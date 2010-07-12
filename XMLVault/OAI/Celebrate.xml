@@ -1,0 +1,2197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<harvest>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/              http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-30T21:54:41Z</responseDate>
+<request verb="Identify">http://digital.library.upenn.edu/webbin/OAI-celebration</request>
+<Identify>
+<repositoryName>A Celebration of Women Writers</repositoryName>
+<baseURL>http://digital.library.upenn.edu/webbin/OAI-celebration</baseURL>
+<protocolVersion>2.0</protocolVersion>
+<adminEmail>onlinebooks@pobox.upenn.edu</adminEmail>
+<earliestDatestamp>2002-01-01</earliestDatestamp>
+<deletedRecord>no</deletedRecord>
+<granularity>YYYY-MM-DD</granularity>
+<description>
+<oai-identifier xmlns="http://www.openarchives.org/OAI/1.1/oai-identifier" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/1.1/oai-identifier                            http://www.openarchives.org/OAI/1.1/oai-identifier.xsd">
+        <scheme>oai</scheme>
+        <repositoryIdentifier>celebration</repositoryIdentifier>
+        <delimiter>:</delimiter>
+        <sampleIdentifier>oai:celebration:stowe/folks</sampleIdentifier>
+      </oai-identifier>
+</description>
+</Identify>
+</OAI-PMH>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/              http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-30T21:54:41Z</responseDate>
+<request verb="ListMetadataFormats">http://digital.library.upenn.edu/webbin/OAI-celebration</request>
+<ListMetadataFormats>
+<metadataFormat>
+<metadataPrefix>oai_dc</metadataPrefix>
+<schema>http://www.openarchives.org/OAI/2.0/oai_dc.xsd</schema>
+<metadataNamespace>http://www.openarchives.org/OAI/2.0/oai_dc/</metadataNamespace>
+</metadataFormat>
+<metadataFormat>
+<metadataPrefix>mods</metadataPrefix>
+<schema>http://www.loc.gov/standards/mods/v3/mods-3-2.xsd</schema>
+<metadataNamespace>http://www.loc.gov/mods/v3</metadataNamespace>
+</metadataFormat>
+</ListMetadataFormats>
+</OAI-PMH>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/              http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-30T21:54:41Z</responseDate>
+<request verb="ListSets">http://digital.library.upenn.edu/webbin/OAI-celebration</request>
+<ListSets>
+<set>
+<setSpec>aquifer</setSpec>
+<setName>Items that may be of particular interest to DLF Aquifer</setName>
+</set>
+<set>
+<setSpec>aquifer:americana</setSpec>
+<setName>Items related to American culture and history</setName>
+</set>
+</ListSets>
+</OAI-PMH>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/              http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-30T21:54:41Z</responseDate>
+<request from="1000-01-01" metadataPrefix="oai_dc" until="2010-01-01" verb="ListRecords">http://digital.library.upenn.edu/webbin/OAI-celebration</request>
+<ListRecords>
+<record>
+<header>
+<identifier>oai:celebration:wheatley/liberty</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Liberty and Peace</dc:title>
+<dc:creator>Wheatley, Phillis, 1753-1784</dc:creator>
+<dc:subject>United States -- History -- Revolution, 1775-1783 -- Poetry</dc:subject>
+<dc:subject>PS866 .W5 L5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/wheatley/liberty/liberty.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: Warden and Russell, 1784</dc:description>
+<dc:publisher>Warden and Russell</dc:publisher>
+<dc:date>1784</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-12-18</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hsmith/autobiography</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Autobiography of Liuetenant-General Sir Harry Smith, Baronet of Aliwal on the Sutlej, G. C. B.</dc:title>
+<dc:creator>Smith, Harry George Wakelyn, Sir, 1788-1860</dc:creator>
+<dc:creator>Smith, G. C. Moore (George Charles Moore), 1858-1940</dc:creator>
+<dc:contributor>Smith, Juana</dc:contributor>
+<dc:subject>Smith, Harry George Wakelyn, Sir, 1788-1860</dc:subject>
+<dc:subject>Generals -- Great Britain -- Biography</dc:subject>
+<dc:subject>Washington (D.C.) -- History -- Capture by the British, 1814</dc:subject>
+<dc:subject>DA68.12 .S6 A2</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/hsmith/autobiography/harry.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>2 volumes in one, covering all of Smith's life; London: John Murray, 1903</dc:description>
+<dc:publisher>John Murray</dc:publisher>
+<dc:date>1903</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-05-29</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:sayers/cathtales</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Catholic Tales and Christian Songs</dc:title>
+<dc:creator>Sayers, Dorothy L. (Dorothy Leigh), 1893-1957</dc:creator>
+<dc:subject>Christian poetry, English</dc:subject>
+<dc:subject>PR6037 .A95 C3</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/sayers/cathtales/dls-cathtales.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Oxford: B. H. Blackwell; New York: Longmans, Green &amp; Co., 1918</dc:description>
+<dc:publisher>Longmans, Green &amp; Co.</dc:publisher>
+<dc:date>1918</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1996-07-30</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:mansfield/garden</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Garden Party, and Other Stories</dc:title>
+<dc:creator>Mansfield, Katherine, 1888-1923</dc:creator>
+<dc:subject>New Zealand -- Social life and customs -- Fiction</dc:subject>
+<dc:subject>PR9639.3 .M258 G3</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/mansfield/garden/garden.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-04-13</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:edwards/nile</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>A Thousand Miles Up the Nile</dc:title>
+<dc:creator>Edwards, Amelia Ann Blanford, 1831-1892</dc:creator>
+<dc:subject>Egypt -- Description and travel</dc:subject>
+<dc:subject>Nile River Valley -- Description and travel</dc:subject>
+<dc:subject>Edwards, Amelia Ann Blanford, 1831-1892</dc:subject>
+<dc:subject>DT54 .E26 1891</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/edwards/nile/nile.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London et al.: G. Routledge and Sons, 1891</dc:description>
+<dc:publisher>G. Routledge and Sons</dc:publisher>
+<dc:date>1891</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2005-11-04</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:montgomery/alpine</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Alpine Path: The Story of My Career</dc:title>
+<dc:creator>Montgomery, L. M. (Lucy Maud), 1874-1942</dc:creator>
+<dc:subject>Montgomery, L. M. (Lucy Maud), 1874-1942</dc:subject>
+<dc:subject>Novelists, Canadian -- 20th century -- Biography</dc:subject>
+<dc:subject>PR6025 .M767 A2</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/montgomery/alpine/alpine.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1999-09-13</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:mcclung/second</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Second Chance</dc:title>
+<dc:creator>McClung, Nellie L., 1873-1951</dc:creator>
+<dc:subject>Temperance -- Fiction</dc:subject>
+<dc:subject>PS3525 .M13 S4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/mcclung/second/second.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Toronto: William Briggs, 1910</dc:description>
+<dc:publisher>William Briggs</dc:publisher>
+<dc:date>1910</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-04-27</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hall/viking</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Viking Tales</dc:title>
+<dc:creator>Hall, Jennie, 1875-1921</dc:creator>
+<dc:creator>Lambdin, Victor Ralph, 1876-1963</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/hall/viking/viking.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Chicago: Rand McNally, c1902</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-05-18</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:eden-lizzie/bohemia</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>A Lady's Glimpse of the Late War in Bohemia</dc:title>
+<dc:creator>Eden, Lizzie Selina</dc:creator>
+<dc:subject>Austro-Prussian War, 1866</dc:subject>
+<dc:subject>Europe -- Description and travel</dc:subject>
+<dc:subject>DD437 .E2</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/eden-lizzie/bohemia/bohemia.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Hurst and Blackett, 1867</dc:description>
+<dc:publisher>Hurst and Blackett</dc:publisher>
+<dc:date>1867</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2005-01-20</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:duberly/journal</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Journal Kept During The Russian War: From The Departure Of The Army From England In April 1854, To The Fall Of Sebastopol</dc:title>
+<dc:creator>Duberly, Frances Isabella Locke, 1829-1903</dc:creator>
+<dc:subject>Crimean War, 1853-1856 -- Personal narratives</dc:subject>
+<dc:subject>DK214 .D81</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/duberly/journal/journal.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>second edition; London: Longman, Brown, Green, and Longmans, 1856</dc:description>
+<dc:publisher>Longman, Brown, Green, and Longmans</dc:publisher>
+<dc:date>1856</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2007-09-29</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:warner-susan/melbourne</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Melbourne House</dc:title>
+<dc:creator>Warner, Susan, 1819-1885</dc:creator>
+<dc:subject>PS3155 .H55 1907</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/warner-susan/melbourne/melbourne.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Ward Lock, and Co., 1907</dc:description>
+<dc:publisher>Ward Lock, and Co.</dc:publisher>
+<dc:date>1907</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-10-09</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:montgomery/rilla</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Rilla of Ingleside</dc:title>
+<dc:creator>Montgomery, L. M. (Lucy Maud), 1874-1942</dc:creator>
+<dc:subject>World War, 1914-1918 -- Prince Edward Island -- Juvenile fiction</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/montgomery/rilla/rilla.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Frederick A. Stokes Company, 1921</dc:description>
+<dc:publisher>Frederick A. Stokes Company</dc:publisher>
+<dc:date>1921</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1999-04-13</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:teresa/letters</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Letters of St. Teresa</dc:title>
+<dc:creator>Teresa, of Avila, Saint, 1515-1582</dc:creator>
+<dc:creator>Dalton, John</dc:creator>
+<dc:subject>Teresa, of Avila, Saint, 1515-1582. Correspondence</dc:subject>
+<dc:subject>Christian saints -- Correspondence</dc:subject>
+<dc:subject>BX4700 .T4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/teresa/letters/letters.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Thomas Baker, 1902</dc:description>
+<dc:publisher>Thomas Baker</dc:publisher>
+<dc:date>1902</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2002-02-25</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:durham/albania</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>High Albania</dc:title>
+<dc:creator>Durham, M. E. (Mary Edith), 1863-1944</dc:creator>
+<dc:subject>Durham, M. E. (Mary Edith), 1863-1944 -- Journeys -- Albania</dc:subject>
+<dc:subject>Albania -- Description and travel</dc:subject>
+<dc:subject>Albania -- Social life and customs</dc:subject>
+<dc:subject>DR701 .S5 D8</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/durham/albania/albania.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Edward Arnold, 1909</dc:description>
+<dc:publisher>Edward Arnold</dc:publisher>
+<dc:date>1909</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-09-01</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:richards/howe</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Julia Ward Howe, 1819-1910</dc:title>
+<dc:creator>Richards, Laura Elizabeth Howe, 1850-1943</dc:creator>
+<dc:creator>Elliott, Maud Howe, 1854-1948</dc:creator>
+<dc:contributor>Hall, Florence Howe, 1845-1922</dc:contributor>
+<dc:subject>Howe, Julia Ward, 1819-1910</dc:subject>
+<dc:subject>Authors, American -- 19th century -- Biography</dc:subject>
+<dc:subject>Feminists -- United States -- Biography</dc:subject>
+<dc:subject>PS2018 .R5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/richards/howe/howe-I.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>2 volumes; Boston and New York: Houghton Mifflin Company, 1915</dc:description>
+<dc:publisher>Houghton Mifflin Company</dc:publisher>
+<dc:date>1915</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-03-04</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:forbes/insulinde</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Insulinde: Experiences of a Naturalist's Wife in the Eastern Archipelago</dc:title>
+<dc:creator>Forbes, Anna</dc:creator>
+<dc:subject>Malay Archipelago -- Description and travel</dc:subject>
+<dc:subject>DS601 .F69</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/forbes/insulinde/insulinde.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Edinburgh and London: William Blackwood and Sons, 1887 (Oxford reprint)</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2007-02-28</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:burton/romance</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Romance of Isabel, Lady Burton</dc:title>
+<dc:creator>Burton, Isabel, Lady, 1831-1896</dc:creator>
+<dc:creator>Wilkins, William Henry</dc:creator>
+<dc:subject>Burton, Isabel, Lady, 1831-1896</dc:subject>
+<dc:subject>Burton, Richard Francis, Sir, 1821-1890</dc:subject>
+<dc:subject>G246.B75 A4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/burton/romance/romance.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Dodd, Mead &amp; Co., 1897</dc:description>
+<dc:publisher>Dodd, Mead &amp; Co.</dc:publisher>
+<dc:date>1897</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-05-05</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:beynon/aleta</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Aleta Dey</dc:title>
+<dc:creator>Beynon, Francis Marion</dc:creator>
+<dc:subject>Women pacifists -- Fiction</dc:subject>
+<dc:subject>Manitoba -- Fiction</dc:subject>
+<dc:subject>PR9199.3.B4245 A85</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/beynon/aleta/aleta.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>1919</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-06-14</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:besterman/quest</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Quaint and Curious Quest of Johnny Longfoot, the Shoe King's Son</dc:title>
+<dc:creator>Besterman, Catherine</dc:creator>
+<dc:creator>Chappell, Warren, 1904-</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/besterman/quest/quest.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Indianapolis and New York: Bobbs-Merrill Co., c1947</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2008-03-07</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:solis-cohen/birds</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Breakfast of the Birds, and Other Stories</dc:title>
+<dc:creator>Steinberg, Judah, 1863-1908</dc:creator>
+<dc:creator>Solis-Cohen, Emily</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/solis-cohen/birds/birds.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Philadelphia: Jewish Publication Society, 1947</dc:description>
+<dc:publisher>Jewish Publication Society</dc:publisher>
+<dc:date>1947</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-02-11</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:webster/patty</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Just Patty</dc:title>
+<dc:creator>Webster, Jean, 1876-1916</dc:creator>
+<dc:creator>Relyea, C. M. (Charles M.), 1863-1932</dc:creator>
+<dc:subject>Boarding schools -- Fiction</dc:subject>
+<dc:subject>Friendship -- Fiction</dc:subject>
+<dc:subject>PS3545 .E375 J8</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/webster/patty/patty.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Grosset and Dunlap, c1911</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-01-14</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:meigs/garden</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Master Simon's Garden</dc:title>
+<dc:creator>Meigs, Cornelia, 1884-1973</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/meigs/garden/garden.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: The Macmillan Company, 1916</dc:description>
+<dc:publisher>The Macmillan Company</dc:publisher>
+<dc:date>1916</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-01-30</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:bagnold/happy</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Happy Foreigner</dc:title>
+<dc:creator>Bagnold, Enid [1889-1981]</dc:creator>
+<dc:subject>World War, 1914-1918 -- Fiction</dc:subject>
+<dc:subject>PR6003 .A35 H3</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/bagnold/happy/happy.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1999-01-14</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:ely/garden</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>A Woman's Hardy Garden</dc:title>
+<dc:creator>Ely, Helena Rutherfurd, d. 1920</dc:creator>
+<dc:subject>Flower gardening</dc:subject>
+<dc:subject>Perennials</dc:subject>
+<dc:subject>Landscape gardening</dc:subject>
+<dc:subject>SB454 .E48</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/ely/garden/garden.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York and London: Macmillan, 1903</dc:description>
+<dc:publisher>Macmillan</dc:publisher>
+<dc:date>1903</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2004-07-05</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:edgeworth/belinda</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Belinda</dc:title>
+<dc:creator>Edgeworth, Maria, 1767-1849</dc:creator>
+<dc:subject>Young women -- Fiction</dc:subject>
+<dc:subject>Courtship -- Fiction</dc:subject>
+<dc:subject>London (England) -- Fiction</dc:subject>
+<dc:subject>PR4644 .B41</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/edgeworth/belinda/belinda.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-09-01</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:bruce/mates</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Mates at Billabong</dc:title>
+<dc:creator>Bruce, Mary Grant, 1878-1958</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/bruce/mates/mates.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1999-04-30</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:wheatley/whitefield</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>An Elegiac Poem, on the Death of That Celebrated Divine, and Eminent Servant of Jesus Christ, the Late Reverend, and Pious, George Whitefield</dc:title>
+<dc:creator>Wheatley, Phillis, 1753-1784</dc:creator>
+<dc:subject>Whitefield, George, 1714-1770</dc:subject>
+<dc:subject>PS866 .W5 E5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/wheatley/whitefield/whitefield.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: Russell and Boyles, 1770</dc:description>
+<dc:publisher>Russell and Boyles</dc:publisher>
+<dc:date>1770</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-12-18</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:elliott/art</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Art and Handicraft in the Woman's Building of the World's Columbian Exposition, Chicago, 1893</dc:title>
+<dc:creator>Elliott, Maud Howe, 1854-1948</dc:creator>
+<dc:subject>World's Columbian Exposition (1893 : Chicago, Ill.)</dc:subject>
+<dc:subject>Women artists</dc:subject>
+<dc:subject>T500 .H1 E5 1894</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/elliott/art/art.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Chicago and New York: Rand, McNally and Co., 1894</dc:description>
+<dc:publisher>Rand, McNally and Co.</dc:publisher>
+<dc:date>1894</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2005-05-03</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:finch/1713</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Miscellany Poems, on Several Occasions</dc:title>
+<dc:creator>Winchilsea, Anne Kingsmill Finch, Countess of, 1661-1720</dc:creator>
+<dc:subject>PR3765 .W57 .A1</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/finch/1713/miscellany-poems.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Printed for John Barber and Sold by Benj. Tooke, William Taylor, and James Round, 1713</dc:description>
+<dc:publisher>Printed for John Barber and Sold by Benj. Tooke, William Taylor, and James Round</dc:publisher>
+<dc:date>1713</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1997-03-19</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:bryant/russia</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Six Red Months in Russia: An Observer's Account of Russia Before and During the Proletarian Dictatorship</dc:title>
+<dc:creator>Bryant, Louise, 1885-1936</dc:creator>
+<dc:subject>Soviet Union -- History -- Revolution, 1917-1921 -- Personal narratives</dc:subject>
+<dc:subject>DK265 .B77</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/bryant/russia/russia.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: George H. Doran Company, 1918</dc:description>
+<dc:publisher>George H. Doran Company</dc:publisher>
+<dc:date>1918</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-07-25</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:lawless/edgeworth</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Maria Edgeworth</dc:title>
+<dc:creator>Lawless, Emily, 1845-1913</dc:creator>
+<dc:subject>Edgeworth, Maria, 1767-1849</dc:subject>
+<dc:subject>PR4646 .L3</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/lawless/edgeworth/edgeworth.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York &amp; London: The Macmillan Company, 1905</dc:description>
+<dc:publisher>The Macmillan Company</dc:publisher>
+<dc:date>1905</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-07-27</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:wharton/france</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Fighting France</dc:title>
+<dc:creator>Wharton, Edith, 1862-1937</dc:creator>
+<dc:subject>World War, 1914-1918 -- France</dc:subject>
+<dc:subject>D640 .W5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/wharton/france/france.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-05-04</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:alleman/gettysburg</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>At Gettysburg, or, What a Girl Saw and Heard of the Battle: A True Narrative</dc:title>
+<dc:creator>Alleman, Tillie Pierce [1848-1914]</dc:creator>
+<dc:subject>Gettysburg, Battle of, Gettysburg, Pa., 1863</dc:subject>
+<dc:subject>Gettysburg (Pa.) -- History -- Civil War, 1861-1865</dc:subject>
+<dc:subject>United States -- History -- Civil War, 1861-1865 -- Campaigns</dc:subject>
+<dc:subject>E475.53 .A42</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/alleman/gettysburg/gettysburg.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: W. Lake Borland, 1889</dc:description>
+<dc:publisher>W. Lake Borland</dc:publisher>
+<dc:date>1889</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-10-19</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:orczy/molly</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Lady Molly of Scotland Yard</dc:title>
+<dc:creator>Orczy, Emmuska Orczy, Baroness, 1865-1947</dc:creator>
+<dc:subject>Police -- Great Britain -- Fiction</dc:subject>
+<dc:subject>PR6029 .R25 L3</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/orczy/molly/molly.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Cassell and Company, 1912</dc:description>
+<dc:publisher>Cassell and Company</dc:publisher>
+<dc:date>1912</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-05-30</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:murray/equality</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>On the Equality of the Sexes</dc:title>
+<dc:creator>Murray, Judith Sargent, 1751-1820</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/murray/equality/equality.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>as published in The Massachusetts Magazine, 1790</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-04-03</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:inchbald/vows</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Lover's Vows</dc:title>
+<dc:creator>Inchbald, Mrs., 1753-1821</dc:creator>
+<dc:creator>Kotzebue, August von, 1761-1819</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/inchbald/vows/vows.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>fifth edition; London, 1798</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2002-01-15</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hale-katherine/romance</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Canadian Cities of Romance</dc:title>
+<dc:creator>Hale, Katherine, 1878-1956</dc:creator>
+<dc:creator>Stevens, Dorothy</dc:creator>
+<dc:subject>Cities and towns -- Canada</dc:subject>
+<dc:subject>Canada -- Description and travel</dc:subject>
+<dc:subject>F1015 .G37</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/hale-katherine/romance/romance.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: George H. Doran, c1922</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-08-06</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:dehuff/taytay</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Taytay's Tales</dc:title>
+<dc:creator>De Huff, Elizabeth Willis</dc:creator>
+<dc:creator>Kabotie, Fred</dc:creator>
+<dc:creator>Polelonema, Otis</dc:creator>
+<dc:subject>Indians of North America -- Folklore</dc:subject>
+<dc:subject>E98 .F6 D3</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/dehuff/taytay/taytay.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Harcourt, Brace and Company, c1922</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-08-13</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:ewing/peace</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Peace Egg and a Christmas Mumming Play</dc:title>
+<dc:creator>Ewing, Juliana Horatia Gatty, 1841-1885</dc:creator>
+<dc:creator>Browne, Gordon, 1858-1932</dc:creator>
+<dc:subject>Christmas stories</dc:subject>
+<dc:subject>Christmas plays</dc:subject>
+<dc:subject>Mumming plays</dc:subject>
+<dc:subject>Conduct of life -- Juvenile fiction</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/ewing/peace/peace.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London; Brighton: Society for Promoting Christian Knowledge; New York: E and J. B. Young &amp; Co., 1887</dc:description>
+<dc:publisher>E and J. B. Young &amp; Co.</dc:publisher>
+<dc:date>1887</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2005-04-04</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:wentworth/fire</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Fire Within</dc:title>
+<dc:creator>Wentworth, Patricia</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/wentworth/fire/fire.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York, and London: G. P. Putnam's sons, 1913</dc:description>
+<dc:publisher>G. P. Putnam's sons</dc:publisher>
+<dc:date>1913</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-09-05</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:greenaway/marigold</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Marigold Garden: Pictures and Rhymes</dc:title>
+<dc:creator>Greenaway, Kate, 1846-1901</dc:creator>
+<dc:subject>Children's poetry, English</dc:subject>
+<dc:subject>NC978.5 .G7 A4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/greenaway/marigold/marigold.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London and New York: Frederick Warne and Co., c1885</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-10-23</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:zitkala-sa/stories</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>American Indian Stories</dc:title>
+<dc:creator>Zitkala-Sa, 1876-1938</dc:creator>
+<dc:subject>Zitkala-Sa, 1876-1938</dc:subject>
+<dc:subject>Yankton women -- Biography</dc:subject>
+<dc:subject>Yankton Indians -- Social conditions</dc:subject>
+<dc:subject>Yankton Indians -- Government relations</dc:subject>
+<dc:subject>E99 .Y25 Z57</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/zitkala-sa/stories/stories.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Washington: Hayworth Publishing House, 1921</dc:description>
+<dc:publisher>Hayworth Publishing House</dc:publisher>
+<dc:date>1921</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1999-11-19</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:stowe/folks</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Oldtown Folks</dc:title>
+<dc:creator>Stowe, Harriet Beecher, 1811-1896</dc:creator>
+<dc:subject>New England -- Social life and customs -- Fiction</dc:subject>
+<dc:subject>Women -- New England -- Fiction</dc:subject>
+<dc:subject>PS2954 .O4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/stowe/folks/folks.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: Fields, Osgood, and Co., 1869</dc:description>
+<dc:publisher>Fields, Osgood, and Co.</dc:publisher>
+<dc:date>1869</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-01-11</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:kilmer/vigils</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Vigils</dc:title>
+<dc:creator>Kilmer, Aline, 1888-1941</dc:creator>
+<dc:subject>PS3521 .I37 V5 1921</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/kilmer/vigils/vigils.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: George H. Doran Company, c1921</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-12-05</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:montessori/method</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Montessori Method</dc:title>
+<dc:creator>Montessori, Maria, 1870-1952</dc:creator>
+<dc:creator>George, Anne E.</dc:creator>
+<dc:subject>Montessori method of education</dc:subject>
+<dc:subject>Education, Preschool -- Philosophy</dc:subject>
+<dc:subject>LB775 .M7</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/montessori/method/method.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Frederick A. Stokes Company, 1912</dc:description>
+<dc:publisher>Frederick A. Stokes Company</dc:publisher>
+<dc:date>1912</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1999-03-02</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:taylor/autobiography</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Autobiography and Other Memorials of Mrs. Gilbert, Formerly Ann Taylor</dc:title>
+<dc:creator>Taylor, Ann, 1782-1866</dc:creator>
+<dc:creator>Gilbert, Josiah</dc:creator>
+<dc:subject>Taylor, Ann, 1782-1866</dc:subject>
+<dc:subject>PR4712 .G6 Z5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/taylor/autobiography/autobiography-I.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>two volumes; London: Henry S. King and Co., 1874</dc:description>
+<dc:publisher>Henry S. King and Co.</dc:publisher>
+<dc:date>1874</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-04-03</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:edgeworth/ladies</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Letters for Literary Ladies: To Which is Added, An Essay on the Noble Science of Self-Justification</dc:title>
+<dc:creator>Edgeworth, Maria, 1767-1849</dc:creator>
+<dc:subject>Feminism and literature</dc:subject>
+<dc:subject>Women and literature</dc:subject>
+<dc:subject>PR4644 .L4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/edgeworth/ladies/ladies.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>second edition, 1798</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2002-01-29</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:mcdonnell/hauff</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Hauff's Fairy Tales, Translated and Adapted</dc:title>
+<dc:creator>Hauff, Wilhelm, 1802-1827</dc:creator>
+<dc:creator>McDonnell, Cicely</dc:creator>
+<dc:subject>Fairy tales</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/mcdonnell/hauff/hauff.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Dean and Son, 1903</dc:description>
+<dc:publisher>Dean and Son</dc:publisher>
+<dc:date>1903</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2004-03-26</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:seacole/adventures</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Wonderful Adventures of Mrs. Seacole in Many Lands</dc:title>
+<dc:creator>Seacole, Mary, 1805-1881</dc:creator>
+<dc:subject>Seacole, Mary, 1805-1881</dc:subject>
+<dc:subject>Women, Black -- Jamaica -- Biography</dc:subject>
+<dc:subject>Nurses -- Biography</dc:subject>
+<dc:subject>Crimean War, 1853-1856 -- Personal narratives</dc:subject>
+<dc:subject>Women, Black -- Social conditions -- 19th century</dc:subject>
+<dc:subject>DK215 .S43 1857</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/seacole/adventures/adventures.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: James Blackwood, 1857</dc:description>
+<dc:publisher>James Blackwood</dc:publisher>
+<dc:date>1857</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2007-01-26</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:gregory/poetry</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Kiltartan Poetry Book: Prose Translations from the Irish</dc:title>
+<dc:creator>Gregory, Lady, 1852-1932</dc:creator>
+<dc:subject>Irish literature -- Translations into English</dc:subject>
+<dc:subject>Ireland -- Literary collections</dc:subject>
+<dc:subject>PB1421 .G74</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/gregory/poetry/poetry.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York And London: G. P. Putnam's Sons, The Knickerbocker Press, 1919</dc:description>
+<dc:publisher>G. P. Putnam's Sons, The Knickerbocker Press</dc:publisher>
+<dc:date>1919</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-04-17</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:freeman/highway</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Heart's Highway: A Romance of Virginia in the Seventeenth Century</dc:title>
+<dc:creator>Freeman, Mary Eleanor Wilkins, 1852-1930</dc:creator>
+<dc:subject>Virginia -- History -- Colonial period, ca. 1600-1775 -- Fiction</dc:subject>
+<dc:subject>PS1712 .H4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/freeman/highway/highway.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: John Murray, 1900</dc:description>
+<dc:publisher>John Murray</dc:publisher>
+<dc:date>1900</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-09-21</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:cary/mariam</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Tragedie of Mariam, the Faire Queene of Jewry Written by That Learned, Vertuous, and Truly Noble Ladie, E. C.</dc:title>
+<dc:creator>Cary, Elizabeth, Lady, 1585 or 6-1639</dc:creator>
+<dc:subject>Mariamne, consort of Herod I, King of Judea, ca. 57-ca. 29 B.C. -- Drama</dc:subject>
+<dc:subject>Herod I, King of Judea, 73-4 B.C. -- Drama</dc:subject>
+<dc:subject>PR2499 .F3 T7</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/cary/mariam/mariam.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Thomas Creede, for Richard Hawkins, 1613</dc:description>
+<dc:publisher>Thomas Creede, for Richard Hawkins</dc:publisher>
+<dc:date>1613</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2007-12-14</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hill/burney</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Juniper Hall: A Rendezvous of Certain Illustrious Personages during the French Revolution, Including Alexandre D'Arblay and Fanny Burney</dc:title>
+<dc:creator>Hill, Constance, 1844?-1929</dc:creator>
+<dc:creator>Hill, Ellen G.</dc:creator>
+<dc:subject>France -- History -- Revolution, 1789-1799 -- Refugees</dc:subject>
+<dc:subject>Burney, Fanny, 1752-1840 -- Homes and haunts</dc:subject>
+<dc:subject>Juniper Hall (England)</dc:subject>
+<dc:subject>DC158.1 .H6</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/hill/burney/junip.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London &amp; New York: John Lane, The Bodley Head Limited, 1904</dc:description>
+<dc:publisher>John Lane, The Bodley Head Limited</dc:publisher>
+<dc:date>1904</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-10-09</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:phelps/comrades</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Comrades</dc:title>
+<dc:creator>Phelps, Elizabeth Stuart, 1844-1911</dc:creator>
+<dc:creator>Smith, Howard E.</dc:creator>
+<dc:subject>PS3142 .C66</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/phelps/comrades/comrades.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York and London: Harper and Brothers, 1911</dc:description>
+<dc:publisher>Harper and Brothers</dc:publisher>
+<dc:date>1911</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-05-16</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:eagle/congress</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Congress of Women: Held in the Woman's Building, World's Columbian Exposition, Chicago, U. S. A., 1893, With Portraits, Biographies and Addresses</dc:title>
+<dc:creator>Eagle, Mary Kavanaugh Oldham, d. 1903</dc:creator>
+<dc:subject>World's Congress of Representative Women (1893 : Chicago, Ill.)</dc:subject>
+<dc:subject>World's Columbian Exposition (1893 : Chicago, Ill.)</dc:subject>
+<dc:subject>Women -- Congresses</dc:subject>
+<dc:subject>HQ1106 1893 .C62</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/eagle/congress/congress.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Chicago: Monarch Book Company, 1894</dc:description>
+<dc:publisher>Monarch Book Company</dc:publisher>
+<dc:date>1894</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-03-04</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:carlyle/jwclam</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Letters and Memorials of Jane Welsh Carlyle</dc:title>
+<dc:creator>Carlyle, Jane Welsh, 1801-1866</dc:creator>
+<dc:creator>Carlyle, Thomas, 1795-1881</dc:creator>
+<dc:creator>Froude, James Anthony, 1818-1894</dc:creator>
+<dc:subject>Carlyle, Jane Welsh, 1801-1866 -- Correspondence</dc:subject>
+<dc:subject>Carlyle, Thomas, 1795-1881 -- Marriage</dc:subject>
+<dc:subject>Women intellectuals -- Great Britain -- Correspondence</dc:subject>
+<dc:subject>Authors' spouses -- Great Britain -- Correspondence</dc:subject>
+<dc:subject>PR4419.C5 A8</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/carlyle/jwclam/lam.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Longmans, Green, And Co., 1883</dc:description>
+<dc:publisher>Longmans, Green, And Co.</dc:publisher>
+<dc:date>1883</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-01-30</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:bruce/maid</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>A Little Bush Maid</dc:title>
+<dc:creator>Bruce, Mary Grant, 1878-1958</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/bruce/maid/maid.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2002-02-28</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:gregory/theatre</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Our Irish Theatre: A Chapter of Autobiography</dc:title>
+<dc:creator>Gregory, Lady, 1852-1932</dc:creator>
+<dc:subject>Gregory, Lady, 1852-1932</dc:subject>
+<dc:subject>Women authors, Irish -- 19th century -- Biography</dc:subject>
+<dc:subject>Women authors, Irish -- 20th century -- Biography</dc:subject>
+<dc:subject>Theater -- Ireland</dc:subject>
+<dc:subject>PN2601 .G7</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/gregory/theatre/theatre.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York And London: G. P. Putnam's Sons, The Knickerbocker Press, 1913</dc:description>
+<dc:publisher>G. P. Putnam's Sons, The Knickerbocker Press</dc:publisher>
+<dc:date>1913</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-07-03</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:bernhardt/otter</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Keo the Otter</dc:title>
+<dc:creator>Bernhardt, Virgie</dc:creator>
+<dc:creator>Peters, Marjee</dc:creator>
+<dc:subject>Otters -- Juvenile fiction</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/bernhardt/otter/otter.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Milwaukee: E. M. Hale and Company, 1937</dc:description>
+<dc:publisher>E. M. Hale and Company</dc:publisher>
+<dc:date>1937</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2007-12-21</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:gale/lulu</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Miss Lulu Bett</dc:title>
+<dc:creator>Gale, Zona, 1874-1938</dc:creator>
+<dc:subject>Single women -- Drama</dc:subject>
+<dc:subject>Housekeepers -- Drama</dc:subject>
+<dc:subject>Self-realization -- Drama</dc:subject>
+<dc:subject>Middle West -- Drama</dc:subject>
+<dc:subject>PS3513 .A34 M51</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/gale/lulu/lulu.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>stage play, two endings; New York: D. Appleton and Company, 1921</dc:description>
+<dc:publisher>D. Appleton and Company</dc:publisher>
+<dc:date>1921</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-09-29</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:struther/miniver</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Mrs. Miniver</dc:title>
+<dc:creator>Struther, Jan, 1901-1953</dc:creator>
+<dc:subject>Married women -- Fiction</dc:subject>
+<dc:subject>PR6025 .A9 M5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/struther/miniver/miniver.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-06-06</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:sheard/miracle</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Miracle, and Other Poems</dc:title>
+<dc:creator>Sheard, Virna</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/sheard/miracle/miracle.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Toronto: J. M. Dent &amp; Sons, Ltd., 1913</dc:description>
+<dc:publisher>J. M. Dent &amp; Sons, Ltd.</dc:publisher>
+<dc:date>1913</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2004-09-03</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:smith/manor</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Old Manor House</dc:title>
+<dc:creator>Smith, Charlotte Turner, 1749-1806</dc:creator>
+<dc:subject>Inheritance and succession -- Fiction</dc:subject>
+<dc:subject>Women landowners -- Fiction</dc:subject>
+<dc:subject>Women domestics -- Fiction</dc:subject>
+<dc:subject>Social classes -- Fiction</dc:subject>
+<dc:subject>Manors -- Fiction</dc:subject>
+<dc:subject>PR3688 .S4 O5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/smith/manor/manor.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: J. Bell, 1793; Reprinted London: Pandora Press, 1987</dc:description>
+<dc:publisher>Pandora Press</dc:publisher>
+<dc:date>1987</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-04-01</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:addams/hullhouse</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Twenty Years at Hull-House, With Autobiographical Notes</dc:title>
+<dc:creator>Addams, Jane, 1860-1935</dc:creator>
+<dc:subject>Hull House (Chicago, Ill.) -- History</dc:subject>
+<dc:subject>Social settlements -- Illinois -- Chicago -- History</dc:subject>
+<dc:subject>Addams, Jane, 1860-1935</dc:subject>
+<dc:subject>Women social reformers -- United States -- Biography</dc:subject>
+<dc:subject>Social service -- Illinois -- Chicago -- History</dc:subject>
+<dc:subject>HV4196 .C4 A3</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/addams/hullhouse/hullhouse.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: The Macmillan Company, 1912. Copyright 1910</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-03-10</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:marshall/country</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>This Country of Ours: The Story of the United States</dc:title>
+<dc:creator>Marshall, H. E. (Henrietta Elizabeth), b. 1876</dc:creator>
+<dc:creator>Michael, A. C.</dc:creator>
+<dc:subject>United States -- History</dc:subject>
+<dc:subject>E178.3 .M36</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/marshall/country/country.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: George H. Doran Company, c1917</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-10-31</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:arnim/april</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Enchanted April</dc:title>
+<dc:creator>Elizabeth, 1866-1941</dc:creator>
+<dc:subject>British -- Italy -- Fiction</dc:subject>
+<dc:subject>Female friendship -- Fiction</dc:subject>
+<dc:subject>Italy -- Fiction</dc:subject>
+<dc:subject>PR6035 .U8 E6</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/arnim/april/april.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-07-30</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:warner-susan/field</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Daisy in the Field</dc:title>
+<dc:creator>Warner, Susan, 1819-1885</dc:creator>
+<dc:subject>PS3155 .D35</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/warner-susan/field/field.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Frederick Warne and Co., n.d.</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-10-09</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:bronte</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Selected Works and Commentary</dc:title>
+<dc:creator>Brontë, Anne, 1820-1849</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/bronte/bronte-anne.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1996-06-28</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:pirkis/brooke</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Experiences of Loveday Brooke, Lady Detective</dc:title>
+<dc:creator>Pirkis, Catherine Louisa, 1839-1910</dc:creator>
+<dc:creator>Higham, Bernard</dc:creator>
+<dc:subject>Brooke, Loveday (Fictitious character) -- Fiction</dc:subject>
+<dc:subject>Detective and mystery stories, English</dc:subject>
+<dc:subject>Women detectives -- England -- Fiction</dc:subject>
+<dc:subject>PR5185 .P57 E971</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/pirkis/brooke/brooke.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-08-11</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:winnemucca/piutes</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Life Among The Piutes: Their Wrongs and Claims</dc:title>
+<dc:creator>Hopkins, Sarah Winnemucca, 1844?-1891</dc:creator>
+<dc:creator>Mann, Mary Tyler Peabody, 1806-1887</dc:creator>
+<dc:subject>Hopkins, Sarah Winnemucca, 1844?-1891</dc:subject>
+<dc:subject>Paiute Indians</dc:subject>
+<dc:subject>Paiute Indians -- Biography</dc:subject>
+<dc:subject>E99 .P2 H712</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/winnemucca/piutes/piutes.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: Cupples, Upham and Co.; New York: G. P. Putnam's Sons, 1883</dc:description>
+<dc:publisher>G. P. Putnam's Sons</dc:publisher>
+<dc:date>1883</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-09-22</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hemans/restoration</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Restoration of the Works of Art to Italy: A Poem</dc:title>
+<dc:creator>Hemans, Felicia Dorothea Browne, 1793-1835</dc:creator>
+<dc:subject>PR4780 .R47</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/hemans/restoration/restoration.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1997-10-07</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:ewing/gatty</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Juliana Horatia Ewing and Her Books</dc:title>
+<dc:creator>Eden, Horatia K. F. Gatty</dc:creator>
+<dc:contributor>Ewing, Juliana Horatia Gatty, 1841-1885</dc:contributor>
+<dc:subject>Ewing, Juliana Horatia Gatty, 1841-1885</dc:subject>
+<dc:subject>PR4699 .E85 Z65</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/ewing/gatty/gatty.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Society for Promoting Christian Knowledge, 1885</dc:description>
+<dc:publisher>Society for Promoting Christian Knowledge</dc:publisher>
+<dc:date>1885</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1997-11-24</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:burney/evelina</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Evelina: or, The History of a Young Lady's Entrance Into the World</dc:title>
+<dc:creator>Burney, Fanny, 1752-1840</dc:creator>
+<dc:subject>Young women -- Fiction</dc:subject>
+<dc:subject>Debutantes -- Fiction</dc:subject>
+<dc:subject>England -- Fiction</dc:subject>
+<dc:subject>PR3316 .A4 E8</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/burney/evelina/evelina.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-04-19</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:norton/elfw</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>English Laws for Women in the Nineteenth Century</dc:title>
+<dc:creator>Norton, Caroline Sheridan, 1808-1877</dc:creator>
+<dc:subject>Women -- Legal status, laws, etc. -- Great Britain</dc:subject>
+<dc:subject>Husband and wife -- Great Britain</dc:subject>
+<dc:subject>KD734 .N67</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/norton/elfw/elfw.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1996-03-01</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hemans/records</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Records of Woman, With Other Poems</dc:title>
+<dc:creator>Hemans, Felicia Dorothea Browne, 1793-1835</dc:creator>
+<dc:subject>Women -- Poetry</dc:subject>
+<dc:subject>PR4780 .R4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/hemans/records/records.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>second edition; Edinburgh: W. Blackwood; London: T. Cadell, 1828</dc:description>
+<dc:publisher>T. Cadell</dc:publisher>
+<dc:date>1828</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-10-03</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:robinson/memoirs</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Memoirs of Mary Robinson</dc:title>
+<dc:creator>Robinson, Mary, 1758-1800</dc:creator>
+<dc:creator>Robinson, Mary Elizabeth, ca. 1775-1818</dc:creator>
+<dc:contributor>Molloy, J. Fitzgerald (Joseph Fitzgerald), 1858-1908</dc:contributor>
+<dc:subject>Robinson, Mary, 1758-1800</dc:subject>
+<dc:subject>Authors, English -- 18th century -- Biography</dc:subject>
+<dc:subject>Actors -- England -- Biography</dc:subject>
+<dc:subject>PR5233 .R27 Z47</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/robinson/memoirs/memoirs.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Philadelphia: J. B. Lippincott Co., 1895</dc:description>
+<dc:publisher>J. B. Lippincott Co.</dc:publisher>
+<dc:date>1895</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1996-11-04</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:moodie/roughing</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Roughing It in the Bush</dc:title>
+<dc:creator>Moodie, Susanna, 1803-1885</dc:creator>
+<dc:subject>Ontario -- Description and travel</dc:subject>
+<dc:subject>Frontier and pioneer life -- Ontario</dc:subject>
+<dc:subject>Moodie, Susanna, 1803-1885</dc:subject>
+<dc:subject>Pioneers -- Ontario -- Biography</dc:subject>
+<dc:subject>Women pioneers -- Ontario -- Biography</dc:subject>
+<dc:subject>F1057 .M8</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/moodie/roughing/roughing.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>based on the 1852 Bentley edition</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-04-07</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:ewing/snap-dragons</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Snap-Dragons: A Tale of Christmas Eve; and Old Father Christmas: An Old-Fashioned Tale of the Young Days of a Grumpy Old Godfather</dc:title>
+<dc:creator>Ewing, Juliana Horatia Gatty, 1841-1885</dc:creator>
+<dc:creator>Browne, Gordon, 1858-1932</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/ewing/snap-dragons/snap-dragons.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Society For Promoting Christian Knowledge, ca. 1888</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-12-25</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hopkins/hagar</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Hagar's Daughter: A Story of Southern Caste Prejudice</dc:title>
+<dc:creator>Hopkins, Pauline E. (Pauline Elizabeth)</dc:creator>
+<dc:subject>United States -- Race relations -- Fiction</dc:subject>
+<dc:subject>PS1999 .H4226 H2</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/hopkins/hagar/hagar.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2002-02-28</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:robins/convert</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Convert</dc:title>
+<dc:creator>Robins, Elizabeth, 1862-1952</dc:creator>
+<dc:subject>Women -- Fiction</dc:subject>
+<dc:subject>Suffragists -- Fiction</dc:subject>
+<dc:subject>PS2719 .R4 C66</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/robins/convert/convert.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2004-12-19</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:kemble/further</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Further Records, 1848-1883: A Series of Letters</dc:title>
+<dc:creator>Kemble, Fanny, 1809-1893</dc:creator>
+<dc:subject>Kemble, Fanny, 1809-1893 -- Correspondence</dc:subject>
+<dc:subject>Plantation owners' spouses -- Georgia -- Correspondence</dc:subject>
+<dc:subject>Actors -- Great Britain -- Correspondence</dc:subject>
+<dc:subject>Women -- Georgia -- Correspondence</dc:subject>
+<dc:subject>PN2598 .K4 A4 1891</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/kemble/further/further.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Henry Holt and Co., 1891</dc:description>
+<dc:publisher>Henry Holt and Co.</dc:publisher>
+<dc:date>1891</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2004-10-18</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:haywood/fatal</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Fatal Secret: or, Constancy in Distress</dc:title>
+<dc:creator>Haywood, Eliza Fowler, 1693?-1756</dc:creator>
+<dc:subject>PR3506 .H94 F27</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/haywood/fatal/fatal.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>from a 1725 edition</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2006-06-20</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:osborne/letters</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Letters from Dorothy Osborne to Sir William Temple (1652-54)</dc:title>
+<dc:creator>Osborne, Dorothy, 1627-1695</dc:creator>
+<dc:creator>Parry, Edward Abbott</dc:creator>
+<dc:subject>Osborne, Dorothy, 1627-1695 -- Correspondence</dc:subject>
+<dc:subject>Temple, William, Sir, 1628-1699 -- Correspondence</dc:subject>
+<dc:subject>Statesmen's spouses -- Great Britain -- Correspondence</dc:subject>
+<dc:subject>Women -- Great Britain -- History -- 17th century</dc:subject>
+<dc:subject>Great Britain -- Social life and customs -- 17th century</dc:subject>
+<dc:subject>DA429 .T2 A2</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/osborne/letters/letters.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-06-12</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:jewsbury/letters</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Selections from the Letters of Geraldine Endsor Jewsbury to Jane Welsh Carlyle</dc:title>
+<dc:creator>Jewsbury, Geraldine Endsor, 1812-1880</dc:creator>
+<dc:creator>Ireland, Annie Elizabeth Nicholson [d. 1893]</dc:creator>
+<dc:subject>Jewsbury, Geraldine Endsor, 1812-1880 -- Correspondence</dc:subject>
+<dc:subject>Carlyle, Jane Welsh, 1801-1866 -- Correspondence</dc:subject>
+<dc:subject>PR4825 .J48 A85</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/jewsbury/letters/gej.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>London: Longmans, Green, and Co., 1892</dc:description>
+<dc:publisher>Longmans, Green, and Co.</dc:publisher>
+<dc:date>1892</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-11-13</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:livesay/ukraina</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Songs of Ukraina, With Ruthenian Poems</dc:title>
+<dc:creator>Livesay, Florence Randal, 1874-[1953]</dc:creator>
+<dc:subject>Folk songs, Ukrainian</dc:subject>
+<dc:subject>Ukrainian poetry -- Translations into English</dc:subject>
+<dc:subject>PG3986 .E3 L5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/livesay/ukraina/ukraina.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Dent and Dutton edition, 1916</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2004-08-14</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:thaxter/garden</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>An Island Garden</dc:title>
+<dc:creator>Thaxter, Celia, 1835-1894</dc:creator>
+<dc:creator>Hassam, Childe</dc:creator>
+<dc:subject>Celia Thaxter's Garden (Appledore Island, Me.)</dc:subject>
+<dc:subject>Thaxter, Celia, 1835-1894</dc:subject>
+<dc:subject>Gardens -- Maine -- Appledore Island</dc:subject>
+<dc:subject>Appledore Island (Me.) -- Description and travel</dc:subject>
+<dc:subject>SB466 .U6 T5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/thaxter/garden/garden.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2001-07-13</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:cryer/canoe</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Flying Canoe: Legends of the Cowichans</dc:title>
+<dc:creator>Cryer, Beryl M.</dc:creator>
+<dc:subject>Cowichan Indians -- Folklore</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/cryer/canoe/canoe.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Victoria: J. Parker Buckle Printing, 1949</dc:description>
+<dc:publisher>J. Parker Buckle Printing</dc:publisher>
+<dc:date>1949</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2005-09-25</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:montgomery/rainbow</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Rainbow Valley</dc:title>
+<dc:creator>Montgomery, L. M. (Lucy Maud), 1874-1942</dc:creator>
+<dc:identifier>http://digital.library.upenn.edu/women/montgomery/rainbow/rainbow.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Frederick A. Stokes Company, 1919</dc:description>
+<dc:publisher>Frederick A. Stokes Company</dc:publisher>
+<dc:date>1919</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1999-03-19</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:mcclung/danny</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Sowing Seeds in Danny</dc:title>
+<dc:creator>McClung, Nellie L., 1873-1951</dc:creator>
+<dc:subject>Family -- Juvenile fiction</dc:subject>
+<dc:subject>PS3525 .M13 S6</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/mcclung/danny/danny.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Grosset and Dunlap, 1908</dc:description>
+<dc:publisher>Grosset and Dunlap</dc:publisher>
+<dc:date>1908</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-07-24</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:bronte/agnes</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Agnes Grey</dc:title>
+<dc:creator>Brontë, Anne, 1820-1849</dc:creator>
+<dc:subject>Governesses -- Fiction</dc:subject>
+<dc:subject>Single women -- Fiction</dc:subject>
+<dc:subject>England -- Fiction</dc:subject>
+<dc:subject>PR4162 .A54</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/bronte/agnes/agnes-grey.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1996-10-02</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:widdemer/paradise</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>The Old Road to Paradise</dc:title>
+<dc:creator>Widdemer, Margaret</dc:creator>
+<dc:subject>PS3545 .I175 O5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/widdemer/paradise/paradise.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>New York: Henry Holt And Company, 1918</dc:description>
+<dc:publisher>Henry Holt And Company</dc:publisher>
+<dc:date>1918</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-10-12</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:alcott/sketches</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Hospital Sketches</dc:title>
+<dc:creator>Alcott, Louisa May, 1832-1888</dc:creator>
+<dc:subject>United States -- History -- Civil War, 1861-1865 -- Hospitals</dc:subject>
+<dc:subject>United States -- History -- Civil War, 1861-1865 -- Personal narratives</dc:subject>
+<dc:subject>E621 .A4 1863</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/alcott/sketches/sketches.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: James Redpath, 1863</dc:description>
+<dc:publisher>James Redpath</dc:publisher>
+<dc:date>1863</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-05-06</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:mulets/flower</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Flower Stories</dc:title>
+<dc:creator>Mulets, Lenore Elizabeth, b. 1876</dc:creator>
+<dc:creator>Schneider, Sophie</dc:creator>
+<dc:subject>Botany -- Juvenile and popular literature</dc:subject>
+<dc:subject>QK49 .M95</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/mulets/flower/flower.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: L. C. Page and Company, 1903</dc:description>
+<dc:publisher>L. C. Page and Company</dc:publisher>
+<dc:date>1903</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2003-06-03</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:johnston/desert</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>In the Desert of Waiting: The Legend of Camel-Back Mountain</dc:title>
+<dc:creator>Johnston, Annie F. (Annie Fellows), 1863-1931</dc:creator>
+<dc:subject>Paradise (Islam) -- Fiction</dc:subject>
+<dc:subject>PS2137 .J641 I5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/johnston/desert/desert.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: L. C. Page &amp; Co., 1908</dc:description>
+<dc:publisher>L. C. Page &amp; Co.</dc:publisher>
+<dc:date>1908</dc:date>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2007-04-25</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:alcott/men</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Little Men: Life at Plumfield With Jo's Boys</dc:title>
+<dc:creator>Alcott, Louisa May, 1832-1888</dc:creator>
+<dc:subject>Boarding schools -- Juvenile fiction</dc:subject>
+<dc:subject>Family -- New England -- Juvenile fiction</dc:subject>
+<dc:subject>New England -- History -- 19th century -- Juvenile fiction</dc:subject>
+<dc:subject>PS1017 .L4</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/alcott/men/men.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Chicago, New York: M. A. Donohue &amp; Co., n.d.  Copyright 1871</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-02-17</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:haywood/fantomina</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Fantomina: or, Love in a Maze, Being a Secret History of an Amour Between Two Persons of Condition</dc:title>
+<dc:creator>Haywood, Eliza Fowler, 1693?-1756</dc:creator>
+<dc:subject>PR3506 .H94 F2</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/haywood/fantomina/fantomina.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>1725</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2005-12-31</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:hill/austen</identifier>
+<datestamp>2008-05-09</datestamp>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Jane Austen: Her Homes and Her Friends</dc:title>
+<dc:creator>Hill, Constance, 1844?-1929</dc:creator>
+<dc:subject>Austen, Jane, 1775-1817 -- Homes and haunts</dc:subject>
+<dc:subject>Austen, Jane, 1775-1817 -- Friends and associates</dc:subject>
+<dc:subject>Novelists, English -- 19th century -- Biography</dc:subject>
+<dc:subject>Literary landmarks -- England</dc:subject>
+<dc:subject>PR4036 .H5</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/hill/austen/homes.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>third edition</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2000-12-11</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:cridge/rights</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Man's Rights: or, How Would You Like It?</dc:title>
+<dc:creator>Cridge, Annie Denton</dc:creator>
+<dc:subject>Women -- Social conditions</dc:subject>
+<dc:subject>HQ1233 .C93 1870</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/cridge/rights/rights.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>9 dreams; from the book and serial publications, 1870</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2007-06-26</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:buffalo/garden</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Buffalo Bird Woman's Garden</dc:title>
+<dc:creator>Waheenee, 1839?-</dc:creator>
+<dc:creator>Wilson, Gilbert Livingstone, 1868-1930</dc:creator>
+<dc:subject>Waheenee, 1839?-</dc:subject>
+<dc:subject>Goodbird, Edward</dc:subject>
+<dc:subject>Hidatsa Indians -- Agriculture</dc:subject>
+<dc:subject>Indians of North America -- Great Plains -- Agriculture</dc:subject>
+<dc:subject>E99 .H6 W337</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/buffalo/garden/garden.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>2002-05-21</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<record>
+<header>
+<identifier>oai:celebration:truth/1850</identifier>
+<datestamp>2008-05-09</datestamp>
+<setSpec>aquifer:americana</setSpec>
+</header>
+<metadata>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                           http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dc:title>Narrative of Sojourner Truth, a Northern Slave, Emancipated from Bodily Servitude by the State of New York, in 1828</dc:title>
+<dc:creator>Truth, Sojourner, d. 1883</dc:creator>
+<dc:creator>Gilbert, Olive</dc:creator>
+<dc:contributor>Weld, Theodore Dwight, 1803-1895</dc:contributor>
+<dc:subject>Truth, Sojourner, d. 1883</dc:subject>
+<dc:subject>African Americans -- Biography</dc:subject>
+<dc:subject>African American women -- Biography</dc:subject>
+<dc:subject>African American abolitionists -- Biography</dc:subject>
+<dc:subject>Abolitionists -- United States -- Biography</dc:subject>
+<dc:subject>Social reformers -- United States -- Biography</dc:subject>
+<dc:subject>Slaves -- New York (State) -- Ulster County -- Biography</dc:subject>
+<dc:subject>Slavery -- New York (State) -- Ulster County -- History -- 19th century</dc:subject>
+<dc:subject>E185.97 .T875 1850</dc:subject>
+<dc:identifier>http://digital.library.upenn.edu/women/truth/1850/1850.html</dc:identifier>
+<dc:format>text/html</dc:format>
+<dc:description>Boston: The author, 1850; main text as reprinted by Oxford University Press in 1991</dc:description>
+<dc:publisher>A Celebration of Women Writers</dc:publisher>
+<dc:date>1998-05-07</dc:date><dc:type>Text</dc:type>
+</oai_dc:dc>
+</metadata>
+</record>
+<resumptionToken completeListSize="326">ERROR,oai_dc,100</resumptionToken>
+</ListRecords>
+</OAI-PMH>
+</harvest>

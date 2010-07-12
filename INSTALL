@@ -1,0 +1,13 @@
+Necessary Tools for Execution
+To execute the VIVO harvester, you need the following things:
+* An Installation of VIVO to read from and write to
+* A mysql database to use for Storing Jena Models
+* Java
+
+Necessary Libraries for building
+This project uses Maven to build the necessary libraries into the project jar.  If you are wishing to modify the files and re build the jar you will need Maven installed.
+
+
+
+
+July 9th, 2010		Creation		Stephen V. Williams
