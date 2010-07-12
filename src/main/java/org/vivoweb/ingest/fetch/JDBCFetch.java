@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the new BSD license
+ * which accompanies this distribution, and is available at
+ * http://www.opensource.org/licenses/bsd-license.html
+ * 
+ * Contributors:
+ *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
 import java.io.IOException;
@@ -11,28 +21,46 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.JDBCRecordHandler;
 import org.vivoweb.ingest.util.RecordHandler;
 import org.vivoweb.ingest.util.Task;
 import org.xml.sax.SAXException;
 
 /**
+ * Fetch from JDBC into RDF/XML
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class JDBCFetch extends Task {
 	
+	/**
+	 * Log4J Logger
+	 */
 	private static Log log = LogFactory.getLog(JDBCFetch.class);
+	/**
+	 * Record Handler to write records to
+	 */
 	private RecordHandler rh;
+	/**
+	 * Database we are fetching from
+	 */
 	private Connection db;
+	/**
+	 * Table information
+	 */
 	private HashMap<String,Map<String,String>> tables;
+	/**
+	 * Statement processor for the database
+	 */
 	private Statement cursor;
+	/**
+	 * Namespace for RDF made from this database
+	 */
 	private String uriNS;
 
 	@Override
 	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
 		String repositoryConfig = getParam(params, "repositoryConfig", true);
 		this.rh = RecordHandler.parseConfig(repositoryConfig);
+		this.rh.setOverwriteDefault(true);
 		String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
 		try {
 			Class.forName(jdbcDriverClass);
@@ -68,6 +96,11 @@ public class JDBCFetch extends Task {
 		}
 	}
 	
+	/**
+	 * Checks if the table exists
+	 * @param tableName the name of the table to check for
+	 * @throws IOException the table does not exist
+	 */
 	private void checkTableExists(String tableName) throws IOException {
 		boolean a;
 		try {
@@ -88,10 +121,20 @@ public class JDBCFetch extends Task {
 		}
 	}
 	
+	/**
+	 * Get the data field information for a table from the parameter list
+	 * @param tableName the table to get the data field information for
+	 * @return the data field list
+	 */
 	private String[] getDataFields(String tableName) {
 		return this.tables.get(tableName).get("dataFieldList").split("\\s?,\\s?");
 	}
 	
+	/**
+	 * Get the relation field information for a table from the parameter list
+	 * @param tableName the table to get the relation field information for
+	 * @return the relation field mapping
+	 */
 	private Map<String,String> getRelationFields(String tableName) {
 		Map<String,String> relations = new HashMap<String,String>();
 		String relationList = this.tables.get(tableName).get("relationFieldList");
@@ -107,10 +150,20 @@ public class JDBCFetch extends Task {
 		return relations;
 	}
 	
+	/**
+	 * Get the id field information for a table from the parameter list
+	 * @param tableName the table to get the id field information for
+	 * @return the id field name
+	 */
 	private String getIDField(String tableName) {
 		return this.tables.get(tableName).get("idField");
 	}
 	
+	/**
+	 * Builds a select statement against the table using configured fields
+	 * @param tableName the table to build the select statement for
+	 * @return the select statement
+	 */
 	private String buildSelect(String tableName) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
@@ -128,14 +181,29 @@ public class JDBCFetch extends Task {
 		return sb.toString();
 	}
 	
-	private String buildTableNS(String tableName) {
+	/**
+	 * Builds a table's record namespace
+	 * @param tableName the table to build the namespace for
+	 * @return the namespace
+	 */
+	private String buildTableRecordNS(String tableName) {
 		return this.uriNS+tableName+"/";
 	}
 	
+	/**
+	 * Builds a table's field description namespace
+	 * @param tableName the table to build the namespace for
+	 * @return the namespace
+	 */
 	private String buildTableFieldNS(String tableName) {
 		return this.uriNS+"fields/"+tableName+"/";
 	}
 	
+	/**
+	 * Checks if a table is properly configured
+	 * @param tableName the name of the table to check
+	 * @throws IOException the table is incorrectly configured
+	 */
 	private void checkTableConfigured(String tableName) throws IOException {
 		boolean a = true;
 		try {
@@ -157,6 +225,7 @@ public class JDBCFetch extends Task {
 				//For each Record
 				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next(); ) {
 					String recID = "id-"+rs.getString(getIDField(tableName)).trim();
+					log.trace("Creating RDF for "+tableName+": "+recID);
 					//Build RDF BEGIN
 					//Header info
 					String tableNS = "db-"+tableName;
@@ -169,7 +238,7 @@ public class JDBCFetch extends Task {
 					sb.append(buildTableFieldNS(tableName));
 					sb.append("\"\n");
 					sb.append("         xml:base=\"");
-					sb.append(buildTableNS(tableName));
+					sb.append(buildTableRecordNS(tableName));
 					sb.append("\">\n");
 					
 					//Record info BEGIN
@@ -199,7 +268,7 @@ public class JDBCFetch extends Task {
 						sb.append(":");
 						sb.append(relationField);
 						sb.append(" rdf:resource=\"");
-						sb.append(this.buildTableNS(relations.get(relationField)));
+						sb.append(this.buildTableRecordNS(relations.get(relationField)));
 						
 						//insert field value
 						sb.append("id-"+rs.getString(relationField).trim());
@@ -216,6 +285,7 @@ public class JDBCFetch extends Task {
 					
 					//Write RDF to RecordHandler
 //					System.out.println(sb.toString());
+					log.trace("Adding record for "+tableName+": "+recID);
 					this.rh.addRecord(tableName+"_"+recID,sb.toString());
 				}
 			} catch(SQLException e) {

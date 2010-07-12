@@ -146,6 +146,9 @@
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
 			<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
+			<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
+			<score:initials><xsl:value-of select="Initials" /></score:initials>
+			<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
 		</rdf:Description>
 	</xsl:template>
 	

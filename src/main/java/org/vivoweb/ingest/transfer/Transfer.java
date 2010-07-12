@@ -11,22 +11,52 @@ import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /**
+ * Transfer data from one Jena model to another
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class Transfer extends Task {
 	
+	/**
+	 * Log4J Logger
+	 */
 	private static Log log = LogFactory.getLog(Transfer.class);
+	/**
+	 * Model to read records from
+	 */
+	private Model input;
+	/**
+	 * Model to write records to
+	 */
+	private Model output;
 	
 	/**
-	 * @param in Model to read from
-	 * @param out Model to write to
+	 * Default Constructor
 	 */
-	public static void transfer(Model in, Model out) {
-		out.add(in);
+	public Transfer() {
+	  //Nothing to do here
+	  //Used by Task config parser
+	  //Should only be used in conjunction with setParams()
 	}
 	
 	/**
+	 * Constructor
+	 * @param in input Model
+	 * @param out output Model
+	 */
+	public Transfer(Model in, Model out) {
+	  this.input = in;
+	  this.output = out;
+	}
+	
+	/**
+	 * Copy data from input to output
+	 */
+	private void transfer() {
+		this.output.add(this.input);
+	}
+	
+	/**
+	 * Main Method
 	 * @param args command line arguments
 	 */
 	public static void main(String... args) {
@@ -38,22 +68,24 @@ public class Transfer extends Task {
 		try {
 			JenaConnect in = JenaConnect.parseConfig(args[1]);
 			JenaConnect out = JenaConnect.parseConfig(args[2]);
-			transfer(in.getJenaModel(),out.getJenaModel());
+			new Transfer(in.getJenaModel(), out.getJenaModel()).transfer();
 		} catch(Exception e) {
-			// TODO Real Error Handling?
 			log.error(e.getMessage(),e);
 		}
 	}
 	
-
 	@Override
 	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		// TODO Auto-generated method stub
+		String inConfig = getParam(params, "inputModel", true);
+		String outConfig = getParam(params, "outputModel", true);
+		JenaConnect in = JenaConnect.parseConfig(inConfig);
+		JenaConnect out = JenaConnect.parseConfig(outConfig);
+		this.input = in.getJenaModel();
+		this.output = out.getJenaModel();
 	}
 	
-
 	@Override
 	protected void runTask() throws NumberFormatException {
-		// TODO Auto-generated method stub
+		transfer();
 	}
 }

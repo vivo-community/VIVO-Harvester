@@ -36,12 +36,18 @@ import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.util.ModelLoader;
 
 /**
+ * Connection Helper for Jena Models
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class JenaConnect {
 	
+	/**
+	 * Log4J Logger
+	 */
 	private static Log log = LogFactory.getLog(JenaConnect.class);
+	/**
+	 * Model we are connecting to
+	 */
 	private Model jenaModel;
 	
 	/**
@@ -53,8 +59,6 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(FileObject configFile) throws ParserConfigurationException, SAXException, IOException {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
 		return new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream());
 	}
 	
@@ -67,9 +71,6 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(File configFile) throws ParserConfigurationException, SAXException, IOException {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		
 		return parseConfig(VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()));
 	}
 	
@@ -94,9 +95,6 @@ public class JenaConnect {
 	 * @param dbClass jdbc driver class
 	 */
 	public JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of constructor "JenaConnect.JenaConnect" to Protected.
-		//FIXME This code was marked as may cause compile errors by UCDetector.
 		try {
 			this.setJenaModel(this.createModel(dbUrl, dbUser, dbPass, dbType, dbClass));
 		} catch(InstantiationException e) {
@@ -126,9 +124,6 @@ public class JenaConnect {
 	 * @param in input stream to load rdf from
 	 */
 	public JenaConnect(InputStream in) {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of Constructor to Private
-		//FIXME This code was marked as may cause compile errors by UCDetector.
 		this.setJenaModel(ModelFactory.createDefaultModel());
 		this.loadRDF(in);
 	}
@@ -139,8 +134,6 @@ public class JenaConnect {
 	 * @throws FileSystemException error getting file contents
 	 */
 	public JenaConnect(String inFilePath) throws FileSystemException {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
 		this(VFS.getManager().resolveFile(new File("."), inFilePath).getContent().getInputStream());
 	}
 	
@@ -152,27 +145,68 @@ public class JenaConnect {
 		return this.jenaModel;
 	}
 	
-
+	/**
+	 * Setter
+	 * @param jena the new model
+	 */
 	private void setJenaModel(Model jena) {
 		this.jenaModel = jena;
 	}
 	
-
+	/**
+	 * Connect and create default model
+	 * @param dbUrl url of server
+	 * @param dbUser username to connect with
+	 * @param dbPass password to connect with
+	 * @param dbType database type
+	 * @param dbClass jdbc connection class
+	 * @return the model
+	 * @throws InstantiationException could not instantiate
+	 * @throws IllegalAccessException not authorized
+	 * @throws ClassNotFoundException no such class
+	 */
 	private Model createModel(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		return initModel(initDB(dbUrl, dbUser, dbPass, dbType, dbClass)).createDefaultModel();
 	}
 	
+	/**
+	 * Connect and load model
+	 * @param dbUrl url of server
+	 * @param dbUser username to connect with
+	 * @param dbPass password to connect with
+	 * @param modelName named model to connect to
+	 * @param dbType database type
+	 * @param dbClass jdbc connection class
+	 * @return the model
+	 */
 	private Model loadModel(String dbUrl, String dbUser, String dbPass, String modelName, String dbType, String dbClass) {
 		return ModelLoader.connectToDB(dbUrl, dbUser, dbPass, modelName, dbType, dbClass);
 	}
 	
+	/**
+	 * Connect to jena server
+	 * @param dbUrl url of server
+	 * @param dbUser username to connect with
+	 * @param dbPass password to connect with
+	 * @param dbType database type
+	 * @param dbClass jdbc connection class
+	 * @return the database connection
+	 * @throws InstantiationException could not instantiate
+	 * @throws IllegalAccessException not authorized
+	 * @throws ClassNotFoundException no such class
+	 */
 	private IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Class.forName(dbClass).newInstance();
 		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
 	}
 	
+	/**
+	 * Get ModelMaker for a database connection
+	 * @param dbcon the database connection
+	 * @return the ModelMaker
+	 */
 	private ModelMaker initModel(IDBConnection dbcon) {
 		return ModelFactory.createModelRDBMaker(dbcon);
 	}
@@ -182,9 +216,6 @@ public class JenaConnect {
 	 * @param in input stream to read rdf from
 	 */
 	public void loadRDF(InputStream in) {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of method "JenaConnect.loadRDF" to Private
-		//FIXME This code was marked as may cause compile errors by UCDetector.
 		this.getJenaModel().read(in, null);
 		log.info("RDF Data was loaded");
 	}
@@ -194,8 +225,6 @@ public class JenaConnect {
 	 * @param out output stream to write rdf to
 	 */
 	public void exportRDF(OutputStream out) {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
 		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
 		fasterWriter.setProperty("allowBadURIs", "true");
 		fasterWriter.setProperty("relativeURIs", "");
@@ -208,25 +237,50 @@ public class JenaConnect {
 	 * @param rh the RecordHandler to pull records from
 	 */
 	public void importRDF(RecordHandler rh) {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
 		for(Record r : rh) {
 			this.getJenaModel().read(r.getData());
 		}
 	}
 	
+	/**
+	 * Config parser for Jena Models
+	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+	 */
 	private static class JenaConnectConfigParser extends DefaultHandler {
+		/**
+		 * JenaConnect we are parsing data for
+		 */
 		private JenaConnect jc;
+		/**
+		 * Param list from the config file
+		 */
 		private Map<String,String> params;
+		/**
+		 * temporary storage for cdata
+		 */
 		private String tempVal;
+		/**
+		 * temporary storage for param name
+		 */
 		private String tempParamName;
 		
+		/**
+		 * Default Constructor
+		 */
 		protected JenaConnectConfigParser() {
 			this.params = new HashMap<String,String>();
 			this.tempVal = "";
 			this.tempParamName = "";
 		}
 		
+		/**
+		 * Build a JenaConnect using the input stream data
+		 * @param inputStream stream to read config from
+		 * @return the JenaConnect described by the stream
+		 * @throws ParserConfigurationException parser incorrectly configured
+		 * @throws SAXException xml error
+		 * @throws IOException error reading stream
+		 */
 		protected JenaConnect parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser

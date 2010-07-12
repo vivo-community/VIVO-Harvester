@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Model>
+	<Param name="dbClass">com.mysql.jdbc.Driver</Param>
+	<Param name="dbType">MySQL</Param>
+	<Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/scoring</Param>
+	<Param name="dbUser">vivo</Param>
+	<Param name="dbPass">v3nd3tta</Param>
+</Model>

@@ -27,23 +27,33 @@ import org.vivoweb.ingest.translate.Translator;
 
 /**
  * Gloze Tranlator
- * This class translates XML into its own natrual RDF ontology
+ * This class translates XML into its own natural RDF ontology
  * using the gloze library.  Translation into the VIVO ontology
  * is completed using the RDF Translator.
  * 
- * TODO:  Identify additional parameters required for translation
- * TODO:  Identify methods to invoke in the gloze library
+ * TODO Stephen: Identify additional parameters required for translation
+ * TODO Stephen: Identify methods to invoke in the gloze library
  * 
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  */
 public class GlozeTranslator extends Translator{
 
 	/**
+	 * the file to be translated
 	 * 
+	 * FIXME Stephen: remove this and use the incoming stream
 	 */
-	//FIXME remove this and use the incoming stream if possible
-	protected File incomingXMLFile;				
+	protected File incomingXMLFile;
+	
+	/**
+	 * The incoming schema to help gloze translate the xml file
+	 */
 	protected File incomingSchema;
+	
+
+	/**
+	 * the uri base for relative nodes in the xml file
+	 */
 	protected URI uriBase;
 
 	/**
@@ -81,6 +91,11 @@ public class GlozeTranslator extends Translator{
 	}
 	
 	
+	/**
+	 * The main translation method for the gloze translation class
+	 * setups up the necessary conditions for using the gloze library
+	 * then executes its translation class
+	 */
 	public void translateFile(){
 		Gloze gl = new Gloze();
 		
@@ -109,9 +124,7 @@ public class GlozeTranslator extends Translator{
 		outputModel.write(this.outStream);
 	}
 	
-	/**
-	 * 
-	 */
+	@Override
 	public void execute() {
 		if (this.uriBase != null && this.inStream != null ){	
 			log.info("Translation: Start");
@@ -128,14 +141,16 @@ public class GlozeTranslator extends Translator{
 	
 	/***
 	 * 
-	 * @param args 
-	 * @param switch states if you are using the file methods or the record handler
-	 * @param inFile the xml file to translate
-	 * @param inRecordHandler
-	 * @param schema
-	 * @param outFile
-	 * @param outRecordHandler
-	 * @param uriBase - required for gloze translation the unset URIBASE used is http://vivoweb.org/glozeTranslation/noURI/
+	 * @param args the argument list passed to Main
+	 * <ul>
+	 * <li><em>switch</em> states if you are using the file methods or the record handler</li>
+	 * <li><em>inFile</em> the xml file to translate</li>
+	 * <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
+	 * <li><em>schema</em> the incoming schema for gloze translation</li>
+	 * <li><em>outFile</em> the out file </li>
+	 * <li><em>outRecordHandler</em> the out record handler</li>
+	 * <li><em>uriBase</em> required for gloze translation the unset URIBASE used is http://vivoweb.org/glozeTranslation/noURI/</li>
+	 * </ul>
 	 */
 	public void parseArgsExecute(String[] args){
 		if (args.length != 5) {
@@ -218,7 +233,7 @@ public class GlozeTranslator extends Translator{
 	
 	/**
 	 * 
-	 * @param args
+	 * @param args the string required for translation
 	 */
 	public static void main(String[] args) {
 		GlozeTranslator glTrans = new GlozeTranslator();

@@ -23,14 +23,18 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * Record Handler Interface
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public abstract class RecordHandler implements Iterable<Record> {
 	
-	private boolean overwriteDefault = false;
+	/**
+	 * Do we overwrite existing records by default
+	 */
+	private boolean overwriteDefault = true;
 	
 	/**
+	 * Sets parameters from param list
 	 * @param params map of parameters
 	 * @throws IllegalArgumentException invalid parameters
 	 * @throws IOException error 
@@ -78,19 +82,18 @@ public abstract class RecordHandler implements Iterable<Record> {
 	}
 	
 	/**
+	 * Get a record
 	 * @param recID record id to get
 	 * @return record
 	 * @throws IllegalArgumentException record not found 
 	 * @throws IOException error reading
 	 */
 	public Record getRecord(String recID) throws IllegalArgumentException, IOException {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of method "RecordHandler.getRecord" to Protected.
-		//FIXME This code was marked as may cause compile errors by UCDetector.
 		return new Record(recID, getRecordData(recID));
 	}
 	
 	/**
+	 * Retrieve the data for a given record
 	 * @param recID id of record to retrieve
 	 * @return data from record
 	 * @throws IllegalArgumentException id not found
@@ -99,12 +102,21 @@ public abstract class RecordHandler implements Iterable<Record> {
 	public abstract String getRecordData(String recID) throws IllegalArgumentException, IOException;
 	
 	/**
+	 * Delete the specified Record
 	 * @param recID id of record to delete
 	 * @throws IOException i/o error
 	 */
 	public abstract void delRecord(String recID) throws IOException;
 	
-	protected String getParam(Map<String,String> params, String paramName, boolean required) {
+	/**
+	 * Get a specified parameter
+	 * @param params the param list to retrieve from
+	 * @param paramName the parameter to retrieve
+	 * @param required is this parameter required?
+	 * @return the value for the parameter
+	 * @throws IllegalArgumentException parameter is required and does not exist
+	 */
+	protected String getParam(Map<String,String> params, String paramName, boolean required) throws IllegalArgumentException {
 		if(!params.containsKey(paramName)) {
 			if(required) {
 				throw new IllegalArgumentException("param missing: "+paramName);
@@ -115,6 +127,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	}
 	
 	/**
+	 * Build RecordHandler based on config file
 	 * @param filename filename of config file
 	 * @return RecordHandler described by config file
 	 * @throws IOException xml config parse error
@@ -122,31 +135,55 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws ParserConfigurationException xml config parse error
 	 */
 	public static RecordHandler parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
-		return new RecordHandlerParser().parseRecordHandlerConfig(filename);
+		return new RecordHandlerParser().parseConfig(filename);
 	}
 	
 	/**
-	 * @param overwriteDefault the overwriteDefault to set
+	 * Setter for overwriteDefault
+	 * @param overwrite the new value for overwriteDefault
 	 */
-	public void setOverwriteDefault(boolean overwriteDefault) {
-		this.overwriteDefault = overwriteDefault;
+	public void setOverwriteDefault(boolean overwrite) {
+		this.overwriteDefault = overwrite;
 	}
 
 	/**
+	 * Getter for overwriteDefault
 	 * @return the overwriteDefault
 	 */
 	public boolean isOverwriteDefault() {
 		return this.overwriteDefault;
 	}
 
+	/**
+	 * Config Parser for RecordHandlers
+	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+	 */
 	private static class RecordHandlerParser extends DefaultHandler {
 		
+		/**
+		 * The RecordHandler we are building
+		 */
 		private RecordHandler rh;
+		/**
+		 * The param list from config file
+		 */
 		private Map<String,String> params;
+		/**
+		 * Class name for the RecordHandler
+		 */
 		private String type;
+		/**
+		 * Temporary container for cdata
+		 */
 		private String tempVal;
+		/**
+		 * Temporary container for parameter name
+		 */
 		private String tempParamName;
 		
+		/**
+		 * Default Constructor
+		 */
 		protected RecordHandlerParser() {
 			this.params = new HashMap<String,String>();
 			this.tempVal = "";
@@ -161,11 +198,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		 * @throws SAXException xml parsing error
 		 * @throws ParserConfigurationException xml parsing error
 		 */
-		public RecordHandler parseRecordHandlerConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
-			return new RecordHandlerParser().parseConfig(filename);
-		}
-		
-		private RecordHandler parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
+		protected RecordHandler parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse the file and also register this class for call backs

@@ -1,4 +1,5 @@
-<!------------------------------------------------------------------------------
+<?xml version="1.0"?>
+<!--
   Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the new BSD license
@@ -7,8 +8,7 @@
   
   Contributors:
       Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
-------------------------------------------------------------------------------->
-<?xml version="1.0"?>
+-->
 <!-- 
   Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams
   
@@ -84,7 +84,7 @@
 		<bibo:contributorList><xsl:value-of select="dc:creator" /></bibo:contributorList>
 		<score:SubjectString><xsl:value-of select="dc:subject" /></score:SubjectString>
 		<core:Description><xsl:value-of select="dc:description" /></core:Description>
-		<bibo:identifier><xsl:value-of select="dc:identifier"</bibo:identifier>
+		<bibo:identifier><xsl:value-of select="dc:identifier" /></bibo:identifier>
 	</xsl:template>
 	
 </xsl:stylesheet>

@@ -33,23 +33,47 @@ import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateRequest;
 
 /**
+ * RecordHandler that stores data in a Jena Model
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class JenaRecordHandler extends RecordHandler {
 	
+	/**
+	 * Log4J Logger
+	 */
 	private static Log log = LogFactory.getLog(JenaRecordHandler.class);
+	/**
+	 * the jena model we are using to store records
+	 */
 	protected Model model;
+	/**
+	 * namespace for recordhandlers
+	 */
 	protected static final String rhNameSpace = "http://ingest.vivoweb.org/util/jenarecordhandler#";
+	/**
+	 * record type
+	 */
 	protected Property recType;
+	/**
+	 * id type
+	 */
 	protected Property idType;
+	/**
+	 * data type
+	 */
 	protected Property dataType;
+	/**
+	 * rdf:type
+	 */
 	protected Property isA;
 	
 	/**
 	 * Default Constructor
 	 */
-	public JenaRecordHandler() {
-		
+	protected JenaRecordHandler() {
+		//Nothing to do here
+		//Used by config construction
+		//Should be used in conjunction with setParams()
 	}
 	
 	/**
@@ -104,6 +128,10 @@ public class JenaRecordHandler extends RecordHandler {
 		initVars(dataFieldType);
 	}
 	
+	/**
+	 * Initializes all the variables
+	 * @param dataFieldType the type for data storage
+	 */
 	private void initVars(String dataFieldType) {
 		this.recType = this.model.createProperty(rhNameSpace, "record");
 		this.idType = this.model.createProperty(rhNameSpace, "idField");
@@ -172,6 +200,11 @@ public class JenaRecordHandler extends RecordHandler {
 		return data;
 	}
 	
+	/**
+	 * Retrieves a record's resource from jena model
+	 * @param recID the record id to retrieve
+	 * @return the resource
+	 */
 	private Resource getRecordResource(String recID) {
 		try {
 			return this.model.listStatements(null, this.idType, recID).nextStatement().getSubject();
@@ -188,10 +221,20 @@ public class JenaRecordHandler extends RecordHandler {
 		return new JenaRecordIterator();
 	}
 	
+	/**
+	 * Iterator for JenaRecordHandler
+	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+	 */
 	private class JenaRecordIterator implements Iterator<Record> {
 		
+		/**
+		 * ResultSet from query
+		 */
 		private ResultSet resultSet;
 		
+		/**
+		 * Default Constructor
+		 */
 		protected JenaRecordIterator() {
 		// create query string
 			String sQuery = ""
@@ -213,10 +256,12 @@ public class JenaRecordHandler extends RecordHandler {
 			this.resultSet = qe.execSelect();
 		}
 		
+		@Override
 		public boolean hasNext() {
 			return this.resultSet.hasNext();
 		}
 		
+		@Override
 		public Record next() {
 			try {
 				QuerySolution querySol = this.resultSet.next();
@@ -231,6 +276,7 @@ public class JenaRecordHandler extends RecordHandler {
 			}
 		}
 		
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}

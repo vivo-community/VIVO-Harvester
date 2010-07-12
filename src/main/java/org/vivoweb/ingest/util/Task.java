@@ -13,11 +13,14 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * Task Interface
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public abstract class Task {
 	
+	/**
+	 * Has this task been initialized with its parameters
+	 */
 	private boolean ready = false;
 	
 	/**
@@ -32,6 +35,13 @@ public abstract class Task {
 		this.ready = true;
 	}
 	
+	/**
+	 * Uses given parameters to initialize the task and prepare for execution
+	 * @param params mapping of parameter name to parameter value
+	 * @throws IOException xml parsing error
+	 * @throws SAXException xml parsing error
+	 * @throws ParserConfigurationException xml parsing error
+	 */
 	protected abstract void acceptParams(Map<String,String> params) throws ParserConfigurationException, SAXException, IOException;
 	
 	/**
@@ -45,9 +55,21 @@ public abstract class Task {
 		runTask();
 	}
 	
+	/**
+	 * Checks if task's parameters have been initialized, and executes the task
+	 * @throws NumberFormatException non-numerical config value encountered where numerical value expected
+	 */
 	protected abstract void runTask() throws NumberFormatException;
 	
-	protected String getParam(Map<String,String> params, String paramName, boolean required) {
+	/**
+	 * Get a specified parameter
+	 * @param params the param list to retrieve from
+	 * @param paramName the parameter to retrieve
+	 * @param required is this parameter required?
+	 * @return the value for the parameter
+	 * @throws IllegalArgumentException parameter is required and does not exist
+	 */
+	protected String getParam(Map<String,String> params, String paramName, boolean required) throws IllegalArgumentException {
 		if(!params.containsKey(paramName)) {
 			if(required) {
 				throw new IllegalArgumentException("param missing: "+paramName);
@@ -58,6 +80,7 @@ public abstract class Task {
 	}
 	
 	/**
+	 * Main Method
 	 * @param args command line arguments
 	 * @throws IOException xml parsing error
 	 * @throws SAXException xml parsing error
@@ -71,14 +94,36 @@ public abstract class Task {
 		t.executeTask();
 	}
 	
+	/**
+	 * Config Parser for Tasks
+	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+	 */
 	private static class TaskConfigParser extends DefaultHandler {
 		
+		/**
+		 * The task we are building
+		 */
 		private Task task;
+		/**
+		 * The param list from config file
+		 */
 		private Map<String,String> params;
+		/**
+		 * Class name for the RecordHandler
+		 */
 		private String type;
+		/**
+		 * Temporary container for cdata
+		 */
 		private String tempVal;
+		/**
+		 * Temporary container for parameter id
+		 */
 		private String tempParamID;
 		
+		/**
+		 * Default Constructor
+		 */
 		protected TaskConfigParser() {
 			this.params = new HashMap<String,String>();
 			this.tempVal = "";
@@ -97,6 +142,14 @@ public abstract class Task {
 			return new TaskConfigParser().parseConfig(filename);
 		}
 		
+		/**
+		 * Parses a configuration file describing a Task
+		 * @param filename the name of the file to parse
+		 * @return the Task described by the config file
+		 * @throws IOException xml parsing error
+		 * @throws SAXException xml parsing error
+		 * @throws ParserConfigurationException xml parsing error
+		 */
 		private Task parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser

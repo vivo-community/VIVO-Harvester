@@ -13,11 +13,14 @@
 package org.vivoweb.ingest.score;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.JenaConnect;
 import org.vivoweb.ingest.util.Record;
 import org.vivoweb.ingest.util.RecordHandler;
+import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -31,100 +34,128 @@ import com.hp.hpl.jena.rdf.model.*;
  *  @author Nicholas Skaggs nskaggs@ichp.ufl.edu
  */
 public class Score {
-	public static final String[] arrRequiredParamaters = {"connectionPath", "username", "password", "dbType", "dbClass", "vivoModelName", "scoreModelName"};
-	private static Log log = LogFactory.getLog(Score.class);
-	
-		private static Model vivo;
+		/**
+		 * Log4J Logger
+		 */
+		private static Log log = LogFactory.getLog(Score.class);
+		/**
+		 * Model for VIVO instance
+		 */
+		private Model vivo;
+		/**
+		 * Model where input is stored
+		 */
 		private Model scoreInput;
+		/**
+		 * Model where output is stored
+		 */
 		private Model scoreOutput;
 		
+		/**
+		 * Main Method
+		 * @param args command line arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig
+		 */
 		final static public void main(String[] args) {
 			
-			//pass models from command line
-			//TODO proper args handler
+			log.info("Scoring: Start");
 			
-			if (args.length != 3) {
-				System.out.println("Usage: score rdfRecordHandler VivoJenaConfig OutputJenaConfig");
+			//pass models from command line
+			//TODO Nicholas: proper args handler
+			
+			if (args.length != 4) {
+				log.error("Usage requires 4 arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig");
 				return;
 			}
 			
 			try {
+				log.info("Loading configuration and models");
 				RecordHandler rh = RecordHandler.parseConfig(args[0]);
-				JenaConnect jenaVivoDB = JenaConnect.parseConfig(args[1]);
-				JenaConnect jenaOutputDB = JenaConnect.parseConfig(args[2]);;
+				JenaConnect jenaTempDB = JenaConnect.parseConfig(args[1]);
+				JenaConnect jenaVivoDB = JenaConnect.parseConfig(args[2]);
+				JenaConnect jenaOutputDB = JenaConnect.parseConfig(args[3]);
 				
-				Model jenaInputDB = ModelFactory.createDefaultModel();
+				Model jenaInputDB = jenaTempDB.getJenaModel();
 				for (Record r: rh) {
 					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 				}
 				
 				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel()).execute();
-			} catch (Exception e) {
+			} catch(ParserConfigurationException e) {
+				log.fatal(e.getMessage(),e);
+			} catch(SAXException e) {
+				log.fatal(e.getMessage(),e);
+			} catch(IOException e) {
 				log.fatal(e.getMessage(),e);
 			}
+			
+			log.info("Scoring: End");
 	    }
 		
 		
-		public Score (Model vivo, Model scoreInput, Model scoreOutput) {
-			this.vivo = vivo;
-			this.scoreInput = scoreInput;
-			this.scoreOutput = scoreOutput;
+		/**
+		 * Constructor
+		 * @param jenaVivo model containing vivo statements
+		 * @param jenaScoreInput model containing statements to be scored
+		 * @param jenaScoreOutput output model
+		 */
+		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput) {
+			this.vivo = jenaVivo;
+			this.scoreInput = jenaScoreInput;
+			this.scoreOutput = jenaScoreOutput;
 		}
 		
+		/**
+		 * Executes scoring algorithms
+		 */
 		public void execute() {		
-			 	log.info("Scoring: Start");
-			 	
 			 	ResultSet scoreInputResult;
-			 	ResultSet matchResult;
 			 	
 			 	//DEBUG
-				 	//TODO howto pass this in via config
+				 	//TODO Nicholas: howto pass this in via config
+			 		log.info("Executing matchResult");
 				 	String matchAttribute = "email";
 				 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
 			    						"SELECT ?x ?email " +
 			    						"WHERE { ?x score:workEmail ?email}";
 				 	String coreAttribute = "core:workEmail";
-				 	String authorAttribute = "author";
+				 	
 			 	//DEBUG
 			 	
 				//Attempt Matching
 
 			 	//Exact Matches
-			 	//TODO finish implementation of exact matching loop
+			 	//TODO Nicholas: finish implementation of exact matching loop
 			 	//for each matchAttribute
-			 		scoreInputResult = executeQuery(scoreInput, matchQuery);
-			 		exactMatch(vivo,scoreInput,matchAttribute,coreAttribute,scoreInputResult);
+			 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+			 		exactMatch(this.vivo,this.scoreInput,matchAttribute,coreAttribute,scoreInputResult);
 			    //end for
 			 		
 		 		//DEBUG
-				 	//TODO howto pass this in via config
-				 	matchAttribute = "author";
-				 	matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			    	       		 "SELECT ?x ?author " +
-			    				 "WHERE { ?x score:author ?author}";
-				 	coreAttribute = "core:author";
+				 	//TODO Nicholas: howto pass this in via config
+				 	//matchAttribute = "author";
+				 	//matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
+			    	//       		 "SELECT ?x ?author " +
+			    	//			 "WHERE { ?x score:author ?author}";
+				 	//coreAttribute = "core:author";
 			 	//DEBUG
 				
 				//Pairwise Matches
-				//TODO finish implementation of pairwise matching loop
+				//TODO Nicholas: finish implementation of pairwise matching loop
 			 	//for each matchAttribute
-			 		scoreInputResult = executeQuery(scoreInput, matchQuery);
-			 		pairwiseScore(vivo,scoreInput,matchAttribute,coreAttribute,scoreInputResult);	
+			 		//scoreInputResult = executeQuery(scoreInput, matchQuery);
+			 		//pairwiseScore(vivo,scoreInput,matchAttribute,coreAttribute,scoreInputResult);	
 			 	//end for
 			 		
 				//Close and done
-				//scoreInput.close();
-		    	//scoreOutput.close();
-		    	vivo.close();
-		    	log.info("Scoring: End");
+				this.scoreInput.close();
+		    	this.scoreOutput.close();
+		    	this.vivo.close();
 		}
 		
 		/**
-		 * executeQuery
 		 * Executes a sparql query against a JENA model and returns a result set
-		 * 
-		 * @param  Model model a model containing statements
-		 * @param  String queryString the query to execute against the model
+		 * @param  model a model containing statements
+		 * @param  queryString the query to execute against the model
 		 * @return queryExec the executed query result set
 		 */
 		 private static ResultSet executeQuery(Model model, String queryString) {
@@ -136,21 +167,18 @@ public class Score {
 		 
 		 
 		/**
-		 * commitResultSet
 		 * Commits resultset to a matched model
-		 * 
-		 * @param  Model vivo a model containing vivo statements
-		 * @param  Model score a model containing vivo + scoring statements
-		 * @param  ResultSet storeResult the result to be stored
-		 * @param  Resource paperResource
-		 * @param  RDFNode matchNode
-		 * @param  RDFNode paperNode
+		 * @param  result a model containing vivo statements
+		 * @param  storeResult the result to be stored
+		 * @param  paperResource the paper of the resource
+		 * @param  matchNode the node to match
+		 * @param  paperNode the node of the paper
 		 */
-		 private static void commitResultSet(Model matched, ResultSet storeResult, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
+		 private static void commitResultSet(Model result, ResultSet storeResult, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
 				RDFNode authorNode;
 				QuerySolution vivoSolution;
 				
-				//loop thru vivo matches
+				//loop thru resultset
 	 	    	while (storeResult.hasNext()) {
 	 	    		vivoSolution = storeResult.nextSolution();
 	 	    		
@@ -159,24 +187,22 @@ public class Score {
 	                log.info("Found " + matchNode.toString() + " for person " + authorNode.toString());
 	                log.info("Adding paper " + paperNode.toString());
 	
-	                matched.add(recursiveSanitizeBuild(paperResource,null));
+	                result.add(recursiveSanitizeBuild(paperResource,null));
 	                
-	                matched = replaceResource(authorNode, paperNode, matched);
+	                replaceResource(authorNode, paperNode, result);
 	                
 					//take results and store in matched model
-	                matched.commit();
+	                result.commit();
 	 	    	} 
 		 }
 		 
 		/**
-		 * replaceResource
 		 * Traverses paperNode and adds to toReplace model 
-		 * 
-		 * @param  RDFNode mainNode
-		 * @param  RDFNode paperNode
-		 * @param  Model toReplace
+		 * @param  mainNode primary node
+		 * @param  paperNode node of paper
+		 * @param  toReplace model to replace
+		 * @return a model (toReplace to be exact) //TODO Nicholas: you know that this is unnecessary as Java passes Objects by reference? You can just be void -CAH
 		 */
-		 
 		 private static Model replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
 			 Resource authorship;
 			 Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
@@ -235,13 +261,11 @@ public class Score {
 		 }
 		 
 		/**
-		 * recursiveSanitizeBuild
 		 * Traverses paperNode and adds to toReplace model 
-		 * 
-		 * @param Resource mainRes
-		 * @param Resource linkRes
+		 * @param mainRes the main resource
+		 * @param linkRes the resource to link it to
+		 * @return the model containing the sanitized info so far 
 		 */
-		 
 		 private static Model recursiveSanitizeBuild(Resource mainRes, Resource linkRes){
 			 Model returnModel = ModelFactory.createDefaultModel();
 			 Statement stmt;
@@ -267,25 +291,22 @@ public class Score {
 		 
 		 
 		/**
-		* pairwiseScore
 		* Executes a pair scoring method, utilizing the matchAttribute. This attribute is expected to 
 		* return 2 to n results from the given query. This "pair" will then be utilized as a matching scheme 
 		* to construct a sub dataset. This dataset can be scored and stored as a match 
-		* 
-		* 
-		* @param  Model matched a model containing statements describing known authors
-		* @param  Model scoreInput a model containing statements to be disambiguated
-		* @param  String matchAttribute an attribute to perform the exact match
-	    * @param  String coreAttribute an attribute to perform the exact match against from core ontology
-		* @param  ResultSet matchResult contains a resultset of the matchAttribute
-		* @return Model scoreInput
+		* @param  matched a model containing statements describing known authors
+		* @param  score a model containing statements to be disambiguated
+		* @param  matchAttribute an attribute to perform the exact match
+		* @param  coreAttribute an attribute to perform the exact match against from core ontology
+		* @param  matchResult contains a resultset of the matchAttribute
+		* @return score model
 		*/
-		
-		private static Model pairwiseScore(Model matched, Model scoreInput, String matchAttribute, String coreAttribute, ResultSet matchResult) {			
+		@SuppressWarnings("unused")
+		private static Model pairwiseScore(Model matched, Model score, String matchAttribute, String coreAttribute, ResultSet matchResult) {			
 		 	//iterate thru scoringInput pairs against matched pairs
-		 	//TODO support partial scoring, multiples matches against several pairs
+		 	//TODO Nicholas: support partial scoring, multiples matches against several pairs
 		 	//if pairs match, store publication to matched author in Model
-			//TODO return scoreInput minus the scored statements
+			//TODO Nicholas: return scoreInput minus the scored statements
 			
 			String scoreMatch;
 			RDFNode matchNode;
@@ -304,24 +325,21 @@ public class Score {
                 log.trace("\nChecking for " + scoreMatch + " in VIVO");
             }	    			 
 	    	
-	    	//TODO return scoreInput minus the scored statements			
-			return scoreInput;
+	    	//TODO Nicholas: return scoreInput minus the scored statements			
+			return score;
 		 }
 		 
 		 
 		 /**
-		 * exactMatch
 		 * Executes an exact matching algorithm for author disambiguation
-		 * 
-		 * 
-		 * @param  Model vivo a model containing statements describing authors
-		 * @param  Model scoreInput a model containing statements to be disambiguated
-		 * @param  String matchAttribute an attribute to perform the exact match
-		 * @param  String coreAttribute an attribute to perform the exact match against from core ontology
-		 * @param  ResultSet matchResult contains a resultset of the matchAttribute
-		 * @return scoreInput
+		 * @param  matched a model containing statements describing authors
+		 * @param  output a model containing statements to be disambiguated
+		 * @param  matchAttribute an attribute to perform the exact match
+		 * @param  coreAttribute an attribute to perform the exact match against from core ontology
+		 * @param  matchResult contains a resultset of the matchAttribute
+		 * @return model of matched statements
 		 */
-		 private static Model exactMatch(Model vivo, Model scoreInput, String matchAttribute, String coreAttribute, ResultSet matchResult) {
+		 private static Model exactMatch(Model matched, Model output, String matchAttribute, String coreAttribute, ResultSet matchResult) {
 				String scoreMatch;
 				String queryString;
 				Resource paperResource;
@@ -337,9 +355,9 @@ public class Score {
 		    	while (matchResult.hasNext()) {
 		    		scoreSolution = matchResult.nextSolution();
 	                matchNode = scoreSolution.get(matchAttribute);
-	                //TODO paperNode must currently be 'x'; howto abstract?
+	                //TODO Nicholas: paperNode must currently be 'x'; howto abstract?
 	                paperNode = scoreSolution.get("x");
-	                //TODO paperResource must currently be 'x'; howto abstract?
+	                //TODO Nicholas: paperResource must currently be 'x'; howto abstract?
 	                paperResource = scoreSolution.getResource("x");
 	                
 	                scoreMatch = matchNode.toString();
@@ -352,12 +370,12 @@ public class Score {
 						"SELECT ?x " +
 						"WHERE { ?x " + coreAttribute + "\"" +  scoreMatch + "\"}";
 	    			
-	    			//TODO how to combine result sets? not possible in JENA
-	    			vivoResult = executeQuery(vivo, queryString);
-	    			commitResultSet(vivo,vivoResult,paperResource,paperNode,matchNode);
+	    			//TODO Nicholas: how to combine result sets? not possible in JENA
+	    			vivoResult = executeQuery(matched, queryString);
+	    			commitResultSet(output,vivoResult,paperResource,paperNode,matchNode);
 	            }	    			 
 		    	
-		    	//TODO return scoreInput minus the scored statements
-		    	return scoreInput;
+		    	//TODO Nicholas: return scoreInput minus the scored statements
+		    	return output;
 		 }
 	}

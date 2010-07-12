@@ -33,15 +33,22 @@ import org.apache.commons.vfs.VFS;
  */
 public class TextFileRecordHandler extends RecordHandler {
 
+	/**
+	 * Log4J Logger
+	 */
 	protected static Log log = LogFactory.getLog(TextFileRecordHandler.class);
-//	private String directory;
+	/**
+	 * The directory to store record files in
+	 */
 	protected FileObject fileDirObj;
 	
 	/**
 	 * Default Constructor
 	 */
-	public TextFileRecordHandler() {
-		
+	protected TextFileRecordHandler() {
+		//Nothing to do here
+		//Used by config construction
+		//Should only be used in conjuction with setParams()
 	}
 	
 	/**
@@ -54,6 +61,11 @@ public class TextFileRecordHandler extends RecordHandler {
 		setFileDirObj(fileDir);
 	}
 	
+	/**
+	 * Setter for fileDirObj
+	 * @param fileDir the directory path String
+	 * @throws IOException unable to connect
+	 */
 	private void setFileDirObj(String fileDir) throws IOException {
 		FileSystemManager fsMan = VFS.getManager();
 		this.fileDirObj = fsMan.resolveFile(new File("."),fileDir);
@@ -70,7 +82,7 @@ public class TextFileRecordHandler extends RecordHandler {
 	
 	@Override
 	public void addRecord(Record rec, boolean overwrite) throws IOException {
-//		log.debug("Resolving file for record: " + rec.getID());
+		log.debug("Resolving file for record: " + rec.getID());
 		FileObject fo = this.fileDirObj.resolveFile(rec.getID());
 		if(!overwrite && fo.exists()) {
 			throw new IOException("Failed to add record "+rec.getID()+" because file "+fo.getName().getFriendlyURI()+" already exists.");
@@ -79,12 +91,13 @@ public class TextFileRecordHandler extends RecordHandler {
 		if(!fo.isWriteable()) {
 			throw new IOException("Insufficient file system privileges to add record "+rec.getID()+" to file "+fo.getName().getFriendlyURI());
 		}
-//		log.debug("Writting data for record: "+rec.getID());
+		log.debug("Writting data for record: "+rec.getID());
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo.getContent().getOutputStream(false)));
 		bw.append(rec.getData());
 		bw.close();
 	}
 	
+	@Override
 	public void delRecord(String recID) throws IOException {
 		FileObject fo = this.fileDirObj.resolveFile(recID);
 		if(!fo.exists()) {
@@ -96,6 +109,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		}
 	}
 	
+	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
 		StringBuilder sb = new StringBuilder();
 		FileObject fo = this.fileDirObj.resolveFile(recID);
@@ -109,32 +123,45 @@ public class TextFileRecordHandler extends RecordHandler {
 		return sb.toString();
 	}
 	
+	@Override
 	public Iterator<Record> iterator() {
 		return new TextFileRecordIterator();
 	}
 	
+	/**
+	 * Iterator for TextFileRecordHandler
+	 * @author cah
+	 */
 	private class TextFileRecordIterator implements Iterator<Record> {
+		/**
+		 * Iterator over the files
+		 */
 		Iterator<FileObject> fileIter;
 		
+		/**
+		 * Default Constructor
+		 */
 		protected TextFileRecordIterator() {
 			LinkedList<FileObject> fileListing = new LinkedList<FileObject>();
 			try {
 				for(FileObject file : TextFileRecordHandler.this.fileDirObj.getChildren()) {
 					if(!file.isHidden()) {
 						fileListing.add(file);
-//						System.out.println(file.getName().getBaseName());
+						log.debug("Found file "+file.getName().getBaseName());
 					}
 				}
 			} catch(FileSystemException e) {
-				log.error("",e);
+				log.error(e.getMessage(),e);
 			}
 			this.fileIter = fileListing.iterator();
 		}
 		
+		@Override
 		public boolean hasNext() {
 			return this.fileIter.hasNext();
 		}
 		
+		@Override
 		public Record next() {
 			try {
 				Record result = getRecord(this.fileIter.next().getName().getBaseName());
@@ -144,6 +171,7 @@ public class TextFileRecordHandler extends RecordHandler {
 			}
 		}
 		
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}

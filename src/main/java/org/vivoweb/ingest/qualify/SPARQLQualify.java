@@ -30,18 +30,26 @@ import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateRequest;
 
 /**
+ * Qualify data using SPARQL queries
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class SPARQLQualify extends Qualify {
+	/**
+	 * Log4J Logger
+	 */
 	private static Log log = LogFactory.getLog(SPARQLQualify.class);
+	/**
+	 * Parameter list for qualification
+	 */
 	private HashMap<String, Map<String, String>> qualifyParams;
 	
 	/**
 	 * Default Constructor
 	 */
 	public SPARQLQualify() {
-		
+		//Nothing to do here
+		//Used by config parsing
+		//Should be used in conjunction with setParams()
 	}
 	
 	/**
@@ -61,6 +69,13 @@ public class SPARQLQualify extends Qualify {
 		}
 	}
 	
+	/**
+	 * Replace records exactly matching uri & datatype & oldValue with newValue
+	 * @param uri uri to match
+	 * @param dataType data type to match
+	 * @param oldValue old value to match
+	 * @param newValue new value to set
+	 */
 	private void strReplace(String uri, String dataType, String oldValue, String newValue) {
 		// create query string
 		String sQuery = ""
@@ -74,6 +89,12 @@ public class SPARQLQualify extends Qualify {
 		UpdateAction.execute(ur, getModel());
 	}
 
+	/**
+	 * Replace records matching dataType & the regexMatch with newValue
+	 * @param dataType data type to match
+	 * @param regexMatch regular expresion to match
+	 * @param newValue new value
+	 */
 	private void regexReplace(String dataType, String regexMatch, String newValue) {
 	// create query string
 		String sQuery = ""
@@ -105,7 +126,6 @@ public class SPARQLQualify extends Qualify {
 		}
 	}
 	
-
 	@Override
 	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
 		try {

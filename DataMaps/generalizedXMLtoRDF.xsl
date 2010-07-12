@@ -1,4 +1,5 @@
-<!------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the new BSD license
@@ -7,8 +8,7 @@
   
   Contributors:
       Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
-------------------------------------------------------------------------------->
-<?xml version="1.0" encoding="UTF-8"?>
+-->
 <!--
 Copyright (c) 2010, Cornell University
 All rights reserved.

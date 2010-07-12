@@ -10,7 +10,8 @@
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
-import gov.nih.nlm.ncbi.www.soap.eutils.*;
+import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub;
+import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.EFetchResult;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.PubmedArticleSet_type0;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.IdListType;
@@ -20,17 +21,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
-
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,161 +40,106 @@ import org.xml.sax.SAXException;
 /**
  * Module for fetching PubMed Citations using the PubMed SOAP Interface<br>
  * Based on the example code available at the PubMed Website.
- * @author Stephen V. Williams swilliams@ctrip.ufl.edu
- * @author Dale R. Scheppler dscheppler@ctrip.ufl.edu
- * @author Christopher Haines cah@ctrip.ufl.edu
+ * @author Stephen V. Williams (swilliams@ctrip.ufl.edu)
+ * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
+ * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
+//@SuppressWarnings("restriction") //TODO Chris: investigate the warnings we get when this is not here... never seen that before
+//Seems to only be on my desktop that I need this SuppressWarnings("restriction")... definitely should look into this
 public class PubmedSOAPFetch extends Task
 {
+	/**
+	 * Log4J Logger
+	 */
 	private static Log log = LogFactory.getLog(PubmedSOAPFetch.class);							//Initialize the logger
+	/**
+	 * Email address pubmed with contact in case of issues
+	 */
 	private String strEmailAddress;
+	/**
+	 * Location information pubmed will use to contact in case of issues
+	 */
 	private String strToolLocation;
+	/**
+	 * Writer for our output stream
+	 */
 	private OutputStreamWriter xmlWriter;
+	/**
+	 * Query to run on pubmed data
+	 */
 	private String strSearchTerm;
+	/**
+	 * Maximum number of records to fetch
+	 */
 	private String strMaxRecords;
-	private RecordHandler rhRecordHandler;
-	private XMLRecordOutputStream osOutStream;
+	/**
+	 * Number of records to fetch per batch
+	 */
 	private String strBatchSize;
 	
 	/**
-	 * Blank constructor for PubmedSOAPFetch
+	 * Default Constructor
 	 */
 	public PubmedSOAPFetch(){
-		//Empty on purpose.
+		//Nothing to do here
+		//Used by config parser
+		//Should be used in conjunction with setParams()
 	}
 	
 	/***
-	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the<br>
-	 * person responsible for this install of the program is required by PubMed guidelines so<br>
-	 * the person can be contacted if there is a problem, such as sending too many queries<br>
+	 * Constructor
+	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
+	 * person responsible for this install of the program is required by PubMed guidelines so
+	 * the person can be contacted if there is a problem, such as sending too many queries
 	 * too quickly. 
 	 * @author Dale Scheppler
 	 * @author Chris Haines
-	 * @param strEmail - Contact email address of the person responsible for this install of the PubMed Harvester
-	 * @param strToolLoc - Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.
-	 * @param osOutStream - The output stream for the method.
+	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
+	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
+	 * @param outStream The output stream for the method.
 	 */
-	public PubmedSOAPFetch(String strEmail, String strToolLoc, OutputStream osOutStream)
+	public PubmedSOAPFetch(String strEmail, String strToolLoc, OutputStream outStream)
 	{
 		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
 		this.strToolLocation = strToolLoc; // This provides further information to NIH
-		try {
-			// Writer to the stream we're getting from the controller.
-			this.xmlWriter = new OutputStreamWriter(osOutStream, "UTF-8");
-		} catch(UnsupportedEncodingException e) {
-			log.error("",e);
-		}
+		setXMLWriter(outStream);
+	}
+	
+	@Override
+	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+		this.strEmailAddress = getParam(params, "emailAddress", true);
+		this.strToolLocation = getParam(params, "location", true);
+		String repositoryConfig = getParam(params, "repositoryConfig", true);
+		this.strSearchTerm = getParam(params, "searchTerm", true);
+		this.strMaxRecords = getParam(params, "maxRecords", true);
+		this.strBatchSize  = getParam(params, "batchSize", true);
+		RecordHandler rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
+		rhRecordHandler.setOverwriteDefault(true);
+		setXMLWriter(new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler));
 	}
 	
 	/**
-	 * This method returns a query for the PubMed Fetch that will request all records<br>
-	 * from the year 1 to the year 8000, essentially, all records.
-	 * @return A string consisting of "1:8000[dp]".
+	 * Performs an ESearch against PubMed database and returns the query web environment/query key data
+	 * @param term The search term to run against pubmed
+	 * @param maxNumRecords The maximum number of records to fetch
+	 * @return String[] = {WebEnv, QueryKey, number of records found, first PMID} from the search - used by fetchPubMedEnv
 	 */
-	public String fetchAll()
-	{
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of method "PubmedSOAPFetch.fetchAll" to Private
-		//FIXME This code was marked as may cause compile errors by UCDetector.
-		return "1:8000[dp]";
+	public String[] runESearch(String term, Integer maxNumRecords) {
+		return runESearch(term, maxNumRecords, Integer.valueOf(0));
 	}
 	
 	/**
-	 * Takes in a string that consists of the latter half of an email address, including the @<br>
-	 * such as "@ufl.edu" and creates a query string to locate all records associated with<br>
-	 * that address.
-	 * @param strAffiliation - The latter half of an email address, such as "@ufl.edu"
-	 * @return A query string that will allow a search by affiliation.
-	 */
-	public String queryByAffiliation(String strAffiliation)
-	{
-		return strAffiliation+"[ad]";
-	}
-
-	/**
-	 * Performs an ESearch against PubMed database using a search term.<br>
-	 * The search terms are generated by other methods in this class or <br>
-	 * can be passed in directly.
-	 * 
-	 * @param term - The search term, in string format.
-	 * @param maxNumRecords - Maximum number of records to pull, set currently by Fetch.throttle.
-	 * @return List<Integer> of ids found in the search result
+	 * Performs an ESearch against PubMed database and returns the query web environment/query key data
+	 * @param term The search term to run against pubmed
+	 * @param maxNumRecords The maximum number of records to fetch
+	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID
+	 * @return String[] = {WebEnv, QueryKey, number of records found, first PMID} from the search - used by fetchPubMedEnv
 	 * @author Chris Haines
 	 * @author Dale Scheppler
 	 */
-	public List<Integer> ESearch(String term, Integer maxNumRecords)
+	public String[] runESearch(String term, Integer maxNumRecords, Integer retStart)
 	{
-		// define the list to hold our ids
-		ArrayList<Integer> idList = new ArrayList<Integer>();
-		try
-		{
-			// create service connection
-			EUtilsServiceStub service = new EUtilsServiceStub();
-			// create a new search
-			EUtilsServiceStub.ESearchRequest req = new EUtilsServiceStub.ESearchRequest();
-			// set search to pubmed database
-			req.setDb("pubmed");
-			// set search term
-			req.setTerm(term);
-			// set max number of records to return from search
-			req.setRetMax(maxNumRecords.toString());
-			// run the search and get result set
-			EUtilsServiceStub.ESearchResult res = service.run_eSearch(req);
-			log.trace("Fetching a total of " + res.getIdList().getId().length + " records.");
-			// for each id in the list of ids in the search results
-			for (String id : res.getIdList().getId())
-			{
-				try
-				{
-					// put it in our List
-					idList.add(new Integer(id));
-				}
-				// just in case there is a non-number in the ID list (should not happen)
-				catch (NumberFormatException e)
-				{
-					e.printStackTrace();
-				}
-			}
-			log.trace(idList.size()+" records found");
-		}
-		catch (AxisFault f)
-		{
-			log.error("Failed to initialize service connection");
-			f.printStackTrace();
-		}
-		catch (RemoteException e)
-		{
-			log.error("Failed to run the search");
-			e.printStackTrace();
-		}
-		// return the list of ids
-		return idList;
-	}
-	
-	/**
-	 * FIXME CAH could you please document this? I can't tell what it's doing at a glance.<br>
-	 * It looks like it does something related to ESearch but I'm not seeing it.
-	 * @param term - The search term generated by other methods in this class, in string format.
-	 * @param maxNumRecords - The maximum number of records to fetch.
-	 * @return An array of strings
-	 */
-	public String[] ESearchEnv(String term, Integer maxNumRecords) {
-		return ESearchEnv(term, maxNumRecords, 0);
-	}
-	
-	/**
-	 * Performs an ESearch against PubMed database using a search term and a web environment/query key.
-	 * 
-	 * @param term - The search term as a string generated by other methods in this class, or passed in manually.
-	 * @param maxNumRecords - Maximum number of records to pull, set currently by Fetch.throttle.
-	 * @param retStart - FIXME this was marked as todo, what is it todo?
-	 * @return String[] = {WebEnv, QueryKey, idListLength} FIXME CAH better documentation needed.
-	 * @author Chris Haines
-	 * @author Dale Scheppler
-	 */
-	public String[] ESearchEnv(String term, Integer maxNumRecords, Integer retStart)
-	{
-		String[] env = new String[3];
+		String[] env = new String[4];
 		try
 		{
 			// create service connection
@@ -223,6 +166,7 @@ public class PubmedSOAPFetch extends Task
 			env[0] = res.getWebEnv();
 			env[1] = res.getQueryKey();
 			env[2] = ""+res.getIdList().getId().length;
+			env[3] = res.getIdList().getId()[0];
 		}
 		catch (RemoteException e)
 		{
@@ -233,52 +177,19 @@ public class PubmedSOAPFetch extends Task
 	
 	/**
 	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
-	 * @param env =  = {WebEnv, QueryKey, idListLength}
-	 * @throws IllegalArgumentException 
-	 * FIXME CAH Also needs better documentation
-	 * @author Chris Haines
+	 * @param WebEnv web environment from an ESearch
+	 * @param QueryKey query key from an ESearch
+	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID
+	 * @param numRecords The number of records to fetch
 	 */
-	public void fetchPubMedEnv(String[] env) throws IllegalArgumentException {
-		if(env.length != 3) {
-			throw new IllegalArgumentException("Invalid WebEnv, QueryKey, and idListLength");
-		}
-		fetchPubMedEnv(env[0], env[1], "0", env[2]);
-	}
-	
-	/**
-	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
-	 * @param env = {WebEnv, QueryKey, [idListLength]}
-	 * @param start = String of record number to start at 
-	 * @param numRecords = String of number of records to pull
-	 * @throws IllegalArgumentException 
-	 */
-	public void fetchPubMedEnv(String[] env, String start, String numRecords) throws IllegalArgumentException {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		if(!(env.length == 2 || env.length == 3)) {
-			throw new IllegalArgumentException("Invalid WebEnv and QueryKey");
-		}
-		fetchPubMedEnv(env[0], env[1], start, numRecords);
-	}
-	
-	/**
-	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
-	 * @param WebEnv
-	 * @param QueryKey
-	 * @param intStart 
-	 * @param maxRecords 
-	 */
-	public void fetchPubMedEnv(String WebEnv, String QueryKey, String intStart, String maxRecords) {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of method "PubmedSOAPFetch.fetchPubMedEnv" to Private
-		//FIXME This code was marked as may cause compile errors by UCDetector.
+	public void fetchPubMed(String WebEnv, String QueryKey, String retStart, String numRecords) {
 		EFetchPubmedServiceStub.EFetchRequest req = new EFetchPubmedServiceStub.EFetchRequest();
 		req.setQuery_key(QueryKey);
 		req.setWebEnv(WebEnv);
 		req.setEmail(this.strEmailAddress);
 		req.setTool(this.strToolLocation);
-		req.setRetstart(intStart);
-		req.setRetmax(maxRecords);
+		req.setRetstart(retStart);
+		req.setRetmax(numRecords);
 		log.trace("Fetching records from search");
 		try {
 			serializeFetchRequest(req);
@@ -288,147 +199,130 @@ public class PubmedSOAPFetch extends Task
 	}
 	
 	/**
-	 * This method takes in a range of PMIDs and returns Query string to get all the ids
-	 * 
-	 * @param ids
-	 *            Range of PMID you want to pull, in list form
-	 * @return 
+	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
+	 * @param env {WebEnv, QueryKey, number of records found, first PMID} - from ESearch
+	 * @throws IllegalArgumentException env is invalid
+	 * @author Chris Haines
 	 */
-	public String queryPubMedIDs(List<Integer> ids) {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		StringBuilder strPMID = new StringBuilder();
-		for(int id = 0; id < ids.size(); id++ ) {
-			if(id != 0) {
-				strPMID.append(",");
-			}
-			strPMID.append(ids.get(id));
+	public void fetchPubMed(String[] env) throws IllegalArgumentException {
+		if(env.length < 3) {
+			throw new IllegalArgumentException("Invalid env. Must contain {WebEnv, QueryKey, number of records found}");
 		}
-		return strPMID.toString()+"[uid]";
+		fetchPubMed(env[0], env[1], "0", env[2]);
 	}
+	
 	/**
-	 * FIXME What in the world is this doing? There are no comments.
-	 * @param req
-	 * @throws RemoteException
+	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
+	 * @param env {WebEnv, QueryKey, number of records found} - from ESearch
+	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID 
+	 * @param numRecords The number of records to fetch
+	 * @throws IllegalArgumentException env is invalid
 	 */
-	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws RemoteException {
-		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
-		EFetchPubmedServiceStub service = new EFetchPubmedServiceStub();
-		EFetchResult result = service.run_eFetch(req);
-		PubmedArticleSet_type0 articleSet = result.getPubmedArticleSet();
-		XMLStreamWriter writer;
-		try {
-			writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
-			MTOMAwareXMLSerializer serial = new MTOMAwareXMLSerializer(writer);
-			log.trace("Writing to output");
-			articleSet.serialize(new QName("RemoveMe"), null, serial);
-			serial.flush();
-			log.trace("Writing complete");
-//			log.trace("buffer size: "+buffer.size());
-			String iString = buffer.toString("UTF-8");
-			sanitizeXML(iString);
-		} catch(XMLStreamException e) {
-			log.error("Unable to write to output",e);
-		} catch(UnsupportedEncodingException e) {
-			log.error("Cannot get xml from buffer",e);
+	public void fetchPubMed(String[] env, String retStart, String numRecords) throws IllegalArgumentException {
+		if(env.length < 2) {
+			throw new IllegalArgumentException("Invalid env. Must contain {WebEnv, QueryKey}");
 		}
+		fetchPubMed(env[0], env[1], retStart, numRecords);
 	}
 	
 	/**
-	 * This method takes in a range of PMIDs and returns MedLine XML to the main
-	 * method as an outputstream.
-	 * 
-	 * @param id
-	 *            PMID you want to pull
-	 * @return 
-	 */
-	public String queryPubMedID(int id) {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		return id+"[uid]";
-	}
-	
-	/**
-	 * 
-	 * @param intStartRecord
-	 * @param intStopRecord
-	 * @return 
-	 */
-	public String queryByRange(int intStartRecord, int intStopRecord)
-	{
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		return intStartRecord+":"+intStopRecord+"[uid]";
-	}
-	
-	/**
-	 * TODO
-	 * @param intStartMonth
-	 * @param intStartDay
-	 * @param intStartYear
-	 * @param intStopMonth
-	 * @param intStopDay
-	 * @param intStopYear
-	 * @return 
-	 */
-	public String queryAllByDateRange(int intStartMonth, int intStartDay, int intStartYear, int intStopMonth, int intStopDay, int intStopYear)
-	{
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		return intStartYear+"/"+intStartMonth+"/"+intStartDay+"[PDAT]:"+intStopYear+"/"+intStopMonth+"/"+intStopDay+"[PDAT]";		
-	}
-	
-	/**
-	 * 
-	 * @param intLastRunMonth
-	 * @param intLastRunDay
-	 * @param intLastRunYear 
-	 * @return String query to fetch all from given date
-	 */
-	public String queryAllFromLastFetch(int intLastRunMonth, int intLastRunDay, int intLastRunYear)
-	{
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		return intLastRunYear+"/"+intLastRunMonth+"/"+intLastRunDay+"[PDAT]:8000[PDAT]";
-	}
-	
-	/**
-	 * This function simply checks to see what is the highest PubMed article PMID at the time it is called.<br>
-	 * The pubmed website might have 2-5 more records past what this one pulls<br>
-	 * But this function pulls them up to what they have indexed.<br>
-	 * So it's as good a "Highest number" as we're going to get.<br>
-	 * 
-	 * @return Returns an integer of the highest PMID at the time it is run
+	 * Get highest PubMed article PMID
+	 * @return highest PMID
 	 * @author Dale Scheppler
 	 */
 	public int getHighestRecordNumber()
 	{
-		Calendar gcToday = Calendar.getInstance();
-		int intYear = gcToday.get(Calendar.YEAR);
-		int intMonth = gcToday.get(Calendar.MONTH);
-		int intDay = gcToday.get(Calendar.DATE);
-//		List<Integer> lstResult = ESearchEnv("\""+intYear+"/"+intMonth+"/"+intDay+"\""+"[PDAT] : \""+(intYear + 5)+"/"+12+"/"+31+"\"[PDAT]", 1);
-		List<Integer> lstResult = ESearch("\""+intYear+"/"+intMonth+"/"+intDay+"\""+"[PDAT] : \""+(intYear + 5)+"/"+12+"/"+31+"\"[PDAT]", 1);
-		return lstResult.get(0);
+		return Integer.parseInt(runESearch(queryAll(), Integer.valueOf(1))[3]);
 	}
 	
 	/**
-	 * Sanitize Method<br>
-	 * Adds the dtd and xml code to the top of the xml file and removes the extraneous<br>
-	 * xml namespace attributes.  This function is slated for deprecation during milestone 2<br>
-	 * FIXME SVW CAH Please take a look at this.
-	 * @param strInput - The XML Stream to Sanitize.
-	 * @throws IOException In case we run into problems doing this
+	 * Get query to fetch all records in pubmed
+	 * @return query string for all pubmed records
+	 */
+	public String queryAll()
+	{
+		return "1:8000[dp]";
+	}
+	
+	/**
+	 * Get query for all records between a date range
+	 * @param start start date
+	 * @param end end date
+	 * @return query string for date range
+	 */
+	public String queryAllByDateRange(Calendar start, Calendar end)
+	{
+		SimpleDateFormat dfm = new SimpleDateFormat("yyyy/M/d");
+		return dfm.format(start.getTime())+"[PDAT]:"+dfm.format(end.getTime())+"[PDAT]";		
+	}
+	
+	/**
+	 * Get query for all records since a given date
+	 * @param date date to fetch since
+	 * @return String query to fetch all from given date
+	 */
+	public String queryAllSinceDate(Calendar date)
+	{
+		SimpleDateFormat dfm = new SimpleDateFormat("yyyy/M/d");
+		return dfm.format(date.getTime())+"[PDAT]:8000[PDAT]";
+	}
+	
+	/**
+	 * Get query string to locate all records matching the given affiliation
+	 * Ex: "vivoweb.org" matches records with "vivoweb.org" in the affiliation field
+	 * @param strAffiliation The affiliation information
+	 * @return A query string that will allow a search by affiliation.
+	 */
+	public String queryByAffiliation(String strAffiliation)
+	{
+		return strAffiliation+"[ad]";
+	}
+	
+	/**
+	 * Get query to fetch all records in a given PMID range
+	 * @param intStartPMID start PMID
+	 * @param intStopPMID end PMID
+	 * @return String query to fetch all in range
+	 */
+	public String queryByRange(int intStartPMID, int intStopPMID)
+	{
+		return intStartPMID+":"+intStopPMID+"[uid]";
+	}
+	
+	@Override
+	protected void runTask() throws NumberFormatException {
+		Integer recToFetch;
+		if(this.strMaxRecords.equalsIgnoreCase("all")) {
+			recToFetch = Integer.valueOf(getHighestRecordNumber());
+		} else {
+			recToFetch = Integer.valueOf(this.strMaxRecords);
+		}
+		int intBatchSize = Integer.parseInt(this.strBatchSize); 
+		if(recToFetch.intValue() <= intBatchSize) {
+			fetchPubMed(runESearch(this.strSearchTerm, recToFetch));
+		} else {
+			String[] env = runESearch(this.strSearchTerm, recToFetch);
+			String WebEnv = env[0];
+			String QueryKey = env[1];
+			for(int x = recToFetch.intValue(); x > 0; x-=intBatchSize) {
+				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
+				int startRec = recToFetch.intValue() - x;
+				System.out.println("maxRec: "+maxRec);
+				System.out.println("startRec: "+startRec);
+				fetchPubMed(WebEnv, QueryKey, startRec+"", maxRec+"");
+			}
+		}
+	}
+	
+	/**
+	 * Sanitizes XML in preparation for writing to output stream
+	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
+	 * @param strInput The XML to Sanitize.
 	 * @author Chris Haines
 	 * @author Stephen Williams
 	 */
 	private void sanitizeXML(String strInput) {
 		log.trace("Sanitizing Output");
-		
-		//System Messages
-//		log.trace("=================================\n=======================================================================\n=======================================================================\n=======================================================================");
-//		log.trace(s);
-//		log.trace("+++++++++++++++++++++++++++++++++\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
 		log.trace("XML File Length - Pre Sanitize: " + strInput.length());
 		log.trace("XML File Length - Post Sanitze: " + newS.length());
@@ -440,109 +334,56 @@ public class PubmedSOAPFetch extends Task
 		} catch(IOException e) {
 			log.error("Unable to write XML to file.",e);
 		}
-//		log.trace(newS);
-//		log.trace("---------------------------------\n-----------------------------------------------------------------------\n-----------------------------------------------------------------------\n-----------------------------------------------------------------------");
 		log.trace("Sanitization Complete");
 	}
 	
 	/**
-	 * This method adds the header to the XML stream.
-	 * @throws IOException
+	 * Runs, sanitizes, and outputs the results of a EFetch request to the xmlWriter
+	 * @param req the request to run and output results
+	 * @throws RemoteException error running EFetch
 	 */
-	public void beginXML() throws IOException {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of method "PubmedSOAPFetch.BeginXML" to Private
-		//FIXME This code was marked as may cause compile errors by UCDetector.
-		this.xmlWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		this.xmlWriter.write("<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n");
-		this.xmlWriter.write("<PubmedArticleSet>\n");
-		this.xmlWriter.flush();
-	}
-	
-	/**
-	 * This method adds the footer to the XML stream.
-	 * @throws IOException
-	 */
-	public void endXML() throws IOException {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of method "PubmedSOAPFetch.endXML" to Private
-		//FIXME This code was marked as may cause compile errors by UCDetector.
-		this.xmlWriter.flush();
-		this.xmlWriter.write("</PubmedArticleSet>");
-		this.xmlWriter.flush();
-		this.xmlWriter.close();
-	}
-	
-	/**
-	 * Executes the fetch
-	 * 
-	 * FIXME eventually Fetch should be initialized with parameters such that it know which of the fetches to run and all
-	 * FIXME CAH You put this comment here, either clarify, do it, or remove :)
-	 * -- that needs to be called is execute()
-	 */
-	public void execute()
-	{
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		log.info("Fetch Begin");
-		//xml write functions, take in a stream pass it to a writer
-		//Header lines for XML files from pubmed
+	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws RemoteException {
+		//Create buffer for raw, pre-sanitized output
+		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
+		//Connect to pubmed
+		EFetchPubmedServiceStub service = new EFetchPubmedServiceStub();
+		//Run the EFetch request
+		EFetchResult result = service.run_eFetch(req);
+		//Get the article set
+		PubmedArticleSet_type0 articleSet = result.getPubmedArticleSet();
+		XMLStreamWriter writer;
 		try {
-			beginXML();
-			this.fetchAll();
-			endXML();
-		} catch(IOException e) {
-			log.error("",e);
+			//Create a temporary xml writer to our buffer
+			writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
+			MTOMAwareXMLSerializer serial = new MTOMAwareXMLSerializer(writer);
+			log.trace("Writing to output");
+			//Output data
+			articleSet.serialize(new QName("RemoveMe"), null, serial);
+			serial.flush();
+			log.trace("Writing complete");
+//			log.trace("buffer size: "+buffer.size());
+			//Dump buffer to String
+			String iString = buffer.toString("UTF-8");
+			//Sanitize string (which writes it to xmlWriter)
+			sanitizeXML(iString);
+		} catch(XMLStreamException e) {
+			log.error("Unable to write to output",e);
+		} catch(UnsupportedEncodingException e) {
+			log.error("Cannot get xml from buffer",e);
 		}
-//		this.fetchByAffiliation("ufl.edu", 20);
-		log.info("Fetch End");
-		// TODO throttling should be done as part of the queries maybe? the current throttle does not work with the idea of
-		// -- WebEnv/QueryKey fetching... Will need to research how that will work
-	}
-	@Override
-	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		this.strEmailAddress = getParam(params, "emailAddress", true);
-		this.strToolLocation = getParam(params, "location", true);
-		String repositoryConfig = getParam(params, "repositoryConfig", true);
-		this.strSearchTerm = getParam(params, "searchTerm", true);
-		this.strMaxRecords = getParam(params, "maxRecords", true);
-		this.strBatchSize  = getParam(params, "batchSize", true);
-		this.rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
-		this.rhRecordHandler.setOverwriteDefault(true);
-		this.osOutStream = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", this.rhRecordHandler);
 	}
 	
 
-	@Override
-	protected void runTask() throws NumberFormatException {
+	/**
+	 * Setter for xmlwriter
+	 * @param os outputstream to write to
+	 */
+	private void setXMLWriter(OutputStream os) {
 		try {
 			// Writer to the stream we're getting from the controller.
-			this.xmlWriter = new OutputStreamWriter(this.osOutStream, "UTF-8");
+			this.xmlWriter = new OutputStreamWriter(os, "UTF-8");
 		} catch(UnsupportedEncodingException e) {
 			log.error("",e);
-		}
-		Integer recToFetch;
-		if(this.strMaxRecords.equalsIgnoreCase("all")) {
-			recToFetch = Integer.valueOf(getHighestRecordNumber());
-		} else {
-			recToFetch = Integer.valueOf(this.strMaxRecords);
-		}
-		int intBatchSize = Integer.valueOf(this.strBatchSize); 
-		if(recToFetch.intValue() <= intBatchSize) {
-			fetchPubMedEnv(ESearchEnv(this.strSearchTerm, recToFetch));
-		} else {
-			String[] envInfo = ESearchEnv(this.strSearchTerm, recToFetch);
-			String WebEnv = envInfo[0];
-			String QueryKey = envInfo[1];
-			String idListLength = envInfo[2];
-			Integer.parseInt(idListLength);
-			for(int x = recToFetch.intValue(); x > 0; x-=intBatchSize) {
-				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
-				int startRec = recToFetch.intValue() - x;
-				System.out.println("maxRec: "+maxRec);
-				System.out.println("startRec: "+startRec);
-				fetchPubMedEnv(WebEnv, QueryKey, startRec+"", maxRec+"");
-			}
 		}
 	}
 	

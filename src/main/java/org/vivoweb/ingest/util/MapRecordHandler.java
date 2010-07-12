@@ -16,18 +16,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * Record Handler that uses a Java Map to store records in memory
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class MapRecordHandler extends RecordHandler {
-	//This code was marked as may cause compile errors by UCDetector.
-	//Change visibility of class to Private
-	//FIXME This code was marked as may cause compile errors by UCDetector.
-	
+	/**
+	 * The map to store records in 
+	 */
 	Map<String,String> map;
-	//This code was marked as may cause compile errors by UCDetector.
-	//Change visibility of Field "MapRecordHandler.map" to Private
-	//FIXME This code was marked as may cause compile errors by UCDetector.
 	
 	/**
 	 * Default Constructor
@@ -59,23 +55,36 @@ public class MapRecordHandler extends RecordHandler {
 		return new MapRecordIterator();
 	}
 	
+	/**
+	 * Iterator for MapRecordHandler
+	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+	 */
 	private class MapRecordIterator implements Iterator<Record> {
+		/**
+		 * Iterator for the keys in the map
+		 */
 		private Iterator<String> keyIter;
 		
+		/**
+		 * Default Constructor
+		 */
 		protected MapRecordIterator() {
 			this.keyIter = MapRecordHandler.this.map.keySet().iterator();
 		}
 		
+		@Override
 		public boolean hasNext() {
 			return this.keyIter.hasNext();
 		}
 		
+		@Override
 		public Record next() {
 			String key = this.keyIter.next();
 			String data = MapRecordHandler.this.map.get(key);
 			return new Record(key,data);
 		}
 		
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -83,7 +92,7 @@ public class MapRecordHandler extends RecordHandler {
 	
 	@Override
 	public void setParams(Map<String, String> params) throws IllegalArgumentException, IOException {
-		
+		//No params to set
 	}
 	
 }

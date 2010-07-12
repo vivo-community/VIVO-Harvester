@@ -11,11 +11,17 @@
 package org.vivoweb.ingest.util;
 
 /**
+ * Individual record
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class Record {
+	/**
+	 * ID of this record
+	 */
 	private String id;
+	/**
+	 * Data for this record
+	 */
 	private String data;
 	
 	/**
@@ -24,21 +30,12 @@ public class Record {
 	 * @param recData records data
 	 */
 	public Record(String recID, String recData) {
-		//This code was marked as may cause compile errors by UCDetector.
-		//Change visibility of constructor "Record.Record" to Protected.
-		//FIXME This code was marked as may cause compile errors by UCDetector.
-		setID(recID);
-		setData(recData);
+		this.id = recID;
+		this.data = recData;
 	}
 	
 	/**
-	 * @param newID id to be used
-	 */
-	private void setID(String newID) {
-		this.id = newID;
-	}
-	
-	/**
+	 * Getter for ID
 	 * @return the records id
 	 */
 	public String getID() {
@@ -46,13 +43,16 @@ public class Record {
 	}
 	
 	/**
+	 * Setter for Data
 	 * @param newData data to be used
 	 */
+	@SuppressWarnings("unused") //TODO Chris: eventually make this public and automatically update the data in the original record handler
 	private void setData(String newData) {
 		this.data = newData;
 	}
 	
 	/**
+	 * Getter for Data
 	 * @return the records data
 	 */
 	public String getData() {

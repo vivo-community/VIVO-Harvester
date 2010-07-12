@@ -13,26 +13,44 @@ package org.vivoweb.ingest.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.fetch.PubmedSOAPFetch;
-import org.xml.sax.SAXException;
 
 /**
+ * An Output Stream that breaks XML blobs into individual Records and writes to a RecordHandler
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class XMLRecordOutputStream extends OutputStream {
+	/**
+	 * Log4J Logger
+	 */
+	@SuppressWarnings("unused") //log lines are commented because it slowed down the process significantly
 	private static Log log = LogFactory.getLog(XMLRecordOutputStream.class);
+	/**
+	 * Buffer to hold data until a complete record is formed
+	 */
 	private ByteArrayOutputStream buf;
+	/**
+	 * RecordHandler to write record to
+	 */
 	private RecordHandler rh;
+	/**
+	 * the byte array that represent a closing record tag
+	 */
 	private byte[] closeTag;
+	/**
+	 * Regex to find the identifing data in the record data
+	 */
 	private Pattern idRegex;
+	/**
+	 * Prepend to each record
+	 */
 	private String header;
+	/**
+	 * Append to each record
+	 */
 	private String footer;
 	
 	/**
@@ -57,61 +75,35 @@ public class XMLRecordOutputStream extends OutputStream {
 		this.buf.write(arg0);
 		byte[] a = this.buf.toByteArray();
 		if(compareByteArrays(a, this.closeTag)) {
+			// Slows things down ALOT to have these
 //			log.debug("Complete Record Written to buffer");
 			String record = new String(a);
 			Matcher m = this.idRegex.matcher(record);
 			m.find();
 			String id = m.group(1);
+			// Slows things down ALOT to have these
 //			log.debug("Adding record id: "+id);
 			this.rh.addRecord(id.trim(), this.header+record.trim()+this.footer);
 			this.buf.reset();
 		}
 	}
 	
-	private boolean compareByteArrays(byte[] a, byte[] b) {
-		if(a.length < b.length) {
+	/**
+	 * Compare two byte arrays
+	 * @param arrayOne first to compare
+	 * @param arrayTwo second to compare
+	 * @return true if the last bytes in arrayOne is equivalent to arrayTwo, false otherwise
+	 */
+	private boolean compareByteArrays(byte[] arrayOne, byte[] arrayTwo) {
+		if(arrayOne.length < arrayTwo.length) {
 			return false;
 		}
-		int o = a.length-b.length;
-		for(int i = 0; i < b.length; i++) {
-			if(a[o+i] != b[i]) {
+		int o = arrayOne.length-arrayTwo.length;
+		for(int i = 0; i < arrayTwo.length; i++) {
+			if(arrayOne[o+i] != arrayTwo[i]) {
 				return false;
 			}
 		}
 		return true;
-	}
-	
-	/**
-	 * @param args commandline arguments
-	 * @throws ParserConfigurationException xml parse error 
-	 * @throws SAXException xml parse error
-	 * @throws IOException error connecting
-	 */
-	public static void main(String... args) throws ParserConfigurationException, SAXException, IOException {
-		RecordHandler dataStore;
-//		dataStore = RecordHandler.parseConfig("config/PubmedJenaRecordHandler.xml");
-//		dataStore = RecordHandler.parseConfig("config/PubmedRDFRecordHandler.xml");
-		dataStore = RecordHandler.parseConfig("config/PubmedXMLRecordHandler.xml");
-//		dataStore = new MapRecordHandler();
-//		dataStore = new JDBCRecordHandler("com.mysql.jdbc.Driver", "mysql", "127.0.0.1", "3306", "jdbcrecordstore", "jdbcRecordStore", "5j63ucbNdZ5MCRda", "recordTable");
-//		dataStore = new JenaRecordHandler("com.mysql.jdbc.Driver", "mysql", "127.0.0.1", "3306", "jenarecordstore", "jenaRecordStore", "j6QvzjGG5muJmYN4", "MySQL", "http://localhost/jenarecordhandlerdemo#data");
-//		dataStore = new JenaRecordHandler("config/JenaModel.xml", "http://localhost/jenarecordhandlerdemo#data");
-//		dataStore = new TextFileRecordHandler("XMLVault");
-//		dataStore = new TextFileRecordHandler("ftp://yourMom:y0urM0m123@127.0.0.1:21/path/to/dir");
-		XMLRecordOutputStream os = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", dataStore);
-		PubmedSOAPFetch f = new PubmedSOAPFetch("hainesc@ctrip.ufl.edu", "University of Florid", os);
-		f.fetchPubMedEnv(f.ESearchEnv(f.fetchAll(), new Integer(5)));
-//		LinkedList<String> ids = new LinkedList<String>();
-//		for(Record r : dataStore) {
-//			System.out.println("========================================================");
-//			System.out.println(r.getID());
-//			System.out.println("--------------------------------------------------------");
-//			System.out.println(r.getData());
-//			System.out.println("========================================================\n");
-//			ids.add(r.getID());
-//		}
-//		for(String id : ids) {
-//			dataStore.delRecord(id);
-//		}
 	}
 }

@@ -10,37 +10,56 @@
  ******************************************************************************/
 package org.vivoweb.ingest.qualify;
 
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.JenaConnect;
 import org.vivoweb.ingest.util.Task;
+import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /**
+ * Massage field data into the exact format we need
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public abstract class Qualify extends Task {
-	//This code was marked as may cause compile errors by UCDetector.
-	//Change visibility of class to Default
-	//FIXME This code was marked as may cause compile errors by UCDetector.
 	
+	/**
+	 * Log4J Logger
+	 */
+	private static Log log = LogFactory.getLog(Qualify.class);
+	/**
+	 * Jena Model we are working in
+	 */
 	private Model model;
 	
 	/**
-	 * @param model the model to set
+	 * Setter for model
+	 * @param newModel the model to set
 	 */
-	protected void setModel(Model model) {
-		this.model = model;
+	protected void setModel(Model newModel) {
+		this.model = newModel;
 	}
 	
 	/**
+	 * Setter for model
 	 * @param configFileName the config file that describes the model to set
 	 */
 	protected void setModel(String configFileName) {
-		//This code was marked as never used by UCDetector.
-		//FIXME Determine if this code is necessary.
-		
+		try {
+			this.model = JenaConnect.parseConfig(configFileName).getJenaModel();
+		} catch(ParserConfigurationException e) {
+			log.error(e.getMessage(),e);
+		} catch(SAXException e) {
+			log.error(e.getMessage(),e);
+		} catch(IOException e) {
+			log.error(e.getMessage(),e);
+		}
 	}
 	
 	/**
+	 * Getter for model
 	 * @return the model
 	 */
 	protected Model getModel() {
@@ -48,6 +67,7 @@ public abstract class Qualify extends Task {
 	}
 	
 	/**
+	 * Replace data matching dataType & matchValue with newValue
 	 * @param dataType field to search
 	 * @param matchValue match this value
 	 * @param newValue replace matches with this value
