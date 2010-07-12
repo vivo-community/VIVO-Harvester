@@ -1,0 +1,4 @@
+address:www.twmuseums.org.uk/pnds/memorynet/
+startDate:1000-01-01
+endDate:2010-01-01
+filename:XMLVault/OAI/MemoryNet.xml

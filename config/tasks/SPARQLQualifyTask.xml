@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task type="org.vivoweb.ingest.qualify.SPARQLQualify">
+	<Param id="modelConfig">config/jenaModels/qualifyTestJena.xml</Param>
+	<Param id="replace1.dataType">http://example.com/uri/goes#here</Param>
+	<Param id="replace1.matchValue">matchMeExactly</Param>
+	<Param id="replace1.newValue">replaceWithMe</Param>
+	<Param id="replace1.isRegex">false</Param>
+	<Param id="replace2.dataType">http://sample.com/uri/also#here</Param>
+	<Param id="replace2.matchValue">.*?match[Me]+With[a]?Regex.*?</Param>
+	<Param id="replace2.newValue">replaceWithPlainOlMe</Param>
+	<Param id="replace2.isRegex">true</Param>
+</Task>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<harvest>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-30T22:08:36+01:00</responseDate>
+<request identifier="oai:arXiv.org:hep-th/9901001" verb="Identify">http://an.oa.org/OAI-script</request>
+<Identify>
+<repositoryName>Memory Net</repositoryName><baseURL>http://www.twmuseums.org.uk/memorynet/</baseURL><protocolVersion>2.0</protocolVersion><adminEmail>matt@sumodesign.co.uk</adminEmail><earliestDatestamp>2010-06-30</earliestDatestamp><deletedRecord>no</deletedRecord><granularity>YYYY-MM-DD</granularity></Identify>
+</OAI-PMH>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-30T22:08:37+01:00</responseDate>
+<request identifier="oai:arXiv.org:hep-th/9901001" verb="ListMetadataFormats">http://an.oa.org/OAI-script</request>
+<ListMetadataFormats>
+<metadataFormat><metadataPrefix>oai_dc</metadataPrefix><schema>http://www.openarchives.org/OAI/2.0/oai_dc.xsd</schema><metadataNamespace>http://www.openarchives.org/OAI/2.0/oai_dc/</metadataNamespace></metadataFormat></ListMetadataFormats>
+</OAI-PMH>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-30T22:08:38+01:00</responseDate>
+<request identifier="oai:arXiv.org:hep-th/9901001">http://an.oa.org/OAI-script</request>
+<error code="noSetHierarchy">This repository does not support sets</error></OAI-PMH>
+</harvest>

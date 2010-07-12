@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<harvest>
+<?xml-stylesheet type="text/xsl" href="oai2.xsl" ?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-17T17:23:15Z</responseDate>
+<request verb="Identify">http://www.uflib.ufl.edu/ufdc/</request>
+<Identify>
+<repositoryName>University of Florida Digital Collections</repositoryName>
+	<baseURL>http://www.uflib.ufl.edu/ufdc/</baseURL>
+	<protocolVersion>2.0</protocolVersion>
+	<adminEmail>ufdc@uflib.ufl.edu</adminEmail>
+	<earliestDatestamp>2005-12-15</earliestDatestamp>
+	<deletedRecord>transient</deletedRecord>
+	<granularity>YYYY-MM-DD</granularity>
+<description>
+	<oai-identifier xmlns="http://www.openarchives.org/OAI/2.0/oai-identifier" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd">
+		<scheme>oai</scheme>
+		<repositoryIdentifier>ufdc</repositoryIdentifier>
+		<delimiter>:</delimiter>
+		<sampleIdentifier>oai:www.uflib.ufl.edu.ufdc:UF12345678</sampleIdentifier>
+	</oai-identifier>
+</description>
+</Identify>
+</OAI-PMH>
+<?xml-stylesheet type="text/xsl" href="oai2.xsl" ?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-17T17:23:17Z</responseDate>
+<request verb="ListMetadataFormats">http://www.uflib.ufl.edu/ufdc/</request>
+<ListMetadataFormats>
+<metadataFormat>
+<metadataPrefix>oai_dc</metadataPrefix>
+<schema>http://www.openarchives.org/OAI/2.0/oai_dc.xsd</schema>
+<metadataNamespace>http://www.openarchives.org/OAI/2.0/oai_dc/</metadataNamespace>
+</metadataFormat>
+</ListMetadataFormats>
+</OAI-PMH>
+<?xml-stylesheet type="text/xsl" href="oai2.xsl" ?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2010-06-17T17:23:18Z</responseDate>
+<request verb="ListSets">http://www.uflib.ufl.edu/ufdc/</request>
+<ListSets>
+<set>
+<setSpec>africa1</setSpec>
+<setName>Africana Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Africana Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:africa1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=africa1</dc:identifier>
+	<dc:description>The Africana Collection support the past, ongoing and future needs of University of Florida's Center for African Studies, one of the most active and well regarded such centers in the United States of America
+and the only United States Department of Education Title VI Center for African Studies in the American southeast.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>asia1</setSpec>
+<setName>Asian Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Asian Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:asia1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=asia1</dc:identifier>
+	<dc:description>This digital collection draws from the Asian Studies Collections at the University of Florida, and includes rare resources on Chinese Art History.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>dloc</setSpec>
+<setName>Digital Library of the Caribbean</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Digital Library of the Caribbean</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:dloc</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=dloc</dc:identifier>
+	<dc:description>The Digital Library of the Caribbean (dLOC) is a cooperative digital library for resources from and about the Caribbean and circum-Caribbean. dLOC provides access to digitized versions of Caribbean cultural, historical and research materials currently held in archives, libraries, and private collections.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>dlosa1</setSpec>
+<setName>South American Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>South American Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:dlosa1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=dlosa1</dc:identifier>
+	<dc:description>South American Area Studies General Collection</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>edmod1</setSpec>
+<setName>Education Library Digital Collection</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Education Library Digital Collection</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:edmod1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=edmod1</dc:identifier>
+	<dc:description/>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>esbnd</setSpec>
+<setName>Spanish Borderlands Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Spanish Borderlands Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:esbnd</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=esbnd</dc:identifier>
+	<dc:description>Spanish Borderlands Collections</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>euro1</setSpec>
+<setName>European Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>European Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:euro1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=euro1</dc:identifier>
+	<dc:description>European History Resources comprises resources digitized from the University of Florida's special and circulating collections pertaining to the history and cultures of Europe. The bulk of materials collected here document France and the Unit.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>fald</setSpec>
+<setName>Architecture &amp; Landscape Design</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Architecture &amp; Landscape Design</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:fald</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=fald</dc:identifier>
+	<dc:description>The Florida Architecture &amp; Landscape Design Collection focuses on architecture, with holdings in landscape design and urban design, from Florida and the Caribbean. This collection includes the Florida Institute of Architects Publications, select materials from the Architecture Archives from Special Collections, and the Kenneth Treister Collection.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>fao1</setSpec>
+<setName>Food and Agricultural Sciences</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Food and Agricultural Sciences</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:fao1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=fao1</dc:identifier>
+	<dc:description>The 'Food and Agricultural Sciences' General Collection holds general resources about agriculture, food crops, farming, and soil and climate conditions conducive to agriculture. A main stay of the collection is the publications of the Institute for Food and Agricultural Sciences. Special collections include Florida Historical Agriculture and Rural Life, International Farming Systems, and U.S. Department of Agriculture Soil Survey publications of Florida, Puerto Rico and the U.S. Virgin Islands.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>fast1</setSpec>
+<setName>Sciences and Technologies</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Sciences and Technologies</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:fast1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=fast1</dc:identifier>
+	<dc:description>Florida Sciences and Technologies</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>fdnl1</setSpec>
+<setName>Florida Digital Newspaper Library</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Florida Digital Newspaper Library</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:fdnl1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=fdnl1</dc:identifier>
+	<dc:description>The Florida Digital Newspaper Library, hosted by the University of Florida Libraries, provides access to the news and history of Florida.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>fhpc</setSpec>
+<setName>Florida History &amp; Heritage Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Florida History &amp; Heritage Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:fhpc</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=fhpc</dc:identifier>
+	<dc:description>The 'Florida History and Heritage Collections' document Florida arts, culture, history, and society.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>flaac</setSpec>
+<setName>African American Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>African American Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:flaac</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=flaac</dc:identifier>
+	<dc:description>Together collections both on-line and in the Libraries' physical holdings depict an American tableau and represent a snap-shot of Floridian culture.  Rare book collections define the historic context of the African American community in the nation's struggles and growth.  Florida collections, closer to home, document the lives of African American Floridians both in life and through death. Digital collections draw special attention to The Visionaires and the records of the Cunningham Funeral Home</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>flap</setSpec>
+<setName>Aerial Photography: Florida</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Aerial Photography: Florida</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:flap</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=flap</dc:identifier>
+	<dc:description>Historical aerial photographs dramatically document changes in Florida's land use. The initial Aerial Photography: Florida collection was funded by two Florida Library Service and Technology Assistant grants from the Florida Department of State.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>flaw1</setSpec>
+<setName>Florida Law Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Florida Law Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:flaw1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=flaw1</dc:identifier>
+	<dc:description>Florida Law currently holds the Journal of the Florida House of Reprentatives and a Florida Water Law collection. Planned additions include the Laws of the Florida Territory and the Early Florida Constitutions, as well as a variety of general texts on Florida laws, the legislative process, and government.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>foto1</setSpec>
+<setName>Florida Photograph Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Florida Photograph Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:foto1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=foto1</dc:identifier>
+	<dc:description>Florida Photographs is comprised of several collections that visually document Florida and the University of Florida in particular. Among the holdings, Florida is documented in photographs, postcards, three-dimensional artifacts, and other visual resources that capture the spirit of old and contemporary Florida alike.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>gart1</setSpec>
+<setName>Graphic Arts General Resources</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Graphic Arts General Resources</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:gart1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=gart1</dc:identifier>
+	<dc:description>Graphic Arts General Resources</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>gfl</setSpec>
+<setName>The Floridians</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>The Floridians</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:gfl</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=gfl</dc:identifier>
+	<dc:description>The Floridians makes available the archives, manuscripts and other personal collections of Florida leaders, including architects, visual and performing artists, writers, politicians, ecologists, etc.  These collections contain the priceless and varied record of stewardships that wielded statewide and national significance.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>hos</setSpec>
+<setName>History of Medicine</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>History of Medicine</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:hos</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=hos</dc:identifier>
+	<dc:description/>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>howe1</setSpec>
+<setName>The Parkman Dexter Howe Library</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>The Parkman Dexter Howe Library</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:howe1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=howe1</dc:identifier>
+	<dc:description>The Parkman Dexter Howe Library is comprised of thousands of books and manuscripts by New England authors and contains many early New England books.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>hsca</setSpec>
+<setName>UF Health Science Archives Photograph Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>UF Health Science Archives Photograph Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:hsca</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=hsca</dc:identifier>
+	<dc:description>The Health Science Center Archives is a unit associated with and containing historical materials from the six colleges in the Health Science Center as well as the Health Center administrative unit, the Vice President for Health Affairs, and the Health Center Library. The materials in these collections help describe the history of founding of the Center in the 1940s and 1950s and its opening in 1956. The collections include administrative records, copies of oral histories from founding members of</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>jud1</setSpec>
+<setName>Judaica General Collection</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Judaica General Collection</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:jud1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=jud1</dc:identifier>
+	<dc:description>Judaica General Collection</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>juv</setSpec>
+<setName>Baldwin Library of Historical Children's Literature</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Baldwin Library of Historical Children's Literature</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:juv</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=juv</dc:identifier>
+	<dc:description>Rare English and American 19th century children's literature from the Baldwin Library of Historical Children's Literature  in the Department of Special Collections at the University of Florida.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>lit</setSpec>
+<setName>Literary Studies: General Collection</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Literary Studies: General Collection</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:lit</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=lit</dc:identifier>
+	<dc:description/>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>map1</setSpec>
+<setName>World Map Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>World Map Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:map1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=map1</dc:identifier>
+	<dc:description>World Map Collections represents a joint project to document the maps from around the world. Collections are heavily weighted toward historic or antique maps, but selected modern maps are also included. Images are provided here in the JPEG 2000 format in zoomable images.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>mmoh</setSpec>
+<setName>Matheson Museum Oral Histories</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Matheson Museum Oral Histories</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:mmoh</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=mmoh</dc:identifier>
+	<dc:description/>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>nat</setSpec>
+<setName>Natural Sciences General Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Natural Sciences General Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:nat</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=nat</dc:identifier>
+	<dc:description>The Natural Sciences Collections  include resources that cover the natural science in the broadest sense as well as in the specific area of Wetlands development and protection. Content includes ecology and human/environment interactions.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>oh1</setSpec>
+<setName>Florida Counties Oral History Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Florida Counties Oral History Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:oh1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=oh1</dc:identifier>
+	<dc:description>Florida Counties Oral History Collections</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>oh2</setSpec>
+<setName>Florida Topical Oral History Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Florida Topical Oral History Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:oh2</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=oh2</dc:identifier>
+	<dc:description>Grouped among the Florida Topical Oral History Collections are interviews representing campus life and the history of the University of Florida.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>oh3</setSpec>
+<setName>Miscellaneous Oral History Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Miscellaneous Oral History Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:oh3</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=oh3</dc:identifier>
+	<dc:description>Miscellaneous Oral History Collections</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>oh4</setSpec>
+<setName>Native Americans Oral History Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Native Americans Oral History Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:oh4</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=oh4</dc:identifier>
+	<dc:description>Native Americans Oral History Collections</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>oh5</setSpec>
+<setName>University of Florida Oral History Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>University of Florida Oral History Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:oh5</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=oh5</dc:identifier>
+	<dc:description>University of Florida Oral History Collections</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>ospre</setSpec>
+<setName>Open Stacks Project Resources</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Open Stacks Project Resources</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:ospre</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=ospre</dc:identifier>
+	<dc:description>Open Stacks Project Resources</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>part1</setSpec>
+<setName>Performing Arts Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Performing Arts Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:part1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=part1</dc:identifier>
+	<dc:description>The exciting and colorful history of theatre, film and dance, highlighting all the thrills, chills and adventure, is showcased in the Performing Arts Collections of the Belknap Collection for the Performing Arts in the Smathers Libraries' Department of Special Collections on the campus to the University of Florida (Gainesville, FL).</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>psa1</setSpec>
+<setName>Psychology in Art Collection</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Psychology in Art Collection</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:psa1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=psa1</dc:identifier>
+	<dc:description>Psychology in Art Collection</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>punch</setSpec>
+<setName>Comics</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Comics</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:punch</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=punch</dc:identifier>
+	<dc:description/>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>ros1</setSpec>
+<setName>Rossica General Collection</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Rossica General Collection</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:ros1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=ros1</dc:identifier>
+	<dc:description>The Archive of the Rossica Society is a digital library of the Society's Rossica Journal of Russian Philately, excluding issues published within the last three years, and other digitized holdings from the Society's Library, together with Russian philatelic resources collected by the University of Florida and its partners</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>rw</setSpec>
+<setName>Radical Women</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Radical Women</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:rw</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=rw</dc:identifier>
+	<dc:description/>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>sanborn</setSpec>
+<setName>Sanborn Fire Insurance Maps of Florida</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Sanborn Fire Insurance Maps of Florida</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:sanborn</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=sanborn</dc:identifier>
+	<dc:description>Sanborn Fire Insurance Maps of Florida contains imagery from the Sanborn Fire Insurance Company's set of Florida maps from the late 1800's to mid 1900's.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>spohp1</setSpec>
+<setName>About the Samuel Proctor Oral History Program</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>About the Samuel Proctor Oral History Program</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:spohp1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=spohp1</dc:identifier>
+	<dc:description>About the Samuel Proctor Oral History Program</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>swfln</setSpec>
+<setName>SWFLN Gold Coast Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>SWFLN Gold Coast Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:swfln</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=swfln</dc:identifier>
+	<dc:description>The Southwest Florida Library Network (SWFLN) is one of the regional consortia of multi-type libraries and information specialists in the State of Florida.  SWFLN serves the Florida counties of Charlotte, Collier, DeSoto, Glades, Hendry and Lee, as well as portions of Monroe.  This project provides web-based access to images and documents from libraries, museums, societies and other historical agencies in Southwest Florida.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>theo1</setSpec>
+<setName>Theology Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Theology Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:theo1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=theo1</dc:identifier>
+	<dc:description>The 'Theology General Collection' currently includes materials preserved and cataloged through the many Kohler Victorian Theology Pamphlet Collection microfilming and cataloging grants.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>ufherb</setSpec>
+<setName>Herbarium Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Herbarium Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:ufherb</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=ufherb</dc:identifier>
+	<dc:description>The 'University of Florida Herbarium Specimen Collections' provides digital images for selected specimens from the Florida Museum of Natural History / University of Florida Herbarium.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>ufir</setSpec>
+<setName>University of Florida Institutional Repository</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>University of Florida Institutional Repository</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:ufir</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=ufir</dc:identifier>
+	<dc:description>The Institutional Repository at the University of Florida is a collection of the University of Florida community's research, news, outreach, and educational materials.</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>usa</setSpec>
+<setName>United States History Collection</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>United States History Collection</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:usa</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=usa</dc:identifier>
+	<dc:description>United States History Collection</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>wet1</setSpec>
+<setName>Wetlands General Research Collections</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Wetlands General Research Collections</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:wet1</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=wet1</dc:identifier>
+	<dc:description>Wetlands General Research Collections</dc:description>
+</oai_dc:dc>
+</set>
+<set>
+<setSpec>wid</setSpec>
+<setName>Women in Development</setName>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+	<dc:title>Women in Development</dc:title> 
+	<dc:identifier>oai:www.uflib.ufl.edu.ufdc:wid</dc:identifier>
+	<dc:identifier>http://www.uflib.ufl.edu/ufdc/?a=wid</dc:identifier>
+	<dc:description>Women in Development collects research on societal structures in Africa, the Caribbean, and Latin America. These materials reflect the impact of women in rural and urban settings. They discuss issues of education, economic growth and legal rights among other topics.</dc:description>
+</oai_dc:dc>
+</set>
+</ListSets>
+</OAI-PMH>
+</harvest>
