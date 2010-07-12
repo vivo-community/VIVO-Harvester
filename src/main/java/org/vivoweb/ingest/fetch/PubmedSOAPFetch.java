@@ -44,8 +44,6 @@ import org.xml.sax.SAXException;
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-//@SuppressWarnings("restriction") //TODO Chris: investigate the warnings we get when this is not here... never seen that before
-//Seems to only be on my desktop that I need this SuppressWarnings("restriction")... definitely should look into this
 public class PubmedSOAPFetch extends Task
 {
 	/**
@@ -78,15 +76,6 @@ public class PubmedSOAPFetch extends Task
 	private String strBatchSize;
 	
 	/**
-	 * Default Constructor
-	 */
-	public PubmedSOAPFetch(){
-		//Nothing to do here
-		//Used by config parser
-		//Should be used in conjunction with setParams()
-	}
-	
-	/***
 	 * Constructor
 	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
 	 * person responsible for this install of the program is required by PubMed guidelines so
@@ -98,24 +87,51 @@ public class PubmedSOAPFetch extends Task
 	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
 	 * @param outStream The output stream for the method.
 	 */
-	public PubmedSOAPFetch(String strEmail, String strToolLoc, OutputStream outStream)
-	{
+	public PubmedSOAPFetch(String strEmail, String strToolLoc, OutputStream outStream) {
 		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
 		this.strToolLocation = strToolLoc; // This provides further information to NIH
+		this.strSearchTerm = queryAll();
+		this.strMaxRecords = getHighestRecordNumber()+"";
+		this.strBatchSize = "1000";
 		setXMLWriter(outStream);
 	}
 	
-	@Override
-	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		this.strEmailAddress = getParam(params, "emailAddress", true);
-		this.strToolLocation = getParam(params, "location", true);
+	/**
+	 * Constructor
+	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
+	 * person responsible for this install of the program is required by PubMed guidelines so
+	 * the person can be contacted if there is a problem, such as sending too many queries
+	 * too quickly. 
+	 * @author Dale Scheppler
+	 * @author Chris Haines
+	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
+	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
+	 * @param searchTerm query to run on pubmed data
+	 * @param maxRecords maximum number of records to fetch
+	 * @param batchSize number of records to fetch per batch
+	 * @param outStream The output stream for the method.
+	 */
+	public PubmedSOAPFetch(String strEmail, String strToolLoc, String searchTerm, String maxRecords, String batchSize, OutputStream outStream)
+	{
+		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
+		this.strToolLocation = strToolLoc; // This provides further information to NIH
+		this.strSearchTerm = searchTerm;
+		this.strMaxRecords = maxRecords;
+		this.strBatchSize = batchSize;
+		setXMLWriter(outStream);
+	}
+	
+	public static PubmedSOAPFetch getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+		String emailAddress = getParam(params, "emailAddress", true);
+		String toolLocation = getParam(params, "location", true);
 		String repositoryConfig = getParam(params, "repositoryConfig", true);
-		this.strSearchTerm = getParam(params, "searchTerm", true);
-		this.strMaxRecords = getParam(params, "maxRecords", true);
-		this.strBatchSize  = getParam(params, "batchSize", true);
+		String searchTerm = getParam(params, "searchTerm", true);
+		String maxRecords = getParam(params, "maxRecords", true);
+		String batchSize  = getParam(params, "batchSize", true);
 		RecordHandler rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
 		rhRecordHandler.setOverwriteDefault(true);
-		setXMLWriter(new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler));
+		OutputStream os = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler);
+		return new PubmedSOAPFetch(emailAddress, toolLocation, searchTerm, maxRecords, batchSize, os);
 	}
 	
 	/**
@@ -239,7 +255,7 @@ public class PubmedSOAPFetch extends Task
 	 * Get query to fetch all records in pubmed
 	 * @return query string for all pubmed records
 	 */
-	public String queryAll()
+	public static String queryAll()
 	{
 		return "1:8000[dp]";
 	}
@@ -250,7 +266,7 @@ public class PubmedSOAPFetch extends Task
 	 * @param end end date
 	 * @return query string for date range
 	 */
-	public String queryAllByDateRange(Calendar start, Calendar end)
+	public static String queryAllByDateRange(Calendar start, Calendar end)
 	{
 		SimpleDateFormat dfm = new SimpleDateFormat("yyyy/M/d");
 		return dfm.format(start.getTime())+"[PDAT]:"+dfm.format(end.getTime())+"[PDAT]";		
@@ -261,7 +277,7 @@ public class PubmedSOAPFetch extends Task
 	 * @param date date to fetch since
 	 * @return String query to fetch all from given date
 	 */
-	public String queryAllSinceDate(Calendar date)
+	public static String queryAllSinceDate(Calendar date)
 	{
 		SimpleDateFormat dfm = new SimpleDateFormat("yyyy/M/d");
 		return dfm.format(date.getTime())+"[PDAT]:8000[PDAT]";
@@ -273,7 +289,7 @@ public class PubmedSOAPFetch extends Task
 	 * @param strAffiliation The affiliation information
 	 * @return A query string that will allow a search by affiliation.
 	 */
-	public String queryByAffiliation(String strAffiliation)
+	public static String queryByAffiliation(String strAffiliation)
 	{
 		return strAffiliation+"[ad]";
 	}
@@ -284,13 +300,13 @@ public class PubmedSOAPFetch extends Task
 	 * @param intStopPMID end PMID
 	 * @return String query to fetch all in range
 	 */
-	public String queryByRange(int intStartPMID, int intStopPMID)
+	public static String queryByRange(int intStartPMID, int intStopPMID)
 	{
 		return intStartPMID+":"+intStopPMID+"[uid]";
 	}
 	
 	@Override
-	protected void runTask() throws NumberFormatException {
+	public void executeTask() throws NumberFormatException {
 		Integer recToFetch;
 		if(this.strMaxRecords.equalsIgnoreCase("all")) {
 			recToFetch = Integer.valueOf(getHighestRecordNumber());
@@ -373,7 +389,6 @@ public class PubmedSOAPFetch extends Task
 		}
 	}
 	
-
 	/**
 	 * Setter for xmlwriter
 	 * @param os outputstream to write to
@@ -386,5 +401,4 @@ public class PubmedSOAPFetch extends Task
 			log.error("",e);
 		}
 	}
-	
 }

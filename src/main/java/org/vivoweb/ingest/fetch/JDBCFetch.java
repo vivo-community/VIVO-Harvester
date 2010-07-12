@@ -40,13 +40,9 @@ public class JDBCFetch extends Task {
 	 */
 	private RecordHandler rh;
 	/**
-	 * Database we are fetching from
-	 */
-	private Connection db;
-	/**
 	 * Table information
 	 */
-	private HashMap<String,Map<String,String>> tables;
+	private Map<String,Map<String,String>> tables;
 	/**
 	 * Statement processor for the database
 	 */
@@ -55,12 +51,30 @@ public class JDBCFetch extends Task {
 	 * Namespace for RDF made from this database
 	 */
 	private String uriNS;
+	
+	/**
+	 * Constructor
+	 * @param output RecordHandler to write records to 
+	 * @param dbConn database connection to read from
+	 * @param tableInfo information about tables to read
+	 * @param uriNameSpace base string for uri generation
+	 * @throws SQLException error connecting to database
+	 */
+	public JDBCFetch(RecordHandler output, Connection dbConn, Map<String,Map<String,String>> tableInfo, String uriNameSpace) throws SQLException {
+		this.rh = output;
+		this.tables = tableInfo;
+		this.cursor = dbConn.createStatement();
+		this.uriNS = uriNameSpace;
+		for(String tableName : this.tables.keySet()) {
+			checkTableExists(tableName);
+			checkTableConfigured(tableName);
+		}
+	}
 
-	@Override
-	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+	public static JDBCFetch getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
 		String repositoryConfig = getParam(params, "repositoryConfig", true);
-		this.rh = RecordHandler.parseConfig(repositoryConfig);
-		this.rh.setOverwriteDefault(true);
+		RecordHandler output = RecordHandler.parseConfig(repositoryConfig);
+		output.setOverwriteDefault(true);
 		String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
 		try {
 			Class.forName(jdbcDriverClass);
@@ -73,35 +87,36 @@ public class JDBCFetch extends Task {
 		String dbName = getParam(params, "dbName", true);
 		String username = getParam(params, "username", true);
 		String password = getParam(params, "password", true);
-		this.uriNS = "http://"+connType+"."+host+"/"+dbName+"/";
+		String uriNameSpace = "http://"+connType+"."+host+"/"+dbName+"/";
+		Connection dbConn;
 		try {
-			this.db = DriverManager.getConnection("jdbc:"+connType+"://"+host+":"+port+"/"+dbName, username, password);
-			this.cursor = this.db.createStatement();
+			dbConn = DriverManager.getConnection("jdbc:"+connType+"://"+host+":"+port+"/"+dbName, username, password);
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		this.tables = new HashMap<String,Map<String,String>>();
+		Map<String,Map<String,String>> tableInfo = new HashMap<String,Map<String,String>>();
 		for(String tableData : params.keySet()) {
 			String[] temp = tableData.split("\\.", 2);
 			if(temp.length == 2) {
-				if(!this.tables.containsKey(temp[0])) {
-					this.tables.put(temp[0], new HashMap<String,String>());
+				if(!tableInfo.containsKey(temp[0])) {
+					tableInfo.put(temp[0], new HashMap<String,String>());
 				}
-				this.tables.get(temp[0]).put(temp[1], params.get(tableData));
+				tableInfo.get(temp[0]).put(temp[1], params.get(tableData));
 			}
 		}
-		for(String tableName : this.tables.keySet()) {
-			checkTableExists(tableName);
-			checkTableConfigured(tableName);
+		try {
+			return new JDBCFetch(output,dbConn,tableInfo,uriNameSpace);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(),e);
 		}
 	}
 	
 	/**
 	 * Checks if the table exists
 	 * @param tableName the name of the table to check for
-	 * @throws IOException the table does not exist
+	 * @throws SQLException the table does not exist
 	 */
-	private void checkTableExists(String tableName) throws IOException {
+	private void checkTableExists(String tableName) throws SQLException {
 		boolean a;
 		try {
 			// ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL
@@ -117,7 +132,7 @@ public class JDBCFetch extends Task {
 			}
 		}
 		if(!a) {
-			throw new IOException("Database Does Not Contain Table: "+tableName);
+			throw new SQLException("Database Does Not Contain Table: "+tableName);
 		}
 	}
 	
@@ -202,22 +217,18 @@ public class JDBCFetch extends Task {
 	/**
 	 * Checks if a table is properly configured
 	 * @param tableName the name of the table to check
-	 * @throws IOException the table is incorrectly configured
+	 * @throws SQLException the table is incorrectly configured
 	 */
-	private void checkTableConfigured(String tableName) throws IOException {
-		boolean a = true;
+	private void checkTableConfigured(String tableName) throws SQLException {
 		try {
 			this.cursor.execute(buildSelect(tableName));
 		} catch(SQLException e) {
-			a = false;
-		}
-		if(!a) {
-			throw new IOException("Table '"+tableName+"' Is Not Structured Correctly");
+			throw new SQLException("Table '"+tableName+"' Is Not Structured Correctly",e);
 		}
 	}
 	
 	@Override
-	protected void runTask() throws NumberFormatException {
+	public void executeTask() throws NumberFormatException {
 		//For each Table
 		for(String tableName : this.tables.keySet()) {
 			StringBuilder sb = new StringBuilder();

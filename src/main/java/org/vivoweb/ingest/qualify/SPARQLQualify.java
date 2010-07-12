@@ -41,23 +41,16 @@ public class SPARQLQualify extends Qualify {
 	/**
 	 * Parameter list for qualification
 	 */
-	private HashMap<String, Map<String, String>> qualifyParams;
-	
-	/**
-	 * Default Constructor
-	 */
-	public SPARQLQualify() {
-		//Nothing to do here
-		//Used by config parsing
-		//Should be used in conjunction with setParams()
-	}
+	private Map<String, Map<String, String>> qualifyParams;
 	
 	/**
 	 * Constructor
 	 * @param model the JENA model to run qualifications on
+	 * @param params the search/replace parameters
 	 */
-	public SPARQLQualify(Model model) {
+	public SPARQLQualify(Model model, Map<String,Map<String,String>> params) {
 		setModel(model);
+		this.qualifyParams = params;
 	}
 	
 	@Override
@@ -126,14 +119,14 @@ public class SPARQLQualify extends Qualify {
 		}
 	}
 	
-	@Override
-	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+	public static SPARQLQualify getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+		Model m;
 		try {
-			setModel(JenaConnect.parseConfig(getParam(params, "modelConfig", true)).getJenaModel());
+			m = JenaConnect.parseConfig(getParam(params, "modelConfig", true)).getJenaModel();
 		} catch(NullPointerException e) {
 			throw new IOException("Jena Model Configuration Invalid",e);
 		}
-		this.qualifyParams = new HashMap<String,Map<String,String>>();
+		Map<String,Map<String,String>> qualifyParams = new HashMap<String,Map<String,String>>();
 		for(String paramID : params.keySet()) {
 			String[] temp = paramID.trim().split("\\.", 2);
 			if(temp.length != 2) {
@@ -141,15 +134,16 @@ public class SPARQLQualify extends Qualify {
 			}
 			temp[0] = temp[0].trim();
 			temp[1] = temp[1].trim();
-			if(!this.qualifyParams.containsKey(temp[0])) {
-				this.qualifyParams.put(temp[0], new HashMap<String,String>());
+			if(!qualifyParams.containsKey(temp[0])) {
+				qualifyParams.put(temp[0], new HashMap<String,String>());
 			}
-			this.qualifyParams.get(temp[0]).put(temp[1], params.get(paramID).trim());
+			qualifyParams.get(temp[0]).put(temp[1], params.get(paramID).trim());
 		}
+		return new SPARQLQualify(m,qualifyParams);
 	}	
 
 	@Override
-	protected void runTask() throws NumberFormatException {
+	public void executeTask() throws NumberFormatException {
 		for(Map<String, String> qualifyRun : this.qualifyParams.values()) {
 			String dataType = getParam(qualifyRun, "dataType", true);
 			String matchValue = getParam(qualifyRun, "matchValue", true);

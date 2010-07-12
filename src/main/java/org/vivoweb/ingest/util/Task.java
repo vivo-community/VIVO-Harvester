@@ -2,6 +2,8 @@ package org.vivoweb.ingest.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,47 +21,23 @@ import org.xml.sax.helpers.DefaultHandler;
 public abstract class Task {
 	
 	/**
-	 * Has this task been initialized with its parameters
-	 */
-	private boolean ready = false;
-	
-	/**
-	 * Uses given parameters to initialize the task and prepare for execution
+	 * Uses given parameters to build an instance of the Task
 	 * @param params mapping of parameter name to parameter value
+	 * @return the built Task
 	 * @throws IOException xml parsing error
 	 * @throws SAXException xml parsing error
 	 * @throws ParserConfigurationException xml parsing error
 	 */
-	public void setParams(Map<String,String> params) throws ParserConfigurationException, SAXException, IOException {
-		acceptParams(params);
-		this.ready = true;
-	}
-	
-	/**
-	 * Uses given parameters to initialize the task and prepare for execution
-	 * @param params mapping of parameter name to parameter value
-	 * @throws IOException xml parsing error
-	 * @throws SAXException xml parsing error
-	 * @throws ParserConfigurationException xml parsing error
-	 */
-	protected abstract void acceptParams(Map<String,String> params) throws ParserConfigurationException, SAXException, IOException;
-	
-	/**
-	 * Checks if task's parameters have been initialized, and executes the task
-	 * @throws NumberFormatException non-numerical config value encountered where numerical value expected
-	 */
-	public void executeTask() throws NumberFormatException {
-		if(!this.ready) {
-			throw new IllegalStateException("You must set the parameters first!");
-		}
-		runTask();
+	@SuppressWarnings("unused")
+	public static Task getInstance(Map<String,String> params) throws ParserConfigurationException, SAXException, IOException {
+		throw new IllegalStateException("Task cannot be initialized as it is an Abstract Class.  Try instantiating a class that extends Task.");
 	}
 	
 	/**
 	 * Checks if task's parameters have been initialized, and executes the task
 	 * @throws NumberFormatException non-numerical config value encountered where numerical value expected
 	 */
-	protected abstract void runTask() throws NumberFormatException;
+	public abstract void executeTask();
 	
 	/**
 	 * Get a specified parameter
@@ -69,7 +47,7 @@ public abstract class Task {
 	 * @return the value for the parameter
 	 * @throws IllegalArgumentException parameter is required and does not exist
 	 */
-	protected String getParam(Map<String,String> params, String paramName, boolean required) throws IllegalArgumentException {
+	protected static String getParam(Map<String,String> params, String paramName, boolean required) throws IllegalArgumentException {
 		if(!params.containsKey(paramName)) {
 			if(required) {
 				throw new IllegalArgumentException("param missing: "+paramName);
@@ -77,6 +55,14 @@ public abstract class Task {
 			return null;
 		}
 		return params.remove(paramName);
+	}
+	
+	/**
+	 * Uses given parameters to build an instance of the Task
+	 * @return the mapping of commandline flags to parameter names
+	 */
+	protected static Map<String,String> getCommandLineArgMap() {
+		throw new IllegalStateException("Task cannot be initialized as it is an Abstract Class, thus it has no commandline arg maps.");
 	}
 	
 	/**
@@ -180,25 +166,25 @@ public abstract class Task {
 			if(qName.equalsIgnoreCase("Task")) {
 				try {
 					Class<?> className = Class.forName(this.type);
-					Object tempTask = className.newInstance();
+//					Object tempTask = className.newInstance();
+					Method builderMethod = className.getDeclaredMethod("getInstance", this.params.getClass());
+					Object tempTask = builderMethod.invoke(null, this.params);
 					if(!(tempTask instanceof Task)) {
 						throw new SAXException("Class must extend Task");
 					}
 					this.task = (Task)tempTask;
-					this.task.setParams(this.params);
+//					this.task.setParams(this.params);
 				} catch(ClassNotFoundException e) {
 					throw new SAXException("Unknown Class: "+this.type,e);
 				} catch(SecurityException e) {
 					throw new SAXException(e.getMessage(),e);
 				} catch(IllegalArgumentException e) {
 					throw new SAXException(e.getMessage(),e);
-				} catch(InstantiationException e) {
-					throw new SAXException(e.getMessage(),e);
 				} catch(IllegalAccessException e) {
 					throw new SAXException(e.getMessage(),e);
-				} catch(ParserConfigurationException e) {
+				} catch(NoSuchMethodException e) {
 					throw new SAXException(e.getMessage(),e);
-				} catch(IOException e) {
+				} catch(InvocationTargetException e) {
 					throw new SAXException(e.getMessage(),e);
 				}
 			} else if(qName.equalsIgnoreCase("Param")) {

@@ -30,15 +30,6 @@ public class Transfer extends Task {
 	private Model output;
 	
 	/**
-	 * Default Constructor
-	 */
-	public Transfer() {
-	  //Nothing to do here
-	  //Used by Task config parser
-	  //Should only be used in conjunction with setParams()
-	}
-	
-	/**
 	 * Constructor
 	 * @param in input Model
 	 * @param out output Model
@@ -74,18 +65,16 @@ public class Transfer extends Task {
 		}
 	}
 	
-	@Override
-	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+	public static Transfer getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
 		String inConfig = getParam(params, "inputModel", true);
 		String outConfig = getParam(params, "outputModel", true);
 		JenaConnect in = JenaConnect.parseConfig(inConfig);
 		JenaConnect out = JenaConnect.parseConfig(outConfig);
-		this.input = in.getJenaModel();
-		this.output = out.getJenaModel();
+		return new Transfer(in.getJenaModel(), out.getJenaModel());
 	}
 	
 	@Override
-	protected void runTask() throws NumberFormatException {
+	public void executeTask() throws NumberFormatException {
 		transfer();
 	}
 }

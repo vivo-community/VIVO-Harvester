@@ -28,11 +28,11 @@ import ORG.oclc.oai.harvester2.app.RawWrite;
  * @author Dale Scheppler
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class OAIHarvest extends Task {
+public class OAIFetch extends Task {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(OAIHarvest.class);
+	private static Log log = LogFactory.getLog(OAIFetch.class);
 	/**
 	 * The website address of the OAI Repository without the protocol prefix (No http://)
 	 */
@@ -55,44 +55,43 @@ public class OAIHarvest extends Task {
 	 * The output stream to send the harvested XML to
 	 */
 	private OutputStream osOutStream;
-
+	
 	/**
-	 * Calls the RawWrite function of the OAI Harvester example code. Writes to an output stream.<br>
-	 * Some repositories are configured incorrectly and this process will not work. For those a custom<br>
-	 * method will need to be written.
-	 * @author Dale Scheppler
-	 * @param strAddress The website address of the repository, without http://
-	 * @param strStartDate The date at which to begin fetching records, format and time resolution depends on repository.
-	 * @param strEndDate The date at which to stop fetching records, format and time resolution depends on repository.
-	 * @param osOutStream The output stream to write to.
-	 * @throws SAXException Thrown if there is an error in SAX.
-	 * @throws TransformerException Thrown if there is an error during XML transform.
-	 * @throws NoSuchFieldException Thrown if one of the fields queried does not exist.
-	 * @throws ParserConfigurationException parser is configured wrong
-	 * @throws IOException error connecting to OAI repository
+	 * Constuctor
+	 * @param address The website address of the repository, without http://
+	 * @param outStream The output stream to write to
 	 */
-	public static void execute(String strAddress, String strStartDate, String strEndDate, OutputStream osOutStream) throws SAXException, TransformerException, NoSuchFieldException, IOException, ParserConfigurationException
-	{
-		RawWrite.run("http://" + strAddress, strStartDate, strEndDate, "oai_dc", "", osOutStream);
+	public OAIFetch(String address, OutputStream outStream) {
+		this(address, "0001-01-01", "8000-01-01", outStream);
 	}
 	
-	@Override
-	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		this.strAddress = getParam(params, "address", true);
-		this.strStartDate = getParam(params, "startDate", true);
-		this.strEndDate = getParam(params, "endDate", true);
+	/**
+	 * Constuctor
+	 * @param address The website address of the repository, without http://
+	 * @param startDate The date at which to begin fetching records, format and time resolution depends on repository.
+	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
+	 * @param outStream The output stream to write to
+	 */
+	public OAIFetch(String address, String startDate, String endDate, OutputStream outStream) {
+		this.strAddress = address;
+		this.strStartDate = startDate;
+		this.strEndDate = endDate;
+		this.osOutStream = outStream;
+	}
+	
+	public static OAIFetch getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+		String address = getParam(params, "address", true);
+		String startDate = getParam(params, "startDate", true);
+		String endDate = getParam(params, "endDate", true);
 		String repositoryConfig = getParam(params, "repositoryConfig", true);
-		String recordTag = getParam(params, "recordTag", true);
-		String xmlHead = getParam(params, "xmlHead", true);
-		String xmlFoot = getParam(params, "xmlFoot", true);
-		String idRegex = getParam(params, "idRegex", true);
 		RecordHandler rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
 		rhRecordHandler.setOverwriteDefault(true);
-		this.osOutStream = new XMLRecordOutputStream(recordTag, xmlHead, xmlFoot, idRegex, rhRecordHandler);
+		OutputStream os = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler);
+		return new OAIFetch(address, startDate, endDate, os);
 	}
 	
 	@Override
-	protected void runTask() throws NumberFormatException {
+	public void executeTask() throws NumberFormatException {
 		try {
 			System.out.println("http://" + this.strAddress);
 			System.out.println(this.strStartDate);
@@ -110,5 +109,4 @@ public class OAIHarvest extends Task {
 			log.error(e.getMessage(),e);
 		}
 	}
-
 }

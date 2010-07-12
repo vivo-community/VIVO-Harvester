@@ -13,6 +13,11 @@ package org.vivoweb.ingest.translate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.Task;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -30,30 +35,53 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  *
  */
-public class RDFTranslator extends Translator{
-	
+public class RDFTranslator extends Task {
+	/**
+	 * the log property for logging errors, information, debugging
+	 */
+	private static Log log = LogFactory.getLog(RDFTranslator.class);
+	/**
+	 * the workfslow descriptor file
+	 */
 	private File translationWorkFlow;
+	/**
+	 * in stream is the stream containing the file (xml) that we are going to translate
+	 */
+	protected InputStream inStream;
+	/**
+	 * out stream is the stream that the controller will be handling and were we will dump the translation
+	 */
+	protected OutputStream outStream;
 	
-	
+	/**
+	 * Default Constructor
+	 */
 	public RDFTranslator(){
+		//Nothing yet
 	}
 	
+	/**
+	 * 
+	 * @param transWF the RDF Workflow descriptor file
+	 */
 	public RDFTranslator(File transWF){
 		this.setTranslationWorkFlow(transWF);
 		
 	}
 	
-	
+	/**
+	 * Setter for workflow
+	 * @param transWF the RDF Workflow descriptor file
+	 */
 	public void setTranslationWorkFlow(File transWF){
 		this.translationWorkFlow = transWF;
 	}
 	
-	
-	public void execute(){
+	@Override
+	public void executeTask(){
 		//checking for valid input parameters
-		if ((this.translationWorkFlow !=null && this.translationWorkFlow.isFile()) && this.inStream != null && this.outStream != null) {
+		if ((this.translationWorkFlow !=null && this.translationWorkFlow.isFile()) && this.inStream != null && this.inStream != null) {
 			log.info("Translation: Start");
-		
 			try{			
 				Model wfModel = ModelFactory.createDefaultModel();
 				
@@ -69,7 +97,6 @@ public class RDFTranslator extends Translator{
 				log.error(e.getMessage());
 			}
 			
-			
 			log.info("Translation: End");
 		}
 		else {
@@ -78,24 +105,23 @@ public class RDFTranslator extends Translator{
 		}
 	}
 	
-	//TODO make this work
+	/**
+	 * Performs RDF Workflow
+	 * @param workflow the workflow
+	 * @param toBeModified the model to be modified
+	 */
+	@SuppressWarnings("unused")
 	public void processWorkFlow(Model workflow, Model toBeModified){
+		//TODO Stephen: make this work
 	}
 	
-	
-	/**
-	 * The main method is for execution through the command line.  
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args){
+	public static void main(String... args){
 		if (args.length < 3 || args.length > 4){
 			log.error("Invalid Arguments: RDFTranslate requires at least 1 arguments.  The system was supplied with " + args.length);
 			//throw new IllegalArgumentException();
 		}
 		else {
 			if (args[0].equals("-f")){
-				
 				try {
 					RDFTranslator rdfTrans = new RDFTranslator();
 									
@@ -103,17 +129,16 @@ public class RDFTranslator extends Translator{
 					rdfTrans.setTranslationWorkFlow(new File(args[1]));
 					
 					//read in the jena model rdf to inputstream
-					rdfTrans.setInStream(new FileInputStream(new File(args[2])));
+					rdfTrans.inStream = new FileInputStream(new File(args[2]));
 					
 					//set the outstream as System.out
-					rdfTrans.setOutStream(System.out);
+					rdfTrans.outStream = System.out;
 					
-					rdfTrans.execute();
+					rdfTrans.executeTask();
 				}
 				catch (Exception e){
 					log.error(e.getMessage());  //TODO make this more robust (better information for debugging problems)
 				}
-				
 			}
 			else if (args[0].equals("-rh")){
 				//pull in rdf workflow
@@ -124,7 +149,6 @@ public class RDFTranslator extends Translator{
 				log.error("Invalid Arguments: Translate option " + args[0] + " not handled.");
 				//throw new IllegalArgumentException();
 			}
-			
 		}
 	}
 
