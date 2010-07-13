@@ -1,0 +1,6 @@
+org.vivoweb.ingest.fetch
+org.vivoweb.ingest.qualify
+org.vivoweb.ingest.score
+org.vivoweb.ingest.transfer
+org.vivoweb.ingest.translate
+org.vivoweb.ingest.util
