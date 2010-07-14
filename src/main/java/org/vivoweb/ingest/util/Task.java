@@ -5,20 +5,31 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import static java.util.Arrays.*;
 
 /**
  * Task Interface
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public abstract class Task {
+	/**
+	 * Log4J Logger
+	 */
+	private static Log log = LogFactory.getLog(Task.class);
 	
 	/**
 	 * Uses given parameters to build an instance of the Task
@@ -58,26 +69,62 @@ public abstract class Task {
 	}
 	
 	/**
-	 * Uses given parameters to build an instance of the Task
-	 * @return the mapping of commandline flags to parameter names
+	 * Checks if the OptionSet contains all the listed arguments
+	 * @param ops the optionset to check
+	 * @param args the arguments to check for
 	 */
-	protected static Map<String,String> getCommandLineArgMap() {
-		throw new IllegalStateException("Task cannot be initialized as it is an Abstract Class, thus it has no commandline arg maps.");
+	protected static void checkNeededArgs(OptionSet ops, String... args) {
+		for(String arg : args) {
+			if(!ops.has(arg)) {
+				throw new IllegalArgumentException("Missing Argument: "+arg);
+			}
+		}
 	}
 	
 	/**
-	 * Main Method
-	 * @param args command line arguments
+	 * Runs a task based off its config
+	 * @param filepath path to config file
 	 * @throws IOException xml parsing error
 	 * @throws SAXException xml parsing error
 	 * @throws ParserConfigurationException xml parsing error
 	 */
-	public static void main(String... args) throws ParserConfigurationException, SAXException, IOException {
-		if(args.length != 1) {
-			throw new IllegalArgumentException("Usage: Task [path/to/config/file.xml]");
+	public static void runConfig(String filepath) throws ParserConfigurationException, SAXException, IOException {
+//		Task t = TaskConfigParser.parseTaskConfig(filepath);
+//		t.executeTask();
+	}
+	
+	/**
+	 * Get the OptionParser for this Task
+	 * @return the OptionParser
+	 */
+	protected static OptionParser getParser() {
+		OptionParser parser = new OptionParser();
+		parser.acceptsAll(asList("x", "config"), "configuration file").withRequiredArg().describedAs("Config File Path");
+		return parser;
+	}
+	
+	/**
+	 * Main method
+	 * @param args commandline arguments
+	 */
+	public static void main(String... args) {
+		OptionSet options = getParser().parse(args);
+		try {
+			if(options.has("config")) {
+//				runConfig((String)options.valueOf("config"));
+				Map<String, String> t = TaskConfigParser.parseTaskConfig((String)options.valueOf("config"));
+				String[] params = {};
+				List<String> paramList = new LinkedList<String>();
+				for(String key : t.keySet()) {
+					//
+				}
+				t.getClass().getMethod("main", args.getClass()).invoke(null, new Object());
+			} else {
+				getParser().printHelpOn(System.out);
+			}
+		} catch(Exception e) {
+			log.error(e.getMessage(),e);
 		}
-		Task t = TaskConfigParser.parseTaskConfig(args[0]);
-		t.executeTask();
 	}
 	
 	/**
@@ -124,7 +171,7 @@ public abstract class Task {
 		 * @throws SAXException xml parsing error
 		 * @throws ParserConfigurationException xml parsing error
 		 */
-		public static Task parseTaskConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
+		public static Map<String, String> parseTaskConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
 			return new TaskConfigParser().parseConfig(filename);
 		}
 		
@@ -136,11 +183,11 @@ public abstract class Task {
 		 * @throws SAXException xml parsing error
 		 * @throws ParserConfigurationException xml parsing error
 		 */
-		private Task parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
+		private Map<String, String> parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse the file and also register this class for call backs
-			return this.task;
+			return this.params;
 		}
 		
 		@Override
@@ -167,7 +214,7 @@ public abstract class Task {
 				try {
 					Class<?> className = Class.forName(this.type);
 //					Object tempTask = className.newInstance();
-					Method builderMethod = className.getDeclaredMethod("getInstance", this.params.getClass());
+					Method builderMethod = className.getDeclaredMethod("getInstance", Map.class);
 					Object tempTask = builderMethod.invoke(null, this.params);
 					if(!(tempTask instanceof Task)) {
 						throw new SAXException("Class must extend Task");

@@ -12,11 +12,14 @@ package org.vivoweb.ingest.fetch;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
@@ -108,6 +111,35 @@ public class JDBCFetch extends Task {
 			return new JDBCFetch(output,dbConn,tableInfo,uriNameSpace);
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * Temp to see if we can read the data from the database rather than config files
+	 * @throws SQLException error talking with database
+	 */
+	public void getTableData() throws SQLException {
+		List<String> tableNames = new LinkedList<String>();
+		DatabaseMetaData metaData = this.cursor.getConnection().getMetaData();
+		
+		//Get Table Names
+		String[] tableTypes = {"TABLE"};
+		ResultSet tableData = metaData.getTables(null, null, "%", tableTypes);
+		while(tableData.next()) {
+			tableNames.add(tableData.getString("TABLE_NAME"));
+		}
+		
+		//For each Table
+		for(String tableName : tableNames) {
+			System.out.println("tableName: "+tableName);
+			ResultSet columnData = metaData.getColumns(null, null, tableName, "%");
+			while(columnData.next()) {
+				String name = columnData.getString("COLUMN_NAME");
+				String dataType = columnData.getString("TYPE_NAME");
+				int size = columnData.getInt("COLUMN_SIZE");
+				System.out.println(name+": "+dataType+"["+size+"]");
+			}
+			System.out.println();
 		}
 	}
 	

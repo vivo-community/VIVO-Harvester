@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task type="org.vivoweb.ingest.fetch.JDBCTest">
+	<Param id="jdbcDriverClass">com.mysql.jdbc.Driver</Param>
+	<Param id="connType">mysql</Param>
+	<Param id="host">127.0.0.1</Param>
+	<Param id="port">3306</Param>
+	<Param id="dbName">jdbcdemoharvest</Param>
+	<Param id="username">jdbcDemoHarvest</Param>
+	<Param id="password">EFaY6nSxBNpL7cYb</Param>
+</Task>
