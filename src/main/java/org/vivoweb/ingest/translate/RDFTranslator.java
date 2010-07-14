@@ -28,9 +28,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * the VIVO ontology.  It uses RDFworkflows to manipulate the
  * data
  * 
- * TODO:  Identify additional parameters required for translation
- * TODO:  Identify the method of invoking an RDF workflow in Jena
- * TODO:  Create a sample RDF workflow
+ * @TODO Stephen: Identify additional parameters required for translation
+ * @TODO Stephen: Identify the method of invoking an RDF workflow in Jena
+ * @TODO Stephen: Create a sample RDF workflow
  * 
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  *
@@ -137,7 +137,7 @@ public class RDFTranslator extends Task {
 					rdfTrans.executeTask();
 				}
 				catch (Exception e){
-					log.error(e.getMessage());  //TODO make this more robust (better information for debugging problems)
+					log.error(e.getMessage());  //TODO Stephen: make this more robust (better information for debugging problems)
 				}
 			}
 			else if (args[0].equals("-rh")){

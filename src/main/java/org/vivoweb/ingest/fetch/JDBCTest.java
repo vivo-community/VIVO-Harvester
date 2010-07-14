@@ -43,6 +43,43 @@ public class JDBCTest extends Task {	/**
 	 * @throws SQLException error talking with database
 	 */
 	public JDBCTest(Connection dbConn) throws SQLException {
+		initCursor(dbConn);
+	}
+	
+	/**
+	 * Constructor
+	 * @param opts option set of parsed args
+	 * @throws IOException error creating task
+	 */
+	public JDBCTest(OptionSet opts) throws IOException {
+		String jdbcDriverClass = (String)opts.valueOf("d");
+		try {
+			Class.forName(jdbcDriverClass);
+		} catch(ClassNotFoundException e) {
+			throw new IOException(e.getMessage(),e);
+		}
+		String connLine = (String)opts.valueOf("c");
+		String username = (String)opts.valueOf("u");
+		String password = (String)opts.valueOf("p");
+		Connection dbConn;
+		try {
+			dbConn = DriverManager.getConnection(connLine, username, password);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(),e);
+		}
+		try {
+			initCursor(dbConn);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * Initializes the cursor for our database connection
+	 * @param dbConn the database connection
+	 * @throws SQLException error connecting to database
+	 */
+	private void initCursor(Connection dbConn) throws SQLException {
 		this.cursor = dbConn.createStatement();
 	}
 	
@@ -102,31 +139,54 @@ public class JDBCTest extends Task {	/**
 		return parser;
 	}
 	
-	public static JDBCTest getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
-		try {
-			Class.forName(jdbcDriverClass);
-		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(),e);
-		}
-		String connType = getParam(params, "connType", true);
-		String host = getParam(params, "host", true);
-		String port = getParam(params, "port", true);
-		String dbName = getParam(params, "dbName", true);
-		String username = getParam(params, "username", true);
-		String password = getParam(params, "password", true);
-		Connection dbConn;
-		try {
-			dbConn = DriverManager.getConnection("jdbc:"+connType+"://"+host+":"+port+"/"+dbName, username, password);
-		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
-		}
-		try {
-			return new JDBCTest(dbConn);
-		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
-		}
-	}
+//	public static JDBCTest getInstance(OptionSet opts) throws IOException {
+//		String jdbcDriverClass = (String)opts.valueOf("d");
+//		try {
+//			Class.forName(jdbcDriverClass);
+//		} catch(ClassNotFoundException e) {
+//			throw new IOException(e.getMessage(),e);
+//		}
+//		String connLine = (String)opts.valueOf("c");
+//		String username = (String)opts.valueOf("u");
+//		String password = (String)opts.valueOf("p");
+//		Connection dbConn;
+//		try {
+//			dbConn = DriverManager.getConnection(connLine, username, password);
+//		} catch(SQLException e) {
+//			throw new IOException(e.getMessage(),e);
+//		}
+//		try {
+//			return new JDBCTest(dbConn);
+//		} catch(SQLException e) {
+//			throw new IOException(e.getMessage(),e);
+//		}
+//	}
+//	
+//	public static JDBCTest getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
+//		String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
+//		try {
+//			Class.forName(jdbcDriverClass);
+//		} catch(ClassNotFoundException e) {
+//			throw new IOException(e.getMessage(),e);
+//		}
+//		String connType = getParam(params, "connType", true);
+//		String host = getParam(params, "host", true);
+//		String port = getParam(params, "port", true);
+//		String dbName = getParam(params, "dbName", true);
+//		String username = getParam(params, "username", true);
+//		String password = getParam(params, "password", true);
+//		Connection dbConn;
+//		try {
+//			dbConn = DriverManager.getConnection("jdbc:"+connType+"://"+host+":"+port+"/"+dbName, username, password);
+//		} catch(SQLException e) {
+//			throw new IOException(e.getMessage(),e);
+//		}
+//		try {
+//			return new JDBCTest(dbConn);
+//		} catch(SQLException e) {
+//			throw new IOException(e.getMessage(),e);
+//		}
+//	}
 
 	@Override
 	public void executeTask() {
@@ -142,9 +202,11 @@ public class JDBCTest extends Task {	/**
 			Task.main(args);
 		}
 		OptionSet o = getParser().parse(args);
-		checkNeededArgs(o,"d","c","u","p","o");
-		if(o.has("d")) {
-			//
-		}
+		checkNeededArgs(o,"d","c","u","p");
+		System.out.println(o.valueOf("d"));
+		System.out.println(o.valueOf("c"));
+		System.out.println(o.valueOf("u"));
+		System.out.println(o.valueOf("p"));
+		System.out.println(o.valueOf("o"));
 	}
 }

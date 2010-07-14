@@ -47,9 +47,9 @@ import org.vivoweb.ingest.util.Task;
  * object
  * VERSION Version Version of the vCard Specification
  * KEY Public Key
- * TODO complete javadoc overview
- * TODO Complete Translation
- * TODO allow for other versions
+ * @TODO Stephen: complete javadoc overview
+ * @TODO Stephen: Complete Translation
+ * @TODO Stephen: allow for other versions
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  */
 public class VCardTranslator extends Task {

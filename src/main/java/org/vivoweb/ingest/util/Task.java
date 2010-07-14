@@ -31,18 +31,29 @@ public abstract class Task {
 	 */
 	private static Log log = LogFactory.getLog(Task.class);
 	
-	/**
-	 * Uses given parameters to build an instance of the Task
-	 * @param params mapping of parameter name to parameter value
-	 * @return the built Task
-	 * @throws IOException xml parsing error
-	 * @throws SAXException xml parsing error
-	 * @throws ParserConfigurationException xml parsing error
-	 */
-	@SuppressWarnings("unused")
-	public static Task getInstance(Map<String,String> params) throws ParserConfigurationException, SAXException, IOException {
-		throw new IllegalStateException("Task cannot be initialized as it is an Abstract Class.  Try instantiating a class that extends Task.");
-	}
+//	/**
+//	 * Uses given parameters to build an instance of the Task
+//	 * @param params mapping of parameter name to parameter value
+//	 * @return the built Task
+//	 * @throws IOException xml parsing error
+//	 * @throws SAXException xml parsing error
+//	 * @throws ParserConfigurationException xml parsing error
+//	 */
+//	@SuppressWarnings("unused")
+//	public static Task getInstance(Map<String,String> params) throws ParserConfigurationException, SAXException, IOException {
+//		throw new IllegalStateException("Task cannot be initialized as it is an Abstract Class.  Try instantiating a class that extends Task.");
+//	}
+//	
+//	/**
+//	 * Uses given options to build an instance of the Task
+//	 * @param opts option set of parsed args
+//	 * @return the built Task
+//	 * @throws IOException error creating task
+//	 */
+//	@SuppressWarnings("unused")
+//	public static Task getInstance(OptionSet opts) throws IOException {
+//		throw new IllegalStateException("Task cannot be initialized as it is an Abstract Class.  Try instantiating a class that extends Task.");
+//	}
 	
 	/**
 	 * Checks if task's parameters have been initialized, and executes the task
@@ -57,6 +68,7 @@ public abstract class Task {
 	 * @param required is this parameter required?
 	 * @return the value for the parameter
 	 * @throws IllegalArgumentException parameter is required and does not exist
+	 * @TODO Chris: Make this private when all Tasks use OptionSet instead of params
 	 */
 	protected static String getParam(Map<String,String> params, String paramName, boolean required) throws IllegalArgumentException {
 		if(!params.containsKey(paramName)) {
@@ -82,31 +94,52 @@ public abstract class Task {
 	}
 	
 	/**
-	 * Instantiate an instance of taskClass with args from filePath config
-	 * @param taskClass subclass of Task to run with args from config
+	 * 
 	 * @param filePath path to the config file
-	 * @throws NoSuchMethodException method not defined
+	 * @return 
 	 * @throws SecurityException violates security manager
-	 * @throws InvocationTargetException cannot invoke using those params
-	 * @throws IllegalAccessException  method is not accessible
 	 * @throws IllegalArgumentException illegal arguments for method
+	 * @throws IOException error reading config file
+	 * @throws SAXException xml parse error
+	 * @throws ParserConfigurationException parser config error
 	 */
-	public static void runConfig(Class<? extends Task> taskClass, String filePath) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		String[] args = {}; //TODO Chris: Fill this in
-		taskClass.getMethod("main", String[].class).invoke(null, (Object)args);
+	public static String[] configToArgs(String filePath) throws SecurityException, IllegalArgumentException, ParserConfigurationException, SAXException, IOException {
+		Map<String, String> params = TaskConfigParser.parseTaskConfig(filePath);
+		String[] paramArray = {};
+		List<String> paramList = new LinkedList<String>();
+		String taskConfigClass = getParam(params,"TaskTypeClass",true);
+//		Class<?> className = Class.forName(taskConfigClass);
+		StringBuilder sb;
+		for(String key : params.keySet()) {
+			sb = new StringBuilder();
+			String value = params.get(key);
+			if(!value.equalsIgnoreCase("false")) {
+				sb.append("--");
+				sb.append(key);
+				if(!value.equalsIgnoreCase("true")) {
+					sb.append("=");
+					sb.append(value);
+				}
+//				sb.append(" ");
+				paramList.add(sb.toString());
+			}
+		}
+		paramArray = paramList.toArray(paramArray);
+//		className.getMethod("main", paramArray.getClass()).invoke(null, (Object)paramArray);
+		return paramArray;
 	}
 	
-	/**
-	 * Runs a task based off its config
-	 * @param filepath path to config file
-	 * @throws IOException xml parsing error
-	 * @throws SAXException xml parsing error
-	 * @throws ParserConfigurationException xml parsing error
-	 */
-	public static void runConfig(String filepath) throws ParserConfigurationException, SAXException, IOException {
-//		Task t = TaskConfigParser.parseTaskConfig(filepath);
-//		t.executeTask();
-	}
+//	/**
+//	 * Runs a task based off its config
+//	 * @param filepath path to config file
+//	 * @throws IOException xml parsing error
+//	 * @throws SAXException xml parsing error
+//	 * @throws ParserConfigurationException xml parsing error
+//	 */
+//	public static void runConfig(String filepath) throws ParserConfigurationException, SAXException, IOException {
+////		Task t = TaskConfigParser.parseTaskConfig(filepath);
+////		t.executeTask();
+//	}
 	
 	/**
 	 * Get the OptionParser for this Task
@@ -126,14 +159,7 @@ public abstract class Task {
 		OptionSet options = getParser().parse(args);
 		try {
 			if(options.has("config")) {
-//				runConfig((String)options.valueOf("config"));
-				Map<String, String> t = TaskConfigParser.parseTaskConfig((String)options.valueOf("config"));
-				String[] params = {};
-				List<String> paramList = new LinkedList<String>();
-				for(String key : t.keySet()) {
-					//
-				}
-				t.getClass().getMethod("main", args.getClass()).invoke(null, new Object());
+//				runConfig((String)options.valueOf("config")); //TODO Chris: Resolve this
 			} else {
 				getParser().printHelpOn(System.out);
 			}
@@ -148,10 +174,10 @@ public abstract class Task {
 	 */
 	private static class TaskConfigParser extends DefaultHandler {
 		
-		/**
-		 * The task we are building
-		 */
-		private Task task;
+//		/**
+//		 * The task we are building
+//		 */
+//		private Task task;
 		/**
 		 * The param list from config file
 		 */
@@ -226,29 +252,30 @@ public abstract class Task {
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if(qName.equalsIgnoreCase("Task")) {
-				try {
-					Class<?> className = Class.forName(this.type);
-//					Object tempTask = className.newInstance();
-					Method builderMethod = className.getDeclaredMethod("getInstance", Map.class);
-					Object tempTask = builderMethod.invoke(null, this.params);
-					if(!(tempTask instanceof Task)) {
-						throw new SAXException("Class must extend Task");
-					}
-					this.task = (Task)tempTask;
-//					this.task.setParams(this.params);
-				} catch(ClassNotFoundException e) {
-					throw new SAXException("Unknown Class: "+this.type,e);
-				} catch(SecurityException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(IllegalArgumentException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(IllegalAccessException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(NoSuchMethodException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(InvocationTargetException e) {
-					throw new SAXException(e.getMessage(),e);
-				}
+				this.params.put("TaskTypeClass", this.type);
+//				try {
+//					Class<?> className = Class.forName(this.type);
+////					Object tempTask = className.newInstance();
+//					Method builderMethod = className.getDeclaredMethod("getInstance", Map.class);
+//					Object tempTask = builderMethod.invoke(null, this.params);
+//					if(!(tempTask instanceof Task)) {
+//						throw new SAXException("Class must extend Task");
+//					}
+//					this.task = (Task)tempTask;
+////					this.task.setParams(this.params);
+//				} catch(ClassNotFoundException e) {
+//					throw new SAXException("Unknown Class: "+this.type,e);
+//				} catch(SecurityException e) {
+//					throw new SAXException(e.getMessage(),e);
+//				} catch(IllegalArgumentException e) {
+//					throw new SAXException(e.getMessage(),e);
+//				} catch(IllegalAccessException e) {
+//					throw new SAXException(e.getMessage(),e);
+//				} catch(NoSuchMethodException e) {
+//					throw new SAXException(e.getMessage(),e);
+//				} catch(InvocationTargetException e) {
+//					throw new SAXException(e.getMessage(),e);
+//				}
 			} else if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamID, this.tempVal);
 			} else {
