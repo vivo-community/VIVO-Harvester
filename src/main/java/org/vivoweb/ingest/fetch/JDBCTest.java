@@ -53,7 +53,7 @@ public class JDBCTest extends Task {	/**
 	public void getTableData() throws SQLException {
 		List<String> tableNames = new LinkedList<String>();
 		DatabaseMetaData metaData = this.cursor.getConnection().getMetaData();
-		
+		String catalog = this.cursor.getConnection().getCatalog();
 		//Get Table Names
 		String[] tableTypes = {"TABLE"};
 		ResultSet tableData = metaData.getTables(null, null, "%", tableTypes);
@@ -63,14 +63,31 @@ public class JDBCTest extends Task {	/**
 		
 		//For each Table
 		for(String tableName : tableNames) {
+			System.out.println("====================================");
 			System.out.println("tableName: "+tableName);
-			ResultSet columnData = metaData.getColumns(null, null, tableName, "%");
+			System.out.println("------------------------------------");
+			ResultSet primaryKeys = metaData.getPrimaryKeys(catalog, null, tableName);
+			while(primaryKeys.next()) {
+				String name = primaryKeys.getString("COLUMN_NAME");
+//				String dataType = primaryKeys.getString("TYPE_NAME");
+//				int size = primaryKeys.getInt("COLUMN_SIZE");
+				System.out.println("primary key: "+name);
+			}
+			ResultSet columnData = metaData.getColumns(catalog, null, tableName, "%");
 			while(columnData.next()) {
 				String name = columnData.getString("COLUMN_NAME");
 				String dataType = columnData.getString("TYPE_NAME");
 				int size = columnData.getInt("COLUMN_SIZE");
-				System.out.println(name+": "+dataType+"["+size+"]");
+				System.out.println("column name: "+name+" - "+dataType+"["+size+"]");
 			}
+			ResultSet foreignKeys = metaData.getExportedKeys(catalog, null, tableName);
+			while(foreignKeys.next()) {
+				String foreignTable = foreignKeys.getString("FKTABLE_NAME");
+				String foreignColumnName = foreignKeys.getString("FKCOLUMN_NAME");
+				int foreignSequence = foreignKeys.getInt("KEY_SEQ");
+				System.out.println("foreign key: "+foreignSequence+" - "+foreignTable+"["+foreignColumnName+"]");
+			}
+			System.out.println("====================================");
 			System.out.println();
 		}
 	}
@@ -121,6 +138,9 @@ public class JDBCTest extends Task {	/**
 	}
 	
 	public static void main(String... args) {
+		if(args.length == 1) {
+			Task.main(args);
+		}
 		OptionSet o = getParser().parse(args);
 		checkNeededArgs(o,"d","c","u","p","o");
 		if(o.has("d")) {

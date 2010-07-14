@@ -82,6 +82,21 @@ public abstract class Task {
 	}
 	
 	/**
+	 * Instantiate an instance of taskClass with args from filePath config
+	 * @param taskClass subclass of Task to run with args from config
+	 * @param filePath path to the config file
+	 * @throws NoSuchMethodException method not defined
+	 * @throws SecurityException violates security manager
+	 * @throws InvocationTargetException cannot invoke using those params
+	 * @throws IllegalAccessException  method is not accessible
+	 * @throws IllegalArgumentException illegal arguments for method
+	 */
+	public static void runConfig(Class<? extends Task> taskClass, String filePath) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		String[] args = {}; //TODO Chris: Fill this in
+		taskClass.getMethod("main", String[].class).invoke(null, (Object)args);
+	}
+	
+	/**
 	 * Runs a task based off its config
 	 * @param filepath path to config file
 	 * @throws IOException xml parsing error
