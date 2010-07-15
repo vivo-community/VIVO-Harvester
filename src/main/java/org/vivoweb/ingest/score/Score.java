@@ -217,7 +217,7 @@ public class Score {
              Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 				
 			 
-             log.trace("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
+             log.info("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
              authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/1");
              
              //string that finds the last name of the person in VIVO
@@ -229,6 +229,8 @@ public class Score {
 									"WHERE {?badNode foaf:lastName " + authorLName.getObject().toString() + " ." +
 											"?badNode http://vivoweb.org/ontology/core#authorInAuthorship ?authorship}" +
 											"?authorship http://vivoweb.org/ontology/core#linkedInformationResource " + paperNode.toString() ;
+             
+             log.debug(authorQuery);
              
              ResultSet killList = executeQuery(toReplace,authorQuery);
              
@@ -313,7 +315,7 @@ public class Score {
 			QuerySolution scoreSolution;
 
 		 	//create pairs of *attribute* from matched
-	    	log.trace("Creating pairs of " + matchAttribute + " from input");
+	    	log.info("Creating pairs of " + matchAttribute + " from input");
 	    	
 	    	//look for exact match in vivo
 	    	while (matchResult.hasNext()) {
@@ -322,7 +324,7 @@ public class Score {
                 
                 scoreMatch = matchNode.toString();
                 
-                log.trace("\nChecking for " + scoreMatch + " in VIVO");
+                log.info("\nChecking for " + scoreMatch + " in VIVO");
             }	    			 
 	    	
 	    	//TODO Nicholas: return scoreInput minus the scored statements			
@@ -349,7 +351,7 @@ public class Score {
 				QuerySolution scoreSolution;
 
                 
-		    	log.trace("Looping thru " + matchAttribute + " from input");
+		    	log.info("Looping thru " + matchAttribute + " from input");
 		    	
 		    	//look for exact match in vivo
 		    	while (matchResult.hasNext()) {
@@ -362,13 +364,15 @@ public class Score {
 	                
 	                scoreMatch = matchNode.toString();
 	                
-	                log.trace("\nChecking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
+	                log.info("\nChecking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
 	    			
 	                //Select all matching attributes from vivo store
 	    			queryString =
 						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
 						"SELECT ?x " +
-						"WHERE { ?x " + coreAttribute + "\"" +  scoreMatch + "\"}";
+						"WHERE { ?x " + coreAttribute + " \"" +  scoreMatch + "\"}";
+	    			
+	    			log.debug(queryString);
 	    			
 	    			//TODO Nicholas: how to combine result sets? not possible in JENA
 	    			vivoResult = executeQuery(matched, queryString);
