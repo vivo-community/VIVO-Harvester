@@ -215,12 +215,14 @@ public class Score {
              Resource dependVitro = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource");
              Resource dependVivoWeb = ResourceFactory.createResource("http://vivoweb.org/ontology/core#DependentResource");
              Resource flag1 = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing");
+             Resource authorshipClass = ResourceFactory.createResource("http://vivoweb.org/ontology/core#Authorship");
+             
              Property rdfType = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
              Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 				
 			 
              log.info("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
-             authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/1");
+             authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/l1");
              
              //string that finds the last name of the person in VIVO
              Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
@@ -237,8 +239,12 @@ public class Score {
              ResultSet killList = executeQuery(toReplace,authorQuery);
              
              while(killList.hasNext()) {
+            	 QuerySolution killSolution = killList.nextSolution();
+	 	    		
+	 	    	 //Grab person URI
+            	 Resource removeAuthor = killSolution.getResource("badNode");
+	                
             	 //query the paper for the first author node (assumption that affiliation matches first author)
-                 Resource removeAuthor = toReplace.getResource(killList.next().toString());
             	 log.debug("Delete Resource " + removeAuthor.toString());
                  
 	             //return a statement iterator with all the statements for the Author that matches, then remove those statements
@@ -248,11 +254,12 @@ public class Score {
 	             }
 	             
 	             toReplace.remove(deleteStmts);
-	             deleteStmts = toReplace.listStatements(removeAuthor, null, (RDFNode)null);
-	             while (deleteStmts.hasNext()) {
-	            	 log.debug("Delete Statement " + deleteStmts.next().toString());
+	             
+	             StmtIterator authorStmts = removeAuthor.listProperties();
+	             while (authorStmts.hasNext()) {
+	            	 log.debug("Delete Statement " + authorStmts.next().toString());
 	             }
-	             toReplace.remove(deleteStmts);
+	             toReplace.remove(authorStmts);
              }
                          
              
@@ -266,14 +273,16 @@ public class Score {
              log.trace("Link Statement [" + paperNode.toString() + ", " + authorshipForPaper.toString() + ", " + authorship.toString() + "]");
              toReplace.add(authorship,rdfType,flag1);
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
-             toReplace.add(authorship,rdfType,dependVitro);
-             log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVitro.toString() + "]");
-             toReplace.add(authorship,rdfType,dependVivoWeb);
-             log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVivoWeb.toString() + "]");
+             toReplace.add(authorship,rdfType,authorshipClass);
+             log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + authorshipClass.toString() + "]");
+             //toReplace.add(authorship,rdfType,dependVitro);
+             //log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVitro.toString() + "]");
+             //toReplace.add(authorship,rdfType,dependVivoWeb);
+             //log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVivoWeb.toString() + "]");
              toReplace.add(authorship,rdfLabel,"Authorship for Paper");
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
              
-      
+             toReplace.commit();
 		 }
 		 
 		/**
