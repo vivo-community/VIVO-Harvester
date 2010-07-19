@@ -137,6 +137,8 @@
 		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
+			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource" />
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
 			<core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}" />
 			<core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
 			<core:authorRank><xsl:value-of select="position()" /></core:authorRank>			

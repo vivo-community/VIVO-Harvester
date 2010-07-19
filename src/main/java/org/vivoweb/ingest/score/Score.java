@@ -211,6 +211,9 @@ public class Score {
              Property paperOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedInformationResource");
              
              
+             
+             Resource dependVitro = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource");
+             Resource dependVivoWeb = ResourceFactory.createResource("http://vivoweb.org/ontology/core#DependentResource");
              Resource flag1 = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing");
              Property rdfType = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
              Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
@@ -224,7 +227,7 @@ public class Score {
              
              String authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " +
          							"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-									"SELECT ?x " +
+									"SELECT ?badNode " +
 									"WHERE {?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " +
 											"?badNode core:authorInAuthorship ?authorship . " +
 											"?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
@@ -233,14 +236,22 @@ public class Score {
              
              ResultSet killList = executeQuery(toReplace,authorQuery);
              
-             while(killList.hasNext()){
+             while(killList.hasNext()) {
             	 //query the paper for the first author node (assumption that affiliation matches first author)
                  Resource removeAuthor = toReplace.getResource(killList.next().toString());
-            	 
-	             //return a statment iterator with all the statements for the Author that matches, then remove those statements
+            	 log.debug("Delete Resource " + removeAuthor.toString());
+                 
+	             //return a statement iterator with all the statements for the Author that matches, then remove those statements
 	             StmtIterator deleteStmts = toReplace.listStatements(null, null, removeAuthor);
+	             while (deleteStmts.hasNext()) {
+	            	 log.debug("Delete Statement " + deleteStmts.next().toString());
+	             }
+	             
 	             toReplace.remove(deleteStmts);
 	             deleteStmts = toReplace.listStatements(removeAuthor, null, (RDFNode)null);
+	             while (deleteStmts.hasNext()) {
+	            	 log.debug("Delete Statement " + deleteStmts.next().toString());
+	             }
 	             toReplace.remove(deleteStmts);
              }
                          
@@ -255,8 +266,14 @@ public class Score {
              log.trace("Link Statement [" + paperNode.toString() + ", " + authorshipForPaper.toString() + ", " + authorship.toString() + "]");
              toReplace.add(authorship,rdfType,flag1);
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
+             toReplace.add(authorship,rdfType,dependVitro);
+             log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVitro.toString() + "]");
+             toReplace.add(authorship,rdfType,dependVivoWeb);
+             log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVivoWeb.toString() + "]");
              toReplace.add(authorship,rdfLabel,"Authorship for Paper");
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
+             
+      
 		 }
 		 
 		/**
