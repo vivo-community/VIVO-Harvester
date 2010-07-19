@@ -127,7 +127,7 @@ public class Score {
 			 	//TODO Nicholas: finish implementation of exact matching loop
 			 	//for each matchAttribute
 			 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
-			 		exactMatch(this.vivo,this.scoreInput,matchAttribute,coreAttribute,scoreInputResult);
+			 		exactMatch(this.vivo,this.scoreOutput,matchAttribute,coreAttribute,scoreInputResult);
 			    //end for
 			 		
 		 		//DEBUG
@@ -189,7 +189,7 @@ public class Score {
 	
 	                result.add(recursiveSanitizeBuild(paperResource,null));
 	                
-	                replaceResource(authorNode, paperNode, result);
+	                replaceResource(authorNode,paperNode, result);
 	                
 					//take results and store in matched model
 	                result.commit();
@@ -201,9 +201,8 @@ public class Score {
 		 * @param  mainNode primary node
 		 * @param  paperNode node of paper
 		 * @param  toReplace model to replace
-		 * @return a model (toReplace to be exact) //TODO Nicholas: you know that this is unnecessary as Java passes Objects by reference? You can just be void -CAH
 		 */
-		 private static Model replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
+		 private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
 			 Resource authorship;
 			 Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
              Property authorshipForPerson = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorInAuthorship");
@@ -221,14 +220,14 @@ public class Score {
              authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/1");
              
              //string that finds the last name of the person in VIVO
-             Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastname"));
+             Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
              
              String authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " +
          							"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
 									"SELECT ?x " +
-									"WHERE {?badNode foaf:lastName " + authorLName.getObject().toString() + " ." +
-											"?badNode http://vivoweb.org/ontology/core#authorInAuthorship ?authorship}" +
-											"?authorship http://vivoweb.org/ontology/core#linkedInformationResource " + paperNode.toString() ;
+									"WHERE {?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " +
+											"?badNode core:authorInAuthorship ?authorship . " +
+											"?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
              
              log.debug(authorQuery);
              
@@ -258,8 +257,6 @@ public class Score {
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
              toReplace.add(authorship,rdfLabel,"Authorship for Paper");
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
-             
-             return toReplace;
 		 }
 		 
 		/**
@@ -282,8 +279,11 @@ public class Score {
 				 if (!stmt.getPredicate().toString().contains("/score")) {
 	          		returnModel.add(stmt);
 	          		                    	
-	                 	if (stmt.getObject().isResource()  && (Resource)stmt.getObject() != linkRes) {
+	                 	if ((stmt.getObject().isResource() && !((Resource)stmt.getObject()).equals(linkRes)) && !((Resource)stmt.getObject()).equals(mainRes)) {
 	                 		returnModel.add(recursiveSanitizeBuild((Resource)stmt.getObject(), mainRes));
+	                 	}
+	                 	if (!stmt.getSubject().equals(linkRes) && !stmt.getSubject().equals(mainRes)) {
+	                 		returnModel.add(recursiveSanitizeBuild(stmt.getSubject(), mainRes));
 	                 	}
 	          		}
 			 }
@@ -370,13 +370,17 @@ public class Score {
 	    			queryString =
 						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
 						"SELECT ?x " +
-						"WHERE { ?x " + coreAttribute + " \"" +  scoreMatch + "\"}";
+						"WHERE { ?x " + coreAttribute + " \"" +  scoreMatch + "\" }";
 	    			
 	    			log.debug(queryString);
 	    			
 	    			//TODO Nicholas: how to combine result sets? not possible in JENA
 	    			vivoResult = executeQuery(matched, queryString);
-	    			commitResultSet(output,vivoResult,paperResource,paperNode,matchNode);
+	    			//while (vivoResult.hasNext()) {
+	    			//	System.out.println(vivoResult.toString());
+	    			//}
+	    			
+	    			commitResultSet(output,vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
 		    	
 		    	//TODO Nicholas: return scoreInput minus the scored statements
