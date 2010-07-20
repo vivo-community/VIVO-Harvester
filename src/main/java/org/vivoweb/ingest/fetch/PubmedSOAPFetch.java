@@ -158,15 +158,13 @@ public class PubmedSOAPFetch extends Task
 			req.setUsehistory("y");
 			// run the search and get result set
 			EUtilsServiceStub.ESearchResult res = service.run_eSearch(req);
-			IdListType a = res.getIdList();
-			String[] b = a.getId();
-			int numRec = b.length;
-			log.trace("Query resulted in a total of " + numRec + " records.");
 			// save the environment data
 			env[0] = res.getWebEnv();
 			env[1] = res.getQueryKey();
 			env[2] = ""+res.getIdList().getId().length;
 			env[3] = res.getIdList().getId()[0];
+			
+			log.trace("Query resulted in a total of " + env[2] + " records.");
 		}
 		catch (RemoteException e)
 		{
@@ -304,11 +302,15 @@ public class PubmedSOAPFetch extends Task
 			String[] env = runESearch(this.strSearchTerm, recToFetch);
 			String WebEnv = env[0];
 			String QueryKey = env[1];
+			// sanity check for max records
+			if (Integer.parseInt(env[2]) < recToFetch.intValue()) {
+				recToFetch = Integer.getInteger(env[2]);
+			}
 			for(int x = recToFetch.intValue(); x > 0; x-=intBatchSize) {
 				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
 				int startRec = recToFetch.intValue() - x;
-				System.out.println("maxRec: "+maxRec);
-				System.out.println("startRec: "+startRec);
+				log.debug("maxRec: "+maxRec);
+				log.debug("startRec: "+startRec);
 				fetchPubMed(WebEnv, QueryKey, startRec+"", maxRec+"");
 			}
 		}
