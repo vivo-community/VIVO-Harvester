@@ -202,15 +202,15 @@ public class Score {
 		 * @param  paperNode node of paper
 		 * @param  toReplace model to replace
 		 */
-		 private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
+		 @SuppressWarnings("null")
+		private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
 			 Resource authorship;
 			 Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
              Property authorshipForPerson = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorInAuthorship");
              
              Property authorshipForPaper = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#informationResourceInAuthorship");
              Property paperOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedInformationResource");
-             
-             
+             Property rankOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorRank");
              
              Resource dependVitro = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource");
              Resource dependVivoWeb = ResourceFactory.createResource("http://vivoweb.org/ontology/core#DependentResource");
@@ -219,7 +219,7 @@ public class Score {
              
              Property rdfType = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
              Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
-				
+			 int authorRank = 1;	
 			 
              log.info("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
              authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/l1");
@@ -243,23 +243,43 @@ public class Score {
 	 	    		
 	 	    	 //Grab person URI
             	 Resource removeAuthor = killSolution.getResource("badNode");
-	                
+	             
             	 //query the paper for the first author node (assumption that affiliation matches first author)
             	 log.debug("Delete Resource " + removeAuthor.toString());
                  
 	             //return a statement iterator with all the statements for the Author that matches, then remove those statements
+            	 //model.remove is broken so we are using statement.remove
 	             StmtIterator deleteStmts = toReplace.listStatements(null, null, removeAuthor);
 	             while (deleteStmts.hasNext()) {
-	            	 log.debug("Delete Statement " + deleteStmts.next().toString());
-	             }
-	             
-	             toReplace.remove(deleteStmts);
+	            	 Statement dStmt = deleteStmts.next();
+	            	 log.debug("Delete Statement " + dStmt.toString());
+	            		            	 
+                 	if (!dStmt.getSubject().equals(removeAuthor)) {
+                 		Statement authorRankStmt = dStmt.getSubject().getProperty(rankOf);
+                 		authorRank = authorRankStmt.getObject().asLiteral().getInt();
+       	                              		
+                 		StmtIterator authorshipStmts = dStmt.getSubject().listProperties();
+	       	            while (authorshipStmts.hasNext()) {
+	       	            	 log.debug("Delete Statement " + authorshipStmts.next().toString());
+	       	            }
+	       	            dStmt.getSubject().removeProperties();
+	       	            
+	       	            StmtIterator deleteAuthorshipStmts = toReplace.listStatements(null, null, dStmt.getSubject());
+	       	            while (deleteAuthorshipStmts.hasNext()) {
+	       	            	Statement dASStmt = deleteAuthorshipStmts.next();
+	       	            	log.debug("Delete Statement " + dASStmt.toString());
+	       	            	dASStmt.remove();
+	       	            }	       	            
+	       	            	       	            
+                 	}                 	
+                 	
+	             }	             
 	             
 	             StmtIterator authorStmts = removeAuthor.listProperties();
 	             while (authorStmts.hasNext()) {
 	            	 log.debug("Delete Statement " + authorStmts.next().toString());
 	             }
-	             toReplace.remove(authorStmts);
+	             removeAuthor.removeProperties();
              }
                          
              
@@ -281,6 +301,9 @@ public class Score {
              //log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVivoWeb.toString() + "]");
              toReplace.add(authorship,rdfLabel,"Authorship for Paper");
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
+             toReplace.addLiteral(authorship,rankOf,authorRank);
+             log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", " + String.valueOf(authorRank) + "]");
+             
              
              toReplace.commit();
 		 }
