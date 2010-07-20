@@ -202,7 +202,6 @@ public class Score {
 		 * @param  paperNode node of paper
 		 * @param  toReplace model to replace
 		 */
-		 @SuppressWarnings("null")
 		private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
 			 Resource authorship;
 			 Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
@@ -212,8 +211,6 @@ public class Score {
              Property paperOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedInformationResource");
              Property rankOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorRank");
              
-             Resource dependVitro = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource");
-             Resource dependVivoWeb = ResourceFactory.createResource("http://vivoweb.org/ontology/core#DependentResource");
              Resource flag1 = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing");
              Resource authorshipClass = ResourceFactory.createResource("http://vivoweb.org/ontology/core#Authorship");
              
@@ -295,10 +292,6 @@ public class Score {
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
              toReplace.add(authorship,rdfType,authorshipClass);
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + authorshipClass.toString() + "]");
-             //toReplace.add(authorship,rdfType,dependVitro);
-             //log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVitro.toString() + "]");
-             //toReplace.add(authorship,rdfType,dependVivoWeb);
-             //log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + dependVivoWeb.toString() + "]");
              toReplace.add(authorship,rdfLabel,"Authorship for Paper");
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
              toReplace.addLiteral(authorship,rankOf,authorRank);
