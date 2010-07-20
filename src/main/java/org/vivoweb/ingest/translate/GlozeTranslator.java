@@ -127,11 +127,11 @@ public class GlozeTranslator extends Translator{
 	@Override
 	public void execute() {
 		if (this.uriBase != null && this.inStream != null ){	
-			log.info("Translation: Start");
+			log.trace("Translation: Start");
 			
 			translateFile();
 			
-			log.info("Translation: End");
+			log.trace("Translation: End");
 		}
 		else {
 			log.error("Invalid Arguments: Gloze Translation requires a URIBase and XMLFile");
