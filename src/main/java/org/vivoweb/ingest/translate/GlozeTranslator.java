@@ -137,11 +137,11 @@ public class GlozeTranslator extends Task {
 	@Override
 	public void executeTask() {
 		if(this.uriBase != null && this.inStream != null) {
-			log.info("Translation: Start");
+			log.trace("Translation: Start");
 			
 			translateFile();
 			
-			log.info("Translation: End");
+			log.trace("Translation: End");
 		} else {
 			log.error("Invalid Arguments: Gloze Translation requires a URIBase and XMLFile");
 			throw new IllegalArgumentException();

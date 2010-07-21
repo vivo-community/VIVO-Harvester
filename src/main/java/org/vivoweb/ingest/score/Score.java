@@ -127,7 +127,7 @@ public class Score {
 			 	//TODO Nicholas: finish implementation of exact matching loop
 			 	//for each matchAttribute
 			 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
-			 		exactMatch(this.vivo,this.scoreInput,matchAttribute,coreAttribute,scoreInputResult);
+			 		exactMatch(this.vivo,this.scoreOutput,matchAttribute,coreAttribute,scoreInputResult);
 			    //end for
 			 		
 		 		//DEBUG
@@ -189,7 +189,7 @@ public class Score {
 	
 	                result.add(recursiveSanitizeBuild(paperResource,null));
 	                
-	                replaceResource(authorNode, paperNode, result);
+	                replaceResource(authorNode,paperNode, result);
 	                
 					//take results and store in matched model
 	                result.commit();
@@ -201,46 +201,82 @@ public class Score {
 		 * @param  mainNode primary node
 		 * @param  paperNode node of paper
 		 * @param  toReplace model to replace
-		 * @return a model (toReplace to be exact) //TODO Nicholas: you know that this is unnecessary as Java passes Objects by reference? You can just be void -CAH
 		 */
-		 private static Model replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
+		private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace){
 			 Resource authorship;
 			 Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
              Property authorshipForPerson = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorInAuthorship");
              
              Property authorshipForPaper = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#informationResourceInAuthorship");
              Property paperOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedInformationResource");
-             
+             Property rankOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorRank");
              
              Resource flag1 = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing");
+             Resource authorshipClass = ResourceFactory.createResource("http://vivoweb.org/ontology/core#Authorship");
+             
              Property rdfType = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
              Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
-				
+			 int authorRank = 1;	
 			 
-             log.trace("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
-             authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/1");
+             log.info("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
+             authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/l1");
              
              //string that finds the last name of the person in VIVO
-             Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastname"));
+             Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
              
              String authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " +
          							"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-									"SELECT ?x " +
-									"WHERE {?badNode foaf:lastName " + authorLName.getObject().toString() + " ." +
-											"?badNode http://vivoweb.org/ontology/core#authorInAuthorship ?authorship}" +
-											"?authorship http://vivoweb.org/ontology/core#linkedInformationResource " + paperNode.toString() ;
+									"SELECT ?badNode " +
+									"WHERE {?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " +
+											"?badNode core:authorInAuthorship ?authorship . " +
+											"?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
+             
+             log.debug(authorQuery);
              
              ResultSet killList = executeQuery(toReplace,authorQuery);
              
-             while(killList.hasNext()){
+             while(killList.hasNext()) {
+            	 QuerySolution killSolution = killList.nextSolution();
+	 	    		
+	 	    	 //Grab person URI
+            	 Resource removeAuthor = killSolution.getResource("badNode");
+	             
             	 //query the paper for the first author node (assumption that affiliation matches first author)
-                 Resource removeAuthor = toReplace.getResource(killList.next().toString());
-            	 
-	             //return a statment iterator with all the statements for the Author that matches, then remove those statements
+            	 log.debug("Delete Resource " + removeAuthor.toString());
+                 
+	             //return a statement iterator with all the statements for the Author that matches, then remove those statements
+            	 //model.remove is broken so we are using statement.remove
 	             StmtIterator deleteStmts = toReplace.listStatements(null, null, removeAuthor);
-	             toReplace.remove(deleteStmts);
-	             deleteStmts = toReplace.listStatements(removeAuthor, null, (RDFNode)null);
-	             toReplace.remove(deleteStmts);
+	             while (deleteStmts.hasNext()) {
+	            	 Statement dStmt = deleteStmts.next();
+	            	 log.debug("Delete Statement " + dStmt.toString());
+	            		            	 
+                 	if (!dStmt.getSubject().equals(removeAuthor)) {
+                 		Statement authorRankStmt = dStmt.getSubject().getProperty(rankOf);
+                 		authorRank = authorRankStmt.getObject().asLiteral().getInt();
+       	                              		
+                 		StmtIterator authorshipStmts = dStmt.getSubject().listProperties();
+	       	            while (authorshipStmts.hasNext()) {
+	       	            	 log.debug("Delete Statement " + authorshipStmts.next().toString());
+	       	            }
+	       	            dStmt.getSubject().removeProperties();
+	       	            
+	       	            StmtIterator deleteAuthorshipStmts = toReplace.listStatements(null, null, dStmt.getSubject());
+	       	            while (deleteAuthorshipStmts.hasNext()) {
+	       	            	Statement dASStmt = deleteAuthorshipStmts.next();
+	       	            	log.debug("Delete Statement " + dASStmt.toString());
+	       	            	dASStmt.remove();
+	       	            }	       	            
+	       	            	       	            
+                 	}                 	
+                 	
+	             }	             
+	             
+	             StmtIterator authorStmts = removeAuthor.listProperties();
+	             while (authorStmts.hasNext()) {
+	            	 log.debug("Delete Statement " + authorStmts.next().toString());
+	             }
+	             removeAuthor.removeProperties();
              }
                          
              
@@ -254,10 +290,15 @@ public class Score {
              log.trace("Link Statement [" + paperNode.toString() + ", " + authorshipForPaper.toString() + ", " + authorship.toString() + "]");
              toReplace.add(authorship,rdfType,flag1);
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
+             toReplace.add(authorship,rdfType,authorshipClass);
+             log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + authorshipClass.toString() + "]");
              toReplace.add(authorship,rdfLabel,"Authorship for Paper");
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
+             toReplace.addLiteral(authorship,rankOf,authorRank);
+             log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", " + String.valueOf(authorRank) + "]");
              
-             return toReplace;
+             
+             toReplace.commit();
 		 }
 		 
 		/**
@@ -280,8 +321,11 @@ public class Score {
 				 if (!stmt.getPredicate().toString().contains("/score")) {
 	          		returnModel.add(stmt);
 	          		                    	
-	                 	if (stmt.getObject().isResource()  && (Resource)stmt.getObject() != linkRes) {
+	                 	if ((stmt.getObject().isResource() && !((Resource)stmt.getObject()).equals(linkRes)) && !((Resource)stmt.getObject()).equals(mainRes)) {
 	                 		returnModel.add(recursiveSanitizeBuild((Resource)stmt.getObject(), mainRes));
+	                 	}
+	                 	if (!stmt.getSubject().equals(linkRes) && !stmt.getSubject().equals(mainRes)) {
+	                 		returnModel.add(recursiveSanitizeBuild(stmt.getSubject(), mainRes));
 	                 	}
 	          		}
 			 }
@@ -313,7 +357,7 @@ public class Score {
 			QuerySolution scoreSolution;
 
 		 	//create pairs of *attribute* from matched
-	    	log.trace("Creating pairs of " + matchAttribute + " from input");
+	    	log.info("Creating pairs of " + matchAttribute + " from input");
 	    	
 	    	//look for exact match in vivo
 	    	while (matchResult.hasNext()) {
@@ -322,7 +366,7 @@ public class Score {
                 
                 scoreMatch = matchNode.toString();
                 
-                log.trace("\nChecking for " + scoreMatch + " in VIVO");
+                log.info("\nChecking for " + scoreMatch + " in VIVO");
             }	    			 
 	    	
 	    	//TODO Nicholas: return scoreInput minus the scored statements			
@@ -349,7 +393,7 @@ public class Score {
 				QuerySolution scoreSolution;
 
                 
-		    	log.trace("Looping thru " + matchAttribute + " from input");
+		    	log.info("Looping thru " + matchAttribute + " from input");
 		    	
 		    	//look for exact match in vivo
 		    	while (matchResult.hasNext()) {
@@ -362,17 +406,23 @@ public class Score {
 	                
 	                scoreMatch = matchNode.toString();
 	                
-	                log.trace("\nChecking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
+	                log.info("\nChecking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
 	    			
 	                //Select all matching attributes from vivo store
 	    			queryString =
 						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
 						"SELECT ?x " +
-						"WHERE { ?x " + coreAttribute + "\"" +  scoreMatch + "\"}";
+						"WHERE { ?x " + coreAttribute + " \"" +  scoreMatch + "\" }";
+	    			
+	    			log.debug(queryString);
 	    			
 	    			//TODO Nicholas: how to combine result sets? not possible in JENA
 	    			vivoResult = executeQuery(matched, queryString);
-	    			commitResultSet(output,vivoResult,paperResource,paperNode,matchNode);
+	    			//while (vivoResult.hasNext()) {
+	    			//	System.out.println(vivoResult.toString());
+	    			//}
+	    			
+	    			commitResultSet(output,vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
 		    	
 		    	//TODO Nicholas: return scoreInput minus the scored statements

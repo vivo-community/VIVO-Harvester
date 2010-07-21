@@ -175,7 +175,7 @@ public class XSLTranslator extends Task {
 				this.setTranslationFile(new File(args[2]));
 				this.inStream = new FileInputStream(new File(args[1]));
 				
-				log.info("Translating Record " + args[1].toString());
+				log.trace("Translating Record " + args[1].toString());
 				
 				if( !args[3].equals("") && args[3] != null) {
 					this.outStream = new FileOutputStream(new File(args[3]));
@@ -203,7 +203,7 @@ public class XSLTranslator extends Task {
 				
 				// get from the in record and translate
 				for(Record r : inStore) {
-					log.info("Translating Record " + r.getID());
+					log.trace("Translating Record " + r.getID());
 					
 					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
 					this.outStream = buff; 
@@ -222,7 +222,7 @@ public class XSLTranslator extends Task {
 			throw new IllegalArgumentException();
 		}
 		
-		log.info("Translation: End");
+		log.trace("Translation: End");
 		
 	}
 	
