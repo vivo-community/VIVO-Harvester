@@ -304,7 +304,8 @@ public class PubmedSOAPFetch extends Task
 			String QueryKey = env[1];
 			// sanity check for max records
 			if (Integer.parseInt(env[2]) < recToFetch.intValue()) {
-				recToFetch = Integer.getInteger(env[2]);
+				recToFetch = Integer.valueOf(env[2]);
+				log.debug("Fetching the maxium of " + recToFetch);
 			}
 			for(int x = recToFetch.intValue(); x > 0; x-=intBatchSize) {
 				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
