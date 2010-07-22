@@ -164,6 +164,8 @@
 	<xsl:template match="MeshHeading" mode="fullTerm">
 		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh/{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
+			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
 			<rdfs:label><xsl:value-of select="DescriptorName"/></rdfs:label>
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
