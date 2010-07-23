@@ -10,15 +10,16 @@
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
+import static java.util.Arrays.asList;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.RecordHandler;
-import org.vivoweb.ingest.util.Task;
 import org.vivoweb.ingest.util.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 import ORG.oclc.oai.harvester2.app.RawWrite;
@@ -28,7 +29,7 @@ import ORG.oclc.oai.harvester2.app.RawWrite;
  * @author Dale Scheppler
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class OAIFetch extends Task {
+public class OAIFetch {
 	/**
 	 * Log4J Logger
 	 */
@@ -79,23 +80,34 @@ public class OAIFetch extends Task {
 		this.osOutStream = outStream;
 	}
 	
-	public static OAIFetch getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		String address = getParam(params, "address", true);
-		String startDate = getParam(params, "startDate", true);
-		String endDate = getParam(params, "endDate", true);
-		String repositoryConfig = getParam(params, "repositoryConfig", true);
-		RecordHandler rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
-		rhRecordHandler.setOverwriteDefault(true);
-		OutputStream os = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler);
-		return new OAIFetch(address, startDate, endDate, os);
+	/**
+	 * Constructor
+	 * @param argList parsed argument list
+	 * @throws IOException error connecting to record handler
+	 */
+	public OAIFetch(ArgList argList) throws IOException {
+		this.strAddress = argList.get("u");
+		this.strStartDate = argList.get("s");
+		this.strEndDate = argList.get("e");
+		String repositoryConfig = argList.get("o");
+		RecordHandler rhRecordHandler;
+		try {
+			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(IOException e) {
+			throw new IOException(e.getMessage(),e);
+		}
+		this.osOutStream = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler);
 	}
 	
-	@Override
-	public void executeTask() throws NumberFormatException {
+	/**
+	 * Executes the task
+	 */
+	public void executeTask() {
 		try {
-			System.out.println("http://" + this.strAddress);
-			System.out.println(this.strStartDate);
-			System.out.println(this.strEndDate);
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
 		} catch(IOException e) {
 			log.error(e.getMessage(),e);
@@ -107,6 +119,37 @@ public class OAIFetch extends Task {
 			log.error(e.getMessage(),e);
 		} catch(NoSuchFieldException e) {
 			log.error(e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * Get the OptionParser for this Task
+	 * @return the OptionParser
+	 */
+	protected static OptionParser getParser() {
+		OptionParser parser = new OptionParser();
+		parser.acceptsAll(asList("u", "url")).withRequiredArg().describedAs("repository url");
+		parser.acceptsAll(asList("s", "start")).withRequiredArg().describedAs("beginning date of date range (MM/DD/YYYY)");
+		parser.acceptsAll(asList("e", "end")).withRequiredArg().describedAs("ending date of date range (MM/DD/YYYY)");
+		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("RecordHandler config file path");
+		return parser;
+	}
+	
+	/**
+	 * Main method
+	 * @param args commandline arguments
+	 */
+	public static void main(String... args) {
+		try {
+			new OAIFetch(new ArgList(getParser(), args, "u","s","e","o")).executeTask();
+		} catch(IllegalArgumentException e) {
+			try {
+				getParser().printHelpOn(System.out);
+			} catch(IOException e1) {
+				log.fatal(e.getMessage(),e);
+			}
+		} catch(Exception e) {
+			log.fatal(e.getMessage(),e);
 		}
 	}
 }

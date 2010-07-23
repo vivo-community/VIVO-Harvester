@@ -10,11 +10,11 @@
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
+import static java.util.Arrays.asList;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.EFetchResult;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.PubmedArticleSet_type0;
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.IdListType;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,29 +23,29 @@ import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import joptsimple.OptionParser;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.RecordHandler;
-import org.vivoweb.ingest.util.Task;
 import org.vivoweb.ingest.util.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 
 /**
- * Module for fetching PubMed Citations using the PubMed SOAP Interface<br>
+ * Module for fetching PubMed Citations using the PubMed SOAP Interface
  * Based on the example code available at the PubMed Website.
  * @author Stephen V. Williams (swilliams@ctrip.ufl.edu)
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class PubmedSOAPFetch extends Task
-{
+public class PubmedSOAPFetch {
 	/**
 	 * Log4J Logger
 	 */
@@ -91,7 +91,7 @@ public class PubmedSOAPFetch extends Task
 		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
 		this.strToolLocation = strToolLoc; // This provides further information to NIH
 		this.strSearchTerm = queryAll();
-		this.strMaxRecords = getHighestRecordNumber()+"";
+		this.strMaxRecords = getHighestPMID()+"";
 		this.strBatchSize = "1000";
 		setXMLWriter(outStream);
 	}
@@ -121,17 +121,28 @@ public class PubmedSOAPFetch extends Task
 		setXMLWriter(outStream);
 	}
 	
-	public static PubmedSOAPFetch getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		String emailAddress = getParam(params, "emailAddress", true);
-		String toolLocation = getParam(params, "location", true);
-		String repositoryConfig = getParam(params, "repositoryConfig", true);
-		String searchTerm = getParam(params, "searchTerm", true);
-		String maxRecords = getParam(params, "maxRecords", true);
-		String batchSize  = getParam(params, "batchSize", true);
-		RecordHandler rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
-		rhRecordHandler.setOverwriteDefault(true);
+	/**
+	 * Constructor
+	 * @param argList parsed argument list
+	 * @throws IOException error creating task
+	 */
+	public PubmedSOAPFetch(ArgList argList) throws IOException {
+		this.strEmailAddress = argList.get("m");
+		this.strToolLocation = argList.get("l");
+		String repositoryConfig = argList.get("o");
+		this.strSearchTerm = argList.get("t");
+		this.strMaxRecords = argList.get("n");
+		this.strBatchSize  = argList.get("b");
+		RecordHandler rhRecordHandler;
+		try {
+			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(),e);
+		}
 		OutputStream os = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler);
-		return new PubmedSOAPFetch(emailAddress, toolLocation, searchTerm, maxRecords, batchSize, os);
+		setXMLWriter(os);
 	}
 	
 	/**
@@ -244,9 +255,18 @@ public class PubmedSOAPFetch extends Task
 	 * @return highest PMID
 	 * @author Dale Scheppler
 	 */
-	public int getHighestRecordNumber()
+	private int getHighestPMID()
 	{
 		return Integer.parseInt(runESearch(queryAll(), Integer.valueOf(1))[3]);
+	}
+	
+	/**
+	 * Get highest PubMed article PMID
+	 * @return highest PMID
+	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+	 */
+	public static int getHighestRecordNumber() {
+		return new PubmedSOAPFetch("", "", queryAll(), "1", "1", new NullOutputStream()).getHighestPMID();
 	}
 	
 	/**
@@ -303,8 +323,84 @@ public class PubmedSOAPFetch extends Task
 		return intStartPMID+":"+intStopPMID+"[uid]";
 	}
 	
-	@Override
-	public void executeTask() throws NumberFormatException {
+	/**
+	 * Sanitizes XML in preparation for writing to output stream
+	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
+	 * @param strInput The XML to Sanitize.
+	 * @author Chris Haines
+	 * @author Stephen Williams
+	 */
+	private void sanitizeXML(String strInput) {
+		log.debug("Sanitizing Output");
+		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
+		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
+		log.debug("XML File Length - Post Sanitze: " + newS.length());
+		log.debug("Sanitization Complete");
+		try {
+			log.trace("Writing to output");
+			this.xmlWriter.write(newS);
+			//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
+			this.xmlWriter.write("\n");
+			this.xmlWriter.flush();
+			log.trace("Writing complete");
+		} catch(IOException e) {
+			log.error("Unable to write XML to file.",e);
+		}
+	}
+	
+	/**
+	 * Runs, sanitizes, and outputs the results of a EFetch request to the xmlWriter
+	 * @param req the request to run and output results
+	 * @throws RemoteException error running EFetch
+	 */
+	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws RemoteException {
+		//Create buffer for raw, pre-sanitized output
+		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
+		//Connect to pubmed
+		EFetchPubmedServiceStub service = new EFetchPubmedServiceStub();
+		//Run the EFetch request
+		EFetchResult result = service.run_eFetch(req);
+		//Get the article set
+		PubmedArticleSet_type0 articleSet = result.getPubmedArticleSet();
+		XMLStreamWriter writer;
+		try {
+			//Create a temporary xml writer to our buffer
+			writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
+			MTOMAwareXMLSerializer serial = new MTOMAwareXMLSerializer(writer);
+			log.debug("Buffering records");
+			//Output data
+			articleSet.serialize(new QName("RemoveMe"), null, serial);
+			serial.flush();
+			log.debug("Buffering complete");
+			log.debug("buffer size: "+buffer.size());
+			//Dump buffer to String
+			String iString = buffer.toString("UTF-8");
+			//Sanitize string (which writes it to xmlWriter)
+			sanitizeXML(iString);
+		} catch(XMLStreamException e) {
+			log.error("Unable to write to output",e);
+		} catch(UnsupportedEncodingException e) {
+			log.error("Cannot get xml from buffer",e);
+		}
+	}
+	
+	/**
+	 * Setter for xmlwriter
+	 * @param os outputstream to write to
+	 */
+	private void setXMLWriter(OutputStream os) {
+		try {
+			// Writer to the stream we're getting from the controller.
+			this.xmlWriter = new OutputStreamWriter(os, "UTF-8");
+		} catch(UnsupportedEncodingException e) {
+			log.error("",e);
+		}
+	}
+	
+	/**
+	 * Executes the task
+	 */
+	public void executeTask() {
 		Integer recToFetch;
 		if(this.strMaxRecords.equalsIgnoreCase("all")) {
 			recToFetch = Integer.valueOf(getHighestRecordNumber());
@@ -333,74 +429,35 @@ public class PubmedSOAPFetch extends Task
 	}
 	
 	/**
-	 * Sanitizes XML in preparation for writing to output stream
-	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
-	 * @param strInput The XML to Sanitize.
-	 * @author Chris Haines
-	 * @author Stephen Williams
+	 * Get the OptionParser for this Task
+	 * @return the OptionParser
 	 */
-	private void sanitizeXML(String strInput) {
-		log.trace("Sanitizing Output");
-		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
-		log.trace("XML File Length - Pre Sanitize: " + strInput.length());
-		log.trace("XML File Length - Post Sanitze: " + newS.length());
-		try {
-			this.xmlWriter.write(newS);
-			//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
-			this.xmlWriter.write("\n");
-			this.xmlWriter.flush();
-		} catch(IOException e) {
-			log.error("Unable to write XML to file.",e);
-		}
-		log.trace("Sanitization Complete");
+	private static OptionParser getParser() {
+		OptionParser parser = new OptionParser();
+		parser.acceptsAll(asList("m", "email")).withRequiredArg().describedAs("contact email address");
+		parser.acceptsAll(asList("l", "location")).withRequiredArg().describedAs("contact location/institution");
+		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("RecordHandler config file path");
+		parser.acceptsAll(asList("t", "termSearch")).withRequiredArg().describedAs("term to search against pubmed").defaultsTo(queryAll());
+		parser.acceptsAll(asList("n", "numRecords")).withRequiredArg().describedAs("maximun records to return").defaultsTo(""+getHighestRecordNumber());
+		parser.acceptsAll(asList("b", "batchSize")).withRequiredArg().describedAs("number of records to fetch per batch").defaultsTo("1000");
+		return parser;
 	}
 	
 	/**
-	 * Runs, sanitizes, and outputs the results of a EFetch request to the xmlWriter
-	 * @param req the request to run and output results
-	 * @throws RemoteException error running EFetch
+	 * Main method
+	 * @param args commandline arguments
 	 */
-	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws RemoteException {
-		//Create buffer for raw, pre-sanitized output
-		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
-		//Connect to pubmed
-		EFetchPubmedServiceStub service = new EFetchPubmedServiceStub();
-		//Run the EFetch request
-		EFetchResult result = service.run_eFetch(req);
-		//Get the article set
-		PubmedArticleSet_type0 articleSet = result.getPubmedArticleSet();
-		XMLStreamWriter writer;
+	public static void main(String... args) {
 		try {
-			//Create a temporary xml writer to our buffer
-			writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
-			MTOMAwareXMLSerializer serial = new MTOMAwareXMLSerializer(writer);
-			log.trace("Writing to output");
-			//Output data
-			articleSet.serialize(new QName("RemoveMe"), null, serial);
-			serial.flush();
-			log.trace("Writing complete");
-//			log.trace("buffer size: "+buffer.size());
-			//Dump buffer to String
-			String iString = buffer.toString("UTF-8");
-			//Sanitize string (which writes it to xmlWriter)
-			sanitizeXML(iString);
-		} catch(XMLStreamException e) {
-			log.error("Unable to write to output",e);
-		} catch(UnsupportedEncodingException e) {
-			log.error("Cannot get xml from buffer",e);
-		}
-	}
-	
-	/**
-	 * Setter for xmlwriter
-	 * @param os outputstream to write to
-	 */
-	private void setXMLWriter(OutputStream os) {
-		try {
-			// Writer to the stream we're getting from the controller.
-			this.xmlWriter = new OutputStreamWriter(os, "UTF-8");
-		} catch(UnsupportedEncodingException e) {
-			log.error("",e);
+			new PubmedSOAPFetch(new ArgList(getParser(), args, "m","l","o","t","n","b")).executeTask();
+		} catch(IllegalArgumentException e) {
+			try {
+				getParser().printHelpOn(System.out);
+			} catch(IOException e1) {
+				log.fatal(e.getMessage(),e);
+			}
+		} catch(Exception e) {
+			log.fatal(e.getMessage(),e);
 		}
 	}
 }

@@ -10,12 +10,13 @@
  ******************************************************************************/
 package org.vivoweb.ingest.qualify;
 
+import static java.util.Arrays.asList;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
+import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.JenaConnect;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
@@ -33,32 +34,78 @@ import com.hp.hpl.jena.update.UpdateRequest;
  * Qualify data using SPARQL queries
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class SPARQLQualify extends Qualify {
+public class SPARQLQualify {
 	/**
 	 * Log4J Logger
 	 */
 	private static Log log = LogFactory.getLog(SPARQLQualify.class);
 	/**
-	 * Parameter list for qualification
+	 * Jena Model we are working in
 	 */
-	private Map<String, Map<String, String>> qualifyParams;
+	private Model model;
+	/**
+	 * The data predicate
+	 */
+	private String dataPredicate;
+	/**
+	 * The string to match
+	 */
+	private String matchTerm;
+	/**
+	 * The value to replace it with
+	 */
+	private String newVal;
+	/**
+	 * Is this to use Regex to match the string
+	 */
+	private boolean regex;
 	
 	/**
 	 * Constructor
-	 * @param model the JENA model to run qualifications on
-	 * @param params the search/replace parameters
+	 * @param jenaModel the JENA model to run qualifications on
+	 * @param dataType the data predicate
+	 * @param matchString the string to match
+	 * @param newValue the value to replace it with
+	 * @param isRegex is this to use Regex to match the string
 	 */
-	public SPARQLQualify(Model model, Map<String,Map<String,String>> params) {
-		setModel(model);
-		this.qualifyParams = params;
+	public SPARQLQualify(Model jenaModel, String dataType, String matchString, String newValue, boolean isRegex) {
+		this.model = jenaModel;
+		this.dataPredicate = dataType;
+		this.regex = isRegex;
+		this.matchTerm = matchString;
+		this.newVal = newValue;
 	}
 	
-	@Override
-	public void replace(String dataType, String matchValue, String newValue, boolean regex) {
-		if(regex) {
-			regexReplace(dataType, matchValue, newValue);
-		} else {
-			strReplace("?uri", dataType, matchValue, newValue);
+	/**
+	 * Constructor
+	 * @param argList parsed argument list
+	 * @throws IOException error creating task
+	 */
+	public SPARQLQualify(ArgList argList) throws IOException {
+		if(!(argList.has("r") ^ argList.has("t"))) {
+			throw new IllegalArgumentException("Must provide one of --regex or --text, but not both");
+		}
+		setModel(argList.get("j"));
+		this.dataPredicate = argList.get("d");
+		this.regex = argList.has("r");
+		this.matchTerm = (this.regex?argList.get("r"):argList.get("t"));
+		this.newVal = argList.get("v");
+	}
+	
+	/**
+	 * Setter for model
+	 * @param configFileName the config file that describes the model to set
+	 * @throws IOException error connecting to model
+	 */
+	private void setModel(String configFileName) throws IOException {
+		try {
+			this.model = JenaConnect.parseConfig(configFileName).getJenaModel();
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(IOException e) {
+			throw new IOException(e.getMessage(),e);
 		}
 	}
 	
@@ -70,6 +117,7 @@ public class SPARQLQualify extends Qualify {
 	 * @param newValue new value to set
 	 */
 	private void strReplace(String uri, String dataType, String oldValue, String newValue) {
+		log.trace("Running text replace '"+dataType+"':'"+oldValue+"' with '"+newValue+"'");
 		// create query string
 		String sQuery = ""
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -79,7 +127,7 @@ public class SPARQLQualify extends Qualify {
 		
 		// run update
 		UpdateRequest ur = UpdateFactory.create(sQuery);
-		UpdateAction.execute(ur, getModel());
+		UpdateAction.execute(ur, this.model);
 	}
 
 	/**
@@ -89,7 +137,8 @@ public class SPARQLQualify extends Qualify {
 	 * @param newValue new value
 	 */
 	private void regexReplace(String dataType, String regexMatch, String newValue) {
-	// create query string
+		log.trace("Running Regex replace '"+dataType+"':'"+regexMatch+"' with '"+newValue+"'");
+		// create query string
 		String sQuery = ""
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 				+ "Select ?record ?dataField "
@@ -101,7 +150,7 @@ public class SPARQLQualify extends Qualify {
 		Query query = QueryFactory.create(sQuery);
 		
 		// execute the query and obtain results
-		QueryExecution qe = QueryExecutionFactory.create(query, getModel());
+		QueryExecution qe = QueryExecutionFactory.create(query, this.model);
 		ResultSet resultSet = qe.execSelect();
 		
 		// read first result
@@ -111,48 +160,60 @@ public class SPARQLQualify extends Qualify {
 			data = result.getLiteral(resultSet.getResultVars().get(1)).getString();
 			if(data.matches(regexMatch)) {
 				String newData = data.replaceAll(regexMatch, newValue);
+				log.trace("matching record found");
+				log.debug("data: "+data);
+				log.debug("newData: "+newData);
 				if(!newData.equals(data)) {
 					String record = result.getLiteral(resultSet.getResultVars().get(0)).getString();
+					log.debug("Updating record");
 					strReplace(record, dataType, data, newData);
+				} else {
+					log.debug("No update needed");
 				}
 			}
 		}
 	}
 	
-	public static SPARQLQualify getInstance(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		Model m;
-		try {
-			m = JenaConnect.parseConfig(getParam(params, "modelConfig", true)).getJenaModel();
-		} catch(NullPointerException e) {
-			throw new IOException("Jena Model Configuration Invalid",e);
-		}
-		Map<String,Map<String,String>> qualifyParams = new HashMap<String,Map<String,String>>();
-		for(String paramID : params.keySet()) {
-			String[] temp = paramID.trim().split("\\.", 2);
-			if(temp.length != 2) {
-				throw new SAXException("Parameter improperly configured: "+paramID+" -> "+params.get(paramID));
-			}
-			temp[0] = temp[0].trim();
-			temp[1] = temp[1].trim();
-			if(!qualifyParams.containsKey(temp[0])) {
-				qualifyParams.put(temp[0], new HashMap<String,String>());
-			}
-			qualifyParams.get(temp[0]).put(temp[1], params.get(paramID).trim());
-		}
-		return new SPARQLQualify(m,qualifyParams);
-	}	
-
-	@Override
-	public void executeTask() throws NumberFormatException {
-		for(Map<String, String> qualifyRun : this.qualifyParams.values()) {
-			String dataType = getParam(qualifyRun, "dataType", true);
-			String matchValue = getParam(qualifyRun, "matchValue", true);
-			String newValue = getParam(qualifyRun, "newValue", true);
-			String isRegex = getParam(qualifyRun, "isRegex", true);
-			boolean regex = Boolean.parseBoolean(isRegex);
-			log.trace("Running: replace(\""+dataType+"\", \""+matchValue+"\", \""+newValue+"\", "+regex+");");
-			replace(dataType, matchValue, newValue, regex);
+	/**
+	 * Executes the task
+	 */
+	public void executeTask() {
+		if(this.regex) {
+			regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
+		} else {
+			strReplace("?uri", this.dataPredicate, this.matchTerm, this.newVal);
 		}
 	}
-
+	
+	/**
+	 * Get the OptionParser for this Task
+	 * @return the OptionParser
+	 */
+	private static OptionParser getParser() {
+		OptionParser parser = new OptionParser();
+		parser.acceptsAll(asList("j", "jenaConfig")).withRequiredArg().describedAs("config file for jena model");
+		parser.acceptsAll(asList("d", "dataType")).withRequiredArg().describedAs("date type (rdf predicate)");
+		parser.acceptsAll(asList("r", "regexMatch")).withRequiredArg().describedAs("match this regex expresion");
+		parser.acceptsAll(asList("t", "textMatch")).withRequiredArg().describedAs("match this exact text string");
+		parser.acceptsAll(asList("v", "value")).withRequiredArg().describedAs("replace matching records with this value");
+		return parser;
+	}
+	
+	/**
+	 * Main method
+	 * @param args commandline arguments
+	 */
+	public static void main(String... args) {
+		try {
+			new SPARQLQualify(new ArgList(getParser(), args, "j","d","v")).executeTask();
+		} catch(IllegalArgumentException e) {
+			try {
+				getParser().printHelpOn(System.out);
+			} catch(IOException e1) {
+				log.fatal(e.getMessage(),e);
+			}
+		} catch(Exception e) {
+			log.fatal(e.getMessage(),e);
+		}
+	}
 }
