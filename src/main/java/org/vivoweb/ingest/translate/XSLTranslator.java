@@ -9,6 +9,8 @@
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
 
+import static java.util.Arrays.asList;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,6 +24,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import joptsimple.OptionParser;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.Record;
@@ -225,6 +230,20 @@ public class XSLTranslator extends Task {
 		log.trace("Translation: End");
 		
 	}
+	
+	/**
+	 * Get the OptionParser for this Task
+	 * @return the OptionParser
+	 */
+	protected static OptionParser getParser() {
+		OptionParser parser = new OptionParser();
+		parser.acceptsAll(asList("d", "driver")).withRequiredArg().describedAs("jdbc driver class");
+		parser.acceptsAll(asList("c", "connection")).withRequiredArg().describedAs("jdbc connection string");
+		parser.acceptsAll(asList("u", "username")).withRequiredArg().describedAs("database username");
+		parser.acceptsAll(asList("p", "password")).withRequiredArg().describedAs("database password");
+		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("RecordHandler config file path");
+		return parser;
+	}	
 	
 	/**
 	 * Currently the main method accepts two methods of execution, file translation and record handler translation
