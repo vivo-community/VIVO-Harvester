@@ -7,18 +7,16 @@
  * 
  * Contributors:
  *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- *     Christoper Barnes, Narayan Raum - scoring ideas and algorithim
+ *     Christopher Barnes, Narayan Raum - scoring ideas and algorithim
  *     Yang Li - pairwise scoring algorithm
- *     Christoper Barnes - regex scoring algorithim
+ *     Christopher Barnes - regex scoring algorithim
  ******************************************************************************/
 package org.vivoweb.ingest.score;
 
 import static java.util.Arrays.asList;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-
 import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +31,14 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /***
  *  VIVO Score
@@ -91,9 +96,10 @@ public class Score {
 			//parser.acceptsAll(asList("u", "username")).withRequiredArg().describedAs("database username");
 			//parser.acceptsAll(asList("p", "password")).withRequiredArg().describedAs("database password");
 			parser.acceptsAll(asList("r", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config file path");
-			parser.acceptsAll(asList("t", "tempJenaConfig")).withRequiredArg().describedAs("tempJenaConfig config file path");
 			parser.acceptsAll(asList("v", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config file path");
-			parser.acceptsAll(asList("o", "outputJenaConfig")).withRequiredArg().describedAs("outputJenaConfig config file path");
+			parser.acceptsAll(asList("w", "workingModel")).withOptionalArg().describedAs("working model name").defaultsTo("workingModel");
+			parser.acceptsAll(asList("o", "outputModel")).withOptionalArg().describedAs("output model name").defaultsTo("outputModel");
+			parser.acceptsAll(asList("n","allow-non-empty-working-model")).withOptionalArg().describedAs("flag to allow a non-empty working model");
 			return parser;
 		}
 		
@@ -115,7 +121,7 @@ public class Score {
 		 * @param opts option set of parsed args
 		 */
 		public Score(ArgList opts) {
-			//TODO: verify args; ensure required args are all present
+			//TODO Nicholas: verify args; ensure required args are all present
 //			String jdbcDriverClass = (String)opts.valueOf("d ");
 //			try {
 //				Class.forName(jdbcDriverClass);
@@ -137,14 +143,32 @@ public class Score {
 			//	return;
 			//}
 			
+			//Get optional inputs / set defaults
+			String workingModel = opts.get("w");
+			String outputModel = opts.get("o");
+			Boolean allowNonEmptyWorkingModel= new Boolean(opts.has("n"));
+
 			try {
 				log.info("Loading configuration and models");
-				RecordHandler rh = RecordHandler.parseConfig(opts.get("r"));
-				JenaConnect jenaTempDB = JenaConnect.parseConfig(opts.get("t"));
-				JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("v"));
-				JenaConnect jenaOutputDB = JenaConnect.parseConfig(opts.get("o"));
+				RecordHandler rh = RecordHandler.parseConfig(opts.get("r"));	
 				
+				//Connect to vivo
+				JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("v"));
+				
+				//Create working model
+				JenaConnect jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
+				
+				//Create output model
+				JenaConnect jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
+				
+				//Load up rdf data from translate into temp model
 				Model jenaInputDB = jenaTempDB.getJenaModel();
+				
+				if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel.booleanValue()) {
+					log.warn("Working model was not empty!");
+					jenaInputDB.removeAll();
+				}
+				
 				for (Record r: rh) {
 					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 				}
@@ -170,7 +194,7 @@ public class Score {
 			 		log.info("Executing matchResult");
 				 	String matchAttribute = "email";
 				 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			    						"SELECT ?x ?email " +
+			    						"SELECT ?x ?email" +
 			    						"WHERE { ?x score:workEmail ?email}";
 				 	String coreAttribute = "core:workEmail";
 				 	
@@ -351,8 +375,7 @@ public class Score {
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
              toReplace.addLiteral(authorship,rankOf,authorRank);
              log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", " + String.valueOf(authorRank) + "]");
-             
-             
+
              toReplace.commit();
 		 }
 		 
