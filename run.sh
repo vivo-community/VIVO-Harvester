@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Execute Fetch for PubMed
-java -cp target/ingest-0.3.jar:target/dependency/* org.vivoweb.ingest.fetch.Fetch PubMed
+java -cp target/ingest-0.3.jar:target/dependency/* org.vivoweb.ingest.fetch.PubmedSOAPFetch -c config/tasks/PubmedFetchTask.xml
 
 # Execute Translate
 java -cp target/ingest-0.3.jar:target/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/PubmedXMLRecordHandler.xml -x DataMaps/PubMedToVivo.xsl -o config/recordHandlers/PubmedRDFRecordHandler.xml  
