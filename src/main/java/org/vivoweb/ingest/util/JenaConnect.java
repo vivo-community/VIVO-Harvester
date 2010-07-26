@@ -49,6 +49,10 @@ public class JenaConnect {
 	 * Model we are connecting to
 	 */
 	private Model jenaModel;
+	/**
+	 * Parameters for this Jena Connection
+	 */
+	private Map<String,String> parameters;
 	
 	/**
 	 * Config File Based Factory
@@ -59,7 +63,7 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(FileObject configFile) throws ParserConfigurationException, SAXException, IOException {
-		return new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream());
+		return build(new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream()));
 	}
 	
 	/**
@@ -87,6 +91,30 @@ public class JenaConnect {
 	}
 	
 	/**
+	 * Build a JenaConnect based on the given parameter set
+	 * @param params the parameter set
+	 * @return the JenaConnect
+	 */
+	private static JenaConnect build(Map<String,String> params) {
+		if(!params.containsKey("type")){
+			throw new IllegalArgumentException("must define type!");
+		}
+		JenaConnect jc;
+		if(params.get("type").equalsIgnoreCase("memory")) {
+			jc = new JenaConnect();
+		} else if(params.get("type").equalsIgnoreCase("db")) {
+			if(params.containsKey("modelName")) {
+				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("modelName"), params.get("dbType"), params.get("dbClass"));
+			} else {
+				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"));
+			}
+		} else {
+			throw new IllegalArgumentException("unknown type: "+params.get("type"));
+		}
+		return jc;
+	}
+	
+	/**
 	 * Constructor (w/o Named Model)
 	 * @param dbUrl jdbc connection url
 	 * @param dbUser username to use
@@ -97,6 +125,13 @@ public class JenaConnect {
 	public JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
 		try {
 			this.setJenaModel(this.createModel(dbUrl, dbUser, dbPass, dbType, dbClass));
+			this.parameters = new HashMap<String,String>();
+			this.parameters.put("type", "db");
+			this.parameters.put("dbUrl", dbUrl);
+			this.parameters.put("dbUser", dbUser);
+			this.parameters.put("dbpass", dbPass);
+			this.parameters.put("dbType", dbType);
+			this.parameters.put("dbClass", dbClass);
 		} catch(InstantiationException e) {
 			log.error(e.getMessage(), e);
 		} catch(IllegalAccessException e) {
@@ -112,8 +147,9 @@ public class JenaConnect {
 	 * @param modelName the model name to use
 	 */
 	public JenaConnect(JenaConnect old, String modelName) {
-		System.out.println(old+modelName);
-		//TODO Chris: Actually Do this
+		this.parameters = old.parameters;
+		this.parameters.put("modelName", modelName);
+		this.setJenaModel(build(this.parameters).jenaModel);
 	}
 	
 	/**
@@ -127,6 +163,24 @@ public class JenaConnect {
 	 */
 	public JenaConnect(String dbUrl, String dbUser, String dbPass, String modelName, String dbType, String dbClass) {
 		this.setJenaModel(this.loadModel(dbUrl, dbUser, dbPass, modelName, dbType, dbClass));
+		this.parameters = new HashMap<String,String>();
+		this.parameters.put("type", "db");
+		this.parameters.put("dbUrl", dbUrl);
+		this.parameters.put("dbUser", dbUser);
+		this.parameters.put("dbpass", dbPass);
+		this.parameters.put("dbType", dbType);
+		this.parameters.put("dbClass", dbClass);
+		this.parameters.put("modelName", modelName);
+	}
+	
+	/**
+	 * Default Constructor
+	 */
+	public JenaConnect() {
+		this.setJenaModel(ModelFactory.createDefaultModel());
+		this.parameters = new HashMap<String,String>();
+		this.parameters.put("type", "memory");
+		this.parameters.put("source", "none");
 	}
 	
 	/**
@@ -134,8 +188,9 @@ public class JenaConnect {
 	 * @param in input stream to load rdf from
 	 */
 	public JenaConnect(InputStream in) {
-		this.setJenaModel(ModelFactory.createDefaultModel());
+		this();
 		this.loadRDF(in);
+		this.parameters.put("source", "inputStream");
 	}
 	
 	/**
@@ -144,7 +199,9 @@ public class JenaConnect {
 	 * @throws FileSystemException error getting file contents
 	 */
 	public JenaConnect(String inFilePath) throws FileSystemException {
-		this(VFS.getManager().resolveFile(new File("."), inFilePath).getContent().getInputStream());
+		this();
+		this.loadRDF(VFS.getManager().resolveFile(new File("."), inFilePath).getContent().getInputStream());
+		this.parameters.put("source", inFilePath);
 	}
 	
 	/**
@@ -258,10 +315,6 @@ public class JenaConnect {
 	 */
 	private static class JenaConnectConfigParser extends DefaultHandler {
 		/**
-		 * JenaConnect we are parsing data for
-		 */
-		private JenaConnect jc;
-		/**
 		 * Param list from the config file
 		 */
 		private Map<String,String> params;
@@ -291,12 +344,12 @@ public class JenaConnect {
 		 * @throws SAXException xml error
 		 * @throws IOException error reading stream
 		 */
-		protected JenaConnect parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
+		protected Map<String, String> parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			JenaConnectConfigParser p = new JenaConnectConfigParser();
 			sp.parse(inputStream, p); // parse the file and also register this class for call backs
-			return p.jc;
+			return this.params;
 		}
 		
 		@Override
@@ -318,17 +371,7 @@ public class JenaConnect {
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if(qName.equalsIgnoreCase("Model")) {
-				try {
-					if(this.params.containsKey("modelName")) {
-						this.jc = new JenaConnect(this.params.get("dbUrl"), this.params.get("dbUser"), this.params.get("dbPass"), this.params.get("modelName"), this.params.get("dbType"), this.params.get("dbClass"));
-					} else {
-						this.jc = new JenaConnect(this.params.get("dbUrl"), this.params.get("dbUser"), this.params.get("dbPass"), this.params.get("dbType"), this.params.get("dbClass"));
-					}
-				} catch(SecurityException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(IllegalArgumentException e) {
-					throw new SAXException(e.getMessage(),e);
-				}
+				this.params.put("type", "db");
 			} else if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
 			} else {
