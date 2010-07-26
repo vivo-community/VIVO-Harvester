@@ -9,14 +9,20 @@
  *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  *     Christoper Barnes, Narayan Raum - scoring ideas and algorithim
  *     Yang Li - pairwise scoring algorithm
+ *     Christoper Barnes - regex scoring algorithim
  ******************************************************************************/
 package org.vivoweb.ingest.score;
+
+import static java.util.Arrays.asList;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+
+import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.JenaConnect;
 import org.vivoweb.ingest.util.Record;
 import org.vivoweb.ingest.util.RecordHandler;
@@ -31,7 +37,7 @@ import com.hp.hpl.jena.rdf.model.*;
 
 /***
  *  VIVO Score
- *  @author Nicholas Skaggs nskaggs@ichp.ufl.edu
+ *  @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
  */
 public class Score {
 		/**
@@ -51,45 +57,45 @@ public class Score {
 		 */
 		private Model scoreOutput;
 		
+		
 		/**
-		 * Main Method
-		 * @param args command line arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig
+		 * Main method
+		 * @param args command line arguments
 		 */
-		final static public void main(String[] args) {
+		public static void main(String... args) {
 			
 			log.info("Scoring: Start");
-			
-			//pass models from command line
-			//TODO Nicholas: proper args handler
-			
-			if (args.length != 4) {
-				log.error("Usage requires 4 arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig");
-				return;
-			}
-			
+			//rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig
 			try {
-				log.info("Loading configuration and models");
-				RecordHandler rh = RecordHandler.parseConfig(args[0]);
-				JenaConnect jenaTempDB = JenaConnect.parseConfig(args[1]);
-				JenaConnect jenaVivoDB = JenaConnect.parseConfig(args[2]);
-				JenaConnect jenaOutputDB = JenaConnect.parseConfig(args[3]);
-				
-				Model jenaInputDB = jenaTempDB.getJenaModel();
-				for (Record r: rh) {
-					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+				new Score(new ArgList(getParser(), args, "r","t","v","o")).execute();
+			} catch(IllegalArgumentException e) {
+				try {
+					getParser().printHelpOn(System.out);
+				} catch(IOException e1) {
+					log.fatal(e.getMessage(),e);
 				}
-				
-				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel()).execute();
-			} catch(ParserConfigurationException e) {
-				log.fatal(e.getMessage(),e);
-			} catch(SAXException e) {
-				log.fatal(e.getMessage(),e);
-			} catch(IOException e) {
+			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
 			}
-			
 			log.info("Scoring: End");
-	    }
+		}
+		
+		/**
+		 * Get the OptionParser
+		 * @return the OptionParser
+		 */
+		protected static OptionParser getParser() {
+			OptionParser parser = new OptionParser();
+			//parser.acceptsAll(asList("e", "exactmatch")).withRequiredArg().describedAs("exact matching algorithim");
+			//parser.acceptsAll(asList("p", "pairwise")).withRequiredArg().describedAs("pairwise algorithim");
+			//parser.acceptsAll(asList("u", "username")).withRequiredArg().describedAs("database username");
+			//parser.acceptsAll(asList("p", "password")).withRequiredArg().describedAs("database password");
+			parser.acceptsAll(asList("r", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config file path");
+			parser.acceptsAll(asList("t", "tempJenaConfig")).withRequiredArg().describedAs("tempJenaConfig config file path");
+			parser.acceptsAll(asList("v", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config file path");
+			parser.acceptsAll(asList("o", "outputJenaConfig")).withRequiredArg().describedAs("outputJenaConfig config file path");
+			return parser;
+		}
 		
 		
 		/**
@@ -104,6 +110,55 @@ public class Score {
 			this.scoreOutput = jenaScoreOutput;
 		}
 		
+		/**
+		 * Constructor
+		 * @param opts option set of parsed args
+		 */
+		public Score(ArgList opts) {
+			//TODO: verify args; ensure required args are all present
+//			String jdbcDriverClass = (String)opts.valueOf("d ");
+//			try {
+//				Class.forName(jdbcDriverClass);
+//			} catch(ClassNotFoundException e) {
+//				throw new IOException(e.getMessage(),e);
+//			}
+//			String connLine = (String)opts.valueOf("c");
+//			String username = (String)opts.valueOf("u");
+//			String password = (String)opts.valueOf("p");
+//			Connection dbConn;
+//			try {
+//				dbConn = DriverManager.getConnection(connLine, username, password);
+//			} catch(SQLException e) {
+//				throw new IOException(e.getMessage(),e);
+//			}
+			
+			//if (args.length != 4) {
+			//	log.error("Usage requires 4 arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig");
+			//	return;
+			//}
+			
+			try {
+				log.info("Loading configuration and models");
+				RecordHandler rh = RecordHandler.parseConfig(opts.get("r"));
+				JenaConnect jenaTempDB = JenaConnect.parseConfig(opts.get("t"));
+				JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("v"));
+				JenaConnect jenaOutputDB = JenaConnect.parseConfig(opts.get("o"));
+				
+				Model jenaInputDB = jenaTempDB.getJenaModel();
+				for (Record r: rh) {
+					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+				}
+				
+				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel()).execute();
+			} catch(ParserConfigurationException e) {
+				log.fatal(e.getMessage(),e);
+			} catch(SAXException e) {
+				log.fatal(e.getMessage(),e);
+			} catch(IOException e) {
+				log.fatal(e.getMessage(),e);
+			}
+		}
+
 		/**
 		 * Executes scoring algorithms
 		 */
