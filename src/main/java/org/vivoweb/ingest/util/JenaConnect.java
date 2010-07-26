@@ -107,6 +107,16 @@ public class JenaConnect {
 	}
 	
 	/**
+	 * Constructor (connects to the same jena triple store as another jena connect, but uses a different named model)
+	 * @param old the other jenaconnect
+	 * @param modelName the model name to use
+	 */
+	public JenaConnect(JenaConnect old, String modelName) {
+		System.out.println(old+modelName);
+		//TODO Chris: Actually Do this
+	}
+	
+	/**
 	 * Constructor (w/ Named Model)
 	 * @param dbUrl jdbc connection url
 	 * @param dbUser username to use
