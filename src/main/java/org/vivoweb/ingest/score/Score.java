@@ -61,6 +61,10 @@ public class Score {
 		 * Model where output is stored
 		 */
 		private Model scoreOutput;
+		/**
+		 * Attribute to match for exactMatch algorithim
+		 */
+		private String matchAttribute;
 		
 		
 		/**
@@ -70,9 +74,8 @@ public class Score {
 		public static void main(String... args) {
 			
 			log.info("Scoring: Start");
-			//rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig
 			try {
-				new Score(new ArgList(getParser(), args, "r","t","v","o")).execute();
+				new Score(new ArgList(getParser(), args, "r","v"));
 			} catch(IllegalArgumentException e) {
 				try {
 					getParser().printHelpOn(System.out);
@@ -89,7 +92,7 @@ public class Score {
 		 * Get the OptionParser
 		 * @return the OptionParser
 		 */
-		protected static OptionParser getParser() {
+		private static OptionParser getParser() {
 			OptionParser parser = new OptionParser();
 			//parser.acceptsAll(asList("e", "exactmatch")).withRequiredArg().describedAs("exact matching algorithim");
 			//parser.acceptsAll(asList("p", "pairwise")).withRequiredArg().describedAs("pairwise algorithim");
@@ -97,9 +100,10 @@ public class Score {
 			//parser.acceptsAll(asList("p", "password")).withRequiredArg().describedAs("database password");
 			parser.acceptsAll(asList("r", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config file path");
 			parser.acceptsAll(asList("v", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config file path");
-			parser.acceptsAll(asList("w", "workingModel")).withOptionalArg().describedAs("working model name").defaultsTo("workingModel");
-			parser.acceptsAll(asList("o", "outputModel")).withOptionalArg().describedAs("output model name").defaultsTo("outputModel");
-			parser.acceptsAll(asList("n","allow-non-empty-working-model")).withOptionalArg().describedAs("flag to allow a non-empty working model");
+			parser.acceptsAll(asList("e", "exactMatch")).withRequiredArg().describedAs("exact match fieldname").defaultsTo("workEmail");
+			parser.acceptsAll(asList("w", "workingModel")).withRequiredArg().describedAs("working model name").defaultsTo("workingModel");
+			parser.acceptsAll(asList("o", "outputModel")).withRequiredArg().describedAs("output model name").defaultsTo("outputModel");
+			parser.acceptsAll(asList("n","allow-non-empty-working-model"),"flag to allow a non-empty working model");
 			return parser;
 		}
 		
@@ -109,11 +113,13 @@ public class Score {
 		 * @param jenaVivo model containing vivo statements
 		 * @param jenaScoreInput model containing statements to be scored
 		 * @param jenaScoreOutput output model
+		 * @param exactMatchArg exact match attribute
 		 */
-		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput) {
+		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput, String exactMatchArg) {
 			this.vivo = jenaVivo;
 			this.scoreInput = jenaScoreInput;
 			this.scoreOutput = jenaScoreOutput;
+			this.matchAttribute = exactMatchArg;
 		}
 		
 		/**
@@ -173,7 +179,9 @@ public class Score {
 					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 				}
 				
-				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel()).execute();
+				String exactMatchArg = opts.get("e");
+				
+				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel(), exactMatchArg).execute();
 			} catch(ParserConfigurationException e) {
 				log.fatal(e.getMessage(),e);
 			} catch(SAXException e) {
@@ -192,11 +200,10 @@ public class Score {
 			 	//DEBUG
 				 	//TODO Nicholas: howto pass this in via config
 			 		log.info("Executing matchResult");
-				 	String matchAttribute = "email";
 				 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			    						"SELECT ?x ?email" +
-			    						"WHERE { ?x score:workEmail ?email}";
-				 	String coreAttribute = "core:workEmail";
+			    						"SELECT ?x ?" + this.matchAttribute + " " + 
+			    						"WHERE { ?x score:" + this.matchAttribute + " ?" + this.matchAttribute + "}";
+				 	String coreAttribute = "core:" + this.matchAttribute;
 				 	
 			 	//DEBUG
 			 	
@@ -206,7 +213,7 @@ public class Score {
 			 	//TODO Nicholas: finish implementation of exact matching loop
 			 	//for each matchAttribute
 			 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
-			 		exactMatch(this.vivo,this.scoreOutput,matchAttribute,coreAttribute,scoreInputResult);
+			 		exactMatch(this.vivo,this.scoreOutput,this.matchAttribute,coreAttribute,scoreInputResult);
 			    //end for
 			 		
 		 		//DEBUG
