@@ -48,24 +48,58 @@ public class XSLTranslator {
 	private File translationFile;
 	/**
 	 * in stream is the stream containing the file (xml) that we are going to translate
+	 * @TODO possibly remove and switch to passing streams to xmlTranslate
 	 */
 	protected InputStream inStream;
 	/**
 	 * out stream is the stream that the controller will be handling and were we will dump the translation
+	 * @TODO possibly remove and switch to passing streams to xmlTranslate
 	 */
 	protected OutputStream outStream;
+	/**
+	 * record handler for incoming records
+	 */
+	protected RecordHandler inStore;
+	/**
+	 * record handler for storing records
+	 */
+	protected RecordHandler outStore;
 	
 	/**
 	 * Default constructor
 	 */
-	public XSLTranslator() {
+	@SuppressWarnings("unused")
+	private XSLTranslator() {
 		// empty constructor
 	}
 	
 	/**
 	 * Constructor
-	 * Initializing constructor for the translate method, it is not required to use this constructor
-	 * but it is suggested, since not passing one of the variables would result in a error being thrown
+	 * 
+	 * @param argumentList
+	 *           <ul>
+	 *           <li>translationFile the file that details the translation from the original xml to the target format</li>
+	 *           <li>inRecordHandler the files/records that require translation</li>
+	 *           <li>outRecordHandler the output record for the translated files</li>
+	 *           </ul>
+	 */
+	public XSLTranslator(ArgList argumentList) {
+		//set Translation file
+		this.setTranslationFile(new File(argumentList.get("xslFile")));
+		
+		// create record handlers
+		try {
+			this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
+			this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
+		} catch (Exception e) {
+			log.error(e);		//TODO  catch more specific errors
+		}
+	}
+	
+	/**
+	 * @deprecated
+	 * Constructor
+	 * Initializing constructor for the translate method
 	 * 
 	 * @param transFile
 	 *           The file that contains the mapping for translation
@@ -74,6 +108,7 @@ public class XSLTranslator {
 	 * @param oStream
 	 *           the outgoing stream that the translation is passed to
 	 */
+	@Deprecated
 	public XSLTranslator(File transFile, InputStream iStream, OutputStream oStream) {
 		this.setTranslationFile(transFile);
 		this.inStream = iStream;
@@ -97,16 +132,30 @@ public class XSLTranslator {
 	 */
 	public void execute() {
 		// checking for valid input parameters
-		if((this.translationFile != null && this.translationFile.isFile()) && this.inStream != null
-				&& this.outStream != null) {
-			xmlTranslate();
-		} else {
-			log.error("Translation unable to start: Not all Parameters Set");
-			log.error("Translation File: " + this.translationFile.toString());
-			log.error("Translation File truth: " + this.translationFile.isFile());
-			log.error("Translation Stream: " + this.inStream.toString());
-			throw new IllegalArgumentException("Unable to translate, system not configured");
+		log.info("Translation: Start");
+		
+		try {
+			// create a output stream for writing to the out store
+			ByteArrayOutputStream buff = new ByteArrayOutputStream();
+			
+			// get from the in record and translate
+			for(Record r : this.inStore) {
+				log.trace("Translating Record " + r.getID());
+				
+				this.inStream = new ByteArrayInputStream(r.getData().getBytes());
+				this.outStream = buff; 
+				this.xmlTranslate();
+				buff.flush();
+				this.outStore.addRecord(r.getID(), buff.toString());
+				buff.reset();
+			}
+			
+			buff.close();
+		} catch(Exception e) {
+			log.error("", e);
 		}
+		 
+		log.trace("Translation: End");
 	}
 	
 	/***
@@ -136,56 +185,6 @@ public class XSLTranslator {
 	}
 	
 	/**
-	 * Currently the main method accepts two methods of execution, file translation and record handler translation
-	 * This is the method that executes those functions. It was put in place so that translator's main method
-	 * can also call this method and pass its argument array
-	 * 
-	 * @param argumentList
-	 *           the file to translate and xsl
-	 *           <ul>
-	 *           <li>translationFile the file that details the translation from the original xml to the target format</li>
-	 *           <li>inRecordHandler the files/records that require translation</li>
-	 *           <li>outRecordHandler the output record for the translated files</li>
-	 *           </ul>
-	 */
-	public void parseArgsExecute(ArgList argumentList) {
-		
-		log.info("Translation: Start");
-		
-		try {
-			// pull in the translation xsl
-			
-			this.setTranslationFile(new File(argumentList.get("xslFile")));
-			
-			// create record handlers
-			RecordHandler inStore = RecordHandler.parseConfig(argumentList.get("input"));
-			RecordHandler outStore = RecordHandler.parseConfig(argumentList.get("output"));
-			
-			// create a output stream for writing to the out store
-			ByteArrayOutputStream buff = new ByteArrayOutputStream();
-			
-			// get from the in record and translate
-			for(Record r : inStore) {
-				log.trace("Translating Record " + r.getID());
-				
-				this.inStream = new ByteArrayInputStream(r.getData().getBytes());
-				this.outStream = buff; 
-				this.execute();
-				buff.flush();
-				outStore.addRecord(r.getID(), buff.toString());
-				buff.reset();
-			}
-			
-			buff.close();
-		} catch(Exception e) {
-			log.error("", e);
-		}
-		 
-		log.trace("Translation: End");
-		
-	}
-	
-	/**
 	 * Get the OptionParser for this Task
 	 * @return the OptionParser
 	 */
@@ -207,7 +206,7 @@ public class XSLTranslator {
 	 */
 	public static void main(String... args) {
 		try {
-			new XSLTranslator().parseArgsExecute(new ArgList(getParser(), args, "i","o","x"));
+			new XSLTranslator(new ArgList(getParser(), args, "i","o","x")).execute();
 		} catch(IllegalArgumentException e) {
 			try {
 				getParser().printHelpOn(System.out);
