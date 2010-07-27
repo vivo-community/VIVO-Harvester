@@ -78,9 +78,10 @@ public class Score {
 				new Score(new ArgList(getParser(), args, "r","v"));
 			} catch(IllegalArgumentException e) {
 				try {
+					log.fatal(e);
 					getParser().printHelpOn(System.out);
 				} catch(IOException e1) {
-					log.fatal(e.getMessage(),e);
+					log.fatal(e1.getMessage(),e1);
 				}
 			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
@@ -101,7 +102,7 @@ public class Score {
 			parser.acceptsAll(asList("r", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config file path");
 			parser.acceptsAll(asList("v", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config file path");
 			parser.acceptsAll(asList("e", "exactMatch")).withRequiredArg().describedAs("exact match fieldname").defaultsTo("workEmail");
-			parser.acceptsAll(asList("w", "workingModel")).withRequiredArg().describedAs("working model name").defaultsTo("workingModel");
+			parser.acceptsAll(asList("t", "tempModel")).withRequiredArg().describedAs("temporary working model name").defaultsTo("tempModel");
 			parser.acceptsAll(asList("o", "outputModel")).withRequiredArg().describedAs("output model name").defaultsTo("outputModel");
 			parser.acceptsAll(asList("n","allow-non-empty-working-model"),"flag to allow a non-empty working model");
 			return parser;
@@ -109,7 +110,7 @@ public class Score {
 		
 		
 		/**
-		 * Constructor
+		 * Constructor	
 		 * @param jenaVivo model containing vivo statements
 		 * @param jenaScoreInput model containing statements to be scored
 		 * @param jenaScoreOutput output model
@@ -150,9 +151,10 @@ public class Score {
 			//}
 			
 			//Get optional inputs / set defaults
-			String workingModel = opts.get("w");
+			String workingModel = opts.get("t");
 			String outputModel = opts.get("o");
 			Boolean allowNonEmptyWorkingModel= new Boolean(opts.has("n"));
+			String exactMatchArg = opts.get("e");
 
 			try {
 				log.info("Loading configuration and models");
@@ -178,8 +180,6 @@ public class Score {
 				for (Record r: rh) {
 					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 				}
-				
-				String exactMatchArg = opts.get("e");
 				
 				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel(), exactMatchArg).execute();
 			} catch(ParserConfigurationException e) {

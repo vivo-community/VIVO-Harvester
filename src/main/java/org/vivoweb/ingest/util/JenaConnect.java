@@ -347,8 +347,7 @@ public class JenaConnect {
 		protected Map<String, String> parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			JenaConnectConfigParser p = new JenaConnectConfigParser();
-			sp.parse(inputStream, p); // parse the file and also register this class for call backs
+			sp.parse(inputStream, this); // parse the file and also register this class for call backs
 			return this.params;
 		}
 		

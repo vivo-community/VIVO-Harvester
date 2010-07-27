@@ -46,7 +46,7 @@ public class ArgList {
 	 * Constructor
 	 * @param p parser
 	 * @param args commandline args
-	 * @param neededArgs the required arguments
+	 * @param neededArgs the required arguments (do not include arguments with default values)
 	 * @throws IllegalArgumentException missing args
 	 * @throws IOException error parsing args
 	 */
@@ -87,13 +87,27 @@ public class ArgList {
 	 * @return the value
 	 */
 	public String get(String arg) {
-		return ((this.oCmdSet.has(arg))?(String)this.oCmdSet.valueOf(arg):((this.oConfSet!=null && this.oConfSet.has(arg))?(String)this.oConfSet.valueOf(arg):null));
+		String retVal = null;
+		if(this.oCmdSet.has(arg)) {
+			retVal = (String)this.oCmdSet.valueOf(arg);
+		} else {
+			if(this.oConfSet != null && this.oConfSet.has(arg)) {
+				retVal = (String)this.oConfSet.valueOf(arg);
+			} else {
+				try {
+					retVal = (String)this.oCmdSet.valueOf(arg);
+				} catch (NullPointerException e){
+					retVal = null;
+				}
+			}
+		}
+		return retVal;
 	}
 	
 	/**
 	 * Determines if the arg list has a value for a given argument
 	 * @param arg the argument
-	 * @return true if a value was provided (from any of command line, config files, or default values)
+	 * @return true if a value was provided (from any of command line, config files)
 	 */
 	public boolean has(String arg) {
 		return (this.oCmdSet.has(arg) || (this.oConfSet != null && this.oConfSet.has(arg)));
