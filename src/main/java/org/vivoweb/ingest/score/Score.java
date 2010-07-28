@@ -16,6 +16,8 @@ package org.vivoweb.ingest.score;
 import static java.util.Arrays.asList;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
+
 import javax.xml.parsers.ParserConfigurationException;
 import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
@@ -65,7 +67,7 @@ public class Score {
 		/**
 		 * Attribute to match for exactMatch algorithim
 		 */
-		private String matchAttribute;
+		private List<String> matchAttribute;
 		
 		
 		/**
@@ -76,7 +78,7 @@ public class Score {
 			
 			log.info("Scoring: Start");
 			try {
-				new Score(new ArgList(getParser(), args, "i","v"));
+				new Score(new ArgList(getParser(), args, "i","V"));
 			} catch(IllegalArgumentException e) {
 				try {
 					log.fatal(e);
@@ -96,16 +98,17 @@ public class Score {
 		 */
 		private static OptionParser getParser() {
 			OptionParser parser = new OptionParser();
-			//parser.acceptsAll(asList("e", "exactmatch")).withRequiredArg().describedAs("exact matching algorithim");
-			//parser.acceptsAll(asList("p", "pairwise")).withRequiredArg().describedAs("pairwise algorithim");
-			//parser.acceptsAll(asList("u", "username")).withRequiredArg().describedAs("database username");
-			//parser.acceptsAll(asList("p", "password")).withRequiredArg().describedAs("database password");
-			parser.acceptsAll(asList("i", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config file path");
-			parser.acceptsAll(asList("v", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config file path");
+			parser.acceptsAll(asList("i", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config filename");
+			//TODO Nicholas: Implement individual RDF input
+			//parser.acceptsAll(asList("f", "rdfFilename")).withRequiredArg().describedAs("RDF filename");
+			parser.acceptsAll(asList("V", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config filename");
+			parser.acceptsAll(asList("T", "tempModelConfig")).withRequiredArg().describedAs("tempModelConfig config filename");
+			parser.acceptsAll(asList("O", "outputModelConfig")).withRequiredArg().describedAs("outputModelConfig config filename");
 			parser.acceptsAll(asList("e", "exactMatch")).withRequiredArg().describedAs("exact match fieldname").defaultsTo("workEmail");
 			parser.acceptsAll(asList("t", "tempModel")).withRequiredArg().describedAs("temporary working model name").defaultsTo("tempModel");
 			parser.acceptsAll(asList("o", "outputModel")).withRequiredArg().describedAs("output model name").defaultsTo("outputModel");
-			parser.acceptsAll(asList("n","allow-non-empty-working-model"),"flag to allow a non-empty working model");
+			parser.acceptsAll(asList("n","allow-non-empty-working-model"),"If set, this will not clear the working model before scoring begins");
+			parser.acceptsAll(asList("r","retain-working-model"),"If set, this will not clear the working model after scoring is complete");
 			return parser;
 		}
 		
@@ -117,7 +120,7 @@ public class Score {
 		 * @param jenaScoreOutput output model
 		 * @param exactMatchArg exact match attribute
 		 */
-		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput, String exactMatchArg) {
+		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput, List<String> exactMatchArg) {
 			this.vivo = jenaVivo;
 			this.scoreInput = jenaScoreInput;
 			this.scoreOutput = jenaScoreOutput;
@@ -128,36 +131,26 @@ public class Score {
 		 * Constructor
 		 * @param opts option set of parsed args
 		 */
-		public Score(ArgList opts) {
-			//TODO Nicholas: verify args; ensure required args are all present
-//			String jdbcDriverClass = (String)opts.valueOf("d ");
-//			try {
-//				Class.forName(jdbcDriverClass);
-//			} catch(ClassNotFoundException e) {
-//				throw new IOException(e.getMessage(),e);
-//			}
-//			String connLine = (String)opts.valueOf("c");
-//			String username = (String)opts.valueOf("u");
-//			String password = (String)opts.valueOf("p");
-//			Connection dbConn;
-//			try {
-//				dbConn = DriverManager.getConnection(connLine, username, password);
-//			} catch(SQLException e) {
-//				throw new IOException(e.getMessage(),e);
-//			}
-			
+		public Score(ArgList opts) {			
 			//Get optional inputs / set defaults
-			String workingModel = opts.get("t");
-			String outputModel = opts.get("o");
+			//Check for config files, before parsing name options
+			String workingModel = opts.get("T");
+			if (workingModel == null) workingModel = opts.get("t");
+			
+			String outputModel = opts.get("O");
+			if (outputModel == null) outputModel = opts.get("o");
+			
+			
 			boolean allowNonEmptyWorkingModel = opts.has("n");
-			String exactMatchArg = opts.get("e");
+			boolean retainWorkingModel = opts.has("r");
+			List<String> exactMatchArg = opts.getAll("e");
 
 			try {
 				log.info("Loading configuration and models");
 				RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));	
 				
 				//Connect to vivo
-				JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("v"));
+				JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
 				
 				//Create working model
 				JenaConnect jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
@@ -169,7 +162,7 @@ public class Score {
 				Model jenaInputDB = jenaTempDB.getJenaModel();
 				
 				if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel) {
-					log.warn("Working model was not empty!");
+					log.warn("Working model was not empty! -- Emptying Model before execution");
 					jenaInputDB.removeAll();
 				}
 				
@@ -177,7 +170,20 @@ public class Score {
 					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 				}
 				
-				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel(), exactMatchArg).execute();
+				//Init
+				Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel(), exactMatchArg);
+				
+				//Call each exactMatch
+				for (String attribute : scoring.matchAttribute) {
+					scoring.executeExactMatch(attribute);
+				}
+				
+			 	//Empty working model
+				if (!retainWorkingModel) scoring.scoreInput.removeAll();
+				//Close and done
+				scoring.scoreInput.close();
+				scoring.scoreOutput.close();
+				scoring.vivo.close();
 			} catch(ParserConfigurationException e) {
 				log.fatal(e.getMessage(),e);
 			} catch(SAXException e) {
@@ -188,50 +194,29 @@ public class Score {
 		}
 
 		/**
-		 * Executes scoring algorithms
+		 * Executes exact match algorithm
+		 * @param attribute attribute to match
 		 */
-		public void execute() {		
-			 	ResultSet scoreInputResult;
-			 	
-			 	//DEBUG
-				 	//TODO Nicholas: howto pass this in via config
-			 		log.info("Executing matchResult");
-				 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			    						"SELECT ?x ?" + this.matchAttribute + " " + 
-			    						"WHERE { ?x score:" + this.matchAttribute + " ?" + this.matchAttribute + "}";
-				 	String coreAttribute = "core:" + this.matchAttribute;
-				 	
-			 	//DEBUG
-			 	
-				//Attempt Matching
+		private void executeExactMatch(String attribute) {		
+		 	ResultSet scoreInputResult;
+		 	
+		 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
+	    						"SELECT ?x ?" + attribute + " " + 
+	    						"WHERE { ?x score:" + attribute + " ?" + attribute + "}";
+		 	String coreAttribute = "core:" + attribute;
+		 	
+		 	log.debug(matchQuery);
 
-			 	//Exact Matches
-			 	//TODO Nicholas: finish implementation of exact matching loop
-			 	//for each matchAttribute
-			 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
-			 		exactMatch(this.vivo,this.scoreOutput,this.matchAttribute,coreAttribute,scoreInputResult);
-			    //end for
-			 		
-		 		//DEBUG
-				 	//TODO Nicholas: howto pass this in via config
-				 	//matchAttribute = "author";
-				 	//matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			    	//       		 "SELECT ?x ?author " +
-			    	//			 "WHERE { ?x score:author ?author}";
-				 	//coreAttribute = "core:author";
-			 	//DEBUG
-				
-				//Pairwise Matches
-				//TODO Nicholas: finish implementation of pairwise matching loop
-			 	//for each matchAttribute
-			 		//scoreInputResult = executeQuery(scoreInput, matchQuery);
-			 		//pairwiseScore(vivo,scoreInput,matchAttribute,coreAttribute,scoreInputResult);	
-			 	//end for
-			 		
-				//Close and done
-				this.scoreInput.close();
-		    	this.scoreOutput.close();
-		    	this.vivo.close();
+		 	//Exact Match
+		 	log.info("Executing exactMatch for " + attribute);
+	 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+	 		
+	    	//Log extra info message if none found
+	    	if (!scoreInputResult.hasNext()) {
+	    		log.info("No matches found for " + attribute + " in input");
+	    	} else {
+	    		exactMatch(this.vivo,this.scoreOutput,attribute,coreAttribute,scoreInputResult);
+	    	}
 		}
 		
 		/**
@@ -245,7 +230,7 @@ public class Score {
 		    	QueryExecution queryExec = QueryExecutionFactory.create(query, model);
 		    	
 		    	return queryExec.execSelect();
-			}
+		 }
 		 
 		 
 		/**
@@ -361,7 +346,6 @@ public class Score {
 	             removeAuthor.removeProperties();
              }
                          
-             
              toReplace.add(authorship,linkedAuthorOf,mainNode);
              log.trace("Link Statement [" + authorship.toString() + ", " + linkedAuthorOf.toString() + ", " + mainNode.toString() + "]");
              toReplace.add((Resource)mainNode,authorshipForPerson,authorship);
@@ -431,7 +415,6 @@ public class Score {
 		 	//iterate thru scoringInput pairs against matched pairs
 		 	//TODO Nicholas: support partial scoring, multiples matches against several pairs
 		 	//if pairs match, store publication to matched author in Model
-			//TODO Nicholas: return scoreInput minus the scored statements
 			
 			String scoreMatch;
 			RDFNode matchNode;
@@ -449,8 +432,7 @@ public class Score {
                 
                 log.info("\nChecking for " + scoreMatch + " in VIVO");
             }	    			 
-	    	
-	    	//TODO Nicholas: return scoreInput minus the scored statements			
+	    
 			return score;
 		 }
 		 
@@ -473,8 +455,7 @@ public class Score {
 				ResultSet vivoResult;
 				QuerySolution scoreSolution;
 
-                
-		    	log.info("Looping thru " + matchAttribute + " from input");
+		    	log.info("Looping thru matching" + matchAttribute + " from input");
 		    	
 		    	//look for exact match in vivo
 		    	while (matchResult.hasNext()) {
@@ -497,16 +478,11 @@ public class Score {
 	    			
 	    			log.debug(queryString);
 	    			
-	    			//TODO Nicholas: how to combine result sets? not possible in JENA
 	    			vivoResult = executeQuery(matched, queryString);
-	    			//while (vivoResult.hasNext()) {
-	    			//	System.out.println(vivoResult.toString());
-	    			//}
 	    			
 	    			commitResultSet(output,vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
 		    	
-		    	//TODO Nicholas: return scoreInput minus the scored statements
 		    	return output;
 		 }
 	}

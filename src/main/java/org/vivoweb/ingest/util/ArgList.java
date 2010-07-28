@@ -12,6 +12,8 @@ package org.vivoweb.ingest.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -96,6 +98,29 @@ public class ArgList {
 			} else {
 				try {
 					retVal = (String)this.oCmdSet.valueOf(arg);
+				} catch (NullPointerException e){
+					retVal = null;
+				}
+			}
+		}
+		return retVal;
+	}
+	
+	/**
+	 * Gets the values of the argument
+	 * @param arg argument to get
+	 * @return the values
+	 */
+	public List<String> getAll(String arg) {
+		List<String> retVal = null;
+		if(this.oCmdSet.has(arg)) {
+			retVal = (List<String>) this.oCmdSet.valuesOf(arg);
+		} else {
+			if(this.oConfSet != null && this.oConfSet.has(arg)) {
+				retVal = (List<String>) this.oConfSet.valuesOf(arg);
+			} else {
+				try {
+					retVal = (List<String>) this.oCmdSet.valuesOf(arg);
 				} catch (NullPointerException e){
 					retVal = null;
 				}
