@@ -129,7 +129,7 @@ public class JenaConnect {
 			this.parameters.put("type", "db");
 			this.parameters.put("dbUrl", dbUrl);
 			this.parameters.put("dbUser", dbUser);
-			this.parameters.put("dbpass", dbPass);
+			this.parameters.put("dbPass", dbPass);
 			this.parameters.put("dbType", dbType);
 			this.parameters.put("dbClass", dbClass);
 		} catch(InstantiationException e) {
@@ -167,7 +167,7 @@ public class JenaConnect {
 		this.parameters.put("type", "db");
 		this.parameters.put("dbUrl", dbUrl);
 		this.parameters.put("dbUser", dbUser);
-		this.parameters.put("dbpass", dbPass);
+		this.parameters.put("dbPass", dbPass);
 		this.parameters.put("dbType", dbType);
 		this.parameters.put("dbClass", dbClass);
 		this.parameters.put("modelName", modelName);

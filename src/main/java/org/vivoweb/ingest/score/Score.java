@@ -41,6 +41,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /***
+ * 
  *  VIVO Score
  *  @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
  */
@@ -75,7 +76,7 @@ public class Score {
 			
 			log.info("Scoring: Start");
 			try {
-				new Score(new ArgList(getParser(), args, "r","v"));
+				new Score(new ArgList(getParser(), args, "i","v"));
 			} catch(IllegalArgumentException e) {
 				try {
 					log.fatal(e);
@@ -99,7 +100,7 @@ public class Score {
 			//parser.acceptsAll(asList("p", "pairwise")).withRequiredArg().describedAs("pairwise algorithim");
 			//parser.acceptsAll(asList("u", "username")).withRequiredArg().describedAs("database username");
 			//parser.acceptsAll(asList("p", "password")).withRequiredArg().describedAs("database password");
-			parser.acceptsAll(asList("r", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config file path");
+			parser.acceptsAll(asList("i", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config file path");
 			parser.acceptsAll(asList("v", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config file path");
 			parser.acceptsAll(asList("e", "exactMatch")).withRequiredArg().describedAs("exact match fieldname").defaultsTo("workEmail");
 			parser.acceptsAll(asList("t", "tempModel")).withRequiredArg().describedAs("temporary working model name").defaultsTo("tempModel");
@@ -153,12 +154,12 @@ public class Score {
 			//Get optional inputs / set defaults
 			String workingModel = opts.get("t");
 			String outputModel = opts.get("o");
-			Boolean allowNonEmptyWorkingModel= new Boolean(opts.has("n"));
+			boolean allowNonEmptyWorkingModel= opts.has("n");
 			String exactMatchArg = opts.get("e");
 
 			try {
 				log.info("Loading configuration and models");
-				RecordHandler rh = RecordHandler.parseConfig(opts.get("r"));	
+				RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));	
 				
 				//Connect to vivo
 				JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("v"));
@@ -172,7 +173,7 @@ public class Score {
 				//Load up rdf data from translate into temp model
 				Model jenaInputDB = jenaTempDB.getJenaModel();
 				
-				if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel.booleanValue()) {
+				if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel) {
 					log.warn("Working model was not empty!");
 					jenaInputDB.removeAll();
 				}
