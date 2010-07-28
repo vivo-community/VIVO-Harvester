@@ -33,7 +33,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
-import com.hp.hpl.jena.util.ModelLoader;
 
 /**
  * Connection Helper for Jena Models
@@ -162,7 +161,7 @@ public class JenaConnect {
 	 * @param dbClass jdbc driver class
 	 */
 	public JenaConnect(String dbUrl, String dbUser, String dbPass, String modelName, String dbType, String dbClass) {
-		this.setJenaModel(this.loadModel(dbUrl, dbUser, dbPass, modelName, dbType, dbClass));
+		this.setJenaModel(this.loadModel(dbUrl, dbUser, dbPass, modelName, dbType));
 		this.parameters = new HashMap<String,String>();
 		this.parameters.put("type", "db");
 		this.parameters.put("dbUrl", dbUrl);
@@ -244,12 +243,9 @@ public class JenaConnect {
 	 * @param dbPass password to connect with
 	 * @param modelName named model to connect to
 	 * @param dbType database type
-	 * @param dbClass jdbc connection class
 	 * @return the model
 	 */
-	private Model loadModel(String dbUrl, String dbUser, String dbPass, String modelName, String dbType, String dbClass) {
-		//return ModelLoader.connectToDB(dbUrl, dbUser, dbPass, modelName, dbType, dbClass);
-		//return ModelFactory.createSimpleRDBConnection(dbUrl,dbUser,dbPass,dbType)
+	private Model loadModel(String dbUrl, String dbUser, String dbPass, String modelName, String dbType) {
 		ModelMaker maker = ModelFactory.createModelRDBMaker(ModelFactory.createSimpleRDBConnection(dbUrl,dbUser,dbPass,dbType));
 		//If modelName doesn't exist, allow creation
 		return maker.openModel(modelName, false);

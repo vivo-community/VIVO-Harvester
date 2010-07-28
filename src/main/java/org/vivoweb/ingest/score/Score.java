@@ -146,15 +146,10 @@ public class Score {
 //				throw new IOException(e.getMessage(),e);
 //			}
 			
-			//if (args.length != 4) {
-			//	log.error("Usage requires 4 arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig");
-			//	return;
-			//}
-			
 			//Get optional inputs / set defaults
 			String workingModel = opts.get("t");
 			String outputModel = opts.get("o");
-			boolean allowNonEmptyWorkingModel= opts.has("n");
+			boolean allowNonEmptyWorkingModel = opts.has("n");
 			String exactMatchArg = opts.get("e");
 
 			try {
