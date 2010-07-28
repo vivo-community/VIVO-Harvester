@@ -175,7 +175,7 @@ public class Score {
 				
 				//Call each exactMatch
 				for (String attribute : scoring.matchAttribute) {
-					scoring.executeExactMatch(attribute);
+					scoring.exactMatch(attribute);
 				}
 				
 			 	//Empty working model
@@ -191,32 +191,6 @@ public class Score {
 			} catch(IOException e) {
 				log.fatal(e.getMessage(),e);
 			}
-		}
-
-		/**
-		 * Executes exact match algorithm
-		 * @param attribute attribute to match
-		 */
-		private void executeExactMatch(String attribute) {		
-		 	ResultSet scoreInputResult;
-		 	
-		 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-	    						"SELECT ?x ?" + attribute + " " + 
-	    						"WHERE { ?x score:" + attribute + " ?" + attribute + "}";
-		 	String coreAttribute = "core:" + attribute;
-		 	
-		 	log.debug(matchQuery);
-
-		 	//Exact Match
-		 	log.info("Executing exactMatch for " + attribute);
-	 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
-	 		
-	    	//Log extra info message if none found
-	    	if (!scoreInputResult.hasNext()) {
-	    		log.info("No matches found for " + attribute + " in input");
-	    	} else {
-	    		exactMatch(this.vivo,this.scoreOutput,attribute,coreAttribute,scoreInputResult);
-	    	}
 		}
 		
 		/**
@@ -403,50 +377,50 @@ public class Score {
 		* Executes a pair scoring method, utilizing the matchAttribute. This attribute is expected to 
 		* return 2 to n results from the given query. This "pair" will then be utilized as a matching scheme 
 		* to construct a sub dataset. This dataset can be scored and stored as a match 
-		* @param  matched a model containing statements describing known authors
-		* @param  score a model containing statements to be disambiguated
-		* @param  matchAttribute an attribute to perform the exact match
-		* @param  coreAttribute an attribute to perform the exact match against from core ontology
-		* @param  matchResult contains a resultset of the matchAttribute
+		* @param  attribute an attribute to perform the matching query
 		* @return score model
 		*/
 		@SuppressWarnings("unused")
-		private static Model pairwiseScore(Model matched, Model score, String matchAttribute, String coreAttribute, ResultSet matchResult) {			
+		private Model pairwiseScore(String attribute) {			
 		 	//iterate thru scoringInput pairs against matched pairs
 		 	//TODO Nicholas: support partial scoring, multiples matches against several pairs
 		 	//if pairs match, store publication to matched author in Model
 			
-			String scoreMatch;
-			RDFNode matchNode;
-			QuerySolution scoreSolution;
-
-		 	//create pairs of *attribute* from matched
-	    	log.info("Creating pairs of " + matchAttribute + " from input");
-	    	
-	    	//look for exact match in vivo
-	    	while (matchResult.hasNext()) {
-	    		scoreSolution = matchResult.nextSolution();
-                matchNode = scoreSolution.get(matchAttribute);
-                
-                scoreMatch = matchNode.toString();
-                
-                log.info("\nChecking for " + scoreMatch + " in VIVO");
+			ResultSet scoreInputResult;
+			String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
+								"SELECT ?x ?" + attribute + " " + 
+								"WHERE { ?x score:" + attribute + " ?" + attribute + "}";
+			String coreAttribute = "core:" + attribute;
+			
+			
+			//Exact Match
+			log.info("Executing pairWise for " + attribute);
+			log.debug(matchQuery);
+			scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+			
+			//Log extra info message if none found
+			if (!scoreInputResult.hasNext()) {
+				log.info("No matches found for " + attribute + " in input");
+			} else {
+				log.info("Looping thru matching" + attribute + " from input");
+			}
+			
+			//look for exact match in vivo
+			while (scoreInputResult.hasNext()) {
+			 	//create pairs of *attribute* from matched
+		    	log.info("Creating pairs of " + attribute + " from input");
             }	    			 
 	    
-			return score;
+	    	return this.scoreOutput;
 		 }
 		 
 		 
 		 /**
 		 * Executes an exact matching algorithm for author disambiguation
-		 * @param  matched a model containing statements describing authors
-		 * @param  output a model containing statements to be disambiguated
-		 * @param  matchAttribute an attribute to perform the exact match
-		 * @param  coreAttribute an attribute to perform the exact match against from core ontology
-		 * @param  matchResult contains a resultset of the matchAttribute
+		 * @param  attribute an attribute to perform the exact match
 		 * @return model of matched statements
 		 */
-		 private static Model exactMatch(Model matched, Model output, String matchAttribute, String coreAttribute, ResultSet matchResult) {
+		 private Model exactMatch(String attribute) {
 				String scoreMatch;
 				String queryString;
 				Resource paperResource;
@@ -454,16 +428,31 @@ public class Score {
 				RDFNode paperNode;
 				ResultSet vivoResult;
 				QuerySolution scoreSolution;
+			 	ResultSet scoreInputResult;
+			 	
+			 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
+		    						"SELECT ?x ?" + attribute + " " + 
+		    						"WHERE { ?x score:" + attribute + " ?" + attribute + "}";
+			 	String coreAttribute = "core:" + attribute;
 
-		    	log.info("Looping thru matching" + matchAttribute + " from input");
+
+			 	//Exact Match
+			 	log.info("Executing exactMatch for " + attribute);
+			 	log.debug(matchQuery);
+		 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+		 		
+		    	//Log extra info message if none found
+		    	if (!scoreInputResult.hasNext()) {
+		    		log.info("No matches found for " + attribute + " in input");
+		    	} else {
+		    		log.info("Looping thru matching" + attribute + " from input");
+		    	}
 		    	
 		    	//look for exact match in vivo
-		    	while (matchResult.hasNext()) {
-		    		scoreSolution = matchResult.nextSolution();
-	                matchNode = scoreSolution.get(matchAttribute);
-	                //TODO Nicholas: paperNode must currently be 'x'; howto abstract?
+		    	while (scoreInputResult.hasNext()) {
+		    		scoreSolution = scoreInputResult.nextSolution();
+	                matchNode = scoreSolution.get(attribute);
 	                paperNode = scoreSolution.get("x");
-	                //TODO Nicholas: paperResource must currently be 'x'; howto abstract?
 	                paperResource = scoreSolution.getResource("x");
 	                
 	                scoreMatch = matchNode.toString();
@@ -478,11 +467,11 @@ public class Score {
 	    			
 	    			log.debug(queryString);
 	    			
-	    			vivoResult = executeQuery(matched, queryString);
+	    			vivoResult = executeQuery(this.vivo, queryString);
 	    			
-	    			commitResultSet(output,vivoResult,paperResource,matchNode,paperNode);
+	    			commitResultSet(this.scoreOutput,vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
 		    	
-		    	return output;
+		    	return this.scoreOutput;
 		 }
 	}
