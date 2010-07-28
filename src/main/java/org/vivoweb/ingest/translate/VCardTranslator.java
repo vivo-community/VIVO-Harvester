@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
 
-import org.vivoweb.ingest.util.Task;
+
 
 /**
  * VCARD Translator
@@ -52,7 +52,7 @@ import org.vivoweb.ingest.util.Task;
  * @TODO Stephen: allow for other versions
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  */
-public class VCardTranslator extends Task {
+public class VCardTranslator {
 	// Global Variables
 	
 	/**
@@ -65,7 +65,9 @@ public class VCardTranslator extends Task {
 		// if Key.Equals()
 	}
 	
-	@Override
+	/**
+	 * 
+	 */
 	public void executeTask() {
 		// Nothing yet
 	}

@@ -13,21 +13,23 @@ package org.vivoweb.ingest.translate;
 import java.io.IOException;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
-import org.vivoweb.ingest.util.Task;
 import org.xml.sax.SAXException;
 
 /**
  * Handles the bibtex format and translates it into the VIVO ontology.
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  */
-public class BibtexTranslator extends Task{
+public class BibtexTranslator {
 	
 	public static BibtexTranslator getInstance(Map<String,String> params) throws ParserConfigurationException, SAXException, IOException {
 		//TODO Stephen: Identify parameters required for translation
 		return null;
 	}
 
-	@Override
+	/**
+	 * 
+	 * @throws NumberFormatException
+	 */
 	public void executeTask() throws NumberFormatException {
 		//TODO Stephen: Stub out parsing method for reading in the Bibtex Records
 	}

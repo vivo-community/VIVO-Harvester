@@ -17,8 +17,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.Task;
-
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -35,7 +33,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  *
  */
-public class RDFTranslator extends Task {
+public class RDFTranslator {
 	/**
 	 * the log property for logging errors, information, debugging
 	 */
@@ -77,7 +75,9 @@ public class RDFTranslator extends Task {
 		this.translationWorkFlow = transWF;
 	}
 	
-	@Override
+	/**
+	 * 
+	 */
 	public void executeTask(){
 		//checking for valid input parameters
 		if ((this.translationWorkFlow !=null && this.translationWorkFlow.isFile()) && this.inStream != null && this.inStream != null) {
