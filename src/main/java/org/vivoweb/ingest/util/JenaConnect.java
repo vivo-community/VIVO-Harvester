@@ -248,7 +248,11 @@ public class JenaConnect {
 	 * @return the model
 	 */
 	private Model loadModel(String dbUrl, String dbUser, String dbPass, String modelName, String dbType, String dbClass) {
-		return ModelLoader.connectToDB(dbUrl, dbUser, dbPass, modelName, dbType, dbClass);
+		//return ModelLoader.connectToDB(dbUrl, dbUser, dbPass, modelName, dbType, dbClass);
+		//return ModelFactory.createSimpleRDBConnection(dbUrl,dbUser,dbPass,dbType)
+		ModelMaker maker = ModelFactory.createModelRDBMaker(ModelFactory.createSimpleRDBConnection(dbUrl,dbUser,dbPass,dbType));
+		//If modelName doesn't exist, allow creation
+		return maker.openModel(modelName, false);
 	}
 	
 	/**
