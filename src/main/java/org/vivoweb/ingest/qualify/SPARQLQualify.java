@@ -10,14 +10,14 @@
  ******************************************************************************/
 package org.vivoweb.ingest.qualify;
 
-import static java.util.Arrays.asList;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.JenaConnect;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -186,16 +186,16 @@ public class SPARQLQualify {
 	}
 	
 	/**
-	 * Get the OptionParser for this Task
-	 * @return the OptionParser
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	private static OptionParser getParser() {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("j", "jenaConfig")).withRequiredArg().describedAs("config file for jena model");
-		parser.acceptsAll(asList("d", "dataType")).withRequiredArg().describedAs("date type (rdf predicate)");
-		parser.acceptsAll(asList("r", "regexMatch")).withRequiredArg().describedAs("match this regex expresion");
-		parser.acceptsAll(asList("t", "textMatch")).withRequiredArg().describedAs("match this exact text string");
-		parser.acceptsAll(asList("v", "value")).withRequiredArg().describedAs("replace matching records with this value");
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("SPARQLQualify");
+		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jenaConfig").setDescription("config file for jena model").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataType").setDescription("data type (rdf predicate)").withParameter(true, "RDF_PREDICATE"));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX"));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING"));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").setDescription("replace matching record data with this value").withParameter(true, "REPLACE_VALUE"));
 		return parser;
 	}
 	
@@ -205,13 +205,9 @@ public class SPARQLQualify {
 	 */
 	public static void main(String... args) {
 		try {
-			new SPARQLQualify(new ArgList(getParser(), args, "j","d","v")).executeTask();
+			new SPARQLQualify(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
-			try {
-				getParser().printHelpOn(System.out);
-			} catch(IOException e1) {
-				log.fatal(e.getMessage(),e);
-			}
+			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

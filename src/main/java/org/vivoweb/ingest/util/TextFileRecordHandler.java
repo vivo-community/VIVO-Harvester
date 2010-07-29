@@ -16,23 +16,33 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TimeZone;
+import java.util.TreeSet;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
+import org.vivoweb.ingest.util.RecordMetaData.RecordMetaDataType;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class TextFileRecordHandler extends RecordHandler {
-
 	/**
 	 * Log4J Logger
 	 */
@@ -41,6 +51,10 @@ public class TextFileRecordHandler extends RecordHandler {
 	 * The directory to store record files in
 	 */
 	protected FileObject fileDirObj;
+	/**
+	 * The directory to store record metadata files in
+	 */
+	private FileObject metaDirObj;
 	
 	/**
 	 * Default Constructor
@@ -73,6 +87,11 @@ public class TextFileRecordHandler extends RecordHandler {
 			log.info("Directory '"+fileDir+"' Does Not Exist, attempting to create");
 			this.fileDirObj.createFolder();
 		}
+		this.metaDirObj = fsMan.resolveFile(this.fileDirObj, ".metadata");
+		if(!this.metaDirObj.exists()) {
+			log.info("Direcotry '"+fileDir+"/.metadata' Does Not Exist, attempting to create");
+			this.metaDirObj.createFolder();
+		}
 	}
 	
 	@Override
@@ -81,7 +100,7 @@ public class TextFileRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, boolean overwrite) throws IOException {
+	public void addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
 		//log.debug("Resolving file for record: " + rec.getID());
 		FileObject fo = this.fileDirObj.resolveFile(rec.getID());
 		if(!overwrite && fo.exists()) {
@@ -95,6 +114,22 @@ public class TextFileRecordHandler extends RecordHandler {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo.getContent().getOutputStream(false)));
 		bw.append(rec.getData());
 		bw.close();
+		createMetaDataFile(rec.getID());
+		setWritten(rec, operator);
+	}
+	
+	/**
+	 * Creates the metadata file for a given record
+	 * @param recID the record id
+	 * @throws IOException error writing metadata file
+	 */
+	private void createMetaDataFile(String recID) throws IOException {
+		FileObject fmo = this.fileDirObj.resolveFile(recID);
+		try {
+			fmo.createFile();
+		} catch(FileSystemException e) {
+			throw new IOException("Error creating metadata for record "+recID+" at file "+fmo.getName().getFriendlyURI());
+		}
 	}
 	
 	@Override
@@ -107,6 +142,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		} else if(!fo.delete()) {
 			throw new IOException("Failed to delete record "+recID+" from file "+fo.getName().getFriendlyURI());
 		}
+		delMetaData(recID);
 	}
 	
 	@Override
@@ -121,6 +157,58 @@ public class TextFileRecordHandler extends RecordHandler {
 		}
 		br.close();
 		return sb.toString();
+	}
+	
+	@Override
+	protected void delMetaData(String recID) throws IOException {
+		FileObject fmo = this.metaDirObj.resolveFile(recID);
+		if(!fmo.exists()) {
+			log.warn("Attempted to delete record "+recID+" metadata, but file "+fmo.getName().getFriendlyURI()+" did not exist.");
+		} else if(!fmo.isWriteable()) {
+			throw new IOException("Insufficient file system privileges to delete record "+recID+" metadata from file "+fmo.getName().getFriendlyURI());
+		} else if(!fmo.delete()) {
+			throw new IOException("Failed to delete record "+recID+" metadata from file "+fmo.getName().getFriendlyURI());
+		}
+	}
+	
+	@Override
+	protected void addMetaData(Record rec, RecordMetaData rmd) {
+		try {
+			FileObject fmo = this.metaDirObj.resolveFile(rec.getID());
+			if(!fmo.exists()) {
+				log.warn("Attempted to add record "+rec.getID()+" metadata, but file "+fmo.getName().getFriendlyURI()+" did not exist. Initializeing record metadata.");
+				createMetaDataFile(rec.getID());
+			} else if(!fmo.isWriteable()) {
+				throw new IOException("Insufficient file system privileges to delete record "+rec.getID()+" metadata from file "+fmo.getName().getFriendlyURI());
+			}
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(false)));
+			bw.append("<MetaDataRecord>\n");
+			bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
+			bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
+			bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
+			bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
+			bw.append("</MetaDataRecord>\n");
+			bw.close();
+		} catch(IOException e) {
+			log.error(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
+		try {
+			FileObject fmo = this.metaDirObj.resolveFile(recID);
+			if(!fmo.exists()) {
+				throw new IOException("Attempted to retrieve record "+recID+" metadata, but file "+fmo.getName().getFriendlyURI()+" does not exist");
+			} else if(!fmo.isReadable()) {
+				throw new IOException("Insufficient file system privileges to read record "+recID+" metadata from file "+fmo.getName().getFriendlyURI());
+			}
+			return new TextFileMetaDataParser().parseMetaData(fmo);
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(),e);
+		}
 	}
 	
 	@Override
@@ -177,4 +265,109 @@ public class TextFileRecordHandler extends RecordHandler {
 		}
 	}
 	
+	/**
+	 * MetaData File Parser for TextFileRecordHandlers
+	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+	 */
+	private static class TextFileMetaDataParser extends DefaultHandler {
+		
+		/**
+		 * The RecordHandler we are building
+		 */
+		private SortedSet<RecordMetaData> rmdSet;
+		/**
+		 * The date of the current rmd
+		 */
+		private Calendar tempDate;
+		/**
+		 * Class name of the operator for current rmd
+		 */
+		private Class<?> tempOperator;
+		/**
+		 * The rmdType of current rmd
+		 */
+		private RecordMetaDataType tempOperation;
+		/**
+		 * The md5hash of current rmd
+		 */
+		private String tempMD5;
+		/**
+		 * The value of the current cdata
+		 */
+		private String tempVal;
+		
+		/**
+		 * Default Constructor
+		 */
+		protected TextFileMetaDataParser() {
+			this.rmdSet = new TreeSet<RecordMetaData>();
+			this.tempDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
+			this.tempDate.setTimeInMillis(0);
+			this.tempOperation = RecordMetaDataType.error;
+			this.tempOperator = IllegalArgumentException.class;
+		}
+		
+		/**
+		 * Parses the metadata file and return sortedset of recordmetadata
+		 * @param fmo the fileobject of the metadata file
+		 * @return sortedset of recordmetadata
+		 * @throws ParserConfigurationException parser configured incorrectly
+		 * @throws SAXException error parsing xml
+		 * @throws IOException error reading xml
+		 */
+		protected SortedSet<RecordMetaData> parseMetaData(FileObject fmo) throws ParserConfigurationException, SAXException, IOException {
+			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
+			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
+			sp.parse(fmo.getContent().getInputStream(), this); // parse the file and also register this class for call backs
+			return this.rmdSet;
+		}
+		
+		@Override
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			if(qName.equalsIgnoreCase("MetaDataRecord")) {
+				this.tempDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
+				this.tempDate.setTimeInMillis(0);
+				this.tempOperation = RecordMetaDataType.error;
+				this.tempOperator = IllegalArgumentException.class;
+				this.tempMD5 = "";
+			} else if(qName.equalsIgnoreCase("Date")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
+			} else if(qName.equalsIgnoreCase("Operation")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
+			} else if(qName.equalsIgnoreCase("Operator")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
+			} else if(qName.equalsIgnoreCase("MD5")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
+			} else {
+				throw new SAXException("Unknown Tag: "+qName);
+			}
+		}
+		
+		@Override
+		public void characters(char[] ch, int start, int length) throws SAXException {
+			this.tempVal = new String(ch, start, length);
+		}
+		
+		@Override
+		public void endElement(String uri, String localName, String qName) throws SAXException {
+			if(qName.equalsIgnoreCase("MetaDataRecord")) {
+				RecordMetaData rmd = new RecordMetaData(this.tempDate, this.tempOperator, this.tempOperation, this.tempMD5);
+				this.rmdSet.add(rmd);
+			} else if(qName.equalsIgnoreCase("Date")) {
+				this.tempDate.setTimeInMillis(Long.parseLong(this.tempVal));
+			} else if(qName.equalsIgnoreCase("Operation")) {
+				this.tempOperation = RecordMetaDataType.valueOf(this.tempVal);
+			} else if(qName.equalsIgnoreCase("Operator")) {
+				try {
+					this.tempOperator = Class.forName(this.tempVal);
+				} catch(ClassNotFoundException e) {
+					throw new SAXException(e.getMessage(),e);
+				}
+			} else if(qName.equalsIgnoreCase("MD5")) {
+				this.tempMD5 = this.tempVal;
+			} else {
+				throw new SAXException("Unknown Tag: "+qName);
+			}
+		}
+	}
 }

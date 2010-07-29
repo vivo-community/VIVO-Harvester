@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
-import static java.util.Arrays.asList;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,11 +21,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
-import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.RecordHandler;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 import org.xml.sax.SAXException;
 
 /**
@@ -316,7 +316,7 @@ public class JDBCFetch {
 					
 					//Write RDF to RecordHandler
 					log.trace("Adding record for "+tableName+": "+recID);
-					this.rh.addRecord(tableName+"_"+recID,sb.toString());
+					this.rh.addRecord(tableName+"_"+recID,sb.toString(), this.getClass());
 				}
 			}
 		} catch(SQLException e) {
@@ -327,16 +327,16 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Get the OptionParser for this Task
-	 * @return the OptionParser
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	protected static OptionParser getParser() {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("d", "driver")).withRequiredArg().describedAs("jdbc driver class");
-		parser.acceptsAll(asList("c", "connection")).withRequiredArg().describedAs("jdbc connection string");
-		parser.acceptsAll(asList("u", "username")).withRequiredArg().describedAs("database username");
-		parser.acceptsAll(asList("p", "password")).withRequiredArg().describedAs("database password");
-		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("RecordHandler config file path");
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("JDBCFetch");
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		return parser;
 	}
 	
@@ -346,13 +346,9 @@ public class JDBCFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			new JDBCFetch(new ArgList(getParser(), args, "d","c","u","p","o")).executeTask();
+			new JDBCFetch(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
-			try {
-				getParser().printHelpOn(System.out);
-			} catch(IOException e1) {
-				log.fatal(e.getMessage(),e);
-			}
+			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.vivoweb.ingest.util;
 
+import java.io.IOException;
+
 /**
  * Individual record
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
@@ -23,15 +25,21 @@ public class Record {
 	 * Data for this record
 	 */
 	private String data;
+	/**
+	 * the recordhandler this record came from
+	 */
+	private RecordHandler rh;
 	
 	/**
 	 * Constructor
 	 * @param recID records id
 	 * @param recData records data
+	 * @param recordhandler the recordhandler this record came from
 	 */
-	public Record(String recID, String recData) {
+	protected Record(String recID, String recData, RecordHandler recordhandler) {
 		this.id = recID;
 		this.data = recData;
+		this.rh = recordhandler;
 	}
 	
 	/**
@@ -45,10 +53,12 @@ public class Record {
 	/**
 	 * Setter for Data
 	 * @param newData data to be used
+	 * @param operator the class setting the data
+	 * @throws IOException error writing data to recordhandler
 	 */
-	@SuppressWarnings("unused") //TODO Chris: eventually make this public and automatically update the data in the original record handler
-	private void setData(String newData) {
+	public void setData(String newData, Class<?> operator) throws IOException {
 		this.data = newData;
+		this.rh.addRecord(this, operator, true);
 	}
 	
 	/**
@@ -59,4 +69,11 @@ public class Record {
 		return this.data;
 	}
 	
+	/**
+	 * Set this record as processed by the given operator
+	 * @param operator the operator that processed this record
+	 */
+	public void setProcessed(Class<?> operator) {
+		this.rh.setProcessed(this, operator);
+	}
 }

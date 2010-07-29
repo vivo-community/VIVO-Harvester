@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Record Handler that uses a Java Map to store records in memory
@@ -24,6 +26,10 @@ public class MapRecordHandler extends RecordHandler {
 	 * The map to store records in 
 	 */
 	Map<String,String> map;
+	/**
+	 * The map to store metadata in
+	 */
+	Map<String,RecordMetaData> metaDataMap;
 	
 	/**
 	 * Default Constructor
@@ -33,7 +39,7 @@ public class MapRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, boolean overwrite) throws IOException {
+	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
 		if(!overwrite && this.map.containsKey(rec.getID())) {
 			throw new IOException("Record already exists!");
 		}
@@ -81,7 +87,7 @@ public class MapRecordHandler extends RecordHandler {
 		public Record next() {
 			String key = this.keyIter.next();
 			String data = MapRecordHandler.this.map.get(key);
-			return new Record(key,data);
+			return new Record(key,data,MapRecordHandler.this);
 		}
 		
 		@Override
@@ -95,4 +101,21 @@ public class MapRecordHandler extends RecordHandler {
 		//No params to set
 	}
 	
+
+	@Override
+	protected void addMetaData(Record rec, RecordMetaData rmd) {
+		this.metaDataMap.put(rec.getID(), rmd);
+	}
+	
+
+	@Override
+	protected void delMetaData(String recID) throws IOException {
+		this.metaDataMap.remove(recID);
+	}
+	
+
+	@Override
+	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
+		return new TreeSet<RecordMetaData>(this.metaDataMap.values());
+	}
 }

@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
-import static java.util.Arrays.asList;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.EFetchResult;
@@ -28,14 +27,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import joptsimple.OptionParser;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.RecordHandler;
 import org.vivoweb.ingest.util.XMLRecordOutputStream;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 import org.xml.sax.SAXException;
 
 /**
@@ -141,7 +141,7 @@ public class PubmedSOAPFetch {
 		} catch(SAXException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		OutputStream os = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler);
+		OutputStream os = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler, this.getClass());
 		setXMLWriter(os);
 	}
 	
@@ -429,17 +429,17 @@ public class PubmedSOAPFetch {
 	}
 	
 	/**
-	 * Get the OptionParser for this Task
-	 * @return the OptionParser
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	private static OptionParser getParser() {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("m", "email")).withRequiredArg().describedAs("contact email address");
-		parser.acceptsAll(asList("l", "location")).withRequiredArg().describedAs("contact location/institution");
-		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("RecordHandler config file path");
-		parser.acceptsAll(asList("t", "termSearch")).withRequiredArg().describedAs("term to search against pubmed").defaultsTo(queryAll());
-		parser.acceptsAll(asList("n", "numRecords")).withRequiredArg().describedAs("maximun records to return").defaultsTo(""+getHighestRecordNumber());
-		parser.acceptsAll(asList("b", "batchSize")).withRequiredArg().describedAs("number of records to fetch per batch").defaultsTo("1000");
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("PubmedSOAPFetch");
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("location").setDescription("contact location/institution").withParameter(true, "LOCATION"));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against pubmed").withParameter(true, "SEARCH_STRING"));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("numRecords").setDescription("maximum records to return").withParameter(true, "NUMBER"));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batchSize").setDescription("number of records to fetch per batch").withParameter(true, "NUMBER"));
 		return parser;
 	}
 	
@@ -449,13 +449,9 @@ public class PubmedSOAPFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			new PubmedSOAPFetch(new ArgList(getParser(), args, "m","l","o","t","n","b")).executeTask();
+			new PubmedSOAPFetch(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
-			try {
-				getParser().printHelpOn(System.out);
-			} catch(IOException e1) {
-				log.fatal(e.getMessage(),e);
-			}
+			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

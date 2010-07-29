@@ -10,17 +10,17 @@
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
-import static java.util.Arrays.asList;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.RecordHandler;
 import org.vivoweb.ingest.util.XMLRecordOutputStream;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 import org.xml.sax.SAXException;
 import ORG.oclc.oai.harvester2.app.RawWrite;
 
@@ -100,7 +100,7 @@ public class OAIFetch {
 		} catch(IOException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		this.osOutStream = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler);
+		this.osOutStream = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler, this.getClass());
 	}
 	
 	/**
@@ -123,15 +123,15 @@ public class OAIFetch {
 	}
 	
 	/**
-	 * Get the OptionParser for this Task
-	 * @return the OptionParser
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	protected static OptionParser getParser() {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("u", "url")).withRequiredArg().describedAs("repository url");
-		parser.acceptsAll(asList("s", "start")).withRequiredArg().describedAs("beginning date of date range (MM/DD/YYYY)");
-		parser.acceptsAll(asList("e", "end")).withRequiredArg().describedAs("ending date of date range (MM/DD/YYYY)");
-		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("RecordHandler config file path");
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("OAIFetch");
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("repository url").withParameter(true, "URL"));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (MM/DD/YYYY)").withParameter(true, "DATE"));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (MM/DD/YYYY)").withParameter(true, "DATE"));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
 		return parser;
 	}
 	
@@ -141,13 +141,9 @@ public class OAIFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			new OAIFetch(new ArgList(getParser(), args, "u","s","e","o")).executeTask();
+			new OAIFetch(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
-			try {
-				getParser().printHelpOn(System.out);
-			} catch(IOException e1) {
-				log.fatal(e.getMessage(),e);
-			}
+			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

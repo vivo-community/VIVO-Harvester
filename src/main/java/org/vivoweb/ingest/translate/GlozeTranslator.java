@@ -9,25 +9,21 @@
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
 
-import static java.util.Arrays.asList;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import joptsimple.OptionParser;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.Record;
 import org.vivoweb.ingest.util.RecordHandler;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 import com.hp.gloze.Gloze;
 import com.hp.hpl.jena.rdf.model.*;
 
@@ -193,7 +189,7 @@ public class GlozeTranslator {
 					this.outStream = buff;
 					this.translateFile();
 					buff.flush();
-					this.outStore.addRecord(r.getID(), buff.toString());
+					this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
 					buff.reset();
 				}
 				buff.close();
@@ -209,30 +205,27 @@ public class GlozeTranslator {
 	}
 	
 	/**
-	 * @return returns OptionParser
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	protected static OptionParser getParser() {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("i", "input")).withRequiredArg().describedAs("Input Record Handler");
-		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("Output Record Handler");
-		parser.acceptsAll(asList("z", "xmlSchema")).withOptionalArg().describedAs("XML Schema");
-		parser.acceptsAll(asList("u", "uriBase")).withOptionalArg().describedAs("URI Base");
+	protected static ArgParser getParser() {
+		ArgParser parser = new ArgParser("GlozeTranslator");
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("xmlSchema").withParameter(false, "XML_SCHEMA").setDescription("xsl file").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("uriBase").withParameter(false, "URI_BASE").setDescription("uri base").setRequired(true));
 		return parser;
 	}	
 	
-	/***
-	 * 
+	/**
+	 * Main Method
 	 * @param args list of arguments required to execute glozetranslate
 	 */
 	public static void main(String[] args) {
 		try {
-			new GlozeTranslator(new ArgList(getParser(), args, "i","o","z","u")).execute();
+			new GlozeTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			try {
-				getParser().printHelpOn(System.out);
-			} catch(IOException e1) {
-				log.fatal(e.getMessage(),e);
-			}
+			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

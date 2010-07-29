@@ -52,6 +52,10 @@ public class XMLRecordOutputStream extends OutputStream {
 	 * Append to each record
 	 */
 	private String footer;
+	/**
+	 * The class writing records
+	 */
+	private Class<?> opClass;
 	
 	/**
 	 * Constructor
@@ -60,14 +64,16 @@ public class XMLRecordOutputStream extends OutputStream {
 	 * @param footerInfo appended to each record
 	 * @param idLocationRegex regex to find the data to be used as ID
 	 * @param recordHandler RecordHandler to write records to
+	 * @param operator the class writing records
 	 */
-	public XMLRecordOutputStream(String tagToSplitOn, String headerInfo, String footerInfo, String idLocationRegex, RecordHandler recordHandler) {
+	public XMLRecordOutputStream(String tagToSplitOn, String headerInfo, String footerInfo, String idLocationRegex, RecordHandler recordHandler, Class<?> operator) {
 		this.buf = new ByteArrayOutputStream();
 		this.rh = recordHandler;
 		this.idRegex = Pattern.compile(idLocationRegex);
 		this.closeTag = ("</"+tagToSplitOn+">").getBytes();
 		this.header = headerInfo;
 		this.footer = footerInfo;
+		this.opClass = operator;
 	}
 
 	@Override
@@ -83,7 +89,7 @@ public class XMLRecordOutputStream extends OutputStream {
 			String id = m.group(1);
 			// Slows things down ALOT to have these
 //			log.debug("Adding record id: "+id);
-			this.rh.addRecord(id.trim(), this.header+record.trim()+this.footer);
+			this.rh.addRecord(id.trim(), this.header+record.trim()+this.footer, this.opClass);
 			this.buf.reset();
 		}
 	}

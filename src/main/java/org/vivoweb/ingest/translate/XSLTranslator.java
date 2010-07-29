@@ -9,12 +9,9 @@
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
 
-import static java.util.Arrays.asList;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.xml.transform.Source;
@@ -22,14 +19,13 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import joptsimple.OptionParser;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.Record;
 import org.vivoweb.ingest.util.RecordHandler;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology
@@ -146,7 +142,7 @@ public class XSLTranslator {
 				this.outStream = buff; 
 				this.xmlTranslate();
 				buff.flush();
-				this.outStore.addRecord(r.getID(), buff.toString());
+				this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
 				buff.reset();
 			}
 			
@@ -185,14 +181,14 @@ public class XSLTranslator {
 	}
 	
 	/**
-	 * Get the OptionParser for this Task
-	 * @return the OptionParser
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	protected static OptionParser getParser() {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("i", "input")).withRequiredArg().describedAs("Input Record Handler");
-		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("Output Record Handler");
-		parser.acceptsAll(asList("x", "xslFile")).withRequiredArg().describedAs("XSL File");
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("XSLTranslator");
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
 		return parser;
 	}	
 	
@@ -201,18 +197,13 @@ public class XSLTranslator {
 	 * The main method actually passes its arg string to another method so that Translator can
 	 * use this same method of execution
 	 * 
-	 * @param args
-	 *           (passed directly to parseArgs)
+	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
 		try {
-			new XSLTranslator(new ArgList(getParser(), args, "i","o","x")).execute();
+			new XSLTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			try {
-				getParser().printHelpOn(System.out);
-			} catch(IOException e1) {
-				log.fatal(e.getMessage(),e);
-			}
+			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

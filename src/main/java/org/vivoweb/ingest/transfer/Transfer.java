@@ -10,14 +10,14 @@
  ******************************************************************************/
 package org.vivoweb.ingest.transfer;
 
-import static java.util.Arrays.asList;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.ArgList;
 import org.vivoweb.ingest.util.JenaConnect;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -82,13 +82,13 @@ public class Transfer {
 	}
 	
 	/**
-	 * Get the OptionParser for this Task
-	 * @return the OptionParser
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	private static OptionParser getParser() {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("i", "input")).withRequiredArg().describedAs("config file for input jena model");
-		parser.acceptsAll(asList("o", "output")).withRequiredArg().describedAs("config file for output jena model");
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("Transfer");
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(true));
 		return parser;
 	}
 	
@@ -98,13 +98,9 @@ public class Transfer {
 	 */
 	public static void main(String... args) {
 		try {
-			new Transfer(new ArgList(getParser(), args, "i","o")).executeTask();
+			new Transfer(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
-			try {
-				getParser().printHelpOn(System.out);
-			} catch(IOException e1) {
-				log.fatal(e.getMessage(),e);
-			}
+			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

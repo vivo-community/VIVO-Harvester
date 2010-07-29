@@ -12,12 +12,17 @@ package org.vivoweb.ingest.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TimeZone;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.vfs.VFS;
+import org.vivoweb.ingest.util.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,7 +32,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public abstract class RecordHandler implements Iterable<Record> {
-	
 	/**
 	 * Do we overwrite existing records by default
 	 */
@@ -44,30 +48,33 @@ public abstract class RecordHandler implements Iterable<Record> {
 	/**
 	 * Adds a record to the RecordHandler
 	 * @param rec record to add
+	 * @param creator the creator
 	 * @param overwrite when set to true, will automatically overwrite existing records
 	 * @throws IOException error adding
 	 */
-	public abstract void addRecord(Record rec, boolean overwrite) throws IOException;
+	public abstract void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException;
 	
 	/**
 	 * Adds a record to the RecordHandler
 	 * @param recID record id to add
 	 * @param recData record data to add
+	 * @param creator the creator
 	 * @param overwrite when set to true, will automatically overwrite existing records
 	 * @throws IOException error adding
 	 */
-	public void addRecord(String recID, String recData, boolean overwrite) throws IOException {
-		addRecord(new Record(recID, recData), overwrite);
+	public void addRecord(String recID, String recData, Class<?> creator, boolean overwrite) throws IOException {
+		addRecord(new Record(recID, recData, this), creator, overwrite);
 	}
 	
 	/**
 	 * Adds a record to the RecordHandler
 	 * If overwriteDefault is set to true, will automatically overwrite existing records
 	 * @param rec record to add
+	 * @param creator the creator
 	 * @throws IOException error adding
 	 */
-	public void addRecord(Record rec) throws IOException {
-		addRecord(rec, isOverwriteDefault());
+	public void addRecord(Record rec, Class<?> creator) throws IOException {
+		addRecord(rec, creator, isOverwriteDefault());
 	}
 	
 	/**
@@ -75,10 +82,11 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * If overwriteDefault is set to true, will automatically overwrite existing records
 	 * @param recID record id to add
 	 * @param recData record data to add
+	 * @param creator the creator
 	 * @throws IOException error adding
 	 */
-	public void addRecord(String recID, String recData) throws IOException {
-		addRecord(new Record(recID, recData));
+	public void addRecord(String recID, String recData, Class<?> creator) throws IOException {
+		addRecord(new Record(recID, recData, this), creator);
 	}
 	
 	/**
@@ -89,7 +97,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error reading
 	 */
 	public Record getRecord(String recID) throws IllegalArgumentException, IOException {
-		return new Record(recID, getRecordData(recID));
+		return new Record(recID, getRecordData(recID), this);
 	}
 	
 	/**
@@ -100,6 +108,102 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error reading
 	 */
 	public abstract String getRecordData(String recID) throws IllegalArgumentException, IOException;
+	
+	/**
+	 * Retrieves all metadata for a given record
+	 * @param recID id of record to retrieve metadata for
+	 * @return the metadata map
+	 * @throws IOException error retrieving record metadata
+	 */
+	public abstract SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException;
+	
+	/**
+	 * Get the last RecordMetaData for a given record
+	 * @param recID id of record to retrieve metadata for
+	 * @return the last metadata
+	 * @throws IOException error retrieving record metadata
+	 */
+	public RecordMetaData getLastMetaData(String recID) throws IOException {
+		return getLastMetaData(recID, null);
+	}
+	
+	/**
+	 * Get the last RecordMetaData of a given type for a given record
+	 * @param recID id of record to retrieve metadata for
+	 * @param type the type of metadata, null for any type
+	 * @return the last metadata of the specified type
+	 * @throws IOException error retrieving record metadata
+	 */
+	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type) throws IOException {
+		for(RecordMetaData rmd : getRecordMetaData(recID)) {
+			if(type == null || rmd.getOperation() == type) {
+				return rmd;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Get the last Write RecordMetaData for a given record 
+	 * @param recID id of record to retrieve metadata for
+	 * @return the last write metadata
+	 * @throws IOException error retrieving record metadata
+	 */
+	public RecordMetaData getLastWrittenMetaData(String recID) throws IOException {
+		return getLastMetaData(recID, RecordMetaData.RecordMetaDataType.written);
+	}
+	
+	/**
+	 * Get the last Processed RecordMetaData for a given record 
+	 * @param recID id of record to retrieve metadata for
+	 * @return the last write metadata
+	 * @throws IOException error retrieving record metadata
+	 */
+	public RecordMetaData getLastProcessedMetaData(String recID) throws IOException {
+		return getLastMetaData(recID, RecordMetaDataType.processed);
+	}
+	
+	/**
+	 * Add a metadata record to indicate that the given operator has processed the given record
+	 * @param rec record to set processed
+	 * @param operator the class performing the processing
+	 */
+	protected void setProcessed(Record rec, Class<?> operator) {
+		addMetaData(rec, operator, RecordMetaDataType.processed);
+	}
+	
+	/**
+	 * Add a metadata record to indicate that the given operator has written the given record
+	 * @param rec record to set written
+	 * @param operator the class performing the writing
+	 */
+	protected void setWritten(Record rec, Class<?> operator) {
+		addMetaData(rec, operator, RecordMetaDataType.written);
+	}
+	
+	/**
+	 * Adds a metadata record for the given record
+	 * @param rec record to add metadata for
+	 * @param operator the class operating on the record
+	 * @param type the operation type
+	 */
+	protected void addMetaData(Record rec, Class<?> operator, RecordMetaDataType type) {
+		addMetaData(rec, new RecordMetaData(Calendar.getInstance(TimeZone.getTimeZone("GMT"),Locale.US), operator, type, RecordMetaData.makeMD5Hash(rec.getData())));
+	}
+	
+	/**
+	 * Adds a metadata record
+	 * @param rec record to add metadata for
+	 * @param rmd the metadata record
+	 */
+	protected abstract void addMetaData(Record rec, RecordMetaData rmd);
+	
+	/**
+	 * Deletes all metadata for a record
+	 * @param recID record id to delete metadata for
+	 * @throws IOException error deleting metadata
+	 */
+	protected abstract void delMetaData(String recID) throws IOException;
 	
 	/**
 	 * Delete the specified Record
@@ -153,6 +257,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	public boolean isOverwriteDefault() {
 		return this.overwriteDefault;
 	}
+
 
 	/**
 	 * Config Parser for RecordHandlers

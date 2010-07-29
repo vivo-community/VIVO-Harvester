@@ -54,18 +54,13 @@ public class ConfigParser extends DefaultHandler {
 		Map<String, String> params = new ConfigParser().parseConfig(filePath);
 		String[] paramArray = {};
 		List<String> paramList = new LinkedList<String>();
-		StringBuilder sb;
 		for(String key : params.keySet()) {
-			sb = new StringBuilder();
 			String value = params.get(key);
 			if(!value.equalsIgnoreCase("false")) {
-				sb.append("--");
-				sb.append(key);
+				paramList.add("--"+key);
 				if(!value.equalsIgnoreCase("true")) {
-					sb.append("=");
-					sb.append(value);
+					paramList.add(value);
 				}
-				paramList.add(sb.toString());
 			}
 		}
 		paramArray = paramList.toArray(paramArray);
