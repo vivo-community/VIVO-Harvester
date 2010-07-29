@@ -16,11 +16,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.RecordHandler;
-import org.vivoweb.ingest.util.XMLRecordOutputStream;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
+import org.vivoweb.ingest.util.repo.RecordHandler;
+import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 import ORG.oclc.oai.harvester2.app.RawWrite;
 

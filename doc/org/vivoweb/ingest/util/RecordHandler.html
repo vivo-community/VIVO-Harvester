@@ -93,7 +93,7 @@ org.vivoweb.ingest.util</FONT>
 Class RecordHandler</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.vivoweb.ingest.util.RecordHandler</B>
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.vivoweb.ingest.util.repo.RecordHandler</B>
 </PRE>
 <DL>
 <DT><B>All Implemented Interfaces:</B> <DD>java.lang.Iterable&lt;<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&gt;</DD>
@@ -146,7 +146,7 @@ Record Handler Interface
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.Record)">addRecord</A></B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec)</CODE>
+<TD><CODE><B><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.repo.Record)">addRecord</A></B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a record to the RecordHandler
@@ -155,7 +155,7 @@ Record Handler Interface
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>abstract &nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.Record, boolean)">addRecord</A></B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec,
+<TD><CODE><B><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.repo.Record, boolean)">addRecord</A></B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec,
           boolean&nbsp;overwrite)</CODE>
 
 <BR>
@@ -307,7 +307,7 @@ public abstract void <B>setParams</B>(java.util.Map&lt;java.lang.String,java.lan
 </DL>
 <HR>
 
-<A NAME="addRecord(org.vivoweb.ingest.util.Record, boolean)"><!-- --></A><H3>
+<A NAME="addRecord(org.vivoweb.ingest.util.repo.Record, boolean)"><!-- --></A><H3>
 addRecord</H3>
 <PRE>
 public abstract void <B>addRecord</B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec,
@@ -348,7 +348,7 @@ public void <B>addRecord</B>(java.lang.String&nbsp;recID,
 </DL>
 <HR>
 
-<A NAME="addRecord(org.vivoweb.ingest.util.Record)"><!-- --></A><H3>
+<A NAME="addRecord(org.vivoweb.ingest.util.repo.Record)"><!-- --></A><H3>
 addRecord</H3>
 <PRE>
 public void <B>addRecord</B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec)

@@ -8,21 +8,18 @@
  * Contributors:
  *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
-package org.vivoweb.ingest.util;
+package org.vivoweb.ingest.util.repo;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TimeZone;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.vfs.VFS;
-import org.vivoweb.ingest.util.RecordMetaData.RecordMetaDataType;
+import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -188,7 +185,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param type the operation type
 	 */
 	protected void addMetaData(Record rec, Class<?> operator, RecordMetaDataType type) {
-		addMetaData(rec, new RecordMetaData(Calendar.getInstance(TimeZone.getTimeZone("GMT"),Locale.US), operator, type, RecordMetaData.makeMD5Hash(rec.getData())));
+		addMetaData(rec, new RecordMetaData(operator, type, RecordMetaData.makeMD5Hash(rec.getData())));
 	}
 	
 	/**

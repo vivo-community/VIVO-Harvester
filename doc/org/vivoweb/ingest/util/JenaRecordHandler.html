@@ -93,8 +93,8 @@ org.vivoweb.ingest.util</FONT>
 Class JenaRecordHandler</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html" title="class in org.vivoweb.ingest.util">org.vivoweb.ingest.util.RecordHandler</A>
-      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.vivoweb.ingest.util.JenaRecordHandler</B>
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html" title="class in org.vivoweb.ingest.util">org.vivoweb.ingest.util.repo.RecordHandler</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.vivoweb.ingest.util.repo.JenaRecordHandler</B>
 </PRE>
 <DL>
 <DT><B>All Implemented Interfaces:</B> <DD>java.lang.Iterable&lt;<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&gt;</DD>
@@ -174,7 +174,7 @@ RecordHandler that stores data in a Jena Model
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../org/vivoweb/ingest/util/JenaRecordHandler.html#addRecord(org.vivoweb.ingest.util.Record, boolean)">addRecord</A></B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec,
+<TD><CODE><B><A HREF="../../../../org/vivoweb/ingest/util/JenaRecordHandler.html#addRecord(org.vivoweb.ingest.util.repo.Record, boolean)">addRecord</A></B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec,
           boolean&nbsp;overwrite)</CODE>
 
 <BR>
@@ -219,7 +219,7 @@ RecordHandler that stores data in a Jena Model
 <TH ALIGN="left"><B>Methods inherited from class org.vivoweb.ingest.util.<A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html" title="class in org.vivoweb.ingest.util">RecordHandler</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.Record)">addRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(java.lang.String, java.lang.String)">addRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(java.lang.String, java.lang.String, boolean)">addRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#getRecord(java.lang.String)">getRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#isOverwriteDefault()">isOverwriteDefault</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#parseConfig(java.lang.String)">parseConfig</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#setOverwriteDefault(boolean)">setOverwriteDefault</A></CODE></TD>
+<TD><CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.repo.Record)">addRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(java.lang.String, java.lang.String)">addRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(java.lang.String, java.lang.String, boolean)">addRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#getRecord(java.lang.String)">getRecord</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#isOverwriteDefault()">isOverwriteDefault</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#parseConfig(java.lang.String)">parseConfig</A>, <A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#setOverwriteDefault(boolean)">setOverwriteDefault</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -314,18 +314,18 @@ public <B>JenaRecordHandler</B>(java.lang.String&nbsp;configFile,
 </TR>
 </TABLE>
 
-<A NAME="addRecord(org.vivoweb.ingest.util.Record, boolean)"><!-- --></A><H3>
+<A NAME="addRecord(org.vivoweb.ingest.util.repo.Record, boolean)"><!-- --></A><H3>
 addRecord</H3>
 <PRE>
 public void <B>addRecord</B>(<A HREF="../../../../org/vivoweb/ingest/util/Record.html" title="class in org.vivoweb.ingest.util">Record</A>&nbsp;rec,
                       boolean&nbsp;overwrite)
                throws java.io.IOException</PRE>
 <DL>
-<DD><B>Description copied from class: <CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.Record, boolean)">RecordHandler</A></CODE></B></DD>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.repo.Record, boolean)">RecordHandler</A></CODE></B></DD>
 <DD>Adds a record to the RecordHandler
 <P>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.Record, boolean)">addRecord</A></CODE> in class <CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html" title="class in org.vivoweb.ingest.util">RecordHandler</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html#addRecord(org.vivoweb.ingest.util.repo.Record, boolean)">addRecord</A></CODE> in class <CODE><A HREF="../../../../org/vivoweb/ingest/util/RecordHandler.html" title="class in org.vivoweb.ingest.util">RecordHandler</A></CODE></DL>
 </DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>rec</CODE> - record to add<DD><CODE>overwrite</CODE> - when set to true, will automatically overwrite existing records

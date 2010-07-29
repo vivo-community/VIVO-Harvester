@@ -21,11 +21,11 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.Record;
-import org.vivoweb.ingest.util.RecordHandler;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
+import org.vivoweb.ingest.util.repo.Record;
+import org.vivoweb.ingest.util.repo.RecordHandler;
 
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology

@@ -8,12 +8,14 @@
  * Contributors:
  *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
-package org.vivoweb.ingest.util;
+package org.vivoweb.ingest.util.repo;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,6 +57,16 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 		this.operator = operatorClass;
 		this.operation = operationType;
 		this.md5hash = md5;
+	}
+	
+	/**
+	 * Constructor (with timestamp = now)
+	 * @param operatorClass The class that performed the operation
+	 * @param operationType The operation that was performed
+	 * @param md5 md5hash of the data
+	 */
+	protected RecordMetaData(Class<?> operatorClass, RecordMetaDataType operationType, String md5) {
+		this(Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US), operatorClass, operationType, md5);
 	}
 	
 	/**

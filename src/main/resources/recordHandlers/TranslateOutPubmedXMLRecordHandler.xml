@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RecordHandler type="org.vivoweb.ingest.util.TextFileRecordHandler">
+<RecordHandler type="org.vivoweb.ingest.util.repo.TextFileRecordHandler">
 	<Param name="fileDir">file:///P:/software.engineering/Projects_Public/VIVO Grant/Interface - Harvester - PubMed/PubmedRDF</Param>
 </RecordHandler>

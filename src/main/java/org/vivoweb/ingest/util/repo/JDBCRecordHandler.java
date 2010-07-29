@@ -8,7 +8,7 @@
  * Contributors:
  *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
-package org.vivoweb.ingest.util;
+package org.vivoweb.ingest.util.repo;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -20,8 +20,10 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 
 /**
  * RecordHandler that stores data in a JDBC Database
@@ -186,7 +188,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, boolean overwrite) throws IOException {
+	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
 		try {
 			PreparedStatement ps = this.db.prepareStatement("insert into "+this.table+"("+idField+", "+this.dataField+") values (?, ?)");
 			ps.setString(1, rec.getID());
@@ -209,6 +211,7 @@ public class JDBCRecordHandler extends RecordHandler {
 				throw new IOException("Unable to add record: "+rec.getID()+" - "+e.getMessage());
 			}
 		}
+		this.addMetaData(rec, creator, RecordMetaDataType.written);
 	}
 	
 	@Override
@@ -273,7 +276,7 @@ public class JDBCRecordHandler extends RecordHandler {
 		@Override
 		public Record next() {
 			try {
-				return new Record(this.rs.getString(1),new String(this.rs.getBytes(2)));
+				return new Record(this.rs.getString(1),new String(this.rs.getBytes(2)), JDBCRecordHandler.this);
 			} catch(SQLException e) {
 				throw new NoSuchElementException(e.getMessage());
 			}
@@ -310,5 +313,20 @@ public class JDBCRecordHandler extends RecordHandler {
 			initAll(jdbcDriverClass, connLine, username, password, tableName, dataFieldName);
 		}
 	}
-	
+
+	@Override
+	protected void addMetaData(Record rec, RecordMetaData rmd) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	protected void delMetaData(String recID) throws IOException {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

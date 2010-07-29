@@ -8,7 +8,7 @@
  * Contributors:
  *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
-package org.vivoweb.ingest.util;
+package org.vivoweb.ingest.util.repo;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 
 /**
  * Record Handler that uses a Java Map to store records in memory
@@ -29,7 +30,7 @@ public class MapRecordHandler extends RecordHandler {
 	/**
 	 * The map to store metadata in
 	 */
-	Map<String,RecordMetaData> metaDataMap;
+	Map<String,SortedSet<RecordMetaData>> metaDataMap;
 	
 	/**
 	 * Default Constructor
@@ -44,6 +45,7 @@ public class MapRecordHandler extends RecordHandler {
 			throw new IOException("Record already exists!");
 		}
 		this.map.put(rec.getID(), rec.getData());
+		addMetaData(rec, creator, RecordMetaDataType.written);
 	}
 	
 	@Override
@@ -101,21 +103,21 @@ public class MapRecordHandler extends RecordHandler {
 		//No params to set
 	}
 	
-
 	@Override
 	protected void addMetaData(Record rec, RecordMetaData rmd) {
-		this.metaDataMap.put(rec.getID(), rmd);
+		if(!this.metaDataMap.containsKey(rec.getID())) {
+			this.metaDataMap.put(rec.getID(), new TreeSet<RecordMetaData>());
+		}
+		this.metaDataMap.get(rec.getID()).add(rmd);
 	}
 	
-
 	@Override
 	protected void delMetaData(String recID) throws IOException {
 		this.metaDataMap.remove(recID);
 	}
 	
-
 	@Override
 	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
-		return new TreeSet<RecordMetaData>(this.metaDataMap.values());
+		return this.metaDataMap.get(recID);
 	}
 }

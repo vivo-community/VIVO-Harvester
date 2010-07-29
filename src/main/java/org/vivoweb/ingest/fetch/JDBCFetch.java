@@ -23,10 +23,10 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.RecordHandler;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
+import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
 
 /**

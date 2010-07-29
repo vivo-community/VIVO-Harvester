@@ -59,7 +59,7 @@ public class ArgParser {
 	 * Get the Options
 	 * @return the Options
 	 */
-	public Options getOptions() {
+	protected Options getOptions() {
 		if(this.parser == null) {
 			createOptions();
 		}
