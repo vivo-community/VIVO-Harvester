@@ -89,7 +89,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		}
 		this.metaDirObj = fsMan.resolveFile(this.fileDirObj, ".metadata");
 		if(!this.metaDirObj.exists()) {
-			log.info("Direcotry '"+fileDir+"/.metadata' Does Not Exist, attempting to create");
+			log.info("Directory '"+fileDir+"/.metadata' Does Not Exist, attempting to create");
 			this.metaDirObj.createFolder();
 		}
 	}

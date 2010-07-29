@@ -13,16 +13,16 @@
  ******************************************************************************/
 package org.vivoweb.ingest.score;
 
-import static java.util.Arrays.asList;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import joptsimple.OptionParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
@@ -63,12 +63,7 @@ public class Score {
 		/**
 		 * Model where output is stored
 		 */
-		private Model scoreOutput;
-		/**
-		 * Attribute to match for exactMatch algorithim
-		 */
-		private List<String> matchAttribute;
-		
+		private Model scoreOutput;		
 		
 		/**
 		 * Main method
@@ -78,14 +73,69 @@ public class Score {
 			
 			log.info("Scoring: Start");
 			try {
-				new Score(new ArgList(getParser(), args, "i","V"));
-			} catch(IllegalArgumentException e) {
+				ArgList opts = new ArgList(getParser(), args);
+				//Get optional inputs / set defaults
+				//Check for config files, before parsing name options
+				String workingModel = opts.get("T");
+				if (workingModel == null) workingModel = opts.get("t");
+				
+				String outputModel = opts.get("O");
+				if (outputModel == null) outputModel = opts.get("o");
+				
+				
+				boolean allowNonEmptyWorkingModel = opts.has("n");
+				boolean retainWorkingModel = opts.has("r");
+				List<String> exactMatchArg = opts.getAll("e");
+
 				try {
-					log.fatal(e);
-					getParser().printHelpOn(System.out);
-				} catch(IOException e1) {
-					log.fatal(e1.getMessage(),e1);
+					log.info("Loading configuration and models");
+					RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));	
+					
+					//Connect to vivo
+					JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
+					
+					//Create working model
+					JenaConnect jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
+					
+					//Create output model
+					JenaConnect jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
+					
+					//Load up rdf data from translate into temp model
+					Model jenaInputDB = jenaTempDB.getJenaModel();
+					
+					if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel) {
+						log.warn("Working model was not empty! -- emptying model before execution");
+						jenaInputDB.removeAll();
+					}
+					
+					for (Record r: rh) {
+						jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+					}
+					
+					//Init
+					Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel());
+					
+					//Call each exactMatch
+					for (String attribute : exactMatchArg) {
+						scoring.exactMatch(attribute);
+					}
+					
+				 	//Empty working model
+					if (!retainWorkingModel) scoring.scoreInput.removeAll();
+					//Close and done
+					scoring.scoreInput.close();
+					scoring.scoreOutput.close();
+					scoring.vivo.close();
+				} catch(ParserConfigurationException e) {
+					log.fatal(e.getMessage(),e);
+				} catch(SAXException e) {
+					log.fatal(e.getMessage(),e);
+				} catch(IOException e) {
+					log.fatal(e.getMessage(),e);
 				}
+			} catch(IllegalArgumentException e) {
+				log.fatal(e);
+				System.out.println(getParser().getUsage());
 			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
 			}
@@ -96,19 +146,20 @@ public class Score {
 		 * Get the OptionParser
 		 * @return the OptionParser
 		 */
-		private static OptionParser getParser() {
-			OptionParser parser = new OptionParser();
-			parser.acceptsAll(asList("i", "rdfRecordHandler")).withRequiredArg().describedAs("rdfRecordHandler config filename");
+		private static ArgParser getParser() {
+			ArgParser parser = new ArgParser("Score");
+			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("rdfRecordHandler").setDescription("rdfRecordHandler config filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoJenaConfig").setDescription("vivoJenaConfig config filename").withParameter(true, "CONFIG_FILE").setRequired(true));			
 			//TODO Nicholas: Implement individual RDF input
-			//parser.acceptsAll(asList("f", "rdfFilename")).withRequiredArg().describedAs("RDF filename");
-			parser.acceptsAll(asList("V", "vivoJenaConfig")).withRequiredArg().describedAs("vivoJenaConfig config filename");
-			parser.acceptsAll(asList("T", "tempModelConfig")).withRequiredArg().describedAs("tempModelConfig config filename");
-			parser.acceptsAll(asList("O", "outputModelConfig")).withRequiredArg().describedAs("outputModelConfig config filename");
-			parser.acceptsAll(asList("e", "exactMatch")).withRequiredArg().describedAs("exact match fieldname").defaultsTo("workEmail");
-			parser.acceptsAll(asList("t", "tempModel")).withRequiredArg().describedAs("temporary working model name").defaultsTo("tempModel");
-			parser.acceptsAll(asList("o", "outputModel")).withRequiredArg().describedAs("output model name").defaultsTo("outputModel");
-			parser.acceptsAll(asList("n","allow-non-empty-working-model"),"If set, this will not clear the working model before scoring begins");
-			parser.acceptsAll(asList("r","retain-working-model"),"If set, this will not clear the working model after scoring is complete");
+			//parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("rdfFilename").setDescription("RDF Filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempModelConfig").setDescription("tempModelConfig config filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("exact match attribute name").withParameters(true, "RDF_PREDICATE").setDefaultValue("workEmail"));
+			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("pairwise attribute name").withParameters(true, "RDF_PREDICATE").setDefaultValue("author"));
+			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
+			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
+			parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("allow-non-empty-working-model").setDescription("If set, this will not clear the working model before scoring begins"));
+			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("retain-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
 			return parser;
 		}
 		
@@ -118,79 +169,11 @@ public class Score {
 		 * @param jenaVivo model containing vivo statements
 		 * @param jenaScoreInput model containing statements to be scored
 		 * @param jenaScoreOutput output model
-		 * @param exactMatchArg exact match attribute
 		 */
-		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput, List<String> exactMatchArg) {
+		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput) {
 			this.vivo = jenaVivo;
 			this.scoreInput = jenaScoreInput;
 			this.scoreOutput = jenaScoreOutput;
-			this.matchAttribute = exactMatchArg;
-		}
-		
-		/**
-		 * Constructor
-		 * @param opts option set of parsed args
-		 */
-		public Score(ArgList opts) {			
-			//Get optional inputs / set defaults
-			//Check for config files, before parsing name options
-			String workingModel = opts.get("T");
-			if (workingModel == null) workingModel = opts.get("t");
-			
-			String outputModel = opts.get("O");
-			if (outputModel == null) outputModel = opts.get("o");
-			
-			
-			boolean allowNonEmptyWorkingModel = opts.has("n");
-			boolean retainWorkingModel = opts.has("r");
-			List<String> exactMatchArg = opts.getAll("e");
-
-			try {
-				log.info("Loading configuration and models");
-				RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));	
-				
-				//Connect to vivo
-				JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
-				
-				//Create working model
-				JenaConnect jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
-				
-				//Create output model
-				JenaConnect jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
-				
-				//Load up rdf data from translate into temp model
-				Model jenaInputDB = jenaTempDB.getJenaModel();
-				
-				if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel) {
-					log.warn("Working model was not empty! -- Emptying Model before execution");
-					jenaInputDB.removeAll();
-				}
-				
-				for (Record r: rh) {
-					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
-				}
-				
-				//Init
-				Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel(), exactMatchArg);
-				
-				//Call each exactMatch
-				for (String attribute : scoring.matchAttribute) {
-					scoring.exactMatch(attribute);
-				}
-				
-			 	//Empty working model
-				if (!retainWorkingModel) scoring.scoreInput.removeAll();
-				//Close and done
-				scoring.scoreInput.close();
-				scoring.scoreOutput.close();
-				scoring.vivo.close();
-			} catch(ParserConfigurationException e) {
-				log.fatal(e.getMessage(),e);
-			} catch(SAXException e) {
-				log.fatal(e.getMessage(),e);
-			} catch(IOException e) {
-				log.fatal(e.getMessage(),e);
-			}
 		}
 		
 		/**
@@ -387,22 +370,33 @@ public class Score {
 		 	//if pairs match, store publication to matched author in Model
 			
 			ResultSet scoreInputResult;
-			String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-								"SELECT ?x ?" + attribute + " " + 
-								"WHERE { ?x score:" + attribute + " ?" + attribute + "}";
-			String coreAttribute = "core:" + attribute;
+			ResultSet vivoResult;
+			String inputMatchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
+									 "SELECT ?x ?" + attribute + " " + 
+									 "WHERE { ?x score:" + attribute + " ?" + attribute + "}";
 			
+			String vivoMatchQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+									"SELECT ?x ?" + attribute + " " + 
+									"WHERE { ?x core:" + attribute + " ?" + attribute + "}";		
 			
-			//Exact Match
+			//Create pairs list from input 
 			log.info("Executing pairWise for " + attribute);
-			log.debug(matchQuery);
-			scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+			log.debug(inputMatchQuery);
+			scoreInputResult = executeQuery(this.scoreInput, inputMatchQuery);
 			
 			//Log extra info message if none found
 			if (!scoreInputResult.hasNext()) {
 				log.info("No matches found for " + attribute + " in input");
-			} else {
-				log.info("Looping thru matching" + attribute + " from input");
+			}
+			
+			//Create pairs list from vivo 
+			log.info("Executing pairWise for " + attribute);
+			log.debug(vivoMatchQuery);
+			scoreInputResult = executeQuery(this.vivo, vivoMatchQuery);
+			
+			//Log extra info message if none found
+			if (!scoreInputResult.hasNext()) {
+				log.info("No matches found for " + attribute + " in vivo");
 			}
 			
 			//look for exact match in vivo
@@ -445,7 +439,7 @@ public class Score {
 		    	if (!scoreInputResult.hasNext()) {
 		    		log.info("No matches found for " + attribute + " in input");
 		    	} else {
-		    		log.info("Looping thru matching" + attribute + " from input");
+		    		log.info("Looping thru matching " + attribute + " from input");
 		    	}
 		    	
 		    	//look for exact match in vivo
