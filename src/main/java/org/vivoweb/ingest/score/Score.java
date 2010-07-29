@@ -84,8 +84,10 @@ public class Score {
 				
 				
 				boolean allowNonEmptyWorkingModel = opts.has("n");
-				boolean retainWorkingModel = opts.has("r");
+				boolean retainWorkingModel = opts.has("k");
 				List<String> exactMatchArg = opts.getAll("e");
+				List<String> pairwiseArg = opts.getAll("p");
+				List<String> regexArg = opts.getAll("r");
 
 				try {
 					log.info("Loading configuration and models");
@@ -118,6 +120,16 @@ public class Score {
 					//Call each exactMatch
 					for (String attribute : exactMatchArg) {
 						scoring.exactMatch(attribute);
+					}
+					
+					//Call each pairwise
+					for (String attribute : pairwiseArg) {
+						scoring.pairwise(attribute);
+					}
+					
+					//Call each regex
+					for (String regex : regexArg) {
+						scoring.regex(regex);
 					}
 					
 				 	//Empty working model
@@ -154,12 +166,13 @@ public class Score {
 			//parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("rdfFilename").setDescription("RDF Filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempModelConfig").setDescription("tempModelConfig config filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("exact match attribute name").withParameters(true, "RDF_PREDICATE").setDefaultValue("workEmail"));
-			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("pairwise attribute name").withParameters(true, "RDF_PREDICATE").setDefaultValue("author"));
+			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE").setDefaultValue("workEmail"));
+			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("performa a pairwise scoring").withParameters(true, "RDF_PREDICATE").setDefaultValue("author"));
+			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
 			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
 			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
 			parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("allow-non-empty-working-model").setDescription("If set, this will not clear the working model before scoring begins"));
-			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("retain-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
+			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
 			return parser;
 		}
 		
@@ -363,8 +376,7 @@ public class Score {
 		* @param  attribute an attribute to perform the matching query
 		* @return score model
 		*/
-		@SuppressWarnings("unused")
-		private Model pairwiseScore(String attribute) {			
+		private Model pairwise(String attribute) {			
 		 	//iterate thru scoringInput pairs against matched pairs
 		 	//TODO Nicholas: support partial scoring, multiples matches against several pairs
 		 	//if pairs match, store publication to matched author in Model
@@ -407,7 +419,18 @@ public class Score {
 	    
 	    	return this.scoreOutput;
 		 }
+		
+		/**
+		* Executes a regex scoring method 
+		* @param regex string containing regular expression 
+		* @return score model
+		*/
+		private Model regex(String regex) {
+			
+			log.info("Executing " + regex + " regular expression");
 		 
+			return this.scoreOutput;
+		}
 		 
 		 /**
 		 * Executes an exact matching algorithm for author disambiguation
@@ -451,7 +474,7 @@ public class Score {
 	                
 	                scoreMatch = matchNode.toString();
 	                
-	                log.info("\nChecking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
+	                log.info("Checking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
 	    			
 	                //Select all matching attributes from vivo store
 	    			queryString =
