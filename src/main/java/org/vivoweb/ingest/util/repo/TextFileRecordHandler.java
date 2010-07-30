@@ -89,7 +89,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		}
 		this.metaDirObj = fsMan.resolveFile(this.fileDirObj, ".metadata");
 		if(!this.metaDirObj.exists()) {
-			log.info("Directory '"+fileDir+"/.metadata' Does Not Exist, attempting to create");
+			log.debug("Directory '"+fileDir+"/.metadata' Does Not Exist, attempting to create");
 			this.metaDirObj.createFolder();
 		}
 	}
@@ -175,7 +175,7 @@ public class TextFileRecordHandler extends RecordHandler {
 	protected void addMetaData(Record rec, RecordMetaData rmd) throws IOException {
 		FileObject fmo = this.metaDirObj.resolveFile(rec.getID());
 		if(!fmo.exists()) {
-			log.warn("Attempted to add record "+rec.getID()+" metadata, but file "+fmo.getName().getFriendlyURI()+" did not exist. Initializeing record metadata.");
+			log.debug("Attempted to add record "+rec.getID()+" metadata, but file "+fmo.getName().getFriendlyURI()+" did not exist. Initializing record metadata.");
 			createMetaDataFile(rec.getID());
 		} else if(!fmo.isWriteable()) {
 			throw new IOException("Insufficient file system privileges to delete record "+rec.getID()+" metadata from file "+fmo.getName().getFriendlyURI());
