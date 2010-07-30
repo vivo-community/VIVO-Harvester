@@ -185,12 +185,15 @@ public class GlozeTranslator {
 				ByteArrayOutputStream buff = new ByteArrayOutputStream();
 				// get from the in record and translate
 				for(Record r : this.inStore) {
-					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
-					this.outStream = buff;
-					this.translateFile();
-					buff.flush();
-					this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
-					buff.reset();
+					if (r.needsProcessed(this.getClass())) {
+						this.inStream = new ByteArrayInputStream(r.getData().getBytes());
+						this.outStream = buff;
+						this.translateFile();
+						buff.flush();
+						this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
+						r.setProcessed(this.getClass());
+						buff.reset();
+					}
 				}
 				buff.close();
 			} catch(Exception e) {
