@@ -185,5 +185,12 @@
     	<classifier>javadoc</classifier>
     	<scope>compile</scope>
     </dependency>
+    <dependency>
+    	<groupId>net.sf.saxon</groupId>
+    	<artifactId>saxon-dom</artifactId>
+    	<version>8.7</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
 </project>
