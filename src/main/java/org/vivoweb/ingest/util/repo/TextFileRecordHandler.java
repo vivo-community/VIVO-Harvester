@@ -136,9 +136,18 @@ public class TextFileRecordHandler extends RecordHandler {
 	 * @throws IOException error writing metadata file
 	 */
 	private void createMetaDataFile(String recID) throws IOException {
-		FileObject fmo = this.fileDirObj.resolveFile(recID);
+		FileObject fmo = this.metaDirObj.resolveFile(recID);
 		try {
 			fmo.createFile();
+			
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(false)));
+			bw.append("<MetaDataRecordList>\n");
+//			bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
+//			bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
+//			bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
+//			bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
+			bw.append("</MetaDataRecordList>\n");
+			bw.close();
 		} catch(FileSystemException e) {
 			throw new IOException("Error creating metadata for record "+recID+" at file "+fmo.getName().getFriendlyURI());
 		}
@@ -386,6 +395,8 @@ public class TextFileRecordHandler extends RecordHandler {
 				//Do Nothing, but don't remove so it doesnt go to else clause
 			} else if(qName.equalsIgnoreCase("MD5")) {
 				//Do Nothing, but don't remove so it doesnt go to else clause
+			} else if(qName.equalsIgnoreCase("MetaDataRecordList")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
 			} else {
 				throw new SAXException("Unknown Tag: "+qName);
 			}
@@ -413,6 +424,8 @@ public class TextFileRecordHandler extends RecordHandler {
 				}
 			} else if(qName.equalsIgnoreCase("MD5")) {
 				this.tempMD5 = this.tempVal;
+			} else if(qName.equalsIgnoreCase("MetaDataRecordList")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
 			} else {
 				throw new SAXException("Unknown Tag: "+qName);
 			}
