@@ -180,7 +180,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		} else if(!fmo.isWriteable()) {
 			throw new IOException("Insufficient file system privileges to delete record "+rec.getID()+" metadata from file "+fmo.getName().getFriendlyURI());
 		}
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(false)));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(true)));
 		bw.append("<MetaDataRecord>\n");
 		bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
 		bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");

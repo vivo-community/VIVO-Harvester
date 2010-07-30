@@ -401,6 +401,7 @@ public class PubmedSOAPFetch {
 	 * Executes the task
 	 */
 	public void executeTask() {
+		log.info("Fetch: Start");
 		Integer recToFetch;
 		if(this.strMaxRecords.equalsIgnoreCase("all")) {
 			recToFetch = Integer.valueOf(getHighestRecordNumber());
@@ -426,6 +427,7 @@ public class PubmedSOAPFetch {
 				fetchPubMed(WebEnv, QueryKey, startRec+"", maxRec+"");
 			}
 		}
+		log.info("Fetch: End");
 	}
 	
 	/**

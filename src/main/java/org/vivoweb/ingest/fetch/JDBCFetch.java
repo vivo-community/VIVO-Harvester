@@ -250,6 +250,7 @@ public class JDBCFetch {
 	 * Executes the task
 	 */
 	public void executeTask() {
+		log.info("Fetch: Start");
 		//For each Table
 		try {
 			for(String tableName : this.getTableNames()) {
@@ -324,6 +325,7 @@ public class JDBCFetch {
 		} catch(IOException e) {
 			log.error(e.getMessage(),e);
 		}
+		log.info("Fetch: End");
 	}
 	
 	/**

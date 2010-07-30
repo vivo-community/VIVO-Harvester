@@ -151,10 +151,10 @@ public class XSLTranslator {
 			
 			buff.close();
 		} catch(Exception e) {
-			log.error("", e);
+			log.error(e.getMessage(),e);
 		}
 		 
-		log.trace("Translation: End");
+		log.info("Translation: End");
 	}
 	
 	/***

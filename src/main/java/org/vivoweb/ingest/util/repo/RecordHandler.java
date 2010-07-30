@@ -341,8 +341,13 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error getting meta data
 	 */
 	public boolean needsProcessed(String id, Class<?> operator) throws IOException {
-		Calendar write = getLastMetaData(id, RecordMetaDataType.written, operator).getDate();
-		Calendar processed = getLastMetaData(id, RecordMetaDataType.processed, operator).getDate();
+		RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
+		Calendar write = rmdWrite.getDate();
+		RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
+		if (rmdProcess == null) {
+			return true;
+		}
+		Calendar processed = rmdProcess.getDate();
 		return (processed.compareTo(write) < 0);
 	}
 }

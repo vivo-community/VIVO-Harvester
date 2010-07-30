@@ -107,6 +107,7 @@ public class OAIFetch {
 	 * Executes the task
 	 */
 	public void executeTask() {
+		log.info("Fetch: Start");
 		try {
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
 		} catch(IOException e) {
@@ -120,6 +121,7 @@ public class OAIFetch {
 		} catch(NoSuchFieldException e) {
 			log.error(e.getMessage(),e);
 		}
+		log.info("Fetch: End");
 	}
 	
 	/**
