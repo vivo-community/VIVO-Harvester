@@ -106,7 +106,7 @@ public class OAIFetch {
 	/**
 	 * Executes the task
 	 */
-	public void executeTask() {
+	public void execute() {
 		log.info("Fetch: Start");
 		try {
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
@@ -143,7 +143,7 @@ public class OAIFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			new OAIFetch(new ArgList(getParser(), args)).executeTask();
+			new OAIFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {

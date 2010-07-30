@@ -249,7 +249,7 @@ public class JDBCFetch {
 	/**
 	 * Executes the task
 	 */
-	public void executeTask() {
+	public void execute() {
 		log.info("Fetch: Start");
 		//For each Table
 		try {
@@ -348,7 +348,7 @@ public class JDBCFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			new JDBCFetch(new ArgList(getParser(), args)).executeTask();
+			new JDBCFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {

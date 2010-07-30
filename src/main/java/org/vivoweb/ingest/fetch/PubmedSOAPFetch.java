@@ -400,7 +400,7 @@ public class PubmedSOAPFetch {
 	/**
 	 * Executes the task
 	 */
-	public void executeTask() {
+	public void execute() {
 		log.info("Fetch: Start");
 		Integer recToFetch;
 		if(this.strMaxRecords.equalsIgnoreCase("all")) {
@@ -451,7 +451,7 @@ public class PubmedSOAPFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			new PubmedSOAPFetch(new ArgList(getParser(), args)).executeTask();
+			new PubmedSOAPFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
