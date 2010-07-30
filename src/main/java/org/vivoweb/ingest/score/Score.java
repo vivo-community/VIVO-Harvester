@@ -378,9 +378,8 @@ public class Score {
 		* return 2 to n results from the given query. This "pair" will then be utilized as a matching scheme 
 		* to construct a sub dataset. This dataset can be scored and stored as a match 
 		* @param  attribute an attribute to perform the matching query
-		* @return score model
 		*/
-		private Model pairwise(String attribute) {			
+		public void pairwise(String attribute) {			
 		 	//iterate thru scoringInput pairs against matched pairs
 		 	//TODO Nicholas: support partial scoring, multiples matches against several pairs
 		 	//if pairs match, store publication to matched author in Model
@@ -420,28 +419,23 @@ public class Score {
 			 	//create pairs of *attribute* from matched
 		    	log.info("Creating pairs of " + attribute + " from input");
             }	    			 
-	    
-	    	return this.scoreOutput;
 		 }
 		
 		/**
 		* Executes a regex scoring method 
 		* @param regex string containing regular expression 
-		* @return score model
 		*/
-		private Model regex(String regex) {
+		private void regex(String regex) {
 			
 			log.info("Executing " + regex + " regular expression");
 		 
-			return this.scoreOutput;
 		}
 		 
 		 /**
 		 * Executes an exact matching algorithm for author disambiguation
 		 * @param  attribute an attribute to perform the exact match
-		 * @return model of matched statements
 		 */
-		 private Model exactMatch(String attribute) {
+		 public void exactMatch(String attribute) {
 				String scoreMatch;
 				String queryString;
 				Resource paperResource;
@@ -492,7 +486,5 @@ public class Score {
 	    			
 	    			commitResultSet(this.scoreOutput,vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
-		    	
-		    	return this.scoreOutput;
 		 }
 	}
