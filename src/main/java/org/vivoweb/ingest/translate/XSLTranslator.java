@@ -136,14 +136,17 @@ public class XSLTranslator {
 			
 			// get from the in record and translate
 			for(Record r : this.inStore) {
-				log.trace("Translating Record " + r.getID());
-				
-				this.inStream = new ByteArrayInputStream(r.getData().getBytes());
-				this.outStream = buff; 
-				this.xmlTranslate();
-				buff.flush();
-				this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
-				buff.reset();
+				if (r.needsProcessed(this.getClass())){
+					log.trace("Translating Record " + r.getID());
+					
+					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
+					this.outStream = buff; 
+					this.xmlTranslate();
+					buff.flush();
+					this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
+					r.setProcessed(this.getClass());
+					buff.reset();
+				}
 			}
 			
 			buff.close();

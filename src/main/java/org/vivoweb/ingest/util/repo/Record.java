@@ -76,4 +76,14 @@ public class Record {
 	public void setProcessed(Class<?> operator) {
 		this.rh.setProcessed(this, operator);
 	}
+
+	/**
+	 * 
+	 * @param class1
+	 * @return
+	 */
+	public boolean needsProcessed(Class<?> class1) {
+		// TODO Chris: make this work
+		return false;
+	}
 }
