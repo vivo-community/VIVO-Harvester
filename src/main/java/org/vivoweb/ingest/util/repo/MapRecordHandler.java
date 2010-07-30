@@ -51,6 +51,7 @@ public class MapRecordHandler extends RecordHandler {
 	@Override
 	public void delRecord(String recID) throws IOException {
 		this.map.remove(recID);
+		delMetaData(recID);
 	}
 	
 	@Override
@@ -117,7 +118,7 @@ public class MapRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
+	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		return this.metaDataMap.get(recID);
 	}
 }

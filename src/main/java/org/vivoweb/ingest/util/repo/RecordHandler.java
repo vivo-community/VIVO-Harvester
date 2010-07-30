@@ -12,6 +12,7 @@ package org.vivoweb.ingest.util.repo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -112,28 +113,19 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return the metadata map
 	 * @throws IOException error retrieving record metadata
 	 */
-	public abstract SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException;
+	protected abstract SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException;
 	
 	/**
-	 * Get the last RecordMetaData for a given record
-	 * @param recID id of record to retrieve metadata for
-	 * @return the last metadata
-	 * @throws IOException error retrieving record metadata
-	 */
-	public RecordMetaData getLastMetaData(String recID) throws IOException {
-		return getLastMetaData(recID, null);
-	}
-	
-	/**
-	 * Get the last RecordMetaData of a given type for a given record
+	 * Get the last RecordMetaData of a given type by a given operator for a given record
 	 * @param recID id of record to retrieve metadata for
 	 * @param type the type of metadata, null for any type
+	 * @param operator the operator to get for, null for any type
 	 * @return the last metadata of the specified type
 	 * @throws IOException error retrieving record metadata
 	 */
-	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type) throws IOException {
+	private RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
-			if(type == null || rmd.getOperation() == type) {
+			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
 				return rmd;
 			}
 		}
@@ -141,31 +133,12 @@ public abstract class RecordHandler implements Iterable<Record> {
 	}
 	
 	/**
-	 * Get the last Write RecordMetaData for a given record 
-	 * @param recID id of record to retrieve metadata for
-	 * @return the last write metadata
-	 * @throws IOException error retrieving record metadata
-	 */
-	public RecordMetaData getLastWrittenMetaData(String recID) throws IOException {
-		return getLastMetaData(recID, RecordMetaData.RecordMetaDataType.written);
-	}
-	
-	/**
-	 * Get the last Processed RecordMetaData for a given record 
-	 * @param recID id of record to retrieve metadata for
-	 * @return the last write metadata
-	 * @throws IOException error retrieving record metadata
-	 */
-	public RecordMetaData getLastProcessedMetaData(String recID) throws IOException {
-		return getLastMetaData(recID, RecordMetaDataType.processed);
-	}
-	
-	/**
 	 * Add a metadata record to indicate that the given operator has processed the given record
 	 * @param rec record to set processed
 	 * @param operator the class performing the processing
+	 * @throws IOException error setting processed
 	 */
-	protected void setProcessed(Record rec, Class<?> operator) {
+	protected void setProcessed(Record rec, Class<?> operator) throws IOException {
 		addMetaData(rec, operator, RecordMetaDataType.processed);
 	}
 	
@@ -173,8 +146,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * Add a metadata record to indicate that the given operator has written the given record
 	 * @param rec record to set written
 	 * @param operator the class performing the writing
+	 * @throws IOException error setting written
 	 */
-	protected void setWritten(Record rec, Class<?> operator) {
+	protected void setWritten(Record rec, Class<?> operator) throws IOException {
 		addMetaData(rec, operator, RecordMetaDataType.written);
 	}
 	
@@ -183,8 +157,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param rec record to add metadata for
 	 * @param operator the class operating on the record
 	 * @param type the operation type
+	 * @throws IOException error adding meta data
 	 */
-	protected void addMetaData(Record rec, Class<?> operator, RecordMetaDataType type) {
+	protected void addMetaData(Record rec, Class<?> operator, RecordMetaDataType type) throws IOException {
 		addMetaData(rec, new RecordMetaData(operator, type, RecordMetaData.makeMD5Hash(rec.getData())));
 	}
 	
@@ -192,8 +167,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * Adds a metadata record
 	 * @param rec record to add metadata for
 	 * @param rmd the metadata record
+	 * @throws IOException error adding meta data
 	 */
-	protected abstract void addMetaData(Record rec, RecordMetaData rmd);
+	protected abstract void addMetaData(Record rec, RecordMetaData rmd) throws IOException;
 	
 	/**
 	 * Deletes all metadata for a record
@@ -254,14 +230,12 @@ public abstract class RecordHandler implements Iterable<Record> {
 	public boolean isOverwriteDefault() {
 		return this.overwriteDefault;
 	}
-
-
+	
 	/**
 	 * Config Parser for RecordHandlers
 	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
 	 */
 	private static class RecordHandlerParser extends DefaultHandler {
-		
 		/**
 		 * The RecordHandler we are building
 		 */
@@ -358,4 +332,17 @@ public abstract class RecordHandler implements Iterable<Record> {
 		}
 	}
 	
+
+	/**
+	 * Has the given record been written since last processed by operator?
+	 * @param id the record to check fo
+	 * @param operator the class to check for
+	 * @return true if written since last processed by operator or if never been processed by operator
+	 * @throws IOException error getting meta data
+	 */
+	public boolean needsProcessed(String id, Class<?> operator) throws IOException {
+		Calendar write = getLastMetaData(id, RecordMetaDataType.written, operator).getDate();
+		Calendar processed = getLastMetaData(id, RecordMetaDataType.processed, operator).getDate();
+		return (processed.compareTo(write) < 0);
+	}
 }

@@ -72,18 +72,19 @@ public class Record {
 	/**
 	 * Set this record as processed by the given operator
 	 * @param operator the operator that processed this record
+	 * @throws IOException error setting processed
 	 */
-	public void setProcessed(Class<?> operator) {
+	public void setProcessed(Class<?> operator) throws IOException {
 		this.rh.setProcessed(this, operator);
 	}
 
 	/**
-	 * 
-	 * @param class1
-	 * @return
+	 * Has this record been written since last processed by operator?
+	 * @param operator the class to check for
+	 * @return true if written since last processed by operator or if never been processed by operator
+	 * @throws IOException error retrieving meta data
 	 */
-	public boolean needsProcessed(Class<?> class1) {
-		// TODO Chris: make this work
-		return false;
+	public boolean needsProcessed(Class<?> operator) throws IOException {
+		return this.rh.needsProcessed(getID(), operator);
 	}
 }

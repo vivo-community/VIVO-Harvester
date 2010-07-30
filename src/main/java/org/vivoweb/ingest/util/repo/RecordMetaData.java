@@ -105,7 +105,7 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 	 * Defines the type of Record MetaData Types
 	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
 	 */
-	public enum RecordMetaDataType {
+	public static enum RecordMetaDataType {
 		/**
 		 * Data was written
 		 */

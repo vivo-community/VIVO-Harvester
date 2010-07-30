@@ -172,30 +172,26 @@ public class TextFileRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	protected void addMetaData(Record rec, RecordMetaData rmd) {
-		try {
-			FileObject fmo = this.metaDirObj.resolveFile(rec.getID());
-			if(!fmo.exists()) {
-				log.warn("Attempted to add record "+rec.getID()+" metadata, but file "+fmo.getName().getFriendlyURI()+" did not exist. Initializeing record metadata.");
-				createMetaDataFile(rec.getID());
-			} else if(!fmo.isWriteable()) {
-				throw new IOException("Insufficient file system privileges to delete record "+rec.getID()+" metadata from file "+fmo.getName().getFriendlyURI());
-			}
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(false)));
-			bw.append("<MetaDataRecord>\n");
-			bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
-			bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
-			bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
-			bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
-			bw.append("</MetaDataRecord>\n");
-			bw.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(),e);
+	protected void addMetaData(Record rec, RecordMetaData rmd) throws IOException {
+		FileObject fmo = this.metaDirObj.resolveFile(rec.getID());
+		if(!fmo.exists()) {
+			log.warn("Attempted to add record "+rec.getID()+" metadata, but file "+fmo.getName().getFriendlyURI()+" did not exist. Initializeing record metadata.");
+			createMetaDataFile(rec.getID());
+		} else if(!fmo.isWriteable()) {
+			throw new IOException("Insufficient file system privileges to delete record "+rec.getID()+" metadata from file "+fmo.getName().getFriendlyURI());
 		}
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(false)));
+		bw.append("<MetaDataRecord>\n");
+		bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
+		bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
+		bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
+		bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
+		bw.append("</MetaDataRecord>\n");
+		bw.close();
 	}
 	
 	@Override
-	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
+	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		try {
 			FileObject fmo = this.metaDirObj.resolveFile(recID);
 			if(!fmo.exists()) {

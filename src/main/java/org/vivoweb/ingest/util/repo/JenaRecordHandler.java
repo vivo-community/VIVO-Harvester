@@ -10,13 +10,19 @@
 package org.vivoweb.ingest.util.repo;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TimeZone;
+import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -66,6 +72,30 @@ public class JenaRecordHandler extends RecordHandler {
 	 * rdf:type
 	 */
 	protected Property isA;
+	/**
+	 * metadata type
+	 */
+	protected Property metaType;
+	/**
+	 * metadata relation
+	 */
+	protected Property metaRel;
+	/**
+	 * metadata calendar
+	 */
+	protected Property metaCal;
+	/**
+	 * metadata operation
+	 */
+	protected Property metaOperation;
+	/**
+	 * metadata operator
+	 */
+	protected Property metaOperator;
+	/**
+	 * metadata md5
+	 */
+	protected Property metaMD5;
 	
 	/**
 	 * Default Constructor
@@ -137,10 +167,16 @@ public class JenaRecordHandler extends RecordHandler {
 		this.idType = this.model.createProperty(rhNameSpace, "idField");
 		this.dataType = this.model.createProperty(dataFieldType);
 		this.isA = this.model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#","type");
+		this.metaType = this.model.createProperty(rhNameSpace, "metaData");
+		this.metaRel = this.model.createProperty(rhNameSpace, "metaRel");
+		this.metaCal = this.model.createProperty(rhNameSpace, "metaCal");
+		this.metaOperation = this.model.createProperty(rhNameSpace, "metaOperation");
+		this.metaOperator = this.model.createProperty(rhNameSpace, "metaOperation");
+		this.metaMD5 = this.model.createProperty(rhNameSpace, "metaMD5");
 	}
 	
 	@Override
-	public void addRecord(Record rec, boolean overwrite) throws IOException {
+	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
 		Resource record = getRecordResource(rec.getID());
 		if(!overwrite && record != null) {
 			throw new IOException("Record already exists!");
@@ -150,6 +186,7 @@ public class JenaRecordHandler extends RecordHandler {
 		this.model.add(this.model.createStatement(record, this.isA, this.recType));
 		this.model.add(this.model.createStatement(record, this.idType, rec.getID()));
 		this.model.add(this.model.createStatement(record, this.dataType, rec.getData()));
+		this.addMetaData(rec, creator, RecordMetaDataType.written);
 	}
 	
 	@Override
@@ -168,6 +205,7 @@ public class JenaRecordHandler extends RecordHandler {
 				+ "}";
 		UpdateRequest ur = UpdateFactory.create(sQuery);
 		UpdateAction.execute(ur, this.model);
+		delMetaData(recID);
 	}
 	
 	@Override
@@ -314,5 +352,97 @@ public class JenaRecordHandler extends RecordHandler {
 		}
 		initVars(dataFieldType);
 	}
+
 	
+	@Override
+	protected void addMetaData(Record rec, RecordMetaData rmd) throws IOException {
+		Resource record = getRecordResource(rec.getID());
+		if(record == null) {
+			throw new IOException("Record "+rec.getID()+" does not exist!");
+		}
+		Resource metaData = this.model.createResource();
+		this.model.add(this.model.createStatement(metaData, this.isA, this.metaType));
+		this.model.add(this.model.createStatement(metaData, this.metaRel, record));
+		this.model.add(this.model.createStatement(metaData, this.metaCal, rmd.getDate().getTimeInMillis()+""));
+		this.model.add(this.model.createStatement(metaData, this.metaOperation, rmd.getOperation().toString()));
+		this.model.add(this.model.createStatement(metaData, this.metaOperator, rmd.getOperator().getName()));
+		this.model.add(this.model.createStatement(metaData, this.metaMD5, rmd.getMD5()));
+	}
+	
+
+	@Override
+	protected void delMetaData(String recID) throws IOException {
+		// create query string
+		String sQuery = ""
+				+ "PREFIX rhns: <"+rhNameSpace+"> \n"
+				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+				+ "DELETE { "
+				+ "  ?record ?p ?v "
+				+ "} "
+				+ "WHERE { "
+				+ "  ?record rdf:type rhns:"+this.metaType.getLocalName()+" . "
+				+ "  ?record rhns:"+this.metaRel.getLocalName()+" \""+recID+"\" . "
+				+ "  ?record ?p ?v . "
+				+ "}";
+		UpdateRequest ur = UpdateFactory.create(sQuery);
+		UpdateAction.execute(ur, this.model);
+	}
+	
+
+	@Override
+	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
+		SortedSet<RecordMetaData> retVal = new TreeSet<RecordMetaData>();
+		// create query string
+		String sQuery = ""
+				+ "PREFIX rhns: <"+rhNameSpace+"> \n"
+				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
+				+ "Select ?cal ?operation ?operator ?md5 \n"
+				+ "WHERE { \n"
+				+ "  ?meta rdf:type rhns:"+this.metaType.getLocalName()+" . \n"
+				+ "  ?meta rhns:"+this.metaRel.getLocalName()+" \""+recID+"\" . \n"
+				+ "  ?meta rhns:"+this.metaCal.getLocalName()+" ?cal . \n"
+				+ "  ?meta rhns:"+this.metaOperation.getLocalName()+" ?operation . \n"
+				+ "  ?meta rhns:"+this.metaOperator.getLocalName()+" ?operator . \n"
+				+ "  ?meta rhns:"+this.metaMD5.getLocalName()+" ?md5 . \n"
+				+ "}";
+		
+		// create query
+		Query query = QueryFactory.create(sQuery);
+		
+		// execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, JenaRecordHandler.this.model);
+		ResultSet rs = qe.execSelect();
+		
+		while(rs.hasNext()) {
+			QuerySolution querySol = rs.next();
+			List<String> resultVars = rs.getResultVars();
+			//Get Calendar
+			String varCal = resultVars.get(0);
+			Literal litCal = querySol.getLiteral(varCal);
+			String strCal = litCal.getString();
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
+			cal.setTimeInMillis(Long.parseLong(strCal));
+			//Get Operation
+			String varOperation = resultVars.get(0);
+			Literal litOperation = querySol.getLiteral(varOperation);
+			String strOperation = litOperation.getString();
+			RecordMetaDataType operation = RecordMetaDataType.valueOf(strOperation);
+			//Get Operator
+			String varOperator = resultVars.get(0);
+			Literal litOperator = querySol.getLiteral(varOperator);
+			String strOperator = litOperator.getString();
+			Class<?> operator;
+			try {
+				operator = Class.forName(strOperator);
+			} catch(ClassNotFoundException e) {
+				throw new IOException(e.getMessage(),e);
+			}
+			//Get MD5
+			String varMD5 = resultVars.get(0);
+			Literal litMD5 = querySol.getLiteral(varMD5);
+			String md5 = litMD5.getString();
+			retVal.add(new RecordMetaData(cal, operator, operation, md5));
+		}
+		return null;
+	}
 }
