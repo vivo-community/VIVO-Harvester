@@ -113,8 +113,7 @@ public class Score {
 					//Read in records that need processing
 					for (Record r: rh) {
 						if (r.needsProcessed(Score.class)) {
-							ByteArrayInputStream rData = new ByteArrayInputStream(r.getData().getBytes());
-							jenaInputDB.read(rData, null);
+							jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 							r.setProcessed(Score.class);
 						}	
 					}
