@@ -25,9 +25,19 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
@@ -35,6 +45,8 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -178,16 +190,56 @@ public class TextFileRecordHandler extends RecordHandler {
 			log.debug("Attempted to add record "+rec.getID()+" metadata, but file "+fmo.getName().getFriendlyURI()+" did not exist. Initializing record metadata.");
 			createMetaDataFile(rec.getID());
 		} else if(!fmo.isWriteable()) {
-			throw new IOException("Insufficient file system privileges to delete record "+rec.getID()+" metadata from file "+fmo.getName().getFriendlyURI());
+			throw new IOException("Insufficient file system privileges to modify record "+rec.getID()+" metadata from file "+fmo.getName().getFriendlyURI());
 		}
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(true)));
-		bw.append("<MetaDataRecord>\n");
-		bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
-		bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
-		bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
-		bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
-		bw.append("</MetaDataRecord>\n");
-		bw.close();
+		
+		DocumentBuilder db;
+		Document doc;
+		try {
+			db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			doc = db.parse(fmo.getContent().getInputStream());
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(),e);
+		}
+		Element rootNode = doc.getDocumentElement();
+		Element newNode = doc.createElement("MetaDataRecord");
+		Element dateNode = doc.createElement("Date");
+		dateNode.appendChild(doc.createTextNode(rmd.getDate().getTimeInMillis()+""));
+		newNode.appendChild(dateNode);
+		Element operationNode = doc.createElement("Operation");
+		operationNode.appendChild(doc.createTextNode(rmd.getOperation().toString()));
+		newNode.appendChild(operationNode);
+		Element operatorNode = doc.createElement("Operator");
+		operatorNode.appendChild(doc.createTextNode(rmd.getOperator().getName()));
+		newNode.appendChild(operatorNode);
+		Element md5Node = doc.createElement("MD5");
+		md5Node.appendChild(doc.createTextNode(rmd.getMD5()));
+		newNode.appendChild(md5Node);
+		rootNode.appendChild(newNode);
+		
+		try {
+			Transformer trans = TransformerFactory.newInstance().newTransformer();
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
+			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			trans.transform(new DOMSource(doc), new StreamResult(fmo.getContent().getOutputStream(false)));
+		} catch(TransformerConfigurationException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(TransformerFactoryConfigurationError e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(TransformerException e) {
+			throw new IOException(e.getMessage(),e);
+		}
+		
+//		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(true)));
+//		bw.append("<MetaDataRecord>\n");
+//		bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
+//		bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
+//		bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
+//		bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
+//		bw.append("</MetaDataRecord>\n");
+//		bw.close();
 	}
 	
 	@Override
