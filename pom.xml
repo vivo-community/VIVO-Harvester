@@ -57,8 +57,8 @@
                                 <data>
                                     <src>${project.basedir}/config</src>
                                     <type>directory</type>
-                                    <!-- <include/> -->
-                                    <exclude>**/.svn</exclude>
+                                    <!-- <includes/> -->
+                                    <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
                                       <prefix>/usr/share/vivoingest</prefix>
@@ -67,8 +67,8 @@
                                 <data>
                                     <src>${project.basedir}/logs</src>
                                     <type>directory</type>
-                                    <!-- <include/> -->
-                                    <exclude>**/.svn</exclude>
+                                    <!-- <includes/> -->
+                                    <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
                                       <prefix>/var/log/vivoingest</prefix>
@@ -77,7 +77,7 @@
                                 <data>
                                     <src>${project.basedir}/scripts</src>
                                     <type>directory</type>
-                                    <include>**/.sh</include>
+                                    <includes>*.sh</includes>
                                     <mapper>
                                       <type>perm</type>
                                       <prefix>/usr/share/vivoingest/scripts</prefix>
@@ -86,7 +86,8 @@
                                 <data>
                                     <src>${project.basedir}</src>
                                     <type>directory</type>
-                                    <exclude>pom.xml,Changes.txt</exclude>
+                                    <!-- <excludes>pom.xml,Changes.txt</excludes> -->
+                                    <includes>AUTHORS,CHANGELOG,INSTALL,LICENSE,README,THANKS</includes> -->
                                     <mapper>
                                       <type>perm</type>
                                       <prefix>/usr/share/vivoingest/docs</prefix>
