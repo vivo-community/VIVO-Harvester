@@ -1,0 +1,28 @@
+0.4
+Design
+
+    * Clean up of Configuration Utilities
+    * Simplification of Design for execution 
+
+Virtual Machine
+
+    * Add harvester to virtual machine 
+
+Scoring
+
+    * Must allow for parameters to be passed in from command line for any algorithm
+    * Must allow for process flow and order dependency 
+
+Translating
+
+    * Definition of VIVO to Medline Relationship of Publication Types (ie Article, Demo, etc) 
+    
+0.3.2
+Fix tarball
+Fixes exception when executing fetch queries
+
+0.3.1
+Fix publication linking issues
+
+0.3
+Initial release for public consumption
