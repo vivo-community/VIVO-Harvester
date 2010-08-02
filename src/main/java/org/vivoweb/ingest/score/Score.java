@@ -172,7 +172,7 @@ public class Score {
 			parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempModelConfig").setDescription("tempModelConfig config filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE").setDefaultValue("workEmail"));
-			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("performa a pairwise scoring").withParameters(true, "RDF_PREDICATE").setDefaultValue("author"));
+			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
 			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
 			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
@@ -382,44 +382,18 @@ public class Score {
 		*/
 		public void pairwise(String attribute) {			
 		 	//iterate thru scoringInput pairs against matched pairs
-		 	//TODO Nicholas: support partial scoring, multiples matches against several pairs
+		 	//TODO Nicholas: finish implementation
 		 	//if pairs match, store publication to matched author in Model
-			
-			ResultSet scoreInputResult;
-			ResultSet vivoResult;
-			String inputMatchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-									 "SELECT ?x ?" + attribute + " " + 
-									 "WHERE { ?x score:" + attribute + " ?" + attribute + "}";
-			
-			String vivoMatchQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-									"SELECT ?x ?" + attribute + " " + 
-									"WHERE { ?x core:" + attribute + " ?" + attribute + "}";		
 			
 			//Create pairs list from input 
 			log.info("Executing pairWise for " + attribute);
-			log.debug(inputMatchQuery);
-			scoreInputResult = executeQuery(this.scoreInput, inputMatchQuery);
-			
+			log.warn("Pairwise is not complete");
+						
 			//Log extra info message if none found
-			if (!scoreInputResult.hasNext()) {
-				log.info("No matches found for " + attribute + " in input");
-			}
-			
 			//Create pairs list from vivo 
-			log.info("Executing pairWise for " + attribute);
-			log.debug(vivoMatchQuery);
-			scoreInputResult = executeQuery(this.vivo, vivoMatchQuery);
-			
-			//Log extra info message if none found
-			if (!scoreInputResult.hasNext()) {
-				log.info("No matches found for " + attribute + " in vivo");
-			}
-			
+			//Log extra info message if none found			
 			//look for exact match in vivo
-			while (scoreInputResult.hasNext()) {
-			 	//create pairs of *attribute* from matched
-		    	log.info("Creating pairs of " + attribute + " from input");
-            }	    			 
+			//create pairs of *attribute* from matched	    			 
 		 }
 		
 		/**
@@ -427,8 +401,10 @@ public class Score {
 		* @param regex string containing regular expression 
 		*/
 		private void regex(String regex) {
+		 	//TODO Chris: finish implementation
 			
 			log.info("Executing " + regex + " regular expression");
+			log.warn("Regex is not complete");
 		 
 		}
 		 
