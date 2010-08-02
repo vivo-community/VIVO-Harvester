@@ -142,7 +142,7 @@ public class ArgList {
 		if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
 			retVal.addAll(Arrays.asList(this.oConfSet.getOptionValues(arg)));
 		}
-		if(includeDefaultValue && this.argParser.getOptMap().get(arg).hasDefaultValue()) {
+		if((includeDefaultValue || retVal.isEmpty()) && this.argParser.getOptMap().get(arg).hasDefaultValue()) {
 			retVal.add(this.argParser.getOptMap().get(arg).getDefaultValue());
 		}
 		return retVal;
