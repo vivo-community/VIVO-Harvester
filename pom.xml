@@ -34,6 +34,69 @@
   				<target>1.6</target>
   			</configuration>
   		</plugin>
+  		<plugin>
+                <artifactId>jdeb</artifactId>
+                <groupId>org.vafer</groupId>
+                <version>0.8</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jdeb</goal>
+                        </goals>
+                        <configuration>
+                            <dataSet>
+                                <data>
+                                    <src>${project.build.directory}/${project.build.finalName}.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                      <type>perm</type>
+                                      <prefix>/usr/share/vivoingest/bin</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/config</src>
+                                    <type>directory</type>
+                                    <!-- <include/> -->
+                                    <exclude>**/.svn</exclude>
+                                    <mapper>
+                                      <type>perm</type>
+                                      <prefix>/usr/share/vivoingest</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/logs</src>
+                                    <type>directory</type>
+                                    <!-- <include/> -->
+                                    <exclude>**/.svn</exclude>
+                                    <mapper>
+                                      <type>perm</type>
+                                      <prefix>/var/log/vivoingest</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/scripts</src>
+                                    <type>directory</type>
+                                    <include>**/.sh</include>
+                                    <mapper>
+                                      <type>perm</type>
+                                      <prefix>/usr/share/vivoingest/scripts</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}</src>
+                                    <type>directory</type>
+                                    <exclude>pom.xml,Changes.txt</exclude>
+                                    <mapper>
+                                      <type>perm</type>
+                                      <prefix>/usr/share/vivoingest/docs</prefix>
+                                    </mapper>
+                                </data>
+                            </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
   	</plugins>
   </build>
   <dependencies>
