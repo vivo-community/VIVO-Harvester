@@ -61,7 +61,7 @@
                                     <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/dependency</prefix>
+                                      <prefix>/usr/share/vivoingest/bin/dependency</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -71,17 +71,7 @@
                                     <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${project.basedir}/logs</src>
-                                    <type>directory</type>
-                                    <!-- <includes/> -->
-                                    <excludes>**/*.svn*/**</excludes>
-                                    <mapper>
-                                      <type>perm</type>
-                                      <prefix>/var/log/vivoingest</prefix>
+                                      <prefix>/usr/share/vivoingest/config</prefix>
                                     </mapper>
                                 </data>
                                 <data>
