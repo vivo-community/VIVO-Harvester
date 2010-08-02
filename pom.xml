@@ -61,7 +61,7 @@
                                     <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest</prefix>
+                                      <prefix>/usr/share/vivoingest/dependency</prefix>
                                     </mapper>
                                 </data>
                                 <data>
