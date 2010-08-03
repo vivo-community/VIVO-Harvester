@@ -348,6 +348,6 @@ public abstract class RecordHandler implements Iterable<Record> {
 			return true;
 		}
 		Calendar processed = rmdProcess.getDate();
-		return (processed.compareTo(write) < 0);
+		return ((processed.compareTo(write) < 0) && !rmdWrite.getMD5().equals(rmdProcess.getMD5()));
 	}
 }
