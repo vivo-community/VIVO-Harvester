@@ -373,13 +373,14 @@ public abstract class RecordHandler implements Iterable<Record> {
 				//If md5s same
 				if(RecordMetaData.makeMD5Hash(rec.getData()).equals(rmd.getMD5())) {
 					//do nothing more
+					log.debug("Record "+rec.getID()+" has not changed... no need to update.");
 					return false;
 				}
 			}
 			return true;
-		} catch(Exception e) {
+		} catch(IOException e) {
+			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
 			return true;
 		}
-		
 	}
 }
