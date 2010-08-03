@@ -370,6 +370,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		RecordMetaData rmd;
 		try {
 			if((rmd = getLastMetaData(rec.getID(), null, null)) != null) {
+				log.debug("Record has metadata: "+rmd);
 				//Get previous record meta data md5
 				//If md5s same
 				if(RecordMetaData.makeMD5Hash(rec.getData()).equals(rmd.getMD5())) {
