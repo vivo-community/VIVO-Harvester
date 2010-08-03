@@ -14,6 +14,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <developers>
+  </developers>
   <organization>
   	<name>VIVO: Enabling National Networking of Scientists</name>
   	<url>http://vivoweb.org</url>
@@ -100,7 +102,11 @@
                 </executions>
             </plugin>
   	</plugins>
+  	<resources>
+  	</resources>
   </build>
+  <profiles>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -215,13 +221,6 @@
     	<version>1.0</version>
     	<scope>system</scope>
     	<systemPath>${basedir}/lib/eutils_axis2.jar</systemPath>
-    </dependency>
-    <dependency>
-    	<groupId>com.hp</groupId>
-    	<artifactId>d2rmap</artifactId>
-    	<version>0.3</version>
-    	<scope>system</scope>
-    	<systemPath>${basedir}/lib/d2rmap-V03.jar</systemPath>
     </dependency>
     <dependency>
     	<groupId>org.oclc</groupId>
