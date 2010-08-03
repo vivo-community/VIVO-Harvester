@@ -77,10 +77,10 @@ public class SPARQLQualify {
 	public SPARQLQualify(Model jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex) {
 		this.model = jenaModel;
 		this.dataPredicate = dataType;
-		this.regex = isRegex;
 		this.matchTerm = matchString;
 		this.newVal = newValue;
 		this.modelName = withModelName;
+		this.regex = isRegex;
 	}
 	
 	/**
@@ -109,6 +109,7 @@ public class SPARQLQualify {
 		try {
 			//connect to proper model, if specified on command line
 			if (this.modelName != null) {
+				log.trace("Using " + this.modelName + " for input Model");
 				this.model = (new JenaConnect(JenaConnect.parseConfig(configFileName),this.modelName)).getJenaModel();
 			} else {
 				this.model = JenaConnect.parseConfig(configFileName).getJenaModel();
