@@ -151,7 +151,12 @@
 			<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
 			<score:initials><xsl:value-of select="Initials" /></score:initials>
 			<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
-			<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
+			<xsl:when test="string(ForeName)">
+				<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
+			</xsl:when>
+			<xsl:otherwise>
+				<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
+			</xsl:otherwise>
 		</rdf:Description>
 	</xsl:template>
 	
