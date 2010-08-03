@@ -161,7 +161,7 @@ public class Score {
 					log.fatal(e.getMessage(),e);
 				}
 			} catch(IllegalArgumentException e) {
-				log.fatal(e);
+				log.info(e);
 				System.out.println(getParser().getUsage());
 			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
