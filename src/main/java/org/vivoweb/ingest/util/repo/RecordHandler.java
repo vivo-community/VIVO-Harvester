@@ -378,6 +378,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 				if(newMD5.equals(rmd.getMD5())) {
 					//do nothing more
 					log.debug("Record "+rec.getID()+" has not changed... no need to update.");
+					log.debug("old record data: \n"+getRecordData(rec.getID()));
+					log.debug("new record data: \n"+rec.getData());
 					return false;
 				}
 			}
