@@ -370,19 +370,19 @@ public abstract class RecordHandler implements Iterable<Record> {
 		RecordMetaData rmd;
 		try {
 			if((rmd = getLastMetaData(rec.getID(), null, null)) != null) {
-				log.debug("Record has metadata: "+rmd);
+//				log.debug("Record has metadata: "+rmd);
 				//Get previous record meta data md5
 				//If md5s same
 				String newMD5 = RecordMetaData.makeMD5Hash(rec.getData());
-				log.debug("New Data MD5: "+newMD5);
+//				log.debug("New Data MD5: "+newMD5);
 				if(newMD5.equals(rmd.getMD5())) {
 					//do nothing more
 					log.debug("Record "+rec.getID()+" has not changed... no need to update.");
 					return false;
 				}
-				String oldData = getRecordData(rec.getID());
-				log.debug("old recorded md5: "+rmd.getMD5());
-				log.debug("md5 of old data: "+RecordMetaData.makeMD5Hash(oldData));
+//				String oldData = getRecordData(rec.getID());
+//				log.debug("old recorded md5: "+rmd.getMD5());
+//				log.debug("md5 of old data: "+RecordMetaData.makeMD5Hash(oldData));
 //				log.debug("old record data: \n"+oldData);
 //				log.debug("new record data: \n"+rec.getData());
 			}
