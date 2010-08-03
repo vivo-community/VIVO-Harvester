@@ -129,7 +129,7 @@ public class SPARQLQualify {
 	 * @param newValue new value to set
 	 */
 	private void strReplace(String uri, String dataType, String oldValue, String newValue) {
-		log.trace("Running text replace '"+dataType+"':'"+oldValue+"' with '"+newValue+"'");
+		log.info("Running text replace '"+dataType+"': '"+oldValue+"' with '"+newValue+"'");
 		// create query string
 		String sQuery = ""
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -149,7 +149,7 @@ public class SPARQLQualify {
 	 * @param newValue new value
 	 */
 	private void regexReplace(String dataType, String regexMatch, String newValue) {
-		log.trace("Running Regex replace '"+dataType+"':'"+regexMatch+"' with '"+newValue+"'");
+		log.info("Running Regex replace '"+dataType+"': '"+regexMatch+"' with '"+newValue+"'");
 		// create query string
 		String sQuery = ""
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -217,6 +217,7 @@ public class SPARQLQualify {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info("SPARQLQualify: Start");
 		try {
 			new SPARQLQualify(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
@@ -224,5 +225,6 @@ public class SPARQLQualify {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}
+		log.info("SPARQLQualify: End");
 	}
 }

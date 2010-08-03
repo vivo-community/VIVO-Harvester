@@ -122,6 +122,7 @@ public class Transfer {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info("Transfer: Start");
 		try {
 			new Transfer(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
@@ -129,5 +130,6 @@ public class Transfer {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}
+		log.info("Transfer: End");
 	}
 }

@@ -88,6 +88,7 @@ public class Score {
 				List<String> exactMatchArg = opts.getAll("e");
 				List<String> pairwiseArg = opts.getAll("p");
 				List<String> regexArg = opts.getAll("r");
+				int processCount = 0;
 
 				try {
 					log.info("Loading configuration and models");
@@ -116,33 +117,42 @@ public class Score {
 							log.trace("Record " + r.getID() + " added to incoming processing model");
 							jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 							r.setProcessed(Score.class);
+							processCount += 1;
 						}	
 					}
 					
-					//Init
-					Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel());
-					
-					//Call each exactMatch
-					for (String attribute : exactMatchArg) {
-						scoring.exactMatch(attribute);
-					}
-					
-					//Call each pairwise
-					for (String attribute : pairwiseArg) {
-						scoring.pairwise(attribute);
-					}
-					
-					//Call each regex
-					for (String regex : regexArg) {
-						scoring.regex(regex);
-					}
-					
-				 	//Empty working model
-					if (!retainWorkingModel) scoring.scoreInput.removeAll();
-					//Close and done
-					scoring.scoreInput.close();
-					scoring.scoreOutput.close();
-					scoring.vivo.close();
+					//Speed Hack -- if no records to process, end
+					if (processCount != 0) {
+						
+						//Init
+						Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel());
+						
+						//Call each exactMatch
+						for (String attribute : exactMatchArg) {
+							scoring.exactMatch(attribute);
+						}
+						
+						//Call each pairwise
+						for (String attribute : pairwiseArg) {
+							scoring.pairwise(attribute);
+						}
+						
+						//Call each regex
+						for (String regex : regexArg) {
+							scoring.regex(regex);
+						}
+						
+						//Empty working model
+						if (!retainWorkingModel) scoring.scoreInput.removeAll();
+						//Close and done
+						scoring.scoreInput.close();
+						scoring.scoreOutput.close();
+						scoring.vivo.close();
+						
+					} else {
+						//nothing to do but end
+					}	
+					 	
 				} catch(ParserConfigurationException e) {
 					log.fatal(e.getMessage(),e);
 				} catch(SAXException e) {

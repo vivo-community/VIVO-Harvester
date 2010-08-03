@@ -191,7 +191,7 @@ public class PubmedSOAPFetch {
 			env[2] = ""+res.getIdList().getId().length;
 			env[3] = res.getIdList().getId()[0];
 			
-			log.trace("Query resulted in a total of " + env[2] + " records.");
+			log.info("Query resulted in a total of " + env[2] + " records.");
 		}
 		catch (RemoteException e)
 		{
@@ -215,7 +215,7 @@ public class PubmedSOAPFetch {
 		req.setTool(this.strToolLocation);
 		req.setRetstart(retStart);
 		req.setRetmax(numRecords);
-		log.trace("Fetching records from search");
+		log.info("Fetching records from search");
 		try {
 			serializeFetchRequest(req);
 		}catch(RemoteException e) {
