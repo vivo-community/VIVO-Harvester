@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set working directory to base folder
-cd /usr/share/vivoingest
+cd ..
 
 # Execute Fetch for PubMed
 java -cp bin/ingest-0.4.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.PubmedSOAPFetch -X config/tasks/PubmedFetchTask.xml
@@ -13,6 +13,7 @@ java -cp bin/ingest-0.4.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLT
 java -cp bin/ingest-0.4.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -i config/recordHandlers/PubmedRDFRecordHandler.xml -V config/jenaModels/VIVO.xml
 
 # Execute Qualify
-
+java -cp bin/ingest-0.4.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.SPARQLQualify -j config/jenaModels/VIVO.xml -n staging
 
 # Execute Transfer
+java -cp bin/ingest-0.4.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.SPARQLQualify -i config/jenaModels/VIVO.xml -I staging -o config/jenaModels/VIVO.xml

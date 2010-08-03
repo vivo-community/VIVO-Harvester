@@ -56,6 +56,10 @@ public class SPARQLQualify {
 	 */
 	private String newVal;
 	/**
+	 * The model name
+	 */
+	private String modelName;
+	/**
 	 * Is this to use Regex to match the string
 	 */
 	private boolean regex;
@@ -66,14 +70,16 @@ public class SPARQLQualify {
 	 * @param dataType the data predicate
 	 * @param matchString the string to match
 	 * @param newValue the value to replace it with
+	 * @param withModelName the model name to connect to (will override jena config)
 	 * @param isRegex is this to use Regex to match the string
 	 */
-	public SPARQLQualify(Model jenaModel, String dataType, String matchString, String newValue, boolean isRegex) {
+	public SPARQLQualify(Model jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex) {
 		this.model = jenaModel;
 		this.dataPredicate = dataType;
 		this.regex = isRegex;
 		this.matchTerm = matchString;
 		this.newVal = newValue;
+		this.modelName = withModelName;
 	}
 	
 	/**
@@ -90,6 +96,7 @@ public class SPARQLQualify {
 		this.regex = argList.has("r");
 		this.matchTerm = (this.regex?argList.get("r"):argList.get("t"));
 		this.newVal = argList.get("v");
+		this.modelName = argList.get("n");
 	}
 	
 	/**
@@ -99,7 +106,12 @@ public class SPARQLQualify {
 	 */
 	private void setModel(String configFileName) throws IOException {
 		try {
-			this.model = JenaConnect.parseConfig(configFileName).getJenaModel();
+			//connect to proper model, if specified on command line
+			if (this.modelName != null) {
+				this.model = (new JenaConnect(JenaConnect.parseConfig(configFileName),this.modelName)).getJenaModel();
+			} else {
+				this.model = JenaConnect.parseConfig(configFileName).getJenaModel();
+			}
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
 		} catch(SAXException e) {
@@ -133,7 +145,7 @@ public class SPARQLQualify {
 	/**
 	 * Replace records matching dataType & the regexMatch with newValue
 	 * @param dataType data type to match
-	 * @param regexMatch regular expresion to match
+	 * @param regexMatch regular expression to match
 	 * @param newValue new value
 	 */
 	private void regexReplace(String dataType, String regexMatch, String newValue) {
@@ -192,6 +204,7 @@ public class SPARQLQualify {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SPARQLQualify");
 		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jenaConfig").setDescription("config file for jena model").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("modelName").setDescription("specify model to connect to. this requires you specify a jenaConfig and will override the jena config modelname").withParameter(true, "MODEL_NAME"));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataType").setDescription("data type (rdf predicate)").withParameter(true, "RDF_PREDICATE"));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX"));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING"));
