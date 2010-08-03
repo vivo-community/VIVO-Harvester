@@ -89,6 +89,9 @@ public class Transfer {
 		}
 		String inConfig = argList.get("i");
 		String outConfig = argList.get("o");
+		this.inputModelName = argList.get("I");
+		this.outputModelName = argList.get("O");
+		
 		try {
 			//connect to proper model, if specified on command line
 			if (this.inputModelName != null) {

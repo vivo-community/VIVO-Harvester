@@ -131,8 +131,22 @@ public class SPARQLQualify {
 	 */
 	private void strReplace(String uri, String dataType, String oldValue, String newValue) {
 		log.info("Running text replace '"+dataType+"': '"+oldValue+"' with '"+newValue+"'");
-		// create query string
+		
 		String sQuery = ""
+			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+			+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
+			+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+		log.trace(sQuery);
+	
+		// run update
+		UpdateRequest ur = UpdateFactory.create(sQuery);
+		UpdateAction.execute(ur, this.model);
+		
+		
+		this.model.commit();
+		
+		// create query string
+		 sQuery = ""
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 				+ "DELETE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
 				//+ "DELETE { "+uri+" <"+dataType+"> ?value } ";
@@ -140,20 +154,7 @@ public class SPARQLQualify {
 		log.trace(sQuery);
 		
 		// run update
-		UpdateRequest ur = UpdateFactory.create(sQuery);
-		
-		UpdateAction.execute(ur, this.model);
-		this.model.commit();
-		
-		sQuery = ""
-			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-			+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
-			+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-		log.trace(sQuery);
-	
-		// run update
 		ur = UpdateFactory.create(sQuery);
-	
 		UpdateAction.execute(ur, this.model);
 	}
 
