@@ -118,9 +118,7 @@ public class Transfer {
 		}
 		
 		//empty model
-		if (!argList.has("k")) {
-			this.retainModel = true;
-		}
+		this.retainModel = argList.has("k");
 	}
 	
 	/**
@@ -137,8 +135,9 @@ public class Transfer {
 			log.trace("Outputting RDF to " + this.dumpModel);
 			try {
 				this.input.write(new FileOutputStream(this.dumpModel));
+				//this.input.write(System.out);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
+				//TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
 				//TODO Nicholas: Fix Jena error
@@ -147,7 +146,7 @@ public class Transfer {
 		}
 		
 		//empty model
-		if (this.retainModel) {
+		if (!this.retainModel) {
 			this.input.removeAll();
 		}
 	}
@@ -170,7 +169,7 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("dump file").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").setDescription("If set, this will not clear the input model after transfer is complete").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").withParameter(false, "cheese").setDescription("If set, this will not clear the input model after transfer is complete"));
 		return parser;
 	}
 	
