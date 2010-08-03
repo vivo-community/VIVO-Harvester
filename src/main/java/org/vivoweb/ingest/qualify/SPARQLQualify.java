@@ -33,6 +33,7 @@ import com.hp.hpl.jena.update.UpdateRequest;
 /**
  * Qualify data using SPARQL queries
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+ * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
  */
 public class SPARQLQualify {
 	/**

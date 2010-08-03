@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.vivoweb.ingest.transfer;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
@@ -24,6 +26,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 /**
  * Transfer data from one Jena model to another
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+ * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
  */
 public class Transfer {
 	/**
@@ -77,6 +80,7 @@ public class Transfer {
 			} else {
 				this.input = JenaConnect.parseConfig(inConfig).getJenaModel();
 			}
+			
 			//connect to proper model, if specified on command line
 			if (this.outputModelName != null) {
 				this.output = (new JenaConnect(JenaConnect.parseConfig(outConfig),this.outputModelName)).getJenaModel();
@@ -87,6 +91,16 @@ public class Transfer {
 			throw new IOException(e.getMessage(),e);
 		} catch(SAXException e) {
 			throw new IOException(e.getMessage(),e);
+		}
+		
+		//output to file, if requested
+		if (argList.has("d")) { 
+			try {
+				this.input.write(new FileOutputStream(argList.get("d")));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -113,7 +127,8 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)l").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("dump file").setRequired(false));
 		return parser;
 	}
 	

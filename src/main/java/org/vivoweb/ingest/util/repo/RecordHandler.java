@@ -350,32 +350,36 @@ public abstract class RecordHandler implements Iterable<Record> {
 		RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
 		Calendar write = rmdWrite.getDate();
 		RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
+		//log.debug("rmdWrite: "+rmdWrite);
+		//log.debug("rmdProcess: "+rmdProcess);
 		if (rmdProcess == null) {
 			return true;
 		}
 		Calendar processed = rmdProcess.getDate();
-		log.debug("rmdWrite: "+rmdWrite);
-		log.debug("rmdProcess: "+rmdWrite);
-		return ((processed.compareTo(write) < 0) && !rmdWrite.getMD5().equals(rmdProcess.getMD5()));
+		return (processed.compareTo(write) < 0);
 	}
 	
 	/**
 	 * Does the given record contain updated information compared to existing record data
 	 * @param rec the record
 	 * @return true if need updated or record is new
-	 * @throws IOException error getting metadata
 	 */
-	protected boolean needsUpdated(Record rec) throws IOException {
+	protected boolean needsUpdated(Record rec) {
 		//Check if previous record meta data exists
 		RecordMetaData rmd;
-		if((rmd = getLastMetaData(rec.getID(), null, null)) != null) {
-			//Get previous record meta data md5
-			//If md5s same
-			if(RecordMetaData.makeMD5Hash(rec.getData()).equals(rmd.getMD5())) {
-				//do nothing more
-				return false;
+		try {
+			if((rmd = getLastMetaData(rec.getID(), null, null)) != null) {
+				//Get previous record meta data md5
+				//If md5s same
+				if(RecordMetaData.makeMD5Hash(rec.getData()).equals(rmd.getMD5())) {
+					//do nothing more
+					return false;
+				}
 			}
+			return true;
+		} catch(Exception e) {
+			return true;
 		}
-		return true;
+		
 	}
 }
