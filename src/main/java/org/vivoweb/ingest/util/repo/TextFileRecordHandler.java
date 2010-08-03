@@ -228,7 +228,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		newNode.appendChild(dateNode);
 		//Start Remove Here
 		Element dateNodeReadable = doc.createElement("DateReadable");
-		dateNodeReadable.appendChild(doc.createTextNode(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(rmd.getDate())+""));
+		dateNodeReadable.appendChild(doc.createTextNode(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(rmd.getDate().getTime())));
 		newNode.appendChild(dateNodeReadable);
 		//Stop Remove Here
 		Element operationNode = doc.createElement("Operation");
