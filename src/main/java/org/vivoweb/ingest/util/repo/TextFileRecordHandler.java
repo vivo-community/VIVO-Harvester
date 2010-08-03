@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -225,6 +226,11 @@ public class TextFileRecordHandler extends RecordHandler {
 		Element dateNode = doc.createElement("Date");
 		dateNode.appendChild(doc.createTextNode(rmd.getDate().getTimeInMillis()+""));
 		newNode.appendChild(dateNode);
+		//Start Remove Here
+		Element dateNodeReadable = doc.createElement("DateReadable");
+		dateNodeReadable.appendChild(doc.createTextNode(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(rmd.getDate())+""));
+		newNode.appendChild(dateNodeReadable);
+		//Stop Remove Here
 		Element operationNode = doc.createElement("Operation");
 		operationNode.appendChild(doc.createTextNode(rmd.getOperation().toString()));
 		newNode.appendChild(operationNode);
@@ -405,6 +411,8 @@ public class TextFileRecordHandler extends RecordHandler {
 				//Do Nothing, but don't remove so it doesnt go to else clause
 			} else if(qName.equalsIgnoreCase("MetaDataRecordList")) {
 				//Do Nothing, but don't remove so it doesnt go to else clause
+			} else if(qName.equalsIgnoreCase("DateReadable")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
 			} else {
 				throw new SAXException("Unknown Tag: "+qName);
 			}
@@ -433,6 +441,8 @@ public class TextFileRecordHandler extends RecordHandler {
 			} else if(qName.equalsIgnoreCase("MD5")) {
 				this.tempMD5 = this.tempVal;
 			} else if(qName.equalsIgnoreCase("MetaDataRecordList")) {
+				//Do Nothing, but don't remove so it doesnt go to else clause
+			} else if(qName.equalsIgnoreCase("DateReadable")) {
 				//Do Nothing, but don't remove so it doesnt go to else clause
 			} else {
 				throw new SAXException("Unknown Tag: "+qName);
