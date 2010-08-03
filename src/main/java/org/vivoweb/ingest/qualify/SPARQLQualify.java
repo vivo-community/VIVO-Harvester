@@ -26,9 +26,9 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.update.UpdateAction;
-import com.hp.hpl.jena.update.UpdateFactory;
-import com.hp.hpl.jena.update.UpdateRequest;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
  * Qualify data using SPARQL queries
@@ -133,30 +133,57 @@ public class SPARQLQualify {
 	private void strReplace(String uri, String dataType, String oldValue, String newValue) {
 		log.info("Running text replace '"+dataType+"': '"+oldValue+"' with '"+newValue+"'");
 		
-		String sQuery = ""
-			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-			+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
-			+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-		log.trace(sQuery);
+		
+		if (uri != null) {
+			//Jena doesn't handle sparql updates properly, so we're forced to use methods
+			StmtIterator stmtItr = this.model.listStatements(ResourceFactory.createResource(uri), ResourceFactory.createProperty(dataType), oldValue);
+			
+			while (stmtItr.hasNext()) {
+				Statement stmt = stmtItr.next();
+				log.trace("Replacing record");
+				log.debug("oldValue: "+oldValue);
+				log.debug("newValue: "+newValue);
+				this.model.add(stmt.getSubject(), stmt.getPredicate(), newValue);
+				stmt.remove();			
+			}
+		} else {
+			//Jena doesn't handle sparql updates properly, so we're forced to use methods
+			StmtIterator stmtItr = this.model.listStatements(null, ResourceFactory.createProperty(dataType), oldValue);
+			
+			while (stmtItr.hasNext()) {
+				Statement stmt = stmtItr.next();
+				log.trace("Replacing record");
+				log.debug("oldValue: "+oldValue);
+				log.debug("newValue: "+newValue);
+				this.model.add(stmt.getSubject(), stmt.getPredicate(), newValue);
+				stmt.remove();
+			}
+		}
+//		String sQuery = ""
+//			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+//			+ "DELETE { "+uri+" <"+dataType+"> \""+oldValue+"\" } "
+//			+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
+//			+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+
+//		log.trace(sQuery);
 	
 		// run update
-		UpdateRequest ur = UpdateFactory.create(sQuery);
-		UpdateAction.execute(ur, this.model);
+//		UpdateRequest ur = UpdateFactory.create(sQuery);
+//		UpdateAction.execute(ur, this.model);
 		
-		
-		this.model.commit();
-		
-		// create query string
-		 sQuery = ""
-				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-				+ "DELETE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-				//+ "DELETE { "+uri+" <"+dataType+"> ?value } ";
-				//+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-		log.trace(sQuery);
-		
-		// run update
-		ur = UpdateFactory.create(sQuery);
-		UpdateAction.execute(ur, this.model);
+//		this.model.commit();
+//		
+//		// create query string
+//		 sQuery = ""
+//				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+//				+ "DELETE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+//				//+ "DELETE { "+uri+" <"+dataType+"> ?value } ";
+//				//+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+//		log.trace(sQuery);
+//		
+//		// run update
+//		ur = UpdateFactory.create(sQuery);
+//		UpdateAction.execute(ur, this.model);
 	}
 
 	/**
@@ -170,7 +197,7 @@ public class SPARQLQualify {
 		// create query string
 		String sQuery = ""
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-				+ "Select ?record ?dataField "
+				+ "SELECT ?record ?dataField "
 				+ "WHERE { "
 				+ "  ?record <"+dataType+"> ?dataField . "
 				+ "}";
@@ -186,16 +213,13 @@ public class SPARQLQualify {
 		
 		// read first result
 		String data = null;
-		if(resultSet.hasNext()) {
+		while (resultSet.hasNext()) {
 			QuerySolution result = resultSet.next();
 			data = result.getLiteral(resultSet.getResultVars().get(1)).getString();
 			if(data.matches(regexMatch)) {
 				String newData = data.replaceAll(regexMatch, newValue);
-				log.trace("matching record found");
-				log.debug("data: "+data);
-				log.debug("newData: "+newData);
 				if(!newData.equals(data)) {
-					String record = result.getLiteral(resultSet.getResultVars().get(0)).getString();
+					String record = result.getResource(resultSet.getResultVars().get(0)).toString();
 					log.debug("Updating record");
 					strReplace(record, dataType, data, newData);
 				} else {
@@ -212,7 +236,7 @@ public class SPARQLQualify {
 		if(this.regex) {
 			regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
 		} else {
-			strReplace("?uri", this.dataPredicate, this.matchTerm, this.newVal);
+			strReplace(null, this.dataPredicate, this.matchTerm, this.newVal);
 		}
 	}
 	
