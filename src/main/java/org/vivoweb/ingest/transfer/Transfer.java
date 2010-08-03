@@ -13,8 +13,6 @@ package org.vivoweb.ingest.transfer;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
-
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +50,14 @@ public class Transfer {
 	 * output model name
 	 */
 	private String outputModelName;
+	/**
+	 * dump model option
+	 */
+	private String dumpModel;
+	/**
+	 * keep model after transfer
+	 */
+	private boolean retainModel;
 	
 	/**
 	 * Constructor
@@ -59,12 +65,16 @@ public class Transfer {
 	 * @param out output Model
 	 * @param inName input model name
 	 * @param outName output model name
+	 * @param file dump to file option
+	 * @param keep keep transferred data option
 	 */
-	public Transfer(Model in, Model out, String inName, String outName) {
+	public Transfer(Model in, Model out, String inName, String outName, String file, boolean keep) {
 	  this.input = in;
 	  this.output = out;
 	  this.inputModelName = inName;
 	  this.outputModelName = outName;
+	  this.dumpModel = file;
+	  this.retainModel = keep;
 	}
 	
 	/**
@@ -104,18 +114,12 @@ public class Transfer {
 		
 		//output to file, if requested
 		if (argList.has("d")) { 
-			log.trace("Outputting RDF to " + argList.get("d"));
-			try {
-				this.input.write(new FileOutputStream(argList.get("d")));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.dumpModel = argList.get("d");
 		}
 		
 		//empty model
 		if (!argList.has("k")) {
-			this.input.removeAll();
+			this.retainModel = true;
 		}
 	}
 	
@@ -123,7 +127,29 @@ public class Transfer {
 	 * Copy data from input to output
 	 */
 	private void transfer() {
-		this.output.add(this.input);
+		
+		if (this.output != null) { 
+			this.output.add(this.input);
+		}
+		
+		//output to file, if requested
+		if (this.dumpModel != null) { 
+			log.trace("Outputting RDF to " + this.dumpModel);
+			try {
+				this.input.write(new FileOutputStream(this.dumpModel));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				//TODO Nicholas: Fix Jena error
+				//do nothing; currently bad xml will cause jena to throw error
+			}	
+		}
+		
+		//empty model
+		if (this.retainModel) {
+			this.input.removeAll();
+		}
 	}
 	
 	/**

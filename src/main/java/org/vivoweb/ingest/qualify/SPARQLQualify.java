@@ -142,14 +142,17 @@ public class SPARQLQualify {
 		// run update
 		UpdateRequest ur = UpdateFactory.create(sQuery);
 		
+		UpdateAction.execute(ur, this.model);
+		this.model.commit();
+		
 		sQuery = ""
 			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 			+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
 			+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-	log.trace(sQuery);
+		log.trace(sQuery);
 	
-	// run update
-	ur = UpdateFactory.create(sQuery);
+		// run update
+		ur = UpdateFactory.create(sQuery);
 	
 		UpdateAction.execute(ur, this.model);
 	}
