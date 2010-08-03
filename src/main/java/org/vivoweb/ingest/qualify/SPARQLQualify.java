@@ -92,12 +92,12 @@ public class SPARQLQualify {
 		if(!(argList.has("r") ^ argList.has("t"))) {
 			throw new IllegalArgumentException("Must provide one of --regex or --text, but not both");
 		}
+		this.modelName = argList.get("n");
 		setModel(argList.get("j"));
 		this.dataPredicate = argList.get("d");
 		this.regex = argList.has("r");
 		this.matchTerm = (this.regex?argList.get("r"):argList.get("t"));
 		this.newVal = argList.get("v");
-		this.modelName = argList.get("n");
 	}
 	
 	/**
