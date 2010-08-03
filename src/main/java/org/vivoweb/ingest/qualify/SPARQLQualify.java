@@ -137,6 +137,7 @@ public class SPARQLQualify {
 				+ "DELETE { "+uri+" <"+dataType+"> ?value } "
 				+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
 				+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+		log.trace(sQuery);
 		
 		// run update
 		UpdateRequest ur = UpdateFactory.create(sQuery);
@@ -158,6 +159,8 @@ public class SPARQLQualify {
 				+ "WHERE { "
 				+ "  ?record <"+dataType+"> ?dataField . "
 				+ "}";
+		
+		log.trace(sQuery);
 		
 		// create query
 		Query query = QueryFactory.create(sQuery);

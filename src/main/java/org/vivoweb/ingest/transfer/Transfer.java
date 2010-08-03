@@ -76,6 +76,7 @@ public class Transfer {
 		try {
 			//connect to proper model, if specified on command line
 			if (this.inputModelName != null) {
+				log.trace("Using  " + this.inputModelName + " for input Model");
 				this.input = (new JenaConnect(JenaConnect.parseConfig(inConfig),this.inputModelName)).getJenaModel();
 			} else {
 				this.input = JenaConnect.parseConfig(inConfig).getJenaModel();
@@ -83,6 +84,7 @@ public class Transfer {
 			
 			//connect to proper model, if specified on command line
 			if (this.outputModelName != null) {
+				log.trace("Using  " + this.outputModelName + " for output Model");
 				this.output = (new JenaConnect(JenaConnect.parseConfig(outConfig),this.outputModelName)).getJenaModel();
 			} else {
 				this.output = JenaConnect.parseConfig(outConfig).getJenaModel();
@@ -95,6 +97,7 @@ public class Transfer {
 		
 		//output to file, if requested
 		if (argList.has("d")) { 
+			log.trace("Outputting RDF to " + argList.get("d"));
 			try {
 				this.input.write(new FileOutputStream(argList.get("d")));
 			} catch (FileNotFoundException e) {
