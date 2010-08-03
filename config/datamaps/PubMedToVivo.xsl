@@ -130,8 +130,20 @@
 			<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
 			<score:initials><xsl:value-of select="Initials" /></score:initials>
 			<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
-			<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
+			<xsl:apply-templates select="self::*" mode="nameCreation" />
 		</rdf:Description>
+	</xsl:template>
+	
+	<xsl:template match="Author" mode="nameCreation">
+		<xsl:choose>
+			<xsl:when test="string(ForeName)">
+				<rdfs:label><xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+			</xsl:when>
+			<xsl:otherwise>
+				<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
+			</xsl:otherwise>
+			<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
+		</xsl:choose>
 	</xsl:template>
 	
 	<!-- The Mesh List -->
