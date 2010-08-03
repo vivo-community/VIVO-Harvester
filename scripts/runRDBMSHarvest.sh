@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# Execute Fetch for PubMed
+# Set working directory
+cd /usr/share/vivoingest
+
+# Execute Fetch for RDBMS
 java -cp target/ingest-0.4.jar:target/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -c config/tasks/JDBCFetchTask.xml
 
 # Execute Translate
@@ -8,6 +11,5 @@ java -cp target/ingest-0.4.jar:target/dependency/* org.vivoweb.ingest.fetch.JDBC
 # Execute Score
 
 # Execute Qualify
-
 
 # Execute Transfer

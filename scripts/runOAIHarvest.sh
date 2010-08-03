@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set working directory
+cd /usr/share/vivoingest
+
 # Execute Fetch for OAI
 java -cp target/ingest-0.4.jar:target/dependency/* org.vivoweb.ingest.fetch.OAIFetch -c config/tasks/OAIFetchTask.xml
 
