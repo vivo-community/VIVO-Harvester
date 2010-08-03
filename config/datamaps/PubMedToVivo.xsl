@@ -142,7 +142,6 @@
 			<xsl:otherwise>
 				<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
 			</xsl:otherwise>
-			<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
 		</xsl:choose>
 	</xsl:template>
 	
