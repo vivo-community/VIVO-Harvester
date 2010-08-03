@@ -134,13 +134,23 @@ public class SPARQLQualify {
 		// create query string
 		String sQuery = ""
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-				+ "DELETE { "+uri+" <"+dataType+"> ?value } "
-				+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
-				+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+				+ "DELETE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+				//+ "DELETE { "+uri+" <"+dataType+"> ?value } ";
+				//+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
 		log.trace(sQuery);
 		
 		// run update
 		UpdateRequest ur = UpdateFactory.create(sQuery);
+		
+		sQuery = ""
+			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+			+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
+			+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
+	log.trace(sQuery);
+	
+	// run update
+	ur = UpdateFactory.create(sQuery);
+	
 		UpdateAction.execute(ur, this.model);
 	}
 
@@ -225,6 +235,7 @@ public class SPARQLQualify {
 		try {
 			new SPARQLQualify(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
+			log.fatal(e.getMessage(),e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);

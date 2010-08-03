@@ -13,6 +13,8 @@ package org.vivoweb.ingest.transfer;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
+
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,6 +73,10 @@ public class Transfer {
 	 * @throws IOException error creating task
 	 */
 	public Transfer(ArgList argList) throws IOException {
+		//Require some args
+		if ((!argList.has("o") && !argList.has("O") && !argList.has("d")) || !argList.has("i")) {
+			throw new IllegalArgumentException("Must provide one of -o or -O, or -d in addition to -i");
+		}
 		String inConfig = argList.get("i");
 		String outConfig = argList.get("o");
 		try {
@@ -81,13 +87,14 @@ public class Transfer {
 			} else {
 				this.input = JenaConnect.parseConfig(inConfig).getJenaModel();
 			}
-			
-			//connect to proper model, if specified on command line
-			if (this.outputModelName != null) {
-				log.trace("Using  " + this.outputModelName + " for output Model");
-				this.output = (new JenaConnect(JenaConnect.parseConfig(outConfig),this.outputModelName)).getJenaModel();
-			} else {
-				this.output = JenaConnect.parseConfig(outConfig).getJenaModel();
+			if (argList.has("o") || argList.has("O")) {
+				//connect to proper model, if specified on command line
+				if (this.outputModelName != null) {
+					log.trace("Using  " + this.outputModelName + " for output Model");
+					this.output = (new JenaConnect(JenaConnect.parseConfig(outConfig),this.outputModelName)).getJenaModel();
+				} else {
+					this.output = JenaConnect.parseConfig(outConfig).getJenaModel();
+				}
 			}
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
@@ -104,6 +111,11 @@ public class Transfer {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		
+		//empty model
+		if (!argList.has("k")) {
+			this.input.removeAll();
 		}
 	}
 	
@@ -132,6 +144,7 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("dump file").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").setDescription("If set, this will not clear the input model after transfer is complete").setRequired(false));
 		return parser;
 	}
 	
@@ -144,7 +157,11 @@ public class Transfer {
 		try {
 			new Transfer(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
+			log.fatal(e.getMessage());
 			System.out.println(getParser().getUsage());
+		} catch(IOException e) {
+			log.fatal(e.getMessage());
+			System.out.println(getParser().getUsage());	
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}
