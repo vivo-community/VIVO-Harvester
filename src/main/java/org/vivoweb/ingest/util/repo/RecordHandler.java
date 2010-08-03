@@ -365,6 +365,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return true if need updated or record is new
 	 */
 	protected boolean needsUpdated(Record rec) {
+		log.debug("Checking if Record "+rec.getID()+" needs updated");
 		//Check if previous record meta data exists
 		RecordMetaData rmd;
 		try {
@@ -377,6 +378,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 					return false;
 				}
 			}
+			log.debug("Record has changed... need to update");
 			return true;
 		} catch(IOException e) {
 			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
