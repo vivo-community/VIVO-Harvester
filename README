@@ -1,32 +1,27 @@
-VIVO Harvester Version .3 Pre-Release Candidate
+VIVO Harvester 0.4
 VIVO: Enabling National Networking of Scientists
 
-New to this Release
-* OAI Fetch Class
-* Relational Database Fetch Class 
-* Gloze Translation Class
-* Elimination of Controller Framework
-* Task Framework
-* Qualify Class
+Quick start
+To harvest all of your institution data from pubmed into your vivo instance, you need to minimally do the following things:
+
+Edit config/VIVO.xml and set it to point to your vivo database
+Edit tasks/PubmedFetch.xml and change the options as follows:
+
+	<Param id="email">YOUREMAIL</Param>
+	<Param id="location">YOURLOCATION</Param>
+	<Param id="output">config/recordHandlers/PubmedXMLRecordHandler.xml</Param>
+	<Param id="termSearch">youraffliationstring.edu[ad]</Param>
+	<Param id="numRecords">ALL</Param>
+	<Param id="batchSize">1000</Param>
+	
+run scripts/runPubMedHarvest.sh or scripts/runPubMedHarvest.bat depending on your server OS.
 
 Project Documentation
 For more information about the project, visit http://sourceforge/projects/vivo/.  Documentation can be found on the source forge wiki at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Main_Page.
 
-Necessary Tools for Execution
-To execute the VIVO harvester, you need the following things:
-* An Installation of VIVO to read from and write to
-* A mysql database to use for Storing Jena Models
-* Java
-
 Configuration
-Each module (Fetch, Translate, Score) require various configuration files depending on the task you are attempting to accomplish.  Example configuration scripts exist in the config file.  Record handlers are special configs that specify the location of the data either were to put it or where to read it.  Example translation maps exist in the DataMaps folder.
+Each module (Fetch, Translate, Score) require various configuration files depending on the task you are attempting to accomplish.  Example configuration scripts exist in the config directory.  Record handlers are special configs that specify the location of the data either were to put it or where to read it.  Example translation maps exist in the DataMaps folder.
 More information about project configuration can be found at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Configuration.  
 
-Execution
-Provided in the project zip is a file run.sh.  This file contains example executing PubMedSoapFetch, translating the incoming xml, then scoring the translated data into and placing matches into your VIVO instance. 
-
-
-
-
-July 9th, 2010		Creation	Stephen V. Williams swilliams@ctrip.ufl.edu
-
+Execution Scripts
+Several example scripts are provided in the scripts folder.
