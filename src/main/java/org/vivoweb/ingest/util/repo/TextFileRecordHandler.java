@@ -114,13 +114,8 @@ public class TextFileRecordHandler extends RecordHandler {
 	
 	@Override
 	public void addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
-		try {
-			if(!needsUpdated(rec)) {
-				return;
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(!needsUpdated(rec)) {
+			return;
 		}
 		//log.debug("Resolving file for record: " + rec.getID());
 		FileObject fo = this.fileDirObj.resolveFile(rec.getID());
