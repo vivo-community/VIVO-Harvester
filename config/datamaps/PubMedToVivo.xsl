@@ -9,27 +9,6 @@
       Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 -->
 <!-- <?xml version="1.0"?> -->
-<!-- 
-  Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams
-  
-  This file is part of VIVO.
-  
-  VIVO is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  VIVO is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with VIVO.  If not, see <http://www.gnu.org/licenses/gpl-3.0.txt>.
-  
-  Contributors:
-      Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial implementation
- -->
 <!-- Header information for the Style Sheet
 	The style sheet requires xmlns for each prefix you use in constructing
 	the new elements
@@ -151,12 +130,7 @@
 			<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
 			<score:initials><xsl:value-of select="Initials" /></score:initials>
 			<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
-			<xsl:when test="string(ForeName)">
-				<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
-			</xsl:when>
-			<xsl:otherwise>
-				<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
-			</xsl:otherwise>
+			<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
 		</rdf:Description>
 	</xsl:template>
 	
@@ -227,4 +201,3 @@
 	
 	
 </xsl:stylesheet>
-
