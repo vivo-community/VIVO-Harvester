@@ -19,6 +19,8 @@ import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
@@ -30,6 +32,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public abstract class RecordHandler implements Iterable<Record> {
+	/**
+	 * Log4J Logger
+	 */
+	protected static Log log = LogFactory.getLog(RecordHandler.class);
 	/**
 	 * Do we overwrite existing records by default
 	 */
@@ -348,6 +354,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 			return true;
 		}
 		Calendar processed = rmdProcess.getDate();
+		log.debug("rmdWrite: "+rmdWrite);
+		log.debug("rmdProcess: "+rmdWrite);
 		return ((processed.compareTo(write) < 0) && !rmdWrite.getMD5().equals(rmdProcess.getMD5()));
 	}
 }

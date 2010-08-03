@@ -148,4 +148,9 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 		}
 		return retVal;
 	}
+	
+	@Override
+	public String toString() {
+		return "<Date='"+this.date.getTimeInMillis()+"'><Operator='"+this.operator.getName()+"'><Operation='"+this.operation+"'><MD5='"+this.md5hash+"'>";
+	}
 }
