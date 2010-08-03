@@ -181,7 +181,7 @@ public class TextFileRecordHandler extends RecordHandler {
 			sb.append("\n");
 		}
 		br.close();
-		return sb.toString();
+		return sb.toString().trim();
 	}
 	
 	@Override
