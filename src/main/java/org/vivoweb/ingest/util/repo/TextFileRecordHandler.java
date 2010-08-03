@@ -113,6 +113,9 @@ public class TextFileRecordHandler extends RecordHandler {
 	
 	@Override
 	public void addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
+		if(!needsUpdated(rec)) {
+			return;
+		}
 		//log.debug("Resolving file for record: " + rec.getID());
 		FileObject fo = this.fileDirObj.resolveFile(rec.getID());
 		if(!overwrite && fo.exists()) {

@@ -129,7 +129,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return the last metadata of the specified type
 	 * @throws IOException error retrieving record metadata
 	 */
-	private RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
+	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
 			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
 				return rmd;
@@ -357,5 +357,25 @@ public abstract class RecordHandler implements Iterable<Record> {
 		log.debug("rmdWrite: "+rmdWrite);
 		log.debug("rmdProcess: "+rmdWrite);
 		return ((processed.compareTo(write) < 0) && !rmdWrite.getMD5().equals(rmdProcess.getMD5()));
+	}
+	
+	/**
+	 * Does the given record contain updated information compared to existing record data
+	 * @param rec the record
+	 * @return true if need updated or record is new
+	 * @throws IOException error getting metadata
+	 */
+	protected boolean needsUpdated(Record rec) throws IOException {
+		//Check if previous record meta data exists
+		RecordMetaData rmd;
+		if((rmd = getLastMetaData(rec.getID(), null, null)) != null) {
+			//Get previous record meta data md5
+			//If md5s same
+			if(RecordMetaData.makeMD5Hash(rec.getData()).equals(rmd.getMD5())) {
+				//do nothing more
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -41,6 +41,9 @@ public class MapRecordHandler extends RecordHandler {
 	
 	@Override
 	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
+		if(!needsUpdated(rec)) {
+			return;
+		}
 		if(!overwrite && this.map.containsKey(rec.getID())) {
 			throw new IOException("Record already exists!");
 		}
