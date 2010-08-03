@@ -453,6 +453,7 @@ public class PubmedSOAPFetch {
 		try {
 			new PubmedSOAPFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
+			log.debug(e.getMessage(),e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
