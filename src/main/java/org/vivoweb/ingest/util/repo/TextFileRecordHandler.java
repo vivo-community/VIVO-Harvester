@@ -44,6 +44,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.FileType;
+import org.apache.commons.vfs.FileTypeSelector;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.w3c.dom.Document;
@@ -436,7 +438,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		protected TextFileRecordIterator() {
 			LinkedList<FileObject> fileListing = new LinkedList<FileObject>();
 			try {
-				for(FileObject file : TextFileRecordHandler.this.fileDirObj.getChildren()) {
+				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(new FileTypeSelector(FileType.FILE))) {
 					if(!file.isHidden()) {
 						fileListing.add(file);
 							//log.debug("Found file "+file.getName().getBaseName());
