@@ -1,3 +1,7 @@
+0.4.1
+Fix null pointer exception inside fetch
+Fix mesh terms and author stubs
+
 0.4
 Design
 
