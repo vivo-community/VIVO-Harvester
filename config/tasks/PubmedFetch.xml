@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task type="org.vivoweb.ingest.fetch.PubmedSOAPFetch">
+	<Param id="email">hainesc@ctrip.ufl.edu</Param>
+	<Param id="location">University of Florida</Param>
+	<Param id="output">config/recordHandlers/PubmedXMLRecordHandler.xml</Param>
+	<Param id="termSearch">1:8000[dp]</Param>
+	<Param id="numRecords">20</Param>
+	<Param id="batchSize">1000</Param>
+</Task>

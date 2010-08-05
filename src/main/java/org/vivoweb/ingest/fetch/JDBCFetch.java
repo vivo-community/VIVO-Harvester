@@ -17,20 +17,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.RecordHandler;
-import org.vivoweb.ingest.util.Task;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
+import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
 
 /**
- * Fetch from JDBC into RDF/XML
+ * Fetches rdf data from a JDBC database
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class JDBCFetch extends Task {
-	
+public class JDBCFetch {
 	/**
 	 * Log4J Logger
 	 */
@@ -40,131 +43,175 @@ public class JDBCFetch extends Task {
 	 */
 	private RecordHandler rh;
 	/**
-	 * Database we are fetching from
-	 */
-	private Connection db;
-	/**
-	 * Table information
-	 */
-	private HashMap<String,Map<String,String>> tables;
-	/**
 	 * Statement processor for the database
 	 */
 	private Statement cursor;
 	/**
+	 * Mapping of tablename to idField name
+	 */
+	private Map<String,String> idFields = null;
+	/**
+	 * Mapping of tablename to mapping of fieldname to tablename
+	 */
+	private Map<String,Map<String,String>> relations = null;
+	/**
+	 * Mapping of tablename to list of datafields
+	 */
+	private Map<String,List<String>> dataFields = null;
+	/**
+	 * list of tablenames
+	 */
+	private List<String> tableNames = null;
+	/**
 	 * Namespace for RDF made from this database
 	 */
 	private String uriNS;
-
-	@Override
-	protected void acceptParams(Map<String, String> params) throws ParserConfigurationException, SAXException, IOException {
-		String repositoryConfig = getParam(params, "repositoryConfig", true);
-		this.rh = RecordHandler.parseConfig(repositoryConfig);
-		this.rh.setOverwriteDefault(true);
-		String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
+	
+	/**
+	 * Constructor
+	 * @param dbConn connection to the database
+	 * @param output RecordHandler to write data to
+	 * @param uriNameSpace namespace base for rdf records
+	 * @throws SQLException error talking with database
+	 */
+	public JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace) throws SQLException {
+		this.cursor = dbConn.createStatement();
+		this.rh = output;
+		this.uriNS = uriNameSpace;
+	}
+	
+	/**
+	 * Constructor
+	 * @param opts option set of parsed args
+	 * @throws IOException error creating task
+	 */
+	public JDBCFetch(ArgList opts) throws IOException {
+		String jdbcDriverClass = opts.get("d");
 		try {
 			Class.forName(jdbcDriverClass);
 		} catch(ClassNotFoundException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		String connType = getParam(params, "connType", true);
-		String host = getParam(params, "host", true);
-		String port = getParam(params, "port", true);
-		String dbName = getParam(params, "dbName", true);
-		String username = getParam(params, "username", true);
-		String password = getParam(params, "password", true);
-		this.uriNS = "http://"+connType+"."+host+"/"+dbName+"/";
+		String connLine = opts.get("c");
+		String username = opts.get("u");
+		String password = opts.get("p");
+		Connection dbConn;
 		try {
-			this.db = DriverManager.getConnection("jdbc:"+connType+"://"+host+":"+port+"/"+dbName, username, password);
-			this.cursor = this.db.createStatement();
+			dbConn = DriverManager.getConnection(connLine, username, password);
+			this.cursor = dbConn.createStatement();
+			this.rh = RecordHandler.parseConfig(opts.get("o"));
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(),e);
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		this.tables = new HashMap<String,Map<String,String>>();
-		for(String tableData : params.keySet()) {
-			String[] temp = tableData.split("\\.", 2);
-			if(temp.length == 2) {
-				if(!this.tables.containsKey(temp[0])) {
-					this.tables.put(temp[0], new HashMap<String,String>());
-				}
-				this.tables.get(temp[0]).put(temp[1], params.get(tableData));
-			}
+		String[] temp = connLine.split(":");
+		if(temp.length < 2) {
+			throw new IOException("connLine unparsable: connType");
 		}
-		for(String tableName : this.tables.keySet()) {
-			checkTableExists(tableName);
-			checkTableConfigured(tableName);
+		String connType = temp[1];
+		temp = connLine.split("//");
+		if(temp.length < 2) {
+			throw new IOException("connLine unparsable: host");
 		}
+		String host = temp[1].split("/")[0].split(":")[0];
+		temp = temp[1].split("/");
+		if(temp.length < 2) {
+			throw new IOException("connLine unparsable: dbName");
+		}
+		String dbName = temp[1];
+		this.uriNS = "http://"+host+"/"+connType+"/"+dbName+"/";
 	}
 	
 	/**
-	 * Checks if the table exists
-	 * @param tableName the name of the table to check for
-	 * @throws IOException the table does not exist
-	 */
-	private void checkTableExists(String tableName) throws IOException {
-		boolean a;
-		try {
-			// ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL
-			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '"+tableName+"')) then 1 else 0 end");
-			a = this.cursor.getResultSet().getBoolean(1);
-		} catch(SQLException e) {
-			try {
-				// Other RDBMS. Graceful degradation
-				a = true;
-				this.cursor.execute("select 1 from "+tableName+" where 1 = 0");
-			} catch(SQLException e1) {
-				a = false;
-			}
-		}
-		if(!a) {
-			throw new IOException("Database Does Not Contain Table: "+tableName);
-		}
-	}
-	
-	/**
-	 * Get the data field information for a table from the parameter list
+	 * Get the data field information for a table from the database
 	 * @param tableName the table to get the data field information for
 	 * @return the data field list
+	 * @throws SQLException error connecting to DB
 	 */
-	private String[] getDataFields(String tableName) {
-		return this.tables.get(tableName).get("dataFieldList").split("\\s?,\\s?");
-	}
-	
-	/**
-	 * Get the relation field information for a table from the parameter list
-	 * @param tableName the table to get the relation field information for
-	 * @return the relation field mapping
-	 */
-	private Map<String,String> getRelationFields(String tableName) {
-		Map<String,String> relations = new HashMap<String,String>();
-		String relationList = this.tables.get(tableName).get("relationFieldList");
-		if(relationList != null){
-			for(String relation : relationList.split("\\s?,\\s?")) {
-				String[] temp = relation.split("\\s?:\\s?", 2);
-				if(temp.length != 2) {
-					throw new IllegalArgumentException();
+	private List<String> getDataFields(String tableName) throws SQLException {
+		if(this.dataFields == null) {
+			this.dataFields = new HashMap<String,List<String>>();
+		}
+		if(!this.dataFields.containsKey(tableName)) {
+			this.dataFields.put(tableName, new LinkedList<String>());
+			ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
+			while(columnData.next()) {
+				String colName = columnData.getString("COLUMN_NAME");
+				if(!getIDField(tableName).equalsIgnoreCase(colName) && !getRelationFields(tableName).containsKey(colName)) {
+					this.dataFields.get(tableName).add(colName);
 				}
-				relations.put(temp[0], temp[1]);
 			}
 		}
-		return relations;
+		return this.dataFields.get(tableName);
 	}
 	
 	/**
-	 * Get the id field information for a table from the parameter list
+	 * Get the relation field information for a table from the database
+	 * @param tableName the table to get the relation field information for
+	 * @return the relation field mapping
+	 * @throws SQLException error connecting to DB
+	 */
+	private Map<String,String> getRelationFields(String tableName) throws SQLException {
+		if(this.relations == null) {
+			this.relations = new HashMap<String,Map<String,String>>();
+		}
+		if(!this.relations.containsKey(tableName)) {
+			this.relations.put(tableName, new HashMap<String,String>());
+			ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
+			while(foreignKeys.next()) {
+				this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("FKTABLE_NAME"));
+			}
+		}
+		return this.relations.get(tableName);
+	}
+	
+	/**
+	 * Get the id field information for a table from the database
 	 * @param tableName the table to get the id field information for
 	 * @return the id field name
+	 * @throws SQLException error connecting to DB
 	 */
-	private String getIDField(String tableName) {
-		return this.tables.get(tableName).get("idField");
+	private String getIDField(String tableName) throws SQLException {
+		if(this.idFields == null) {
+			this.idFields = new HashMap<String,String>();
+		}
+		if(!this.idFields.containsKey(tableName)) {
+			ResultSet primaryKeys = this.cursor.getConnection().getMetaData().getPrimaryKeys(this.cursor.getConnection().getCatalog(), null, tableName);
+			while(primaryKeys.next()) {
+				String name = primaryKeys.getString("COLUMN_NAME");
+				this.idFields.put(tableName, name);
+			}
+		}
+		return this.idFields.get(tableName);
+	}
+	
+	/**
+	 * Gets the tablenames in database
+	 * @return list of tablenames
+	 * @throws SQLException error connecting to DB
+	 */
+	private List<String> getTableNames() throws SQLException {
+		if(this.tableNames == null) {
+			this.tableNames = new LinkedList<String>();
+			String[] tableTypes = {"TABLE"};
+			ResultSet tableData = this.cursor.getConnection().getMetaData().getTables(this.cursor.getConnection().getCatalog(), null, "%", tableTypes);
+			while(tableData.next()) {
+				this.tableNames.add(tableData.getString("TABLE_NAME"));
+			}
+		}
+		return this.tableNames;
 	}
 	
 	/**
 	 * Builds a select statement against the table using configured fields
 	 * @param tableName the table to build the select statement for
 	 * @return the select statement
+	 * @throws SQLException error connecting to db
 	 */
-	private String buildSelect(String tableName) {
+	private String buildSelect(String tableName) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for(String dataField : getDataFields(tableName)) {
@@ -198,30 +245,16 @@ public class JDBCFetch extends Task {
 	private String buildTableFieldNS(String tableName) {
 		return this.uriNS+"fields/"+tableName+"/";
 	}
-	
+
 	/**
-	 * Checks if a table is properly configured
-	 * @param tableName the name of the table to check
-	 * @throws IOException the table is incorrectly configured
+	 * Executes the task
 	 */
-	private void checkTableConfigured(String tableName) throws IOException {
-		boolean a = true;
-		try {
-			this.cursor.execute(buildSelect(tableName));
-		} catch(SQLException e) {
-			a = false;
-		}
-		if(!a) {
-			throw new IOException("Table '"+tableName+"' Is Not Structured Correctly");
-		}
-	}
-	
-	@Override
-	protected void runTask() throws NumberFormatException {
+	public void execute() {
+		log.info("Fetch: Start");
 		//For each Table
-		for(String tableName : this.tables.keySet()) {
-			StringBuilder sb = new StringBuilder();
-			try {
+		try {
+			for(String tableName : this.getTableNames()) {
+				StringBuilder sb = new StringBuilder();
 				//For each Record
 				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next(); ) {
 					String recID = "id-"+rs.getString(getIDField(tableName)).trim();
@@ -260,15 +293,14 @@ public class JDBCFetch extends Task {
 						sb.append(field);
 						sb.append(">\n");
 					}
-					Map<String,String> relations = getRelationFields(tableName);
-					for(String relationField : relations.keySet()) {
+					for(String relationField : getRelationFields(tableName).keySet()) {
 						//Field BEGIN
 						sb.append("    <");
 						sb.append(tableNS);
 						sb.append(":");
 						sb.append(relationField);
 						sb.append(" rdf:resource=\"");
-						sb.append(this.buildTableRecordNS(relations.get(relationField)));
+						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
 						
 						//insert field value
 						sb.append("id-"+rs.getString(relationField).trim());
@@ -284,19 +316,43 @@ public class JDBCFetch extends Task {
 					//Build RDF END
 					
 					//Write RDF to RecordHandler
-//					System.out.println(sb.toString());
 					log.trace("Adding record for "+tableName+": "+recID);
-					this.rh.addRecord(tableName+"_"+recID,sb.toString());
+					this.rh.addRecord(tableName+"_"+recID,sb.toString(), this.getClass());
 				}
-			} catch(SQLException e) {
-				log.error(e.getMessage(),e);
-				log.debug(sb.toString());
-				break;
-			} catch(IOException e) {
-				log.error(e.getMessage(),e);
-				break;
 			}
+		} catch(SQLException e) {
+			log.error(e.getMessage(),e);
+		} catch(IOException e) {
+			log.error(e.getMessage(),e);
 		}
+		log.info("Fetch: End");
 	}
 	
+	/**
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
+	 */
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("JDBCFetch");
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+		return parser;
+	}
+	
+	/**
+	 * Main method
+	 * @param args commandline arguments
+	 */
+	public static void main(String... args) {
+		try {
+			new JDBCFetch(new ArgList(getParser(), args)).execute();
+		} catch(IllegalArgumentException e) {
+			System.out.println(getParser().getUsage());
+		} catch(Exception e) {
+			log.fatal(e.getMessage(),e);
+		}
+	}
 }

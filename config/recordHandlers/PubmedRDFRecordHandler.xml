@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RecordHandler type="org.vivoweb.ingest.util.JDBCRecordHandler">
-	<Param name="jdbcDriverClass">com.mysql.jdbc.Driver</Param>
-	<Param name="connType">mysql</Param>
-	<Param name="host">127.0.0.1</Param>
-	<Param name="port">3306</Param>
-	<Param name="dbName">jdbcrecordstore</Param>
-	<Param name="username">jdbcRecordStore</Param>
-	<Param name="password">5j63ucbNdZ5MCRda</Param>
-	<Param name="tableName">recordTable</Param>
-	<Param name="dataFieldName">dataField</Param>
+<RecordHandler type="org.vivoweb.ingest.util.repo.TextFileRecordHandler">
+	<Param name="fileDir">XMLVault/PubmedRDF</Param>
 </RecordHandler>

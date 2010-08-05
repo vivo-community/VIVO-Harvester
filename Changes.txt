@@ -1,0 +1,1 @@
+Debian maintainer and upstream author are identical. See 'Changelog'

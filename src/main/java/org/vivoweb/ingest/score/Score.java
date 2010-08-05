@@ -7,19 +7,25 @@
  * 
  * Contributors:
  *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- *     Christoper Barnes, Narayan Raum - scoring ideas and algorithim
+ *     Christopher Barnes, Narayan Raum - scoring ideas and algorithim
  *     Yang Li - pairwise scoring algorithm
+ *     Christopher Barnes - regex scoring algorithim
  ******************************************************************************/
 package org.vivoweb.ingest.score;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
+
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.JenaConnect;
-import org.vivoweb.ingest.util.Record;
-import org.vivoweb.ingest.util.RecordHandler;
+import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
+import org.vivoweb.ingest.util.args.ArgParser;
+import org.vivoweb.ingest.util.repo.JenaConnect;
+import org.vivoweb.ingest.util.repo.Record;
+import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -27,11 +33,19 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /***
+ * 
  *  VIVO Score
- *  @author Nicholas Skaggs nskaggs@ichp.ufl.edu
+ *  @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
  */
 public class Score {
 		/**
@@ -49,51 +63,136 @@ public class Score {
 		/**
 		 * Model where output is stored
 		 */
-		private Model scoreOutput;
+		private Model scoreOutput;		
 		
 		/**
-		 * Main Method
-		 * @param args command line arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig
+		 * Main method
+		 * @param args command line arguments
 		 */
-		final static public void main(String[] args) {
+		public static void main(String... args) {
 			
 			log.info("Scoring: Start");
-			
-			//pass models from command line
-			//TODO Nicholas: proper args handler
-			
-			if (args.length != 4) {
-				log.error("Usage requires 4 arguments rdfRecordHandler tempJenaConfig vivoJenaConfig outputJenaConfig");
-				return;
-			}
-			
 			try {
-				log.info("Loading configuration and models");
-				RecordHandler rh = RecordHandler.parseConfig(args[0]);
-				JenaConnect jenaTempDB = JenaConnect.parseConfig(args[1]);
-				JenaConnect jenaVivoDB = JenaConnect.parseConfig(args[2]);
-				JenaConnect jenaOutputDB = JenaConnect.parseConfig(args[3]);
+				ArgList opts = new ArgList(getParser(), args);
+				//Get optional inputs / set defaults
+				//Check for config files, before parsing name options
+				String workingModel = opts.get("T");
+				if (workingModel == null) workingModel = opts.get("t");
 				
-				Model jenaInputDB = jenaTempDB.getJenaModel();
-				for (Record r: rh) {
-					jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+				String outputModel = opts.get("O");
+				if (outputModel == null) outputModel = opts.get("o");
+				
+				
+				boolean allowNonEmptyWorkingModel = opts.has("n");
+				boolean retainWorkingModel = opts.has("k");
+				List<String> exactMatchArg = opts.getAll("e");
+				List<String> pairwiseArg = opts.getAll("p");
+				List<String> regexArg = opts.getAll("r");
+				int processCount = 0;
+
+				try {
+					log.info("Loading configuration and models");
+					RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));	
+					
+					//Connect to vivo
+					JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
+					
+					//Create working model
+					JenaConnect jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
+					
+					//Create output model
+					JenaConnect jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
+					
+					//Load up rdf data from translate into temp model
+					Model jenaInputDB = jenaTempDB.getJenaModel();
+					
+					if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel) {
+						log.warn("Working model was not empty! -- emptying model before execution");
+						jenaInputDB.removeAll();
+					}
+					
+					//Read in records that need processing
+					for (Record r: rh) {
+						if (r.needsProcessed(Score.class)) {
+							log.trace("Record " + r.getID() + " added to incoming processing model");
+							jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+							r.setProcessed(Score.class);
+							processCount += 1;
+						}	
+					}
+					
+					//Speed Hack -- if no records to process, end
+					if (processCount != 0) {
+						
+						//Init
+						Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel());
+						
+						//Call each exactMatch
+						for (String attribute : exactMatchArg) {
+							scoring.exactMatch(attribute);
+						}
+						
+						//Call each pairwise
+						for (String attribute : pairwiseArg) {
+							scoring.pairwise(attribute);
+						}
+						
+						//Call each regex
+						for (String regex : regexArg) {
+							scoring.regex(regex);
+						}
+						
+						//Empty working model
+						if (!retainWorkingModel) scoring.scoreInput.removeAll();
+						//Close and done
+						scoring.scoreInput.close();
+						scoring.scoreOutput.close();
+						scoring.vivo.close();
+						
+					} else {
+						//nothing to do but end
+					}	
+					 	
+				} catch(ParserConfigurationException e) {
+					log.fatal(e.getMessage(),e);
+				} catch(SAXException e) {
+					log.fatal(e.getMessage(),e);
+				} catch(IOException e) {
+					log.fatal(e.getMessage(),e);
 				}
-				
-				new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel()).execute();
-			} catch(ParserConfigurationException e) {
-				log.fatal(e.getMessage(),e);
-			} catch(SAXException e) {
-				log.fatal(e.getMessage(),e);
-			} catch(IOException e) {
+			} catch(IllegalArgumentException e) {
+				System.out.println(getParser().getUsage());
+			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
 			}
-			
 			log.info("Scoring: End");
-	    }
+		}
+		
+		/**
+		 * Get the OptionParser
+		 * @return the OptionParser
+		 */
+		private static ArgParser getParser() {
+			ArgParser parser = new ArgParser("Score");
+			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("rdfRecordHandler").setDescription("rdfRecordHandler config filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoJenaConfig").setDescription("vivoJenaConfig config filename").withParameter(true, "CONFIG_FILE").setRequired(true));			
+			//TODO Nicholas: Implement individual RDF input
+			//parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("rdfFilename").setDescription("RDF Filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempModelConfig").setDescription("tempModelConfig config filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE").setDefaultValue("workEmail"));
+			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
+			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
+			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
+			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
+			parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("allow-non-empty-working-model").setDescription("If set, this will not clear the working model before scoring begins"));
+			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
+			return parser;
+		}
 		
 		
 		/**
-		 * Constructor
+		 * Constructor	
 		 * @param jenaVivo model containing vivo statements
 		 * @param jenaScoreInput model containing statements to be scored
 		 * @param jenaScoreOutput output model
@@ -102,54 +201,6 @@ public class Score {
 			this.vivo = jenaVivo;
 			this.scoreInput = jenaScoreInput;
 			this.scoreOutput = jenaScoreOutput;
-		}
-		
-		/**
-		 * Executes scoring algorithms
-		 */
-		public void execute() {		
-			 	ResultSet scoreInputResult;
-			 	
-			 	//DEBUG
-				 	//TODO Nicholas: howto pass this in via config
-			 		log.info("Executing matchResult");
-				 	String matchAttribute = "email";
-				 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			    						"SELECT ?x ?email " +
-			    						"WHERE { ?x score:workEmail ?email}";
-				 	String coreAttribute = "core:workEmail";
-				 	
-			 	//DEBUG
-			 	
-				//Attempt Matching
-
-			 	//Exact Matches
-			 	//TODO Nicholas: finish implementation of exact matching loop
-			 	//for each matchAttribute
-			 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
-			 		exactMatch(this.vivo,this.scoreOutput,matchAttribute,coreAttribute,scoreInputResult);
-			    //end for
-			 		
-		 		//DEBUG
-				 	//TODO Nicholas: howto pass this in via config
-				 	//matchAttribute = "author";
-				 	//matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			    	//       		 "SELECT ?x ?author " +
-			    	//			 "WHERE { ?x score:author ?author}";
-				 	//coreAttribute = "core:author";
-			 	//DEBUG
-				
-				//Pairwise Matches
-				//TODO Nicholas: finish implementation of pairwise matching loop
-			 	//for each matchAttribute
-			 		//scoreInputResult = executeQuery(scoreInput, matchQuery);
-			 		//pairwiseScore(vivo,scoreInput,matchAttribute,coreAttribute,scoreInputResult);	
-			 	//end for
-			 		
-				//Close and done
-				this.scoreInput.close();
-		    	this.scoreOutput.close();
-		    	this.vivo.close();
 		}
 		
 		/**
@@ -163,7 +214,7 @@ public class Score {
 		    	QueryExecution queryExec = QueryExecutionFactory.create(query, model);
 		    	
 		    	return queryExec.execSelect();
-			}
+		 }
 		 
 		 
 		/**
@@ -279,7 +330,6 @@ public class Score {
 	             removeAuthor.removeProperties();
              }
                          
-             
              toReplace.add(authorship,linkedAuthorOf,mainNode);
              log.trace("Link Statement [" + authorship.toString() + ", " + linkedAuthorOf.toString() + ", " + mainNode.toString() + "]");
              toReplace.add((Resource)mainNode,authorshipForPerson,authorship);
@@ -296,8 +346,7 @@ public class Score {
              log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
              toReplace.addLiteral(authorship,rankOf,authorRank);
              log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", " + String.valueOf(authorRank) + "]");
-             
-             
+
              toReplace.commit();
 		 }
 		 
@@ -338,52 +387,41 @@ public class Score {
 		* Executes a pair scoring method, utilizing the matchAttribute. This attribute is expected to 
 		* return 2 to n results from the given query. This "pair" will then be utilized as a matching scheme 
 		* to construct a sub dataset. This dataset can be scored and stored as a match 
-		* @param  matched a model containing statements describing known authors
-		* @param  score a model containing statements to be disambiguated
-		* @param  matchAttribute an attribute to perform the exact match
-		* @param  coreAttribute an attribute to perform the exact match against from core ontology
-		* @param  matchResult contains a resultset of the matchAttribute
-		* @return score model
+		* @param  attribute an attribute to perform the matching query
 		*/
-		@SuppressWarnings("unused")
-		private static Model pairwiseScore(Model matched, Model score, String matchAttribute, String coreAttribute, ResultSet matchResult) {			
+		public void pairwise(String attribute) {			
 		 	//iterate thru scoringInput pairs against matched pairs
-		 	//TODO Nicholas: support partial scoring, multiples matches against several pairs
+		 	//TODO Nicholas: finish implementation
 		 	//if pairs match, store publication to matched author in Model
-			//TODO Nicholas: return scoreInput minus the scored statements
 			
-			String scoreMatch;
-			RDFNode matchNode;
-			QuerySolution scoreSolution;
-
-		 	//create pairs of *attribute* from matched
-	    	log.info("Creating pairs of " + matchAttribute + " from input");
-	    	
-	    	//look for exact match in vivo
-	    	while (matchResult.hasNext()) {
-	    		scoreSolution = matchResult.nextSolution();
-                matchNode = scoreSolution.get(matchAttribute);
-                
-                scoreMatch = matchNode.toString();
-                
-                log.info("\nChecking for " + scoreMatch + " in VIVO");
-            }	    			 
-	    	
-	    	//TODO Nicholas: return scoreInput minus the scored statements			
-			return score;
+			//Create pairs list from input 
+			log.info("Executing pairWise for " + attribute);
+			log.warn("Pairwise is not complete");
+						
+			//Log extra info message if none found
+			//Create pairs list from vivo 
+			//Log extra info message if none found			
+			//look for exact match in vivo
+			//create pairs of *attribute* from matched	    			 
 		 }
+		
+		/**
+		* Executes a regex scoring method 
+		* @param regex string containing regular expression 
+		*/
+		private void regex(String regex) {
+		 	//TODO Chris: finish implementation
+			
+			log.info("Executing " + regex + " regular expression");
+			log.warn("Regex is not complete");
 		 
+		}
 		 
 		 /**
 		 * Executes an exact matching algorithm for author disambiguation
-		 * @param  matched a model containing statements describing authors
-		 * @param  output a model containing statements to be disambiguated
-		 * @param  matchAttribute an attribute to perform the exact match
-		 * @param  coreAttribute an attribute to perform the exact match against from core ontology
-		 * @param  matchResult contains a resultset of the matchAttribute
-		 * @return model of matched statements
+		 * @param  attribute an attribute to perform the exact match
 		 */
-		 private static Model exactMatch(Model matched, Model output, String matchAttribute, String coreAttribute, ResultSet matchResult) {
+		 public void exactMatch(String attribute) {
 				String scoreMatch;
 				String queryString;
 				Resource paperResource;
@@ -391,22 +429,36 @@ public class Score {
 				RDFNode paperNode;
 				ResultSet vivoResult;
 				QuerySolution scoreSolution;
+			 	ResultSet scoreInputResult;
+			 	
+			 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
+		    						"SELECT ?x ?" + attribute + " " + 
+		    						"WHERE { ?x score:" + attribute + " ?" + attribute + "}";
+			 	String coreAttribute = "core:" + attribute;
 
-                
-		    	log.info("Looping thru " + matchAttribute + " from input");
+
+			 	//Exact Match
+			 	log.info("Executing exactMatch for " + attribute);
+			 	log.debug(matchQuery);
+		 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+		 		
+		    	//Log extra info message if none found
+		    	if (!scoreInputResult.hasNext()) {
+		    		log.info("No matches found for " + attribute + " in input");
+		    	} else {
+		    		log.info("Looping thru matching " + attribute + " from input");
+		    	}
 		    	
 		    	//look for exact match in vivo
-		    	while (matchResult.hasNext()) {
-		    		scoreSolution = matchResult.nextSolution();
-	                matchNode = scoreSolution.get(matchAttribute);
-	                //TODO Nicholas: paperNode must currently be 'x'; howto abstract?
+		    	while (scoreInputResult.hasNext()) {
+		    		scoreSolution = scoreInputResult.nextSolution();
+	                matchNode = scoreSolution.get(attribute);
 	                paperNode = scoreSolution.get("x");
-	                //TODO Nicholas: paperResource must currently be 'x'; howto abstract?
 	                paperResource = scoreSolution.getResource("x");
 	                
 	                scoreMatch = matchNode.toString();
 	                
-	                log.info("\nChecking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
+	                log.info("Checking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
 	    			
 	                //Select all matching attributes from vivo store
 	    			queryString =
@@ -416,16 +468,9 @@ public class Score {
 	    			
 	    			log.debug(queryString);
 	    			
-	    			//TODO Nicholas: how to combine result sets? not possible in JENA
-	    			vivoResult = executeQuery(matched, queryString);
-	    			//while (vivoResult.hasNext()) {
-	    			//	System.out.println(vivoResult.toString());
-	    			//}
+	    			vivoResult = executeQuery(this.vivo, queryString);
 	    			
-	    			commitResultSet(output,vivoResult,paperResource,matchNode,paperNode);
+	    			commitResultSet(this.scoreOutput,vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
-		    	
-		    	//TODO Nicholas: return scoreInput minus the scored statements
-		    	return output;
 		 }
 	}
