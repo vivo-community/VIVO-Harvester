@@ -88,7 +88,11 @@
 	
 	<!-- Links to From the Paper to the Terms and Authors -->
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef">
-		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
+		<!--  <xsl:choose>
+			<xsl:when test="string(LastName)">-->
+				<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
+			<!-- </xsl:when>
+		</xsl:choose>-->
 	</xsl:template>
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef">
 		<core:hasSubjectArea rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh{position()}" />
@@ -123,27 +127,33 @@
 			<core:authorRank><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
 		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
-			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+			<xsl:choose>
+				<xsl:when test="string(ForeName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+					<rdfs:label><xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
+					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
+					<score:initials><xsl:value-of select="Initials" /></score:initials>
+					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
+				</xsl:when>
+				<xsl:when test="string(LastName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+					<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
+					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
+					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
+					<score:initials><xsl:value-of select="Initials" /></score:initials>
+					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>			
+				</xsl:when>
+				<xsl:when test="string(CollectiveName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+					<rdfs:label><xsl:value-of select="CollectiveName" /></rdfs:label>
+				</xsl:when>
+			</xsl:choose>
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
-			<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
-			<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
-			<score:initials><xsl:value-of select="Initials" /></score:initials>
-			<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
-			<xsl:apply-templates select="self::*" mode="nameCreation" />
 		</rdf:Description>
-	</xsl:template>
-	
-	<xsl:template match="Author" mode="nameCreation">
-		<xsl:choose>
-			<xsl:when test="string(ForeName)">
-				<rdfs:label><xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
-			</xsl:when>
-			<xsl:otherwise>
-				<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
+	</xsl:template>	
+
 	
 	<!-- The Mesh List -->
 	<xsl:template match="MedlineCitation/MeshHeadingList" mode="fullTerm">
@@ -152,7 +162,7 @@
 	
 	<!-- The Mesh Terms -->
 	<xsl:template match="MeshHeading" mode="fullTerm">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh/{position()}">
+		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
 			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
