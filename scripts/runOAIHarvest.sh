@@ -4,7 +4,7 @@
 cd /usr/share/vivoingest
 
 # Execute Fetch for OAI
-java -cp bin/ingest-0.4.1.jar:bin/dependency/* org.vivoweb.ingest.fetch.OAIFetch -c config/tasks/OAIFetchTask.xml
+java -cp bin/ingest-0.4.1.jar:bin/dependency/* org.vivoweb.ingest.fetch.OAIFetch -X config/tasks/OAIFetchTask.xml
 
 # Execute Translate
 java -cp bin/ingest-0.4.1.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  

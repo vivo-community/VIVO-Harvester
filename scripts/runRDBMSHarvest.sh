@@ -4,7 +4,7 @@
 cd /usr/share/vivoingest
 
 # Execute Fetch for RDBMS
-java -cp bin/ingest-0.4.1.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -c config/tasks/JDBCFetchTask.xml
+java -cp bin/ingest-0.4.1.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -X config/tasks/JDBCFetchTask.xml
 
 # Execute Translate - to translate from an unknown data source you must convert the xml/rdf to the vivo ontology by defining an xsl file
 java -cp bin/ingest-0.4.1.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  
