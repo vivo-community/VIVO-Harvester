@@ -1,9 +1,9 @@
 Package: vivoingest
-Version: 0.4
+Version: 0.4.3
 Section: misc
 Priority: misc
 Architecture: all
 Depends: openjdk-6-jre
 Maintainer: VIVO sourceforge team <vivo-dev-all@sourceforge.net>
-Description: The VIVO harvester ingests data from various sources and imports into VIVO.
+Description: The VIVO harvester ingests data from various sources and imports the data into a VIVO database.
 Distribution: development

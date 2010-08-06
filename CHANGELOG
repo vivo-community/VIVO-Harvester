@@ -1,3 +1,7 @@
+0.4.3
+Add force option and author name matching to scoring
+fix version information in debian package
+
 0.4.2
 Patch for .metadata error on Windows
 
