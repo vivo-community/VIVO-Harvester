@@ -492,7 +492,7 @@ public class Score {
 		    		foreNameNode = scoreSolution.get("foreName");
 	                paperNode = scoreSolution.get("x");
 	                paperResource = scoreSolution.getResource("x");
-	                
+	                matchNodes.clear();
 	                
 	                log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
 	    			
