@@ -87,7 +87,6 @@ public class Score {
 				
 				boolean allowNonEmptyWorkingModel = opts.has("n");
 				boolean retainWorkingModel = opts.has("k");
-				int minChars = Integer.parseInt(opts.get("a"));
 				List<String> exactMatchArg = opts.getAll("e");
 				List<String> pairwiseArg = opts.getAll("p");
 				List<String> regexArg = opts.getAll("r");
@@ -132,7 +131,7 @@ public class Score {
 						
 						//authorname matching
 						if (opts.has("a")) {
-							scoring.authorNameMatch(minChars);
+							scoring.authorNameMatch(Integer.parseInt(opts.get("a")));
 						}
 						
 						//Call each exactMatch
