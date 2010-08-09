@@ -16,6 +16,7 @@ package org.vivoweb.ingest.score;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -521,8 +522,9 @@ public class Score {
 
 	    			//Did we find a keeper? if so, store if meets threshold
 	    			//if more than 1 person find, keep the highest "best" match
-	    			while (matchNodes.iterator().hasNext()) {
-	    				vivoSolution = matchNodes.iterator().next();
+	    			Iterator<QuerySolution> matches = matchNodes.iterator();
+	    			while (matches.hasNext()) {
+	    				vivoSolution = matches.next();
 	    				loopNode = vivoSolution.get("firstName");
 	    				loop = 0;
     					while (loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
