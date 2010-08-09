@@ -190,7 +190,7 @@ public class Score {
 			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
-			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS").setDefaultValue("2"));
+			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
 			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
 			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
