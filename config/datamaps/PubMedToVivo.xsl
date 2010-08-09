@@ -57,6 +57,21 @@
 				<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
 				<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
 				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
+				<xsl:choose>
+					<xsl:when test="MedlineCitation/Article/PubDate/Year">
+						<core:Year><xsl:value-of select="MedlineCitation/Article/PubDate/Year"/></core:Year>
+					</xsl:when>
+					<!-- 
+					<xsl:when test="MedlineCitation/Article/PubDate/Month">
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PubDate/Day">
+					</xsl:when>
+					-->
+				</xsl:choose>
+				
+				
+				
+				
 				<xsl:apply-templates select="MedlineCitation/Article/Affiliation" />
 				<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
 				<xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" />
@@ -88,14 +103,10 @@
 	
 	<!-- Links to From the Paper to the Terms and Authors -->
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef">
-		<!--  <xsl:choose>
-			<xsl:when test="string(LastName)">-->
-				<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
-			<!-- </xsl:when>
-		</xsl:choose>-->
+		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef">
-		<core:hasSubjectArea rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh{position()}" />
+		<core:hasSubjectArea rdf:resource="http://vivoweb.org/pubMed/mesh/m{self::DescriptorName}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
 		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/pubMed/journal/j{child::ISSN}" />
@@ -124,7 +135,7 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
 			<core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}" />
 			<core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
-			<core:authorRank><xsl:value-of select="position()" /></core:authorRank>			
+			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
 		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
 			<xsl:choose>
@@ -162,7 +173,7 @@
 	
 	<!-- The Mesh Terms -->
 	<xsl:template match="MeshHeading" mode="fullTerm">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh{position()}">
+		<rdf:Description rdf:about="http://vivoweb.org/pubMed/mesh/m{self::DescriptorName}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
 			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
@@ -217,6 +228,7 @@
 			<core:Title><xsl:value-of select="Title" /></core:Title>
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
 			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
+			<core:publicationVenueFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
 	</xsl:template>	
 	
