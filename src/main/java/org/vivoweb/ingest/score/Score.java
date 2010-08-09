@@ -506,7 +506,7 @@ public class Score {
 	    				vivoSolution = vivoResult.next();
 	    				log.trace(vivoSolution.toString());
 	    				matchNode = vivoSolution.get("firstName");
-	    				//if (matchNode != null) {
+	    				if (matchNode != null && foreNameNode != null) {
 	    					log.trace("Checking " + matchNode);
 		    				if (foreNameNode.toString().substring(0, 1).equals(matchNode.toString().substring(0, 1))) {
 		    					//keep
@@ -515,7 +515,7 @@ public class Score {
 		    				} else {
 		    					//do nothing
 		    				}
-	    				//}
+	    				}
 	    				
 	    			}
 	            }	    			 

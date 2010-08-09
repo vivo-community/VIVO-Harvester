@@ -1,3 +1,10 @@
+0.4.4
+Fix scoring run failure when forename is blank
+Authors are listed out of order
+Dates are missing on many articles
+MeSH terms are duplicated
+articles not listed on their journal page under "publication venue for"
+
 0.4.3
 Add force option and author name matching to scoring
 fix version information in debian package
