@@ -87,6 +87,7 @@ public class Score {
 				
 				boolean allowNonEmptyWorkingModel = opts.has("n");
 				boolean retainWorkingModel = opts.has("k");
+				int minChars = Integer.parseInt(opts.get("a"));
 				List<String> exactMatchArg = opts.getAll("e");
 				List<String> pairwiseArg = opts.getAll("p");
 				List<String> regexArg = opts.getAll("r");
@@ -131,7 +132,7 @@ public class Score {
 						
 						//authorname matching
 						if (opts.has("a")) {
-							scoring.authorNameMatch();
+							scoring.authorNameMatch(minChars);
 						}
 						
 						//Call each exactMatch
@@ -189,7 +190,7 @@ public class Score {
 			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE").setDefaultValue("workEmail"));
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
-			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring"));
+			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS").setDefaultValue("2"));
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
 			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
 			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
@@ -448,8 +449,9 @@ public class Score {
 		
 		 /**`
 		 * Executes an author name matching algorithm for author disambiguation
+		 * @param minChars minimum number of chars to require for first name portion of match 
 		 */
-		 public void authorNameMatch() {
+		 public void authorNameMatch(int minChars) {
 				String queryString;
 				Resource paperResource;
 				RDFNode lastNameNode;
@@ -531,12 +533,16 @@ public class Score {
     						loop++;
     					}
     					loop--;
-    					//if loopNode matches more of foreNameNode, it's the new best match
-    					//TODO Nicholas: Fix the preference for the first "best" match
-    					if (matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-    						log.trace("Setting " + loopNode + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
-    						matchNode = loopNode;
-    						authorNode = vivoSolution.get("x");
+    					if (loop < minChars) {
+    						log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
+    					} else {
+	    					//if loopNode matches more of foreNameNode, it's the new best match
+	    					//TODO Nicholas: Fix the preference for the first "best" match
+	    					if (matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+	    						log.trace("Setting " + loopNode.toString() + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
+	    						matchNode = loopNode;
+	    						authorNode = vivoSolution.get("x");
+	    					}
     					}
 	    			}
 	    			if (matchNode != null && authorNode != null) {
