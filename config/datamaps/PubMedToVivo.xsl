@@ -58,20 +58,10 @@
 				<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
 				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
 				<xsl:choose>
-					<xsl:when test="MedlineCitation/Article/PubDate/Year">
-						<core:Year><xsl:value-of select="MedlineCitation/Article/PubDate/Year"/></core:Year>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
+						<core:Year><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:Year>
 					</xsl:when>
-					<!-- 
-					<xsl:when test="MedlineCitation/Article/PubDate/Month">
-					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PubDate/Day">
-					</xsl:when>
-					-->
 				</xsl:choose>
-				
-				
-				
-				
 				<xsl:apply-templates select="MedlineCitation/Article/Affiliation" />
 				<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
 				<xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" />
@@ -106,7 +96,7 @@
 		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef">
-		<core:hasSubjectArea rdf:resource="http://vivoweb.org/pubMed/mesh/m{self::DescriptorName}" />
+		<core:hasSubjectArea rdf:nodeID="pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
 		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/pubMed/journal/j{child::ISSN}" />
@@ -173,7 +163,7 @@
 	
 	<!-- The Mesh Terms -->
 	<xsl:template match="MeshHeading" mode="fullTerm">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/mesh/m{self::DescriptorName}">
+		<rdf:Description rdf:nodeID="pmid{ancestor::MedlineCitation/PMID}mesh{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
 			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
