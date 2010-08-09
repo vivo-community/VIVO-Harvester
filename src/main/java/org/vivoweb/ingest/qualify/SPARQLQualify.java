@@ -247,7 +247,7 @@ public class SPARQLQualify {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SPARQLQualify");
 		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jenaConfig").setDescription("config file for jena model").withParameter(true, "CONFIG_FILE"));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("modelName").setDescription("specify model to connect to. this requires you specify a jenaConfig and will override the jena config modelname").withParameter(true, "MODEL_NAME"));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("modelName").setDescription("specify model to connect to. this requires you specify a jenaConfig and will override the jena config modelname").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataType").setDescription("data type (rdf predicate)").withParameter(true, "RDF_PREDICATE"));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX"));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING"));
