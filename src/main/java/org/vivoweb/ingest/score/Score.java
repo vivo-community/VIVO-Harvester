@@ -522,17 +522,19 @@ public class Score {
 	    			//Did we find a keeper? if so, store if meets threshold
 	    			//if more than 1 person find, keep the highest "best" match
 	    			while (matchNodes.iterator().hasNext()) {
-	    				loopNode = matchNodes.iterator().next().get("firstName");
+	    				vivoSolution = matchNodes.iterator().next();
+	    				loopNode = vivoSolution.get("firstName");
 	    				loop = 0;
     					while (loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
     						loop++;
     					}
+    					loop--;
     					//if loopNode matches more of foreNameNode, it's the new best match
     					//TODO Nicholas: Fix the preference for the first "best" match
     					if (matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-    						log.trace("Setting " + loopNode + " as best match");
+    						log.trace("Setting " + loopNode + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
     						matchNode = loopNode;
-    						authorNode = matchNodes.iterator().next().get("x");
+    						authorNode = vivoSolution.get("x");
     					}
 	    			}
 	    			if (matchNode != null && authorNode != null) {
