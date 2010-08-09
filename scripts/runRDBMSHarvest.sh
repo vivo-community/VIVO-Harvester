@@ -19,3 +19,6 @@ java -cp bin/ingest-0.4.4.jar:bin/dependency/* org.vivoweb.ingest.score.Score -i
 
 # Execute Transfer
 java -cp bin/ingest-0.4.4.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I staging -o config/jenaModels/VIVO.xml
+
+#Restart Tomcat
+# /etc/init.d/tomcat restart
