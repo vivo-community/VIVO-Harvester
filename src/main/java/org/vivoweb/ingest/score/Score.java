@@ -15,6 +15,7 @@ package org.vivoweb.ingest.score;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -227,14 +228,12 @@ public class Score {
 		/**
 		 * Commits node to a matched model
 		 * @param  result a model containing vivo statements
-		 * @param  vivoSolution the solution to be stored
+		 * @param  authorNode the node of the author
 		 * @param  paperResource the paper of the resource
 		 * @param  matchNode the node to match
 		 * @param  paperNode the node of the paper
 		 */
-		 private static void commitResultSolution(Model result, QuerySolution vivoSolution, Resource paperResource, RDFNode matchNode, RDFNode paperNode) { 	    		
-    		//Grab person URI
-            RDFNode authorNode = vivoSolution.get("x");
+		 private static void commitResultNode(Model result, RDFNode authorNode, Resource paperResource, RDFNode matchNode, RDFNode paperNode) { 	    		
             log.info("Found " + matchNode.toString() + " for person " + authorNode.toString());
             log.info("Adding paper " + paperNode.toString());
 
@@ -446,7 +445,7 @@ public class Score {
 		 
 		}
 		
-		 /**
+		 /**`
 		 * Executes an author name matching algorithm for author disambiguation
 		 */
 		 public void authorNameMatch() {
@@ -455,12 +454,16 @@ public class Score {
 				RDFNode lastNameNode;
 				RDFNode foreNameNode;
 				RDFNode paperNode;
-				RDFNode matchNode;
+				RDFNode authorNode = null;
+				RDFNode matchNode = null;
+				RDFNode loopNode;
 				ResultSet vivoResult;
 				QuerySolution scoreSolution;
 				QuerySolution vivoSolution;
 			 	ResultSet scoreInputResult;
 			 	String scoreMatch;
+			 	ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
+			 	int loop;
 			 	
 			 	String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
 			 						"PREFIX score: <http://vivoweb.org/ontology/score#> " +
@@ -505,18 +508,36 @@ public class Score {
 	    			while (vivoResult.hasNext()) {
 	    				vivoSolution = vivoResult.next();
 	    				log.trace(vivoSolution.toString());
-	    				matchNode = vivoSolution.get("firstName");
-	    				if (matchNode != null && foreNameNode != null) {
-	    					log.trace("Checking " + matchNode);
-		    				if (foreNameNode.toString().substring(0, 1).equals(matchNode.toString().substring(0, 1))) {
-		    					//keep
-		    					log.trace("Keeping " + matchNode.toString());
-		    					commitResultSolution(this.scoreOutput,vivoSolution,paperResource,matchNode,paperNode);
+	    				loopNode = vivoSolution.get("firstName");
+	    				if (loopNode != null && foreNameNode != null) {
+	    					log.trace("Checking " + loopNode);
+		    				if (foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
+		    					matchNodes.add(vivoSolution);
 		    				} else {
 		    					//do nothing
 		    				}
 	    				}
-	    				
+	    			}
+
+	    			//Did we find a keeper? if so, store if meets threshold
+	    			//if more than 1 person find, keep the highest "best" match
+	    			while (matchNodes.iterator().hasNext()) {
+	    				loopNode = matchNodes.iterator().next().get("firstName");
+	    				loop = 0;
+    					while (loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+    						loop++;
+    					}
+    					//if loopNode matches more of foreNameNode, it's the new best match
+    					//TODO Nicholas: Fix the preference for the first "best" match
+    					if (matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+    						log.trace("Setting " + loopNode + " as best match");
+    						matchNode = loopNode;
+    						authorNode = matchNodes.iterator().next().get("x");
+    					}
+	    			}
+	    			if (matchNode != null && authorNode != null) {
+	    				log.trace("Keeping " + matchNode.toString());
+	    				commitResultNode(this.scoreOutput,authorNode,paperResource,matchNode,paperNode);
 	    			}
 	            }	    			 
 		 }
