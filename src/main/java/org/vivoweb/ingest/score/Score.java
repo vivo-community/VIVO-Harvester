@@ -513,7 +513,7 @@ public class Score {
 	    				vivoSolution = vivoResult.next();
 	    				log.trace(vivoSolution.toString());
 	    				loopNode = vivoSolution.get("firstName");
-	    				if (loopNode != null && foreNameNode != null) {
+	    				if (loopNode.toString() != null && foreNameNode.toString() != null) {
 	    					log.trace("Checking " + loopNode);
 		    				if (foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
 		    					matchNodes.add(vivoSolution);
