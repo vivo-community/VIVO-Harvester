@@ -13,6 +13,7 @@ package org.vivoweb.ingest.transfer;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -84,21 +85,27 @@ public class Transfer {
 	 */
 	public Transfer(ArgList argList) throws IOException {
 		//Require some args
-		if ((!argList.has("o") && !argList.has("O") && !argList.has("d")) || !argList.has("i")) {
-			throw new IllegalArgumentException("Must provide one of -o or -O, or -d in addition to -i");
+		if ((!argList.has("o") && !argList.has("O") && !argList.has("d")) || !argList.has("i") && !argList.has("r")) {
+			throw new IllegalArgumentException("Must provide one of -o or -O, or -d in addition to -i or -r");
 		}
 		String inConfig = argList.get("i");
+		String inRDF = argList.get("r");
 		String outConfig = argList.get("o");
 		this.inputModelName = argList.get("I");
 		this.outputModelName = argList.get("O");
 		
 		try {
-			//connect to proper model, if specified on command line
-			if (this.inputModelName != null) {
-				log.trace("Using " + this.inputModelName + " for input Model");
-				this.input = (new JenaConnect(JenaConnect.parseConfig(inConfig),this.inputModelName)).getJenaModel();
+			if (inRDF != null) {
+				log.trace("Loading RDF " + inRDF + " for input Model");
+				this.input = new JenaConnect(inRDF).getJenaModel();
 			} else {
-				this.input = JenaConnect.parseConfig(inConfig).getJenaModel();
+				//connect to proper model, if specified on command line
+				if (this.inputModelName != null) {
+					log.trace("Using " + this.inputModelName + " for input Model");
+					this.input = (new JenaConnect(JenaConnect.parseConfig(inConfig),this.inputModelName)).getJenaModel();
+				} else {
+					this.input = JenaConnect.parseConfig(inConfig).getJenaModel();
+				}
 			}
 			if (argList.has("o") || argList.has("O")) {
 				//connect to proper model, if specified on command line
@@ -134,18 +141,22 @@ public class Transfer {
 		}
 		
 		//output to file, if requested
-		if (this.dumpModel != null) { 
-			log.trace("Outputting RDF to " + this.dumpModel);
-			try {
-				this.input.write(new FileOutputStream(this.dumpModel));
-				//this.input.write(System.out);
-			} catch (FileNotFoundException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception e) {
-				//TODO Nicholas: Fix Jena error
-				//do nothing; currently bad xml will cause jena to throw error
-			}	
+		if (this.dumpModel != null) {
+			if (this.input != null) {
+				log.trace("Outputting RDF to " + this.dumpModel);
+				try {
+					this.input.write(new FileOutputStream(this.dumpModel));
+					//this.input.write(System.out);
+				} catch (FileNotFoundException e) {
+					//TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					//TODO Nicholas: Fix Jena error
+					//do nothing; currently bad xml will cause jena to throw error
+				}
+			} else {
+				log.info("Dump Model option not valid when input is RDF file");
+			}
 		}
 		
 		//empty model
@@ -167,10 +178,11 @@ public class Transfer {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Transfer");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false).setDefaultValue("staging"));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "MODEL_NAME").setDescription("rdf filename for input").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("dump file").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").withParameter(false, "cheese").setDescription("If set, this will not clear the input model after transfer is complete"));
 		return parser;

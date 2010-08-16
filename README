@@ -1,11 +1,11 @@
-VIVO Harvester 0.4
+VIVO Harvester 0.4.1
 VIVO: Enabling National Networking of Scientists
 
 Quick start
 To harvest all of your institution data from pubmed into your vivo instance, you need to minimally do the following things:
 
-Edit config/VIVO.xml and set it to point to your vivo database
-Edit tasks/PubmedFetch.xml and change the options as follows:
+Edit config/jenaModels/VIVO.xml and set it to point to your vivo database
+Edit config/tasks/PubmedFetch.xml and change the options as follows:
 
 	<Param id="email">YOUREMAIL</Param>
 	<Param id="location">YOURLOCATION</Param>
@@ -14,7 +14,9 @@ Edit tasks/PubmedFetch.xml and change the options as follows:
 	<Param id="numRecords">ALL</Param>
 	<Param id="batchSize">1000</Param>
 	
-run scripts/runPubMedHarvest.sh or scripts/runPubMedHarvest.bat depending on your server OS.
+run scripts/runPubMedHarvest.sh
+
+The termSearch is the same search string you would use on pubmed. The above example will harvest everything affiliated to your institution into VIVO.
 
 Project Documentation
 For more information about the project, visit http://sourceforge/projects/vivo/.  Documentation can be found on the source forge wiki at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Main_Page.

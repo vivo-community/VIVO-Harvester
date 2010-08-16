@@ -1,3 +1,26 @@
+0.4.5
+fix authorName bestMatch bug in scoring
+make staging default model for qualify and transfer
+add ability to load from RDF file as input for transfer
+
+0.4.4
+Fix scoring run failure when forename is blank
+Authors are listed out of order
+Dates are missing on many articles
+MeSH terms are duplicated
+articles not listed on their journal page under "publication venue for"
+
+0.4.3
+Add force option and author name matching to scoring
+fix version information in debian package
+
+0.4.2
+Patch for .metadata error on Windows
+
+0.4.1
+Fix null pointer exception inside fetch
+Fix mesh terms and author stubs
+
 0.4
 Design
 

@@ -15,6 +15,8 @@ package org.vivoweb.ingest.score;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -113,7 +115,7 @@ public class Score {
 					
 					//Read in records that need processing
 					for (Record r: rh) {
-						if (r.needsProcessed(Score.class)) {
+						if (r.needsProcessed(Score.class) || opts.has("f")) {
 							log.trace("Record " + r.getID() + " added to incoming processing model");
 							jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
 							r.setProcessed(Score.class);
@@ -126,6 +128,11 @@ public class Score {
 						
 						//Init
 						Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel());
+						
+						//authorname matching
+						if (opts.has("a")) {
+							scoring.authorNameMatch(Integer.parseInt(opts.get("a")));
+						}
 						
 						//Call each exactMatch
 						for (String attribute : exactMatchArg) {
@@ -180,11 +187,13 @@ public class Score {
 			//parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("rdfFilename").setDescription("RDF Filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempModelConfig").setDescription("tempModelConfig config filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE").setDefaultValue("workEmail"));
+			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
+			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
 			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
 			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
+			parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force-process").setDescription("If set, this will reprocess all RDF -- even if it's been processed before"));
 			parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("allow-non-empty-working-model").setDescription("If set, this will not clear the working model before scoring begins"));
 			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
 			return parser;
@@ -218,6 +227,26 @@ public class Score {
 		 
 		 
 		/**
+		 * Commits node to a matched model
+		 * @param  result a model containing vivo statements
+		 * @param  authorNode the node of the author
+		 * @param  paperResource the paper of the resource
+		 * @param  matchNode the node to match
+		 * @param  paperNode the node of the paper
+		 */
+		 private static void commitResultNode(Model result, RDFNode authorNode, Resource paperResource, RDFNode matchNode, RDFNode paperNode) { 	    		
+            log.info("Found " + matchNode.toString() + " for person " + authorNode.toString());
+            log.info("Adding paper " + paperNode.toString());
+
+            result.add(recursiveSanitizeBuild(paperResource,null));
+            
+            replaceResource(authorNode,paperNode, result);
+            
+			//take results and store in matched model
+            result.commit();
+		 }
+		 
+		/**
 		 * Commits resultset to a matched model
 		 * @param  result a model containing vivo statements
 		 * @param  storeResult the result to be stored
@@ -231,7 +260,7 @@ public class Score {
 				
 				//loop thru resultset
 	 	    	while (storeResult.hasNext()) {
-	 	    		vivoSolution = storeResult.nextSolution();
+	 	    		vivoSolution = storeResult.next();
 	 	    		
 	 	    		//Grab person URI
 	                authorNode = vivoSolution.get("x");
@@ -287,7 +316,7 @@ public class Score {
              ResultSet killList = executeQuery(toReplace,authorQuery);
              
              while(killList.hasNext()) {
-            	 QuerySolution killSolution = killList.nextSolution();
+            	 QuerySolution killSolution = killList.next();
 	 	    		
 	 	    	 //Grab person URI
             	 Resource removeAuthor = killSolution.getResource("badNode");
@@ -416,6 +445,113 @@ public class Score {
 			log.warn("Regex is not complete");
 		 
 		}
+		
+		 /**`
+		 * Executes an author name matching algorithm for author disambiguation
+		 * @param minChars minimum number of chars to require for first name portion of match 
+		 */
+		 public void authorNameMatch(int minChars) {
+				String queryString;
+				Resource paperResource;
+				RDFNode lastNameNode;
+				RDFNode foreNameNode;
+				RDFNode paperNode;
+				RDFNode authorNode = null;
+				RDFNode matchNode = null;
+				RDFNode loopNode;
+				ResultSet vivoResult;
+				QuerySolution scoreSolution;
+				QuerySolution vivoSolution;
+			 	ResultSet scoreInputResult;
+			 	String scoreMatch;
+			 	ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
+			 	int loop;
+			 	
+			 	String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+			 						"PREFIX score: <http://vivoweb.org/ontology/score#> " +
+		    						"SELECT ?x ?lastName ?foreName " + 
+		    						"WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName}";
+
+			 	//Exact Match
+			 	log.info("Executing authorNameMatch");
+			 	log.debug(matchQuery);
+		 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+		 		
+		    	//Log extra info message if none found
+		    	if (!scoreInputResult.hasNext()) {
+		    		log.info("No author names found in input");
+		    	} else {
+		    		log.info("Looping thru matching authors from input");
+		    	}
+		    	
+		    	//look for exact match in vivo
+		    	while (scoreInputResult.hasNext()) {
+		    		scoreSolution = scoreInputResult.next();
+		    		lastNameNode = scoreSolution.get("lastName");
+		    		foreNameNode = scoreSolution.get("foreName");
+	                paperNode = scoreSolution.get("x");
+	                paperResource = scoreSolution.getResource("x");
+	                matchNodes.clear();
+	                matchNode = null;
+	                authorNode = null;
+	                
+	                log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
+	    			
+	                scoreMatch = lastNameNode.toString();
+	                
+	                //Select all matching authors from vivo store
+	    			queryString =  "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+								   "SELECT ?x ?firstName " +
+								   "WHERE { ?x foaf:lastName" + " \"" +  scoreMatch + "\" . ?x foaf:firstName ?firstName}";
+	    			
+	    			log.debug(queryString);
+	    			
+	    			vivoResult = executeQuery(this.vivo, queryString);
+	    			
+	    			//Loop thru results and only keep if the last name, and first initial match
+	    			while (vivoResult.hasNext()) {
+	    				vivoSolution = vivoResult.next();
+	    				log.trace(vivoSolution.toString());
+	    				loopNode = vivoSolution.get("firstName");
+	    				if (loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
+	    					log.trace("Checking " + loopNode);
+		    				if (foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
+		    					matchNodes.add(vivoSolution);
+		    				} else {
+		    					//do nothing
+		    				}
+	    				}
+	    			}
+
+	    			//Did we find a keeper? if so, store if meets threshold
+	    			//if more than 1 person find, keep the highest "best" match
+	    			Iterator<QuerySolution> matches = matchNodes.iterator();
+	    			while (matches.hasNext()) {
+	    				vivoSolution = matches.next();
+	    				loopNode = vivoSolution.get("firstName");
+	    				loop = 0;
+    					while (loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+    						loop++;
+    					}
+    					loop--;
+    					if (loop < minChars) {
+    						log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
+    					} else {
+	    					//if loopNode matches more of foreNameNode, it's the new best match
+	    					//TODO Nicholas: Fix the preference for the first "best" match
+	    					if (matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+	    						log.trace("Setting " + loopNode.toString() + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
+	    						matchNode = loopNode;
+	    						authorNode = vivoSolution.get("x");
+	    					}
+    					}
+	    			}
+	    			if (matchNode != null && authorNode != null) {
+	    				log.trace("Keeping " + matchNode.toString());
+	    				commitResultNode(this.scoreOutput,authorNode,paperResource,matchNode,paperNode);
+	    			}
+	            }	    			 
+		 }
 		 
 		 /**
 		 * Executes an exact matching algorithm for author disambiguation
@@ -451,7 +587,7 @@ public class Score {
 		    	
 		    	//look for exact match in vivo
 		    	while (scoreInputResult.hasNext()) {
-		    		scoreSolution = scoreInputResult.nextSolution();
+		    		scoreSolution = scoreInputResult.next();
 	                matchNode = scoreSolution.get(attribute);
 	                paperNode = scoreSolution.get("x");
 	                paperResource = scoreSolution.getResource("x");
