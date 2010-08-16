@@ -10,14 +10,13 @@
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.codec.digest.DigestUtils;
+//import org.apache.commons.codec.digest.DigestUtils;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 
 /**
  * Contains a metadata statement about a record
@@ -27,7 +26,7 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(RecordMetaData.class);
+//	private static Log log = LogFactory.getLog(RecordMetaData.class);
 	/**
 	 * The date the operation was performed
 	 */
@@ -135,17 +134,12 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 	 * @param text the text to md5
 	 * @return the md5 hash
 	 */
-	public static String makeMD5Hash(String text) {
-		String retVal = null;
-		try {
-			MessageDigest m = MessageDigest.getInstance("MD5");
-			byte[] data = text.getBytes(); 
-			m.update(data,0,data.length);
-			BigInteger i = new BigInteger(1,m.digest());
-			retVal = String.format("%1$032X", i);
-		} catch(NoSuchAlgorithmException e) {
-			log.fatal(e.getMessage(),e);
-		}
-		return retVal;
+	public static String md5hex(String text) {
+		return DigestUtils.md5Hex(text.trim());
+	}
+	
+	@Override
+	public String toString() {
+		return "<Date='"+this.date.getTimeInMillis()+"'><Operator='"+this.operator.getName()+"'><Operation='"+this.operation+"'><MD5='"+this.md5hash+"'>";
 	}
 }

@@ -19,6 +19,8 @@ import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
@@ -30,6 +32,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public abstract class RecordHandler implements Iterable<Record> {
+	/**
+	 * Log4J Logger
+	 */
+	private static Log log = LogFactory.getLog(RecordHandler.class);
 	/**
 	 * Do we overwrite existing records by default
 	 */
@@ -123,7 +129,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return the last metadata of the specified type
 	 * @throws IOException error retrieving record metadata
 	 */
-	private RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
+	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
 			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
 				return rmd;
@@ -160,7 +166,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error adding meta data
 	 */
 	protected void addMetaData(Record rec, Class<?> operator, RecordMetaDataType type) throws IOException {
-		addMetaData(rec, new RecordMetaData(operator, type, RecordMetaData.makeMD5Hash(rec.getData())));
+		addMetaData(rec, new RecordMetaData(operator, type, RecordMetaData.md5hex(rec.getData())));
 	}
 	
 	/**
@@ -344,10 +350,45 @@ public abstract class RecordHandler implements Iterable<Record> {
 		RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
 		Calendar write = rmdWrite.getDate();
 		RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
+		//log.debug("rmdWrite: "+rmdWrite);
+		//log.debug("rmdProcess: "+rmdProcess);
 		if (rmdProcess == null) {
 			return true;
 		}
 		Calendar processed = rmdProcess.getDate();
 		return (processed.compareTo(write) < 0);
+	}
+	
+	/**
+	 * Does the given record contain updated information compared to existing record data
+	 * @param rec the record
+	 * @return true if need updated or record is new
+	 */
+	protected boolean needsUpdated(Record rec) {
+		log.debug("Checking if Record "+rec.getID()+" needs updated");
+		try {
+			RecordMetaData rmd = getLastMetaData(rec.getID(), RecordMetaDataType.written, null);
+			//Check if previous written record meta data exists
+			if(rmd != null) {
+				//Get previous record meta data md5
+				String oldMD5 = rmd.getMD5();
+				//If md5s same
+				String newMD5 = RecordMetaData.md5hex(rec.getData());
+				if(newMD5.equals(oldMD5)) {
+					//do nothing more
+					log.debug("Record "+rec.getID()+" has not changed... no need to update.");
+					return false;
+				}
+				log.debug("Record has changed... need to update");
+			} else {
+				log.debug("Record never written... need to update");
+			}
+			return true;
+		} catch(IOException e) {
+			//error getting metadata file... assume it does not exist
+			//TODO Chris: RC2 - perhaps we can test for that assumption?
+			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
+			return true;
+		}
 	}
 }

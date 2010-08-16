@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Task type="org.vivoweb.ingest.transfer.Transfer">
-	<Param id="inputModelConfig">config/jenaModels/qualifyTestJena.xml</Param>
-	<Param id="outputModelConfig">config/jenaModels/qualifyTestJena.xml</Param>
-</Task>

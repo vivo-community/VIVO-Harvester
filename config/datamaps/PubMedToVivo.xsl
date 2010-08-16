@@ -9,27 +9,6 @@
       Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 -->
 <!-- <?xml version="1.0"?> -->
-<!-- 
-  Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams
-  
-  This file is part of VIVO.
-  
-  VIVO is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  VIVO is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with VIVO.  If not, see <http://www.gnu.org/licenses/gpl-3.0.txt>.
-  
-  Contributors:
-      Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial implementation
- -->
 <!-- Header information for the Style Sheet
 	The style sheet requires xmlns for each prefix you use in constructing
 	the new elements
@@ -78,6 +57,11 @@
 				<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
 				<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
 				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
+				<xsl:choose>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
+						<core:Year><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:Year>
+					</xsl:when>
+				</xsl:choose>
 				<xsl:apply-templates select="MedlineCitation/Article/Affiliation" />
 				<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
 				<xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" />
@@ -112,7 +96,7 @@
 		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef">
-		<core:hasSubjectArea rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh{position()}" />
+		<core:hasSubjectArea rdf:nodeID="pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
 		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/pubMed/journal/j{child::ISSN}" />
@@ -141,19 +125,36 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
 			<core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}" />
 			<core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
-			<core:authorRank><xsl:value-of select="position()" /></core:authorRank>			
+			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
 		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
-			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+			<xsl:choose>
+				<xsl:when test="string(ForeName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+					<rdfs:label><xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
+					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
+					<score:initials><xsl:value-of select="Initials" /></score:initials>
+					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
+				</xsl:when>
+				<xsl:when test="string(LastName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+					<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
+					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
+					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
+					<score:initials><xsl:value-of select="Initials" /></score:initials>
+					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>			
+				</xsl:when>
+				<xsl:when test="string(CollectiveName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+					<rdfs:label><xsl:value-of select="CollectiveName" /></rdfs:label>
+				</xsl:when>
+			</xsl:choose>
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
-			<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
-			<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
-			<score:initials><xsl:value-of select="Initials" /></score:initials>
-			<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
-			<rdfs:label><xsl:value-of select="LastName" /> ,<xsl:value-of select="ForeName"/></rdfs:label>
 		</rdf:Description>
-	</xsl:template>
+	</xsl:template>	
+
 	
 	<!-- The Mesh List -->
 	<xsl:template match="MedlineCitation/MeshHeadingList" mode="fullTerm">
@@ -162,7 +163,7 @@
 	
 	<!-- The Mesh Terms -->
 	<xsl:template match="MeshHeading" mode="fullTerm">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/mesh/{position()}">
+		<rdf:Description rdf:nodeID="pmid{ancestor::MedlineCitation/PMID}mesh{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
 			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
@@ -217,9 +218,9 @@
 			<core:Title><xsl:value-of select="Title" /></core:Title>
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
 			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
+			<core:publicationVenueFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
 	</xsl:template>	
 	
 	
 </xsl:stylesheet>
-

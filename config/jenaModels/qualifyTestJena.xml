@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Model>
-	<Param name="dbClass">com.mysql.jdbc.Driver</Param>
-	<Param name="dbType">MySQL</Param>
-	<Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/jenarecordstore</Param>
-	<!-- Param name="modelName">testModel</Param> -->
-	<Param name="dbUser">jenaRecordStore</Param>
-	<Param name="dbPass">j6QvzjGG5muJmYN4</Param>
-</Model>

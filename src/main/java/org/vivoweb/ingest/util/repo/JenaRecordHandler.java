@@ -177,6 +177,9 @@ public class JenaRecordHandler extends RecordHandler {
 	
 	@Override
 	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
+		if(!needsUpdated(rec)) {
+			return;
+		}
 		Resource record = getRecordResource(rec.getID());
 		if(!overwrite && record != null) {
 			throw new IOException("Record already exists!");

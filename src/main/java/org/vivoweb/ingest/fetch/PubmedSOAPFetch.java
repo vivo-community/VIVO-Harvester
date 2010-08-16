@@ -151,8 +151,8 @@ public class PubmedSOAPFetch {
 	 * @param maxNumRecords The maximum number of records to fetch
 	 * @return String[] = {WebEnv, QueryKey, number of records found, first PMID} from the search - used by fetchPubMedEnv
 	 */
-	public String[] runESearch(String term, Integer maxNumRecords) {
-		return runESearch(term, maxNumRecords, Integer.valueOf(0));
+	public String[] runESearch(String term, int maxNumRecords) {
+		return runESearch(term, maxNumRecords, 0);
 	}
 	
 	/**
@@ -164,7 +164,7 @@ public class PubmedSOAPFetch {
 	 * @author Chris Haines
 	 * @author Dale Scheppler
 	 */
-	public String[] runESearch(String term, Integer maxNumRecords, Integer retStart)
+	public String[] runESearch(String term, int maxNumRecords, int retStart)
 	{
 		String[] env = new String[4];
 		try
@@ -178,9 +178,9 @@ public class PubmedSOAPFetch {
 			// set search term
 			req.setTerm(term);
 			// set max number of records to return from search
-			req.setRetMax(maxNumRecords.toString());
+			req.setRetMax(maxNumRecords+"");
 			// set number to start at
-			req.setRetStart(retStart.toString());
+			req.setRetStart(retStart+"");
 			// save this search so we can use the returned set
 			req.setUsehistory("y");
 			// run the search and get result set
@@ -191,7 +191,7 @@ public class PubmedSOAPFetch {
 			env[2] = ""+res.getIdList().getId().length;
 			env[3] = res.getIdList().getId()[0];
 			
-			log.trace("Query resulted in a total of " + env[2] + " records.");
+			log.info("Query resulted in a total of " + env[2] + " records.");
 		}
 		catch (RemoteException e)
 		{
@@ -215,7 +215,7 @@ public class PubmedSOAPFetch {
 		req.setTool(this.strToolLocation);
 		req.setRetstart(retStart);
 		req.setRetmax(numRecords);
-		log.trace("Fetching records from search");
+		log.info("Fetching records from search");
 		try {
 			serializeFetchRequest(req);
 		}catch(RemoteException e) {
@@ -257,7 +257,7 @@ public class PubmedSOAPFetch {
 	 */
 	private int getHighestPMID()
 	{
-		return Integer.parseInt(runESearch(queryAll(), Integer.valueOf(1))[3]);
+		return Integer.parseInt(runESearch(queryAll(), 1)[3]);
 	}
 	
 	/**
@@ -402,26 +402,26 @@ public class PubmedSOAPFetch {
 	 */
 	public void execute() {
 		log.info("Fetch: Start");
-		Integer recToFetch;
+		int recToFetch;
 		if(this.strMaxRecords.equalsIgnoreCase("all")) {
-			recToFetch = Integer.valueOf(getHighestRecordNumber());
+			recToFetch = getHighestRecordNumber();
 		} else {
-			recToFetch = Integer.valueOf(this.strMaxRecords);
+			recToFetch = Integer.parseInt(this.strMaxRecords);
 		}
 		int intBatchSize = Integer.parseInt(this.strBatchSize); 
-		if(recToFetch.intValue() <= intBatchSize) {
+		if(recToFetch <= intBatchSize) {
 			fetchPubMed(runESearch(this.strSearchTerm, recToFetch));
 		} else {
 			String[] env = runESearch(this.strSearchTerm, recToFetch);
 			String WebEnv = env[0];
 			String QueryKey = env[1];
 			// sanity check for max records
-			if (Integer.parseInt(env[2]) < recToFetch.intValue()) {
-				recToFetch = Integer.getInteger(env[2]);
+			if (Integer.parseInt(env[2]) < recToFetch) {
+				recToFetch = Integer.parseInt(env[2]);
 			}
-			for(int x = recToFetch.intValue(); x > 0; x-=intBatchSize) {
+			for(int x = recToFetch; x > 0; x-=intBatchSize) {
 				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
-				int startRec = recToFetch.intValue() - x;
+				int startRec = recToFetch - x;
 				log.debug("maxRec: "+maxRec);
 				log.debug("startRec: "+startRec);
 				fetchPubMed(WebEnv, QueryKey, startRec+"", maxRec+"");
@@ -453,6 +453,7 @@ public class PubmedSOAPFetch {
 		try {
 			new PubmedSOAPFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
+			log.debug(e.getMessage(),e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);

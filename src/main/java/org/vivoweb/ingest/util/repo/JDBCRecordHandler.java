@@ -280,6 +280,9 @@ public class JDBCRecordHandler extends RecordHandler {
 	
 	@Override
 	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
+		if(!needsUpdated(rec)) {
+			return;
+		}
 		try {
 			PreparedStatement ps = this.db.prepareStatement("insert into "+this.table+"("+recordIdField+", "+this.dataField+") values (?, ?)");
 			ps.setString(1, rec.getID());

@@ -3,4 +3,5 @@ org.vivoweb.ingest.qualify
 org.vivoweb.ingest.score
 org.vivoweb.ingest.transfer
 org.vivoweb.ingest.translate
-org.vivoweb.ingest.util
+org.vivoweb.ingest.util.args
+org.vivoweb.ingest.util.repo
