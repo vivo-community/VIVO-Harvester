@@ -258,5 +258,11 @@
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
+    <dependency>
+    	<groupId>com.h2database</groupId>
+    	<artifactId>h2</artifactId>
+    	<version>1.2.140</version>
+    	<type>jar</type>
+    </dependency>
   </dependencies>
 </project>

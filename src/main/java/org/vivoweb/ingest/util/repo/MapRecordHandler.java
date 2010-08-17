@@ -124,4 +124,11 @@ public class MapRecordHandler extends RecordHandler {
 	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		return this.metaDataMap.get(recID);
 	}
+
+	
+	@Override
+	public void close() throws IOException {
+		this.map.clear();
+		this.metaDataMap.clear();
+	}
 }

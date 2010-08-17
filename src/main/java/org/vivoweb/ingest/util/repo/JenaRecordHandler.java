@@ -448,4 +448,10 @@ public class JenaRecordHandler extends RecordHandler {
 		}
 		return null;
 	}
+
+	
+	@Override
+	public void close() throws IOException {
+		this.model.close();
+	}
 }

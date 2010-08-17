@@ -238,6 +238,12 @@ public abstract class RecordHandler implements Iterable<Record> {
 	}
 	
 	/**
+	 * Closes the recordhandler
+	 * @throws IOException error closing
+	 */
+	public abstract void close() throws IOException;
+	
+	/**
 	 * Config Parser for RecordHandlers
 	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
 	 */

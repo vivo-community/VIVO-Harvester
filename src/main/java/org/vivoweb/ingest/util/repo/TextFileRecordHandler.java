@@ -584,4 +584,11 @@ public class TextFileRecordHandler extends RecordHandler {
 			}
 		}
 	}
+
+	
+	@Override
+	public void close() throws IOException {
+		this.fileDirObj.close();
+		this.metaDirObj.close();
+	}
 }
