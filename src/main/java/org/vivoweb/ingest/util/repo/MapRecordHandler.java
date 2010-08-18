@@ -37,6 +37,7 @@ public class MapRecordHandler extends RecordHandler {
 	 */
 	public MapRecordHandler() {
 		this.map = new HashMap<String,String>();
+		this.metaDataMap = new HashMap<String,SortedSet<RecordMetaData>>();
 	}
 	
 	@Override
@@ -124,7 +125,6 @@ public class MapRecordHandler extends RecordHandler {
 	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		return this.metaDataMap.get(recID);
 	}
-
 	
 	@Override
 	public void close() throws IOException {

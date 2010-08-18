@@ -146,6 +146,16 @@ public class JenaRecordHandler extends RecordHandler {
 	}
 	
 	/**
+	 * Constructor (w/ Given Model)
+	 * @param jena the model to use
+	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
+	 */
+	public JenaRecordHandler(Model jena, String dataFieldType) {
+		this.model = jena;
+		initVars(dataFieldType);
+	}
+	
+	/**
 	 * Constructor (w/ Model Config File)
 	 * @param configFile the model config file
 	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
