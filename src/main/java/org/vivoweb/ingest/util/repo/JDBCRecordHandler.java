@@ -434,7 +434,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		SortedSet<RecordMetaData> retVal = new TreeSet<RecordMetaData>();
 		try {
-			ResultSet rs = this.cursor.executeQuery("select "+rmdCalField+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdMD5Field+" from "+this.table+"_rmd where "+rmdRelField+"="+recID+" order by "+rmdCalField+" desc");
+			ResultSet rs = this.cursor.executeQuery("select "+rmdCalField+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdMD5Field+" from "+this.table+"_rmd where "+rmdRelField+"='"+recID+"' order by "+rmdCalField+" desc");
 			while(rs.next()) {
 				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
 				cal.setTimeInMillis(Long.parseLong(rs.getString(rmdCalField)));
@@ -444,9 +444,14 @@ public class JDBCRecordHandler extends RecordHandler {
 				retVal.add(new RecordMetaData(cal, operator, operation, md5));
 			}
 		} catch(SQLException e) {
+			log.debug(e.getMessage(),e);
 			throw new IOException(e.getMessage(),e);
 		} catch(ClassNotFoundException e) {
+			log.debug(e.getMessage(),e);
 			throw new IOException(e.getMessage(),e);
+		}
+		if(retVal.isEmpty()) {
+			throw new IOException("No Matching MetaData Found");
 		}
 		return retVal;
 	}

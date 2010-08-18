@@ -123,7 +123,11 @@ public class MapRecordHandler extends RecordHandler {
 	
 	@Override
 	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
-		return this.metaDataMap.get(recID);
+		SortedSet<RecordMetaData> x = this.metaDataMap.get(recID);
+		if(x == null || x.isEmpty()) {
+			throw new IOException("No Matching MetaData Found");
+		}
+		return x;
 	}
 	
 	@Override

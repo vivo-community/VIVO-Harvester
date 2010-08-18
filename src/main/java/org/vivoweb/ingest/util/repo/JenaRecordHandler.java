@@ -456,7 +456,10 @@ public class JenaRecordHandler extends RecordHandler {
 			String md5 = litMD5.getString();
 			retVal.add(new RecordMetaData(cal, operator, operation, md5));
 		}
-		return null;
+		if(retVal.isEmpty()) {
+			throw new IOException("No Matching MetaData Found");
+		}
+		return retVal;
 	}
 
 	

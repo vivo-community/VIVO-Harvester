@@ -130,6 +130,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error retrieving record metadata
 	 */
 	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
+		log.info("recMeta: "+getRecordMetaData(recID));
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
 			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
 				return rmd;
