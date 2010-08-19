@@ -59,6 +59,10 @@ public class Transfer {
 	 * keep model after transfer
 	 */
 	private boolean retainModel;
+	/**
+	 * empty model before transfer
+	 */
+	private boolean emptyModel;
 	
 	/**
 	 * Constructor
@@ -68,14 +72,16 @@ public class Transfer {
 	 * @param outName output model name
 	 * @param file dump to file option
 	 * @param keep keep transferred data option
+	 * @param empty empty model before transfer
 	 */
-	public Transfer(Model in, Model out, String inName, String outName, String file, boolean keep) {
+	public Transfer(Model in, Model out, String inName, String outName, String file, boolean keep, boolean empty) {
 	  this.input = in;
 	  this.output = out;
 	  this.inputModelName = inName;
 	  this.outputModelName = outName;
 	  this.dumpModel = file;
 	  this.retainModel = keep;
+	  this.emptyModel = empty;
 	}
 	
 	/**
@@ -129,6 +135,7 @@ public class Transfer {
 		
 		//empty model
 		this.retainModel = argList.has("k");
+		this.emptyModel = argList.has("e");
 	}
 	
 	/**
@@ -137,6 +144,9 @@ public class Transfer {
 	private void transfer() {
 		
 		if (this.output != null) { 
+			if (this.emptyModel) {
+				this.output.removeAll();
+			}
 			this.output.add(this.input);
 		}
 		
@@ -180,11 +190,12 @@ public class Transfer {
 		ArgParser parser = new ArgParser("Transfer");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false).setDefaultValue("staging"));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input-model").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false).setDefaultValue("staging"));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output-model").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "MODEL_NAME").setDescription("rdf filename for input").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("dump file").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").withParameter(false, "cheese").setDescription("If set, this will not clear the input model after transfer is complete"));
+		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").withParameter(false, "KEEP_FLAG").setDescription("If set, this will not clear the input model after transfer is complete"));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("empty-input-model").withParameter(false, "EMPTY_FLAG").setDescription("If set, this will clear the input model before transfer is started").setRequired(false));
 		return parser;
 	}
 	
