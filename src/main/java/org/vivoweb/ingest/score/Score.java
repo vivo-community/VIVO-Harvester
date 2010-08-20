@@ -76,14 +76,15 @@ public class Score {
 			log.info("Scoring: Start");
 			try {
 				ArgList opts = new ArgList(getParser(), args);
+				//Require some args
+				if (!opts.has("i") && !opts.has("T")) {
+					throw new IllegalArgumentException("Must provide one of -i or -T");
+				}
+				
 				//Get optional inputs / set defaults
 				//Check for config files, before parsing name options
-				String workingModel = opts.get("T");
-				if (workingModel == null) workingModel = opts.get("t");
-				
-				String outputModel = opts.get("O");
-				if (outputModel == null) outputModel = opts.get("o");
-				
+				String workingModel = opts.get("t");
+				String outputModel = opts.get("o");				
 				
 				boolean allowNonEmptyWorkingModel = opts.has("n");
 				boolean retainWorkingModel = opts.has("k");
@@ -94,40 +95,52 @@ public class Score {
 
 				try {
 					log.info("Loading configuration and models");
-					RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));	
 					
 					//Connect to vivo
 					JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
 					
 					//Create working model
-					JenaConnect jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
-					
+					JenaConnect jenaTempDB;
+					if (opts.has("T")) {
+						jenaTempDB = new JenaConnect(JenaConnect.parseConfig(opts.get("T")),workingModel);
+					} else {
+						jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
+					}
+										
 					//Create output model
-					JenaConnect jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
-					
-					//Load up rdf data from translate into temp model
-					Model jenaInputDB = jenaTempDB.getJenaModel();
-					
-					if (!jenaInputDB.isEmpty() && !allowNonEmptyWorkingModel) {
-						log.warn("Working model was not empty! -- emptying model before execution");
-						jenaInputDB.removeAll();
+					JenaConnect jenaOutputDB;
+					if (opts.has("O")) {
+						jenaOutputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("O")),outputModel);
+					} else {
+						jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
 					}
 					
+					Model jenaInputModel = jenaTempDB.getJenaModel();
+					
 					//Read in records that need processing
-					for (Record r: rh) {
-						if (r.needsProcessed(Score.class) || opts.has("f")) {
-							log.trace("Record " + r.getID() + " added to incoming processing model");
-							jenaInputDB.read(new ByteArrayInputStream(r.getData().getBytes()), null);
-							r.setProcessed(Score.class);
-							processCount += 1;
-						}	
+					if (opts.has("i")) {
+						//Load up rdf data from translate into temp model						
+						if (!jenaInputModel.isEmpty() && !allowNonEmptyWorkingModel) {
+							log.warn("Working model was not empty! -- emptying model before execution");
+							jenaInputModel.removeAll();
+						}
+						
+						RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));
+						for (Record r: rh) {
+							if (r.needsProcessed(Score.class) || opts.has("f")) {
+								log.trace("Record " + r.getID() + " added to incoming processing model");
+								jenaInputModel.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+								r.setProcessed(Score.class);
+								processCount += 1;
+							}	
+						}
 					}
 					
 					//Speed Hack -- if no records to process, end
 					if (processCount != 0) {
 						
 						//Init
-						Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputDB, jenaOutputDB.getJenaModel());
+						Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputModel, jenaOutputDB.getJenaModel());
 						
 						//authorname matching
 						if (opts.has("a")) {
@@ -168,7 +181,8 @@ public class Score {
 					log.fatal(e.getMessage(),e);
 				}
 			} catch(IllegalArgumentException e) {
-				System.out.println(getParser().getUsage());
+				log.fatal(e.getMessage());
+				log.info(getParser().getUsage());
 			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
 			}
@@ -181,7 +195,7 @@ public class Score {
 		 */
 		private static ArgParser getParser() {
 			ArgParser parser = new ArgParser("Score");
-			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("rdfRecordHandler").setDescription("rdfRecordHandler config filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("rdfRecordHandler").setDescription("rdfRecordHandler config filename").withParameter(true, "CONFIG_FILE"));
 			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoJenaConfig").setDescription("vivoJenaConfig config filename").withParameter(true, "CONFIG_FILE").setRequired(true));			
 			//TODO Nicholas: Implement individual RDF input
 			//parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("rdfFilename").setDescription("RDF Filename").withParameter(true, "CONFIG_FILE"));
@@ -191,7 +205,7 @@ public class Score {
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
-			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("tempModel"));
+			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("t"));
 			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
 			parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force-process").setDescription("If set, this will reprocess all RDF -- even if it's been processed before"));
 			parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("allow-non-empty-working-model").setDescription("If set, this will not clear the working model before scoring begins"));
