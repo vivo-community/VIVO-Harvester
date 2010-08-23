@@ -213,7 +213,7 @@
 	<!-- The Main Journal Entity -->
 	<xsl:template match="Journal" mode="fullJournal">
 		<rdf:Description rdf:about="http://vivoweb.org/pubMed/journal/j{child::ISSN}" >
-			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
+			<rdf:type rdf:resource="http://puMedlineCitation/MeshHeadingListrl.org/ontology/bibo/Journal" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:Title><xsl:value-of select="Title" /></core:Title>
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
