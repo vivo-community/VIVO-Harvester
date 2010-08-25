@@ -74,30 +74,130 @@ public class Score {
 		public static void main(String... args) {
 			
 			log.info("Scoring: Start");
+			
+			ArgList opts = new ArgList(getParser(), args);
+			Score(opts);
+			
+			boolean retainWorkingModel = opts.has("k");
+			List<String> exactMatchArg = opts.getAll("e");
+			List<String> pairwiseArg = opts.getAll("p");
+			List<String> regexArg = opts.getAll("r");
+			
+			//Speed Hack -- if no records to process, end
+			if (processCount != 0) {
+				
+
+				
+				//authorname matching
+				if (opts.has("a")) {
+					scoring.authorNameMatch(Integer.parseInt(opts.get("a")));
+				}
+				
+				//Call each exactMatch
+				for (String attribute : exactMatchArg) {
+					scoring.exactMatch(attribute);
+				}
+				
+				//Call each pairwise
+				for (String attribute : pairwiseArg) {
+					scoring.pairwise(attribute);
+				}
+				
+				//Call each regex
+				for (String regex : regexArg) {
+					scoring.regex(regex);
+				}
+				
+				//Empty working model
+				if (!retainWorkingModel) scoring.scoreInput.removeAll();
+				//Close and done
+				scoring.scoreInput.close();
+				scoring.scoreOutput.close();
+				scoring.vivo.close();
+				
+			} else {
+				//nothing to do but end
+			}	
+			log.info("Scoring: End");
+		}
+		
+		/**
+		 * Get the OptionParser
+		 * @return the OptionParser
+		 */
+		private static ArgParser getParser() {
+			ArgParser parser = new ArgParser("Score");
+			//Inputs
+			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("rdfFilename").setDescription("RDF Filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("rdfRecordHandler").setDescription("rdfRecordHandler config filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempModelConfig").setDescription("tempModelConfig config filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoJenaConfig").setDescription("vivoJenaConfig config filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+			
+			//Outputs
+			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
+			
+			//Model name overrides
+			parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("inputModel").setDescription("input model name").withParameter(true, "MODEL_NAME");
+			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("temp"));
+			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
+			
+			//scoring algorithms
+			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
+			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
+			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
+			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
+			
+			//options
+			parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force-process").setDescription("If set, this will reprocess all RDF -- even if it's been processed before"));
+			parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("allow-non-empty-working-model").setDescription("If set, this will not clear the working model before scoring begins"));
+			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
+			return parser;
+		}
+		
+		
+		/**
+		 * Constructor	
+		 * @param jenaVivo model containing vivo statements
+		 * @param jenaScoreInput model containing statements to be scored
+		 * @param jenaScoreOutput output model
+		 */
+		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput) {
+			this.vivo = jenaVivo;
+			this.scoreInput = jenaScoreInput;
+			this.scoreOutput = jenaScoreOutput;
+		}
+		
+		/**
+		 * Execution Task
+		 * @param args argument list
+		 */
+		public Score(String... args) {
 			try {
 				ArgList opts = new ArgList(getParser(), args);
 				//Require some args
-				if (!opts.has("i") && !opts.has("T")) {
-					throw new IllegalArgumentException("Must provide one of -i or -T");
+				if (!opts.has("i") && !opts.has("I") && !opts.has("T")) {
+					throw new IllegalArgumentException("Must provide one of -i, -I, or -T");
 				}
 				
 				//Get optional inputs / set defaults
 				//Check for config files, before parsing name options
 				String workingModel = opts.get("t");
-				String outputModel = opts.get("o");				
+				String outputModel = opts.get("o");
+				String vivoModel = opts.get("v");
 				
 				boolean allowNonEmptyWorkingModel = opts.has("n");
-				boolean retainWorkingModel = opts.has("k");
-				List<String> exactMatchArg = opts.getAll("e");
-				List<String> pairwiseArg = opts.getAll("p");
-				List<String> regexArg = opts.getAll("r");
 				int processCount = 0;
-
+	
 				try {
 					log.info("Loading configuration and models");
 					
 					//Connect to vivo
-					JenaConnect jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
+					JenaConnect jenaVivoDB;
+					if (opts.has("V")) {
+						jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(opts.get("V")),vivoModel);
+					} else {
+						jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
+					}
 					
 					//Create working model
 					JenaConnect jenaTempDB;
@@ -117,14 +217,22 @@ public class Score {
 					
 					Model jenaInputModel = jenaTempDB.getJenaModel();
 					
-					//Read in records that need processing
+					//Load up rdf data from translate into temp model						
+					if (!jenaInputModel.isEmpty() && !allowNonEmptyWorkingModel) {
+						log.warn("Working model was not empty! -- emptying model before execution");
+						jenaInputModel.removeAll();
+					}
+					
+					//Read in rdf from file
 					if (opts.has("i")) {
-						//Load up rdf data from translate into temp model						
-						if (!jenaInputModel.isEmpty() && !allowNonEmptyWorkingModel) {
-							log.warn("Working model was not empty! -- emptying model before execution");
-							jenaInputModel.removeAll();
-						}
-						
+						String rdfFile = opts.get("i");
+						rdfFile.
+						jenaInputModel.read(new ByteArrayInputStream(rdfFile.getBytes()), null);
+						log.info("Loaded " + rdfFile);
+					}
+					
+					//Read in records that need processing
+					if (opts.has("i")) {				
 						RecordHandler rh = RecordHandler.parseConfig(opts.get("i"));
 						for (Record r: rh) {
 							if (r.needsProcessed(Score.class) || opts.has("f")) {
@@ -134,45 +242,11 @@ public class Score {
 								processCount += 1;
 							}	
 						}
+						log.info("Loaded " + processCount + " records");
 					}
 					
-					//Speed Hack -- if no records to process, end
-					if (processCount != 0) {
-						
-						//Init
-						Score scoring = new Score(jenaVivoDB.getJenaModel(), jenaInputModel, jenaOutputDB.getJenaModel());
-						
-						//authorname matching
-						if (opts.has("a")) {
-							scoring.authorNameMatch(Integer.parseInt(opts.get("a")));
-						}
-						
-						//Call each exactMatch
-						for (String attribute : exactMatchArg) {
-							scoring.exactMatch(attribute);
-						}
-						
-						//Call each pairwise
-						for (String attribute : pairwiseArg) {
-							scoring.pairwise(attribute);
-						}
-						
-						//Call each regex
-						for (String regex : regexArg) {
-							scoring.regex(regex);
-						}
-						
-						//Empty working model
-						if (!retainWorkingModel) scoring.scoreInput.removeAll();
-						//Close and done
-						scoring.scoreInput.close();
-						scoring.scoreOutput.close();
-						scoring.vivo.close();
-						
-					} else {
-						//nothing to do but end
-					}	
-					 	
+					new Score(jenaVivoDB.getJenaModel(), jenaInputModel, jenaOutputDB.getJenaModel());
+					
 				} catch(ParserConfigurationException e) {
 					log.fatal(e.getMessage(),e);
 				} catch(SAXException e) {
@@ -186,44 +260,6 @@ public class Score {
 			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
 			}
-			log.info("Scoring: End");
-		}
-		
-		/**
-		 * Get the OptionParser
-		 * @return the OptionParser
-		 */
-		private static ArgParser getParser() {
-			ArgParser parser = new ArgParser("Score");
-			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("rdfRecordHandler").setDescription("rdfRecordHandler config filename").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoJenaConfig").setDescription("vivoJenaConfig config filename").withParameter(true, "CONFIG_FILE").setRequired(true));			
-			//TODO Nicholas: Implement individual RDF input
-			//parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("rdfFilename").setDescription("RDF Filename").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempModelConfig").setDescription("tempModelConfig config filename").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
-			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
-			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
-			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
-			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("t"));
-			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
-			parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force-process").setDescription("If set, this will reprocess all RDF -- even if it's been processed before"));
-			parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("allow-non-empty-working-model").setDescription("If set, this will not clear the working model before scoring begins"));
-			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
-			return parser;
-		}
-		
-		
-		/**
-		 * Constructor	
-		 * @param jenaVivo model containing vivo statements
-		 * @param jenaScoreInput model containing statements to be scored
-		 * @param jenaScoreOutput output model
-		 */
-		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput) {
-			this.vivo = jenaVivo;
-			this.scoreInput = jenaScoreInput;
-			this.scoreOutput = jenaScoreOutput;
 		}
 		
 		/**
