@@ -65,7 +65,27 @@ public class Score {
 		/**
 		 * Model where output is stored
 		 */
-		private Model scoreOutput;		
+		private Model scoreOutput;
+		/**
+		 * Option to retain working model
+		 */
+		private boolean retainWorkingModel;
+		/**
+		 * Arguments for exact match algorithm
+		 */
+		private List<String> exactMatch;
+		/**
+		 * Arguments for pairwise algorithm
+		 */
+		private List<String> pairwise;
+		/**
+		 * Arguments for regex algorithm
+		 */
+		private List<String> regex;
+		/**
+		 * Arguments for authorname algorithm
+		 */
+		private String authorName;
 		
 		/**
 		 * Main method
@@ -75,49 +95,36 @@ public class Score {
 			
 			log.info("Scoring: Start");
 			
-			ArgList opts = new ArgList(getParser(), args);
-			Score(opts);
+			Score scoring = new Score(args);
 			
-			boolean retainWorkingModel = opts.has("k");
-			List<String> exactMatchArg = opts.getAll("e");
-			List<String> pairwiseArg = opts.getAll("p");
-			List<String> regexArg = opts.getAll("r");
+			//Call authorname matching
+			if (scoring.authorName != null) {
+				scoring.authorNameMatch(Integer.parseInt(scoring.authorName));
+			}
 			
-			//Speed Hack -- if no records to process, end
-			if (processCount != 0) {
-				
+			//Call each exactMatch
+			for (String attribute : scoring.exactMatch) {
+				scoring.exactMatch(attribute);
+			}
+			
+			//Call each pairwise
+			for (String attribute : scoring.pairwise) {
+				scoring.pairwise(attribute);
+			}
+			
+			//Call each regex
+			for (String regex : scoring.regex) {
+				scoring.regex(regex);
+			}
+			
+			//Empty working model
+			if (!scoring.retainWorkingModel) scoring.scoreInput.removeAll();
+			
+			//Close and done
+			scoring.scoreInput.close();
+			scoring.scoreOutput.close();
+			scoring.vivo.close();
 
-				
-				//authorname matching
-				if (opts.has("a")) {
-					scoring.authorNameMatch(Integer.parseInt(opts.get("a")));
-				}
-				
-				//Call each exactMatch
-				for (String attribute : exactMatchArg) {
-					scoring.exactMatch(attribute);
-				}
-				
-				//Call each pairwise
-				for (String attribute : pairwiseArg) {
-					scoring.pairwise(attribute);
-				}
-				
-				//Call each regex
-				for (String regex : regexArg) {
-					scoring.regex(regex);
-				}
-				
-				//Empty working model
-				if (!retainWorkingModel) scoring.scoreInput.removeAll();
-				//Close and done
-				scoring.scoreInput.close();
-				scoring.scoreOutput.close();
-				scoring.vivo.close();
-				
-			} else {
-				//nothing to do but end
-			}	
 			log.info("Scoring: End");
 		}
 		
@@ -137,7 +144,7 @@ public class Score {
 			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
 			
 			//Model name overrides
-			parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("inputModel").setDescription("input model name").withParameter(true, "MODEL_NAME");
+			parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("inputModel").setDescription("input model name").withParameter(true, "MODEL_NAME"));
 			parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempModel").setDescription("temporary working model name").withParameter(true, "MODEL_NAME").setDefaultValue("temp"));
 			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
 			
@@ -160,15 +167,25 @@ public class Score {
 		 * @param jenaVivo model containing vivo statements
 		 * @param jenaScoreInput model containing statements to be scored
 		 * @param jenaScoreOutput output model
+		 * @param retainWorkingModelArg If set, this will not clear the working model after scoring is complete
+		 * @param exactMatchArg perform an exact match scoring
+		 * @param pairwiseArg perform a pairwise scoring
+		 * @param regexArg perform a regular expression scoring
+		 * @param authorNameArg perform a author name scoring
 		 */
-		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput) {
+		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
 			this.vivo = jenaVivo;
 			this.scoreInput = jenaScoreInput;
 			this.scoreOutput = jenaScoreOutput;
+			this.retainWorkingModel = retainWorkingModelArg;
+			this.exactMatch = exactMatchArg;
+			this.pairwise = pairwiseArg;
+			this.regex = regexArg;
+			this.authorName = authorNameArg;
 		}
 		
 		/**
-		 * Execution Task
+		 * Constructor
 		 * @param args argument list
 		 */
 		public Score(String... args) {
@@ -183,8 +200,7 @@ public class Score {
 				//Check for config files, before parsing name options
 				String workingModel = opts.get("t");
 				String outputModel = opts.get("o");
-				String vivoModel = opts.get("v");
-				
+				String vivoModel = opts.get("v");		
 				boolean allowNonEmptyWorkingModel = opts.has("n");
 				int processCount = 0;
 	
@@ -226,7 +242,6 @@ public class Score {
 					//Read in rdf from file
 					if (opts.has("i")) {
 						String rdfFile = opts.get("i");
-						rdfFile.
 						jenaInputModel.read(new ByteArrayInputStream(rdfFile.getBytes()), null);
 						log.info("Loaded " + rdfFile);
 					}
@@ -245,7 +260,15 @@ public class Score {
 						log.info("Loaded " + processCount + " records");
 					}
 					
-					new Score(jenaVivoDB.getJenaModel(), jenaInputModel, jenaOutputDB.getJenaModel());
+					//create object
+					this.vivo = jenaVivoDB.getJenaModel();
+					this.scoreInput = jenaInputModel;
+					this.scoreOutput = jenaOutputDB.getJenaModel();					
+					this.retainWorkingModel = opts.has("k");
+					this.exactMatch = opts.getAll("e");
+					this.pairwise = opts.getAll("p");
+					this.regex = opts.getAll("r");
+					this.authorName = opts.get("a");
 					
 				} catch(ParserConfigurationException e) {
 					log.fatal(e.getMessage(),e);
@@ -486,12 +509,12 @@ public class Score {
 		
 		/**
 		* Executes a regex scoring method 
-		* @param regex string containing regular expression 
+		* @param regexString string containing regular expression 
 		*/
-		private void regex(String regex) {
+		private void regex(String regexString) {
 		 	//TODO Chris: finish implementation
 			
-			log.info("Executing " + regex + " regular expression");
+			log.info("Executing " + regexString + " regular expression");
 			log.warn("Regex is not complete");
 		 
 		}

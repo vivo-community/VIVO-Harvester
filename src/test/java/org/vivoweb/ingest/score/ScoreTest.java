@@ -2,13 +2,8 @@
  * 
  */
 package org.vivoweb.ingest.score;
-import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
-import org.vivoweb.ingest.util.args.ArgDef;
 
 import junit.framework.TestCase;
 
@@ -26,6 +21,7 @@ public class ScoreTest extends TestCase {
 	/**
 	 * Test Argument parsing for scoring
 	 */
+	@SuppressWarnings("unused")
 	public void testArguments() {
 		String args;
 		Score Test;
@@ -36,7 +32,7 @@ public class ScoreTest extends TestCase {
 		String VArg = "config/jenaModels/VIVO.xml";
 		
 		//outputs
-		String OArg = "testOutputModel";
+		String OArg = "config/jenaModels/VIVO.xml";
 		
 		//model overrides
 		String tArg = "testTempModel";
@@ -45,35 +41,33 @@ public class ScoreTest extends TestCase {
 			
 		log.info("testArguments Start");
 		log.info("Testing good configs");
+		
 		log.info("Testing rdf input configs");
 		log.info("Test -I IArg -V VArg -a 1 -e workEmail -p -r");
+		args = "-I " + IArg + " -V " + VArg + " -a 1 -e workEmail -p -r";
 		Test = new Score(args);
-		log.info("Test -I IArg -V VArg -v vArg -o oArg -a 1 -e workEmail -p -r");
+		log.info("Test -I IArg -V VArg -v vArg -O OArg -o oArg -O OArg -o oArg -a 1 -e workEmail -p -r");
+		args = "-I " + IArg + " -V " + VArg + " -v " + vArg + " -O " + OArg + " -o " + oArg + " -a 1 -e workEmail -p -r";
+		Test = new Score(args);
+		
 		log.info("Testing Model input configs");
-		log.info("Test -T TArg -V VArg -a 1 -e workEmail -p -r");		
-		log.info("Test -T TArg -t tArg -V VArg -v vArg -o oArg -a 1 -e workEmail -p -r");
+		log.info("Test -T TArg -V VArg -a 1 -e workEmail -p -r");
+		args = "-T " + TArg + " -V " + VArg + " -a 1 -e workEmail -p -r";
+		Test = new Score(args);
+		log.info("Test -T TArg -t tArg -V VArg -v vArg -O OArg -o oArg -a 1 -e workEmail -p -r");
+		args = "-T " + TArg + " -t " + tArg + " -V " + VArg + " -v " + vArg + " -O " + OArg + " -o " + oArg + " -a 1 -e workEmail -p -r";
+		Test = new Score(args);
+		
 		log.info("Testing rdfFile input configs");
 		log.info("Test -i iArg -V VArg -a 1 -e workEmail -p -r");
-		log.info("Test -i iArg -V VArg -v vArg -o oArg -a 1 -e workEmail -p -r");
-		
-		
-		
-		
-		'i'
-		'V'
-		'T'
-		'O'
-		'e'
-		'p'
-		'a'
-		'r'
-		't'
-		'o'
-		'f'
-		'n'
-		'k'
+		args = "-i " + iArg + " -V " + VArg + " -a 1 -e workEmail -p -r";
+		Test = new Score(args);
+		log.info("Test -i iArg -V VArg -v vArg -O OArg -o oArg -a 1 -e workEmail -p -r");
+		args = "-i " + iArg + " -V " + VArg + " -v " + vArg + " -O " + OArg + " -o " + oArg + " -a 1 -e workEmail -p -r";
+		Test = new Score(args);
 		
 		log.info("Testing bad configs");
+		
 		log.info("testArguments End");
 	}
 	
