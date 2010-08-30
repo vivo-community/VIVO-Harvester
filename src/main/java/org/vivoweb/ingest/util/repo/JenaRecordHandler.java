@@ -184,9 +184,9 @@ public class JenaRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
+	public boolean addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
 		if(!needsUpdated(rec)) {
-			return;
+			return false;
 		}
 		Resource record = getRecordResource(rec.getID());
 		if(!overwrite && record != null) {
@@ -199,6 +199,7 @@ public class JenaRecordHandler extends RecordHandler {
 		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(record, this.idType, rec.getID()));
 		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(record, this.dataType, rec.getData()));
 		this.addMetaData(rec, creator, RecordMetaDataType.written);
+		return true;
 	}
 	
 	@Override
@@ -239,7 +240,7 @@ public class JenaRecordHandler extends RecordHandler {
 			QuerySolution result = resultSet.next();
 			data = result.getLiteral(resultSet.getResultVars().get(0)).getString();
 		} else {
-			throw new IOException("Record Not Found!");
+			throw new IllegalArgumentException("Record "+recID+" does not exist!");
 		}
 		return data;
 	}

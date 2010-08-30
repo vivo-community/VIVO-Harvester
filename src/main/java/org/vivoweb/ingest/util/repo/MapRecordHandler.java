@@ -41,15 +41,16 @@ public class MapRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
+	public boolean addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
 		if(!needsUpdated(rec)) {
-			return;
+			return false;
 		}
 		if(!overwrite && this.map.containsKey(rec.getID())) {
 			throw new IOException("Record already exists!");
 		}
 		this.map.put(rec.getID(), rec.getData());
 		addMetaData(rec, creator, RecordMetaDataType.written);
+		return true;
 	}
 	
 	@Override
@@ -60,6 +61,9 @@ public class MapRecordHandler extends RecordHandler {
 	
 	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
+		if(!this.map.containsKey(recID)) {
+			throw new IllegalArgumentException("Record "+recID+" does not exist!");
+		}
 		return this.map.get(recID);
 	}
 	

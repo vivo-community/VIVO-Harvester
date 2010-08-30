@@ -275,9 +275,9 @@ public class JDBCRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
+	public boolean addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
 		if(!needsUpdated(rec)) {
-			return;
+			return false;
 		}
 		try {
 			PreparedStatement ps = this.db.prepareStatement("insert into "+this.table+"("+recordIdField+", "+this.dataField+") values (?, ?)");
@@ -302,6 +302,7 @@ public class JDBCRecordHandler extends RecordHandler {
 			}
 		}
 		addMetaData(rec, creator, RecordMetaDataType.written);
+		return true;
 	}
 	
 	@Override
@@ -319,6 +320,11 @@ public class JDBCRecordHandler extends RecordHandler {
 	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
 		try {
+			ResultSet existrs = this.cursor.executeQuery("select count(*) from "+this.table+" where "+recordIdField+" = '"+recID+"'");
+			existrs.first();
+			if(existrs.getInt(1) < 1) {
+				throw new IllegalArgumentException("Record "+recID+" does not exist!");
+			}
 			ResultSet rs = this.cursor.executeQuery("select "+this.dataField+" from "+this.table+" where "+recordIdField+" = '"+recID+"'");
 			rs.first();
 			return new String(rs.getBytes(1));

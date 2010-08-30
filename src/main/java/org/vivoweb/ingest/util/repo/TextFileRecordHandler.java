@@ -114,9 +114,9 @@ public class TextFileRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
+	public boolean addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
 		if(!needsUpdated(rec)) {
-			return;
+			return false;
 		}
 		//log.debug("Resolving file for record: " + rec.getID());
 		FileObject fo = null;
@@ -153,6 +153,7 @@ public class TextFileRecordHandler extends RecordHandler {
 				}
 			}
 		}
+		return true;
 	}
 	
 	/**
@@ -235,6 +236,9 @@ public class TextFileRecordHandler extends RecordHandler {
 		try {
 			StringBuilder sb = new StringBuilder();
 			fo = this.fileDirObj.resolveFile(recID);
+			if(!fo.exists()) {
+				throw new IllegalArgumentException("Record "+recID+" does not exist!");
+			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(fo.getContent().getInputStream()));
 			String line;
 			while((line = br.readLine()) != null){
