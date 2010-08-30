@@ -11,16 +11,19 @@ import junit.framework.TestCase;
  */
 public class TranslateTest extends TestCase {
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+   /**
+    * I am adding this so you stop killing maven builds >:O
+    */
+   public void testNothing() {
+   	assertTrue(true);
+   }
+
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

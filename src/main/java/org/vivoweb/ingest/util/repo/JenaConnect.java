@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,6 +53,10 @@ public class JenaConnect {
 	 * Parameters for this Jena Connection
 	 */
 	private Map<String,String> parameters;
+	/**
+	 * The jdbc connection
+	 */
+	private IDBConnection conn;
 	
 	/**
 	 * Config File Based Factory
@@ -233,7 +238,8 @@ public class JenaConnect {
 	 */
 	private Model createModel(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		return initModel(initDB(dbUrl, dbUser, dbPass, dbType, dbClass)).createDefaultModel();
+		initDB(dbUrl, dbUser, dbPass, dbType, dbClass);
+		return initModel(this.conn).createDefaultModel();
 	}
 	
 	/**
@@ -258,15 +264,14 @@ public class JenaConnect {
 	 * @param dbPass password to connect with
 	 * @param dbType database type
 	 * @param dbClass jdbc connection class
-	 * @return the database connection
 	 * @throws InstantiationException could not instantiate
 	 * @throws IllegalAccessException not authorized
 	 * @throws ClassNotFoundException no such class
 	 */
-	private IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)
+	private void initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Class.forName(dbClass).newInstance();
-		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
+		this.conn = new DBConnection(dbUrl, dbUser, dbPass, dbType);
 	}
 	
 	/**
@@ -379,4 +384,16 @@ public class JenaConnect {
 		}
 	}
 	
+
+	/**
+	 * Closes the model and the jdbc connection
+	 */
+	public void close() {
+		this.jenaModel.close();
+		try {
+			this.conn.close();
+		} catch(SQLException e) {
+			//ignore
+		}
+	}
 }

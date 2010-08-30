@@ -31,12 +31,10 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.update.UpdateAction;
-import com.hp.hpl.jena.update.UpdateFactory;
-import com.hp.hpl.jena.update.UpdateRequest;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.shared.PropertyNotFoundException;
 
 /**
  * RecordHandler that stores data in a Jena Model
@@ -51,7 +49,7 @@ public class JenaRecordHandler extends RecordHandler {
 	/**
 	 * the jena model we are using to store records
 	 */
-	protected Model model;
+	protected JenaConnect model;
 	/**
 	 * namespace for recordhandlers
 	 */
@@ -122,7 +120,7 @@ public class JenaRecordHandler extends RecordHandler {
 	public JenaRecordHandler(String jdbcDriverClass, String connType, String host, String port, String dbName,
 			String username, String password, String dbType, String modelName, String dataFieldType) {
 		this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password,
-				modelName, dbType, jdbcDriverClass).getJenaModel();
+				modelName, dbType, jdbcDriverClass);
 		initVars(dataFieldType);
 	}
 	
@@ -141,7 +139,7 @@ public class JenaRecordHandler extends RecordHandler {
 	public JenaRecordHandler(String jdbcDriverClass, String connType, String host, String port, String dbName,
 			String username, String password, String dbType, String dataFieldType) {
 		this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password,
-				dbType, jdbcDriverClass).getJenaModel();
+				dbType, jdbcDriverClass);
 		initVars(dataFieldType);
 	}
 	
@@ -150,7 +148,7 @@ public class JenaRecordHandler extends RecordHandler {
 	 * @param jena the model to use
 	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
 	 */
-	public JenaRecordHandler(Model jena, String dataFieldType) {
+	public JenaRecordHandler(JenaConnect jena, String dataFieldType) {
 		this.model = jena;
 		initVars(dataFieldType);
 	}
@@ -164,7 +162,7 @@ public class JenaRecordHandler extends RecordHandler {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public JenaRecordHandler(String configFile, String dataFieldType) throws ParserConfigurationException, SAXException, IOException {
-		this.model = JenaConnect.parseConfig(configFile).getJenaModel();
+		this.model = JenaConnect.parseConfig(configFile);
 		initVars(dataFieldType);
 	}
 	
@@ -173,16 +171,16 @@ public class JenaRecordHandler extends RecordHandler {
 	 * @param dataFieldType the type for data storage
 	 */
 	private void initVars(String dataFieldType) {
-		this.recType = this.model.createProperty(rhNameSpace, "record");
-		this.idType = this.model.createProperty(rhNameSpace, "idField");
-		this.dataType = this.model.createProperty(dataFieldType);
-		this.isA = this.model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#","type");
-		this.metaType = this.model.createProperty(rhNameSpace, "metaData");
-		this.metaRel = this.model.createProperty(rhNameSpace, "metaRel");
-		this.metaCal = this.model.createProperty(rhNameSpace, "metaCal");
-		this.metaOperation = this.model.createProperty(rhNameSpace, "metaOperation");
-		this.metaOperator = this.model.createProperty(rhNameSpace, "metaOperation");
-		this.metaMD5 = this.model.createProperty(rhNameSpace, "metaMD5");
+		this.recType = this.model.getJenaModel().createProperty(rhNameSpace, "record");
+		this.idType = this.model.getJenaModel().createProperty(rhNameSpace, "idField");
+		this.dataType = this.model.getJenaModel().createProperty(dataFieldType);
+		this.isA = this.model.getJenaModel().createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#","type");
+		this.metaType = this.model.getJenaModel().createProperty(rhNameSpace, "metaData");
+		this.metaRel = this.model.getJenaModel().createProperty(rhNameSpace, "metaRel");
+		this.metaCal = this.model.getJenaModel().createProperty(rhNameSpace, "metaCal");
+		this.metaOperation = this.model.getJenaModel().createProperty(rhNameSpace, "metaOperation");
+		this.metaOperator = this.model.getJenaModel().createProperty(rhNameSpace, "metaOperator");
+		this.metaMD5 = this.model.getJenaModel().createProperty(rhNameSpace, "metaMD5");
 	}
 	
 	@Override
@@ -194,31 +192,24 @@ public class JenaRecordHandler extends RecordHandler {
 		if(!overwrite && record != null) {
 			throw new IOException("Record already exists!");
 		} else if(record == null) {
-			record = this.model.createResource();
+			log.debug("Record did not exist...adding");
+			record = this.model.getJenaModel().createResource();
 		}
-		this.model.add(this.model.createStatement(record, this.isA, this.recType));
-		this.model.add(this.model.createStatement(record, this.idType, rec.getID()));
-		this.model.add(this.model.createStatement(record, this.dataType, rec.getData()));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(record, this.isA, this.recType));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(record, this.idType, rec.getID()));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(record, this.dataType, rec.getData()));
 		this.addMetaData(rec, creator, RecordMetaDataType.written);
 	}
 	
 	@Override
 	public void delRecord(String recID) throws IOException {
-		// create query string
-		String sQuery = ""
-				+ "PREFIX rhns: <"+rhNameSpace+"> \n"
-				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-				+ "DELETE { "
-				+ "  ?record ?p ?v "
-				+ "} "
-				+ "WHERE { "
-				+ "  ?record rdf:type rhns:"+this.recType.getLocalName()+" . "
-				+ "  ?record rhns:"+this.idType.getLocalName()+" \""+recID+"\" . "
-				+ "  ?record ?p ?v . "
-				+ "}";
-		UpdateRequest ur = UpdateFactory.create(sQuery);
-		UpdateAction.execute(ur, this.model);
 		delMetaData(recID);
+		Resource r = getRecordResource(recID);
+		if(r == null) {
+			log.debug("Record Does Not Exist");
+			return;
+		}
+		r.removeProperties();
 	}
 	
 	@Override
@@ -239,7 +230,7 @@ public class JenaRecordHandler extends RecordHandler {
 		Query query = QueryFactory.create(sQuery);
 		
 		// execute the query and obtain results
-		QueryExecution qe = QueryExecutionFactory.create(query, this.model);
+		QueryExecution qe = QueryExecutionFactory.create(query, this.model.getJenaModel());
 		ResultSet resultSet = qe.execSelect();
 		
 		// read first result
@@ -247,6 +238,8 @@ public class JenaRecordHandler extends RecordHandler {
 		if(resultSet.hasNext()) {
 			QuerySolution result = resultSet.next();
 			data = result.getLiteral(resultSet.getResultVars().get(0)).getString();
+		} else {
+			throw new IOException("Record Not Found!");
 		}
 		return data;
 	}
@@ -257,14 +250,11 @@ public class JenaRecordHandler extends RecordHandler {
 	 * @return the resource
 	 */
 	private Resource getRecordResource(String recID) {
-		try {
-			return this.model.listStatements(null, this.idType, recID).nextStatement().getSubject();
-		} catch(NullPointerException e) {
-			log.debug("Record not found",e);
-		} catch(NoSuchElementException e) {
-			log.debug("Record not found",e);
+		List<Statement> a = this.model.getJenaModel().listStatements(null, this.idType, recID).toList();
+		if(a == null || a.isEmpty()) {
+			return null;
 		}
-		return null;
+		return a.get(0).getSubject();
 	}
 	
 	@Override
@@ -303,7 +293,7 @@ public class JenaRecordHandler extends RecordHandler {
 			Query query = QueryFactory.create(sQuery);
 			
 			// execute the query and obtain results
-			QueryExecution qe = QueryExecutionFactory.create(query, JenaRecordHandler.this.model);
+			QueryExecution qe = QueryExecutionFactory.create(query, JenaRecordHandler.this.model.getJenaModel());
 			this.resultSet = qe.execSelect();
 		}
 		
@@ -339,7 +329,7 @@ public class JenaRecordHandler extends RecordHandler {
 		String dataFieldType = getParam(params,"dataFieldType",true);
 		if(jenaConfig != null) {
 			try {
-				this.model = JenaConnect.parseConfig(jenaConfig).getJenaModel();
+				this.model = JenaConnect.parseConfig(jenaConfig);
 			} catch(ParserConfigurationException e) {
 				throw new IllegalArgumentException(e);
 			} catch(SAXException e) {
@@ -357,10 +347,10 @@ public class JenaRecordHandler extends RecordHandler {
 			String modelName = getParam(params,"modelName",false);
 			if(modelName != null) {
 				this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password,
-						modelName, dbType, jdbcDriverClass).getJenaModel();
+						modelName, dbType, jdbcDriverClass);
 			} else {
 				this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password,
-						dbType, jdbcDriverClass).getJenaModel();
+						dbType, jdbcDriverClass);
 			}
 		}
 		initVars(dataFieldType);
@@ -373,95 +363,68 @@ public class JenaRecordHandler extends RecordHandler {
 		if(record == null) {
 			throw new IOException("Record "+rec.getID()+" does not exist!");
 		}
-		Resource metaData = this.model.createResource();
-		this.model.add(this.model.createStatement(metaData, this.isA, this.metaType));
-		this.model.add(this.model.createStatement(metaData, this.metaRel, record));
-		this.model.add(this.model.createStatement(metaData, this.metaCal, rmd.getDate().getTimeInMillis()+""));
-		this.model.add(this.model.createStatement(metaData, this.metaOperation, rmd.getOperation().toString()));
-		this.model.add(this.model.createStatement(metaData, this.metaOperator, rmd.getOperator().getName()));
-		this.model.add(this.model.createStatement(metaData, this.metaMD5, rmd.getMD5()));
+		Resource metaData = this.model.getJenaModel().createResource();
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(metaData, this.isA, this.metaType));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(metaData, this.metaRel, record));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(metaData, this.metaCal, rmd.getDate().getTimeInMillis()+""));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(metaData, this.metaOperation, rmd.getOperation().toString()));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(metaData, this.metaOperator, rmd.getOperator().getName()));
+		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(metaData, this.metaMD5, rmd.getMD5()));
 	}
 	
 
 	@Override
 	protected void delMetaData(String recID) throws IOException {
-		// create query string
-		String sQuery = ""
-				+ "PREFIX rhns: <"+rhNameSpace+"> \n"
-				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-				+ "DELETE { "
-				+ "  ?record ?p ?v "
-				+ "} "
-				+ "WHERE { "
-				+ "  ?record rdf:type rhns:"+this.metaType.getLocalName()+" . "
-				+ "  ?record rhns:"+this.metaRel.getLocalName()+" \""+recID+"\" . "
-				+ "  ?record ?p ?v . "
-				+ "}";
-		UpdateRequest ur = UpdateFactory.create(sQuery);
-		UpdateAction.execute(ur, this.model);
+		Resource r = getRecordResource(recID);
+		if(r == null) {
+			throw new IOException("No Matching Record Found For Which To Delete MetaData");
+		}
+		List<Resource> list = this.model.getJenaModel().listResourcesWithProperty(this.metaRel, r).toList();
+		if(list == null || list.isEmpty()) {
+			log.debug("No Metadata to delete");
+			return;
+		}
+		for(Resource metaRes : list) {
+			metaRes.removeProperties();
+		}
 	}
 	
 
 	@Override
 	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		SortedSet<RecordMetaData> retVal = new TreeSet<RecordMetaData>();
-		// create query string
-		String sQuery = ""
-				+ "PREFIX rhns: <"+rhNameSpace+"> \n"
-				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
-				+ "Select ?cal ?operation ?operator ?md5 \n"
-				+ "WHERE { \n"
-				+ "  ?meta rdf:type rhns:"+this.metaType.getLocalName()+" . \n"
-				+ "  ?meta rhns:"+this.metaRel.getLocalName()+" \""+recID+"\" . \n"
-				+ "  ?meta rhns:"+this.metaCal.getLocalName()+" ?cal . \n"
-				+ "  ?meta rhns:"+this.metaOperation.getLocalName()+" ?operation . \n"
-				+ "  ?meta rhns:"+this.metaOperator.getLocalName()+" ?operator . \n"
-				+ "  ?meta rhns:"+this.metaMD5.getLocalName()+" ?md5 . \n"
-				+ "}";
 		
-		// create query
-		Query query = QueryFactory.create(sQuery);
-		
-		// execute the query and obtain results
-		QueryExecution qe = QueryExecutionFactory.create(query, JenaRecordHandler.this.model);
-		ResultSet rs = qe.execSelect();
-		
-		while(rs.hasNext()) {
-			QuerySolution querySol = rs.next();
-			List<String> resultVars = rs.getResultVars();
-			//Get Calendar
-			String varCal = resultVars.get(0);
-			Literal litCal = querySol.getLiteral(varCal);
-			String strCal = litCal.getString();
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
-			cal.setTimeInMillis(Long.parseLong(strCal));
-			//Get Operation
-			String varOperation = resultVars.get(0);
-			Literal litOperation = querySol.getLiteral(varOperation);
-			String strOperation = litOperation.getString();
-			RecordMetaDataType operation = RecordMetaDataType.valueOf(strOperation);
-			//Get Operator
-			String varOperator = resultVars.get(0);
-			Literal litOperator = querySol.getLiteral(varOperator);
-			String strOperator = litOperator.getString();
-			Class<?> operator;
+		Resource r = getRecordResource(recID);
+		if(r == null) {
+			throw new IOException("No Matching Record Found For Which To Retrieve MetaData");
+		}
+		List<Resource> list = this.model.getJenaModel().listResourcesWithProperty(this.metaRel, r).toList();
+		if(list == null || list.isEmpty()) {
+			throw new IOException("No Matching MetaData Found");
+		}
+		for(Resource metaRes : list) {
 			try {
-				operator = Class.forName(strOperator);
+				//Get Calendar
+				String strCal = metaRes.getRequiredProperty(this.metaCal).getString();
+				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
+				cal.setTimeInMillis(Long.parseLong(strCal));
+				//Get Operation
+				String strOperation = metaRes.getRequiredProperty(this.metaOperation).getString();
+				RecordMetaDataType operation = RecordMetaDataType.valueOf(strOperation);
+				//Get Operator
+				String strOperator = metaRes.getRequiredProperty(this.metaOperator).getString();
+				Class<?> operator = Class.forName(strOperator);
+				//Get MD5
+				String md5 = metaRes.getRequiredProperty(this.metaMD5).getString();
+				retVal.add(new RecordMetaData(cal, operator, operation, md5));
+			} catch(PropertyNotFoundException e) {
+				throw new IOException("Property Not Found",e);
 			} catch(ClassNotFoundException e) {
 				throw new IOException(e.getMessage(),e);
 			}
-			//Get MD5
-			String varMD5 = resultVars.get(0);
-			Literal litMD5 = querySol.getLiteral(varMD5);
-			String md5 = litMD5.getString();
-			retVal.add(new RecordMetaData(cal, operator, operation, md5));
-		}
-		if(retVal.isEmpty()) {
-			throw new IOException("No Matching MetaData Found");
 		}
 		return retVal;
 	}
-
 	
 	@Override
 	public void close() throws IOException {

@@ -85,7 +85,7 @@ public class RecordHandlerTest extends TestCase {
 	public void testJenaAddRecord() {
 		log.info("BEGIN JenaRH Test");
 		try {
-			this.rh = new JenaRecordHandler(new JenaConnect("jdbc:h2:XMLVault/TestRH/Jena/h2;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver").getJenaModel(), "dataField");
+			this.rh = new JenaRecordHandler(new JenaConnect("jdbc:h2:XMLVault/TestRH/Jena/h2;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver"), "http://localhost/jenarecordhandlerdemo#data");
 			runAddRecord();
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -112,15 +112,15 @@ public class RecordHandlerTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-//		ArrayList<String> ids = new ArrayList<String>();
-//		for (Record r : this.rh) {
-//			ids.add(r.getID());
-//		}
-//		for (String id : ids) {
-//			this.rh.delRecord(id);
-//		}
+		ArrayList<String> ids = new ArrayList<String>();
+		for (Record r : this.rh) {
+			ids.add(r.getID());
+		}
+		for (String id : ids) {
+			this.rh.delRecord(id);
+		}
 		this.rh.close();
-//		VFS.getManager().resolveFile(new File("."), "XMLVault/TestRH").delete(new AllFileSelector());
+		VFS.getManager().resolveFile(new File("."), "XMLVault/TestRH").delete(new AllFileSelector());
 	}
 	
 }
