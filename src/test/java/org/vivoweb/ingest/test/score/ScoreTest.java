@@ -1,9 +1,10 @@
 /**
  * 
  */
-package org.vivoweb.ingest.score;
+package org.vivoweb.ingest.test.score;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.score.Score;
 
 import junit.framework.TestCase;
 

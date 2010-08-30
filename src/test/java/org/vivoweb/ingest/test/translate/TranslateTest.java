@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.vivoweb.ingest.translate;
+package org.vivoweb.ingest.test.translate;
 
 import junit.framework.TestCase;
 
