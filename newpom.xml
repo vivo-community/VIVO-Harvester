@@ -9,12 +9,12 @@
 
   <repositories>
     <repository>
-      <id>vivotest.ctrip.ufl.edu</id>
+      <id>vivotest.ctrip.ufl.edu releases</id>
       <name>vivotest.ctrip.ufl.edu-releases</name>
       <url>http://vivotest.ctrip.ufl.edu:8080/artifactory/libs-releases-local</url>
     </repository>
 	<repository>
-      <id>vivotest.ctrip.ufl.edu</id>
+      <id>vivotest.ctrip.ufl.edu snapshots</id>
       <name>vivotest.ctrip.ufl.edu-snapshots</name>
       <url>http://vivotest.ctrip.ufl.edu:8080/artifactory/libs-snapshots-local</url>
     </repository>
