@@ -13,6 +13,8 @@ public class WebFetch {
 	 * @author - Dale Scheppler
 	 * @param args - Unused
 	 * @todo Remove the timing, not necessary in this format.
+	 * @todo add configuration and commandline options
+	 * @todo document
 	 */
 	public static void main(String[] args) {
 		
@@ -37,71 +39,34 @@ public class WebFetch {
 	 * @todo At some point this should read configuration data from a configuration file. If I ever plan to release it.
 	 */
 	private static void scrapeTwoWireLogs(){
+		
+		try{
+			Date date = new Date();
+			SimpleDateFormat sdf = new
+			SimpleDateFormat("dd-MMM-yyyy_HH.mm.ss.SSS");
+			String dateString = sdf.format(date);
 
-		Date date = new Date();
-		SimpleDateFormat sdf = new
-		SimpleDateFormat("dd-MMM-yyyy_HH.mm.ss.SSS");
-		String dateString = sdf.format(date);
-
-		System.out.println("Beginning parse of HTML-based logs on 2Wire modem.");
-		System.out.println("The current date/time is: " + dateString);
-		URL twoWire = null;
-		URLConnection urlConnectTwoWire = null;
-		try {
-			twoWire = new URL("http://192.168.1.254/xslt?PAGE=B04");
-		} catch (MalformedURLException e) {
-			System.out.println("Malformed URL. Please enter a new URL and try again.");
-			e.printStackTrace();
-		}
-		System.out.println("The current URL we are checking is: " + twoWire.toString());
-		try {
-			urlConnectTwoWire = twoWire.openConnection();
-		} catch (IOException e) {
-			System.out.println("I/O Exception while attempting to connect to: " + twoWire.toString());
-			e.printStackTrace();
-		}
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new InputStreamReader(urlConnectTwoWire.getInputStream()));
-		} catch (IOException e) {
-			System.out.println("I/O Exception while attempting to establish Buffered Reader Stream from: " + twoWire.toString());
-			e.printStackTrace();
-		}
-		String inputLine;
-		BufferedWriter out = null;
-		try {
-			out = new BufferedWriter(new FileWriter("DSL-2Wire-Log-" + dateString + ".html"));
-		} catch (IOException e1) {
-			System.out.println("Error while trying to initialize logging functionality.");
-			e1.printStackTrace();
-		}
-		try {
+			System.out.println("Beginning parse of HTML-based logs on 2Wire modem.");
+			System.out.println("The current date/time is: " + dateString);
+			URL twoWire = new URL("http://192.168.1.254/xslt?PAGE=B04");
+			URLConnection urlConnectTwoWire = twoWire.openConnection();
+			System.out.println("The current URL we are checking is: " + twoWire.toString());
+			BufferedReader in = new BufferedReader(new InputStreamReader(urlConnectTwoWire.getInputStream()));
+			String inputLine;
+			BufferedWriter out = new BufferedWriter(new FileWriter("DSL-2Wire-Log-" + dateString + ".html"));
 			while ((inputLine = in.readLine()) != null) {
-					out.write(inputLine);
-					out.newLine();
-					
-					
+				out.write(inputLine);
+				out.newLine();
 			}
-			if(out != null)
-			{
 				out.flush();
 				out.close();
-			}
-			else
-			{
-				out.close();	
-			}
-			
-		} catch (IOException e) {
-			System.out.println("I/O Exception while trying to parse output.");
-			e.printStackTrace();
 		}
-		try {
-			in.close();
-		} catch (IOException e) {
-			System.out.println("I/O Exception while trying to close buffered reader.");
+		catch (Exception e)
+		{
 			e.printStackTrace();
+			//SO LAZY -D
 		}
+
 	}
 	/**
 	 * @author Dale Scheppler
