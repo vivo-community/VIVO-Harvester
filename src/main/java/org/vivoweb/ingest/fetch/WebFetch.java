@@ -7,11 +7,12 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class twoWireLogcreator {
+public class WebFetch {
 
 	/**
 	 * @author - Dale Scheppler
 	 * @param args - Unused
+	 * @todo Remove the timing, not necessary in this format.
 	 */
 	public static void main(String[] args) {
 		
@@ -76,14 +77,6 @@ public class twoWireLogcreator {
 		}
 		try {
 			while ((inputLine = in.readLine()) != null) {
-					/*
-					 * We'll worry about the data massaging later. It can dump HTML for now.
-					inputLine = stripString(inputLine, "<div class=\"roundnested\"><div class=\"subtitle\">Statistics</div>Collected forÂ <span class=\"textmono\">");
-					inputLine = stripString(inputLine, "Â");
-					inputLine = stripString(inputLine, "</span><br /><table cellspacing=\"0\" width=\"718\"><tr valign=\"bottom\"><td width=\"250\"></td><td class=\"columnheader\">");
-					inputLine = inputLine.replace("Since Reset", " Since Reset");
-					*/
-					//System.out.println(inputLine); Debug
 					out.write(inputLine);
 					out.newLine();
 					
