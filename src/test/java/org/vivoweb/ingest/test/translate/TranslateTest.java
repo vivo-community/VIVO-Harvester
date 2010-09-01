@@ -85,6 +85,12 @@ public class TranslateTest extends TestCase {
 		
 		//delete the output of the test
 	}
+   
+   private StringBuilder buildPubMedXML(){
+	   StringBuilder outputXML = new StringBuilder();
+	   
+	   return outputXML;
+   }
 
 	@Override
 	protected void tearDown() throws Exception {
