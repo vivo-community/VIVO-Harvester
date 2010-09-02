@@ -94,7 +94,7 @@ public class Transfer {
 	 */
 	public Transfer(ArgList argList) throws IOException {
 		//Require some args
-		if ((!argList.has("o") && !argList.has("O") && !argList.has("d")) || !argList.has("i") && !argList.has("r")) {
+		if ((!argList.has("o") && !argList.has("O") && !argList.has("d")) || !argList.has("i") && !argList.has("r") && !argList.has("h")) {
 			throw new IllegalArgumentException("Must provide one of -o or -O, or -d in addition to -i or -r");
 		}
 		String inConfig = argList.get("i");
@@ -158,35 +158,41 @@ public class Transfer {
 	 */
 	private void transfer() {
 		
-		if (this.output != null) { 
-			if (this.emptyModel) {
-				this.output.removeAll();
-			}
-			this.output.add(this.input);
-		}
+		if (this.input == null) {
+			log.info("Input is empty, nothing to do");
+		} else {
 		
-		//output to file, if requested
-		if (this.dumpFile != null) {
-			if (this.input != null) {
-				log.info("Outputting RDF to " + this.dumpFile);
-				try {
-					this.input.write(new FileOutputStream(this.dumpFile));
-					//this.input.write(System.out);
-				} catch (FileNotFoundException e) {
-					//TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (Exception e) {
-					//TODO Nicholas: Fix Jena error
-					//do nothing; currently bad xml will cause jena to throw error
+			if (this.output != null) { 
+				if (this.emptyModel) {
+					this.output.removeAll();
 				}
-			} else {
-				log.info("Dump Model option not valid when input is RDF file");
+				this.output.add(this.input);
 			}
-		}
-		
-		//empty model
-		if (!this.retainModel) {
-			this.input.removeAll();
+			
+			//output to file, if requested
+			if (this.dumpFile != null) {
+				if (this.input != null) {
+					log.info("Outputting RDF to " + this.dumpFile);
+					try {
+						this.input.write(new FileOutputStream(this.dumpFile));
+						//this.input.write(System.out);
+					} catch (FileNotFoundException e) {
+						//TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						//TODO Nicholas: Fix Jena error
+						//do nothing; currently bad xml will cause jena to throw error
+					}
+				} else {
+					log.info("Dump Model option not valid when input is RDF file");
+				}
+			}
+			
+			//empty model
+			if (!this.retainModel) {
+				log.trace("Emptying Model");
+				this.input.removeAll();
+			}
 		}
 	}
 	
