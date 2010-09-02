@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vivoweb.ingest.transfer;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,6 +22,8 @@ import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
+import org.vivoweb.ingest.util.repo.Record;
+import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -54,7 +57,7 @@ public class Transfer {
 	/**
 	 * dump model option
 	 */
-	private String dumpModel;
+	private String dumpFile;
 	/**
 	 * keep model after transfer
 	 */
@@ -79,7 +82,7 @@ public class Transfer {
 	  this.output = out;
 	  this.inputModelName = inName;
 	  this.outputModelName = outName;
-	  this.dumpModel = file;
+	  this.dumpFile = file;
 	  this.retainModel = keep;
 	  this.emptyModel = empty;
 	}
@@ -102,12 +105,24 @@ public class Transfer {
 		
 		try {
 			if (inRDF != null) {
-				log.trace("Loading RDF " + inRDF + " for input Model");
+				log.info("Loading RDF " + inRDF + " for input");
 				this.input = new JenaConnect(inRDF).getJenaModel();
+			} else if (argList.has("h")) {
+				//Read in records that need processing
+				int processCount = 0;
+				RecordHandler rh = RecordHandler.parseConfig(argList.get("h"));
+				log.info("Loading Records from RecordHandler as input");
+				for (Record r: rh) {
+					log.trace("Record " + r.getID() + " added to incoming processing model");
+					this.input = new JenaConnect().getJenaModel();
+					this.input.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+					processCount += 1;
+				}
+				log.info("Loaded " + processCount + " records");
 			} else {
 				//connect to proper model, if specified on command line
 				if (this.inputModelName != null) {
-					log.trace("Using " + this.inputModelName + " for input Model");
+					log.info("Using " + this.inputModelName + " for input Model");
 					this.input = (new JenaConnect(JenaConnect.parseConfig(inConfig),this.inputModelName)).getJenaModel();
 				} else {
 					this.input = JenaConnect.parseConfig(inConfig).getJenaModel();
@@ -116,7 +131,7 @@ public class Transfer {
 			if (argList.has("o") || argList.has("O")) {
 				//connect to proper model, if specified on command line
 				if (this.outputModelName != null) {
-					log.trace("Using " + this.outputModelName + " for output Model");
+					log.info("Using " + this.outputModelName + " for output Model");
 					this.output = (new JenaConnect(JenaConnect.parseConfig(outConfig),this.outputModelName)).getJenaModel();
 				} else {
 					this.output = JenaConnect.parseConfig(outConfig).getJenaModel();
@@ -129,8 +144,8 @@ public class Transfer {
 		}
 		
 		//output to file, if requested
-		if (argList.has("d")) { 
-			this.dumpModel = argList.get("d");
+		if (argList.has("d")) {
+			this.dumpFile = argList.get("d");
 		}
 		
 		//empty model
@@ -151,11 +166,11 @@ public class Transfer {
 		}
 		
 		//output to file, if requested
-		if (this.dumpModel != null) {
+		if (this.dumpFile != null) {
 			if (this.input != null) {
-				log.trace("Outputting RDF to " + this.dumpModel);
+				log.info("Outputting RDF to " + this.dumpFile);
 				try {
-					this.input.write(new FileOutputStream(this.dumpModel));
+					this.input.write(new FileOutputStream(this.dumpFile));
 					//this.input.write(System.out);
 				} catch (FileNotFoundException e) {
 					//TODO Auto-generated catch block
@@ -188,12 +203,18 @@ public class Transfer {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Transfer");
+		//Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input-model").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false).setDefaultValue("staging"));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output-model").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "MODEL_NAME").setDescription("rdf filename for input").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("dump file").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("recordHandler").withParameter(true, "RECORD_HANDLER").setDescription("record handler for input").setRequired(false));
+		
+		//Outputs
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output-model").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
+		
+		//options
 		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").withParameter(false, "KEEP_FLAG").setDescription("If set, this will not clear the input model after transfer is complete"));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("empty-input-model").withParameter(false, "EMPTY_FLAG").setDescription("If set, this will clear the input model before transfer is started").setRequired(false));
 		return parser;
