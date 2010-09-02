@@ -108,22 +108,8 @@ public class JDBCFetch {
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		String[] temp = connLine.split(":");
-		if(temp.length < 2) {
-			throw new IOException("connLine unparsable: connType");
-		}
-		String connType = temp[1];
-		temp = connLine.split("//");
-		if(temp.length < 2) {
-			throw new IOException("connLine unparsable: host");
-		}
-		String host = temp[1].split("/")[0].split(":")[0];
-		temp = temp[1].split("/");
-		if(temp.length < 2) {
-			throw new IOException("connLine unparsable: dbName");
-		}
-		String dbName = temp[1];
-		this.uriNS = "http://"+host+"/"+connType+"/"+dbName+"/";
+//		this.uriNS = "http://"+host+"/"+connType+"/"+dbName+"/";
+		this.uriNS = connLine+"/";
 	}
 	
 	/**
