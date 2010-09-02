@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.HtmlEntities;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -162,7 +163,15 @@ public class JDBCFetch {
 			this.relations.put(tableName, new HashMap<String,String>());
 			ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 			while(foreignKeys.next()) {
-				this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("FKTABLE_NAME"));
+				StringBuilder sb = new StringBuilder();
+				for(int x = 1; x <= foreignKeys.getMetaData().getColumnCount(); x++) {
+					sb.append(foreignKeys.getMetaData().getColumnName(x));
+					sb.append(" - ");
+					sb.append(foreignKeys.getString(x));
+					sb.append(" || ");
+				}
+				log.debug(sb.toString());
+				this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
 			}
 		}
 		return this.relations.get(tableName);
@@ -234,7 +243,7 @@ public class JDBCFetch {
 	 * @return the namespace
 	 */
 	private String buildTableRecordNS(String tableName) {
-		return this.uriNS+tableName+"/";
+		return this.uriNS+tableName;
 	}
 	
 	/**
@@ -286,7 +295,7 @@ public class JDBCFetch {
 						sb.append(">");
 						
 						//insert field value
-						sb.append(rs.getString(dataField).trim());
+						sb.append(HtmlEntities.htmlEncode(rs.getString(dataField).trim()));
 						
 						//Field END
 						sb.append("</");
@@ -303,7 +312,7 @@ public class JDBCFetch {
 						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
 						
 						//insert field value
-						sb.append("id-"+rs.getString(relationField).trim());
+						sb.append("#id-"+rs.getString(relationField).trim());
 						
 						//Field END
 						sb.append("\"/>\n");

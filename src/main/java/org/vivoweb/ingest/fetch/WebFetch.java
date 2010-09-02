@@ -7,6 +7,9 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * @author - Dale Scheppler
+ */
 public class WebFetch {
 
 	/**
@@ -60,26 +63,11 @@ public class WebFetch {
 			}
 				out.flush();
 				out.close();
-		}
-		catch (Exception e)
-		{
+		} catch(MalformedURLException e) {
 			e.printStackTrace();
-			//SO LAZY -D
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 
 	}
-	/**
-	 * @author Dale Scheppler
-	 * @param baseString - The base string that you want to strip something out of
-	 * @param stringToRemove - The string you wish to remove from baseString
-	 * @return Returns a string minus what you don't want in it.
-	 */
-	@SuppressWarnings("unused")
-	private static String stripString(String baseString, String stringToRemove)
-	{
-		baseString = baseString.replace(stringToRemove, "");
-		return baseString;
-		
-	}
-
 }

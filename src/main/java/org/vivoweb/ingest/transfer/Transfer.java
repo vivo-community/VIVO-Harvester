@@ -10,14 +10,15 @@
  ******************************************************************************/
 package org.vivoweb.ingest.transfer;
 
+import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -45,7 +46,6 @@ public class Transfer {
 	 * Model to write records to
 	 */
 	private Model output;
-	
 	/**
 	 * input model name
 	 */
@@ -106,7 +106,7 @@ public class Transfer {
 		try {
 			if (inRDF != null) {
 				log.info("Loading RDF " + inRDF + " for input");
-				this.input = new JenaConnect(inRDF).getJenaModel();
+				this.input = new JenaConnect(VFS.getManager().resolveFile(new File("."), inRDF).getContent().getInputStream()).getJenaModel();
 			} else if (argList.has("h")) {
 				//Read in records that need processing
 				int processCount = 0;
@@ -178,8 +178,9 @@ public class Transfer {
 						//this.input.write(System.out);
 					} catch (FileNotFoundException e) {
 						//TODO Auto-generated catch block
-						e.printStackTrace();
+						log.error(e.getMessage(),e);
 					} catch (Exception e) {
+						log.error(e.getMessage(),e);
 						//TODO Nicholas: Fix Jena error
 						//do nothing; currently bad xml will cause jena to throw error
 					}
@@ -194,13 +195,6 @@ public class Transfer {
 				this.input.removeAll();
 			}
 		}
-	}
-	
-	/**
-	 * Executes the task
-	 */
-	public void executeTask() {
-		transfer();
 	}
 	
 	/**
@@ -233,7 +227,7 @@ public class Transfer {
 	public static void main(String... args) {
 		log.info("Transfer: Start");
 		try {
-			new Transfer(new ArgList(getParser(), args)).executeTask();
+			new Transfer(new ArgList(getParser(), args)).transfer();
 		} catch(IllegalArgumentException e) {
 			log.fatal(e.getMessage());
 			System.out.println(getParser().getUsage());

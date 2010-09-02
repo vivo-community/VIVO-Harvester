@@ -119,8 +119,7 @@ public class JenaRecordHandler extends RecordHandler {
 	 */
 	public JenaRecordHandler(String jdbcDriverClass, String connType, String host, String port, String dbName,
 			String username, String password, String dbType, String modelName, String dataFieldType) {
-		this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password,
-				modelName, dbType, jdbcDriverClass);
+		this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
 		initVars(dataFieldType);
 	}
 	
@@ -347,8 +346,7 @@ public class JenaRecordHandler extends RecordHandler {
 			String dbType = getParam(params,"dbType",true);
 			String modelName = getParam(params,"modelName",false);
 			if(modelName != null) {
-				this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password,
-						modelName, dbType, jdbcDriverClass);
+				this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
 			} else {
 				this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password,
 						dbType, jdbcDriverClass);

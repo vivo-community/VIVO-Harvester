@@ -1,6 +1,13 @@
-/**
+/*******************************************************************************
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the new BSD license
+ * which accompanies this distribution, and is available at
+ * http://www.opensource.org/licenses/bsd-license.html
  * 
- */
+ * Contributors:
+ *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ ******************************************************************************/
 package org.vivoweb.ingest.test.util.repo;
 
 import java.io.File;
@@ -38,8 +45,28 @@ public class RecordHandlerTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		VFS.getManager().resolveFile(new File("."), "XMLVault/TestRH").createFolder();
-		super.setUp();
 		this.rh = null;
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		ArrayList<String> ids = new ArrayList<String>();
+		//Get list of record ids
+		for (Record r : this.rh) {
+			/*
+			 * Do not do this:
+			 * this.rh.delRecord(r.getID());
+			 * since that will generate ConcurrentModificationException
+			 */
+			ids.add(r.getID());
+		}
+		//Delete records for all ids
+		for (String id : ids) {
+			this.rh.delRecord(id);
+		}
+		this.rh.close();
+		//Delete the testing folder
+		VFS.getManager().resolveFile(new File("."), "XMLVault/TestRH").delete(new AllFileSelector());
 	}
 	
 	/**
@@ -165,28 +192,6 @@ public class RecordHandlerTest extends TestCase {
 			//ignore since this is the expected behavior
 		}
 		log.info("End del test");
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		ArrayList<String> ids = new ArrayList<String>();
-		//Get list of record ids
-		for (Record r : this.rh) {
-			/*
-			 * Do not do this:
-			 * this.rh.delRecord(r.getID());
-			 * since that will generate ConcurrentModificationException
-			 */
-			ids.add(r.getID());
-		}
-		//Delete records for all ids
-		for (String id : ids) {
-			this.rh.delRecord(id);
-		}
-		this.rh.close();
-		//Delete the testing folder
-		VFS.getManager().resolveFile(new File("."), "XMLVault/TestRH").delete(new AllFileSelector());
 	}
 	
 }
