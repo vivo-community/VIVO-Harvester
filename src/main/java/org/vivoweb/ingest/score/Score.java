@@ -94,36 +94,48 @@ public class Score {
 		public static void main(String... args) {
 			
 			log.info("Scoring: Start");
+			try {
+				Score scoring = new Score(args);
 			
-			Score scoring = new Score(args);
-			
-			//Call authorname matching
-			if (scoring.authorName != null) {
-				scoring.authorNameMatch(Integer.parseInt(scoring.authorName));
-			}
-			
-			//Call each exactMatch
-			for (String attribute : scoring.exactMatch) {
-				scoring.exactMatch(attribute);
-			}
-			
-			//Call each pairwise
-			for (String attribute : scoring.pairwise) {
-				scoring.pairwise(attribute);
-			}
-			
-			//Call each regex
-			for (String regex : scoring.regex) {
-				scoring.regex(regex);
-			}
-			
-			//Empty working model
-			if (!scoring.retainWorkingModel) scoring.scoreInput.removeAll();
-			
-			//Close and done
-			scoring.scoreInput.close();
-			scoring.scoreOutput.close();
-			scoring.vivo.close();
+				//Call authorname matching
+				if (scoring.authorName != null) {
+					scoring.authorNameMatch(Integer.parseInt(scoring.authorName));
+				}
+				
+				//Call each exactMatch
+				for (String attribute : scoring.exactMatch) {
+					scoring.exactMatch(attribute);
+				}
+				
+				//Call each pairwise
+				for (String attribute : scoring.pairwise) {
+					scoring.pairwise(attribute);
+				}
+				
+				//Call each regex
+				for (String regex : scoring.regex) {
+					scoring.regex(regex);
+				}
+				
+				//Empty working model
+				if (!scoring.retainWorkingModel) scoring.scoreInput.removeAll();
+				
+				//Close and done
+				scoring.scoreInput.close();
+				scoring.scoreOutput.close();
+				scoring.vivo.close();
+			} catch(ParserConfigurationException e) {
+				log.fatal(e.getMessage(),e);
+			} catch(SAXException e) {
+				log.fatal(e.getMessage(),e);
+			} catch(IOException e) {
+				log.fatal(e.getMessage(),e);
+			} catch(IllegalArgumentException e) {
+				log.fatal(e.getMessage(),e);
+				log.fatal(getParser().getUsage());
+			} catch(Exception e) {
+				log.fatal(e.getMessage(),e);
+			}	
 
 			log.info("Scoring: End");
 		}
@@ -187,8 +199,9 @@ public class Score {
 		/**
 		 * Constructor
 		 * @param args argument list
+		 * @throws Exception exception
 		 */
-		public Score(String... args) {
+		public Score(String... args) throws Exception {
 			try {
 				ArgList opts = new ArgList(getParser(), args);
 				//Require some args
@@ -209,7 +222,7 @@ public class Score {
 					
 					//Connect to vivo
 					JenaConnect jenaVivoDB;
-					if (opts.has("V")) {
+					if (opts.has("v")) {
 						jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(opts.get("V")),vivoModel);
 					} else {
 						jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
@@ -271,17 +284,16 @@ public class Score {
 					this.authorName = opts.get("a");
 					
 				} catch(ParserConfigurationException e) {
-					log.fatal(e.getMessage(),e);
+					throw e;
 				} catch(SAXException e) {
-					log.fatal(e.getMessage(),e);
+					throw e;
 				} catch(IOException e) {
-					log.fatal(e.getMessage(),e);
+					throw e;
 				}
 			} catch(IllegalArgumentException e) {
-				log.fatal(e.getMessage());
-				log.info(getParser().getUsage());
+				throw e;
 			} catch(Exception e) {
-				log.fatal(e.getMessage(),e);
+				throw e;
 			}
 		}
 		
