@@ -216,13 +216,13 @@ public class Score {
 						log.info("Using " + vivoModel + " for model name for vivo");
 						jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(opts.get("v")),vivoModel);
 					} else {
-						jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
+						jenaVivoDB = JenaConnect.parseConfig(opts.get("v"));
 					}
 					
 					//Create working model
 					JenaConnect jenaInputDB;
-					if (opts.has("T")) {
-						jenaInputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("T")),inputModel);
+					if (opts.has("I")) {
+						jenaInputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("i")),inputModel);
 					} else {
 						jenaInputDB = new JenaConnect(jenaVivoDB,inputModel);
 					}
@@ -231,7 +231,7 @@ public class Score {
 					//Create output model
 					JenaConnect jenaOutputDB;
 					if (opts.has("O")) {
-						jenaOutputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("O")),outputModel);
+						jenaOutputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("o")),outputModel);
 					} else {
 						jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
 					}

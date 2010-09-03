@@ -67,18 +67,7 @@ public class ScoreTest extends TestCase {
      */
 	@Override
     protected void setUp() {
-        // create objects under test
-		
-		//Create test rdf file
-		try { 
-			File temp = File.createTempFile("scoretest", ".rdf"); 
-			temp.deleteOnExit();
-			BufferedWriter out = new BufferedWriter(new FileWriter(temp));
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rdf:RDF>\n</rdf:RDF>");
-			out.close();
-		} catch (IOException e) {
-			log.fatal(e.getMessage(),e);
-		}
+		//don't need to do anything
     }
 
     /**
