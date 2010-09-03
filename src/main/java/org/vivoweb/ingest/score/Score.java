@@ -219,11 +219,9 @@ public class Score {
 					jenaOutput = jenaVIVO;
 				}
 				
-				
 				String inputModel = opts.get("I");
 				String outputModel = opts.get("O");
 				String vivoModel = opts.get("V");
-				
 	
 				try {
 					log.info("Loading configuration and models");

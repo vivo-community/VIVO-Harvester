@@ -116,6 +116,7 @@ public class Transfer {
 					log.trace("Record " + r.getID() + " added to incoming processing model");
 					this.input = new JenaConnect().getJenaModel();
 					this.input.read(new ByteArrayInputStream(r.getData().getBytes()), null);
+					r.setProcessed(this.getClass());
 					processCount += 1;
 				}
 				log.info("Loaded " + processCount + " records");
