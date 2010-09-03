@@ -1,10 +1,6 @@
 package org.vivoweb.ingest.test.score;
 
 import org.vivoweb.ingest.score.Score;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.hp.hpl.jena.sparql.util.StringUtils;

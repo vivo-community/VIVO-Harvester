@@ -6,7 +6,6 @@ Transfer
 	Allow for loading from an record handler 
 Junit testing is now implemented; more tests to come 
 New release script for building, testing, and uploading new releases to sourceforge
-Implemented local Maven repository to deal with 303 bug in Maven
 Added rpm to maven build -- NOTE utilize the generated rpm at your own risk -- please file bugs if found
 
 0.4.5
