@@ -20,7 +20,6 @@ public class ScoreTest extends TestCase {
 	 */
 	private static Log log = LogFactory.getLog(ScoreTest.class);
 	
-	
 	/**
 	 * Test Argument parsing for scoring
 	 */
@@ -28,104 +27,38 @@ public class ScoreTest extends TestCase {
 	public void testArguments() {
 		String[] args;
 		Score Test;
+
 		//inputs
-		String tempdir = System.getProperty("java.io.tmpdir");
-
-		if ( !(tempdir.endsWith("/") || tempdir.endsWith("\\")) )
-		   tempdir = tempdir + System.getProperty("file.separator");
-
-		String iArg = tempdir + "scoretest.rdf";
-		String IArg = "config/recordHandlers/PubmedRDFRecordHandler.xml";
-		String TArg = "config/jenaModels/VIVO.xml";
-		String VArg = "config/jenaModels/VIVO.xml";
+		String iArg = "config/jenaModels/VIVO.xml";
+		String vArg = "config/jenaModels/VIVO.xml";
 		
 		//outputs
-		String OArg = "config/jenaModels/VIVO.xml";
+		String oArg = "config/jenaModels/VIVO.xml";
 		
 		//model overrides
-		String tArg = "testTempModel";
-		String oArg = "testOutputModel";
-		String vArg = "testVivoModel";
+		String IArg = "testInputModel";
+		String OArg = "testOutputModel";
+		String VArg = "testVivoModel";
 			
 		log.info("testArguments Start");
 		log.info("Testing good configs");
-		
-		log.info("Testing rdf input configs");
-		log.info("Test -I IArg -V VArg -a 1 -e workEmail -p -r");
-		args = new String[]{"-I",IArg,"-V",VArg,"-a","1","-e","workEmail","-p","-r"};
-		//TODO Nick: ^^ this is how a main method expects to get its args
+
+		//TODO: Nicholas add to arg parsing test. is it still needed?
+		log.info("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
+		args = new String[]{"-i",iArg,"-v",vArg,"-o",oArg,"-a","1","-e","workEmail"};
 		log.info(StringUtils.join(" ", args));
 		try {
 			Test = new Score(args);
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-			//FIXME Nick: Stop checking in tests that wont let Maven Run >:O
-		}
-		
-		log.info("Test -I IArg -V VArg -v vArg -O OArg -o oArg -O OArg -o oArg -a 1 -e workEmail -p -r");
-		args = new String[]{"-I",IArg,"-V",VArg,"-v",vArg,"-O",OArg,"-o",oArg,"-a","1","-e","workEmail","-p","-r"};
-		//TODO Nick: ^^ this is how a main method expects to get its args
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-			//FIXME Nick: Stop checking in tests that wont let Maven Run >:O
-		}
-		
-		log.info("Testing Model input configs");
-		log.info("Test -T TArg -V VArg -a 1 -e workEmail -p -r");
-		args = new String[]{"-T",TArg,"-V ",VArg,"-a","1","-e","workEmail","-p","-r"};
-		//TODO Nick: ^^ this is how a main method expects to get its args
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-			//FIXME Nick: Stop checking in tests that wont let Maven Run >:O
-		}
-		
-		log.info("Test -T TArg -t tArg -V VArg -v vArg -O OArg -o oArg -a 1 -e workEmail -p -r");
-		args = new String[]{"-T",TArg,"-t",tArg,"-V",VArg,"-v",vArg,"-O",OArg,"-o",oArg,"-a","1","-e","workEmail","-p","-r"};
-		//TODO Nick: ^^ this is how a main method expects to get its args
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-			//FIXME Nick: Stop checking in tests that wont let Maven Run >:O
-		}
-		
-		log.info("Testing rdfFile input configs");
-		log.info("Test -i iArg -V VArg -a 1 -e workEmail -p -r");
-		args = new String[]{"-i",iArg,"-V",VArg,"-a","1","-e","workEmail","-p","-r"};
-		//TODO Nick: ^^ this is how a main method expects to get its args
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-			//FIXME Nick: Stop checking in tests that wont let Maven Run >:O
-		}
-		
-		log.info("Test -i iArg -V VArg -v vArg -O OArg -o oArg -a 1 -e workEmail -p -r");
-		args = new String[]{"-i",iArg,"-V",VArg,"-v",vArg,"-O",OArg,"-o",oArg,"-a","1","-e","workEmail","-p","-r"};
-		//TODO Nick: ^^ this is how a main method expects to get its args
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-			//FIXME Nick: Stop checking in tests that wont let Maven Run >:O
+			fail(e.getMessage());
 		}
 		
 		log.info("Testing bad configs");
+		
+		log.info("Testing keep working model");
+		//TODO: add load test for model, one with -k, one without
+		
 		log.info("testArguments End");
 	}
 	
