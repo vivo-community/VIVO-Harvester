@@ -13,22 +13,21 @@
  ******************************************************************************/
 package org.vivoweb.ingest.score;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
-import org.vivoweb.ingest.util.repo.Record;
-import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
+
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -57,19 +56,19 @@ public class Score {
 		/**
 		 * Model for VIVO instance
 		 */
-		private Model vivo;
+		private JenaConnect vivo;
 		/**
 		 * Model where input is stored
 		 */
-		private Model scoreInput;
+		private JenaConnect scoreInput;
 		/**
 		 * Model where output is stored
 		 */
-		private Model scoreOutput;
+		private JenaConnect scoreOutput;
 		/**
 		 * Option to retain working model
 		 */
-		private boolean retainWorkingModel;
+		private boolean keepInputModel;
 		/**
 		 * Arguments for exact match algorithm
 		 */
@@ -97,6 +96,7 @@ public class Score {
 			try {
 				Score scoring = new Score(args);
 			
+				log.info("Running specified algorithims");
 				//Call authorname matching
 				if (scoring.authorName != null) {
 					scoring.authorNameMatch(Integer.parseInt(scoring.authorName));
@@ -118,7 +118,7 @@ public class Score {
 				}
 				
 				//Empty working model
-				if (!scoring.retainWorkingModel) scoring.scoreInput.removeAll();
+				if (!scoring.keepInputModel) scoring.scoreInput.getJenaModel().removeAll();
 				
 				//Close and done
 				scoring.scoreInput.close();
@@ -147,16 +147,16 @@ public class Score {
 		private static ArgParser getParser() {
 			ArgParser parser = new ArgParser("Score");
 			//Inputs
-			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModelConfig").setDescription("inputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoJenaConfig").setDescription("vivoJenaConfig config filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputConfig").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoConfig").setDescription("vivoConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 			
 			//Outputs
-			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModelConfig").setDescription("outputModelConfig config filename").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputConfig").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
 			
 			//Model name overrides
-			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModel").setDescription("vivo model name").withParameter(true, "MODEL_NAME"));
-			parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModel").setDescription("input model name").withParameter(true, "MODEL_NAME").setDefaultValue("scoring"));
-			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModel").setDescription("output model name").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
+			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModel").setDescription("If set, this will override the model name as defined by the vivo config file").withParameter(true, "MODEL_NAME"));
+			parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModel").setDescription("If set, this will override the model name as defined by the input config file").withParameter(true, "MODEL_NAME").setDefaultValue("scoring"));
+			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModel").setDescription("If set, this will override the model name as defined by the output config file").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
 			
 			//scoring algorithms
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
@@ -165,7 +165,7 @@ public class Score {
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
 			
 			//options
-			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-working-model").setDescription("If set, this will not clear the working model after scoring is complete"));
+			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-input-model").setDescription("If set, this will not clear the input model after scoring is complete"));
 			return parser;
 		}
 		
@@ -181,11 +181,11 @@ public class Score {
 		 * @param regexArg perform a regular expression scoring
 		 * @param authorNameArg perform a author name scoring
 		 */
-		public Score(Model jenaVivo, Model jenaScoreInput, Model jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
+		public Score(JenaConnect jenaVivo, JenaConnect jenaScoreInput, JenaConnect jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
 			this.vivo = jenaVivo;
 			this.scoreInput = jenaScoreInput;
 			this.scoreOutput = jenaScoreOutput;
-			this.retainWorkingModel = retainWorkingModelArg;
+			this.keepInputModel = retainWorkingModelArg;
 			this.exactMatch = exactMatchArg;
 			this.pairwise = pairwiseArg;
 			this.regex = regexArg;
@@ -200,18 +200,12 @@ public class Score {
 		public Score(String... args) throws Exception {
 			try {
 				ArgList opts = new ArgList(getParser(), args);
-				//Require some args
-				if (!opts.has("i") && !opts.has("v") && !opts.has("o")) {
-					throw new IllegalArgumentException("Must provide one of -i, -I, or -T");
-				}
 				
 				//Get optional inputs / set defaults
 				//Check for config files, before parsing name options
 				String inputModel = opts.get("I");
 				String outputModel = opts.get("O");
 				String vivoModel = opts.get("V");		
-				boolean allowNonEmptyWorkingModel = opts.has("n");
-				int processCount = 0;
 	
 				try {
 					log.info("Loading configuration and models");
@@ -219,18 +213,20 @@ public class Score {
 					//Connect to vivo
 					JenaConnect jenaVivoDB;
 					if (opts.has("V")) {
+						log.info("Using " + vivoModel + " for model name for vivo");
 						jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(opts.get("v")),vivoModel);
 					} else {
 						jenaVivoDB = JenaConnect.parseConfig(opts.get("V"));
 					}
 					
 					//Create working model
-					JenaConnect jenaTempDB;
+					JenaConnect jenaInputDB;
 					if (opts.has("T")) {
-						jenaTempDB = new JenaConnect(JenaConnect.parseConfig(opts.get("T")),workingModel);
+						jenaInputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("T")),inputModel);
 					} else {
-						jenaTempDB = new JenaConnect(jenaVivoDB,workingModel);
+						jenaInputDB = new JenaConnect(jenaVivoDB,inputModel);
 					}
+					log.info("Using " + inputModel + " for model name for input");
 										
 					//Create output model
 					JenaConnect jenaOutputDB;
@@ -239,41 +235,13 @@ public class Score {
 					} else {
 						jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
 					}
-					
-					Model jenaInputModel = jenaTempDB.getJenaModel();
-					
-					//Load up rdf data from translate into temp model						
-					if (!jenaInputModel.isEmpty() && !allowNonEmptyWorkingModel) {
-						log.warn("Working model was not empty! -- emptying model before execution");
-						jenaInputModel.removeAll();
-					}
-					
-					//Read in rdf from file
-					if (opts.has("i")) {
-						String rdfFile = opts.get("i");
-						jenaInputModel.read(new ByteArrayInputStream(rdfFile.getBytes()), null);
-						log.info("Loaded " + rdfFile);
-					}
-					
-					//Read in records that need processing
-					if (opts.has("I")) {				
-						RecordHandler rh = RecordHandler.parseConfig(opts.get("I"));
-						for (Record r: rh) {
-							if (r.needsProcessed(Score.class) || opts.has("f")) {
-								log.trace("Record " + r.getID() + " added to incoming processing model");
-								jenaInputModel.read(new ByteArrayInputStream(r.getData().getBytes()), null);
-								r.setProcessed(Score.class);
-								processCount += 1;
-							}	
-						}
-						log.info("Loaded " + processCount + " records");
-					}
+					log.info("Using " + outputModel + " for model name for output");
 					
 					//create object
-					this.vivo = jenaVivoDB.getJenaModel();
-					this.scoreInput = jenaInputModel;
-					this.scoreOutput = jenaOutputDB.getJenaModel();					
-					this.retainWorkingModel = opts.has("k");
+					this.vivo = jenaVivoDB;
+					this.scoreInput = jenaInputDB;
+					this.scoreOutput = jenaOutputDB;					
+					this.keepInputModel = opts.has("k");
 					this.exactMatch = opts.getAll("e");
 					this.pairwise = opts.getAll("p");
 					this.regex = opts.getAll("r");
@@ -556,7 +524,7 @@ public class Score {
 			 	//Exact Match
 			 	log.info("Executing authorNameMatch");
 			 	log.debug(matchQuery);
-		 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+		 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
 		 		
 		    	//Log extra info message if none found
 		    	if (!scoreInputResult.hasNext()) {
@@ -587,7 +555,7 @@ public class Score {
 	    			
 	    			log.debug(queryString);
 	    			
-	    			vivoResult = executeQuery(this.vivo, queryString);
+	    			vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
 	    			
 	    			//Loop thru results and only keep if the last name, and first initial match
 	    			while (vivoResult.hasNext()) {
@@ -629,7 +597,7 @@ public class Score {
 	    			}
 	    			if (matchNode != null && authorNode != null) {
 	    				log.trace("Keeping " + matchNode.toString());
-	    				commitResultNode(this.scoreOutput,authorNode,paperResource,matchNode,paperNode);
+	    				commitResultNode(this.scoreOutput.getJenaModel(),authorNode,paperResource,matchNode,paperNode);
 	    			}
 	            }	    			 
 		 }
@@ -657,7 +625,7 @@ public class Score {
 			 	//Exact Match
 			 	log.info("Executing exactMatch for " + attribute);
 			 	log.debug(matchQuery);
-		 		scoreInputResult = executeQuery(this.scoreInput, matchQuery);
+		 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
 		 		
 		    	//Log extra info message if none found
 		    	if (!scoreInputResult.hasNext()) {
@@ -685,9 +653,9 @@ public class Score {
 	    			
 	    			log.debug(queryString);
 	    			
-	    			vivoResult = executeQuery(this.vivo, queryString);
+	    			vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
 	    			
-	    			commitResultSet(this.scoreOutput,vivoResult,paperResource,matchNode,paperNode);
+	    			commitResultSet(this.scoreOutput.getJenaModel(),vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
 		 }
 	}
