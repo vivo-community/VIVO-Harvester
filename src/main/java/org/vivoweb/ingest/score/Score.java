@@ -147,16 +147,16 @@ public class Score {
 		private static ArgParser getParser() {
 			ArgParser parser = new ArgParser("Score");
 			//Inputs
-			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputConfig").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
-			parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoConfig").setDescription("vivoConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+			parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivo-config").setDescription("vivoConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 			
 			//Outputs
-			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputConfig").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
+			parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
 			
 			//Model name overrides
-			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModel").setDescription("If set, this will override the model name as defined by the vivo config file").withParameter(true, "MODEL_NAME"));
-			parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModel").setDescription("If set, this will override the model name as defined by the input config file").withParameter(true, "MODEL_NAME").setDefaultValue("scoring"));
-			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModel").setDescription("If set, this will override the model name as defined by the output config file").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
+			parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivo-model").setDescription("If set, this will override the model name as defined by the vivo config file").withParameter(true, "MODEL_NAME"));
+			parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input-model").setDescription("If set, this will override the model name as defined by the input config file").withParameter(true, "MODEL_NAME").setDefaultValue("scoring"));
+			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output-model").setDescription("If set, this will override the model name as defined by the output config file").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
 			
 			//scoring algorithms
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
