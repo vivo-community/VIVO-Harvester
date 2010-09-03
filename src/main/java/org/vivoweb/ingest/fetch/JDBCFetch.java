@@ -149,14 +149,14 @@ public class JDBCFetch {
 			this.relations.put(tableName, new HashMap<String,String>());
 			ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 			while(foreignKeys.next()) {
-				StringBuilder sb = new StringBuilder();
-				for(int x = 1; x <= foreignKeys.getMetaData().getColumnCount(); x++) {
-					sb.append(foreignKeys.getMetaData().getColumnName(x));
-					sb.append(" - ");
-					sb.append(foreignKeys.getString(x));
-					sb.append(" || ");
-				}
-				log.debug(sb.toString());
+//				StringBuilder sb = new StringBuilder();
+//				for(int x = 1; x <= foreignKeys.getMetaData().getColumnCount(); x++) {
+//					sb.append(foreignKeys.getMetaData().getColumnName(x));
+//					sb.append(" - ");
+//					sb.append(foreignKeys.getString(x));
+//					sb.append(" || ");
+//				}
+//				log.debug(sb.toString());
 				this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
 			}
 		}
