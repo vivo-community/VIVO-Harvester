@@ -203,9 +203,27 @@ public class Score {
 				
 				//Get optional inputs / set defaults
 				//Check for config files, before parsing name options
+				String jenaVIVO = opts.get("v");
+				
+				String jenaInput;
+				if (opts.has("i")) {
+					jenaInput = opts.get("i");
+				} else {
+					jenaInput = jenaVIVO;
+				}
+				
+				String jenaOutput;
+				if (opts.has("o")) {
+					jenaOutput = opts.get("o");
+				} else {
+					jenaOutput = jenaVIVO;
+				}
+				
+				
 				String inputModel = opts.get("I");
 				String outputModel = opts.get("O");
-				String vivoModel = opts.get("V");		
+				String vivoModel = opts.get("V");
+				
 	
 				try {
 					log.info("Loading configuration and models");
@@ -214,15 +232,15 @@ public class Score {
 					JenaConnect jenaVivoDB;
 					if (opts.has("V")) {
 						log.info("Using " + vivoModel + " for model name for vivo");
-						jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(opts.get("v")),vivoModel);
+						jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(jenaVIVO),vivoModel);
 					} else {
-						jenaVivoDB = JenaConnect.parseConfig(opts.get("v"));
+						jenaVivoDB = JenaConnect.parseConfig(jenaVIVO);
 					}
 					
 					//Create working model
 					JenaConnect jenaInputDB;
-					if (opts.has("I")) {
-						jenaInputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("i")),inputModel);
+					if (opts.has("i")) {
+						jenaInputDB = new JenaConnect(JenaConnect.parseConfig(jenaInput),inputModel);
 					} else {
 						jenaInputDB = new JenaConnect(jenaVivoDB,inputModel);
 					}
@@ -230,8 +248,8 @@ public class Score {
 										
 					//Create output model
 					JenaConnect jenaOutputDB;
-					if (opts.has("O")) {
-						jenaOutputDB = new JenaConnect(JenaConnect.parseConfig(opts.get("o")),outputModel);
+					if (opts.has("o")) {
+						jenaOutputDB = new JenaConnect(JenaConnect.parseConfig(jenaOutput),outputModel);
 					} else {
 						jenaOutputDB = new JenaConnect(jenaVivoDB,outputModel);
 					}

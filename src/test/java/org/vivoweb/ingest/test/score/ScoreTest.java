@@ -39,9 +39,29 @@ public class ScoreTest extends TestCase {
 		log.info("testArguments Start");
 		log.info("Testing good configs");
 
-		//TODO: Nicholas add to arg parsing test. is it still needed?
+		//TODO: Nicholas add to arg parsing test
 		log.info("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
 		args = new String[]{"-i",iArg,"-v",vArg,"-o",oArg,"-a","1","-e","workEmail"};
+		log.info(StringUtils.join(" ", args));
+		try {
+			Test = new Score(args);
+		} catch(Exception e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		}
+		
+		log.info("Test -v vArg -a 1");
+		args = new String[]{"-v",vArg,"-a","1"};
+		log.info(StringUtils.join(" ", args));
+		try {
+			Test = new Score(args);
+		} catch(Exception e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		}
+		
+		log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg-a 1 -e workEmail");
+		args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg,"-a","1","-e","workEmail"};
 		log.info(StringUtils.join(" ", args));
 		try {
 			Test = new Score(args);

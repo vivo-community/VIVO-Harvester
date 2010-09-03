@@ -10,7 +10,7 @@ java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetc
 java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  
 
 # Execute Transfer to transfer rdf into "scoring" JENA model
-java -cp bin/ingest-0.5.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O scoring  
+java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O scoring  
 
 # Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
 java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -a 3
