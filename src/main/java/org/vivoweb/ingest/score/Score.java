@@ -22,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.translate.XSLTranslator;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;

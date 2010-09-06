@@ -39,6 +39,7 @@ public class TranslateTest extends TestCase {
    /**
  * @param xmlFile	The file to Translate
  * @param xmlOutput	The expected Output
+ * @param mapFile FIXME
  * @throws IOException	FIXME
  * @throws ClassNotFoundException FIXME
  */
