@@ -94,7 +94,9 @@ public class Score {
 			
 			log.info("Scoring: Start");
 			try {
-				new Score(args).execute();
+				Score Scoring = new Score(args);
+				Scoring.execute();
+				Scoring.close();
 			} catch(ParserConfigurationException e) {
 				log.fatal(e.getMessage(),e);
 			} catch(SAXException e) {
@@ -106,16 +108,24 @@ public class Score {
 				log.fatal(getParser().getUsage());
 			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
-			}	
+			}
 			
 			log.info("Scoring: End");
 		}
 		
+		public void close() {
+			//Close and done
+			this.scoreInput.close();
+			this.scoreOutput.close();
+			this.vivo.close();
+		}
+
 		/**
 		 * Execute score object algorithms
 		 */
 		public void execute() {
 			log.info("Running specified algorithims");
+			
 			//Call authorname matching
 			if (this.authorName != null) {
 				this.authorNameMatch(Integer.parseInt(this.authorName));
@@ -140,11 +150,6 @@ public class Score {
 			if (!this.keepInputModel) {
 				this.scoreInput.getJenaModel().removeAll();
 			}
-			
-			//Close and done
-			this.scoreInput.close();
-			this.scoreOutput.close();
-			this.vivo.close();
 		}
 		
 		
@@ -190,9 +195,9 @@ public class Score {
 		 * @param regexArg perform a regular expression scoring
 		 * @param authorNameArg perform a author name scoring
 		 */
-		public Score(JenaConnect jenaVivo, JenaConnect jenaScoreInput, JenaConnect jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
-			this.vivo = jenaVivo;
+		public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
 			this.scoreInput = jenaScoreInput;
+			this.vivo = jenaVivo;
 			this.scoreOutput = jenaScoreOutput;
 			this.keepInputModel = retainWorkingModelArg;
 			this.exactMatch = exactMatchArg;

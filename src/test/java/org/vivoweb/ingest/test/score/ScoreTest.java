@@ -6,11 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.vivoweb.ingest.score.Score;
 import org.vivoweb.ingest.util.repo.JenaConnect;
+import org.xml.sax.SAXException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 
 import com.hp.hpl.jena.sparql.util.StringUtils;
@@ -42,7 +45,6 @@ public class ScoreTest extends TestCase {
 	/**
 	 * Test Argument parsing for scoring
 	 */
-	@SuppressWarnings("unused")
 	public void testArguments() {
 		String[] args;
 		Score Test;
@@ -58,109 +60,116 @@ public class ScoreTest extends TestCase {
 		String IArg = "testInputModel";
 		String OArg = "testOutputModel";
 		String VArg = "testVivoModel";
+		
+		JenaConnect input;
+		JenaConnect output;
+		JenaConnect vivo;
+		
+		//Load up everything before starting
+		try {
+			input = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),IArg);
+			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream());
 			
-		log.info("testArguments Start");
-		log.info("Testing good configs");
+			vivo = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),VArg);
+			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream());
 
-		//TODO: Nicholas add to arg parsing test
-		log.info("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
-		args = new String[]{"-i",iArg,"-v",vArg,"-o",oArg,"-a","1","-e","workEmail"};
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
+			output = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),OArg);		
+			
+			log.info("testArguments Start");
+			log.info("Testing good configs");
+	
+			log.info("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
+			args = new String[]{"-i",iArg,"-v",vArg,"-o",oArg,"-a","1","-e","workEmail"};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+			} catch(Exception e) {
+				log.error(e.getMessage(),e);
+				fail(e.getMessage());
+			}
+			
+			log.info("Test -v vArg -a 1");
+			args = new String[]{"-v",vArg,"-a","1"};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+			} catch(Exception e) {
+				log.error(e.getMessage(),e);
+				fail(e.getMessage());
+			}
+			
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
+			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg,"-a","1","-e","workEmail"};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+			} catch(Exception e) {
+				log.error(e.getMessage(),e);
+				fail(e.getMessage());
+			}
+			
+			log.info("Testing bad configs");
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
+			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg,"-Q"};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+				log.error("Invalid arguement passed -- score object invalid");
+				fail("Invalid arguement passed -- score object invalid");
+			} catch(Exception e) {
+				//we want exception
+			}
+			
+			log.info("Testing keep working model");
+			//keep input model
+			
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -k");
+			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg, "-k"};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+				Test.execute();
+				if (Test.scoreInput.getJenaModel().isEmpty()) {
+					log.error("Model emptied -k arg violated");
+					fail("Model emptied -k arg violated");
+				}
+			} catch(Exception e) {
+				log.error(e.getMessage(),e);
+				fail(e.getMessage());
+			}
+			
+			//don't keep input model
+			log.info("Testing don't keep working model");
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl");
+			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+				Test.execute();
+				if (!Test.scoreInput.getJenaModel().isEmpty()) {
+					log.error("Model not empty -k arg violated");
+					fail("Model not empty -k arg violated");
+				}
+				Test.close();
+			} catch(Exception e) {
+				log.error(e.getMessage(),e);
+				fail(e.getMessage());
+			}
+	
+			input.close();
+			vivo.close();
+			output.close();
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		} catch (ParserConfigurationException e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		} catch (SAXException e) {
 			log.error(e.getMessage(),e);
 			fail(e.getMessage());
 		}
 		
-		log.info("Test -v vArg -a 1");
-		args = new String[]{"-v",vArg,"-a","1"};
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-			fail(e.getMessage());
-		}
-		
-		log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
-		args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg,"-a","1","-e","workEmail"};
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-			fail(e.getMessage());
-		}
-		
-		log.info("Testing bad configs");
-		log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
-		args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg,"-Q"};
-		log.info(StringUtils.join(" ", args));
-		try {
-			Test = new Score(args);
-			log.error("Invalid arguement passed -- score object invalid");
-			fail("Invalid arguement passed -- score object invalid");
-		} catch(Exception e) {
-			//we want exception
-		}
-		
-		//TODO: Nicholas find out why JENA is giving com.hp.hpl.jena.shared.ClosedException: GraphRDB error here
-//		log.info("Testing keep working model");
-//		//keep input model
-//		//load up some input
-//		try {
-//			JenaConnect input = new JenaConnect(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream());
-//			try {
-//				//transfer it into IArg model
-//				JenaConnect vivo = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),IArg);
-//				vivo.getJenaModel().add(input.getJenaModel());
-//			} catch (IOException e) {
-//				log.error(e.getMessage(),e);
-//				fail(e.getMessage());
-//			} catch (ParserConfigurationException e) {
-//				log.error(e.getMessage(),e);
-//				fail(e.getMessage());
-//			} catch (SAXException e) {
-//				log.error(e.getMessage(),e);
-//				fail(e.getMessage());
-//			}
-//		} catch (FileSystemException e) {
-//			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-//		}
-//		
-//		log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -k");
-//		args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg, "-k"};
-//		log.info(StringUtils.join(" ", args));
-//		try {
-//			Test = new Score(args);
-//			Test.execute();
-//			if (Test.scoreInput.getJenaModel().isEmpty()) {
-//				log.error("Model emptied -k arg violated");
-//				fail("Model emptied -k arg violated");
-//			}
-//		} catch(Exception e) {
-//			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-//		}
-//		
-//		//don't keep input model
-//		log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl");
-//		args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg};
-//		log.info(StringUtils.join(" ", args));
-//		try {
-//			Test = new Score(args);
-//			Test.execute();
-//			if (!Test.scoreInput.getJenaModel().isEmpty()) {
-//				log.error("Model not empty -k arg violated");
-//				fail("Model not empty -k arg violated");
-//			}
-//		} catch(Exception e) {
-//			log.error(e.getMessage(),e);
-//			fail(e.getMessage());
-//		}
-
 		log.info("testArguments End");
 	}
 	
@@ -169,32 +178,45 @@ public class ScoreTest extends TestCase {
 	 */
 	public void testAlgorithims() {
 		Score Test;
-		List<String> workEmail = Arrays.asList("sjg2002@med.cornell.edu");
+		List<String> workEmail = Arrays.asList("workEmail");
+		List<String> blank = Arrays.asList();
 		JenaConnect input;
 		JenaConnect output;
 		JenaConnect vivo;
 		
-		//load input models
+		//load input models		
 		try {
-			input = new JenaConnect(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream());
-			vivo = new JenaConnect(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream());
-			try {
-				output = new JenaConnect(vivo,"scoretest_output");
+				input = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"input");
+				input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream());
 				
+				vivo = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"vivo");
+				vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream());
+	
+				output = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"output");
+
 				//run author score
-				Test = new Score(input,vivo,output,false,null,null,null,"1");
+				Test = new Score(input,vivo,output,true,blank,blank,blank,"1");
+				Test.execute();
+				
 				//check output model
 				if (Test.scoreOutput.getJenaModel().isEmpty()) {
+					log.error("Didn't match anything with author name scoring");
 					fail("Didn't match anything with author name scoring");
 				}
+				
 				//empty output model
 				Test.scoreOutput.getJenaModel().removeAll();
+				
 				//run exactmatch score
-				Test = new Score(input,vivo,output,false,workEmail,null,null,null);
+				Test = new Score(input,vivo,output,false,workEmail,blank,blank,null);
+				Test.execute();
+				
 				//check output model
 				if (Test.scoreOutput.getJenaModel().isEmpty()) {
+					log.error("Didn't match anything with exactMatch scoring");
 					fail("Didn't match anything with exactMatch scoring");
 				}
+				Test.close();
 				
 				input.close();
 				vivo.close();
@@ -203,11 +225,13 @@ public class ScoreTest extends TestCase {
 			} catch (IOException e) {
 				log.error(e.getMessage(),e);
 				fail(e.getMessage());
+			} catch (ParserConfigurationException e) {
+				log.error(e.getMessage(),e);
+				fail(e.getMessage());
+			} catch (SAXException e) {
+				log.error(e.getMessage(),e);
+				fail(e.getMessage());
 			}
-		} catch (FileSystemException e) {
-			log.error(e.getMessage(),e);
-			fail(e.getMessage());
-		}
 	}
 	
     /**
@@ -246,7 +270,7 @@ public class ScoreTest extends TestCase {
 					"<bibo:volume>40</bibo:volume>" +
 					"<bibo:number>2</bibo:number>" +
 					"<core:Year>2010</core:Year>" +
-					"<score:workEmail>@med.cornell.edu</score:workEmail>" +
+					"<score:workEmail>sjg2002@med.cornell.edu</score:workEmail>" +
 					"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubMed/article/pmid20113680/authorship1\"/>" +
 					"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh1\"/>" +
 					"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh2\"/>" +
@@ -436,12 +460,22 @@ public class ScoreTest extends TestCase {
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 						"<Model>" +
 						"<Param name=\"dbClass\">org.h2.Driver</Param>" +
-						"<Param name=\"dbType\">HSQLDB</Param>" +
-						"<Param name=\"dbUrl\">jdbc:h2:mem;MODE=HSQLDB</Param>" +
+						"<Param name=\"dbType\">HSQL</Param>" +
+						"<Param name=\"dbUrl\">jdbc:h2:mem</Param>" +
 						"<Param name=\"modelName\">testVivoModel</Param>" +
 						"<Param name=\"dbUser\">sa</Param>" +
 						"<Param name=\"dbPass\"></Param>" +
 						"</Model>");
+			out.close();
+//			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+//			"<Model>" +
+//			"<Param name=\"dbClass\">org.apache.derby.jdbc.EmbeddedDriver</Param>" +
+//			"<Param name=\"dbType\">Derby</Param>" +
+//			"<Param name=\"dbUrl\">jdbc:derby:temp;create=true</Param>" +
+//			"<Param name=\"modelName\">testVivoModel</Param>" +
+//			"<Param name=\"dbUser\"></Param>" +
+//			"<Param name=\"dbPass\"></Param>" +
+//			"</Model>");
 			out.close();
 		} catch (IOException e) {
 			log.fatal(e.getMessage(),e);

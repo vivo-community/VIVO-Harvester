@@ -110,7 +110,6 @@ public class RDFTranslator {
 	 * @param workflow the workflow
 	 * @param toBeModified the model to be modified
 	 */
-	@SuppressWarnings("unused")
 	public void processWorkFlow(Model workflow, Model toBeModified){
 		//TODO Stephen: make this work
 	}
