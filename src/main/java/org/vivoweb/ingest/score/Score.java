@@ -22,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.translate.XSLTranslator;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -94,36 +95,7 @@ public class Score {
 			
 			log.info("Scoring: Start");
 			try {
-				Score scoring = new Score(args);
-			
-				log.info("Running specified algorithims");
-				//Call authorname matching
-				if (scoring.authorName != null) {
-					scoring.authorNameMatch(Integer.parseInt(scoring.authorName));
-				}
-				
-				//Call each exactMatch
-				for (String attribute : scoring.exactMatch) {
-					scoring.exactMatch(attribute);
-				}
-				
-				//Call each pairwise
-				for (String attribute : scoring.pairwise) {
-					scoring.pairwise(attribute);
-				}
-				
-				//Call each regex
-				for (String regex : scoring.regex) {
-					scoring.regex(regex);
-				}
-				
-				//Empty working model
-				if (!scoring.keepInputModel) scoring.scoreInput.getJenaModel().removeAll();
-				
-				//Close and done
-				scoring.scoreInput.close();
-				scoring.scoreOutput.close();
-				scoring.vivo.close();
+				new Score(args).execute();
 			} catch(ParserConfigurationException e) {
 				log.fatal(e.getMessage(),e);
 			} catch(SAXException e) {
@@ -136,9 +108,47 @@ public class Score {
 			} catch(Exception e) {
 				log.fatal(e.getMessage(),e);
 			}	
-
+			
 			log.info("Scoring: End");
 		}
+		
+		/**
+		 * Execute score object algorithms
+		 */
+		public void execute() {
+			log.info("Running specified algorithims");
+			//Call authorname matching
+			if (this.authorName != null) {
+				this.authorNameMatch(Integer.parseInt(this.authorName));
+			}
+			
+			//Call each exactMatch
+			for (String attribute : this.exactMatch) {
+				this.exactMatch(attribute);
+			}
+			
+			//Call each pairwise
+			for (String attribute : this.pairwise) {
+				this.pairwise(attribute);
+			}
+			
+			//Call each regex
+			for (String attribute : this.regex) {
+				this.regex(attribute);
+			}
+			
+			//Empty working model
+			if (!this.keepInputModel) {
+				this.scoreInput.getJenaModel().removeAll();
+			}
+			
+			//Close and done
+			this.scoreInput.close();
+			this.scoreOutput.close();
+			this.vivo.close();
+		}
+		
+		
 		
 		/**
 		 * Get the OptionParser
