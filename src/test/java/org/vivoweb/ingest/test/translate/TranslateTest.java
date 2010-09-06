@@ -210,214 +210,214 @@ private StringBuilder buildPubMedOutput(){
 	   outputXML.append("<core:informationResourceInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship3'/>");
 	   outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh1'/>");
 	   outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh2/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh3'/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh4'/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh5'/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh6'/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh7'/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh8'/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh9'/>");
-outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh10'/>");
-outputXML.append("<core:hasPublicationVenue rdf:resource='http://vivoweb.org/pubMed/journal/j0882-2786'/>");
-outputXML.append("<score:hasCreateDate rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/dateCreated'/>");
-outputXML.append("<score:hasCompleteDate rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/dateCompleted'/>");
-outputXML.append("</rdf:Description>");
-outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/authorship1'>");
-outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#Authorship'/>");
-outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource'/>");
-outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#DependentResource'/>");
-outputXML.append("<core:linkedAuthor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/author1'/>");
-outputXML.append("<core:linkedInformationResource rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<core:authorRank rdf:datatype='http://www.w3.org/2001/XMLSchema#int'>1</core:authorRank>");
-outputXML.append("</rdf:Description>");
-outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/author1'>");
-outputXML.append("<rdf:type rdf:resource='http://xmlns.com/foaf/0.1/Person'/>");
-outputXML.append("<rdfs:label>Martin, William</rdfs:label>");
-outputXML.append("<foaf:lastName>Martin</foaf:lastName>");
-outputXML.append("<score:foreName>William</score:foreName>");
-outputXML.append("<score:initials>W</score:initials>");
-outputXML.append("<score:suffix/>");
-/*outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/authorship1'/>");
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/authorship2">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship'/>");
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource'/>");
-outputXML.append("<core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/author2'/>");
-outputXML.append("<core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</core:authorRank>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/author2">
-outputXML.append("<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person'/>");
-outputXML.append("<rdfs:label>Lewis, Emma</rdfs:label>
-outputXML.append("<foaf:lastName>Lewis</foaf:lastName>
-outputXML.append("<score:foreName>Emma</score:foreName>
-outputXML.append("<score:initials>E</score:initials>
-outputXML.append("<score:suffix/>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/authorship2'/>");
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/authorship3">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship'/>");
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource'/>");
-outputXML.append("<core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/author3'/>");
-outputXML.append("<core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</core:authorRank>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/author3">
-outputXML.append("<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person'/>");
-outputXML.append("<rdfs:label>Nicol, Ailsa</rdfs:label>
-outputXML.append("<foaf:lastName>Nicol</foaf:lastName>
-outputXML.append("<score:foreName>Ailsa</score:foreName>
-outputXML.append("<score:initials>A</score:initials>
-outputXML.append("<score:suffix/>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/authorship3'/>");
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh1">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Bone Density</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Bone Density</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier/>
-outputXML.append("<score:QualifierIsMajorTerm/>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh2">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Dental Arch</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Dental Arch</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier>anatomy &amp; histology</score:Qualifier>
-outputXML.append("<score:QualifierIsMajorTerm>N</score:QualifierIsMajorTerm>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh3">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Dental Implantation, Endosseous</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Dental Implantation, Endosseous</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier>contraindications</score:Qualifier>
-outputXML.append("<score:QualifierIsMajorTerm>Y</score:QualifierIsMajorTerm>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh4">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Dental Implants</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Dental Implants</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier>contraindications</score:Qualifier>
-outputXML.append("<score:QualifierIsMajorTerm>Y</score:QualifierIsMajorTerm>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh5">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Dental Restoration Failure</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Dental Restoration Failure</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier/>
-outputXML.append("<score:QualifierIsMajorTerm/>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh6">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Gingiva</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Gingiva</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier>anatomy &amp; histology</score:Qualifier>
-outputXML.append("<score:QualifierIsMajorTerm>N</score:QualifierIsMajorTerm>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh7">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Humans</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Humans</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier/>
-outputXML.append("<score:QualifierIsMajorTerm/>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh8">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Infection</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Infection</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier/>
-outputXML.append("<score:QualifierIsMajorTerm/>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh9">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Periodontitis</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Periodontitis</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier/>
-outputXML.append("<score:QualifierIsMajorTerm/>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:nodeID="pmid19885433mesh10">
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm'/>");
-outputXML.append("<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea'/>");
-outputXML.append("<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<rdfs:label>Risk Factors</rdfs:label>
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("<score:Descriptor>Risk Factors</score:Descriptor>
-outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
-outputXML.append("<score:Qualifier/>
-outputXML.append("<score:QualifierIsMajorTerm/>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:about="http://vivoweb.org/pubMed/journal/j0882-2786">
-outputXML.append("<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal'/>");
-outputXML.append("<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-outputXML.append("<core:Title>The International journal of oral &amp; maxillofacial implants</core:Title>
-outputXML.append("<rdfs:label>The International journal of oral &amp; maxillofacial implants</rdfs:label>
-outputXML.append("<bibo:ISSN>0882-2786</bibo:ISSN>
-outputXML.append("<core:publicationVenueFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433'/>");
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/dateCreated">
-outputXML.append("<core:Year>"2009"</core:Year>
-outputXML.append("<core:Month>"11"</core:Month>
-outputXML.append("<core:Day>"03"</core:Day>
-outputXML.append("</rdf:Description>
-outputXML.append("<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/dateCompleted">
-outputXML.append("<core:Year>2010</core:Year>
-outputXML.append("<core:Month>02</core:Month>
-outputXML.append("<core:Day>02</core:Day>
-outputXML.append("</rdf:Description>
-	   </rdf:RDF>*/
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh3'/>");
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh4'/>");
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh5'/>");
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh6'/>");
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh7'/>");
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh8'/>");
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh9'/>");
+		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh10'/>");
+		outputXML.append("<core:hasPublicationVenue rdf:resource='http://vivoweb.org/pubMed/journal/j0882-2786'/>");
+		outputXML.append("<score:hasCreateDate rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/dateCreated'/>");
+		outputXML.append("<score:hasCompleteDate rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/dateCompleted'/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/authorship1'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#Authorship'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#DependentResource'/>");
+		outputXML.append("<core:linkedAuthor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/author1'/>");
+		outputXML.append("<core:linkedInformationResource rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<core:authorRank rdf:datatype='http://www.w3.org/2001/XMLSchema#int'>1</core:authorRank>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/author1'>");
+		outputXML.append("<rdf:type rdf:resource='http://xmlns.com/foaf/0.1/Person'/>");
+		outputXML.append("<rdfs:label>Martin, William</rdfs:label>");
+		outputXML.append("<foaf:lastName>Martin</foaf:lastName>");
+		outputXML.append("<score:foreName>William</score:foreName>");
+		outputXML.append("<score:initials>W</score:initials>");
+		outputXML.append("<score:suffix/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<core:authorInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship1'/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/authorship2'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#Authorship'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#DependentResource'/>");
+		outputXML.append("<core:linkedAuthor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/author2'/>");
+		outputXML.append("<core:linkedInformationResource rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<core:authorRank rdf:datatype='http://www.w3.org/2001/XMLSchema#int'>2</core:authorRank>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/author2'>");
+		outputXML.append("<rdf:type rdf:resource='http://xmlns.com/foaf/0.1/Person'/>");
+		outputXML.append("<rdfs:label>Lewis, Emma</rdfs:label>");
+		outputXML.append("<foaf:lastName>Lewis</foaf:lastName>");
+		outputXML.append("<score:foreName>Emma</score:foreName>");
+		outputXML.append("<score:initials>E</score:initials>");
+		outputXML.append("<score:suffix/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<core:authorInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship2'/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/authorship3'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#Authorship'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#DependentResource'/>");
+		outputXML.append("<core:linkedAuthor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/author3'/>");
+		outputXML.append("<core:linkedInformationResource rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<core:authorRank rdf:datatype='http://www.w3.org/2001/XMLSchema#int'>3</core:authorRank>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/author3'>");
+		outputXML.append("<rdf:type rdf:resource='http://xmlns.com/foaf/0.1/Person'/>");
+		outputXML.append("<rdfs:label>Nicol, Ailsa</rdfs:label>");
+		outputXML.append("<foaf:lastName>Nicol</foaf:lastName>");
+		outputXML.append("<score:foreName>Ailsa</score:foreName>");
+		outputXML.append("<score:initials>A</score:initials>");
+		outputXML.append("<score:suffix/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<core:authorInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship3'/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh1'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Bone Density</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Bone Density</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier/>");
+		outputXML.append("<score:QualifierIsMajorTerm/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh2'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Dental Arch</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Dental Arch</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier>anatomy &amp; histology</score:Qualifier>");
+		outputXML.append("<score:QualifierIsMajorTerm>N</score:QualifierIsMajorTerm>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh3'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Dental Implantation, Endosseous</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Dental Implantation, Endosseous</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier>contraindications</score:Qualifier>");
+		outputXML.append("<score:QualifierIsMajorTerm>Y</score:QualifierIsMajorTerm>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh4'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Dental Implants</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Dental Implants</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier>contraindications</score:Qualifier>");
+		outputXML.append("<score:QualifierIsMajorTerm>Y</score:QualifierIsMajorTerm>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh5'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Dental Restoration Failure</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Dental Restoration Failure</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier/>");
+		outputXML.append("<score:QualifierIsMajorTerm/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh6'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Gingiva</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Gingiva</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier>anatomy &amp; histology</score:Qualifier>");
+		outputXML.append("<score:QualifierIsMajorTerm>N</score:QualifierIsMajorTerm>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh7'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Humans</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Humans</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier/>");
+		outputXML.append("<score:QualifierIsMajorTerm/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh8'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Infection</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Infection</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier/>");
+		outputXML.append("<score:QualifierIsMajorTerm/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh9'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Periodontitis</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Periodontitis</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier/>");
+		outputXML.append("<score:QualifierIsMajorTerm/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh10'>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#SubjectArea'/>");
+		outputXML.append("<core:SubjectAreaFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Risk Factors</rdfs:label>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<score:meshTermOf rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<score:Descriptor>Risk Factors</score:Descriptor>");
+		outputXML.append("<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>");
+		outputXML.append("<score:Qualifier/>");
+		outputXML.append("<score:QualifierIsMajorTerm/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/journal/j0882-2786'>");
+		outputXML.append("<rdf:type rdf:resource='http://purl.org/ontology/bibo/Journal'/>");
+		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
+		outputXML.append("<core:Title>The International journal of oral &amp; maxillofacial implants</core:Title>");
+		outputXML.append("<rdfs:label>The International journal of oral &amp; maxillofacial implants</rdfs:label>");
+		outputXML.append("<bibo:ISSN>0882-2786</bibo:ISSN>");
+		outputXML.append("<core:publicationVenueFor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/dateCreated'>");
+		outputXML.append("<core:Year>'2009'</core:Year>");
+		outputXML.append("<core:Month>'11'</core:Month>");
+		outputXML.append("<core:Day>'03'</core:Day>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/dateCompleted'>");
+		outputXML.append("<core:Year>2010</core:Year>");
+		outputXML.append("<core:Month>02</core:Month>");
+		outputXML.append("<core:Day>02</core:Day>");
+		outputXML.append("</rdf:Description>");
+		outputXML.append("</rdf:RDF>");
 	   return outputXML;
    }
 
