@@ -56,15 +56,15 @@ public class Score {
 		/**
 		 * Model for VIVO instance
 		 */
-		private JenaConnect vivo;
+		public JenaConnect vivo;
 		/**
 		 * Model where input is stored
 		 */
-		private JenaConnect scoreInput;
+		public JenaConnect scoreInput;
 		/**
 		 * Model where output is stored
 		 */
-		private JenaConnect scoreOutput;
+		public JenaConnect scoreOutput;
 		/**
 		 * Option to retain working model
 		 */

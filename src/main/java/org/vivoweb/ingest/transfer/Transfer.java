@@ -95,7 +95,7 @@ public class Transfer {
 	public Transfer(ArgList argList) throws IOException {
 		//Require some args
 		if ((!argList.has("o") && !argList.has("O") && !argList.has("d")) || !argList.has("i") && !argList.has("r") && !argList.has("h")) {
-			throw new IllegalArgumentException("Must provide one of -o or -O, or -d in addition to -i or -r");
+			throw new IllegalArgumentException("Must provide one of -o or -O, or -d in addition to -i or -r or -h");
 		}
 		String inConfig = argList.get("i");
 		String inRDF = argList.get("r");
