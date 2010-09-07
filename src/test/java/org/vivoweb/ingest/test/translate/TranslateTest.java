@@ -91,7 +91,7 @@ private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) 
 	    try {
 	      String line = null;
 	      while ((line = inputReader.readLine()) != null){
-	        resultantXML.append(line);
+	        resultantXML.append(line.trim().replace('\'', '\"'));
 	      }
 	    }
    		finally{
