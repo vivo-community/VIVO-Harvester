@@ -35,17 +35,32 @@ public class TranslateTest extends TestCase {
    public void testNothing() {
    	assertTrue(true);
    }
+
+   /**
+    * 
+    */
+   public void testPubMedXSLT(){
+	   	   try {
+	   		xslTranslateTest(buildPubMedXML().toString(), buildPubMedOutput().toString(),"config/datamaps/PubMedToVIVO.xsl");
+	   	} catch (IOException e) {
+	   		// TODO Auto-generated catch block
+	   		fail("IOException " + e.getMessage());
+	   	} catch (ClassNotFoundException e) {
+	   		// TODO Auto-generated catch block
+	   		fail("ClassNotFoundException " + e.getMessage());
+	   	}
+   	}
    
    /**
- * @param xmlFile	The file to Translate
- * @param xmlOutput	The expected Output
- * @param mapFile FIXME
- * @throws IOException	FIXME
- * @throws ClassNotFoundException FIXME
- */
-private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) throws IOException, ClassNotFoundException{
+	* @param xmlFile	The file to Translate
+	* @param xmlOutput	The expected Output
+	* @param mapFile FIXME
+	* @throws IOException	FIXME
+	* @throws ClassNotFoundException FIXME
+	*/
+   private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) throws IOException, ClassNotFoundException {
 		
-	//set up the test file TestVault/transTests/PubMed
+	   //set up the test file TestVault/transTests/PubMed
 		VFS.getManager().resolveFile(new File("."), "TestVault/Translate/XML").createFolder();
 		VFS.getManager().resolveFile(new File("."), "TestVault/Translate/RDF").createFolder();
 		VFS.getManager().resolveFile(new File("."), "TestVault/Translate/RH").createFolder();
@@ -69,7 +84,7 @@ private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) 
 	    
 	    //add a record to the record handler
 	    TextFileRecordHandler rh = new TextFileRecordHandler("TestVault/Translate/XML");
-	    rh.addRecord("1",xmlFile, Class.forName("vivoweb.org.ingest.fetch.Fetch"));
+	    rh.addRecord("1",xmlFile, this.getClass());
 	    
 		//create the arguments to be passed		
 		String[] argsToBePassed = new String[6];
@@ -92,6 +107,11 @@ private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) 
 	      String line = null;
 	      while ((line = inputReader.readLine()) != null){
 	        resultantXML.append(line.trim().replace('\'', '\"'));
+	        
+	        if (line.trim().startsWith("<score:workEmail>@"))
+	        {
+	        	fail("Improper Truncation of Work Email");
+	        }
 	      }
 	    }
    		finally{
@@ -102,26 +122,8 @@ private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) 
 		assertEquals(resultantXML.toString(), xmlOutput);
 		
 		//delete the output of the test
-		VFS.getManager().resolveFile("TestVault/Translate/XML").delete(new AllFileSelector());
-		VFS.getManager().resolveFile("TestVault/Translate/RDF").delete(new AllFileSelector());
-		VFS.getManager().resolveFile("TestVault/Translate/RH").delete(new AllFileSelector());
+		VFS.getManager().resolveFile("TestVault/Translate").delete(new AllFileSelector());
    }
-   
-   /**
- * 
- */
-public void pubMedXSLTest(){
-	   try {
-		xslTranslateTest(buildPubMedXML().toString(), buildPubMedOutput().toString(),"config/datamaps/PubMedToVIVO.xsl");
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		fail(e.getMessage());
-	} catch (ClassNotFoundException e) {
-		// TODO Auto-generated catch block
-		fail(e.getMessage());
-	}
-   }
-   
    
    /**
  * @return String of an example pubmed file
@@ -424,7 +426,7 @@ private StringBuilder buildPubMedOutput(){
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
+		VFS.getManager().resolveFile("TestVault/Translate").delete(new AllFileSelector());
 	}
 
 }
