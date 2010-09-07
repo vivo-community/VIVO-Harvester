@@ -243,7 +243,6 @@ public class ScoreTest extends TestCase {
 		//Create input rdf file -- Stanley Goldsmith :-) pubmed id 20113680
 		try { 
 			this.scoreInput= File.createTempFile("scoretest_input", ".rdf"); 
-			this.scoreInput.deleteOnExit();
 			BufferedWriter out = new BufferedWriter(new FileWriter(this.scoreInput));
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 					"<rdf:RDF xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
@@ -413,7 +412,6 @@ public class ScoreTest extends TestCase {
 		//Create vivo rdf file -- stanley goldsmith :-)
 		try { 
 			this.vivoRDF= File.createTempFile("scoretest_vivo", ".rdf"); 
-			this.vivoRDF.deleteOnExit();
 			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoRDF));
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 						"<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
@@ -455,7 +453,6 @@ public class ScoreTest extends TestCase {
 		//create VIVO.xml
 		try { 
 			this.vivoXML = File.createTempFile("scoretest_vivo", ".xml"); 
-			this.vivoXML.deleteOnExit();
 			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoXML));
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 						"<Model>" +
