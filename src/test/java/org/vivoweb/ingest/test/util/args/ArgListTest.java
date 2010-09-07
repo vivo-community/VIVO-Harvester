@@ -51,7 +51,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#get(java.lang.String)}.
+	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#get(java.lang.String) get(String arg)}.
 	 */
 	public final void testGet() {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUT_FILE").setDescription("output file").setRequired(true));
@@ -64,7 +64,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String)}.
+	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String) getAll(String arg)}.
 	 */
 	public final void testGetAllString() {
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
@@ -81,7 +81,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String, boolean)}.
+	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String arg, boolean includeDefaultValue)}.
 	 */
 	public final void testGetAllStringBoolean() {
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
@@ -103,7 +103,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#has(java.lang.String)}.
+	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#has(java.lang.String) has(String arg)}.
 	 */
 	public final void testHas() {
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("flag").setDescription("test flag"));

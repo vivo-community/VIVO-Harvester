@@ -10,14 +10,11 @@
  ******************************************************************************/
 package org.vivoweb.ingest.test.util.repo;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.vfs.AllFileSelector;
-import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.JDBCRecordHandler;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.ingest.util.repo.JenaRecordHandler;
@@ -29,22 +26,16 @@ import org.vivoweb.ingest.util.repo.TextFileRecordHandler;
 
 /**
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
- *
  */
 public class RecordHandlerTest extends TestCase {
 	/**
 	 * Log4J Logger
 	 */
 	private static Log log = LogFactory.getLog(RecordHandlerTest.class);
-	
-	/**
-	 * 
-	 */
-	private RecordHandler rh;
+	/** */private RecordHandler rh;
 	
 	@Override
 	protected void setUp() throws Exception {
-		VFS.getManager().resolveFile(new File("."), "XMLVault/TestRH").createFolder();
 		this.rh = null;
 	}
 	
@@ -65,17 +56,15 @@ public class RecordHandlerTest extends TestCase {
 			this.rh.delRecord(id);
 		}
 		this.rh.close();
-		//Delete the testing folder
-		VFS.getManager().resolveFile(new File("."), "XMLVault/TestRH").delete(new AllFileSelector());
 	}
 	
 	/**
-	 * 
+	 * Test method for {@link org.vivoweb.ingest.util.repo.JDBCRecordHandler#JDBCRecordHandler(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String) JDBCRecordHandler(String jdbcDriverClass, String connLine, String username, String password, String tableName, String dataFieldName)}.
 	 */
 	public void testJDBCAddRecord() {
 		log.info("BEGIN JDBCRH Test");
 		try {
-			this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:XMLVault/TestRH/JDBC/h2", "sa", "", "testdb", "data");
+			this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestRH-JDBC", "sa", "", "testdb", "data");
 			runBattery();
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
@@ -85,12 +74,12 @@ public class RecordHandlerTest extends TestCase {
 	}
 	
 	/**
-	 * 
+	 * Test method for {@link org.vivoweb.ingest.util.repo.TextFileRecordHandler#TextFileRecordHandler(java.lang.String) TextFileRecordHandler(String fileDir)}.
 	 */
 	public void testTextFileAddRecord() {
 		log.info("BEGIN TFRH Test");
 		try {
-			this.rh = new TextFileRecordHandler("XMLVault/TestRH/TextFile");
+			this.rh = new TextFileRecordHandler("tmp://testTFRH");
 			runBattery();
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
@@ -100,7 +89,7 @@ public class RecordHandlerTest extends TestCase {
 	}
 	
 	/**
-	 * 
+	 * Test method for {@link org.vivoweb.ingest.util.repo.MapRecordHandler#MapRecordHandler() MapRecordHandler()}.
 	 */
 	public void testMapAddRecord() {
 		log.info("BEGIN MapRH Test");
@@ -115,12 +104,12 @@ public class RecordHandlerTest extends TestCase {
 	}
 	
 	/**
-	 * 
+	 * Test method for {@link org.vivoweb.ingest.util.repo.JenaRecordHandler#JenaRecordHandler(org.vivoweb.ingest.util.repo.JenaConnect, java.lang.String) JenaRecordHandler(JenaConnect jena, String dataFieldType)}.
 	 */
 	public void testJenaAddRecord() {
 		log.info("BEGIN JenaRH Test");
 		try {
-			this.rh = new JenaRecordHandler(new JenaConnect("jdbc:h2:XMLVault/TestRH/Jena/h2;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver"), "http://localhost/jenarecordhandlerdemo#data");
+			this.rh = new JenaRecordHandler(new JenaConnect("jdbc:h2:mem:TestRH-Jena;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver"), "http://localhost/jenarecordhandlerdemo#data");
 			runBattery();
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
