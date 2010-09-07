@@ -130,9 +130,9 @@ public class OAIFetch {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("OAIFetch");
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("repository url").withParameter(true, "URL"));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (MM/DD/YYYY)").withParameter(true, "DATE"));
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (MM/DD/YYYY)").withParameter(true, "DATE"));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("repository url without http://").withParameter(true, "URL"));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
 		return parser;
 	}
