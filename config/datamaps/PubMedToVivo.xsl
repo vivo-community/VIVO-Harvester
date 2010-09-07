@@ -125,9 +125,20 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
 			<core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}" />
 			<core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
+			<xsl:choose>
+				<xsl:when test="string(ForeName)">
+					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+				</xsl:when>
+				<xsl:when test="string(LastName)">
+					<rdfs:label>Authorship for <xsl:value-of select="LastName" /></rdfs:label>
+				</xsl:when>
+				<xsl:when test="string(CollectiveName)">
+					<rdfs:label>Authorship for <xsl:value-of select="CollectiveName" /></rdfs:label>
+				</xsl:when>
+			</xsl:choose>
 			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
+		<!-- <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
@@ -152,7 +163,7 @@
 			</xsl:choose>
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
-		</rdf:Description>
+		</rdf:Description> -->
 	</xsl:template>	
 
 	

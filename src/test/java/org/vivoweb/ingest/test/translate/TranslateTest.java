@@ -11,10 +11,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.translate.XSLTranslator;
+import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.vivoweb.ingest.util.repo.TextFileRecordHandler;
+import org.xml.sax.SAXException;
 
 import junit.framework.TestCase;
 
@@ -26,6 +30,9 @@ public class TranslateTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+//		VFS.getManager().resolveFile(new File("."), "TestVault/Translate").createFolder();
+//	   	VFS.getManager().resolveFile(new File("."), "TestVault/Translate/RH/inRH.xml").createFile();
+//	   	VFS.getManager().resolveFile(new File("."), "TestVault/Translate/RH/outRH.xml").createFile();
 		super.setUp();
 	}
 
@@ -33,7 +40,7 @@ public class TranslateTest extends TestCase {
     * I am adding this so you stop killing maven builds >:O
     */
    public void testNothing() {
-   	assertTrue(true);
+	   	assertTrue(true);
    }
 
    /**
@@ -41,14 +48,10 @@ public class TranslateTest extends TestCase {
     */
    public void testPubMedXSLT(){
 	   	   try {
-	   		xslTranslateTest(buildPubMedXML().toString(), buildPubMedOutput().toString(),"config/datamaps/PubMedToVIVO.xsl");
-	   	} catch (IOException e) {
-	   		// TODO Auto-generated catch block
-	   		fail("IOException " + e.getMessage());
-	   	} catch (ClassNotFoundException e) {
-	   		// TODO Auto-generated catch block
-	   		fail("ClassNotFoundException " + e.getMessage());
-	   	}
+	   		xslTranslateTest(buildPubMedXML().toString(), buildPubMedOutput().toString(),"config/datamaps/PubMedToVivo.xsl");
+	   	} catch (Exception e) {
+	   		fail(e.getMessage());
+	   	} 
    	}
    
    /**
@@ -57,72 +60,52 @@ public class TranslateTest extends TestCase {
 	* @param mapFile FIXME
 	* @throws IOException	FIXME
 	* @throws ClassNotFoundException FIXME
+ * @throws SAXException 
+ * @throws ParserConfigurationException 
 	*/
-   private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) throws IOException, ClassNotFoundException {
+   private void xslTranslateTest(String xmlFile, String xmlOutput, String mapFile) throws IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
 		
-	   //set up the test file TestVault/transTests/PubMed
-		VFS.getManager().resolveFile(new File("."), "TestVault/Translate/XML").createFolder();
-		VFS.getManager().resolveFile(new File("."), "TestVault/Translate/RDF").createFolder();
-		VFS.getManager().resolveFile(new File("."), "TestVault/Translate/RH").createFolder();
-		
-		//grab config file for getting/storing the result
-		File inFile = new File("TestVault/Translate/RH/inRH.xml");
+	   //grab config file for getting/storing the result
+	   	File inFile = File.createTempFile("inputRHConfig", "xml");
 		Writer output = new BufferedWriter(new FileWriter(inFile));
 	    output.write("<?xml version='1.0' encoding='UTF-8'?>" +
 	    		"<RecordHandler type='org.vivoweb.ingest.util.repo.TextFileRecordHandler'>" +
-	    		"<Param name='fileDir'>TestVault/Translate/XML</Param>" +
+	    		"<Param name='fileDir'>tmp://TranslateTestXML</Param>" +
 	    		"</RecordHandler>");
 	    output.close();
 		
-	    		File outFile = new File("TestVault/Translate/RH/outRH.xml");
+   		File outFile = File.createTempFile("outRHConfig", "xml");
 		output = new BufferedWriter(new FileWriter(outFile));
 	    output.write("<?xml version='1.0' encoding='UTF-8'?>" +
 	    		"<RecordHandler type='org.vivoweb.ingest.util.repo.TextFileRecordHandler'>" +
-	    		"<Param name='fileDir'>TestVault/Translate/RDF</Param>" +
+	    		"<Param name='fileDir'>tmp://TranslateTestRDF</Param>" +
 	    		"</RecordHandler>");
 	    output.close();
 	    
 	    //add a record to the record handler
-	    TextFileRecordHandler rh = new TextFileRecordHandler("TestVault/Translate/XML");
-	    rh.addRecord("1",xmlFile, this.getClass());
+	    RecordHandler inRH = RecordHandler.parseConfig(inFile.getAbsolutePath());
+	    inRH.addRecord("1",xmlFile, this.getClass());
 	    
 		//create the arguments to be passed		
 		String[] argsToBePassed = new String[6];
 		argsToBePassed[0] = "-x";
 		argsToBePassed[1] = mapFile;
 		argsToBePassed[2] = "-i";
-		argsToBePassed[3] = "TestVault/Translate/RH/inRH.xml";
+		argsToBePassed[3] = inFile.getAbsolutePath();
 		argsToBePassed[4] = "-o";
-		argsToBePassed[5] = "TestVault/Translate/RH/outRH.xml";
+		argsToBePassed[5] = outFile.getAbsolutePath();
 		
 		//call the xlsTranslate
 		XSLTranslator.main(argsToBePassed);
 		
 		//get the file that was translated
-		File resultantOutput = new File("TestVault/Translate/RDF/1");
-		//buildinto String
-		StringBuilder resultantXML = new StringBuilder("");
-		BufferedReader inputReader = new BufferedReader(new FileReader(resultantOutput));
-	    try {
-	      String line = null;
-	      while ((line = inputReader.readLine()) != null){
-	        resultantXML.append(line.trim().replace('\'', '\"'));
-	        
-	        if (line.trim().startsWith("<score:workEmail>@"))
-	        {
-	        	fail("Improper Truncation of Work Email");
-	        }
-	      }
-	    }
-   		finally{
-	    	inputReader.close();
-	    }
+	    RecordHandler outRH = RecordHandler.parseConfig(outFile.getAbsolutePath());
+	    outRH.getRecord("1").getData();
 		
+	    VFS.getManager().resolveFile(new File("."),"output.xml").getContent().getOutputStream().write(outRH.getRecordData("1").getBytes());
+	    
    		//compare the output
-		assertEquals(resultantXML.toString(), xmlOutput);
-		
-		//delete the output of the test
-		VFS.getManager().resolveFile("TestVault/Translate").delete(new AllFileSelector());
+		assertEquals(outRH.getRecordData("1").replace('\"', '\'').replace("\n ",""), xmlOutput);
    }
    
    /**
@@ -176,7 +159,7 @@ private StringBuilder buildPubMedXML(){
 	   outputXML.append("</PubmedArticleSet>");
 	   return outputXML;
    }
-   
+
    /**
  * @return String of the expected output from a translate of pubmed
  */
@@ -212,7 +195,7 @@ private StringBuilder buildPubMedOutput(){
 	   outputXML.append("<core:informationResourceInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship2'/>");
 	   outputXML.append("<core:informationResourceInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship3'/>");
 	   outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh1'/>");
-	   outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh2/>");
+	   outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh2'/>");
 		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh3'/>");
 		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh4'/>");
 		outputXML.append("<core:hasSubjectArea rdf:nodeID='pmid19885433mesh5'/>");
@@ -232,17 +215,8 @@ private StringBuilder buildPubMedOutput(){
 		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#DependentResource'/>");
 		outputXML.append("<core:linkedAuthor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/author1'/>");
 		outputXML.append("<core:linkedInformationResource rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Authorship for Martin, William</rdfs:label>");
 		outputXML.append("<core:authorRank rdf:datatype='http://www.w3.org/2001/XMLSchema#int'>1</core:authorRank>");
-		outputXML.append("</rdf:Description>");
-		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/author1'>");
-		outputXML.append("<rdf:type rdf:resource='http://xmlns.com/foaf/0.1/Person'/>");
-		outputXML.append("<rdfs:label>Martin, William</rdfs:label>");
-		outputXML.append("<foaf:lastName>Martin</foaf:lastName>");
-		outputXML.append("<score:foreName>William</score:foreName>");
-		outputXML.append("<score:initials>W</score:initials>");
-		outputXML.append("<score:suffix/>");
-		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-		outputXML.append("<core:authorInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship1'/>");
 		outputXML.append("</rdf:Description>");
 		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/authorship2'>");
 		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#Authorship'/>");
@@ -251,17 +225,8 @@ private StringBuilder buildPubMedOutput(){
 		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#DependentResource'/>");
 		outputXML.append("<core:linkedAuthor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/author2'/>");
 		outputXML.append("<core:linkedInformationResource rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Authorship for Lewis, Emma</rdfs:label>");
 		outputXML.append("<core:authorRank rdf:datatype='http://www.w3.org/2001/XMLSchema#int'>2</core:authorRank>");
-		outputXML.append("</rdf:Description>");
-		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/author2'>");
-		outputXML.append("<rdf:type rdf:resource='http://xmlns.com/foaf/0.1/Person'/>");
-		outputXML.append("<rdfs:label>Lewis, Emma</rdfs:label>");
-		outputXML.append("<foaf:lastName>Lewis</foaf:lastName>");
-		outputXML.append("<score:foreName>Emma</score:foreName>");
-		outputXML.append("<score:initials>E</score:initials>");
-		outputXML.append("<score:suffix/>");
-		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-		outputXML.append("<core:authorInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship2'/>");
 		outputXML.append("</rdf:Description>");
 		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/authorship3'>");
 		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#Authorship'/>");
@@ -270,17 +235,8 @@ private StringBuilder buildPubMedOutput(){
 		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/core#DependentResource'/>");
 		outputXML.append("<core:linkedAuthor rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/author3'/>");
 		outputXML.append("<core:linkedInformationResource rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433'/>");
+		outputXML.append("<rdfs:label>Authorship for Nicol, Ailsa</rdfs:label>");
 		outputXML.append("<core:authorRank rdf:datatype='http://www.w3.org/2001/XMLSchema#int'>3</core:authorRank>");
-		outputXML.append("</rdf:Description>");
-		outputXML.append("<rdf:Description rdf:about='http://vivoweb.org/pubMed/article/pmid19885433/author3'>");
-		outputXML.append("<rdf:type rdf:resource='http://xmlns.com/foaf/0.1/Person'/>");
-		outputXML.append("<rdfs:label>Nicol, Ailsa</rdfs:label>");
-		outputXML.append("<foaf:lastName>Nicol</foaf:lastName>");
-		outputXML.append("<score:foreName>Ailsa</score:foreName>");
-		outputXML.append("<score:initials>A</score:initials>");
-		outputXML.append("<score:suffix/>");
-		outputXML.append("<rdf:type rdf:resource='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing'/>");
-		outputXML.append("<core:authorInAuthorship rdf:resource='http://vivoweb.org/pubMed/article/pmid19885433/authorship3'/>");
 		outputXML.append("</rdf:Description>");
 		outputXML.append("<rdf:Description rdf:nodeID='pmid19885433mesh1'>");
 		outputXML.append("<rdf:type rdf:resource='http://vivoweb.org/ontology/score#MeshTerm'/>");
@@ -426,7 +382,7 @@ private StringBuilder buildPubMedOutput(){
 
 	@Override
 	protected void tearDown() throws Exception {
-		VFS.getManager().resolveFile("TestVault/Translate").delete(new AllFileSelector());
+//		VFS.getManager().resolveFile(new File("."),"TestVault/Translate").delete(new AllFileSelector());
 	}
 
 }
