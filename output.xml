@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:bibo="http://purl.org/ontology/bibo/"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owlPlus="http://www.w3.org/2006/12/owl2-xml#"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+         xmlns:skos="http://www.w3.org/2008/05/skos#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:vocab="http://purl.org/vocab/vann/"
+         xmlns:swvocab="http://www.w3.org/2003/06/sw-vocab-status/ns#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:core="http://vivoweb.org/ontology/core#"
+         xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:score="http://vivoweb.org/ontology/score#">
+   <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433">
+      <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <bibo:pmid>19885433</bibo:pmid>
+      <rdfs:label>Local risk factors for implant therapy.</rdfs:label>
+      <core:Title>Local risk factors for implant therapy.</core:Title>
+      <score:Affiliation>Department of Oral and Maxillofacial Surgery, University of Florida College of Dentistry, 1600 SW Archer Road, Room D7-6, Gainesville, FL 32610, USA. wmartin@dental.ufl.edu</score:Affiliation>
+      <bibo:volume>24 Suppl</bibo:volume>
+      <bibo:number/>
+      <core:Year>2009</core:Year>
+      <score:workEmail>wmartin@dental.ufl.edu</score:workEmail>
+      <core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/authorship1"/>
+      <core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/authorship2"/>
+      <core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/authorship3"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh1"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh2"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh3"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh4"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh5"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh6"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh7"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh8"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh9"/>
+      <core:hasSubjectArea rdf:nodeID="pmid19885433mesh10"/>
+      <core:hasPublicationVenue rdf:resource="http://vivoweb.org/pubMed/journal/j0882-2786"/>
+      <score:hasCreateDate rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/dateCreated"/>
+      <score:hasCompleteDate rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/dateCompleted"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/authorship1">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+      <core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/author1"/>
+      <core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Authorship for Martin, William</rdfs:label>
+      <core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</core:authorRank>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/authorship2">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+      <core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/author2"/>
+      <core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Authorship for Lewis, Emma</rdfs:label>
+      <core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</core:authorRank>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/authorship3">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+      <core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433/author3"/>
+      <core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Authorship for Nicol, Ailsa</rdfs:label>
+      <core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</core:authorRank>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh1">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Bone Density</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Bone Density</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier/>
+      <score:QualifierIsMajorTerm/>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh2">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Dental Arch</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Dental Arch</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier>anatomy &amp; histology</score:Qualifier>
+      <score:QualifierIsMajorTerm>N</score:QualifierIsMajorTerm>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh3">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Dental Implantation, Endosseous</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Dental Implantation, Endosseous</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier>contraindications</score:Qualifier>
+      <score:QualifierIsMajorTerm>Y</score:QualifierIsMajorTerm>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh4">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Dental Implants</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Dental Implants</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier>contraindications</score:Qualifier>
+      <score:QualifierIsMajorTerm>Y</score:QualifierIsMajorTerm>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh5">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Dental Restoration Failure</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Dental Restoration Failure</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier/>
+      <score:QualifierIsMajorTerm/>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh6">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Gingiva</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Gingiva</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier>anatomy &amp; histology</score:Qualifier>
+      <score:QualifierIsMajorTerm>N</score:QualifierIsMajorTerm>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh7">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Humans</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Humans</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier/>
+      <score:QualifierIsMajorTerm/>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh8">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Infection</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Infection</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier/>
+      <score:QualifierIsMajorTerm/>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh9">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Periodontitis</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Periodontitis</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier/>
+      <score:QualifierIsMajorTerm/>
+   </rdf:Description>
+   <rdf:Description rdf:nodeID="pmid19885433mesh10">
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea"/>
+      <core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <rdfs:label>Risk Factors</rdfs:label>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+      <score:Descriptor>Risk Factors</score:Descriptor>
+      <score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>
+      <score:Qualifier/>
+      <score:QualifierIsMajorTerm/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivoweb.org/pubMed/journal/j0882-2786">
+      <rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal"/>
+      <rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing"/>
+      <core:Title>The International journal of oral &amp; maxillofacial implants</core:Title>
+      <rdfs:label>The International journal of oral &amp; maxillofacial implants</rdfs:label>
+      <bibo:ISSN>0882-2786</bibo:ISSN>
+      <core:publicationVenueFor rdf:resource="http://vivoweb.org/pubMed/article/pmid19885433"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/dateCreated">
+      <core:Year>"2009"</core:Year>
+      <core:Month>"11"</core:Month>
+      <core:Day>"03"</core:Day>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid19885433/dateCompleted">
+      <core:Year>2010</core:Year>
+      <core:Month>02</core:Month>
+      <core:Day>02</core:Day>
+   </rdf:Description>
+</rdf:RDF>
