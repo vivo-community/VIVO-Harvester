@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vivoweb.ingest.test.util.args;
 
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.args.ArgDef;
@@ -38,9 +39,10 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#ArgList(org.vivoweb.ingest.util.args.ArgParser, java.lang.String[])}.
+	 * 
 	 */
-	public final void makeArgList() {
+	@SuppressWarnings("unused")
+	private final void makeArgList() {
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
@@ -65,10 +67,14 @@ public class ArgListTest extends TestCase {
 	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String)}.
 	 */
 	public final void testGetAllString() {
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
 			ArgList a = new ArgList(parser,new String[]{"-e","Testing1","-e","Testing2","-e","Testing3"});
-			assertEquals(a.get("o"),"Testing");
+			List<String> l = a.getAll("e");
+			assertTrue(l.contains("Testing1"));
+			assertTrue(l.contains("Testing2"));
+			assertTrue(l.contains("Testing3"));
+			assertFalse(l.contains("test"));
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
 		}
@@ -78,14 +84,37 @@ public class ArgListTest extends TestCase {
 	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String, boolean)}.
 	 */
 	public final void testGetAllStringBoolean() {
-//		fail("Not yet implemented");
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
+		try {
+			ArgList a = new ArgList(parser,new String[]{"-e","Testing1","-e","Testing2","-e","Testing3"});
+			List<String> l = a.getAll("e", false);
+			assertTrue(l.contains("Testing1"));
+			assertTrue(l.contains("Testing2"));
+			assertTrue(l.contains("Testing3"));
+			assertFalse(l.contains("test"));
+			l = a.getAll("e", true);
+			assertTrue(l.contains("Testing1"));
+			assertTrue(l.contains("Testing2"));
+			assertTrue(l.contains("Testing3"));
+			assertTrue(l.contains("test"));
+		} catch(Exception e) {
+			log.error(e.getMessage(),e);
+		}
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#has(java.lang.String)}.
 	 */
 	public final void testHas() {
-//		fail("Not yet implemented");
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("flag").setDescription("test flag"));
+		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("zig").setDescription("test missing flag"));
+		try {
+			ArgList a = new ArgList(parser,new String[]{"-f"});
+			assertTrue(a.has("f"));
+			assertFalse(a.has("z"));
+		} catch(Exception e) {
+			log.error(e.getMessage(),e);
+		}
 	}
 	
 }

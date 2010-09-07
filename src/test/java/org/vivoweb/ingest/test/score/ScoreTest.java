@@ -461,21 +461,11 @@ public class ScoreTest extends TestCase {
 						"<Model>" +
 						"<Param name=\"dbClass\">org.h2.Driver</Param>" +
 						"<Param name=\"dbType\">HSQL</Param>" +
-						"<Param name=\"dbUrl\">jdbc:h2:mem</Param>" +
+						"<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +
 						"<Param name=\"modelName\">testVivoModel</Param>" +
 						"<Param name=\"dbUser\">sa</Param>" +
 						"<Param name=\"dbPass\"></Param>" +
 						"</Model>");
-			out.close();
-//			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-//			"<Model>" +
-//			"<Param name=\"dbClass\">org.apache.derby.jdbc.EmbeddedDriver</Param>" +
-//			"<Param name=\"dbType\">Derby</Param>" +
-//			"<Param name=\"dbUrl\">jdbc:derby:temp;create=true</Param>" +
-//			"<Param name=\"modelName\">testVivoModel</Param>" +
-//			"<Param name=\"dbUser\"></Param>" +
-//			"<Param name=\"dbPass\"></Param>" +
-//			"</Model>");
 			out.close();
 		} catch (IOException e) {
 			log.fatal(e.getMessage(),e);
