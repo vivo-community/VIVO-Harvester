@@ -10,11 +10,10 @@
 #author: nskaggs@ctrip.ufl.edu
 
 #WARNING: this code is fragile and not robust.
+#This tool requires you to have your ssh key on the sourceforge server
 
 echo -n "Enter sourceforge username: "
 read NAME
-echo -n "Enter sourceforge password: "
-read PASSWORD
 
 #check out from svn
 svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
@@ -32,7 +31,7 @@ fi
 #get release name (hack alert!) :-)
 cd bin
 RELEASENAME=`ls | grep ingest`
-RELEASENAME=${RELEASENAME:0:1}
+RELEASENAME=${RELEASENAME:0:12}
 
 #unpack debian package
 ar -x $RELEASENAME.deb
@@ -41,12 +40,5 @@ ar -x $RELEASENAME.deb
 mv data.tar.gz $RELEASENAME.tar.gz
 
 #Upload tarball and deb package to sourceforge
-echo $RELEASENAME.deb
-echo $NAME
-
-scp $RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO Harvester"
-expect "password:"
-send "$PASSWORD\r"
-scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO Harvester"
-expect "password:"
-send "$PASSWORD\r"
+scp $RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
