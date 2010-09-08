@@ -19,14 +19,8 @@ import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
@@ -35,15 +29,15 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
  */
-public class SPARQLQualify {
+public class Qualify {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(SPARQLQualify.class);
+	private static Log log = LogFactory.getLog(Qualify.class);
 	/**
 	 * Jena Model we are working in
 	 */
-	private Model model;
+	private JenaConnect model;
 	/**
 	 * The data predicate
 	 */
@@ -73,9 +67,14 @@ public class SPARQLQualify {
 	 * @param newValue the value to replace it with
 	 * @param withModelName the model name to connect to (will override jena config)
 	 * @param isRegex is this to use Regex to match the string
+	 * @throws IOException error connecting to model
 	 */
-	public SPARQLQualify(Model jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex) {
-		this.model = jenaModel;
+	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex) throws IOException {
+		if(withModelName != null) {
+			this.model = new JenaConnect(jenaModel, withModelName);
+		} else {
+			this.model = jenaModel;
+		}
 		this.dataPredicate = dataType;
 		this.matchTerm = matchString;
 		this.newVal = newValue;
@@ -88,7 +87,7 @@ public class SPARQLQualify {
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
-	public SPARQLQualify(ArgList argList) throws IOException {
+	public Qualify(ArgList argList) throws IOException {
 		if(!(argList.has("r") ^ argList.has("t"))) {
 			throw new IllegalArgumentException("Must provide one of --regex or --text, but not both");
 		}
@@ -110,9 +109,9 @@ public class SPARQLQualify {
 			//connect to proper model, if specified on command line
 			if (this.modelName != null) {
 				log.trace("Using " + this.modelName + " for input Model");
-				this.model = (new JenaConnect(JenaConnect.parseConfig(configFileName),this.modelName)).getJenaModel();
+				this.model = new JenaConnect(JenaConnect.parseConfig(configFileName),this.modelName);
 			} else {
-				this.model = JenaConnect.parseConfig(configFileName).getJenaModel();
+				this.model = JenaConnect.parseConfig(configFileName);
 			}
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
@@ -125,65 +124,21 @@ public class SPARQLQualify {
 	
 	/**
 	 * Replace records exactly matching uri & datatype & oldValue with newValue
-	 * @param uri uri to match
 	 * @param dataType data type to match
 	 * @param oldValue old value to match
 	 * @param newValue new value to set
 	 */
-	private void strReplace(String uri, String dataType, String oldValue, String newValue) {
-		log.info("Running text replace '"+dataType+"': '"+oldValue+"' with '"+newValue+"'");
+	private void strReplace(String dataType, String oldValue, String newValue) {
+		StmtIterator stmtItr = this.model.getJenaModel().listStatements(null, this.model.getJenaModel().createProperty(dataType), oldValue);
 		
-		
-		if (uri != null) {
-			//Jena doesn't handle sparql updates properly, so we're forced to use methods
-			StmtIterator stmtItr = this.model.listStatements(ResourceFactory.createResource(uri), ResourceFactory.createProperty(dataType), oldValue);
-			
-			while (stmtItr.hasNext()) {
-				Statement stmt = stmtItr.next();
-				log.trace("Replacing record");
-				log.debug("oldValue: "+oldValue);
-				log.debug("newValue: "+newValue);
-				this.model.add(stmt.getSubject(), stmt.getPredicate(), newValue);
-				stmt.remove();			
-			}
-		} else {
-			//Jena doesn't handle sparql updates properly, so we're forced to use methods
-			StmtIterator stmtItr = this.model.listStatements(null, ResourceFactory.createProperty(dataType), oldValue);
-			
-			while (stmtItr.hasNext()) {
-				Statement stmt = stmtItr.next();
-				log.trace("Replacing record");
-				log.debug("oldValue: "+oldValue);
-				log.debug("newValue: "+newValue);
-				this.model.add(stmt.getSubject(), stmt.getPredicate(), newValue);
-				stmt.remove();
-			}
+		while (stmtItr.hasNext()) {
+			Statement stmt = stmtItr.next();
+			log.trace("Replacing record");
+			log.debug("oldValue: "+oldValue);
+			log.debug("newValue: "+newValue);
+			this.model.getJenaModel().add(stmt.getSubject(), stmt.getPredicate(), newValue);
+			stmt.remove();
 		}
-//		String sQuery = ""
-//			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-//			+ "DELETE { "+uri+" <"+dataType+"> \""+oldValue+"\" } "
-//			+ "INSERT { "+uri+" <"+dataType+"> \""+newValue+"\" } "
-//			+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-
-//		log.trace(sQuery);
-	
-		// run update
-//		UpdateRequest ur = UpdateFactory.create(sQuery);
-//		UpdateAction.execute(ur, this.model);
-		
-//		this.model.commit();
-//		
-//		// create query string
-//		 sQuery = ""
-//				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-//				+ "DELETE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-//				//+ "DELETE { "+uri+" <"+dataType+"> ?value } ";
-//				//+ "WHERE { "+uri+" <"+dataType+"> \""+oldValue+"\" }";
-//		log.trace(sQuery);
-//		
-//		// run update
-//		ur = UpdateFactory.create(sQuery);
-//		UpdateAction.execute(ur, this.model);
 	}
 
 	/**
@@ -193,38 +148,20 @@ public class SPARQLQualify {
 	 * @param newValue new value
 	 */
 	private void regexReplace(String dataType, String regexMatch, String newValue) {
-		log.info("Running Regex replace '"+dataType+"': '"+regexMatch+"' with '"+newValue+"'");
-		// create query string
-		String sQuery = ""
-				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-				+ "SELECT ?record ?dataField "
-				+ "WHERE { "
-				+ "  ?record <"+dataType+"> ?dataField . "
-				+ "}";
+		Property pred = this.model.getJenaModel().createProperty(dataType);
+		ResIterator resItr = this.model.getJenaModel().listResourcesWithProperty(pred);
 		
-		log.trace(sQuery);
-		
-		// create query
-		Query query = QueryFactory.create(sQuery);
-		
-		// execute the query and obtain results
-		QueryExecution qe = QueryExecutionFactory.create(query, this.model);
-		ResultSet resultSet = qe.execSelect();
-		
-		// read first result
-		String data = null;
-		while (resultSet.hasNext()) {
-			QuerySolution result = resultSet.next();
-			data = result.getLiteral(resultSet.getResultVars().get(1)).getString();
-			if(data.matches(regexMatch)) {
-				String newData = data.replaceAll(regexMatch, newValue);
-				if(!newData.equals(data)) {
-					String record = result.getResource(resultSet.getResultVars().get(0)).toString();
-					log.debug("Updating record");
-					strReplace(record, dataType, data, newData);
-				} else {
-					log.debug("No update needed");
-				}
+		while(resItr.hasNext()) {
+			Statement stmt = resItr.next().getRequiredProperty(pred);
+			String obj = stmt.getString();
+			if(obj.matches(regexMatch)) {
+				log.trace("Replacing record");
+				log.debug("oldValue: "+obj);
+				log.debug("newValue: "+newValue);
+				this.model.getJenaModel().add(stmt.getSubject(), stmt.getPredicate(), newValue);
+				stmt.remove();
+			} else {
+				log.debug("no match: "+obj);
 			}
 		}
 	}
@@ -234,9 +171,11 @@ public class SPARQLQualify {
 	 */
 	public void executeTask() {
 		if(this.regex) {
+			log.info("Running Regex replace '"+this.dataPredicate+"': '"+this.matchTerm+"' with '"+this.newVal+"'");
 			regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
 		} else {
-			strReplace(null, this.dataPredicate, this.matchTerm, this.newVal);
+			log.info("Running text replace '"+this.dataPredicate+"': '"+this.matchTerm+"' with '"+this.newVal+"'");
+			strReplace(this.dataPredicate, this.matchTerm, this.newVal);
 		}
 	}
 	
@@ -262,7 +201,7 @@ public class SPARQLQualify {
 	public static void main(String... args) {
 		log.info("SPARQLQualify: Start");
 		try {
-			new SPARQLQualify(new ArgList(getParser(), args)).executeTask();
+			new Qualify(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
 			log.fatal(e.getMessage(),e);
 			System.out.println(getParser().getUsage());

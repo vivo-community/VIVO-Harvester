@@ -45,7 +45,6 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
-import org.apache.commons.vfs.FileTypeSelector;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.w3c.dom.Document;
@@ -115,9 +114,9 @@ public class TextFileRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
+	public boolean addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
 		if(!needsUpdated(rec)) {
-			return;
+			return false;
 		}
 		//log.debug("Resolving file for record: " + rec.getID());
 		FileObject fo = null;
@@ -154,6 +153,7 @@ public class TextFileRecordHandler extends RecordHandler {
 				}
 			}
 		}
+		return true;
 	}
 	
 	/**
@@ -236,6 +236,9 @@ public class TextFileRecordHandler extends RecordHandler {
 		try {
 			StringBuilder sb = new StringBuilder();
 			fo = this.fileDirObj.resolveFile(recID);
+			if(!fo.exists()) {
+				throw new IllegalArgumentException("Record "+recID+" does not exist!");
+			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(fo.getContent().getInputStream()));
 			String line;
 			while((line = br.readLine()) != null){
@@ -438,10 +441,10 @@ public class TextFileRecordHandler extends RecordHandler {
 		protected TextFileRecordIterator() {
 			LinkedList<FileObject> fileListing = new LinkedList<FileObject>();
 			try {
-				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(new FileTypeSelector(FileType.FILE))) {
-					if(!file.isHidden()) {
+				for(FileObject file : TextFileRecordHandler.this.fileDirObj.getChildren()) {
+					if(!file.isHidden() && file.getType() == FileType.FILE) {
 						fileListing.add(file);
-							//log.debug("Found file "+file.getName().getBaseName());
+//						log.debug("Found file "+file.getName().getBaseName());
 					}
 				}
 			} catch(FileSystemException e) {
@@ -476,7 +479,6 @@ public class TextFileRecordHandler extends RecordHandler {
 	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
 	 */
 	private static class TextFileMetaDataParser extends DefaultHandler {
-		
 		/**
 		 * The RecordHandler we are building
 		 */
@@ -583,5 +585,11 @@ public class TextFileRecordHandler extends RecordHandler {
 				throw new SAXException("Unknown Tag: "+qName);
 			}
 		}
+	}
+	
+	@Override
+	public void close() throws IOException {
+		this.fileDirObj.close();
+		this.metaDirObj.close();
 	}
 }

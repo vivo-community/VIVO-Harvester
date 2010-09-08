@@ -3,7 +3,7 @@
 	<Param id="email">hainesc@ctrip.ufl.edu</Param>
 	<Param id="location">University of Florida</Param>
 	<Param id="output">config/recordHandlers/PubmedXMLRecordHandler.xml</Param>
-	<Param id="termSearch">1:8000[dp]</Param>
-	<Param id="numRecords">20</Param>
+	<Param id="termSearch">ufl.edu[ad]</Param>
+	<Param id="numRecords">500</Param>
 	<Param id="batchSize">1000</Param>
 </Task>

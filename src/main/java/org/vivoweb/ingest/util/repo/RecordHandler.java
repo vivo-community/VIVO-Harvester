@@ -54,9 +54,10 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param rec record to add
 	 * @param creator the creator
 	 * @param overwrite when set to true, will automatically overwrite existing records
+	 * @return true if added, false if not needed (aka record already existed and was the same)
 	 * @throws IOException error adding
 	 */
-	public abstract void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException;
+	public abstract boolean addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException;
 	
 	/**
 	 * Adds a record to the RecordHandler
@@ -64,10 +65,11 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param recData record data to add
 	 * @param creator the creator
 	 * @param overwrite when set to true, will automatically overwrite existing records
+	 * @return true if added, false if not needed (aka record already existed and was the same)
 	 * @throws IOException error adding
 	 */
-	public void addRecord(String recID, String recData, Class<?> creator, boolean overwrite) throws IOException {
-		addRecord(new Record(recID, recData, this), creator, overwrite);
+	public boolean addRecord(String recID, String recData, Class<?> creator, boolean overwrite) throws IOException {
+		return addRecord(new Record(recID, recData, this), creator, overwrite);
 	}
 	
 	/**
@@ -75,10 +77,11 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * If overwriteDefault is set to true, will automatically overwrite existing records
 	 * @param rec record to add
 	 * @param creator the creator
+	 * @return true if added, false if not needed (aka record already existed and was the same)
 	 * @throws IOException error adding
 	 */
-	public void addRecord(Record rec, Class<?> creator) throws IOException {
-		addRecord(rec, creator, isOverwriteDefault());
+	public boolean addRecord(Record rec, Class<?> creator) throws IOException {
+		return addRecord(rec, creator, isOverwriteDefault());
 	}
 	
 	/**
@@ -87,10 +90,11 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param recID record id to add
 	 * @param recData record data to add
 	 * @param creator the creator
+	 * @return true if added, false if not needed (aka record already existed and was the same)
 	 * @throws IOException error adding
 	 */
-	public void addRecord(String recID, String recData, Class<?> creator) throws IOException {
-		addRecord(new Record(recID, recData, this), creator);
+	public boolean addRecord(String recID, String recData, Class<?> creator) throws IOException {
+		return addRecord(new Record(recID, recData, this), creator);
 	}
 	
 	/**
@@ -130,6 +134,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error retrieving record metadata
 	 */
 	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
+		log.info("recMeta: "+getRecordMetaData(recID));
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
 			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
 				return rmd;
@@ -236,6 +241,12 @@ public abstract class RecordHandler implements Iterable<Record> {
 	public boolean isOverwriteDefault() {
 		return this.overwriteDefault;
 	}
+	
+	/**
+	 * Closes the recordhandler
+	 * @throws IOException error closing
+	 */
+	public abstract void close() throws IOException;
 	
 	/**
 	 * Config Parser for RecordHandlers

@@ -10,10 +10,14 @@
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,7 +26,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -49,9 +52,92 @@ public class JenaConnect {
 	 */
 	private Model jenaModel;
 	/**
-	 * Parameters for this Jena Connection
+	 * The jdbc connection
 	 */
-	private Map<String,String> parameters;
+	private IDBConnection conn;
+	
+	/**
+	 * Constructor (Memory Default Model)
+	 */
+	public JenaConnect() {
+		this.setJenaModel(ModelFactory.createMemModelMaker().createDefaultModel());
+	}
+	
+	/**
+	 * Constructor (Memory Named Model)
+	 * @param modelName the model name to use
+	 */
+	public JenaConnect(String modelName) {
+		this.setJenaModel(ModelFactory.createMemModelMaker().createModel(modelName));
+	}
+	
+	/**
+	 * Constructor (DB Default Model)
+	 * @param dbUrl jdbc connection url
+	 * @param dbUser username to use
+	 * @param dbPass password to use
+	 * @param dbType database type ex:"MySQL"
+	 * @param dbClass jdbc driver class
+	 */
+	public JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
+		try {
+			this.setJenaModel(initModel(initDB(dbUrl, dbUser, dbPass, dbType, dbClass)).createDefaultModel());
+		} catch(InstantiationException e) {
+			log.error(e.getMessage(), e);
+		} catch(IllegalAccessException e) {
+			log.error(e.getMessage(), e);
+		} catch(ClassNotFoundException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * Constructor (DB Named Model)
+	 * @param dbUrl jdbc connection url
+	 * @param dbUser username to use
+	 * @param dbPass password to use
+	 * @param dbType database type ex:"MySQL"
+	 * @param dbClass jdbc driver class
+	 * @param modelName the model to connect to
+	 */
+	public JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName) {
+		try {
+			this.setJenaModel(initModel(initDB(dbUrl, dbUser, dbPass, dbType, dbClass)).openModel(modelName, false));
+		} catch(InstantiationException e) {
+			log.error(e.getMessage(), e);
+		} catch(IllegalAccessException e) {
+			log.error(e.getMessage(), e);
+		} catch(ClassNotFoundException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * Constructor (connects to the same jena triple store as another jena connect, but uses a different named model)
+	 * @param old the other jenaconnect
+	 * @param modelName the model name to use
+	 * @throws IOException unable to secure db connection
+	 */
+	public JenaConnect(JenaConnect old, String modelName) throws IOException {
+		if(old.conn != null) {
+			try {
+				this.setJenaModel(initModel(new DBConnection(old.conn.getConnection(), old.conn.getDatabaseType())).openModel(modelName, false));
+			} catch(SQLException e) {
+				throw new IOException(e);
+			}
+		} else {
+			this.setJenaModel(ModelFactory.createMemModelMaker().createModel(modelName));
+		}
+	}
+	
+	/**
+	 * Constructor (Load rdf from input stream)
+	 * @param in input stream to load rdf from
+	 */
+	public JenaConnect(InputStream in) {
+		this();
+		this.loadRDF(in);
+	}
 	
 	/**
 	 * Config File Based Factory
@@ -100,10 +186,14 @@ public class JenaConnect {
 		}
 		JenaConnect jc;
 		if(params.get("type").equalsIgnoreCase("memory")) {
-			jc = new JenaConnect();
+			if(params.containsKey("modelName")) {
+				jc = new JenaConnect(params.get("modelName"));
+			} else {
+				jc = new JenaConnect();
+			}
 		} else if(params.get("type").equalsIgnoreCase("db")) {
 			if(params.containsKey("modelName")) {
-				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("modelName"), params.get("dbType"), params.get("dbClass"));
+				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
 			} else {
 				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"));
 			}
@@ -114,93 +204,49 @@ public class JenaConnect {
 	}
 	
 	/**
-	 * Constructor (w/o Named Model)
-	 * @param dbUrl jdbc connection url
-	 * @param dbUser username to use
-	 * @param dbPass password to use
-	 * @param dbType database type ex:"MySQL"
-	 * @param dbClass jdbc driver class
+	 * Load in RDF
+	 * @param in input stream to read rdf from
 	 */
-	public JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
-		try {
-			this.setJenaModel(this.createModel(dbUrl, dbUser, dbPass, dbType, dbClass));
-			this.parameters = new HashMap<String,String>();
-			this.parameters.put("type", "db");
-			this.parameters.put("dbUrl", dbUrl);
-			this.parameters.put("dbUser", dbUser);
-			this.parameters.put("dbPass", dbPass);
-			this.parameters.put("dbType", dbType);
-			this.parameters.put("dbClass", dbClass);
-		} catch(InstantiationException e) {
-			log.error(e.getMessage(), e);
-		} catch(IllegalAccessException e) {
-			log.error(e.getMessage(), e);
-		} catch(ClassNotFoundException e) {
-			log.error(e.getMessage(), e);
+	public void loadRDF(InputStream in) {
+		getJenaModel().read(in, null);
+		log.info("RDF Data was loaded");
+	}
+	
+	/**
+	 * Export all RDF
+	 * @param out output stream to write rdf to
+	 */
+	public void exportRDF(OutputStream out) {
+		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
+		fasterWriter.setProperty("showXmlDeclaration","true");
+		fasterWriter.setProperty("allowBadURIs", "true");
+		fasterWriter.setProperty("relativeURIs", "");
+		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
+		fasterWriter.write(this.jenaModel, osw, "");
+		log.info("RDF/XML Data was exported");
+	}
+	
+	/**
+	 * Adds all records in a RecordHandler to the model
+	 * @param rh the RecordHandler to pull records from
+	 */
+	public void importRDF(RecordHandler rh) {
+		for(Record r : rh) {
+			ByteArrayInputStream bais = new  ByteArrayInputStream(r.getData().getBytes());
+			this.getJenaModel().read(bais,null);
 		}
 	}
 	
 	/**
-	 * Constructor (connects to the same jena triple store as another jena connect, but uses a different named model)
-	 * @param old the other jenaconnect
-	 * @param modelName the model name to use
+	 * Closes the model and the jdbc connection
 	 */
-	public JenaConnect(JenaConnect old, String modelName) {
-		this.parameters = old.parameters;
-		this.parameters.put("modelName", modelName);
-		this.setJenaModel(build(this.parameters).jenaModel);
-	}
-	
-	/**
-	 * Constructor (w/ Named Model)
-	 * @param dbUrl jdbc connection url
-	 * @param dbUser username to use
-	 * @param dbPass password to use
-	 * @param modelName the model to connect to
-	 * @param dbType database type ex:"MySQL"
-	 * @param dbClass jdbc driver class
-	 */
-	public JenaConnect(String dbUrl, String dbUser, String dbPass, String modelName, String dbType, String dbClass) {
-		this.setJenaModel(this.loadModel(dbUrl, dbUser, dbPass, modelName, dbType));
-		this.parameters = new HashMap<String,String>();
-		this.parameters.put("type", "db");
-		this.parameters.put("dbUrl", dbUrl);
-		this.parameters.put("dbUser", dbUser);
-		this.parameters.put("dbPass", dbPass);
-		this.parameters.put("dbType", dbType);
-		this.parameters.put("dbClass", dbClass);
-		this.parameters.put("modelName", modelName);
-	}
-	
-	/**
-	 * Default Constructor
-	 */
-	public JenaConnect() {
-		this.setJenaModel(ModelFactory.createDefaultModel());
-		this.parameters = new HashMap<String,String>();
-		this.parameters.put("type", "memory");
-		this.parameters.put("source", "none");
-	}
-	
-	/**
-	 * Constructor (Load rdf from input stream)
-	 * @param in input stream to load rdf from
-	 */
-	public JenaConnect(InputStream in) {
-		this();
-		this.loadRDF(in);
-		this.parameters.put("source", "inputStream");
-	}
-	
-	/**
-	 * Constructor (Load rdf from File)
-	 * @param inFilePath location of file to read rdf from
-	 * @throws FileSystemException error getting file contents
-	 */
-	public JenaConnect(String inFilePath) throws FileSystemException {
-		this();
-		this.loadRDF(VFS.getManager().resolveFile(new File("."), inFilePath).getContent().getInputStream());
-		this.parameters.put("source", inFilePath);
+	public void close() {
+		this.jenaModel.close();
+		try {
+			this.conn.close();
+		} catch(Exception e) {
+			//ignore
+		}
 	}
 	
 	/**
@@ -220,39 +266,17 @@ public class JenaConnect {
 	}
 	
 	/**
-	 * Connect and create default model
-	 * @param dbUrl url of server
-	 * @param dbUser username to connect with
-	 * @param dbPass password to connect with
-	 * @param dbType database type
-	 * @param dbClass jdbc connection class
-	 * @return the model
-	 * @throws InstantiationException could not instantiate
-	 * @throws IllegalAccessException not authorized
-	 * @throws ClassNotFoundException no such class
+	 * Get ModelMaker for a database connection
+	 * @param dbConn the database connection
+	 * @return the ModelMaker
 	 */
-	private Model createModel(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		return initModel(initDB(dbUrl, dbUser, dbPass, dbType, dbClass)).createDefaultModel();
+	private ModelMaker initModel(IDBConnection dbConn) {
+		this.conn = dbConn;
+		return ModelFactory.createModelRDBMaker(dbConn);
 	}
 	
 	/**
-	 * Connect and load model
-	 * @param dbUrl url of server
-	 * @param dbUser username to connect with
-	 * @param dbPass password to connect with
-	 * @param modelName named model to connect to
-	 * @param dbType database type
-	 * @return the model
-	 */
-	private Model loadModel(String dbUrl, String dbUser, String dbPass, String modelName, String dbType) {
-		ModelMaker maker = ModelFactory.createModelRDBMaker(ModelFactory.createSimpleRDBConnection(dbUrl,dbUser,dbPass,dbType));
-		//If modelName doesn't exist, allow creation
-		return maker.openModel(modelName, false);
-	}
-	
-	/**
-	 * Connect to jena server
+	 * Setup database connection
 	 * @param dbUrl url of server
 	 * @param dbUser username to connect with
 	 * @param dbPass password to connect with
@@ -263,50 +287,9 @@ public class JenaConnect {
 	 * @throws IllegalAccessException not authorized
 	 * @throws ClassNotFoundException no such class
 	 */
-	private IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	private IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Class.forName(dbClass).newInstance();
 		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
-	}
-	
-	/**
-	 * Get ModelMaker for a database connection
-	 * @param dbcon the database connection
-	 * @return the ModelMaker
-	 */
-	private ModelMaker initModel(IDBConnection dbcon) {
-		return ModelFactory.createModelRDBMaker(dbcon);
-	}
-	
-	/**
-	 * Load in RDF
-	 * @param in input stream to read rdf from
-	 */
-	public void loadRDF(InputStream in) {
-		this.getJenaModel().read(in, null);
-		log.info("RDF Data was loaded");
-	}
-	
-	/**
-	 * Export all RDF
-	 * @param out output stream to write rdf to
-	 */
-	public void exportRDF(OutputStream out) {
-		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
-		fasterWriter.setProperty("allowBadURIs", "true");
-		fasterWriter.setProperty("relativeURIs", "");
-		fasterWriter.write(this.jenaModel, out, "");
-		log.info("RDF/XML Data was exported");
-	}
-	
-	/**
-	 * Adds all records in a RecordHandler to the model
-	 * @param rh the RecordHandler to pull records from
-	 */
-	public void importRDF(RecordHandler rh) {
-		for(Record r : rh) {
-			this.getJenaModel().read(r.getData());
-		}
 	}
 	
 	/**
@@ -378,5 +361,4 @@ public class JenaConnect {
 			}
 		}
 	}
-	
 }
