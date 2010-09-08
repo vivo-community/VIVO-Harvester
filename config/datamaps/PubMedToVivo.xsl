@@ -82,7 +82,7 @@
 	<!-- Email Extraction Regular Expression -->
 	<xsl:template match="MedlineCitation/Article/Affiliation">
 		<xsl:variable name="elValue" select="."/>	
-		<xsl:analyze-string select="$elValue" regex="\s*([a-z\d\.]*@[a-z\.]*)">			
+		<xsl:analyze-string select="$elValue" regex="\s*([a-zA-Z\d\.]*@[a-z\.]*)">			
 			<xsl:matching-substring>
 				<score:workEmail>
 					<xsl:value-of select="regex-group(1)" />
