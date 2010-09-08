@@ -1,3 +1,21 @@
+0.5.0
+Fetch
+	JDBCFetch handles XML special characters
+Score
+	no long accept rdf or record handlers as input, use transfer to load into model first
+Transfer
+	Add delete model before import flag
+	Allow for loading from an record handler
+Qualify
+	Using Jena Model methods rather than SPARQL queries now
+Utils
+	Fixed lots of small RecordHandler bugs
+	JenaConnect sibling creation shares database connection, rather than creating separate connection
+	XML special characters handler
+Junit testing is now implemented; more tests to come 
+New release script for building, testing, and uploading new releases to sourceforge
+Added rpm to maven build -- NOTE utilize the generated rpm at your own risk -- please file bugs if found
+
 0.4.5
 fix authorName bestMatch bug in scoring
 make staging default model for qualify and transfer

@@ -37,18 +37,20 @@ public class MapRecordHandler extends RecordHandler {
 	 */
 	public MapRecordHandler() {
 		this.map = new HashMap<String,String>();
+		this.metaDataMap = new HashMap<String,SortedSet<RecordMetaData>>();
 	}
 	
 	@Override
-	public void addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
+	public boolean addRecord(Record rec, Class<?> creator, boolean overwrite) throws IOException {
 		if(!needsUpdated(rec)) {
-			return;
+			return false;
 		}
 		if(!overwrite && this.map.containsKey(rec.getID())) {
 			throw new IOException("Record already exists!");
 		}
 		this.map.put(rec.getID(), rec.getData());
 		addMetaData(rec, creator, RecordMetaDataType.written);
+		return true;
 	}
 	
 	@Override
@@ -59,6 +61,9 @@ public class MapRecordHandler extends RecordHandler {
 	
 	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
+		if(!this.map.containsKey(recID)) {
+			throw new IllegalArgumentException("Record "+recID+" does not exist!");
+		}
 		return this.map.get(recID);
 	}
 	
@@ -122,6 +127,16 @@ public class MapRecordHandler extends RecordHandler {
 	
 	@Override
 	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
-		return this.metaDataMap.get(recID);
+		SortedSet<RecordMetaData> x = this.metaDataMap.get(recID);
+		if(x == null || x.isEmpty()) {
+			throw new IOException("No Matching MetaData Found");
+		}
+		return x;
+	}
+	
+	@Override
+	public void close() throws IOException {
+		this.map.clear();
+		this.metaDataMap.clear();
 	}
 }

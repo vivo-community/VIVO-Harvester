@@ -4,7 +4,7 @@
 
   <groupId>org.vivoweb</groupId>
   <artifactId>ingest</artifactId>
-  <version>0.4.5</version>
+  <version>0.5.0</version>
   <packaging>jar</packaging>
 
   <name>VIVOHarvester</name>
@@ -100,8 +100,96 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin><!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1-alpha-1</version>
+                <executions>
+                    <execution>
+                     	<phase>package</phase>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <copyright>2010, VIVO Harvester Team</copyright>
+                    <distribution>VIVO Release 1.1</distribution>
+                    <group>Development</group>
+                    <packager>VIVO Harvester Team</packager>
+                    <prefix>/usr/share/vivoingest</prefix>
+                    <changelogFile>CHANGELOG</changelogFile>
+                    <defineStatements>
+                       <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+                    </defineStatements>
+                    <mappings>
+                        <mapping>
+                            <directory>/usr/share/vivoingest/bin/</directory>
+                            <filemode>444</filemode>
+                            <sources>
+                                <source>
+                                    <location>${project.build.directory}/${project.build.finalName}.jar</location>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>/usr/share/vivoingest/bin/dependency</directory>
+                            <filemode>750</filemode>
+                            <sources>
+                                <source>
+                                    <location>${project.build.directory}/dependency</location>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>/usr/share/vivoingest/docs</directory>
+                            <documentation>true</documentation>
+                            <filemode>444</filemode>
+                            <sources>
+                                <source>
+                                    <location>AUTHORS</location>
+                                </source>
+                                <source>
+                                    <location>CHANGELOG</location>
+                                </source>
+								<source>
+                                    <location>INSTALL</location>
+                                </source>
+                                <source>
+                                    <location>LICENSE</location>
+                                </source>
+                                <source>
+                                    <location>README</location>
+                                </source>
+                                <source>
+                                    <location>THANKS</location>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>/usr/share/vivoingest/conf</directory>
+                            <configuration>true</configuration>
+                            <filemode>644</filemode>
+                            <sources>
+                                <source>
+                                    <location>config</location>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>/usr/share/vivoingest/scripts</directory>
+                            <filemode>644</filemode>
+                            <sources>
+                                <source>
+                                    <location>scripts</location>
+                                </source>
+                            </sources>
+                        </mapping>
+                    </mappings>
+                </configuration>
             </plugin>
-  	</plugins>
+  	--></plugins>
   	<resources>
   	</resources>
   </build>
@@ -257,6 +345,12 @@
     	<version>1.4</version>
     	<type>jar</type>
     	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.h2database</groupId>
+    	<artifactId>h2</artifactId>
+    	<version>1.2.140</version>
+    	<type>jar</type>
     </dependency>
   </dependencies>
 </project>
