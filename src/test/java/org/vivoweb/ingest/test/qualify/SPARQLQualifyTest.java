@@ -22,11 +22,11 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  * @author Stephen Williams (swilliams@ctrip.ufl.edu)
  */
-public class QualifyTest extends TestCase {
+public class SPARQLQualifyTest extends TestCase {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(QualifyTest.class);
+	private static Log log = LogFactory.getLog(SPARQLQualifyTest.class);
 	/** */private static final String dbClass = "org.h2.Driver";
 	/** */private static final String dbType = "HSQLDB";
 	/** */private static final String dbUrl = "jdbc:h2:mem:TestSPARQLQualifyModel;MODE=HSQLDB";
@@ -82,9 +82,9 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 			String expectedValue = "I Am Testing Test Replace";
 			//call qualify
-			new SPARQLQualify(this.jena, this.label.getURI(), "IATRR", expectedValue, null, false).executeTask();
+			new SPARQLQualify(this.jena, this.label.getURI(), "IATTR", expectedValue, null, false).executeTask();
 			//FIXME woo
-//			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
+			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res2, this.label).getString().equals(expectedValue));
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
 		} catch(Exception e) {

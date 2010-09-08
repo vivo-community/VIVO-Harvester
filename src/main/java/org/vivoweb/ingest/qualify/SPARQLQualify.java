@@ -129,8 +129,6 @@ public class SPARQLQualify {
 	 * @param newValue new value to set
 	 */
 	private void strReplace(String dataType, String oldValue, String newValue) {
-		log.info("Running text replace '"+dataType+"': '"+oldValue+"' with '"+newValue+"'");
-		//Jena doesn't handle sparql updates properly, so we're forced to use methods
 		StmtIterator stmtItr = this.model.getJenaModel().listStatements(null, this.model.getJenaModel().createProperty(dataType), oldValue);
 		
 		while (stmtItr.hasNext()) {
@@ -150,7 +148,6 @@ public class SPARQLQualify {
 	 * @param newValue new value
 	 */
 	private void regexReplace(String dataType, String regexMatch, String newValue) {
-		log.info("Running Regex replace '"+dataType+"': '"+regexMatch+"' with '"+newValue+"'");
 		Property pred = this.model.getJenaModel().createProperty(dataType);
 		ResIterator resItr = this.model.getJenaModel().listResourcesWithProperty(pred);
 		
@@ -174,8 +171,10 @@ public class SPARQLQualify {
 	 */
 	public void executeTask() {
 		if(this.regex) {
+			log.info("Running Regex replace '"+this.dataPredicate+"': '"+this.matchTerm+"' with '"+this.newVal+"'");
 			regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
 		} else {
+			log.info("Running text replace '"+this.dataPredicate+"': '"+this.matchTerm+"' with '"+this.newVal+"'");
 			strReplace(this.dataPredicate, this.matchTerm, this.newVal);
 		}
 	}
