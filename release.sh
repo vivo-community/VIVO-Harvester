@@ -12,9 +12,9 @@
 #WARNING: this code is fragile and not robust.
 
 echo -n "Enter sourceforge username: "
-read name
+read NAME
 echo -n "Enter sourceforge password: "
-read password
+read PASSWORD
 
 #check out from svn
 svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
@@ -30,10 +30,9 @@ if [ "$?" -eq "1" ]; then
 fi
 
 #get release name (hack alert!) :-)
-#sed -n 's/<version>,</version>/p' pom.xml
 cd bin
 RELEASENAME=`ls | grep ingest`
-RELEASENAME=${RELEASENAME:0:12}
+RELEASENAME=${RELEASENAME:0:1}
 
 #unpack debian package
 ar -x $RELEASENAME.deb
@@ -41,11 +40,13 @@ ar -x $RELEASENAME.deb
 #rename tarball
 mv data.tar.gz $RELEASENAME.tar.gz
 
-#make tarball
-#tar -cjvf ingest.tar.bz usr/
-
 #Upload tarball and deb package to sourceforge
-sftp $NAME,$PASSWORD@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO Harvester"
-ls
-#put $RELEASENAME.deb
-#put $RELEASENAME.tar.gz
+echo $RELEASENAME.deb
+echo $NAME
+
+scp $RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO Harvester"
+expect "password:"
+send "$PASSWORD\r"
+scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO Harvester"
+expect "password:"
+send "$PASSWORD\r"
