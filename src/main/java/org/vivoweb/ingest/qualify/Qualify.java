@@ -29,11 +29,11 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
  */
-public class SPARQLQualify {
+public class Qualify {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(SPARQLQualify.class);
+	private static Log log = LogFactory.getLog(Qualify.class);
 	/**
 	 * Jena Model we are working in
 	 */
@@ -69,7 +69,7 @@ public class SPARQLQualify {
 	 * @param isRegex is this to use Regex to match the string
 	 * @throws IOException error connecting to model
 	 */
-	public SPARQLQualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex) throws IOException {
+	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex) throws IOException {
 		if(withModelName != null) {
 			this.model = new JenaConnect(jenaModel, withModelName);
 		} else {
@@ -87,7 +87,7 @@ public class SPARQLQualify {
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
-	public SPARQLQualify(ArgList argList) throws IOException {
+	public Qualify(ArgList argList) throws IOException {
 		if(!(argList.has("r") ^ argList.has("t"))) {
 			throw new IllegalArgumentException("Must provide one of --regex or --text, but not both");
 		}
@@ -201,7 +201,7 @@ public class SPARQLQualify {
 	public static void main(String... args) {
 		log.info("SPARQLQualify: Start");
 		try {
-			new SPARQLQualify(new ArgList(getParser(), args)).executeTask();
+			new Qualify(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
 			log.fatal(e.getMessage(),e);
 			System.out.println(getParser().getUsage());

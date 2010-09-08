@@ -18,8 +18,8 @@ java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v
 
 # Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
 # Off by default, examples show below
-#java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.SPARQLQualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
-#java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.SPARQLQualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
+#java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
+#java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 # Execute Transfer to load "staging" JENA model into VIVO
 java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I staging -o config/jenaModels/VIVO.xml
