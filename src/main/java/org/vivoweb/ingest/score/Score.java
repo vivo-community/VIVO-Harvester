@@ -113,6 +113,9 @@ public class Score {
 			log.info("Scoring: End");
 		}
 		
+		/**
+		 * Close the resources used by score
+		 */
 		public void close() {
 			//Close and done
 			this.scoreInput.close();
