@@ -64,6 +64,10 @@ public class JDBCFetch {
 	 */
 	private List<String> tableNames = null;
 	/**
+	 * list of conditions - optional
+	 */
+	private List<String> condFields = new LinkedList<String>();
+	/**
 	 * Namespace for RDF made from this database
 	 */
 	private String uriNS;
@@ -96,6 +100,40 @@ public class JDBCFetch {
 		String connLine = opts.get("c");
 		String username = opts.get("u");
 		String password = opts.get("p");
+		
+		String tableNamesStr = opts.get("t");
+		String idFieldsStr = opts.get("i");
+		String dataFieldsStr = opts.get("a");
+		String condFieldsStr = opts.get("n");
+		
+		this.tableNames = new LinkedList<String>();
+		String[] tnSplit = tableNamesStr.split(",");
+		for (int i=0; i<tnSplit.length; i++) {
+			this.tableNames.add(tnSplit[i]);
+		}
+		
+		this.dataFields = new HashMap<String,List<String>>();		
+		List<String> dataFieldsList = new LinkedList<String>();
+		String[] dfSplit = dataFieldsStr.split(",");
+		for (int i=0; i<dfSplit.length; i++) {
+			dataFieldsList.add(dfSplit[i]);
+		}
+		// Pending: currently using only the first table name as key - need to fix
+		this.dataFields.put(this.tableNames.get(0), dataFieldsList);			
+		
+		this.idFields = new HashMap<String,String>();
+		// Pending: currently using only the first table name as key and there is only one key in the example - need to fix
+		this.idFields.put(this.tableNames.get(0), idFieldsStr);
+		
+		if (condFieldsStr != null) {
+			String[] condSplit = condFieldsStr.split(",");
+			for (int i=0; i<condSplit.length; i++) {
+				this.condFields.add(condSplit[i]);
+			}
+		}
+		
+		// Pending: need to add code to handle relations
+
 		Connection dbConn;
 		try {
 			dbConn = DriverManager.getConnection(connLine, username, password);
@@ -220,6 +258,19 @@ public class JDBCFetch {
 		sb.append(getIDField(tableName));
 		sb.append(" FROM ");
 		sb.append(tableName);
+
+		if (this.condFields.size() > 0) {
+			int c = 1;
+			sb.append(" WHERE ");
+			for(String cond : this.condFields) {
+				sb.append(cond);
+				if (c < this.condFields.size()) {
+					sb.append(" AND ");
+				}
+				c++;
+			}
+		}
+		log.info("SQL Query: " + sb.toString());
 		return sb.toString();
 	}
 	
@@ -281,7 +332,9 @@ public class JDBCFetch {
 						sb.append(">");
 						
 						//insert field value
-						sb.append(HtmlEntities.htmlEncode(rs.getString(dataField).trim()));
+						if (rs.getString(dataField) != null) {
+							sb.append(HtmlEntities.htmlEncode(rs.getString(dataField).trim()));	
+						}
 						
 						//Field END
 						sb.append("</");
@@ -334,6 +387,10 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameter(true, "TABLE_NAMES").setDescription("database table names").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("tableId").withParameter(true, "ID_FIELDS").setDescription("database table ID column names").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("tableColumns").withParameter(true, "TABLE_COLUMNS").setDescription("database table column names").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("conditions").withParameter(true, "CONDITION_FIELDS").setDescription("select table rows with certain conditions").setRequired(false));
 		return parser;
 	}
 	
