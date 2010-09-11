@@ -136,7 +136,11 @@ public class Score {
 			
 			//Call each exactMatch
 			for (String attribute : this.exactMatch) {
-				this.exactMatch(attribute);
+				//this.exactMatch(attribute);
+				//TODO:  fix exact match to take in two attributes <>,<> check with chaines
+				//for proper format (? comma seperated list ?)
+				this.exactMatch("<http://vivoweb.org/ontology/score#" + attribute + ">",
+						"<http://vivoweb.org/ontology/core#" + attribute + ">");
 			}
 			
 			//Call each pairwise
@@ -638,8 +642,20 @@ public class Score {
 		 /**
 		 * Executes an exact matching algorithm for author disambiguation
 		 * @param  attribute an attribute to perform the exact match
+		 * 			http://vivoweb.org/ontology/score#
+		 * 			http://vivoweb.org/ontology/core#
+		 * TODO: Add in foreign key match
+		 * 			with removal of similarly linked item
+		 * 			eg. -f <http://site/workEmail>,<http://vivo/workEmail>
+		 * 					-toVivo <objectProperty>
+		 * 					-toScoreItem <objectProperty>
+		 * 
+		 * Thinking out loud - we'll need to modify the end results of exact match
+		 * 		now that we are not creating authorships and authors for pubmed entries
+		 * 		we'll need to just link the author whose name parts match someone in vivo
+		 * 		Working on that now
 		 */
-		 public void exactMatch(String attribute) {
+		 public void exactMatch(String scoreAttribute, String vivoAttribute) {
 				String scoreMatch;
 				String queryString;
 				Resource paperResource;
@@ -649,28 +665,26 @@ public class Score {
 				QuerySolution scoreSolution;
 			 	ResultSet scoreInputResult;
 			 	
-			 	String matchQuery = "PREFIX score: <http://vivoweb.org/ontology/score#> " +
-		    						"SELECT ?x ?" + attribute + " " + 
-		    						"WHERE { ?x score:" + attribute + " ?" + attribute + "}";
-			 	String coreAttribute = "core:" + attribute;
+			 	String matchQuery = "SELECT ?x ?scoreAttribute " + 
+		    						"WHERE { ?x " + scoreAttribute + " ?scoreAttribute}";
 
 
 			 	//Exact Match
-			 	log.info("Executing exactMatch for " + attribute);
+			 	log.info("Executing exactMatch for " + scoreAttribute + " against " + vivoAttribute);
 			 	log.debug(matchQuery);
 		 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
 		 		
 		    	//Log extra info message if none found
 		    	if (!scoreInputResult.hasNext()) {
-		    		log.info("No matches found for " + attribute + " in input");
+		    		log.info("No matches found for " + scoreAttribute + " in input");
 		    	} else {
-		    		log.info("Looping thru matching " + attribute + " from input");
+		    		log.info("Looping thru matching " + scoreAttribute + " from input");
 		    	}
 		    	
 		    	//look for exact match in vivo
 		    	while (scoreInputResult.hasNext()) {
 		    		scoreSolution = scoreInputResult.next();
-	                matchNode = scoreSolution.get(attribute);
+	                matchNode = scoreSolution.get("scoreAttribute");
 	                paperNode = scoreSolution.get("x");
 	                paperResource = scoreSolution.getResource("x");
 	                
@@ -680,9 +694,8 @@ public class Score {
 	    			
 	                //Select all matching attributes from vivo store
 	    			queryString =
-						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
 						"SELECT ?x " +
-						"WHERE { ?x " + coreAttribute + " \"" +  scoreMatch + "\" }";
+						"WHERE { ?x " + vivoAttribute + " \"" +  scoreMatch + "\" }";
 	    			
 	    			log.debug(queryString);
 	    			
