@@ -82,7 +82,6 @@ public class ArgParser {
 		return this.optMap;
 	}
 	
-
 	/**
 	 * Get the application name
 	 * @return the application name
@@ -91,7 +90,6 @@ public class ArgParser {
 		return this.app;
 	}
 	
-
 	/**
 	 * Add an Argument Definition to this Argument Parser
 	 * @param arg the argument to add
@@ -131,9 +129,7 @@ public class ArgParser {
 				ob = ob.withDescription(arg.getDescription());
 			}
 			if(arg.hasParameter()) {
-				if(arg.getParameterDescription() != null) {
-					ob = ob.withArgName(arg.getParameterDescription());
-				}
+				ob = ob.withArgName(arg.getParameterDescription());
 				int num = arg.numParameters();
 				if(num == 1) {
 					ob = ob.hasArg(arg.isParameterRequired());
@@ -141,7 +137,11 @@ public class ArgParser {
 					if(arg.isParameterRequired()) {
 						ob = ob.hasArgs();
 					} else {
-						ob = ob.hasOptionalArgs();
+						if(arg.isParameterProperties()) {
+							ob = ob.hasOptionalArgs(2).withValueSeparator();
+						} else {
+							ob = ob.hasOptionalArgs();
+						}
 					}
 				} else {
 					if (arg.isParameterRequired()) {

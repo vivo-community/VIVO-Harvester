@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +30,7 @@ import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
+import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
  * Fetches rdf data from a JDBC database
@@ -64,13 +66,21 @@ public class JDBCFetch {
 	 */
 	private List<String> tableNames = null;
 	/**
-	 * list of conditions - optional
+	 * list of conditions
 	 */
-	private List<String> condFields = new LinkedList<String>();
+	private Map<String,List<String>> whereClauses;
 	/**
 	 * Namespace for RDF made from this database
 	 */
 	private String uriNS;
+	/**
+	 * Prefix each field in query with this
+	 */
+	private String queryPre;
+	/**
+	 * Suffix each field in query with this
+	 */
+	private String querySuf;
 	
 	/**
 	 * Constructor
@@ -83,6 +93,27 @@ public class JDBCFetch {
 		this.cursor = dbConn.createStatement();
 		this.rh = output;
 		this.uriNS = uriNameSpace;
+	}
+	
+	/**
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
+	 */
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("JDBCFetch");
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterProperties("TABLE_NAME", "ID_FIELD").setDescription("use ID_FIELD as identifier for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClauses").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
+		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
+		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
+		return parser;
 	}
 	
 	/**
@@ -100,42 +131,86 @@ public class JDBCFetch {
 		String connLine = opts.get("c");
 		String username = opts.get("u");
 		String password = opts.get("p");
+		this.queryPre = opts.get("delimiterPrefix");
+		this.querySuf = opts.get("delimiterSuffix");
 		
-		String tableNamesStr = opts.get("t");
-		String idFieldsStr = opts.get("i");
-		String dataFieldsStr = opts.get("a");
-		String condFieldsStr = opts.get("n");
-		
-		this.tableNames = new LinkedList<String>();
-		String[] tnSplit = tableNamesStr.split(",");
-		for (int i=0; i<tnSplit.length; i++) {
-			this.tableNames.add(tnSplit[i]);
+		if(opts.has("t")) {
+			this.tableNames = opts.getAll("t");
 		}
 		
-		this.dataFields = new HashMap<String,List<String>>();		
-		List<String> dataFieldsList = new LinkedList<String>();
-		String[] dfSplit = dataFieldsStr.split(",");
-		for (int i=0; i<dfSplit.length; i++) {
-			dataFieldsList.add(dfSplit[i]);
-		}
-		// Pending: currently using only the first table name as key - need to fix
-		this.dataFields.put(this.tableNames.get(0), dataFieldsList);			
-		
-		this.idFields = new HashMap<String,String>();
-		// Pending: currently using only the first table name as key and there is only one key in the example - need to fix
-		this.idFields.put(this.tableNames.get(0), idFieldsStr);
-		
-		if (condFieldsStr != null) {
-			String[] condSplit = condFieldsStr.split(",");
-			for (int i=0; i<condSplit.length; i++) {
-				this.condFields.add(condSplit[i]);
+		if(opts.has("F")) {
+			if(!opts.has("t")) {
+				throw new IllegalArgumentException("Cannot specify fields without tableName");
+			}
+			this.dataFields = new HashMap<String,List<String>>();
+			Properties fields = opts.getProperties("F");
+			for(String tableName : fields.stringPropertyNames()) {
+				if(!this.dataFields.containsKey(tableName.trim())) {
+					this.dataFields.put(tableName, new LinkedList<String>());
+				}
+				for(String fieldLine : fields.get(tableName.trim()).toString().split(",")) {
+					this.dataFields.get(tableName).add(fieldLine.trim());
+					log.debug("field: '"+fieldLine.trim()+"'");
+				}
 			}
 		}
 		
-		// Pending: need to add code to handle relations
-
+		if(opts.has("I")) {
+			if(!opts.has("t")) {
+				throw new IllegalArgumentException("Cannot specify id without tableName");
+			}
+			this.idFields = new HashMap<String,String>();
+			Properties ids = opts.getProperties("I");
+			for(Object table : ids.keySet()) {
+				String tableName = table.toString().trim();
+				this.idFields.put(tableName, ids.get(tableName).toString().trim());
+			}
+		}
+		
+		if (opts.has("W")) {
+			if(!opts.has("t")) {
+				throw new IllegalArgumentException("Cannot specify whereClauses without tableName");
+			}
+			this.whereClauses = new HashMap<String,List<String>>();
+			Properties wheres = opts.getProperties("W");
+			for(Object table : wheres.keySet()) {
+				String tableName = table.toString().trim();
+				if(!this.whereClauses.containsKey(tableName)) {
+					this.whereClauses.put(tableName, new LinkedList<String>());
+				}
+				for(String whereLine : wheres.get(table).toString().split(",")) {
+					this.whereClauses.get(tableName).add(whereLine.trim());
+				}
+			}
+		}
+		
+		if (opts.has("R")) {
+			if(!opts.has("t")) {
+				throw new IllegalArgumentException("Cannot specify relations without tableName");
+			}
+			this.relations = new HashMap<String,Map<String,String>>();
+			Properties rels = opts.getProperties("R");
+			for(Object table : rels.keySet()) {
+				String tableName = table.toString().trim();
+				if(!this.relations.containsKey(tableName)) {
+					this.relations.put(tableName, new HashMap<String, String>());
+				}
+				for(String relLine : rels.get(table).toString().split(",")) {
+					String[] relPair = relLine.split("~", 2);
+					if(relPair.length != 2) {
+						throw new IllegalArgumentException("Bad Relation Line: "+relLine);
+					}
+					this.relations.get(tableName).put(relPair[0].trim(), relPair[1].trim());
+				}
+			}
+		}
+		
 		Connection dbConn;
 		try {
+			System.out.println("dbDriver: '"+jdbcDriverClass+"'");
+			System.out.println("ConnLine: '"+connLine+"'");
+			System.out.println("UserName: '"+username+"'");
+			System.out.println("PassWord: '"+password+"'");
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
 			this.rh = RecordHandler.parseConfig(opts.get("o"));
@@ -146,8 +221,45 @@ public class JDBCFetch {
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-//		this.uriNS = "http://"+host+"/"+connType+"/"+dbName+"/";
 		this.uriNS = connLine+"/";
+	}
+	
+	/**
+	 * Get the field prefix
+	 * @return the field prefix
+	 */
+	private String getFieldPrefix() {
+		if(this.queryPre == null) {
+			this.queryPre = "";
+		}
+		return this.queryPre;
+	}
+
+	/**
+	 * Set the field prefix
+	 * @param fieldPrefix the field prefix to use
+	 */
+	public void setFieldPrefix(String fieldPrefix) {
+		this.queryPre = fieldPrefix;
+	}
+	
+	/**
+	 * Get the field suffix
+	 * @return the field suffix
+	 */
+	private String getFieldSuffix() {
+		if(this.querySuf == null) {
+			this.querySuf = "";
+		}
+		return this.querySuf;
+	}
+
+	/**
+	 * Set the field suffix
+	 * @param fieldSuffix the field suffix to use
+	 */
+	public void setFieldSuffix(String fieldSuffix) {
+		this.querySuf = fieldSuffix;
 	}
 	
 	/**
@@ -202,6 +314,22 @@ public class JDBCFetch {
 	}
 	
 	/**
+	 * Get the where clauses for a table from the database
+	 * @param tableName the table to get the where clauses for
+	 * @return the where clauses
+	 * @throws SQLException error connecting to DB
+	 */
+	private List<String> getWhereClauses(String tableName) throws SQLException {
+		if(this.whereClauses == null) {
+			this.whereClauses = new HashMap<String, List<String>>();
+		}
+		if(!this.whereClauses.containsKey(tableName)) {
+			this.whereClauses.put(tableName, new LinkedList<String>());
+		}
+		return this.whereClauses.get(tableName);
+	}
+	
+	/**
 	 * Get the id field information for a table from the database
 	 * @param tableName the table to get the id field information for
 	 * @return the id field name
@@ -248,27 +376,26 @@ public class JDBCFetch {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for(String dataField : getDataFields(tableName)) {
+			sb.append(getFieldPrefix());
 			sb.append(dataField);
+			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
 		for(String relField : getRelationFields(tableName).keySet()) {
+			sb.append(getFieldPrefix());
 			sb.append(relField);
+			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
+		sb.append(getFieldPrefix());
 		sb.append(getIDField(tableName));
+		sb.append(getFieldSuffix());
 		sb.append(" FROM ");
 		sb.append(tableName);
 
-		if (this.condFields.size() > 0) {
-			int c = 1;
+		if (getWhereClauses(tableName).size() > 0) {
 			sb.append(" WHERE ");
-			for(String cond : this.condFields) {
-				sb.append(cond);
-				if (c < this.condFields.size()) {
-					sb.append(" AND ");
-				}
-				c++;
-			}
+			sb.append(StringUtils.join(" AND ", getWhereClauses(tableName)));
 		}
 		log.info("SQL Query: " + sb.toString());
 		return sb.toString();
@@ -377,24 +504,6 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("JDBCFetch");
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameter(true, "TABLE_NAMES").setDescription("database table names").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("tableId").withParameter(true, "ID_FIELDS").setDescription("database table ID column names").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("tableColumns").withParameter(true, "TABLE_COLUMNS").setDescription("database table column names").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("conditions").withParameter(true, "CONDITION_FIELDS").setDescription("select table rows with certain conditions").setRequired(false));
-		return parser;
-	}
-	
-	/**
 	 * Main method
 	 * @param args commandline arguments
 	 */
@@ -402,6 +511,7 @@ public class JDBCFetch {
 		try {
 			new JDBCFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
+			log.debug(e.getMessage(),e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);

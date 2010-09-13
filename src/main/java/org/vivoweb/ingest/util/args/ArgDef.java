@@ -47,6 +47,10 @@ public class ArgDef {
 	 * Description of argument's parameter
 	 */
 	private String parameterDescription;
+	/**
+	 * Is this argument a parameter map
+	 */
+	private boolean parameterPropertiesType;
 	
 	/**
 	 * Default Constructor
@@ -60,6 +64,7 @@ public class ArgDef {
 		this.numParameters = 0;
 		this.parameterRequired = false;
 		this.parameterDescription = null;
+		this.parameterPropertiesType = false;
 	}
 	
 	/**
@@ -67,7 +72,7 @@ public class ArgDef {
 	 * @return true if this argument has at least a parameter
 	 */
 	public boolean hasParameter() {
-		return (this.numParameters != 0);
+		return (numParameters() != 0);
 	}
 	
 	/**
@@ -75,7 +80,7 @@ public class ArgDef {
 	 * @return true if this argument has many paramters
 	 */
 	public boolean hasParameters() {
-		return (this.numParameters > 1);
+		return (numParameters() > 1 || numParameters() == -1);
 	}
 	
 	/**
@@ -100,6 +105,14 @@ public class ArgDef {
 	 */
 	public String getParameterDescription() {
 		return this.parameterDescription;
+	}
+	
+	/**
+	 * Is this argument a parameter map
+	 * @return true if parameter map
+	 */
+	public boolean isParameterProperties() {
+		return this.parameterPropertiesType;
 	}
 	
 	/**
@@ -228,9 +241,26 @@ public class ArgDef {
 	 * @return this ArgDef
 	 */
 	public ArgDef withParameters(boolean required, String description, int numParams) {
+		if(this.parameterDescription != null) {
+			throw new IllegalArgumentException("Parameter Already Defined");
+		}
+		if(description == null) {
+			throw new IllegalArgumentException("Parameter Must Have Description");
+		}
 		this.numParameters = numParams;
 		this.parameterRequired = required;
 		this.parameterDescription = description;
 		return this;
+	}
+	
+	/**
+	 * Sets thsi argument to have a parameter map
+	 * @param propertyName name of property
+	 * @param valueName name of value
+	 * @return this ArgDef
+	 */
+	public ArgDef withParameterProperties(String propertyName, String valueName) {
+		this.parameterPropertiesType = true;
+		return withParameters(false, propertyName+"="+valueName, -1);
 	}
 }

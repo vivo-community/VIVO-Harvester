@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -106,6 +107,15 @@ public class ArgList {
 	 * @return the value
 	 */
 	public String get(String arg) {
+		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+			throw new IllegalArgumentException(arg+" has no parameters");
+		}
+		if(this.argParser.getOptMap().get(arg).hasParameters()) {
+			throw new IllegalArgumentException(arg+" potentially has more than one value, use getAll()");
+		}
+		if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
+			throw new IllegalArgumentException(arg+" is a properties parameter, use getProperties()");
+		}
 		String retVal;
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal = this.oCmdSet.getOptionValue(arg);
@@ -117,6 +127,27 @@ public class ArgList {
 			}
 		}
 		return retVal;
+	}
+	
+	/**
+	 * Gets the properties for the argument
+	 * @param arg argument to get
+	 * @return the values
+	 */
+	public Properties getProperties(String arg) {
+		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+			throw new IllegalArgumentException(arg+" has no parameters");
+		}
+		if(!this.argParser.getOptMap().get(arg).isParameterProperties()) {
+			if(this.argParser.getOptMap().get(arg).hasParameters()) {
+				throw new IllegalArgumentException(arg+" is not a properties parameter, use getAll()");
+			}
+			throw new IllegalArgumentException(arg+" is not a properties parameter, use get()");
+		}
+		Properties p = new Properties();
+		p.putAll(this.oCmdSet.getOptionProperties(arg));
+		p.putAll(this.oConfSet.getOptionProperties(arg));
+		return p;
 	}
 	
 	/**
@@ -135,6 +166,15 @@ public class ArgList {
 	 * @return the values
 	 */
 	public List<String> getAll(String arg, boolean includeDefaultValue) {
+		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+			throw new IllegalArgumentException(arg+" has no parameters");
+		}
+		if(!this.argParser.getOptMap().get(arg).hasParameters()) {
+			if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
+				throw new IllegalArgumentException(arg+" is a properties parameter, use getProperties()");
+			}
+			throw new IllegalArgumentException(arg+" has only one parameter, use get()");
+		}
 		List<String> retVal = new LinkedList<String>();
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal.addAll(Arrays.asList(this.oCmdSet.getOptionValues(arg)));
