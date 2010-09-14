@@ -317,7 +317,7 @@ public class HtmlEntities {
 		StringBuilder b = new StringBuilder(s.length());
 		for(int i = 0; i < s.length(); i++ ) {
 			char ch = s.charAt(i);
-			if(ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == ' ' || ch == '\'' || ch == '^') {
+			if(ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == ' ' || ch == '\'' || ch == '^' || ch == '.') {
 				b.append(ch);
 			} else {
 				StringBuilder b2 = new StringBuilder();

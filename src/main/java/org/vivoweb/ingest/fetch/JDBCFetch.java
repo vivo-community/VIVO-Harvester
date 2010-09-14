@@ -269,6 +269,7 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private List<String> getDataFields(String tableName) throws SQLException {
+		log.debug(tableName);
 		if(this.dataFields == null) {
 			this.dataFields = new HashMap<String,List<String>>();
 		}
@@ -426,7 +427,7 @@ public class JDBCFetch {
 		log.info("Fetch: Start");
 		//For each Table
 		try {
-			for(String tableName : this.getTableNames()) {
+			for(String tableName : getTableNames()) {
 				StringBuilder sb = new StringBuilder();
 				//For each Record
 				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next(); ) {
