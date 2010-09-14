@@ -12,6 +12,8 @@ package org.vivoweb.ingest.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -290,6 +292,7 @@ public class HtmlEntities {
 			encode.put("&#8364;", "&euro;");
 			// be carefull with this one (non-breaking whitee space)
 			encode.put("&#160;", "&nbsp;");
+			encode.put(null, null);
 		}
 		return encode;
 	}
@@ -314,10 +317,44 @@ public class HtmlEntities {
 	 * @return html encoded string
 	 */
 	public static String htmlEncode(String s) {
+		List<Character> acceptedTypes = new LinkedList<Character>();
+		acceptedTypes.add(Character.valueOf('\''));
+		acceptedTypes.add(Character.valueOf('.'));
+		acceptedTypes.add(Character.valueOf(','));
+		acceptedTypes.add(Character.valueOf(';'));
+		acceptedTypes.add(Character.valueOf(':'));
+		acceptedTypes.add(Character.valueOf('?'));
+		acceptedTypes.add(Character.valueOf('/'));
+		acceptedTypes.add(Character.valueOf('\\'));
+		acceptedTypes.add(Character.valueOf('|'));
+		acceptedTypes.add(Character.valueOf('('));
+		acceptedTypes.add(Character.valueOf(')'));
+		acceptedTypes.add(Character.valueOf('{'));
+		acceptedTypes.add(Character.valueOf('}'));
+		acceptedTypes.add(Character.valueOf('['));
+		acceptedTypes.add(Character.valueOf(']'));
+		acceptedTypes.add(Character.valueOf('!'));
+		acceptedTypes.add(Character.valueOf('@'));
+		acceptedTypes.add(Character.valueOf('#'));
+		acceptedTypes.add(Character.valueOf('$'));
+		acceptedTypes.add(Character.valueOf('%'));
+		acceptedTypes.add(Character.valueOf('^'));
+		acceptedTypes.add(Character.valueOf('*'));
+		acceptedTypes.add(Character.valueOf('-'));
+		acceptedTypes.add(Character.valueOf('_'));
+		acceptedTypes.add(Character.valueOf('+'));
+		acceptedTypes.add(Character.valueOf('='));
+		acceptedTypes.add(Character.valueOf('`'));
+		acceptedTypes.add(Character.valueOf('='));
+		acceptedTypes.add(Character.valueOf(' '));
+		acceptedTypes.add(Character.valueOf('\t'));
+		acceptedTypes.add(Character.valueOf('\n'));
+		acceptedTypes.add(Character.valueOf('\r'));
+		acceptedTypes.add(Character.valueOf('\f'));
 		StringBuilder b = new StringBuilder(s.length());
 		for(int i = 0; i < s.length(); i++ ) {
 			char ch = s.charAt(i);
-			if(ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == ' ' || ch == '\'' || ch == '^' || ch == '.') {
+			if(acceptedTypes.contains(Character.valueOf(ch)) || Character.isLetterOrDigit(ch)) {
 				b.append(ch);
 			} else {
 				StringBuilder b2 = new StringBuilder();

@@ -269,7 +269,6 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private List<String> getDataFields(String tableName) throws SQLException {
-		log.debug(tableName);
 		if(this.dataFields == null) {
 			this.dataFields = new HashMap<String,List<String>>();
 		}
@@ -454,7 +453,7 @@ public class JDBCFetch {
 					sb.append("\">\n");
 					for(String dataField : getDataFields(tableName)) {
 						//Field BEGIN
-						String field = tableNS+":"+dataField;
+						String field = tableNS+":"+dataField.replaceAll(" ", "_");
 						sb.append("    <");
 						sb.append(field);
 						sb.append(">");
@@ -474,7 +473,7 @@ public class JDBCFetch {
 						sb.append("    <");
 						sb.append(tableNS);
 						sb.append(":");
-						sb.append(relationField);
+						sb.append(relationField.replaceAll(" ", "_"));
 						sb.append(" rdf:resource=\"");
 						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
 						
