@@ -317,6 +317,68 @@ public class HtmlEntities {
 	 */
 	public static String htmlEncode(String s) {
 		List<Character> acceptedTypes = new LinkedList<Character>();
+    acceptedTypes.add(Character.valueOf('a'));
+    acceptedTypes.add(Character.valueOf('b'));
+    acceptedTypes.add(Character.valueOf('c'));
+    acceptedTypes.add(Character.valueOf('d'));
+    acceptedTypes.add(Character.valueOf('e'));
+    acceptedTypes.add(Character.valueOf('f'));
+    acceptedTypes.add(Character.valueOf('g'));
+    acceptedTypes.add(Character.valueOf('h'));
+    acceptedTypes.add(Character.valueOf('i'));
+    acceptedTypes.add(Character.valueOf('j'));
+    acceptedTypes.add(Character.valueOf('k'));
+    acceptedTypes.add(Character.valueOf('l'));
+    acceptedTypes.add(Character.valueOf('m'));
+    acceptedTypes.add(Character.valueOf('n'));
+    acceptedTypes.add(Character.valueOf('o'));
+    acceptedTypes.add(Character.valueOf('p'));
+    acceptedTypes.add(Character.valueOf('q'));
+    acceptedTypes.add(Character.valueOf('r'));
+    acceptedTypes.add(Character.valueOf('s'));
+    acceptedTypes.add(Character.valueOf('t'));
+    acceptedTypes.add(Character.valueOf('u'));
+    acceptedTypes.add(Character.valueOf('v'));
+    acceptedTypes.add(Character.valueOf('w'));
+    acceptedTypes.add(Character.valueOf('x'));
+    acceptedTypes.add(Character.valueOf('y'));
+    acceptedTypes.add(Character.valueOf('z'));
+    acceptedTypes.add(Character.valueOf('A'));
+    acceptedTypes.add(Character.valueOf('B'));
+    acceptedTypes.add(Character.valueOf('C'));
+    acceptedTypes.add(Character.valueOf('D'));
+    acceptedTypes.add(Character.valueOf('E'));
+    acceptedTypes.add(Character.valueOf('F'));
+    acceptedTypes.add(Character.valueOf('G'));
+    acceptedTypes.add(Character.valueOf('H'));
+    acceptedTypes.add(Character.valueOf('I'));
+    acceptedTypes.add(Character.valueOf('J'));
+    acceptedTypes.add(Character.valueOf('K'));
+    acceptedTypes.add(Character.valueOf('L'));
+    acceptedTypes.add(Character.valueOf('M'));
+    acceptedTypes.add(Character.valueOf('N'));
+    acceptedTypes.add(Character.valueOf('O'));
+    acceptedTypes.add(Character.valueOf('P'));
+    acceptedTypes.add(Character.valueOf('Q'));
+    acceptedTypes.add(Character.valueOf('R'));
+    acceptedTypes.add(Character.valueOf('S'));
+    acceptedTypes.add(Character.valueOf('T'));
+    acceptedTypes.add(Character.valueOf('U'));
+    acceptedTypes.add(Character.valueOf('V'));
+    acceptedTypes.add(Character.valueOf('W'));
+    acceptedTypes.add(Character.valueOf('X'));
+    acceptedTypes.add(Character.valueOf('Y'));
+    acceptedTypes.add(Character.valueOf('Z'));
+    acceptedTypes.add(Character.valueOf('0'));
+    acceptedTypes.add(Character.valueOf('1'));
+    acceptedTypes.add(Character.valueOf('2'));
+    acceptedTypes.add(Character.valueOf('3'));
+    acceptedTypes.add(Character.valueOf('4'));
+    acceptedTypes.add(Character.valueOf('5'));
+    acceptedTypes.add(Character.valueOf('6'));
+    acceptedTypes.add(Character.valueOf('7'));
+    acceptedTypes.add(Character.valueOf('8'));
+    acceptedTypes.add(Character.valueOf('9'));
 		acceptedTypes.add(Character.valueOf('\''));
 		acceptedTypes.add(Character.valueOf('.'));
 		acceptedTypes.add(Character.valueOf(','));
@@ -353,7 +415,7 @@ public class HtmlEntities {
 		StringBuilder b = new StringBuilder(s.length());
 		for(int i = 0; i < s.length(); i++ ) {
 			char ch = s.charAt(i);
-			if(acceptedTypes.contains(Character.valueOf(ch)) || Character.isLetterOrDigit(ch)) {
+			if(acceptedTypes.contains(Character.valueOf(ch))) {
 				b.append(ch);
 			} else {
 				StringBuilder b2 = new StringBuilder();
@@ -369,10 +431,8 @@ public class HtmlEntities {
 					i++;
 				} else if(Character.isLowSurrogate(ch)) {
 					i++;
-				} else {
-					if(Character.isDefined(ch)) {
-						b2.append("&#").append((int)ch).append(";");
-					}
+				} else if(Character.isDefined(ch)) {
+					b2.append("&#").append((int)ch).append(";");
 				}
 				if(getEncode().containsKey(b2.toString())) {
 					b.append(getEncode().get(b2.toString()));
