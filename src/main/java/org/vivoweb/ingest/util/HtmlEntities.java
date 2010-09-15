@@ -99,7 +99,7 @@ public class HtmlEntities {
 			encode.put("&#218;", "&Uacute;");
 			encode.put("&#219;", "&Ucirc;");
 			encode.put("&#220;", "&Uuml;");
-			encode.put("&#221;", "&Yacute;");
+//			encode.put("&#221;", "&Yacute;");
 			encode.put("&#222;", "&THORN;");
 			encode.put("&#223;", "&szlig;");
 			encode.put("&#224;", "&agrave;");
