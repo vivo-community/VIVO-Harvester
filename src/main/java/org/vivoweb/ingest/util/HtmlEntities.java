@@ -46,7 +46,7 @@ public class HtmlEntities {
 			encode.put("&#165;", "&yen;");
 			encode.put("&#166;", "&brvbar;");
 			encode.put("&#167;", "&sect;");
-//			encode.put("&#168;", "&uml;");
+			encode.put("&#168;", "&uml;");
 			encode.put("&#169;", "&copy;");
 			encode.put("&#170;", "&ordf;");
 			encode.put("&#171;", "&laquo;");
@@ -99,7 +99,7 @@ public class HtmlEntities {
 			encode.put("&#218;", "&Uacute;");
 			encode.put("&#219;", "&Ucirc;");
 			encode.put("&#220;", "&Uuml;");
-//			encode.put("&#221;", "&Yacute;");
+			encode.put("&#221;", "&Yacute;");
 			encode.put("&#222;", "&THORN;");
 			encode.put("&#223;", "&szlig;");
 			encode.put("&#224;", "&agrave;");
@@ -434,11 +434,11 @@ public class HtmlEntities {
 				} else if(Character.isDefined(ch)) {
 					b2.append("&#").append((int)ch).append(";");
 				}
-				if(getEncode().containsKey(b2.toString())) {
-					b.append(getEncode().get(b2.toString()));
-				} else {
+//				if(getEncode().containsKey(b2.toString())) {
+//					b.append(getEncode().get(b2.toString()));
+//				} else {
 					b.append(b2.toString());
-				}
+//				}
 			}
 		}
 		return b.toString();
