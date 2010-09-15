@@ -205,7 +205,7 @@ public class ScoreTest extends TestCase {
 				output = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"output");
 
 				//run author score
-				Test = new Score(input,vivo,output,true,blank,blank,blank,"1");
+				Test = new Score(input,vivo,output,true,blank,blank,blank,blank, "1");
 				Test.execute();
 				
 				//check output model
@@ -218,7 +218,7 @@ public class ScoreTest extends TestCase {
 				Test.scoreOutput.getJenaModel().removeAll();
 				
 				//run exactmatch score
-				Test = new Score(input,vivo,output,false,workEmail,blank,blank,null);
+				Test = new Score(input,vivo,output,false,workEmail,blank,blank,blank, null);
 				Test.execute();
 				
 				//check output model
