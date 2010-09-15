@@ -95,8 +95,8 @@ public class XSLTranslator {
 		this.setTranslationFile(VFS.getManager().resolveFile(new File("."), argumentList.get("xslFile")).getContent().getInputStream());
 		
 		// create record handlers
-		this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
-		this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
+		this.inStore = RecordHandler.parseConfig(argumentList.get("input"), argumentList.getProperties("I"));
+		this.outStore = RecordHandler.parseConfig(argumentList.get("output"), argumentList.getProperties("O"));
 	}
 	
 	/**
@@ -215,7 +215,9 @@ public class XSLTranslator {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("XSLTranslator");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
 		return parser;
 	}	

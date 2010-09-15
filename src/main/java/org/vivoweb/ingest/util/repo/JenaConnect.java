@@ -243,12 +243,17 @@ public class JenaConnect {
 	/**
 	 * Adds all records in a RecordHandler to the model
 	 * @param rh the RecordHandler to pull records from
+	 * @return number of records added
 	 */
-	public void importRDF(RecordHandler rh) {
+	public int importRDF(RecordHandler rh) {
+		int processCount = 0;
 		for(Record r : rh) {
+			log.trace("loading record: "+r.getID());
 			ByteArrayInputStream bais = new  ByteArrayInputStream(r.getData().getBytes());
 			this.getJenaModel().read(bais,null);
+			processCount++;
 		}
+		return processCount;
 	}
 	
 	/**

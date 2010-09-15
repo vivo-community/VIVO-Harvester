@@ -146,7 +146,9 @@ public class ArgList {
 		}
 		Properties p = new Properties();
 		p.putAll(this.oCmdSet.getOptionProperties(arg));
-		p.putAll(this.oConfSet.getOptionProperties(arg));
+		if(this.oConfSet != null) {
+			p.putAll(this.oConfSet.getOptionProperties(arg));
+		}
 		return p;
 	}
 	

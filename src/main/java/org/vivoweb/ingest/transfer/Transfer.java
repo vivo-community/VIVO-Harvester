@@ -11,7 +11,6 @@
 package org.vivoweb.ingest.transfer;
 
 import java.io.File;
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,10 +22,8 @@ import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
-import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
-import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * Transfer data from one Jena model to another
@@ -41,19 +38,11 @@ public class Transfer {
 	/**
 	 * Model to read records from
 	 */
-	private Model input;
+	private JenaConnect input;
 	/**
 	 * Model to write records to
 	 */
-	private Model output;
-	/**
-	 * input model name
-	 */
-	private String inputModelName;
-	/**
-	 * output model name
-	 */
-	private String outputModelName;
+	private JenaConnect output;
 	/**
 	 * dump model option
 	 */
@@ -71,17 +60,13 @@ public class Transfer {
 	 * Constructor
 	 * @param in input Model
 	 * @param out output Model
-	 * @param inName input model name
-	 * @param outName output model name
 	 * @param file dump to file option
 	 * @param keep keep transferred data option
 	 * @param empty empty model before transfer
 	 */
-	public Transfer(Model in, Model out, String inName, String outName, String file, boolean keep, boolean empty) {
+	public Transfer(JenaConnect in, JenaConnect out, String file, boolean keep, boolean empty) {
 	  this.input = in;
 	  this.output = out;
-	  this.inputModelName = inName;
-	  this.outputModelName = outName;
 	  this.dumpFile = file;
 	  this.retainModel = keep;
 	  this.emptyModel = empty;
@@ -93,51 +78,40 @@ public class Transfer {
 	 * @throws IOException error creating task
 	 */
 	public Transfer(ArgList argList) throws IOException {
-		//Require some args
-		if ((!argList.has("o") && !argList.has("O") && !argList.has("d")) || !argList.has("i") && !argList.has("r") && !argList.has("h")) {
-			throw new IllegalArgumentException("Must provide one of -o or -O, or -d in addition to -i or -r or -h");
+		//Require input args
+		if(!argList.has("r") && !argList.has("i") && !argList.has("h")) {
+			throw new IllegalArgumentException("Must provide input via -i, -r, or -h");
 		}
-		String inConfig = argList.get("i");
-		String inRDF = argList.get("r");
-		String outConfig = argList.get("o");
-		this.inputModelName = argList.get("I");
-		this.outputModelName = argList.get("O");
+		//Require output args
+		if (!argList.has("o") && !argList.has("O") && !argList.has("d")) {
+			throw new IllegalArgumentException("Must provide one of -o, -O, or -d");
+		}
 		
 		try {
-			if (inRDF != null) {
-				log.info("Loading RDF " + inRDF + " for input");
-				this.input = new JenaConnect(VFS.getManager().resolveFile(new File("."), inRDF).getContent().getInputStream()).getJenaModel();
-			} else if (argList.has("h")) {
-				//Read in records that need processing
-				int processCount = 0;
-				RecordHandler rh = RecordHandler.parseConfig(argList.get("h"));
-				log.info("Loading Records from RecordHandler as input");
-				for (Record r: rh) {
-					log.trace("Record " + r.getID() + " added to incoming processing model");
-					this.input = new JenaConnect().getJenaModel();
-					this.input.read(new ByteArrayInputStream(r.getData().getBytes()), null);
-					r.setProcessed(this.getClass());
-					processCount += 1;
-				}
-				log.info("Loaded " + processCount + " records");
+			//setup input model
+			if(argList.has("i")) {
+				this.input = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
 			} else {
-				//connect to proper model, if specified on command line
-				if (this.inputModelName != null) {
-					log.info("Using " + this.inputModelName + " for input Model");
-					this.input = (new JenaConnect(JenaConnect.parseConfig(inConfig),this.inputModelName)).getJenaModel();
-				} else {
-					this.input = JenaConnect.parseConfig(inConfig).getJenaModel();
-				}
+				this.input = new JenaConnect();
 			}
-			if (argList.has("o") || argList.has("O")) {
-				//connect to proper model, if specified on command line
-				if (this.outputModelName != null) {
-					log.info("Using " + this.outputModelName + " for output Model");
-					this.output = (new JenaConnect(JenaConnect.parseConfig(outConfig),this.outputModelName)).getJenaModel();
-				} else {
-					this.output = JenaConnect.parseConfig(outConfig).getJenaModel();
-				}
+			
+			//load any specified rdf file data
+			if(argList.has("r")) {
+				String inRDF = argList.get("r");
+				log.info("Loading RDF from " + inRDF);
+				this.input.loadRDF(VFS.getManager().resolveFile(new File("."), inRDF).getContent().getInputStream());
 			}
+			
+			//load data from recordhandler
+			if(argList.has("h")) {
+				//Read in records that need processing
+				log.info("Loading Records from RecordHandler");
+				int processCount = this.input.importRDF(RecordHandler.parseConfig(argList.get("h"), argList.getProperties("H")));
+				log.info("Loaded " + processCount + " records");
+			}
+			
+			//setup output
+			this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
 		} catch(SAXException e) {
@@ -165,9 +139,9 @@ public class Transfer {
 		
 			if (this.output != null) { 
 				if (this.emptyModel) {
-					this.output.removeAll();
+					this.output.getJenaModel().removeAll();
 				}
-				this.output.add(this.input);
+				this.output.getJenaModel().add(this.input.getJenaModel());
 			}
 			
 			//output to file, if requested
@@ -175,14 +149,13 @@ public class Transfer {
 				if (this.input != null) {
 					log.info("Outputting RDF to " + this.dumpFile);
 					try {
-						this.input.write(new FileOutputStream(this.dumpFile));
+						this.input.exportRDF(new FileOutputStream(this.dumpFile));
 						//this.input.write(System.out);
 					} catch (FileNotFoundException e) {
-						//TODO Auto-generated catch block
 						log.error(e.getMessage(),e);
 					} catch (Exception e) {
 						log.error(e.getMessage(),e);
-						//TODO Nicholas: Fix Jena error
+						//NOTTODO Nicholas: Fix Jena error
 						//do nothing; currently bad xml will cause jena to throw error
 					}
 				} else {
@@ -193,7 +166,7 @@ public class Transfer {
 			//empty model
 			if (!this.retainModel) {
 				log.trace("Emptying Model");
-				this.input.removeAll();
+				this.input.getJenaModel().removeAll();
 			}
 		}
 	}
@@ -206,13 +179,14 @@ public class Transfer {
 		ArgParser parser = new ArgParser("Transfer");
 		//Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("input-model").withParameter(true, "MODEL_NAME").setDescription("model name for input (overrides config file)").setRequired(false).setDefaultValue("staging"));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "MODEL_NAME").setDescription("rdf filename for input").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("recordHandler").withParameter(true, "RECORD_HANDLER").setDescription("record handler for input").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("recordHandlerOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
 		
 		//Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output-model").withParameter(true, "MODEL_NAME").setDescription("model name for output (overrides config file)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
 		
 		//options
