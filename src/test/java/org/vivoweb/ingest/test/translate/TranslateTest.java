@@ -72,7 +72,7 @@ public class TranslateTest extends TestCase {
 			assertTrue(this.outRH.iterator().hasNext());
 			
 			// compare the record data with expected output
-			assertEquals(this.outRH.getRecordData("1"), outputData);
+			assertEquals(outputData,this.outRH.getRecordData("1"));
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
 			fail(e.getMessage());

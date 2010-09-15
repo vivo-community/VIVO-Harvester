@@ -9,11 +9,17 @@
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -21,11 +27,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
+import org.xml.sax.SAXException;
 
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology
@@ -78,18 +86,17 @@ public class XSLTranslator {
 	 *           <li>inRecordHandler the files/records that require translation</li>
 	 *           <li>outRecordHandler the output record for the translated files</li>
 	 *           </ul>
+	 * @throws IOException error reading files
+	 * @throws SAXException error with parser
+	 * @throws ParserConfigurationException error with parser config
 	 */
-	public XSLTranslator(ArgList argumentList) {
+	public XSLTranslator(ArgList argumentList) throws ParserConfigurationException, SAXException, IOException {
 		//set Translation file
-		this.setTranslationFile(new File(argumentList.get("xslFile")));
+		this.setTranslationFile(VFS.getManager().resolveFile(new File("."), argumentList.get("xslFile")).getContent().getInputStream());
 		
 		// create record handlers
-		try {
-			this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
-			this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
-		} catch (Exception e) {
-			log.error(e);		//TODO  catch more specific errors
-		}
+		this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
+		this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
 	}
 	
 	/**
@@ -111,6 +118,26 @@ public class XSLTranslator {
 		this.outStream = oStream;
 	}
 	
+	
+	/***
+	 * Set translation file from a file
+	 * 
+	 * @param transFileStream
+	 *           valid type of translation file is xslt
+	 * @throws IOException error creating temp file
+	 */
+	public void setTranslationFile(InputStream transFileStream) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(transFileStream));
+		this.translationFile = File.createTempFile("transFile", "xsl");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(this.translationFile));
+		String s;
+		while((s = br.readLine()) != null) {
+			bw.append(s);
+			bw.append("\n");
+		}
+		bw.close();
+		br.close();
+	}
 	
 	/***
 	 * Set translation file from a file
@@ -137,8 +164,7 @@ public class XSLTranslator {
 			// get from the in record and translate
 			for(Record r : this.inStore) {
 				if (r.needsProcessed(this.getClass())){
-					log.trace("Translating Record " + r.getID());
-					
+					log.info("Translating Record " + r.getID());
 					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
 					this.outStream = buff; 
 					this.xmlTranslate();
@@ -146,14 +172,14 @@ public class XSLTranslator {
 					this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
 					r.setProcessed(this.getClass());
 					buff.reset();
+				} else {
+					log.debug("No Translation Needed: " + r.getID());
 				}
 			}
-			
 			buff.close();
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
 		}
-		 
 		log.info("Translation: End");
 	}
 	
@@ -164,17 +190,16 @@ public class XSLTranslator {
 	 */
 	private void xmlTranslate() {
 		StreamResult outputResult = new StreamResult(this.outStream);
-		
 		try {
 			// JAXP reads data using the Source interface
 			Source xmlSource = new StreamSource(this.inStream);
-			Source xsltSource = new StreamSource(this.translationFile);
+			Source xslSource = new StreamSource(this.translationFile);
 			
 			System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
 			
 			// the factory pattern supports different XSLT processors
 			TransformerFactory transFact = TransformerFactory.newInstance();
-			Transformer trans = transFact.newTransformer(xsltSource);
+			Transformer trans = transFact.newTransformer(xslSource);
 			
 			// this outputs to oStream
 			trans.transform(xmlSource, outputResult);

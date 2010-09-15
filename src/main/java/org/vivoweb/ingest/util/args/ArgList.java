@@ -205,7 +205,7 @@ public class ArgList {
 		/**
 		 * The param list from config file
 		 */
-		private Map<String,String> params;
+		private Map<String,List<String>> params;
 		/**
 		 * Temporary container for cdata
 		 */
@@ -213,13 +213,13 @@ public class ArgList {
 		/**
 		 * Temporary container for parameter id
 		 */
-		private String tempParamID;
+		private String tempParamName;
 		
 		/**
 		 * Default Constructor
 		 */
 		protected ConfigParser() {
-			this.params = new HashMap<String,String>();
+			this.params = new HashMap<String,List<String>>();
 			this.tempVal = "";
 		}
 		
@@ -234,15 +234,16 @@ public class ArgList {
 		 * @throws ParserConfigurationException parser config error
 		 */
 		public String[] configToArgs(String filePath) throws SecurityException, IllegalArgumentException, ParserConfigurationException, SAXException, IOException {
-			Map<String, String> parameters = parseConfig(filePath);
+			Map<String, List<String>> parameters = parseConfig(filePath);
 			String[] paramArray = {};
 			List<String> paramList = new LinkedList<String>();
 			for(String key : parameters.keySet()) {
-				String value = parameters.get(key);
-				if(!value.equalsIgnoreCase("false")) {
-					paramList.add("--"+key);
-					if(!value.equalsIgnoreCase("true")) {
-						paramList.add(value);
+				for(String value : parameters.get(key)) {
+					if(!value.equalsIgnoreCase("false")) {
+						paramList.add("--"+key);
+						if(!value.equalsIgnoreCase("true")) {
+							paramList.add(value);
+						}
 					}
 				}
 			}
@@ -258,7 +259,7 @@ public class ArgList {
 		 * @throws SAXException xml parsing error
 		 * @throws ParserConfigurationException xml parsing error
 		 */
-		private Map<String, String> parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
+		private Map<String, List<String>> parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse the file and also register this class for call backs
@@ -268,11 +269,11 @@ public class ArgList {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			this.tempVal = "";
-			this.tempParamID = "";
+			this.tempParamName = "";
 			if(qName.equalsIgnoreCase("Task")) {
 				//Do nothing, but keep to prevent falling into else
 			} else if(qName.equalsIgnoreCase("Param")) {
-				this.tempParamID = attributes.getValue("id");
+				this.tempParamName = attributes.getValue("name");
 			} else {
 				throw new SAXException("Unknown Tag: "+qName);
 			}
@@ -288,7 +289,10 @@ public class ArgList {
 			if(qName.equalsIgnoreCase("Task")) {
 				//Do nothing, but leave it here so it doesn't fall into else statement
 			} else if(qName.equalsIgnoreCase("Param")) {
-				this.params.put(this.tempParamID, this.tempVal);
+				if(!this.params.containsKey(this.tempParamName)) {
+					this.params.put(this.tempParamName, new LinkedList<String>());
+				}
+				this.params.get(this.tempParamName).add(this.tempVal);
 			} else {
 				throw new SAXException("Unknown Tag: "+qName);
 			}

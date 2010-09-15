@@ -292,7 +292,6 @@ public class HtmlEntities {
 			encode.put("&#8364;", "&euro;");
 			// be carefull with this one (non-breaking whitee space)
 			encode.put("&#160;", "&nbsp;");
-			encode.put(null, null);
 		}
 		return encode;
 	}

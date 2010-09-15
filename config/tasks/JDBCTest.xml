@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Task type="org.vivoweb.ingest.fetch.JDBCFetch">
-	<Param id="driver">com.mysql.jdbc.Driver</Param>
-	<Param id="connection">jdbc:mysql://127.0.0.1:3306/jdbctestharvest</Param>
-	<Param id="username">jdbcTestHarvest</Param>
-	<Param id="password">xKzQVJhBnxYREmYK</Param>
-	<Param id="output">config/recordHandlers/JDBCXMLRecordHandler.xml</Param>
+	<Param name="driver">com.mysql.jdbc.Driver</Param>
+	<Param name="connection">jdbc:mysql://127.0.0.1:3306/jdbctestharvest</Param>
+	<Param name="username">jdbcTestHarvest</Param>
+	<Param name="password">xKzQVJhBnxYREmYK</Param>
+	<Param name="output">config/recordHandlers/JDBCXMLRecordHandler.xml</Param>
 </Task>

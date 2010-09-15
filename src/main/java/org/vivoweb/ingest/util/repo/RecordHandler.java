@@ -134,7 +134,6 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error retrieving record metadata
 	 */
 	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
-		log.info("recMeta: "+getRecordMetaData(recID));
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
 			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
 				return rmd;
@@ -361,8 +360,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 		RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
 		Calendar write = rmdWrite.getDate();
 		RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
-		//log.debug("rmdWrite: "+rmdWrite);
-		//log.debug("rmdProcess: "+rmdProcess);
+//		log.debug("rmdWrite: "+rmdWrite);
+//		log.debug("rmdProcess: "+rmdProcess);
 		if (rmdProcess == null) {
 			return true;
 		}
