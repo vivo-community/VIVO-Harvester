@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -148,7 +149,20 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(FileObject configFile) throws ParserConfigurationException, SAXException, IOException {
-		return build(new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream()));
+		return parseConfig(configFile, null);
+	}
+	
+	/**
+	 * Config File Based Factory that overrides parameters
+	 * @param configFile the vfs config file descriptor
+	 * @param overrideParams the parameters to override the file with
+	 * @return JenaConnect instance
+	 * @throws IOException error connecting
+	 * @throws SAXException xml parse error
+	 * @throws ParserConfigurationException xml parse error
+	 */
+	public static JenaConnect parseConfig(FileObject configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		return build(new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream(), overrideParams));
 	}
 	
 	/**
@@ -327,10 +341,15 @@ public class JenaConnect {
 		 * @throws SAXException xml error
 		 * @throws IOException error reading stream
 		 */
-		protected Map<String, String> parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
+		protected Map<String, String> parseConfig(InputStream inputStream, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			sp.parse(inputStream, this); // parse the file and also register this class for call backs
+			if(overrideParams != null) {
+				for(String key : overrideParams.stringPropertyNames()) {
+					this.params.put(key, overrideParams.getProperty(key));
+				}
+			}
 			return this.params;
 		}
 		

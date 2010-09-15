@@ -111,6 +111,7 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClauses").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
 		return parser;
@@ -213,7 +214,7 @@ public class JDBCFetch {
 			System.out.println("PassWord: '"+password+"'");
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
-			this.rh = RecordHandler.parseConfig(opts.get("o"));
+			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
 		} catch(SAXException e) {

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -222,7 +223,20 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws ParserConfigurationException xml config parse error
 	 */
 	public static RecordHandler parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
-		return new RecordHandlerParser().parseConfig(filename);
+		return parseConfig(filename, null);
+	}
+	
+	/**
+	 * Build RecordHandler based on config file and overrides using the specified parameters
+	 * @param filename filename of config file
+	 * @param overrideParams the parameters to override the file with
+	 * @return RecordHandler described by config file
+	 * @throws IOException xml config parse error
+	 * @throws SAXException xml config parse error
+	 * @throws ParserConfigurationException xml config parse error
+	 */
+	public static RecordHandler parseConfig(String filename, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		return new RecordHandlerParser().parseConfig(filename, overrideParams);
 	}
 	
 	/**
@@ -290,10 +304,36 @@ public abstract class RecordHandler implements Iterable<Record> {
 		 * @throws SAXException xml parsing error
 		 * @throws ParserConfigurationException xml parsing error
 		 */
-		protected RecordHandler parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
+		protected RecordHandler parseConfig(String filename, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse the file and also register this class for call backs
+			if(overrideParams != null) {
+				for(String key : overrideParams.stringPropertyNames()) {
+					this.params.put(key, overrideParams.getProperty(key));
+				}
+			}
+			try {
+				Class<?> className = Class.forName(this.type);
+				Object tempRH = className.newInstance();
+				if(!(tempRH instanceof RecordHandler)) {
+					throw new SAXException("Class must extend RecordHandler");
+				}
+				this.rh = (RecordHandler)tempRH;
+				this.rh.setParams(this.params);
+			} catch(ClassNotFoundException e) {
+				throw new SAXException("Unknown Class: "+this.type,e);
+			} catch(SecurityException e) {
+				throw new SAXException(e.getMessage(),e);
+			} catch(IllegalArgumentException e) {
+				throw new SAXException(e.getMessage(),e);
+			} catch(InstantiationException e) {
+				throw new SAXException(e.getMessage(),e);
+			} catch(IllegalAccessException e) {
+				throw new SAXException(e.getMessage(),e);
+			} catch(IOException e) {
+				throw new SAXException(e.getMessage(),e);
+			}
 			this.rh.setOverwriteDefault(true);
 			return this.rh;
 		}
@@ -319,27 +359,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if(qName.equalsIgnoreCase("RecordHandler")) {
-				try {
-					Class<?> className = Class.forName(this.type);
-					Object tempRH = className.newInstance();
-					if(!(tempRH instanceof RecordHandler)) {
-						throw new SAXException("Class must extend RecordHandler");
-					}
-					this.rh = (RecordHandler)tempRH;
-					this.rh.setParams(this.params);
-				} catch(ClassNotFoundException e) {
-					throw new SAXException("Unknown Class: "+this.type,e);
-				} catch(SecurityException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(IllegalArgumentException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(InstantiationException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(IllegalAccessException e) {
-					throw new SAXException(e.getMessage(),e);
-				} catch(IOException e) {
-					throw new SAXException(e.getMessage(),e);
-				}
+				//ignore
 			} else if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
 			} else {
