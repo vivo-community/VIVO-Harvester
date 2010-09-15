@@ -76,6 +76,7 @@ public class Score {
 		/**
 		 * Arguments for pairwise algorithm
 		 */
+		private List<String> ufMatch;
 		private List<String> pairwise;
 		/**
 		 * Arguments for regex algorithm
@@ -142,7 +143,12 @@ public class Score {
 				this.exactMatch("<http://vivoweb.org/ontology/score#" + attribute + ">",
 						"<http://vivoweb.org/ontology/core#" + attribute + ">");
 			}
-			
+			//Ugly hack GO!
+			for (String attribute : this.ufMatch) {
+				this.ufMatch("<http://vivoweb.org/ontology/score#" + attribute + ">",
+						"<http://vivo.ufl.edu/ontology/vivo-ufl/" + attribute + ">");
+				
+			}
 			//Call each pairwise
 			for (String attribute : this.pairwise) {
 				this.pairwise(attribute);
@@ -181,6 +187,7 @@ public class Score {
 			
 			//scoring algorithms
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
+			parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("ufMatch").setDescription("perform an exact match scoring against the UF VIVO extension").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
@@ -202,12 +209,13 @@ public class Score {
 		 * @param regexArg perform a regular expression scoring
 		 * @param authorNameArg perform a author name scoring
 		 */
-		public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
+		public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> ufMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
 			this.scoreInput = jenaScoreInput;
 			this.vivo = jenaVivo;
 			this.scoreOutput = jenaScoreOutput;
 			this.keepInputModel = retainWorkingModelArg;
 			this.exactMatch = exactMatchArg;
+			this.ufMatch = ufMatchArg;
 			this.pairwise = pairwiseArg;
 			this.regex = regexArg;
 			this.authorName = authorNameArg;
@@ -280,6 +288,7 @@ public class Score {
 					this.scoreOutput = jenaOutputDB;					
 					this.keepInputModel = opts.has("k");
 					this.exactMatch = opts.getAll("e");
+					this.ufMatch = opts.getAll("u");
 					this.pairwise = opts.getAll("p");
 					this.regex = opts.getAll("r");
 					this.authorName = opts.get("a");
@@ -671,6 +680,55 @@ public class Score {
 
 			 	//Exact Match
 			 	log.info("Executing exactMatch for " + scoreAttribute + " against " + vivoAttribute);
+			 	log.debug(matchQuery);
+		 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
+		 		
+		    	//Log extra info message if none found
+		    	if (!scoreInputResult.hasNext()) {
+		    		log.info("No matches found for " + scoreAttribute + " in input");
+		    	} else {
+		    		log.info("Looping thru matching " + scoreAttribute + " from input");
+		    	}
+		    	
+		    	//look for exact match in vivo
+		    	while (scoreInputResult.hasNext()) {
+		    		scoreSolution = scoreInputResult.next();
+	                matchNode = scoreSolution.get("scoreAttribute");
+	                paperNode = scoreSolution.get("x");
+	                paperResource = scoreSolution.getResource("x");
+	                
+	                scoreMatch = matchNode.toString();
+	                
+	                log.info("Checking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
+	    			
+	                //Select all matching attributes from vivo store
+	    			queryString =
+						"SELECT ?x " +
+						"WHERE { ?x " + vivoAttribute + " \"" +  scoreMatch + "\" }";
+	    			
+	    			log.debug(queryString);
+	    			
+	    			vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
+	    			
+	    			commitResultSet(this.scoreOutput.getJenaModel(),vivoResult,paperResource,matchNode,paperNode);
+	            }	    			 
+		 }
+		 public void ufMatch(String scoreAttribute, String vivoAttribute) {
+				String scoreMatch;
+				String queryString;
+				Resource paperResource;
+				RDFNode matchNode;
+				RDFNode paperNode;
+				ResultSet vivoResult;
+				QuerySolution scoreSolution;
+			 	ResultSet scoreInputResult;
+			 	
+			 	String matchQuery = "SELECT ?x ?scoreAttribute " + 
+		    						"WHERE { ?x " + scoreAttribute + " ?scoreAttribute}";
+
+
+			 	//Exact Match
+			 	log.info("Executing ufMatch for " + scoreAttribute + " against " + vivoAttribute);
 			 	log.debug(matchQuery);
 		 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
 		 		
