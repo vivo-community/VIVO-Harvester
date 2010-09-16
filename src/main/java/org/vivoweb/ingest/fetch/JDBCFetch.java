@@ -16,6 +16,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.HtmlEntities;
+import org.vivoweb.ingest.util.SpecialEntities;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -52,7 +53,7 @@ public class JDBCFetch {
 	/**
 	 * Mapping of tablename to idField name
 	 */
-	private Map<String,String> idFields = null;
+	private Map<String,List<String>> idFields = null;
 	/**
 	 * Mapping of tablename to mapping of fieldname to tablename
 	 */
@@ -107,10 +108,10 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterProperties("TABLE_NAME", "ID_FIELD").setDescription("use ID_FIELD as identifier for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("ids").withParameterProperties("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClauses").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
@@ -160,11 +161,11 @@ public class JDBCFetch {
 			if(!opts.has("t")) {
 				throw new IllegalArgumentException("Cannot specify id without tableName");
 			}
-			this.idFields = new HashMap<String,String>();
+			this.idFields = new HashMap<String,List<String>>();
 			Properties ids = opts.getProperties("I");
 			for(Object table : ids.keySet()) {
 				String tableName = table.toString().trim();
-				this.idFields.put(tableName, ids.get(tableName).toString().trim());
+				this.idFields.put(tableName, Arrays.asList(ids.get(tableName).toString().trim().split(",")));
 			}
 		}
 		
@@ -278,7 +279,7 @@ public class JDBCFetch {
 			ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
 			while(columnData.next()) {
 				String colName = columnData.getString("COLUMN_NAME");
-				if(!getIDField(tableName).equalsIgnoreCase(colName) && !getRelationFields(tableName).containsKey(colName)) {
+				if((getIDFields(tableName).size() > 1 || !getIDFields(tableName).contains(colName)) && !getRelationFields(tableName).containsKey(colName)) {
 					this.dataFields.get(tableName).add(colName);
 				}
 			}
@@ -331,21 +332,24 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Get the id field information for a table from the database
-	 * @param tableName the table to get the id field information for
-	 * @return the id field name
+	 * Get the id field list for a table from the database
+	 * @param tableName the table to get the id field list for
+	 * @return the id field list
 	 * @throws SQLException error connecting to DB
 	 */
-	private String getIDField(String tableName) throws SQLException {
+	private List<String> getIDFields(String tableName) throws SQLException {
 		if(this.idFields == null) {
-			this.idFields = new HashMap<String,String>();
+			this.idFields = new HashMap<String,List<String>>();
 		}
 		if(!this.idFields.containsKey(tableName)) {
+			this.idFields.put(tableName, new LinkedList<String>());
 			ResultSet primaryKeys = this.cursor.getConnection().getMetaData().getPrimaryKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 			while(primaryKeys.next()) {
-				String name = primaryKeys.getString("COLUMN_NAME");
-				this.idFields.put(tableName, name);
+				this.idFields.get(tableName).add(primaryKeys.getString("COLUMN_NAME"));
 			}
+		}
+		if(this.idFields.get(tableName).isEmpty()) {
+			throw new IllegalArgumentException("ID fields for table '"+tableName+"' were not provided and no primary keys are present... please provide an ID field set for this table");
 		}
 		return this.idFields.get(tableName);
 	}
@@ -388,9 +392,13 @@ public class JDBCFetch {
 			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
-		sb.append(getFieldPrefix());
-		sb.append(getIDField(tableName));
-		sb.append(getFieldSuffix());
+		for(String idField : getIDFields(tableName)) {
+			sb.append(getFieldPrefix());
+			sb.append(idField);
+			sb.append(getFieldSuffix());
+			sb.append(", ");
+		}
+		sb.delete(sb.lastIndexOf(", "),sb.length());
 		sb.append(" FROM ");
 		sb.append(tableName);
 
@@ -431,7 +439,12 @@ public class JDBCFetch {
 				StringBuilder sb = new StringBuilder();
 				//For each Record
 				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next(); ) {
-					String recID = "id-"+rs.getString(getIDField(tableName)).trim();
+					StringBuilder recID = new StringBuilder();
+					recID.append("id");
+					for(String idField : getIDFields(tableName)) {
+						recID.append("_-_");
+						recID.append(SpecialEntities.xmlEncode(rs.getString(idField).trim()));
+					}
 					log.trace("Creating RDF for "+tableName+": "+recID);
 					//Build RDF BEGIN
 					//Header info
@@ -461,7 +474,7 @@ public class JDBCFetch {
 						
 						//insert field value
 						if (rs.getString(dataField) != null) {
-							sb.append(HtmlEntities.htmlEncode(rs.getString(dataField).trim()));	
+							sb.append(SpecialEntities.xmlEncode(rs.getString(dataField).trim()));	
 						}
 						
 						//Field END
