@@ -187,7 +187,7 @@ public class Score {
 			
 			//scoring algorithms
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATES"));
-			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foriegn link").withParameter(true, "RDF_PREDICATES"));
+			parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foriegn link").withParameter(true, "RDF_PREDICATES"));
 			parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("ufMatch").setDescription("perform an exact match scoring against the UF VIVO extension").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
@@ -507,6 +507,7 @@ public class Score {
 
              toReplace.commit();
 		 }
+		
 		 
 		/**
 		 * Traverses paperNode and adds to toReplace model 
@@ -711,8 +712,7 @@ public class Score {
 		    		scoreSolution = scoreInputResult.next();
 	                scorePredNode = scoreSolution.get("scoreAttribute");
 	                scoreSubNode = scoreSolution.get("x");
-	                
-	                
+	                	                
 	                log.info("Checking for " + scorePredNode.toString() + " from " + scoreSubNode.toString() + " in VIVO");
 	    			
 	                //Select all matching attributes from vivo store
@@ -724,8 +724,14 @@ public class Score {
 	    			
 	    			vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
 	    			
+	    			if(!vivoResult.hasNext()) {
+	    				log.info("No matches in VIVO found");
+	    			} else {
+	    				log.info("initiating link then commit resultset");
+	    			}
+	    			
 	    			linkThenCommitResultSet(this.scoreOutput.getJenaModel(), vivoResult, scoreSubNode, scoreToVIVONode, vivoToScoreNode);	    			
-	            }	    			 
+	            }   			 
 		 }
 		 
 		 

@@ -249,6 +249,8 @@ public class ScoreTest extends TestCase {
      */
 	@Override
     protected void setUp() {
+	
+		
 		// create objects under test		
 		//Create input rdf file -- Stanley Goldsmith :-) pubmed id 20113680
 		try { 
