@@ -186,7 +186,8 @@ public class Score {
 			parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("output-model").setDescription("If set, this will override the model name as defined by the output config file").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
 			
 			//scoring algorithms
-			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATE"));
+			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATES"));
+			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foriegn link").withParameter(true, "RDF_PREDICATES"));
 			parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("ufMatch").setDescription("perform an exact match scoring against the UF VIVO extension").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
@@ -318,6 +319,39 @@ public class Score {
 		    	QueryExecution queryExec = QueryExecutionFactory.create(query, model);
 		    	
 		    	return queryExec.execSelect();
+		 }
+		 
+		 /**
+		  * Links 
+		  * @param result - the model to send things to VIVO
+		  * @param scoreSet - 
+		  * @param vivoNode - 
+		  * @param scoreNode - 
+		  * @param toVIVOProperty - 
+		  * @param toScoreProperty - 
+		  */
+		 private static void linkThenCommitResultSet(Model result, ResultSet scoreSet, RDFNode scoreNode, String toVIVOProperty, String toScoreProperty){
+				QuerySolution vivoSolution;
+			 
+				//loop thru result set
+	 	    	while (scoreSet.hasNext()) {
+	 	    		vivoSolution = scoreSet.next();
+	 	    		
+	 	    		//Grab person URI
+	                RDFNode vivoNode = vivoSolution.get("x");
+	                log.info("Found " + scoreNode.toString() + " for VIVO entity" + vivoNode.toString());
+	                log.info("Adding entity " + scoreNode.toString());
+
+	                result.add(recursiveSanitizeBuild((Resource)scoreNode,null));
+	                
+	                log.info("Linking entity " + scoreNode.toString() + "to VIVO entity " + vivoNode.toString());
+	                
+	                result.add((Resource)scoreNode, ResourceFactory.createProperty(toVIVOProperty), vivoNode);
+	                result.add((Resource)vivoNode, ResourceFactory.createProperty(toScoreProperty), scoreNode);
+	                
+					//take results and store in matched model
+	                result.commit();
+	 	    	} 
 		 }
 		 
 		 
@@ -648,6 +682,53 @@ public class Score {
 	            }	    			 
 		 }
 		 
+		 
+		 public void foriegnKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
+				RDFNode scorePredNode;
+				RDFNode scoreSubNode;
+				ResultSet vivoResult;
+				QuerySolution scoreSolution;
+			 	ResultSet scoreInputResult;
+			 	
+			 	String matchQuery = "SELECT ?x ?scoreAttribute " + 
+		    						"WHERE { ?x " + scoreAttribute + " ?scoreAttribute}";
+
+
+			 	//Exact Match
+			 	log.info("Executing exactMatch for " + scoreAttribute + " against " + vivoAttribute);
+			 	log.debug(matchQuery);
+		 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
+		 		
+		    	//Log extra info message if none found
+		    	if (!scoreInputResult.hasNext()) {
+		    		log.info("No matches found for " + scoreAttribute + " in input");
+		    	} else {
+		    		log.info("Looping thru matching " + scoreAttribute + " from input");
+		    	}
+		    	
+		    	//look for exact match in vivo
+		    	while (scoreInputResult.hasNext()) {
+		    		scoreSolution = scoreInputResult.next();
+	                scorePredNode = scoreSolution.get("scoreAttribute");
+	                scoreSubNode = scoreSolution.get("x");
+	                
+	                
+	                log.info("Checking for " + scorePredNode.toString() + " from " + scoreSubNode.toString() + " in VIVO");
+	    			
+	                //Select all matching attributes from vivo store
+	    			String queryString =
+						"SELECT ?x " +
+						"WHERE { ?x " + vivoAttribute + " \"" +  scorePredNode.toString() + "\" }";
+	    			
+	    			log.debug(queryString);
+	    			
+	    			vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
+	    			
+	    			linkThenCommitResultSet(this.scoreOutput.getJenaModel(), vivoResult, scoreSubNode, scoreToVIVONode, vivoToScoreNode);	    			
+	            }	    			 
+		 }
+		 
+		 
 		 /**
 		 * Executes an exact matching algorithm for author disambiguation
 		 * @param  attribute an attribute to perform the exact match
@@ -713,6 +794,9 @@ public class Score {
 	    			commitResultSet(this.scoreOutput.getJenaModel(),vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
 		 }
+		 
+		 
+		 
 		 public void ufMatch(String scoreAttribute, String vivoAttribute) {
 				String scoreMatch;
 				String queryString;
