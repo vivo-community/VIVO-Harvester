@@ -76,7 +76,6 @@ public class Score {
 		/**
 		 * Arguments for pairwise algorithm
 		 */
-		private List<String> ufMatch;
 		private List<String> pairwise;
 		/**
 		 * Arguments for regex algorithm
@@ -86,6 +85,21 @@ public class Score {
 		 * Arguments for authorname algorithm
 		 */
 		private String authorName;
+		
+		/**
+		 *  Arguments for Foriegn Key
+		 */
+		private String foriegnKey;
+		/**
+		 * 
+		 */
+		private String objToVIVO;
+		/**
+		 * 
+		 */
+		private String objToScore;
+		
+	
 		
 		/**
 		 * Main method
@@ -126,13 +140,28 @@ public class Score {
 
 		/**
 		 * Execute score object algorithms
+		 * @throws Exception 
 		 */
-		public void execute() {
+		public void execute() throws Exception {
 			log.info("Running specified algorithims");
 			
 			//Call authorname matching
 			if (this.authorName != null) {
 				this.authorNameMatch(Integer.parseInt(this.authorName));
+			}
+			
+			//call for ForeignKey linking
+			if (this.foriegnKey != null && this.objToScore != null && this.objToVIVO != null){
+				String[] fKey = foriegnKey.split("=");
+				if (fKey.length == 2){
+					this.foriegnKeyMatch(fKey[0], fKey[1], this.objToVIVO, this.objToScore);
+				}
+				else{
+					throw new Exception("Invalid Parameters, You must supply the 2 data property one for the scoring and vivo models");
+				}				
+			}
+			else if (this.foriegnKey != null && (this.objToScore == null || this.objToVIVO == null)){
+				throw new Exception("Invalid Parameters, you must supply the object property from the scoring model to VIVO and then th einverse object property");
 			}
 			
 			//Call each exactMatch
@@ -143,17 +172,12 @@ public class Score {
 				this.exactMatch("<http://vivoweb.org/ontology/score#" + attribute + ">",
 						"<http://vivoweb.org/ontology/core#" + attribute + ">");
 			}
-			//Ugly hack GO!
-			for (String attribute : this.ufMatch) {
-				this.ufMatch("<http://vivoweb.org/ontology/score#" + attribute + ">",
-						"<http://vivo.ufl.edu/ontology/vivo-ufl/" + attribute + ">");
-				
-			}
+			
 			//Call each pairwise
 			for (String attribute : this.pairwise) {
 				this.pairwise(attribute);
 			}
-			
+						
 			//Call each regex
 			for (String attribute : this.regex) {
 				this.regex(attribute);
@@ -187,11 +211,15 @@ public class Score {
 			
 			//scoring algorithms
 			parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATES"));
-			parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foriegn link").withParameter(true, "RDF_PREDICATES"));
 			parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("ufMatch").setDescription("perform an exact match scoring against the UF VIVO extension").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
 			parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
 			parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true, "REGEX"));
+			parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foriegn link").withParameter(true, "RDF_PREDICATES"));
+						
+			//Object Property 
+			parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("objPropToVIVO").setDescription("set the Object Property to the VIVO Model").withParameter(true, "OBJ_PROPERTIES"));
+			parser.addArgument(new ArgDef().setShortOption('y').setLongOpt("objPropToScore").setDescription("set the Object Property to the Score Model").withParameter(true, "OBJ_PROPERTIES"));
 			
 			//options
 			parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-input-model").setDescription("If set, this will not clear the input model after scoring is complete"));
@@ -210,16 +238,18 @@ public class Score {
 		 * @param regexArg perform a regular expression scoring
 		 * @param authorNameArg perform a author name scoring
 		 */
-		public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> ufMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg) {
+		public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean retainWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, String foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
 			this.scoreInput = jenaScoreInput;
 			this.vivo = jenaVivo;
 			this.scoreOutput = jenaScoreOutput;
 			this.keepInputModel = retainWorkingModelArg;
 			this.exactMatch = exactMatchArg;
-			this.ufMatch = ufMatchArg;
 			this.pairwise = pairwiseArg;
 			this.regex = regexArg;
 			this.authorName = authorNameArg;
+			this.foriegnKey = foriegnKeyArg;
+			this.objToScore = objToScoreArg;
+			this.objToVIVO = objToVIVOArg;
 		}
 		
 		/**
@@ -286,14 +316,16 @@ public class Score {
 					//create object
 					this.vivo = jenaVivoDB;
 					this.scoreInput = jenaInputDB;
-					this.scoreOutput = jenaOutputDB;					
+					this.scoreOutput = jenaOutputDB;
 					this.keepInputModel = opts.has("k");
 					this.exactMatch = opts.getAll("e");
-					this.ufMatch = opts.getAll("u");
 					this.pairwise = opts.getAll("p");
 					this.regex = opts.getAll("r");
 					this.authorName = opts.get("a");
-					
+					this.foriegnKey = opts.get("f");
+					this.objToScore = opts.get("x");
+					this.objToVIVO = opts.get("y");
+										
 				} catch(ParserConfigurationException e) {
 					throw e;
 				} catch(SAXException e) {
@@ -692,7 +724,7 @@ public class Score {
 			 	ResultSet scoreInputResult;
 			 	
 			 	String matchQuery = "SELECT ?x ?scoreAttribute " + 
-		    						"WHERE { ?x " + scoreAttribute + " ?scoreAttribute}";
+		    						"WHERE { ?x <" + scoreAttribute + "> ?scoreAttribute}";
 
 
 			 	//Exact Match
@@ -718,7 +750,7 @@ public class Score {
 	                //Select all matching attributes from vivo store
 	    			String queryString =
 						"SELECT ?x " +
-						"WHERE { ?x " + vivoAttribute + " \"" +  scorePredNode.toString() + "\" }";
+						"WHERE { ?x <" + vivoAttribute + "> \"" +  scorePredNode.toString() + "\" }";
 	    			
 	    			log.debug(queryString);
 	    			
@@ -803,7 +835,7 @@ public class Score {
 		 
 		 
 		 
-		 public void ufMatch(String scoreAttribute, String vivoAttribute) {
+		 /*public void ufMatch(String scoreAttribute, String vivoAttribute) {
 				String scoreMatch;
 				String queryString;
 				Resource paperResource;
@@ -851,5 +883,5 @@ public class Score {
 	    			
 	    			commitResultSet(this.scoreOutput.getJenaModel(),vivoResult,paperResource,matchNode,paperNode);
 	            }	    			 
-		 }
+		 }*/
 	}
