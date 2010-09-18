@@ -220,13 +220,14 @@ public class ScoreTest extends TestCase {
 				Test.scoreOutput.getJenaModel().removeAll();
 				
 				//run exactmatch score
-				Test = new Score(input,vivo,output,false,workEmail,blank,blank, null,null,null,null);
+				Test = new Score(input,vivo,output,true,workEmail,blank,blank, null,null,null,null);
 				Test.execute();
 				
 				//empty output model
 				Test.scoreOutput.getJenaModel().removeAll();
 				
 				//testing Foriegn Key Score Method
+				input.getJenaModel().write(System.out, "RDF/XML");
 				Test = new Score (input,vivo,output,false,blank,blank,blank,null,
 						"http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid",
 						"http://vivoweb.org/ontology/core#worksFor","http://vivoweb.org/ontology/core#departmentOf");

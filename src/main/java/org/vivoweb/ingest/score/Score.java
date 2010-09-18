@@ -724,11 +724,11 @@ public class Score {
 			 	ResultSet scoreInputResult;
 			 	
 			 	String matchQuery = "SELECT ?x ?scoreAttribute " + 
-		    						"WHERE { ?x <" + scoreAttribute + "> ?scoreAttribute}";
+		    						"WHERE { ?x <" + scoreAttribute + "> ?scoreAttribute }";
 
 
 			 	//Exact Match
-			 	log.info("Executing exactMatch for " + scoreAttribute + " against " + vivoAttribute);
+			 	log.info("Executing foriegnKeyMatch for " + scoreAttribute + " against " + vivoAttribute);
 			 	log.debug(matchQuery);
 		 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
 		 		
