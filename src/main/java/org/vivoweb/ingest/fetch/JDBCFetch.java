@@ -108,7 +108,7 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("ids").withParameterProperties("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterProperties("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
@@ -427,6 +427,15 @@ public class JDBCFetch {
 	private String buildTableFieldNS(String tableName) {
 		return this.uriNS+"fields/"+tableName+"/";
 	}
+	
+	/**
+	 * Builds a table's type description namespace
+	 * @param tableName the table to build the namespace for
+	 * @return the namespace
+	 */
+	private String buildTableType(String tableName) {
+		return this.uriNS+"types#"+tableName;
+	}
 
 	/**
 	 * Executes the task
@@ -465,6 +474,14 @@ public class JDBCFetch {
 					sb.append("  <rdf:Description rdf:ID=\"");
 					sb.append(recID);
 					sb.append("\">\n");
+					
+					
+					//insert type value
+					sb.append("    <rdf:type rdf:resource=\"");
+					sb.append(buildTableType(tableName));	
+					sb.append("\"/>\n");
+					
+					//DataFields
 					for(String dataField : getDataFields(tableName)) {
 						//Field BEGIN
 						String field = tableNS+":"+dataField.replaceAll(" ", "_");
@@ -482,6 +499,8 @@ public class JDBCFetch {
 						sb.append(field);
 						sb.append(">\n");
 					}
+					
+					//Relation Fields
 					for(String relationField : getRelationFields(tableName).keySet()) {
 						//Field BEGIN
 						sb.append("    <");
@@ -497,6 +516,7 @@ public class JDBCFetch {
 						//Field END
 						sb.append("\"/>\n");
 					}
+					
 					//Record info END
 					sb.append("  </rdf:Description>\n");
 					
