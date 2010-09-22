@@ -41,7 +41,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	/**
 	 * Database connection
 	 */
-	private Connection db;
+	protected Connection db;
 	/**
 	 * Database statement processor
 	 */
@@ -362,7 +362,7 @@ public class JDBCRecordHandler extends RecordHandler {
 		 * @throws SQLException failed to read records
 		 */
 		protected JDBCRecordIterator() throws SQLException {
-			this.rs = JDBCRecordHandler.this.cursor.executeQuery("select "+JDBCRecordHandler.recordIdField+", "+JDBCRecordHandler.this.dataField+" from "+JDBCRecordHandler.this.table);
+			this.rs = JDBCRecordHandler.this.db.createStatement().executeQuery("select "+JDBCRecordHandler.recordIdField+" from "+JDBCRecordHandler.this.table);
 		}
 		
 		@Override
@@ -378,8 +378,12 @@ public class JDBCRecordHandler extends RecordHandler {
 		@Override
 		public Record next() {
 			try {
-				return new Record(this.rs.getString(JDBCRecordHandler.recordIdField),new String(this.rs.getBytes(JDBCRecordHandler.this.dataField)), JDBCRecordHandler.this);
+				return JDBCRecordHandler.this.getRecord(this.rs.getString(JDBCRecordHandler.recordIdField));
 			} catch(SQLException e) {
+				log.debug(e.getMessage(),e);
+				throw new NoSuchElementException(e.getMessage());
+			} catch(IOException e) {
+				log.debug(e.getMessage(),e);
 				throw new NoSuchElementException(e.getMessage());
 			}
 		}

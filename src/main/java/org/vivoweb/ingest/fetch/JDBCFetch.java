@@ -209,10 +209,10 @@ public class JDBCFetch {
 		
 		Connection dbConn;
 		try {
-			System.out.println("dbDriver: '"+jdbcDriverClass+"'");
-			System.out.println("ConnLine: '"+connLine+"'");
-			System.out.println("UserName: '"+username+"'");
-			System.out.println("PassWord: '"+password+"'");
+//			System.out.println("dbDriver: '"+jdbcDriverClass+"'");
+//			System.out.println("ConnLine: '"+connLine+"'");
+//			System.out.println("UserName: '"+username+"'");
+//			System.out.println("PassWord: '"+password+"'");
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
 			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));

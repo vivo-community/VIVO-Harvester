@@ -60,16 +60,19 @@ public class Transfer {
 	 * Constructor
 	 * @param in input Model
 	 * @param out output Model
-	 * @param file dump to file option
+	 * @param outputFile dump to file option
 	 * @param keep keep transferred data option
 	 * @param empty empty model before transfer
 	 */
-	public Transfer(JenaConnect in, JenaConnect out, String file, boolean keep, boolean empty) {
-	  this.input = in;
-	  this.output = out;
-	  this.dumpFile = file;
-	  this.retainModel = keep;
-	  this.emptyModel = empty;
+	public Transfer(JenaConnect in, JenaConnect out, String outputFile, boolean keep, boolean empty) {
+		if(in == null) {
+			throw new IllegalArgumentException("Must provide non-null input jena connect");
+		}
+		this.input = in;
+		this.output = out;
+		this.dumpFile = outputFile;
+		this.retainModel = keep;
+		this.emptyModel = empty;
 	}
 	
 	/**
@@ -111,7 +114,11 @@ public class Transfer {
 			}
 			
 			//setup output
-			this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
+			if(argList.has("o")) {
+				this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
+			} else {
+				this.output = null;
+			}
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
 		} catch(SAXException e) {
@@ -121,6 +128,8 @@ public class Transfer {
 		//output to file, if requested
 		if (argList.has("d")) {
 			this.dumpFile = argList.get("d");
+		} else {
+			this.dumpFile = null;
 		}
 		
 		//empty model
@@ -132,42 +141,38 @@ public class Transfer {
 	 * Copy data from input to output
 	 */
 	private void transfer() {
+		if(this.output != null) { 
+			if (this.emptyModel) {
+				this.output.getJenaModel().removeAll();
+			}
+			this.output.getJenaModel().add(this.input.getJenaModel());
+		}
 		
-		if (this.input == null) {
-			log.info("Input is empty, nothing to do");
-		} else {
+		//output to file, if requested
+		if(this.dumpFile != null) {
+			log.info("Outputting RDF to " + this.dumpFile);
+			try {
+				this.input.exportRDF(new FileOutputStream(this.dumpFile));
+				//this.input.write(System.out);
+			} catch (FileNotFoundException e) {
+				log.error(e.getMessage(),e);
+			} catch (Exception e) {
+				log.error(e.getMessage(),e);
+				//NOTTODO Nicholas: Fix Jena error
+				//do nothing; currently bad xml will cause jena to throw error
+			}
+		}
 		
-			if (this.output != null) { 
-				if (this.emptyModel) {
-					this.output.getJenaModel().removeAll();
-				}
-				this.output.getJenaModel().add(this.input.getJenaModel());
-			}
-			
-			//output to file, if requested
-			if (this.dumpFile != null) {
-				if (this.input != null) {
-					log.info("Outputting RDF to " + this.dumpFile);
-					try {
-						this.input.exportRDF(new FileOutputStream(this.dumpFile));
-						//this.input.write(System.out);
-					} catch (FileNotFoundException e) {
-						log.error(e.getMessage(),e);
-					} catch (Exception e) {
-						log.error(e.getMessage(),e);
-						//NOTTODO Nicholas: Fix Jena error
-						//do nothing; currently bad xml will cause jena to throw error
-					}
-				} else {
-					log.info("Dump Model option not valid when input is RDF file");
-				}
-			}
-			
-			//empty model
-			if (!this.retainModel) {
-				log.trace("Emptying Model");
-				this.input.getJenaModel().removeAll();
-			}
+		//empty model
+		if (!this.retainModel) {
+			log.trace("Emptying Model");
+			this.input.getJenaModel().removeAll();
+		}
+		
+		//close the models;
+		this.input.close();
+		if(this.output != null) {
+			this.output.close();
 		}
 	}
 	
@@ -207,8 +212,8 @@ public class Transfer {
 			log.fatal(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(IOException e) {
-			log.fatal(e.getMessage());
-			System.out.println(getParser().getUsage());	
+			log.fatal(e.getMessage(),e);
+//			System.out.println(getParser().getUsage());	
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}

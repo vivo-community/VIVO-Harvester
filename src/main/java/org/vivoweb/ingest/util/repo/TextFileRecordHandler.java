@@ -45,6 +45,7 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
+import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.w3c.dom.Document;
@@ -433,36 +434,38 @@ public class TextFileRecordHandler extends RecordHandler {
 		/**
 		 * Iterator over the files
 		 */
-		Iterator<FileObject> fileIter;
+		Iterator<String> fileNameIter;
 		
 		/**
 		 * Default Constructor
 		 */
 		protected TextFileRecordIterator() {
-			LinkedList<FileObject> fileListing = new LinkedList<FileObject>();
+			LinkedList<String> allFileListing = new LinkedList<String>();
+			log.debug("Compiling list of records");
 			try {
-				for(FileObject file : TextFileRecordHandler.this.fileDirObj.getChildren()) {
+				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(Selectors.SELECT_CHILDREN)) {
 					if(!file.isHidden() && file.getType() == FileType.FILE) {
-						fileListing.add(file);
-//						log.debug("Found file "+file.getName().getBaseName());
+						allFileListing.add(file.getName().getBaseName());
+						log.debug("Found file "+file.getName().getBaseName());
 					}
 				}
 			} catch(FileSystemException e) {
 				log.error(e.getMessage(),e);
 			}
-			this.fileIter = fileListing.iterator();
+			this.fileNameIter = allFileListing.iterator();
+			System.gc();
+			log.debug("List compiled");
 		}
 		
 		@Override
 		public boolean hasNext() {
-			return this.fileIter.hasNext();
+			return this.fileNameIter.hasNext();
 		}
 		
 		@Override
 		public Record next() {
 			try {
-				Record result = getRecord(this.fileIter.next().getName().getBaseName());
-				return result;
+				return getRecord(this.fileNameIter.next());
 			} catch(IOException e) {
 				throw new NoSuchElementException(e.getMessage());
 			}
