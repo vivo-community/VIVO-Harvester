@@ -55,6 +55,8 @@ public class Transfer {
 	 * empty model before transfer
 	 */
 	private boolean emptyModel;
+	private String inRDF;
+	private RecordHandler inRH;
 	
 	/**
 	 * Constructor
@@ -95,22 +97,7 @@ public class Transfer {
 			if(argList.has("i")) {
 				this.input = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
 			} else {
-				this.input = new JenaConnect();
-			}
-			
-			//load any specified rdf file data
-			if(argList.has("r")) {
-				String inRDF = argList.get("r");
-				log.info("Loading RDF from " + inRDF);
-				this.input.loadRDF(VFS.getManager().resolveFile(new File("."), inRDF).getContent().getInputStream());
-			}
-			
-			//load data from recordhandler
-			if(argList.has("h")) {
-				//Read in records that need processing
-				log.info("Loading Records from RecordHandler");
-				int processCount = this.input.importRDF(RecordHandler.parseConfig(argList.get("h"), argList.getProperties("H")));
-				log.info("Loaded " + processCount + " records");
+				this.input = null;
 			}
 			
 			//setup output
@@ -119,33 +106,69 @@ public class Transfer {
 			} else {
 				this.output = null;
 			}
+			
+			//load any specified rdf file data
+			if(argList.has("r")) {
+				this.inRDF = argList.get("r");
+			} else {
+				this.inRDF = null;
+			}
+			
+			//load data from recordhandler
+			if(argList.has("h")) {
+				this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getProperties("H"));
+			} else {
+				this.inRH = null;
+			}
+			
+			//output to file, if requested
+			if (argList.has("d")) {
+				this.dumpFile = argList.get("d");
+			} else {
+				this.dumpFile = null;
+			}
+			
+			//empty model
+			this.retainModel = argList.has("k");
+			this.emptyModel = argList.has("e");
+			
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
 		} catch(SAXException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		
-		//output to file, if requested
-		if (argList.has("d")) {
-			this.dumpFile = argList.get("d");
-		} else {
-			this.dumpFile = null;
-		}
-		
-		//empty model
-		this.retainModel = argList.has("k");
-		this.emptyModel = argList.has("e");
 	}
 	
 	/**
 	 * Copy data from input to output
 	 */
 	private void transfer() {
+		boolean skipinput = (this.dumpFile == null && this.input == null);
+		
+		if(skipinput) {
+			
+		}
+		
+
+//		//Read in records that need processing
+//		log.info("Loading Records from RecordHandler");
+//		int processCount = this.input.importRDF(this.inRH);
+//		log.info("Loaded " + processCount + " records");
+
+//		log.info("Loading RDF from " + inRDF);
+//		this.input.loadRDF(VFS.getManager().resolveFile(new File("."), inRDF).getContent().getInputStream());
+		
 		if(this.output != null) { 
 			if (this.emptyModel) {
 				this.output.getJenaModel().removeAll();
 			}
-			this.output.getJenaModel().add(this.input.getJenaModel());
+			
+			if(this.dumpFile == null && this.input == null) {
+				
+			} else {
+				
+				this.output.getJenaModel().add(this.input.getJenaModel());
+			}
 		}
 		
 		//output to file, if requested

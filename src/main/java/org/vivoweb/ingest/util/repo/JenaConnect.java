@@ -223,7 +223,7 @@ public class JenaConnect {
 	 */
 	public void loadRDF(InputStream in) {
 		getJenaModel().read(in, null);
-		log.info("RDF Data was loaded");
+		log.debug("RDF Data was loaded");
 	}
 	
 	/**
@@ -237,7 +237,7 @@ public class JenaConnect {
 		fasterWriter.setProperty("relativeURIs", "");
 		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
 		fasterWriter.write(this.jenaModel, osw, "");
-		log.info("RDF/XML Data was exported");
+		log.debug("RDF/XML Data was exported");
 	}
 	
 	/**

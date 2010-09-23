@@ -71,6 +71,10 @@ public class JDBCFetch {
 	 */
 	private Map<String,List<String>> whereClauses;
 	/**
+	 * mapping of extra tables for the from section
+	 */
+	private Map<String,String> fromClauses;
+	/**
 	 * Namespace for RDF made from this database
 	 */
 	private String uriNS;
@@ -112,6 +116,7 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tableFromClause").withParameterProperties("TABLE_NAME", "TABLE_LIST").setDescription("add tables to use in from clasuse for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
@@ -138,6 +143,17 @@ public class JDBCFetch {
 		
 		if(opts.has("t")) {
 			this.tableNames = opts.getAll("t");
+		}
+		
+		if(opts.has("T")) {
+			if(!opts.has("t")) {
+				throw new IllegalArgumentException("Cannot specify fromClauses without tableName");
+			}
+			this.fromClauses = new HashMap<String, String>();
+			Properties froms = opts.getProperties("T");
+			for(String tableName : froms.stringPropertyNames()) {
+				this.fromClauses.put(tableName.trim(), froms.getProperty(tableName).trim());
+			}
 		}
 		
 		if(opts.has("F")) {
@@ -378,22 +394,35 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to db
 	 */
 	private String buildSelect(String tableName) throws SQLException {
+		boolean multiTable = this.fromClauses.containsKey(tableName);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for(String dataField : getDataFields(tableName)) {
 			sb.append(getFieldPrefix());
+			if(multiTable) {
+				sb.append(tableName);
+				sb.append(".");
+			}
 			sb.append(dataField);
 			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
 		for(String relField : getRelationFields(tableName).keySet()) {
 			sb.append(getFieldPrefix());
+			if(multiTable) {
+				sb.append(tableName);
+				sb.append(".");
+			}
 			sb.append(relField);
 			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
 		for(String idField : getIDFields(tableName)) {
 			sb.append(getFieldPrefix());
+			if(multiTable) {
+				sb.append(tableName);
+				sb.append(".");
+			}
 			sb.append(idField);
 			sb.append(getFieldSuffix());
 			sb.append(", ");
@@ -401,6 +430,10 @@ public class JDBCFetch {
 		sb.delete(sb.lastIndexOf(", "),sb.length());
 		sb.append(" FROM ");
 		sb.append(tableName);
+		if(this.fromClauses.containsKey(tableName)) {
+			sb.append(", ");
+			sb.append(this.fromClauses.get(tableName));
+		}
 
 		if (getWhereClauses(tableName).size() > 0) {
 			sb.append(" WHERE ");
