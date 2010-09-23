@@ -394,7 +394,7 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to db
 	 */
 	private String buildSelect(String tableName) throws SQLException {
-		boolean multiTable = this.fromClauses.containsKey(tableName);
+		boolean multiTable = this.fromClauses != null && this.fromClauses.containsKey(tableName);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for(String dataField : getDataFields(tableName)) {
@@ -430,7 +430,7 @@ public class JDBCFetch {
 		sb.delete(sb.lastIndexOf(", "),sb.length());
 		sb.append(" FROM ");
 		sb.append(tableName);
-		if(this.fromClauses.containsKey(tableName)) {
+		if(multiTable) {
 			sb.append(", ");
 			sb.append(this.fromClauses.get(tableName));
 		}
