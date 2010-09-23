@@ -17,6 +17,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
@@ -143,58 +144,55 @@ public class Transfer {
 	 * Copy data from input to output
 	 */
 	private void transfer() {
-		boolean skipinput = (this.dumpFile == null && this.input == null);
-		
-		if(skipinput) {
-			
+		boolean newInput = false;
+		if(this.dumpFile != null && this.input == null) {
+			newInput = true;
 		}
-		
-
-//		//Read in records that need processing
-//		log.info("Loading Records from RecordHandler");
-//		int processCount = this.input.importRDF(this.inRH);
-//		log.info("Loaded " + processCount + " records");
-
-//		log.info("Loading RDF from " + inRDF);
-//		this.input.loadRDF(VFS.getManager().resolveFile(new File("."), inRDF).getContent().getInputStream());
-		
-		if(this.output != null) { 
-			if (this.emptyModel) {
-				this.output.getJenaModel().removeAll();
-			}
-			
-			if(this.dumpFile == null && this.input == null) {
-				
+		if(this.emptyModel) {
+			if(this.input == null) {
+				newInput = true;
 			} else {
-				
-				this.output.getJenaModel().add(this.input.getJenaModel());
+				emptyJC(this.input);
 			}
 		}
+		if(newInput && this.input == null) {
+			this.input = new JenaConnect();
+		}
+		boolean inputIsOutput = false;
+		if(this.input == null && this.output != null) {
+			inputIsOutput = true;
+			this.input = this.output;
+		} else if(this.input != null && this.output == null) {
+			inputIsOutput = true;
+			this.output = this.input;
+		}
 		
-		//output to file, if requested
+		if(this.inRDF != null) {
+			dumpFileToJC(this.inRDF, this.input);
+		}
+		
+		if(this.inRH != null) {
+			dumpRHToJC(this.inRH, this.input);
+		}
+		
 		if(this.dumpFile != null) {
-			log.info("Outputting RDF to " + this.dumpFile);
-			try {
-				this.input.exportRDF(new FileOutputStream(this.dumpFile));
-				//this.input.write(System.out);
-			} catch (FileNotFoundException e) {
-				log.error(e.getMessage(),e);
-			} catch (Exception e) {
-				log.error(e.getMessage(),e);
-				//NOTTODO Nicholas: Fix Jena error
-				//do nothing; currently bad xml will cause jena to throw error
-			}
+			dumpJCToFile(this.input, this.dumpFile);
+		}
+		
+		if(!inputIsOutput) {
+			transferJCToJC(this.input, this.output);
 		}
 		
 		//empty model
-		if (!this.retainModel) {
-			log.trace("Emptying Model");
-			this.input.getJenaModel().removeAll();
+		if (!this.retainModel && !inputIsOutput) {
+			emptyJC(this.input);
 		}
 		
 		//close the models;
-		this.input.close();
-		if(this.output != null) {
+		if(this.input != null) {
+			this.input.close();
+		}
+		if(this.output != null && !inputIsOutput) {
 			this.output.close();
 		}
 	}
@@ -221,6 +219,40 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").withParameter(false, "KEEP_FLAG").setDescription("If set, this will not clear the input model after transfer is complete"));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("empty-input-model").withParameter(false, "EMPTY_FLAG").setDescription("If set, this will clear the input model before transfer is started").setRequired(false));
 		return parser;
+	}
+	
+	private void dumpFileToJC(String fileName, JenaConnect jc) {
+		try {
+			log.info("Loading RDF from " + fileName);
+			jc.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream());
+		} catch(FileSystemException e) {
+			log.error(e.getMessage(),e);
+		}
+	}
+	
+	private void dumpRHToJC(RecordHandler rh, JenaConnect jc) {
+		//Read in records that need processing
+		log.info("Loading Records from RecordHandler");
+		int processCount = jc.importRDF(rh);
+		log.info("Loaded " + processCount + " records");
+	}
+	
+	private void transferJCToJC(JenaConnect in, JenaConnect out) {
+		this.output.getJenaModel().add(this.input.getJenaModel());
+	}
+	
+	private void emptyJC(JenaConnect jc) {
+		log.trace("Emptying Model");
+		jc.getJenaModel().removeAll();
+	}
+	
+	private void dumpJCToFile(JenaConnect jc, String fileName) {
+		log.info("Outputting RDF to " + fileName);
+		try {
+			jc.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
+		} catch(FileSystemException e) {
+			log.error(e.getMessage(),e);
+		}
 	}
 	
 	/**
