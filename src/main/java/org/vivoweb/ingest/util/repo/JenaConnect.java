@@ -134,10 +134,11 @@ public class JenaConnect {
 	/**
 	 * Constructor (Load rdf from input stream)
 	 * @param in input stream to load rdf from
+	 * @param namespace the base uri to use for imported uris
 	 */
-	public JenaConnect(InputStream in) {
+	public JenaConnect(InputStream in, String namespace) {
 		this();
-		this.loadRDF(in);
+		this.loadRDF(in, namespace);
 	}
 	
 	/**
@@ -220,9 +221,10 @@ public class JenaConnect {
 	/**
 	 * Load in RDF
 	 * @param in input stream to read rdf from
+	 * @param namespace the base uri to use for imported uris
 	 */
-	public void loadRDF(InputStream in) {
-		getJenaModel().read(in, null);
+	public void loadRDF(InputStream in, String namespace) {
+		getJenaModel().read(in, namespace);
 		log.debug("RDF Data was loaded");
 	}
 	
@@ -243,14 +245,18 @@ public class JenaConnect {
 	/**
 	 * Adds all records in a RecordHandler to the model
 	 * @param rh the RecordHandler to pull records from
+	 * @param namespace the base uri to use for imported uris
 	 * @return number of records added
 	 */
-	public int importRDF(RecordHandler rh) {
+	public int importRDF(RecordHandler rh, String namespace) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("loading record: "+r.getID());
+			if(namespace != null) {
+				log.trace("using namespace '"+namespace+"'");
+			}
 			ByteArrayInputStream bais = new  ByteArrayInputStream(r.getData().getBytes());
-			this.getJenaModel().read(bais,null);
+			this.getJenaModel().read(bais,namespace);
 			processCount++;
 		}
 		return processCount;
@@ -267,6 +273,23 @@ public class JenaConnect {
 			//ignore
 		}
 	}
+	
+//	/**
+//	 * Sets the namespace for relative uris
+//	 * @param namespace the namesapce to use
+//	 */
+//	public void setRelativeURINamespaces(String namespace) {
+//		
+//	}
+//	
+//	/**
+//	 * Move nodes in one namespace to another
+//	 * @param oldNamespace the old namespace
+//	 * @param newNamespace the new namespace
+//	 */
+//	public void swapURINamespace(String oldNamespace, String newNamespace) {
+//		
+//	}
 	
 	/**
 	 * Accessor for Jena Model

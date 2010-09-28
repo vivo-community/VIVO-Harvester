@@ -78,10 +78,10 @@ public class ScoreTest extends TestCase {
 		//Load up everything before starting
 		try {
 			input = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),IArg);
-			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream());
+			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null);
 			
 			vivo = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),VArg);
-			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream());
+			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null);
 
 			output = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),OArg);		
 			
@@ -199,10 +199,10 @@ public class ScoreTest extends TestCase {
 		//load input models		
 		try {
 				input = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"input");
-				input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream());
+				input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null);
 				
 				vivo = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"vivo");
-				vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream());
+				vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null);
 	
 				output = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"output");
 

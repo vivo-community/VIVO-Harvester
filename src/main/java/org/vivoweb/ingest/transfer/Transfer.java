@@ -11,8 +11,6 @@
 package org.vivoweb.ingest.transfer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
@@ -58,6 +56,7 @@ public class Transfer {
 	private boolean emptyModel;
 	private String inRDF;
 	private RecordHandler inRH;
+	private String namespace;
 	
 	/**
 	 * Constructor
@@ -128,6 +127,14 @@ public class Transfer {
 			} else {
 				this.dumpFile = null;
 			}
+			
+			//get namespace
+			if(argList.has("n")) {
+				this.namespace = argList.get("n");
+			} else {
+				this.namespace = null;
+			}
+			System.out.println("namespace: "+this.namespace);
 			
 			//empty model
 			this.retainModel = argList.has("k");
@@ -209,6 +216,7 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "MODEL_NAME").setDescription("rdf filename for input").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("recordHandler").withParameter(true, "RECORD_HANDLER").setDescription("record handler for input").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("recordHandlerOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "URI_BASE").setDescription("use URI_BASE when importing relative uris").setRequired(false));
 		
 		//Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
@@ -224,7 +232,7 @@ public class Transfer {
 	private void dumpFileToJC(String fileName, JenaConnect jc) {
 		try {
 			log.info("Loading RDF from " + fileName);
-			jc.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream());
+			jc.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), this.namespace);
 		} catch(FileSystemException e) {
 			log.error(e.getMessage(),e);
 		}
@@ -233,7 +241,7 @@ public class Transfer {
 	private void dumpRHToJC(RecordHandler rh, JenaConnect jc) {
 		//Read in records that need processing
 		log.info("Loading Records from RecordHandler");
-		int processCount = jc.importRDF(rh);
+		int processCount = jc.importRDF(rh, this.namespace);
 		log.info("Loaded " + processCount + " records");
 	}
 	

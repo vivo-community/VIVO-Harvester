@@ -30,6 +30,7 @@ import org.apache.commons.vfs.VFS;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
  * Parsed arguments from commandline and config files
@@ -63,6 +64,8 @@ public class ArgList {
 	public ArgList(ArgParser p, String[] args) throws IllegalArgumentException, IOException {
 		try {
 			this.argParser = p;
+			log.debug("running "+p.getAppName());
+			log.debug("command line args: "+StringUtils.join(" ", args));
 			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(),args);
 			if(this.oCmdSet.hasOption("help")) {
 				String usage = this.argParser.getUsage();
@@ -72,6 +75,7 @@ public class ArgList {
 				String[] confArgs = {""};
 				if(this.oCmdSet.hasOption("X")) {
 					confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
+					log.debug("config file args: "+StringUtils.join(" ", confArgs));
 					this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
 				} else {
 					this.oConfSet = null;
@@ -145,10 +149,10 @@ public class ArgList {
 			throw new IllegalArgumentException(arg+" is not a properties parameter, use get()");
 		}
 		Properties p = new Properties();
-		p.putAll(this.oCmdSet.getOptionProperties(arg));
 		if(this.oConfSet != null) {
 			p.putAll(this.oConfSet.getOptionProperties(arg));
 		}
+		p.putAll(this.oCmdSet.getOptionProperties(arg));
 		return p;
 	}
 	
@@ -237,7 +241,6 @@ public class ArgList {
 		 */
 		public String[] configToArgs(String filePath) throws SecurityException, IllegalArgumentException, ParserConfigurationException, SAXException, IOException {
 			Map<String, List<String>> parameters = parseConfig(filePath);
-			String[] paramArray = {};
 			List<String> paramList = new LinkedList<String>();
 			for(String key : parameters.keySet()) {
 				for(String value : parameters.get(key)) {
@@ -249,8 +252,7 @@ public class ArgList {
 					}
 				}
 			}
-			paramArray = paramList.toArray(paramArray);
-			return paramArray;
+			return paramList.toArray(new String[]{});
 		}
 		
 		/**
