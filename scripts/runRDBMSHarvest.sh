@@ -13,16 +13,18 @@
 cd /usr/share/vivoingest
 
 # Execute Fetch for RDBMS
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -X config/tasks/JDBCFetchTask.xml
+## java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -X config/tasks/JDBCFetchTask.xml
+java -cp lib/d2rmap-V03.jar:bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.D2RMapFetch -X config/tasks/JDBCFetchTask.xml -r config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf
 
 # Execute Translate - to translate from an unknown data source you must convert the xml/rdf to the vivo ontology by defining an xsl file
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  
+##java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  
 
 # Execute Transfer to transfer rdf into "scoring" JENA model
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O scoring  
+## java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O scoring  
+java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/JDBCXMLRecordHandler.xml -o config/jenaModels/VIVO.xml -O scoring
 
 # Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -a 3
+## java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -a 3
 
 # Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
 # Off by default, examples show below

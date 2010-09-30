@@ -359,5 +359,12 @@
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
+	<dependency>
+    	<groupId>de.fuberlin.wiwiss</groupId>
+    	<artifactId>d2r</artifactId>
+    	<version>0.3</version>
+    	<scope>system</scope>
+    	<systemPath>${basedir}/lib/d2rmap-V03.jar</systemPath>
+    </dependency>
   </dependencies>
 </project>
