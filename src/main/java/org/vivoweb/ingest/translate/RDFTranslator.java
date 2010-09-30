@@ -111,6 +111,7 @@ public class RDFTranslator {
 	 * @param toBeModified the model to be modified
 	 */
 	public void processWorkFlow(Model workflow, Model toBeModified){
+		System.out.println(workflow+" "+toBeModified);
 		//TODO Stephen: make this work
 	}
 	

@@ -299,6 +299,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		/**
 		 * Parses a configuration file describing a RecordHandler
 		 * @param filename the name of the file to parse
+		 * @param overrideParams parameters that override the params in the config file
 		 * @return the RecordHandler described by the config file
 		 * @throws IOException xml parsing error
 		 * @throws SAXException xml parsing error

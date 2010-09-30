@@ -168,7 +168,7 @@ public class JDBCFetch {
 				}
 				for(String fieldLine : fields.get(tableName.trim()).toString().split(",")) {
 					this.dataFields.get(tableName).add(fieldLine.trim());
-					log.debug("field: '"+fieldLine.trim()+"'");
+//					log.debug("field: '"+fieldLine.trim()+"'");
 				}
 			}
 		}
@@ -335,9 +335,8 @@ public class JDBCFetch {
 	 * Get the where clauses for a table from the database
 	 * @param tableName the table to get the where clauses for
 	 * @return the where clauses
-	 * @throws SQLException error connecting to DB
 	 */
-	private List<String> getWhereClauses(String tableName) throws SQLException {
+	private List<String> getWhereClauses(String tableName) {
 		if(this.whereClauses == null) {
 			this.whereClauses = new HashMap<String, List<String>>();
 		}

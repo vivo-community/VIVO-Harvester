@@ -364,6 +364,7 @@ public class JenaConnect {
 		/**
 		 * Build a JenaConnect using the input stream data
 		 * @param inputStream stream to read config from
+		 * @param overrideParams parameters that override the params in the config file
 		 * @return the JenaConnect described by the stream
 		 * @throws ParserConfigurationException parser incorrectly configured
 		 * @throws SAXException xml error

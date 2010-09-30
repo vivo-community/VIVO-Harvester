@@ -54,8 +54,17 @@ public class Transfer {
 	 * empty model before transfer
 	 */
 	private boolean emptyModel;
+	/**
+	 * input rdf file
+	 */
 	private String inRDF;
+	/**
+	 * input record handler
+	 */
 	private RecordHandler inRH;
+	/**
+	 * namespace for relative uri resolution
+	 */
 	private String namespace;
 	
 	/**
@@ -229,6 +238,11 @@ public class Transfer {
 		return parser;
 	}
 	
+	/**
+	 * dumps the contents of a file into a jena model
+	 * @param fileName the file to dump
+	 * @param jc the jena model
+	 */
 	private void dumpFileToJC(String fileName, JenaConnect jc) {
 		try {
 			log.info("Loading RDF from " + fileName);
@@ -238,6 +252,11 @@ public class Transfer {
 		}
 	}
 	
+	/**
+	 * dumps the contents of a record handler into a jena model
+	 * @param rh the record handler to dump
+	 * @param jc the jena model
+	 */
 	private void dumpRHToJC(RecordHandler rh, JenaConnect jc) {
 		//Read in records that need processing
 		log.info("Loading Records from RecordHandler");
@@ -245,15 +264,29 @@ public class Transfer {
 		log.info("Loaded " + processCount + " records");
 	}
 	
+	/**
+	 * copies contents of a jena model into another jena model
+	 * @param in the input model
+	 * @param out the output model
+	 */
 	private void transferJCToJC(JenaConnect in, JenaConnect out) {
-		this.output.getJenaModel().add(this.input.getJenaModel());
+		out.getJenaModel().add(in.getJenaModel());
 	}
 	
+	/**
+	 * clears all statements from a jena model
+	 * @param jc the jena model
+	 */
 	private void emptyJC(JenaConnect jc) {
 		log.trace("Emptying Model");
 		jc.getJenaModel().removeAll();
 	}
 	
+	/**
+	 * dumps the contents of a jena model into a file
+	 * @param jc the jena model
+	 * @param fileName the file to dump into
+	 */
 	private void dumpJCToFile(JenaConnect jc, String fileName) {
 		log.info("Outputting RDF to " + fileName);
 		try {

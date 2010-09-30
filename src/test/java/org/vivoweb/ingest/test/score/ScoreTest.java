@@ -26,6 +26,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.util.StringUtils;
 
 import junit.framework.TestCase;
@@ -139,7 +141,7 @@ public class ScoreTest extends TestCase {
 			try {
 				Test = new Score(args);
 				Test.execute();
-				if (Test.scoreInput.getJenaModel().isEmpty()) {
+				if (Test.getScoreInput().getJenaModel().isEmpty()) {
 					log.error("Model emptied -k arg violated");
 					fail("Model emptied -k arg violated");
 				}
@@ -156,7 +158,7 @@ public class ScoreTest extends TestCase {
 			try {
 				Test = new Score(args);
 				Test.execute();
-				if (!Test.scoreInput.getJenaModel().isEmpty()) {
+				if (!Test.getScoreInput().getJenaModel().isEmpty()) {
 					log.error("Model not empty -k arg violated");
 					fail("Model not empty -k arg violated");
 				}
@@ -211,20 +213,20 @@ public class ScoreTest extends TestCase {
 				Test.execute();
 				
 				//check output model
-				if (Test.scoreOutput.getJenaModel().isEmpty()) {
+				if (Test.getScoreOutput().getJenaModel().isEmpty()) {
 					log.error("Didn't match anything with author name scoring");
 					fail("Didn't match anything with author name scoring");
 				}
 				
 				//empty output model
-				Test.scoreOutput.getJenaModel().removeAll();
+				Test.getScoreOutput().getJenaModel().removeAll();
 				
 				//run exactmatch score
 				Test = new Score(input,vivo,output,true,workEmail,blank,blank, null,null,null,null);
 				Test.execute();
 				
 				//empty output model
-				Test.scoreOutput.getJenaModel().removeAll();
+				Test.getScoreOutput().getJenaModel().removeAll();
 				
 				//testing Foriegn Key Score Method
 				input.getJenaModel().write(System.out, "RDF/XML");
@@ -233,8 +235,17 @@ public class ScoreTest extends TestCase {
 						"http://vivoweb.org/ontology/core#worksFor","http://vivoweb.org/ontology/core#departmentOf");
 				Test.execute();
 				
+				StmtIterator stmnts = Test.getScoreOutput().getJenaModel().listStatements();
+				while(stmnts.hasNext()) {
+					Statement stmnt = stmnts.next();
+					System.out.println("Statement Found");
+					System.out.println(" - sub: "+stmnt.getSubject().getURI());
+					System.out.println(" - pre: "+stmnt.getPredicate());
+					System.out.println(" - obj: "+stmnt.getObject());
+				}
+				
 				//check output model
-				//if (Test.scoreOutput.getJenaModel().isEmpty()) {
+				//if (Test.getScoreOutput().getJenaModel().isEmpty()) {
 				//	log.error("Didn't match anything with foriegn key scoring");
 				//	fail("Didn't match anything with foriegn key scoring");
 				//}

@@ -9,25 +9,17 @@
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+//import javax.xml.transform.Source;
+//import javax.xml.transform.stream.StreamResult;
+//import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -49,7 +41,7 @@ public class SPARQLTranslator {
 	 * The translation file is the map that will reconstruct our input stream's document into
 	 * the appropriate format
 	 */
-	private String sparqlConstruct;
+//	private String sparqlConstruct;
 	/**
 	 * in stream is the stream containing the file (xml) that we are going to translate
 	 * @TODO possibly remove and switch to passing streams to xmlTranslate
@@ -135,10 +127,10 @@ public class SPARQLTranslator {
 	 * 
 	 */
 	private void xmlTranslate() {
-		StreamResult outputResult = new StreamResult(this.outStream);
+//		StreamResult outputResult = new StreamResult(this.outStream);
 		try {
 			// JAXP reads data using the Source interface
-			Source xmlSource = new StreamSource(this.inStream);
+//			Source xmlSource = new StreamSource(this.inStream);
 			
 			System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
 			
