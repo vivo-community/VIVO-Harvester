@@ -253,7 +253,7 @@ public class JenaConnect {
 		for(Record r : rh) {
 			log.trace("loading record: "+r.getID());
 			if(namespace != null) {
-				log.trace("using namespace '"+namespace+"'");
+//				log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new  ByteArrayInputStream(r.getData().getBytes());
 			this.getJenaModel().read(bais,namespace);

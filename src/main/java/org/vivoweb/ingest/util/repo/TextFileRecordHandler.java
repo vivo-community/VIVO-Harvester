@@ -446,7 +446,7 @@ public class TextFileRecordHandler extends RecordHandler {
 				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(Selectors.SELECT_CHILDREN)) {
 					if(!file.isHidden() && file.getType() == FileType.FILE) {
 						allFileListing.add(file.getName().getBaseName());
-						log.debug("Found file "+file.getName().getBaseName());
+//						log.debug("Found file "+file.getName().getBaseName());
 					}
 				}
 			} catch(FileSystemException e) {

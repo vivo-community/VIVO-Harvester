@@ -486,7 +486,7 @@ public class JDBCFetch {
 						recID.append("_-_");
 						recID.append(SpecialEntities.xmlEncode(rs.getString(idField).trim()));
 					}
-					log.trace("Creating RDF for "+tableName+": "+recID);
+//					log.trace("Creating RDF for "+tableName+": "+recID);
 					//Build RDF BEGIN
 					//Header info
 					String tableNS = "db-"+tableName;

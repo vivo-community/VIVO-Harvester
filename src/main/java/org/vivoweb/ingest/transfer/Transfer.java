@@ -143,7 +143,6 @@ public class Transfer {
 			} else {
 				this.namespace = null;
 			}
-			System.out.println("namespace: "+this.namespace);
 			
 			//empty model
 			this.retainModel = argList.has("k");

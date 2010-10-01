@@ -309,56 +309,53 @@ public class Score {
 			String outputModel = opts.get("O");
 			String vivoModel = opts.get("V");
 			
-			try {
-				log.info("Loading configuration and models");
-				
-				// Connect to vivo
-				JenaConnect jenaVivoDB;
-				if(opts.has("V")) {
-					log.info("Using " + vivoModel + " for model name for vivo");
-					jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(jenaVIVO), vivoModel);
-				} else {
-					jenaVivoDB = JenaConnect.parseConfig(jenaVIVO);
-				}
-				
-				// Create working model
-				JenaConnect jenaInputDB;
-				if(opts.has("i")) {
-					jenaInputDB = new JenaConnect(JenaConnect.parseConfig(jenaInput), inputModel);
-				} else {
-					jenaInputDB = new JenaConnect(jenaVivoDB, inputModel);
-				}
-				log.info("Using " + inputModel + " for model name for input");
-				
-				// Create output model
-				JenaConnect jenaOutputDB;
-				if(opts.has("o")) {
-					jenaOutputDB = new JenaConnect(JenaConnect.parseConfig(jenaOutput), outputModel);
-				} else {
-					jenaOutputDB = new JenaConnect(jenaVivoDB, outputModel);
-				}
-				log.info("Using " + outputModel + " for model name for output");
-				
-				// create object
-				this.vivo = jenaVivoDB;
-				this.scoreInput = jenaInputDB;
-				this.scoreOutput = jenaOutputDB;
-				this.keepInputModel = opts.has("k");
-				this.exactMatch = opts.getAll("e");
-				this.pairwise = opts.getAll("p");
-				this.regex = opts.getAll("r");
-				this.authorName = opts.get("a");
-				this.foriegnKey = opts.get("f");
-				this.objToScore = opts.get("x");
-				this.objToVIVO = opts.get("y");
-				
-			} catch(ParserConfigurationException e) {
-				throw e;
-			} catch(SAXException e) {
-				throw e;
-			} catch(IOException e) {
-				throw e;
+			log.info("Loading configuration and models");
+			
+			// Connect to vivo
+			JenaConnect jenaVivoDB;
+			if(opts.has("V")) {
+				log.info("Using " + vivoModel + " for model name for vivo");
+				jenaVivoDB = new JenaConnect(JenaConnect.parseConfig(jenaVIVO), vivoModel);
+			} else {
+				jenaVivoDB = JenaConnect.parseConfig(jenaVIVO);
 			}
+			
+			// Create working model
+			JenaConnect jenaInputDB;
+			if(opts.has("i")) {
+				jenaInputDB = new JenaConnect(JenaConnect.parseConfig(jenaInput), inputModel);
+			} else {
+				jenaInputDB = new JenaConnect(jenaVivoDB, inputModel);
+			}
+			log.info("Using " + inputModel + " for model name for input");
+			
+			// Create output model
+			JenaConnect jenaOutputDB;
+			if(opts.has("o")) {
+				jenaOutputDB = new JenaConnect(JenaConnect.parseConfig(jenaOutput), outputModel);
+			} else {
+				jenaOutputDB = new JenaConnect(jenaVivoDB, outputModel);
+			}
+			log.info("Using " + outputModel + " for model name for output");
+			
+			// create object
+			this.vivo = jenaVivoDB;
+			this.scoreInput = jenaInputDB;
+			this.scoreOutput = jenaOutputDB;
+			this.keepInputModel = opts.has("k");
+			this.exactMatch = opts.getAll("e");
+			this.pairwise = opts.getAll("p");
+			this.regex = opts.getAll("r");
+			this.authorName = opts.get("a");
+			this.foriegnKey = opts.get("f");
+			this.objToScore = opts.get("x");
+			this.objToVIVO = opts.get("y");
+		} catch(ParserConfigurationException e) {
+			throw e;
+		} catch(SAXException e) {
+			throw e;
+		} catch(IOException e) {
+			throw e;
 		} catch(IllegalArgumentException e) {
 			throw e;
 		} catch(Exception e) {

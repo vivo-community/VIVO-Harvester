@@ -20,8 +20,8 @@ import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
@@ -36,7 +36,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(RecordHandler.class);
+//	private static Log log = LogFactory.getLog(RecordHandler.class);
 	/**
 	 * Do we overwrite existing records by default
 	 */
@@ -396,7 +396,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return true if need updated or record is new
 	 */
 	protected boolean needsUpdated(Record rec) {
-		log.debug("Checking if Record "+rec.getID()+" needs updated");
+//		log.debug("Checking if Record "+rec.getID()+" needs updated");
 		try {
 			RecordMetaData rmd = getLastMetaData(rec.getID(), RecordMetaDataType.written, null);
 			//Check if previous written record meta data exists
@@ -407,18 +407,18 @@ public abstract class RecordHandler implements Iterable<Record> {
 				String newMD5 = RecordMetaData.md5hex(rec.getData());
 				if(newMD5.equals(oldMD5)) {
 					//do nothing more
-					log.debug("Record "+rec.getID()+" has not changed... no need to update.");
+//					log.debug("Record "+rec.getID()+" has not changed... no need to update.");
 					return false;
 				}
-				log.debug("Record has changed... need to update");
+//				log.debug("Record has changed... need to update");
 			} else {
-				log.debug("Record never written... need to update");
+//				log.debug("Record never written... need to update");
 			}
 			return true;
 		} catch(IOException e) {
 			//error getting metadata file... assume it does not exist
 			//TODO Chris: RC2 - perhaps we can test for that assumption?
-			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
+//			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
 			return true;
 		}
 	}
