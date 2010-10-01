@@ -13,7 +13,7 @@
 cd /usr/share/vivoingest
 
 # Execute Fetch/Translate using D2RMap
-java -cp lib/d2rmap-V03.jar:bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -r config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf
+java -cp lib/d2rmap-V03.jar:bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -u config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf
 
 # Execute Transfer to transfer rdf into "d2rStaging" JENA model
 java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/JDBCXMLRecordHandler.xml -o config/jenaModels/VIVO.xml -O modelName=d2rStaging
@@ -27,4 +27,4 @@ java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Trans
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-/etc/init.d/tomcat restart
+#/etc/init.d/tomcat restart
