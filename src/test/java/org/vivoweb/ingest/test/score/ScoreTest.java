@@ -14,6 +14,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -230,11 +231,16 @@ public class ScoreTest extends TestCase {
 				
 				//testing Foriegn Key Score Method
 				input.getJenaModel().write(System.out, "RDF/XML");
-				Test = new Score (input,vivo,output,false,blank,blank,blank,null,
-						"http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid",
-						"http://vivoweb.org/ontology/core#worksFor","http://vivoweb.org/ontology/core#departmentOf");
-				Test.execute();
-				
+								
+				Score.main(new String[]{"-v",this.vivoXML.getAbsolutePath(),
+						"-I","input",
+						"-O","output",
+						"-V","vivo",
+						"-f","http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid",
+						"-x","http://vivoweb.org/ontology/core#worksFor",
+						"-y","http://vivoweb.org/ontology/core#departmentOf",
+						"-k"});				
+												
 				StmtIterator stmnts = Test.getScoreOutput().getJenaModel().listStatements();
 				while(stmnts.hasNext()) {
 					Statement stmnt = stmnts.next();
@@ -245,15 +251,13 @@ public class ScoreTest extends TestCase {
 				}
 				
 				//check output model
-				//if (Test.getScoreOutput().getJenaModel().isEmpty()) {
-				//	log.error("Didn't match anything with foriegn key scoring");
-				//	fail("Didn't match anything with foriegn key scoring");
-				//}
+				if (output.getJenaModel().isEmpty()) {
+					log.error("Didn't match anything with foriegn key scoring");
+					fail("Didn't match anything with foriegn key scoring");
+				}
+
 				Test.close();
-				
-				
-				
-				
+								
 				input.close();
 				vivo.close();
 				output.close();
