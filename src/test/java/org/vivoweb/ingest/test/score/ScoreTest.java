@@ -14,7 +14,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
+//import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -272,7 +272,7 @@ public class ScoreTest extends TestCase {
 				log.error(e.getMessage(),e);
 				fail(e.getMessage());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				log.error(e.getMessage(),e);
 				fail(e.getMessage());
 			}
 	}

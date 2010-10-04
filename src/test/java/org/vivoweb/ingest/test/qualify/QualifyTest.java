@@ -83,7 +83,6 @@ public class QualifyTest extends TestCase {
 			String expectedValue = "I Am Testing Test Replace";
 			//call qualify
 			new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, null, false).executeTask();
-			//FIXME woo
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res2, this.label).getString().equals(expectedValue));
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
