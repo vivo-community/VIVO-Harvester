@@ -180,6 +180,19 @@ public class JenaConnect {
 	
 	/**
 	 * Config File Based Factory
+	 * @param configFile the config file descriptor
+	 * @param overrideParams the parameters to override the file with
+	 * @return JenaConnect instance
+	 * @throws IOException error connecting
+	 * @throws SAXException xml parse error
+	 * @throws ParserConfigurationException xml parse error
+	 */
+	public static JenaConnect parseConfig(File configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		return parseConfig(VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()), overrideParams);
+	}
+	
+	/**
+	 * Config File Based Factory
 	 * @param configFileName the config file path
 	 * @return JenaConnect instance
 	 * @throws ParserConfigurationException error connecting
@@ -188,6 +201,19 @@ public class JenaConnect {
 	 */
 	public static JenaConnect parseConfig(String configFileName) throws ParserConfigurationException, SAXException, IOException {
 		return parseConfig(VFS.getManager().resolveFile(new File("."), configFileName));
+	}
+	
+	/**
+	 * Config File Based Factory
+	 * @param configFileName the config file path
+	 * @param overrideParams the parameters to override the file with
+	 * @return JenaConnect instance
+	 * @throws ParserConfigurationException error connecting
+	 * @throws SAXException xml parse error
+	 * @throws IOException xml parse error
+	 */
+	public static JenaConnect parseConfig(String configFileName, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		return parseConfig(VFS.getManager().resolveFile(new File("."), configFileName), overrideParams);
 	}
 	
 	/**

@@ -47,9 +47,9 @@ public class Transfer {
 	 */
 	private String dumpFile;
 	/**
-	 * keep model after transfer
+	 * clear model after transfer
 	 */
-	private boolean retainModel;
+	private boolean clearModel;
 	/**
 	 * empty model before transfer
 	 */
@@ -72,17 +72,17 @@ public class Transfer {
 	 * @param in input Model
 	 * @param out output Model
 	 * @param outputFile dump to file option
-	 * @param keep keep transferred data option
+	 * @param clear clear transferred data option
 	 * @param empty empty model before transfer
 	 */
-	public Transfer(JenaConnect in, JenaConnect out, String outputFile, boolean keep, boolean empty) {
+	public Transfer(JenaConnect in, JenaConnect out, String outputFile, boolean clear, boolean empty) {
 		if(in == null) {
 			throw new IllegalArgumentException("Must provide non-null input jena connect");
 		}
 		this.input = in;
 		this.output = out;
 		this.dumpFile = outputFile;
-		this.retainModel = keep;
+		this.clearModel = clear;
 		this.emptyModel = empty;
 	}
 	
@@ -145,7 +145,7 @@ public class Transfer {
 			}
 			
 			//empty model
-			this.retainModel = argList.has("k");
+			this.clearModel = argList.has("w");
 			this.emptyModel = argList.has("e");
 			
 		} catch(ParserConfigurationException e) {
@@ -199,7 +199,7 @@ public class Transfer {
 		}
 		
 		//empty model
-		if (!this.retainModel && !inputIsOutput) {
+		if (this.clearModel && !inputIsOutput) {
 			emptyJC(this.input);
 		}
 		
@@ -232,7 +232,7 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
 		
 		//options
-		parser.addArgument(new ArgDef().setShortOption('k').setLongOpt("keep-transfered-model").withParameter(false, "KEEP_FLAG").setDescription("If set, this will not clear the input model after transfer is complete"));
+		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-transfered-model").withParameter(false, "WIPE_FLAG").setDescription("If set, this will clear the input model after transfer is complete"));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("empty-input-model").withParameter(false, "EMPTY_FLAG").setDescription("If set, this will clear the input model before transfer is started").setRequired(false));
 		return parser;
 	}

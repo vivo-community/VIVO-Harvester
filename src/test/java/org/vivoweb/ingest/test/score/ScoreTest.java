@@ -17,6 +17,7 @@ import java.io.IOException;
 //import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -63,16 +64,24 @@ public class ScoreTest extends TestCase {
 		Score Test;
 		
 		//inputs
-		String iArg = this.vivoXML.toString();
-		String vArg = this.vivoXML.toString();
+		String iArg = this.vivoXML.getAbsolutePath();
+		String vArg = this.vivoXML.getAbsolutePath();
 		
 		//outputs
-		String oArg = this.vivoXML.toString();
+		String oArg = this.vivoXML.getAbsolutePath();
 		
 		//model overrides
-		String IArg = "testInputModel";
-		String OArg = "testOutputModel";
-		String VArg = "testVivoModel";
+		String IArg = "modelName=testInputModel";
+		Properties IArgProp = new Properties();
+		IArgProp.put("modelName", "testInputModel");
+		
+		String OArg = "modelName=testOutputModel";
+		Properties OArgProp = new Properties();
+		OArgProp.put("modelName", "testOutputModel");
+		
+		String VArg = "modelName=testVivoModel";
+		Properties VArgProp = new Properties();
+		VArgProp.put("modelName", "testVivoModel");
 		
 		JenaConnect input;
 		JenaConnect output;
@@ -80,13 +89,13 @@ public class ScoreTest extends TestCase {
 		
 		//Load up everything before starting
 		try {
-			input = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),IArg);
+			input = JenaConnect.parseConfig(iArg,IArgProp);
 			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null);
 			
-			vivo = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),VArg);
+			vivo = JenaConnect.parseConfig(vArg,VArgProp);
 			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null);
 
-			output = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),OArg);		
+			output = JenaConnect.parseConfig(oArg,OArgProp);		
 			
 			log.info("testArguments Start");
 			log.info("Testing good configs");
@@ -136,15 +145,15 @@ public class ScoreTest extends TestCase {
 			log.info("Testing keep working model");
 			//keep input model
 			
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -k");
-			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg, "-k"};
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
+			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg};
 			log.info(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 				Test.execute();
 				if (Test.getScoreInput().getJenaModel().isEmpty()) {
-					log.error("Model emptied -k arg violated");
-					fail("Model emptied -k arg violated");
+					log.error("Model emptied despite -w arg missing");
+					fail("Model emptied despite -w arg missing");
 				}
 			} catch(Exception e) {
 				log.error(e.getMessage(),e);
@@ -153,15 +162,15 @@ public class ScoreTest extends TestCase {
 			
 			//don't keep input model
 			log.info("Testing don't keep working model");
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl");
-			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg};
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
+			args = new String[]{"-i",iArg,"-I",IArg,"-v",vArg,"-V",VArg,"-o",oArg,"-O",OArg,"-w"};
 			log.info(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 				Test.execute();
 				if (!Test.getScoreInput().getJenaModel().isEmpty()) {
-					log.error("Model not empty -k arg violated");
-					fail("Model not empty -k arg violated");
+					log.error("Model not empty -w arg violated");
+					fail("Model not empty -w arg violated");
 				}
 				Test.close();
 			} catch(Exception e) {
@@ -201,80 +210,90 @@ public class ScoreTest extends TestCase {
 		
 		//load input models		
 		try {
-				input = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"input");
-				input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null);
-				
-				vivo = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"vivo");
-				vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null);
-	
-				output = new JenaConnect(JenaConnect.parseConfig(this.vivoXML),"output");
+			Properties inputProp = new Properties();
+			inputProp.put("modelName", "input");
+			input = JenaConnect.parseConfig(this.vivoXML,inputProp);
+			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null);
+			
 
-				//run author score
-				Test = new Score(input,vivo,output,true,blank,blank,blank, "1",null,null,null);
-				Test.execute();
-				
-				//check output model
-				if (Test.getScoreOutput().getJenaModel().isEmpty()) {
-					log.error("Didn't match anything with author name scoring");
-					fail("Didn't match anything with author name scoring");
-				}
-				
-				//empty output model
-				Test.getScoreOutput().getJenaModel().removeAll();
-				
-				//run exactmatch score
-				Test = new Score(input,vivo,output,true,workEmail,blank,blank, null,null,null,null);
-				Test.execute();
-				
-				//empty output model
-				Test.getScoreOutput().getJenaModel().removeAll();
-				
-				//testing Foriegn Key Score Method
-				input.getJenaModel().write(System.out, "RDF/XML");
-								
-				Score.main(new String[]{"-v",this.vivoXML.getAbsolutePath(),
-						"-I","input",
-						"-O","output",
-						"-V","vivo",
-						"-f","http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid",
-						"-x","http://vivoweb.org/ontology/core#worksFor",
-						"-y","http://vivoweb.org/ontology/core#departmentOf",
-						"-k"});				
-												
-				StmtIterator stmnts = Test.getScoreOutput().getJenaModel().listStatements();
-				while(stmnts.hasNext()) {
-					Statement stmnt = stmnts.next();
-					System.out.println("Statement Found");
-					System.out.println(" - sub: "+stmnt.getSubject().getURI());
-					System.out.println(" - pre: "+stmnt.getPredicate());
-					System.out.println(" - obj: "+stmnt.getObject());
-				}
-				
-				//check output model
-				if (output.getJenaModel().isEmpty()) {
-					log.error("Didn't match anything with foriegn key scoring");
-					fail("Didn't match anything with foriegn key scoring");
-				}
-
-				Test.close();
-								
-				input.close();
-				vivo.close();
-				output.close();
-				
-			} catch (IOException e) {
-				log.error(e.getMessage(),e);
-				fail(e.getMessage());
-			} catch (ParserConfigurationException e) {
-				log.error(e.getMessage(),e);
-				fail(e.getMessage());
-			} catch (SAXException e) {
-				log.error(e.getMessage(),e);
-				fail(e.getMessage());
-			} catch (Exception e) {
-				log.error(e.getMessage(),e);
-				fail(e.getMessage());
+			Properties vivoProp = new Properties();
+			vivoProp.put("modelName", "vivo");
+			vivo = JenaConnect.parseConfig(this.vivoXML,vivoProp);
+			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null);
+			
+			Properties outputProp = new Properties();
+			outputProp.put("modelName", "output");
+			output = JenaConnect.parseConfig(this.vivoXML,outputProp);
+			
+			//run author score
+			Test = new Score(input,vivo,output,false,blank,blank,blank,"1",null,null,null);
+			Test.execute();
+			
+			//check output model
+			if (Test.getScoreOutput().getJenaModel().isEmpty()) {
+				log.error("Didn't match anything with author name scoring");
+				fail("Didn't match anything with author name scoring");
 			}
+			
+			//empty output model
+			Test.getScoreOutput().getJenaModel().removeAll();
+			
+			//run exactmatch score
+			Test = new Score(input,vivo,output,false,workEmail,blank,blank,null,null,null,null);
+			Test.execute();
+
+			//check output model
+			if (output.getJenaModel().isEmpty()) {
+				log.error("Didn't match anything with exact match scoring");
+				fail("Didn't match anything with exact match scoring");
+			}
+			
+			//empty output model
+			Test.getScoreOutput().getJenaModel().removeAll();
+			
+			//testing Foriegn Key Score Method
+			input.getJenaModel().write(System.out, "RDF/XML");
+			
+			Score.main(new String[]{"-v",this.vivoXML.getAbsolutePath(),
+					"-I","modelName=input",
+					"-O","modelName=output",
+					"-V","modelName=vivo",
+					"-f","http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid",
+					"-x","http://vivoweb.org/ontology/core#worksFor",
+					"-y","http://vivoweb.org/ontology/core#departmentOf"});				
+			
+			StmtIterator stmnts = Test.getScoreOutput().getJenaModel().listStatements();
+			while(stmnts.hasNext()) {
+				Statement stmnt = stmnts.next();
+				System.out.println("Statement Found");
+				System.out.println(" - sub: "+stmnt.getSubject().getURI());
+				System.out.println(" - pre: "+stmnt.getPredicate());
+				System.out.println(" - obj: "+stmnt.getObject());
+			}
+			
+			//check output model
+			if (output.getJenaModel().isEmpty()) {
+				log.error("Didn't match anything with foriegn key scoring");
+				fail("Didn't match anything with foriegn key scoring");
+			}
+			
+			Test.close();
+			input.close();
+			vivo.close();
+			output.close();
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		} catch (ParserConfigurationException e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		} catch (SAXException e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			fail(e.getMessage());
+		}
 	}
 	
     /**
@@ -507,7 +526,7 @@ public class ScoreTest extends TestCase {
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 						"<Model>" +
 						"<Param name=\"dbClass\">org.h2.Driver</Param>" +
-						"<Param name=\"dbType\">HSQL</Param>" +
+						"<Param name=\"dbType\">HSQLDB</Param>" +
 						"<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +
 						"<Param name=\"modelName\">testVivoModel</Param>" +
 						"<Param name=\"dbUser\">sa</Param>" +

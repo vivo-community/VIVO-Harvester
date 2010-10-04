@@ -36,7 +36,7 @@
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>  
 
-	<!-- The main Article Set of all pubmed citations loaded 
+	<!-- The main node of the record loaded 
 		This serves as the header of the RDF file produced
 	 -->
 	<xsl:template match="rdf:RDF">
@@ -117,13 +117,13 @@
 									<xsl:with-param name="ufid" select="$ufid" />
 									<xsl:with-param name="this" select="$this" />
 								</xsl:call-template>
-							</xsl:when><!--
-							<xsl:when test="$table = 't_PS_H_UF_ACAD_ORG'">
+							</xsl:when>
+							<!-- <xsl:when test="$table = 't_PS_H_UF_ACAD_ORG'">
 								<xsl:call-template name="t_PS_H_UF_ACAD_ORG">
 									<xsl:with-param name="orgid" select="$ufid" />
 									<xsl:with-param name="this" select="$this" />
 								</xsl:call-template>
-							</xsl:when>-->
+							</xsl:when> -->
 						</xsl:choose>
 					</xsl:matching-substring>
 				</xsl:analyze-string>
@@ -256,9 +256,9 @@
 		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/ufid{$ufid}">
 			<core:personInPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}"/>
 		</rdf:Description>
-		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}">
+		<!-- <rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}">
 			<core:organizationForPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}"/>
-		</rdf:Description>
+		</rdf:Description> -->
 		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}">
 			<xsl:choose>
 				<xsl:when test="$typeCode=192">
@@ -280,7 +280,8 @@
 			</xsl:choose>
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
-			<core:positionInOrganization rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}"/>
+			<score:deptID><xsl:value-of select="$fullorgnum"/></score:deptID>
+			<!-- <core:positionInOrganization rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}"/> -->
 			<core:positionForPerson rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/ufid{$ufid}"/>
 			<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></core:startYear>
 			<core:endYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_END_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></core:endYear>
@@ -304,7 +305,7 @@
 		</rdf:Description>
 	</xsl:template>
 	
-	<!--<xsl:template name="t_PS_H_UF_ACAD_ORG">
+	<!-- <xsl:template name="t_PS_H_UF_ACAD_ORG">
 		<xsl:param name='orgid' />
 		<xsl:param name='this' />
 		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$orgid}">
@@ -386,5 +387,5 @@
 				</xsl:matching-substring>
 			</xsl:analyze-string>
 		</rdf:Description>
-	</xsl:template>-->
+	</xsl:template> -->
 </xsl:stylesheet>
