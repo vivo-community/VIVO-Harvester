@@ -216,6 +216,12 @@ public class Score {
 		
 		// options
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription("If set, this will clear the input model after scoring is complete"));
+		
+		//exactMatch foreignLink
+		//exactMatch subNodeLink
+		//score -e core:workEmail=score:workEmail -n Authorship .....
+		//score -e core:UFID=score:UFID -f hasworkRole=workRoleIn
+
 		return parser;
 	}
 	
@@ -335,7 +341,7 @@ public class Score {
 			
 			// Grab person URI
 			RDFNode vivoNode = vivoSolution.get("x");
-			log.info("Found " + scoreNode.toString() + " for VIVO entity" + vivoNode.toString());
+			log.info("Found " + scoreNode.toString() + " for VIVO entity " + vivoNode.toString());
 			log.info("Adding entity " + scoreNode.toString());
 			
 			result.add(recursiveSanitizeBuild((Resource)scoreNode, null));
