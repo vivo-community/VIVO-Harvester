@@ -222,6 +222,9 @@ public class JenaConnect {
 	 * @return the JenaConnect
 	 */
 	private static JenaConnect build(Map<String,String> params) {
+//	  for(String param : params.keySet()) {
+//	    log.debug(param+" => "+params.get(param));
+//	  }
 		if(!params.containsKey("type")){
 			throw new IllegalArgumentException("must define type!");
 		}

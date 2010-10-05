@@ -274,7 +274,7 @@ public class Score {
 			}
 		}
 		
-		Properties outputOverrides = opts.getProperties("I");
+		Properties outputOverrides = opts.getProperties("O");
 		String jenaOutput;
 		if(opts.has("o")) {
 			jenaOutput = opts.get("o");
