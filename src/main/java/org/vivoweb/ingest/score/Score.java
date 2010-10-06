@@ -35,6 +35,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -159,22 +160,28 @@ public class Score {
 		}
 		
 		// Call each exactMatch
-		for(String attribute : this.exactMatch) {
-			// this.exactMatch(attribute);
-			// TODO Nicolas: fix exact match to take in two attributes <>,<> check with chaines
-			// for proper format (? comma seperated list ?)
-			this.exactMatch("<http://vivoweb.org/ontology/score#"+attribute+">","<http://vivoweb.org/ontology/core#"+attribute+">");
+		if(this.exactMatch != null && !this.exactMatch.isEmpty()) {
+  		for(String attribute : this.exactMatch) {
+  			// this.exactMatch(attribute);
+  			// TODO Nicolas: fix exact match to take in two attributes <>,<> check with chaines
+  			// for proper format (? comma seperated list ?)
+  			this.exactMatch("<http://vivoweb.org/ontology/score#"+attribute+">","<http://vivoweb.org/ontology/core#"+attribute+">");
+  		}
 		}
 		
 		// Call each pairwise
-		for(String attribute : this.pairwise) {
-			this.pairwise(attribute);
+		if(this.pairwise != null && !this.pairwise.isEmpty()) {
+    	for(String attribute : this.pairwise) {
+    		this.pairwise(attribute);
+    	}
 		}
 		
 		// Call each regex
 		//TODO Chris: uncomment when regex implemented
-//		for(String attribute : this.regex) {
-//			this.regex(attribute);
+//		if(this.regex != null && !this.regex.isEmpty()) {
+//  		for(String attribute : this.regex) {
+//  			this.regex(attribute);
+//  		}
 //		}
 		
 		// Empty working model
@@ -239,7 +246,7 @@ public class Score {
 	 * @param objToVIVOArg the predicate that connects the object in score to the object in vivo
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, @SuppressWarnings("unused") List<String> regexArg, String authorNameArg, List<String> foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
 		this.scoreOutput = jenaScoreOutput;
@@ -323,38 +330,34 @@ public class Score {
 		
 		return queryExec.execSelect();
 	}
-	
-	/**
-	 * Links the two items and saves the model
-	 * @param result the model to send things to VIVO
-	 * @param scoreSet the result set of matching items
-	 * @param scoreNode the node of the object in scoring
-	 * @param toVIVOProperty the predicate that connects the object in score to the object in vivo
-	 * @param toScoreProperty the predicate that connects the object in vivo to the object in score
-	 */
-	private static void linkThenCommitResultSet(Model result, ResultSet scoreSet, RDFNode scoreNode, String toVIVOProperty, String toScoreProperty) {
-		QuerySolution vivoSolution;
-		
-		// loop thru result set
-		while(scoreSet.hasNext()) {
-			vivoSolution = scoreSet.next();
-			
-			// Grab person URI
-			RDFNode vivoNode = vivoSolution.get("x");
-			log.info("Found " + scoreNode.toString() + " for VIVO entity " + vivoNode.toString());
-			log.info("Adding entity " + scoreNode.toString());
-			
-			result.add(recursiveSanitizeBuild((Resource)scoreNode, null));
-			
-			log.info("Linking entity " + scoreNode.toString() + "to VIVO entity " + vivoNode.toString());
-			
-			result.add((Resource)scoreNode, ResourceFactory.createProperty(toVIVOProperty), vivoNode);
-			result.add((Resource)vivoNode, ResourceFactory.createProperty(toScoreProperty), scoreNode);
-			
-			// take results and store in matched model
-			result.commit();
-		}
-	}
+  
+  /**
+   * Links the two items and saves the model
+   * @param result the model to send things to VIVO
+   * @param scoreSet the resource iterator of matching items
+   * @param scoreNode the node of the object in scoring
+   * @param toVIVOProperty the predicate that connects the object in score to the object in vivo
+   * @param toScoreProperty the predicate that connects the object in vivo to the object in score
+   */
+  private static void linkThenCommitResourceIter(Model result, ResIterator scoreSet, Resource scoreNode, String toVIVOProperty, String toScoreProperty) {
+    // loop thru resources
+    while(scoreSet.hasNext()) {
+      // Grab person URI
+      Resource vivoNode = scoreSet.next();
+      log.info("Found " + scoreNode + " for VIVO entity" + vivoNode);
+      log.info("Adding entity " + scoreNode);
+      
+      result.add(recursiveSanitizeBuild(scoreNode, null));
+      
+      log.info("Linking entity " + scoreNode + "to VIVO entity " + vivoNode);
+      
+      result.add(scoreNode, ResourceFactory.createProperty(toVIVOProperty), vivoNode);
+      result.add(vivoNode, ResourceFactory.createProperty(toScoreProperty), scoreNode);
+      
+      // take results and store in matched model
+      result.commit();
+    }
+  }
 	
 	/**
 	 * Commits node to a matched model
@@ -526,16 +529,14 @@ public class Score {
 	 */
 	private static Model recursiveSanitizeBuild(Resource mainRes, Resource linkRes) {
 		Model returnModel = ModelFactory.createDefaultModel();
-		Statement stmt;
-		
 		StmtIterator mainStmts = mainRes.listProperties();
 		
 		while(mainStmts.hasNext()) {
-			stmt = mainStmts.nextStatement();
+		  Statement stmt = mainStmts.nextStatement();
 			log.trace("Statement " + stmt.toString());
 			
 			// Don't add any scoring statements
-			if( !stmt.getPredicate().toString().contains("/score")) {
+			if( !stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
 				returnModel.add(stmt);
 				
 				if((stmt.getObject().isResource() && !((Resource)stmt.getObject()).equals(linkRes))
@@ -702,40 +703,31 @@ public class Score {
 	 * @param vivoToScoreNode the predicate that connects the object in vivo to the object in score
 	 */
 	public void foriegnKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
-		String matchQuery = "SELECT ?x ?scoreAttribute "+"WHERE { ?x <"+scoreAttribute+"> ?scoreAttribute }";
-		
 		// Foreign Key Match
 		log.info("Executing foriegnKeyMatch for "+scoreAttribute+" against "+vivoAttribute);
-		log.debug(matchQuery);
-		ResultSet scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
-		
-		// Log extra info message and return if none found
-		if( !scoreInputResult.hasNext()) {
-			log.info("No matches found for "+scoreAttribute+" in input");
-			return;
-		}
-		log.info("Looping thru matching "+scoreAttribute+" from input");
-		
-		// look for exact match in vivo
-		while(scoreInputResult.hasNext()) {
-			QuerySolution scoreSolution = scoreInputResult.next();
-			RDFNode scorePredNode = scoreSolution.get("scoreAttribute");
-			RDFNode scoreSubNode = scoreSolution.get("x");
-			
-			log.info("Checking for " + scorePredNode.toString() + " from " + scoreSubNode.toString() + " in VIVO");
-			
-			// Select all matching attributes from vivo store
-			String queryString = "SELECT ?x "+"WHERE { ?x <"+vivoAttribute+"> \""+scorePredNode.toString()+"\"}";
-			log.debug(queryString);
-
-			ResultSet vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
-			if(!vivoResult.hasNext()) {
-				log.info("No matches in VIVO found");
-			} else {
-				log.info("initiating link then commit resultset");
-				linkThenCommitResultSet(this.scoreOutput.getJenaModel(), vivoResult, scoreSubNode, scoreToVIVONode, vivoToScoreNode);
-			}
-		}
+		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
+    Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
+    StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
+    if(!stmtitr.hasNext()) {
+      log.info("No matches found for "+scoreAttribute+" in input");
+      return;
+    }
+    log.info("Looping thru matching "+scoreAttribute+" from input");
+    
+    // look for exact match in vivo
+    while(stmtitr.hasNext()) {
+      Statement stmt = stmtitr.next();
+      Resource sub = stmt.getSubject();
+      RDFNode obj = stmt.getObject();
+      log.info("Checking for " + obj + " from " + sub + " in VIVO");
+      ResIterator matches = this.vivo.getJenaModel().listResourcesWithProperty(vivoAttr, obj);
+      if(!matches.hasNext()) {
+        log.info("No matches in VIVO found");
+      } else {
+        log.info("initiating link then commit resultset");
+        linkThenCommitResourceIter(this.scoreOutput.getJenaModel(), matches, sub, scoreToVIVONode, vivoToScoreNode);
+      }
+    }
 	}
 	
 	/**
