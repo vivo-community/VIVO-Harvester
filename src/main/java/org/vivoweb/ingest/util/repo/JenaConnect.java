@@ -286,6 +286,11 @@ public class JenaConnect {
 			}
 			ByteArrayInputStream bais = new  ByteArrayInputStream(r.getData().getBytes());
 			this.getJenaModel().read(bais,namespace);
+			try {
+        bais.close();
+      } catch (IOException e) {
+        //ignore
+      }
 			processCount++;
 		}
 		return processCount;

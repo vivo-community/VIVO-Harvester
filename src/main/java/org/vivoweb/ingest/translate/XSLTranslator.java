@@ -158,25 +158,21 @@ public class XSLTranslator {
 		log.info("Translation: Start");
 		
 		try {
-			// create a output stream for writing to the out store
-			ByteArrayOutputStream buff = new ByteArrayOutputStream();
-			
 			// get from the in record and translate
 			for(Record r : this.inStore) {
 				if (r.needsProcessed(this.getClass())){
 					log.info("Translating Record " + r.getID());
 					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
-					this.outStream = buff; 
+					this.outStream = new ByteArrayOutputStream(); 
 					this.xmlTranslate();
-					buff.flush();
-					this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
+					this.outStream.flush();
+					this.outStore.addRecord(r.getID(), this.outStream.toString(), this.getClass());
 					r.setProcessed(this.getClass());
-					buff.reset();
+					this.outStream.close();
 				} else {
 					log.debug("No Translation Needed: " + r.getID());
 				}
 			}
-			buff.close();
 		} catch(Exception e) {
 			log.error(e.getMessage(),e);
 		}
