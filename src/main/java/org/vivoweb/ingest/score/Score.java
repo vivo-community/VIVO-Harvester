@@ -307,7 +307,9 @@ public class Score {
 		int count = 0;
 		while(stmtitr.hasNext()) {
 		  count++;
-		  System.out.println(count);
+		  if(count%1000 == 0) {
+		    System.out.println(count);
+		  }
 		}
 		System.out.println("input has "+count+"statements in it");
 		
