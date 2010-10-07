@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.vivoweb.ingest.test;
+package org.vivoweb.ingest.util;
 
 import java.io.File;
 import java.io.IOException;
