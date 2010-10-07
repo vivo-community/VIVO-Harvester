@@ -346,7 +346,7 @@
 						</xsl:otherwise></xsl:choose>
 					</xsl:variable>
 					<xsl:variable name="superorg">
-						<xsl:choose><! -- <xsl:when test="$level=4">
+						<xsl:choose><! - - <xsl:when test="$level=4">
 							<xsl:choose><xsl:when test="$L4id=$p1p2p3xs">
 								<xsl:value-of select="$p1p2p3zeros"/>
 							</xsl:when><xsl:when test="$L3id=$p1p2xs">
@@ -372,7 +372,7 @@
 							<xsl:value-of select="$p1p2zeros"/>
 						</xsl:when><xsl:when test="$level=2 and $L4id!=$p1p2p3xs and $L3id!=$p1p2xs and $L2id=$p1xs">
 							<xsl:value-of select="$p1zeros"/>
-						</xsl:when>-- >
+						</xsl:when>- - >
 						<xsl:when test="$level!=1">
 							<xsl:value-of select="$p1zeros"/>
 						</xsl:when>
