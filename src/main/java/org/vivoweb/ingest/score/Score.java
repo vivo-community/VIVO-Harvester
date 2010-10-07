@@ -309,7 +309,7 @@ public class Score {
 		  stmtitr.next();
 		  count++;
 		}
-		System.out.println("input has "+count+"statements in it");
+		System.out.println("input has "+count+" statements in it");
 		
 		// Create output model
 		this.scoreOutput = JenaConnect.parseConfig(jenaOutput, outputOverrides);
