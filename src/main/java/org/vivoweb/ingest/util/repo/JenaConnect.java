@@ -408,6 +408,9 @@ public class JenaConnect {
 					this.params.put(key, overrideParams.getProperty(key));
 				}
 			}
+			for(String param : this.params.keySet()) {
+			  System.out.println("'"+param+"' - '"+this.params.get(param)+"'");
+			}
 			return this.params;
 		}
 		
