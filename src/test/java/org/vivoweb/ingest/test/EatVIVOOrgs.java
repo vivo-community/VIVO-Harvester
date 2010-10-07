@@ -11,8 +11,11 @@ import java.net.URLConnection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.JenaConnect;
+import org.xml.sax.SAXException;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -25,20 +28,17 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  */
 public class EatVIVOOrgs {
   private static List<Property> otherProperties;
-  private static JenaConnect model;
+  private static JenaConnect inmodel;
+  private static JenaConnect outmodel;
   
   private static void eatOrg(String URI) throws MalformedURLException, IOException {
     System.out.println("eating: "+URI);
-    URLConnection conn = new URL(URI).openConnection();
-    conn.setRequestProperty("Accept", "application/rdf+xml");
-    JenaConnect tempModel = new JenaConnect();
-    tempModel.loadRDF(conn.getInputStream(), null);
-    Resource orgRes = tempModel.getJenaModel().createResource(URI);
+    Resource orgRes = inmodel.getJenaModel().getResource(URI);
     //eat suborgs
-    StmtIterator subOrgItr = orgRes.listProperties(model.getJenaModel().createProperty("http://vivoweb.org/ontology/core#","hasSubOrganization"));
+    StmtIterator subOrgItr = orgRes.listProperties(inmodel.getJenaModel().createProperty("http://vivoweb.org/ontology/core#","hasSubOrganization"));
     while(subOrgItr.hasNext()) {
       Statement subOrgStmt = subOrgItr.next();
-      model.getJenaModel().add(subOrgStmt);
+      outmodel.getJenaModel().add(subOrgStmt);
       String subOrgURI = subOrgStmt.getResource().getURI();
       eatOrg(subOrgURI);
     }
@@ -46,7 +46,7 @@ public class EatVIVOOrgs {
     for(Property prop : otherProperties) {
       StmtIterator otherPropItr = orgRes.listProperties(prop);
       while(otherPropItr.hasNext()) {
-        model.getJenaModel().add(otherPropItr.next());
+        outmodel.getJenaModel().add(otherPropItr.next());
       }
     }
   }
@@ -55,17 +55,20 @@ public class EatVIVOOrgs {
    * @param args cmd line args
    * @throws IOException 
    * @throws MalformedURLException 
+   * @throws SAXException 
+   * @throws ParserConfigurationException 
    */
-  public static void main(String[] args) throws MalformedURLException, IOException {
+  public static void main(String[] args) throws MalformedURLException, IOException, ParserConfigurationException, SAXException {
     String ufURI = "http://vivo.ufl.edu/individual/UniversityofFlorida";
-    model = new JenaConnect();
+    inmodel = JenaConnect.parseConfig("config/jenaModels/myVIVO.xml");
+    outmodel = new JenaConnect();
     otherProperties = new LinkedList<Property>();
-    otherProperties.add(model.getJenaModel().createProperty("http://vivo.ufl.edu/ontology/vivo-ufl/", "deptID"));
-    otherProperties.add(model.getJenaModel().createProperty("http://vivoweb.org/ontology/core#", "subOrganizationWithin"));
-    otherProperties.add(model.getJenaModel().createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "type"));
-    otherProperties.add(model.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"));
+    otherProperties.add(inmodel.getJenaModel().getProperty("http://vivo.ufl.edu/ontology/vivo-ufl/", "deptID"));
+    otherProperties.add(inmodel.getJenaModel().getProperty("http://vivoweb.org/ontology/core#", "subOrganizationWithin"));
+    otherProperties.add(inmodel.getJenaModel().getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "type"));
+    otherProperties.add(inmodel.getJenaModel().getProperty("http://www.w3.org/2000/01/rdf-schema#", "label"));
     eatOrg(ufURI);
-    model.exportRDF(VFS.getManager().resolveFile(new File("."), "XMLVault/ufOrgs.rdf.xml").getContent().getOutputStream(false));
+    outmodel.exportRDF(VFS.getManager().resolveFile(new File("."), "backups/ufOrgs.rdf.xml").getContent().getOutputStream(false));
   }
 
 }
