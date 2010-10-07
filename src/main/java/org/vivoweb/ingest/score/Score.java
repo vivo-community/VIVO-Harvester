@@ -306,10 +306,8 @@ public class Score {
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements();
 		int count = 0;
 		while(stmtitr.hasNext()) {
+		  stmtitr.next();
 		  count++;
-		  if(count%1000 == 0) {
-		    System.out.println(count);
-		  }
 		}
 		System.out.println("input has "+count+"statements in it");
 		
