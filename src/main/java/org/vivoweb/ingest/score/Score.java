@@ -303,6 +303,12 @@ public class Score {
 		
 		// Create working model
 		this.scoreInput = JenaConnect.parseConfig(jenaInput, inputOverrides);
+		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements();
+		int count = 0;
+		while(stmtitr.hasNext()) {
+		  count++;
+		}
+		System.out.println("input has "+count+"statements in it");
 		
 		// Create output model
 		this.scoreOutput = JenaConnect.parseConfig(jenaOutput, outputOverrides);
