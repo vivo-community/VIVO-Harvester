@@ -214,7 +214,7 @@
 	<xsl:template name="t_UF_DIR_EMP_STU_5">
 		<xsl:param name='ufid' />
 		<xsl:param name='this' />
-		<xsl:variable name="fullorgnum" select="$this/db-t_UF_DIR_EMP_STU_6:PS_DEPTID"/>
+		<xsl:variable name="fullorgnum" select="$this/db-t_UF_DIR_EMP_STU_5:PS_DEPTID"/>
 		<xsl:variable name="typeCode" select="$this/db-t_UF_DIR_EMP_STU_5:UF_TYPE_CD"/>
 		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/ufid{$ufid}">
 			<core:personInPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}"/>
