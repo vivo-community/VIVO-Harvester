@@ -114,28 +114,62 @@ public class TextFileRecordHandler extends RecordHandler {
 		setFileDirObj(getParam(params,"fileDir",true));
 	}
 	
+	/**
+	 * Sanitizes a record id
+	 * @param id the record id
+	 * @return null if no sanitization needed, else the new id
+	 */
+	private String sanitizeID(String id) {
+	  String s = id
+	    .replaceAll("\\n", "_-_NEWLINE_-_")
+	    .replaceAll("\\r", "_-_RETURN_-_")
+	    .replaceAll("\\t", "_-_TAB_-_")
+	    .replaceAll(" ", "_-_SPACE_-_")
+	    .replaceAll("\\\\", "_-_BACKSLASH_-_")
+	    .replaceAll("/", "_-_FORWARDSLASH_-_")
+	    .replaceAll(":", "_-_COLON_-_")
+	    .replaceAll("\\*", "_-_STAR_-_")
+	    .replaceAll("\\?", "_-_QUESTIONMARK_-_")
+	    .replaceAll("\"", "_-_DOUBLEQUOTE_-_")
+	    .replaceAll("<", "_-_LESSTHAN_-_")
+	    .replaceAll(">", "_-_GREATERTHAN_-_")
+	    .replaceAll("\\|", "_-_PIPE_-_");
+	  if(s.equals(id)) {
+	    return null;
+	  }
+	  log.debug("record id sanitized from '"+id+"' to '"+s+"'");
+	  return s;
+	}
+	
 	@Override
 	public boolean addRecord(Record rec, Class<?> operator, boolean overwrite) throws IOException {
-		if(!needsUpdated(rec)) {
+	  String newID = sanitizeID(rec.getID());
+	  Record cleanRec;
+	  if(newID == null) {
+	    cleanRec = rec;
+	  } else {
+	    cleanRec = new Record(newID,rec.getData(),this);
+	  }
+		if(!needsUpdated(cleanRec)) {
 			return false;
 		}
-		//log.debug("Resolving file for record: " + rec.getID());
+		//log.debug("Resolving file for record: " + cleanRec.getID());
 		FileObject fo = null;
 		try {
-			fo = this.fileDirObj.resolveFile(rec.getID());
+			fo = this.fileDirObj.resolveFile(cleanRec.getID());
 			if(!overwrite && fo.exists()) {
-				throw new IOException("Failed to add record "+rec.getID()+" because file "+fo.getName().getFriendlyURI()+" already exists.");
+				throw new IOException("Failed to add record "+cleanRec.getID()+" because file "+fo.getName().getFriendlyURI()+" already exists.");
 			}
 			fo.createFile();
 			if(!fo.isWriteable()) {
-				throw new IOException("Insufficient file system privileges to add record "+rec.getID()+" to file "+fo.getName().getFriendlyURI());
+				throw new IOException("Insufficient file system privileges to add record "+cleanRec.getID()+" to file "+fo.getName().getFriendlyURI());
 			}
-			//log.debug("Writting data for record: "+rec.getID());
+			//log.debug("Writting data for record: "+cleanRec.getID());
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo.getContent().getOutputStream(false)));
-			bw.append(rec.getData());
+			bw.append(cleanRec.getData());
 			bw.close();
-			createMetaDataFile(rec.getID());
-			setWritten(rec, operator);
+			createMetaDataFile(cleanRec.getID());
+			setWritten(cleanRec, operator);
 		} catch(IOException e) {
 			if(fo != null) {
 				try {

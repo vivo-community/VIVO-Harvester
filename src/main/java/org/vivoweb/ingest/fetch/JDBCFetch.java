@@ -398,7 +398,7 @@ public class JDBCFetch {
 		sb.append("SELECT ");
 		for(String dataField : getDataFields(tableName)) {
 			sb.append(getFieldPrefix());
-			if(multiTable) {
+			if(multiTable && dataField.split("\\.").length <= 1) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -408,7 +408,7 @@ public class JDBCFetch {
 		}
 		for(String relField : getRelationFields(tableName).keySet()) {
 			sb.append(getFieldPrefix());
-			if(multiTable) {
+			if(multiTable && relField.split("\\.").length <= 1) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -418,7 +418,7 @@ public class JDBCFetch {
 		}
 		for(String idField : getIDFields(tableName)) {
 			sb.append(getFieldPrefix());
-			if(multiTable) {
+			if(multiTable && idField.split("\\.").length <= 1) {
 				sb.append(tableName);
 				sb.append(".");
 			}
