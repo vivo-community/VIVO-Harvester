@@ -304,7 +304,7 @@ public class Score {
 			vivoStmtItr.next();
 			vivoCount++;
 		}
-		System.out.println("vivo has " + vivoCount + " statements in it");
+		log.debug("vivo has " + vivoCount + " statements in it");
 		
 		// Create working model
 		this.scoreInput = JenaConnect.parseConfig(jenaInput, inputOverrides);
@@ -314,7 +314,7 @@ public class Score {
 			inputStmtItr.next();
 			inputCount++;
 		}
-		System.out.println("input has " + inputCount + " statements in it");
+		log.debug("input has " + inputCount + " statements in it");
 		
 		// Create output model
 		this.scoreOutput = JenaConnect.parseConfig(jenaOutput, outputOverrides);
@@ -324,7 +324,7 @@ public class Score {
 			outputStmtItr.next();
 			outputCount++;
 		}
-		System.out.println("output has " + outputCount + " statements in it");
+		log.debug("output has " + outputCount + " statements in it");
 		
 		this.wipeInputModel = opts.has("w");
 		this.exactMatch = opts.getAll("e");
