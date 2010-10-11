@@ -43,7 +43,7 @@ public class JenaConnect {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(JenaConnect.class);
+	protected static Log log = LogFactory.getLog(JenaConnect.class);
 	/**
 	 * Model we are connecting to
 	 */
@@ -372,7 +372,7 @@ public class JenaConnect {
 		/**
 		 * Param list from the config file
 		 */
-		private Map<String, String> params;
+		private final Map<String, String> params;
 		/**
 		 * temporary storage for cdata
 		 */
@@ -410,7 +410,9 @@ public class JenaConnect {
 				}
 			}
 			for(String param : this.params.keySet()) {
-				System.out.println("'" + param + "' - '" + this.params.get(param) + "'");
+				if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
+					JenaConnect.log.debug("'" + param + "' - '" + this.params.get(param) + "'");
+				}
 			}
 			return this.params;
 		}
