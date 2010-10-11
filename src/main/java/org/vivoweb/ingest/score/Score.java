@@ -751,7 +751,7 @@ public class Score {
 			log.info("Checking for " + obj + " from " + sub + " in VIVO");
 			//			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
 			String matchQuery = "SELECT ?sub\nWHERE\n{\n  ?sub <" + vivoAttribute + "> \"" + obj + "\"\n}";
-			System.out.println(matchQuery);
+			//			System.out.println(matchQuery);
 			ResultSet matchesRS = executeQuery(this.vivo.getJenaModel(), matchQuery);
 			if(!matchesRS.hasNext()) {
 				log.info("No matches in VIVO found");
