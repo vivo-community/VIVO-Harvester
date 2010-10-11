@@ -546,7 +546,7 @@ public class TextFileRecordHandler extends RecordHandler {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			sp.parse(fmo.getContent().getInputStream(), this); // parse the file and also register this class for call
-																// backs
+			// backs
 			return this.rmdSet;
 		}
 		

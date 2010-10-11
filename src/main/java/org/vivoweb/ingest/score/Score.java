@@ -49,48 +49,48 @@ public class Score {
 	/**
 	 * Model for VIVO instance
 	 */
-	private JenaConnect vivo;
+	private final JenaConnect vivo;
 	/**
 	 * Model where input is stored
 	 */
-	private JenaConnect scoreInput;
+	private final JenaConnect scoreInput;
 	/**
 	 * Model where output is stored
 	 */
-	private JenaConnect scoreOutput;
+	private final JenaConnect scoreOutput;
 	/**
 	 * Option to retain working model
 	 */
-	private boolean wipeInputModel;
+	private final boolean wipeInputModel;
 	/**
 	 * Arguments for exact match algorithm
 	 */
-	private List<String> exactMatch;
+	private final List<String> exactMatch;
 	/**
 	 * Arguments for pairwise algorithm
 	 */
-	private List<String> pairwise;
-	// TODO Chris: uncomment when regex implemented
-	// /**
-	// * Arguments for regex algorithm
-	// */
-	// private List<String> regex;
+	private final List<String> pairwise;
+	// TODO cah: remove when regex used
+	//	/**
+	//	 * Arguments for regex algorithm
+	//	 */
+	//	private final List<String> regex;
 	/**
 	 * Arguments for authorname algorithm
 	 */
-	private String authorName;
+	private final String authorName;
 	/**
 	 * Arguments for Foriegn Key
 	 */
-	private List<String> foriegnKey;
+	private final List<String> foriegnKey;
 	/**
 	 * the predicate that connects the object in score to the object in vivo
 	 */
-	private String objToVIVO;
+	private final String objToVIVO;
 	/**
 	 * the predicate that connects the object in vivo to the object in score
 	 */
-	private String objToScore;
+	private final String objToScore;
 	
 	/**
 	 * Main method
@@ -244,15 +244,15 @@ public class Score {
 	 * @param objToVIVOArg the predicate that connects the object in score to the object in vivo
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, @SuppressWarnings("unused") List<String> regexArg, String authorNameArg, List<String> foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
 		this.scoreOutput = jenaScoreOutput;
 		this.wipeInputModel = clearWorkingModelArg;
 		this.exactMatch = exactMatchArg;
 		this.pairwise = pairwiseArg;
-		// TODO Chris: uncomment when regex implemented
-		// this.regex = regexArg;
+		//TODO cah: uncomment when regex implemented
+		//		this.regex = regexArg;
 		this.authorName = authorNameArg;
 		this.foriegnKey = foriegnKeyArg;
 		this.objToVIVO = objToVIVOArg;
@@ -315,8 +315,8 @@ public class Score {
 		this.wipeInputModel = opts.has("w");
 		this.exactMatch = opts.getAll("e");
 		this.pairwise = opts.getAll("p");
-		// TODO Chris: uncomment when regex implemented
-		// this.regex = opts.getAll("r");
+		//TODO cah: uncomment when regex implemented
+		//		this.regex = opts.getAll("r");
 		this.authorName = opts.get("a");
 		this.foriegnKey = opts.getAll("f");
 		this.objToVIVO = opts.get("x");
@@ -566,17 +566,15 @@ public class Score {
 	}
 	
 	// TODO Chris: uncomment when regex implemented
-	// /**
-	// * Executes a regex scoring method
-	// * @param regexString string containing regular expression
-	// */
-	// private void regex(String regexString) {
-	// // TODO Chris: finish implementation
-	//		
-	// log.info("Executing " + regexString + " regular expression");
-	// log.warn("Regex is not complete");
-	//		
-	// }
+	//	/**
+	//	 * Executes a regex scoring method
+	//	 * @param regexString string containing regular expression
+	//	 */
+	//	private void regex(String regexString) {
+	//		// TODO Chris: finish implementation
+	//		log.info("Executing " + regexString + " regular expression");
+	//		log.warn("Regex is not complete");
+	//	}
 	
 	/**
 	 * Executes an author name matching algorithm for author disambiguation

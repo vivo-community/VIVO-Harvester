@@ -76,7 +76,7 @@ public class RDFTranslator {
 				Model wfModel = ModelFactory.createDefaultModel();
 				
 				wfModel.read(new FileReader(this.translationWorkFlow), "http://vivoweb.org/harvester/rdfTranslation/", "RDF/XML"); // /working
-																																	// here
+				// here
 				
 				Model mainModel = ModelFactory.createDefaultModel();
 				
@@ -129,7 +129,7 @@ public class RDFTranslator {
 					rdfTrans.executeTask();
 				} catch(Exception e) {
 					log.error(e.getMessage()); // TODO Stephen: make this more robust (better information for debugging
-												// problems)
+					// problems)
 				}
 			} else if(args[0].equals("-rh")) {
 				// pull in rdf workflow
