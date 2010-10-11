@@ -27,6 +27,7 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -329,7 +330,7 @@ public class Score {
 	 * @return queryExec the executed query result set
 	 */
 	private static ResultSet executeQuery(Model model, String queryString) {
-		Query query = QueryFactory.create(queryString);
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, model);
 		
 		return queryExec.execSelect();
