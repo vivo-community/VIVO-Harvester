@@ -31,7 +31,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -344,11 +343,11 @@ public class Score {
 	 * @param toVIVOProperty the predicate that connects the object in score to the object in vivo
 	 * @param toScoreProperty the predicate that connects the object in vivo to the object in score
 	 */
-	private static void linkThenCommitResourceIter(Model result, ResIterator scoreSet, Resource scoreNode, String toVIVOProperty, String toScoreProperty) {
+	private static void linkThenCommitResourceIter(Model result, StmtIterator scoreSet, Resource scoreNode, String toVIVOProperty, String toScoreProperty) {
 		// loop thru resources
 		while(scoreSet.hasNext()) {
 			// Grab person URI
-			Resource vivoNode = scoreSet.next();
+			Resource vivoNode = scoreSet.next().getSubject();
 			log.info("Found " + scoreNode + " for VIVO entity" + vivoNode);
 			log.info("Adding entity " + scoreNode);
 			
@@ -701,9 +700,9 @@ public class Score {
 		while(stmtitr.hasNext()) {
 			Statement stmt = stmtitr.next();
 			Resource sub = stmt.getSubject();
-			String obj = stmt.getObject().asLiteral().getString();
+			RDFNode obj = stmt.getObject();
 			log.info("Checking for " + obj + " from " + sub + " in VIVO");
-			ResIterator matches = this.vivo.getJenaModel().listResourcesWithProperty(vivoAttr, obj);
+			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
 			if(!matches.hasNext()) {
 				log.info("No matches in VIVO found");
 			} else {
