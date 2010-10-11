@@ -2,9 +2,9 @@
 <Task type="org.vivoweb.ingest.fetch.JDBCFetch">
 	<Param name="driver">net.sourceforge.jtds.jdbc.Driver</Param>
 	<Param name="connection">jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD</Param>
-	<Param name="username">USERNAME</Param>
-	<Param name="password">PASSWORD</Param>
-	<Param name="output">config/recordHandlers/PeopleSoft-XML-h2RH.xml</Param>
+	<Param name="username">erp-odbc-2924</Param>
+	<Param name="password">#sql*2924</Param>
+	<Param name="output">config/recordHandlers/PeopleSoft-XML-RH.xml</Param>
 	<Param name="tableName">t_UF_DIR_EMP_STU_1</Param>
 	<Param name="id">t_UF_DIR_EMP_STU_1=UF_IDENTIFIER</Param>
 	<Param name="tableName">t_UF_DIR_EMP_STU_2</Param>
