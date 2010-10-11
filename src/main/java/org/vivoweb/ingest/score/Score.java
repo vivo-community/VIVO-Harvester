@@ -701,7 +701,7 @@ public class Score {
 		while(stmtitr.hasNext()) {
 			Statement stmt = stmtitr.next();
 			Resource sub = stmt.getSubject();
-			RDFNode obj = stmt.getObject();
+			String obj = stmt.getObject().asLiteral().getString();
 			log.info("Checking for " + obj + " from " + sub + " in VIVO");
 			ResIterator matches = this.vivo.getJenaModel().listResourcesWithProperty(vivoAttr, obj);
 			if(!matches.hasNext()) {
