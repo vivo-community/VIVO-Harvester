@@ -701,7 +701,7 @@ public class Score {
 	 */
 	public void foriegnKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
 		// Foreign Key Match
-		log.info("Executing foriegnKeyMatch for " + scoreAttribute + " against " + vivoAttribute);
+		log.info("Executing foriegnKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
 		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
@@ -709,17 +709,17 @@ public class Score {
 		//		System.out.println(stmtQuery);
 		//		ResultSet stmtRS = executeQuery(this.vivo.getJenaModel(), stmtQuery);
 		if(!stmtitr.hasNext()) {
-			log.info("No matches found for " + scoreAttribute + " in input");
+			log.info("No matches found for <" + scoreAttribute + "> in input");
 			return;
 		}
-		log.info("Matches found for " + scoreAttribute + " in input");
+		log.info("Matches found for <" + scoreAttribute + "> in input");
 		
 		// look for exact match in vivo
 		while(stmtitr.hasNext()) {
 			Statement stmt = stmtitr.next();
 			Resource sub = stmt.getSubject();
 			String obj = stmt.getLiteral().getString();
-			log.info("Checking for " + obj + " from " + sub + " in VIVO");
+			log.info("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
 			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
 			//			String matchQuery = "SELECT ?sub\nWHERE\n{\n  ?sub <" + vivoAttribute + "> \"" + obj + "\"\n}";
 			//			System.out.println(matchQuery);
