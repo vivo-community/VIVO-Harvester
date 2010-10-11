@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
@@ -221,11 +217,11 @@ public class JenaConnect {
 	 * @param params the parameter set
 	 * @return the JenaConnect
 	 */
-	private static JenaConnect build(Map<String,String> params) {
-//	  for(String param : params.keySet()) {
-//	    log.debug(param+" => "+params.get(param));
-//	  }
-		if(!params.containsKey("type")){
+	private static JenaConnect build(Map<String, String> params) {
+		// for(String param : params.keySet()) {
+		// log.debug(param+" => "+params.get(param));
+		// }
+		if(!params.containsKey("type")) {
 			throw new IllegalArgumentException("must define type!");
 		}
 		JenaConnect jc;
@@ -242,7 +238,7 @@ public class JenaConnect {
 				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"));
 			}
 		} else {
-			throw new IllegalArgumentException("unknown type: "+params.get("type"));
+			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
 		return jc;
 	}
@@ -263,7 +259,7 @@ public class JenaConnect {
 	 */
 	public void exportRDF(OutputStream out) {
 		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
-		fasterWriter.setProperty("showXmlDeclaration","true");
+		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
 		fasterWriter.setProperty("relativeURIs", "");
 		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
@@ -280,17 +276,17 @@ public class JenaConnect {
 	public int importRDF(RecordHandler rh, String namespace) {
 		int processCount = 0;
 		for(Record r : rh) {
-			log.trace("loading record: "+r.getID());
+			log.trace("loading record: " + r.getID());
 			if(namespace != null) {
-//				log.trace("using namespace '"+namespace+"'");
+				// log.trace("using namespace '"+namespace+"'");
 			}
-			ByteArrayInputStream bais = new  ByteArrayInputStream(r.getData().getBytes());
-			this.getJenaModel().read(bais,namespace);
+			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
+			this.getJenaModel().read(bais, namespace);
 			try {
-        bais.close();
-      } catch (IOException e) {
-        //ignore
-      }
+				bais.close();
+			} catch(IOException e) {
+				// ignore
+			}
 			processCount++;
 		}
 		return processCount;
@@ -304,26 +300,26 @@ public class JenaConnect {
 		try {
 			this.conn.close();
 		} catch(Exception e) {
-			//ignore
+			// ignore
 		}
 	}
 	
-//	/**
-//	 * Sets the namespace for relative uris
-//	 * @param namespace the namesapce to use
-//	 */
-//	public void setRelativeURINamespaces(String namespace) {
-//		
-//	}
-//	
-//	/**
-//	 * Move nodes in one namespace to another
-//	 * @param oldNamespace the old namespace
-//	 * @param newNamespace the new namespace
-//	 */
-//	public void swapURINamespace(String oldNamespace, String newNamespace) {
-//		
-//	}
+	// /**
+	// * Sets the namespace for relative uris
+	// * @param namespace the namesapce to use
+	// */
+	// public void setRelativeURINamespaces(String namespace) {
+	//		
+	// }
+	//	
+	// /**
+	// * Move nodes in one namespace to another
+	// * @param oldNamespace the old namespace
+	// * @param newNamespace the new namespace
+	// */
+	// public void swapURINamespace(String oldNamespace, String newNamespace) {
+	//		
+	// }
 	
 	/**
 	 * Accessor for Jena Model
@@ -376,7 +372,7 @@ public class JenaConnect {
 		/**
 		 * Param list from the config file
 		 */
-		private Map<String,String> params;
+		private Map<String, String> params;
 		/**
 		 * temporary storage for cdata
 		 */
@@ -390,7 +386,7 @@ public class JenaConnect {
 		 * Default Constructor
 		 */
 		protected JenaConnectConfigParser() {
-			this.params = new HashMap<String,String>();
+			this.params = new HashMap<String, String>();
 			this.tempVal = "";
 			this.tempParamName = "";
 		}
@@ -414,7 +410,7 @@ public class JenaConnect {
 				}
 			}
 			for(String param : this.params.keySet()) {
-			  System.out.println("'"+param+"' - '"+this.params.get(param)+"'");
+				System.out.println("'" + param + "' - '" + this.params.get(param) + "'");
 			}
 			return this.params;
 		}
@@ -426,7 +422,7 @@ public class JenaConnect {
 			if(qName.equalsIgnoreCase("Param")) {
 				this.tempParamName = attributes.getValue("name");
 			} else if(!qName.equalsIgnoreCase("Model")) {
-				throw new SAXException("Unknown Tag: "+qName);
+				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
 		
@@ -442,7 +438,7 @@ public class JenaConnect {
 			} else if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
 			} else {
-				throw new SAXException("Unknown Tag: "+qName);
+				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
 	}

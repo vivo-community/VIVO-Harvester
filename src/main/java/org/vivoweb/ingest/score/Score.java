@@ -1,14 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- * Christopher Barnes, Narayan Raum - scoring ideas and algorithim
- * Yang Li - pairwise scoring algorithm
- * Christopher Barnes - regex scoring algorithim
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation Christopher
+ * Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring algorithm Christopher Barnes - regex
+ * scoring algorithim
  ******************************************************************************/
 package org.vivoweb.ingest.score;
 
@@ -98,8 +94,7 @@ public class Score {
 	
 	/**
 	 * Main method
-	 * @param args
-	 * command line arguments
+	 * @param args command line arguments
 	 */
 	public static void main(String... args) {
 		log.info("Scoring: Start");
@@ -146,19 +141,15 @@ public class Score {
 		// call for ForeignKey linking
 		if(this.foriegnKey != null && !this.foriegnKey.isEmpty()) {
 			if(this.objToScore == null) {
-				throw new IllegalArgumentException(
-						"Invalid Parameters, you must supply the object property from VIVO to the scoring model");
+				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from VIVO to the scoring model");
 			}
 			if(this.objToVIVO == null) {
-				throw new IllegalArgumentException(
-						"Invalid Parameters, you must supply the object property from the scoring model to VIVO");
+				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from the scoring model to VIVO");
 			}
 			for(String attributePair : this.foriegnKey) {
 				String[] fKey = attributePair.split("=");
 				if(fKey.length != 2) {
-					throw new IllegalArgumentException(
-							"Invalid Parameters, You must supply the 2 data property one for the scoring and vivo models @ '"
-									+ attributePair + "'");
+					throw new IllegalArgumentException("Invalid Parameters, You must supply the 2 data property one for the scoring and vivo models @ '" + attributePair + "'");
 				}
 				this.foriegnKeyMatch(fKey[0], fKey[1], this.objToVIVO, this.objToScore);
 			}
@@ -170,8 +161,7 @@ public class Score {
 				// this.exactMatch(attribute);
 				// TODO Nicolas: fix exact match to take in two attributes <>,<> check with chaines
 				// for proper format (? comma seperated list ?)
-				this.exactMatch("<http://vivoweb.org/ontology/score#" + attribute + ">",
-						"<http://vivoweb.org/ontology/core#" + attribute + ">");
+				this.exactMatch("<http://vivoweb.org/ontology/score#" + attribute + ">", "<http://vivoweb.org/ontology/core#" + attribute + ">");
 			}
 		}
 		
@@ -203,53 +193,34 @@ public class Score {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Score");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription(
-				"inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file")
-				.withParameter(true, "CONFIG_FILE"));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivo-config").setDescription(
-				"vivoConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivo-config").setDescription("vivoConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		
 		// Outputs
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription(
-				"outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file")
-				.withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
 		
 		// Model name overrides
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterProperties(
-				"JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE")
-				.setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties(
-				"JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE")
-				.setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties(
-				"JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE")
-				.setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
 		// scoring algorithms
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription(
-				"perform an exact match scoring").withParameters(true, "RDF_PREDICATES"));
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("ufMatch").setDescription(
-				"perform an exact match scoring against the UF VIVO extension").withParameters(true, "RDF_PREDICATE"));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription(
-				"perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription(
-				"perform a author name scoring").withParameter(true, "MIN_CHARS"));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATES"));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("ufMatch").setDescription("perform an exact match scoring against the UF VIVO extension").withParameters(true, "RDF_PREDICATE"));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
 		// TODO Chris: uncomment when regex implemented
 		// parser.addArgument(new
 		// ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true,
 		// "REGEX"));
-		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription(
-				"preform a exact match where the id is a foriegn link").withParameters(true, "RDF_PREDICATES"));
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foriegn link").withParameters(true, "RDF_PREDICATES"));
 		
 		// Object Property
-		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("objPropToVIVO").setDescription(
-				"set the Object Property to the VIVO Model").withParameter(true, "OBJ_PROPERTIES"));
-		parser.addArgument(new ArgDef().setShortOption('y').setLongOpt("objPropToScore").setDescription(
-				"set the Object Property to the Score Model").withParameter(true, "OBJ_PROPERTIES"));
+		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("objPropToVIVO").setDescription("set the Object Property to the VIVO Model").withParameter(true, "OBJ_PROPERTIES"));
+		parser.addArgument(new ArgDef().setShortOption('y').setLongOpt("objPropToScore").setDescription("set the Object Property to the Score Model").withParameter(true, "OBJ_PROPERTIES"));
 		
 		// options
-		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription(
-				"If set, this will clear the input model after scoring is complete"));
+		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription("If set, this will clear the input model after scoring is complete"));
 		
 		// exactMatch foreignLink
 		// exactMatch subNodeLink
@@ -261,32 +232,19 @@ public class Score {
 	
 	/**
 	 * Constructor
-	 * @param jenaVivo
-	 * model containing vivo statements
-	 * @param jenaScoreInput
-	 * model containing statements to be scored
-	 * @param jenaScoreOutput
-	 * output model
-	 * @param clearWorkingModelArg
-	 * If set, this will clear the working model after scoring is complete
-	 * @param exactMatchArg
-	 * perform an exact match scoring
-	 * @param pairwiseArg
-	 * perform a pairwise scoring
-	 * @param regexArg
-	 * perform a regular expression scoring
-	 * @param authorNameArg
-	 * perform a author name scoring
-	 * @param foriegnKeyArg
-	 * arguments for foreign key match
-	 * @param objToVIVOArg
-	 * the predicate that connects the object in score to the object in vivo
-	 * @param objToScoreArg
-	 * the predicate that connects the object in vivo to the object in score
+	 * @param jenaVivo model containing vivo statements
+	 * @param jenaScoreInput model containing statements to be scored
+	 * @param jenaScoreOutput output model
+	 * @param clearWorkingModelArg If set, this will clear the working model after scoring is complete
+	 * @param exactMatchArg perform an exact match scoring
+	 * @param pairwiseArg perform a pairwise scoring
+	 * @param regexArg perform a regular expression scoring
+	 * @param authorNameArg perform a author name scoring
+	 * @param foriegnKeyArg arguments for foreign key match
+	 * @param objToVIVOArg the predicate that connects the object in score to the object in vivo
+	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput,
-			boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg,
-			String authorNameArg, List<String> foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
 		this.scoreOutput = jenaScoreOutput;
@@ -303,19 +261,13 @@ public class Score {
 	
 	/**
 	 * Constructor
-	 * @param args
-	 * argument list
-	 * @throws IOException
-	 * error parsing options
-	 * @throws IllegalArgumentException
-	 * arguments invalid
-	 * @throws SAXException
-	 * error parsing configs
-	 * @throws ParserConfigurationException
-	 * error parsing configs
+	 * @param args argument list
+	 * @throws IOException error parsing options
+	 * @throws IllegalArgumentException arguments invalid
+	 * @throws SAXException error parsing configs
+	 * @throws ParserConfigurationException error parsing configs
 	 */
-	public Score(String... args) throws IllegalArgumentException, IOException, ParserConfigurationException,
-			SAXException {
+	public Score(String... args) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
 		ArgList opts = new ArgList(getParser(), args);
 		
 		// Get optional inputs / set defaults
@@ -328,7 +280,7 @@ public class Score {
 			jenaInput = opts.get("i");
 		} else {
 			jenaInput = jenaVIVO;
-			if( !inputOverrides.containsKey("modelName")) {
+			if(!inputOverrides.containsKey("modelName")) {
 				inputOverrides.setProperty("modelName", "Scoring");
 			}
 		}
@@ -339,7 +291,7 @@ public class Score {
 			jenaOutput = opts.get("o");
 		} else {
 			jenaOutput = jenaVIVO;
-			if( !outputOverrides.containsKey("modelName")) {
+			if(!outputOverrides.containsKey("modelName")) {
 				outputOverrides.setProperty("modelName", "Staging");
 			}
 		}
@@ -353,7 +305,7 @@ public class Score {
 		int count = 0;
 		while(stmtitr.hasNext()) {
 			stmtitr.next();
-			count++ ;
+			count++;
 		}
 		System.out.println("input has " + count + " statements in it");
 		
@@ -373,10 +325,8 @@ public class Score {
 	
 	/**
 	 * Executes a sparql query against a JENA model and returns a result set
-	 * @param model
-	 * a model containing statements
-	 * @param queryString
-	 * the query to execute against the model
+	 * @param model a model containing statements
+	 * @param queryString the query to execute against the model
 	 * @return queryExec the executed query result set
 	 */
 	private static ResultSet executeQuery(Model model, String queryString) {
@@ -388,19 +338,13 @@ public class Score {
 	
 	/**
 	 * Links the two items and saves the model
-	 * @param result
-	 * the model to send things to VIVO
-	 * @param scoreSet
-	 * the resource iterator of matching items
-	 * @param scoreNode
-	 * the node of the object in scoring
-	 * @param toVIVOProperty
-	 * the predicate that connects the object in score to the object in vivo
-	 * @param toScoreProperty
-	 * the predicate that connects the object in vivo to the object in score
+	 * @param result the model to send things to VIVO
+	 * @param scoreSet the resource iterator of matching items
+	 * @param scoreNode the node of the object in scoring
+	 * @param toVIVOProperty the predicate that connects the object in score to the object in vivo
+	 * @param toScoreProperty the predicate that connects the object in vivo to the object in score
 	 */
-	private static void linkThenCommitResourceIter(Model result, ResIterator scoreSet, Resource scoreNode,
-			String toVIVOProperty, String toScoreProperty) {
+	private static void linkThenCommitResourceIter(Model result, ResIterator scoreSet, Resource scoreNode, String toVIVOProperty, String toScoreProperty) {
 		// loop thru resources
 		while(scoreSet.hasNext()) {
 			// Grab person URI
@@ -422,19 +366,13 @@ public class Score {
 	
 	/**
 	 * Commits node to a matched model
-	 * @param result
-	 * a model containing vivo statements
-	 * @param authorNode
-	 * the node of the author
-	 * @param paperResource
-	 * the paper of the resource
-	 * @param matchNode
-	 * the node to match
-	 * @param paperNode
-	 * the node of the paper
+	 * @param result a model containing vivo statements
+	 * @param authorNode the node of the author
+	 * @param paperResource the paper of the resource
+	 * @param matchNode the node to match
+	 * @param paperNode the node of the paper
 	 */
-	private static void commitResultNode(Model result, RDFNode authorNode, Resource paperResource, RDFNode matchNode,
-			RDFNode paperNode) {
+	private static void commitResultNode(Model result, RDFNode authorNode, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
 		log.info("Found " + matchNode.toString() + " for person " + authorNode.toString());
 		log.info("Adding paper " + paperNode.toString());
 		
@@ -448,19 +386,13 @@ public class Score {
 	
 	/**
 	 * Commits resultset to a matched model
-	 * @param result
-	 * a model containing vivo statements
-	 * @param storeResult
-	 * the result to be stored
-	 * @param paperResource
-	 * the paper of the resource
-	 * @param matchNode
-	 * the node to match
-	 * @param paperNode
-	 * the node of the paper
+	 * @param result a model containing vivo statements
+	 * @param storeResult the result to be stored
+	 * @param paperResource the paper of the resource
+	 * @param matchNode the node to match
+	 * @param paperNode the node of the paper
 	 */
-	private static void commitResultSet(Model result, ResultSet storeResult, Resource paperResource, RDFNode matchNode,
-			RDFNode paperNode) {
+	private static void commitResultSet(Model result, ResultSet storeResult, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
 		RDFNode authorNode;
 		QuerySolution vivoSolution;
 		
@@ -484,21 +416,16 @@ public class Score {
 	
 	/**
 	 * Traverses paperNode and adds to toReplace model
-	 * @param mainNode
-	 * primary node
-	 * @param paperNode
-	 * node of paper
-	 * @param toReplace
-	 * model to replace
+	 * @param mainNode primary node
+	 * @param paperNode node of paper
+	 * @param toReplace model to replace
 	 */
 	private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace) {
 		Resource authorship;
 		Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
-		Property authorshipForPerson = ResourceFactory
-				.createProperty("http://vivoweb.org/ontology/core#authorInAuthorship");
+		Property authorshipForPerson = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorInAuthorship");
 		
-		Property authorshipForPaper = ResourceFactory
-				.createProperty("http://vivoweb.org/ontology/core#informationResourceInAuthorship");
+		Property authorshipForPaper = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#informationResourceInAuthorship");
 		Property paperOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedInformationResource");
 		Property rankOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorRank");
 		
@@ -513,13 +440,9 @@ public class Score {
 		authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/l1");
 		
 		// string that finds the last name of the person in VIVO
-		Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory
-				.createProperty("http://xmlns.com/foaf/0.1/lastName"));
+		Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
 		
-		String authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> "
-				+ "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?badNode " + "WHERE {?badNode foaf:lastName \""
-				+ authorLName.getObject().toString() + "\" . " + "?badNode core:authorInAuthorship ?authorship . "
-				+ "?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
+		String authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?badNode " + "WHERE {?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " + "?badNode core:authorInAuthorship ?authorship . " + "?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
 		
 		log.debug(authorQuery);
 		
@@ -542,7 +465,7 @@ public class Score {
 				Statement dStmt = deleteStmts.next();
 				log.debug("Delete Statement " + dStmt.toString());
 				
-				if( !dStmt.getSubject().equals(removeAuthor)) {
+				if(!dStmt.getSubject().equals(removeAuthor)) {
 					Statement authorRankStmt = dStmt.getSubject().getProperty(rankOf);
 					authorRank = authorRankStmt.getObject().asLiteral().getInt();
 					
@@ -571,38 +494,29 @@ public class Score {
 		}
 		
 		toReplace.add(authorship, linkedAuthorOf, mainNode);
-		log.trace("Link Statement [" + authorship.toString() + ", " + linkedAuthorOf.toString() + ", "
-				+ mainNode.toString() + "]");
+		log.trace("Link Statement [" + authorship.toString() + ", " + linkedAuthorOf.toString() + ", " + mainNode.toString() + "]");
 		toReplace.add((Resource)mainNode, authorshipForPerson, authorship);
-		log.trace("Link Statement [" + mainNode.toString() + ", " + authorshipForPerson.toString() + ", "
-				+ authorship.toString() + "]");
+		log.trace("Link Statement [" + mainNode.toString() + ", " + authorshipForPerson.toString() + ", " + authorship.toString() + "]");
 		toReplace.add(authorship, paperOf, paperNode);
-		log.trace("Link Statement [" + authorship.toString() + ", " + paperOf.toString() + ", " + paperNode.toString()
-				+ "]");
+		log.trace("Link Statement [" + authorship.toString() + ", " + paperOf.toString() + ", " + paperNode.toString() + "]");
 		toReplace.add((Resource)paperNode, authorshipForPaper, authorship);
-		log.trace("Link Statement [" + paperNode.toString() + ", " + authorshipForPaper.toString() + ", "
-				+ authorship.toString() + "]");
+		log.trace("Link Statement [" + paperNode.toString() + ", " + authorshipForPaper.toString() + ", " + authorship.toString() + "]");
 		toReplace.add(authorship, rdfType, flag1);
 		log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
 		toReplace.add(authorship, rdfType, authorshipClass);
-		log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", "
-				+ authorshipClass.toString() + "]");
+		log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + authorshipClass.toString() + "]");
 		toReplace.add(authorship, rdfLabel, "Authorship for Paper");
-		log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", "
-				+ "Authorship for Paper]");
+		log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
 		toReplace.addLiteral(authorship, rankOf, authorRank);
-		log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", "
-				+ String.valueOf(authorRank) + "]");
+		log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", " + String.valueOf(authorRank) + "]");
 		
 		toReplace.commit();
 	}
 	
 	/**
 	 * Traverses paperNode and adds to toReplace model
-	 * @param mainRes
-	 * the main resource
-	 * @param linkRes
-	 * the resource to link it to
+	 * @param mainRes the main resource
+	 * @param linkRes the resource to link it to
 	 * @return the model containing the sanitized info so far
 	 */
 	private static Model recursiveSanitizeBuild(Resource mainRes, Resource linkRes) {
@@ -614,14 +528,13 @@ public class Score {
 			log.trace("Statement " + stmt.toString());
 			
 			// Don't add any scoring statements
-			if( !stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
+			if(!stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
 				returnModel.add(stmt);
 				
-				if((stmt.getObject().isResource() && !((Resource)stmt.getObject()).equals(linkRes))
-						&& !((Resource)stmt.getObject()).equals(mainRes)) {
+				if((stmt.getObject().isResource() && !((Resource)stmt.getObject()).equals(linkRes)) && !((Resource)stmt.getObject()).equals(mainRes)) {
 					returnModel.add(recursiveSanitizeBuild((Resource)stmt.getObject(), mainRes));
 				}
-				if( !stmt.getSubject().equals(linkRes) && !stmt.getSubject().equals(mainRes)) {
+				if(!stmt.getSubject().equals(linkRes) && !stmt.getSubject().equals(mainRes)) {
 					returnModel.add(recursiveSanitizeBuild(stmt.getSubject(), mainRes));
 				}
 			}
@@ -631,11 +544,10 @@ public class Score {
 	}
 	
 	/**
-	 * Executes a pair scoring method, utilizing the matchAttribute. This attribute is expected to
-	 * return 2 to n results from the given query. This "pair" will then be utilized as a matching scheme
-	 * to construct a sub dataset. This dataset can be scored and stored as a match
-	 * @param attribute
-	 * an attribute to perform the matching query
+	 * Executes a pair scoring method, utilizing the matchAttribute. This attribute is expected to return 2 to n results
+	 * from the given query. This "pair" will then be utilized as a matching scheme to construct a sub dataset. This
+	 * dataset can be scored and stored as a match
+	 * @param attribute an attribute to perform the matching query
 	 */
 	public void pairwise(String attribute) {
 		// iterate thru scoringInput pairs against matched pairs
@@ -668,8 +580,7 @@ public class Score {
 	
 	/**
 	 * Executes an author name matching algorithm for author disambiguation
-	 * @param minChars
-	 * minimum number of chars to require for first name portion of match
+	 * @param minChars minimum number of chars to require for first name portion of match
 	 */
 	public void authorNameMatch(int minChars) {
 		String queryString;
@@ -688,9 +599,7 @@ public class Score {
 		ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
 		int loop;
 		
-		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
-				+ "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT ?x ?lastName ?foreName "
-				+ "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName}";
+		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT ?x ?lastName ?foreName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName}";
 		
 		// Exact Match
 		log.info("Executing authorNameMatch");
@@ -698,7 +607,7 @@ public class Score {
 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
 		
 		// Log extra info message if none found
-		if( !scoreInputResult.hasNext()) {
+		if(!scoreInputResult.hasNext()) {
 			log.info("No author names found in input");
 		} else {
 			log.info("Looping thru matching authors from input");
@@ -715,14 +624,12 @@ public class Score {
 			matchNode = null;
 			authorNode = null;
 			
-			log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from "
-					+ paperNode.toString() + " in VIVO");
+			log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
 			
 			scoreMatch = lastNameNode.toString();
 			
 			// Select all matching authors from vivo store
-			queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?x ?firstName "
-					+ "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName}";
+			queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?x ?firstName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName}";
 			
 			log.debug(queryString);
 			
@@ -751,18 +658,16 @@ public class Score {
 				loopNode = vivoSolution.get("firstName");
 				loop = 0;
 				while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-					loop++ ;
+					loop++;
 				}
-				loop-- ;
+				loop--;
 				if(loop < minChars) {
-					log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length()
-							+ ". Minimum needed to match is " + minChars);
+					log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
 				} else {
 					// if loopNode matches more of foreNameNode, it's the new best match
 					// TODO Nicholas: Fix the preference for the first "best" match
 					if(matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-						log.trace("Setting " + loopNode.toString() + " as best match, matched " + loop + " of "
-								+ foreNameNode.toString().length());
+						log.trace("Setting " + loopNode.toString() + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
 						matchNode = loopNode;
 						authorNode = vivoSolution.get("x");
 					}
@@ -777,23 +682,18 @@ public class Score {
 	
 	/**
 	 * Match on two predicates and insert foreign key links for each match
-	 * @param scoreAttribute
-	 * the predicate of the object in scoring to match on
-	 * @param vivoAttribute
-	 * the predicate of the object in vivo to match on
-	 * @param scoreToVIVONode
-	 * the predicate that connects the object in score to the object in vivo
-	 * @param vivoToScoreNode
-	 * the predicate that connects the object in vivo to the object in score
+	 * @param scoreAttribute the predicate of the object in scoring to match on
+	 * @param vivoAttribute the predicate of the object in vivo to match on
+	 * @param scoreToVIVONode the predicate that connects the object in score to the object in vivo
+	 * @param vivoToScoreNode the predicate that connects the object in vivo to the object in score
 	 */
-	public void foriegnKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode,
-			String vivoToScoreNode) {
+	public void foriegnKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
 		// Foreign Key Match
 		log.info("Executing foriegnKeyMatch for " + scoreAttribute + " against " + vivoAttribute);
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
 		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
-		if( !stmtitr.hasNext()) {
+		if(!stmtitr.hasNext()) {
 			log.info("No matches found for " + scoreAttribute + " in input");
 			return;
 		}
@@ -806,7 +706,7 @@ public class Score {
 			RDFNode obj = stmt.getObject();
 			log.info("Checking for " + obj + " from " + sub + " in VIVO");
 			ResIterator matches = this.vivo.getJenaModel().listResourcesWithProperty(vivoAttr, obj);
-			if( !matches.hasNext()) {
+			if(!matches.hasNext()) {
 				log.info("No matches in VIVO found");
 			} else {
 				log.info("initiating link then commit resultset");
@@ -817,19 +717,12 @@ public class Score {
 	
 	/**
 	 * Executes an exact matching algorithm for author disambiguation
-	 * @param scoreAttribute
-	 * attribute to perform the exact match in scoring
-	 * @param vivoAttribute
-	 * attribute to perform the exact match in vivo
-	 * TODO: Add in foreign key match
-	 * with removal of similarly linked item
-	 * eg. -f <http://site/workEmail>,<http://vivo/workEmail>
-	 * -toVivo <objectProperty>
-	 * -toScoreItem <objectProperty>
-	 * Thinking out loud - we'll need to modify the end results of exact match
-	 * now that we are not creating authorships and authors for pubmed entries
-	 * we'll need to just link the author whose name parts match someone in vivo
-	 * Working on that now
+	 * @param scoreAttribute attribute to perform the exact match in scoring
+	 * @param vivoAttribute attribute to perform the exact match in vivo TODO: Add in foreign key match with removal of
+	 * similarly linked item eg. -f <http://site/workEmail>,<http://vivo/workEmail> -toVivo <objectProperty>
+	 * -toScoreItem <objectProperty> Thinking out loud - we'll need to modify the end results of exact match now that we
+	 * are not creating authorships and authors for pubmed entries we'll need to just link the author whose name parts
+	 * match someone in vivo Working on that now
 	 */
 	public void exactMatch(String scoreAttribute, String vivoAttribute) {
 		String scoreMatch;
@@ -849,7 +742,7 @@ public class Score {
 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
 		
 		// Log extra info message if none found
-		if( !scoreInputResult.hasNext()) {
+		if(!scoreInputResult.hasNext()) {
 			log.info("No matches found for " + scoreAttribute + " in input");
 		} else {
 			log.info("Looping thru matching " + scoreAttribute + " from input");

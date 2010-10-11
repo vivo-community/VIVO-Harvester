@@ -1,12 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2010 Eliza Chan
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Eliza Chan
+ * Copyright (c) 2010 Eliza Chan All rights reserved. This program and the accompanying materials are made available
+ * under the terms of the new BSD license which accompanies this distribution, and is available at
+ * http://www.opensource.org/licenses/bsd-license.html Contributors: Eliza Chan
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
@@ -76,9 +71,9 @@ public class D2RMapFetch {
 		try {
 			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	
@@ -92,7 +87,7 @@ public class D2RMapFetch {
 		try {
 			String output = proc.processMap("RDF/XML", this.d2rConfigPath);
 			this.rh.addRecord(this.d2rOutputFile, output, this.getClass());
-		} catch (Exception e) {
+		} catch(Exception e) {
 			log.error(e.getMessage());
 		}
 		log.info("Fetch: End");
@@ -106,11 +101,10 @@ public class D2RMapFetch {
 		try {
 			new D2RMapFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(),e);
+			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 	}
 }
-

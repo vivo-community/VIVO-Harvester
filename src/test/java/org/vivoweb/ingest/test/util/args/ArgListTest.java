@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.test.util.args;
 
@@ -26,7 +22,8 @@ public class ArgListTest extends TestCase {
 	 * Log4J Logger
 	 */
 	private static Log log = LogFactory.getLog(ArgListTest.class);
-	/** */private static ArgParser parser;
+	/** */
+	private static ArgParser parser;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -56,10 +53,10 @@ public class ArgListTest extends TestCase {
 	public final void testGet() {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUT_FILE").setDescription("output file").setRequired(true));
 		try {
-			ArgList a = new ArgList(parser,new String[]{"-o","Testing"});
-			assertEquals(a.get("o"),"Testing");
+			ArgList a = new ArgList(parser, new String[]{"-o", "Testing"});
+			assertEquals(a.get("o"), "Testing");
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -69,24 +66,25 @@ public class ArgListTest extends TestCase {
 	public final void testGetAllString() {
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
-			ArgList a = new ArgList(parser,new String[]{"-e","Testing1","-e","Testing2","-e","Testing3"});
+			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
 			List<String> l = a.getAll("e");
 			assertTrue(l.contains("Testing1"));
 			assertTrue(l.contains("Testing2"));
 			assertTrue(l.contains("Testing3"));
 			assertFalse(l.contains("test"));
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String arg, boolean includeDefaultValue)}.
+	 * Test method for {@link org.vivoweb.ingest.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String arg,
+	 * boolean includeDefaultValue)}.
 	 */
 	public final void testGetAllStringBoolean() {
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
-			ArgList a = new ArgList(parser,new String[]{"-e","Testing1","-e","Testing2","-e","Testing3"});
+			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
 			List<String> l = a.getAll("e", false);
 			assertTrue(l.contains("Testing1"));
 			assertTrue(l.contains("Testing2"));
@@ -98,7 +96,7 @@ public class ArgListTest extends TestCase {
 			assertTrue(l.contains("Testing3"));
 			assertTrue(l.contains("test"));
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -109,11 +107,11 @@ public class ArgListTest extends TestCase {
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("flag").setDescription("test flag"));
 		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("zig").setDescription("test missing flag"));
 		try {
-			ArgList a = new ArgList(parser,new String[]{"-f"});
+			ArgList a = new ArgList(parser, new String[]{"-f"});
 			assertTrue(a.has("f"));
 			assertFalse(a.has("z"));
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	

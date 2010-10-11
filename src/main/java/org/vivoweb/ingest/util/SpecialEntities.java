@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util;
 
@@ -26,19 +22,19 @@ public class SpecialEntities {
 	/**
 	 * html encode mapping
 	 */
-	private static Map<String,String> htmlEncode = null;
+	private static Map<String, String> htmlEncode = null;
 	/**
 	 * html decode mapping
 	 */
-	private static Map<String,String> htmlDecode = null;
+	private static Map<String, String> htmlDecode = null;
 	/**
 	 * xml encode mapping
 	 */
-	private static Map<String,String> xmlEncode = null;
+	private static Map<String, String> xmlEncode = null;
 	/**
 	 * xml decode mapping
 	 */
-	private static Map<String,String> xmlDecode = null;
+	private static Map<String, String> xmlDecode = null;
 	/**
 	 * list of accepted characters
 	 */
@@ -48,7 +44,7 @@ public class SpecialEntities {
 	 * Gets the html encode mapping
 	 * @return html encode mapping
 	 */
-	private static Map<String,String> getHtmlEncode() {
+	private static Map<String, String> getHtmlEncode() {
 		if(htmlEncode == null) {
 			htmlEncode = new HashMap<String, String>();
 			htmlEncode.put("&#34;", "&quot;");
@@ -326,7 +322,7 @@ public class SpecialEntities {
 	 * Gets the xml encode mapping
 	 * @return xml encode mapping
 	 */
-	private static Map<String,String> getXmlEncode() {
+	private static Map<String, String> getXmlEncode() {
 		if(xmlEncode == null) {
 			xmlEncode = new HashMap<String, String>();
 			xmlEncode.put("&#34;", "&quot;");
@@ -500,7 +496,7 @@ public class SpecialEntities {
 	 * @return encoded string
 	 */
 	private static String encode(String s, String encodeType) {
-		Map<String,String> encodeMap;
+		Map<String, String> encodeMap;
 		if(encodeType.equalsIgnoreCase("html")) {
 			encodeMap = getHtmlEncode();
 		} else if(encodeType.equalsIgnoreCase("xml")) {
@@ -509,7 +505,7 @@ public class SpecialEntities {
 			throw new IllegalArgumentException("decodeType must be xml or html only");
 		}
 		StringBuilder b = new StringBuilder(s.length());
-		for(int i = 0; i < s.length(); i++ ) {
+		for(int i = 0; i < s.length(); i++) {
 			char ch = s.charAt(i);
 			if(getAcceptedChars().contains(Character.valueOf(ch))) {
 				b.append(ch);
@@ -518,7 +514,7 @@ public class SpecialEntities {
 				if(Character.isWhitespace(ch)) {
 					b2.append("&#").append((int)ch).append(";");
 				} else if(Character.isISOControl(ch)) {
-					//ignore
+					// ignore
 				} else if(Character.isHighSurrogate(ch)) {
 					int codePoint;
 					if(i + 1 < s.length() && Character.isSurrogatePair(ch, s.charAt(i + 1)) && Character.isDefined(codePoint = (Character.toCodePoint(ch, s.charAt(i + 1))))) {
@@ -547,7 +543,7 @@ public class SpecialEntities {
 	 * @return decoded string
 	 */
 	private static String decode(String s, String decodeType) {
-		Map<String,String> decodeMap;
+		Map<String, String> decodeMap;
 		if(decodeType.equalsIgnoreCase("html")) {
 			decodeMap = getHtmlDecode();
 		} else if(decodeType.equalsIgnoreCase("xml")) {
@@ -567,13 +563,13 @@ public class SpecialEntities {
 		for(String ch : charCodes) {
 			int charCode = Integer.parseInt(ch);
 			if(Character.isDefined((char)charCode)) {
-				str = str.replaceAll("&#"+ch+";", ""+(char)charCode);
+				str = str.replaceAll("&#" + ch + ";", "" + (char)charCode);
 			} else if(Character.isDefined(charCode)) {
 				StringBuilder b2 = new StringBuilder();
 				for(char c : Character.toChars(charCode)) {
 					b2.append(c);
 				}
-				str = str.replaceAll("&#"+ch+";", b2.toString());
+				str = str.replaceAll("&#" + ch + ";", b2.toString());
 			}
 		}
 		return str;

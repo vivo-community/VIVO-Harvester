@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.args;
 
@@ -95,7 +91,7 @@ public class ArgDef {
 	 * Does this argument require a parameter
 	 * @return true if this argument has a parameter and it is required
 	 */
- 	public boolean isParameterRequired() {
+	public boolean isParameterRequired() {
 		return (hasParameter() && this.parameterRequired);
 	}
 	
@@ -122,7 +118,7 @@ public class ArgDef {
 	public Character getShortOption() {
 		return this.shortOption;
 	}
-
+	
 	/**
 	 * Get the long --Foo type option flag
 	 * @return the longOption (null if not set)
@@ -130,7 +126,7 @@ public class ArgDef {
 	public String getLongOption() {
 		return this.longOption;
 	}
-
+	
 	/**
 	 * Is this argument required
 	 * @return the required
@@ -146,7 +142,7 @@ public class ArgDef {
 	public boolean hasDefaultValue() {
 		return (hasParameter() && (getDefaultValue() != null));
 	}
-
+	
 	/**
 	 * Get the default value
 	 * @return the default value (null if never set)
@@ -154,7 +150,7 @@ public class ArgDef {
 	public String getDefaultValue() {
 		return this.defaultValue;
 	}
-
+	
 	/**
 	 * Get the argument description
 	 * @return the description
@@ -261,6 +257,6 @@ public class ArgDef {
 	 */
 	public ArgDef withParameterProperties(String propertyName, String valueName) {
 		this.parameterPropertiesType = true;
-		return withParameters(false, propertyName+"="+valueName, -1);
+		return withParameters(false, propertyName + "=" + valueName, -1);
 	}
 }

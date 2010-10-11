@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
@@ -53,15 +49,15 @@ public class JDBCFetch {
 	/**
 	 * Mapping of tablename to idField name
 	 */
-	private Map<String,List<String>> idFields = null;
+	private Map<String, List<String>> idFields = null;
 	/**
 	 * Mapping of tablename to mapping of fieldname to tablename
 	 */
-	private Map<String,Map<String,String>> relations = null;
+	private Map<String, Map<String, String>> relations = null;
 	/**
 	 * Mapping of tablename to list of datafields
 	 */
-	private Map<String,List<String>> dataFields = null;
+	private Map<String, List<String>> dataFields = null;
 	/**
 	 * list of tablenames
 	 */
@@ -69,11 +65,11 @@ public class JDBCFetch {
 	/**
 	 * list of conditions
 	 */
-	private Map<String,List<String>> whereClauses;
+	private Map<String, List<String>> whereClauses;
 	/**
 	 * mapping of extra tables for the from section
 	 */
-	private Map<String,String> fromClauses;
+	private Map<String, String> fromClauses;
 	/**
 	 * Namespace for RDF made from this database
 	 */
@@ -133,7 +129,7 @@ public class JDBCFetch {
 		try {
 			Class.forName(jdbcDriverClass);
 		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 		String connLine = opts.get("c");
 		String username = opts.get("u");
@@ -160,7 +156,7 @@ public class JDBCFetch {
 			if(!opts.has("t")) {
 				throw new IllegalArgumentException("Cannot specify fields without tableName");
 			}
-			this.dataFields = new HashMap<String,List<String>>();
+			this.dataFields = new HashMap<String, List<String>>();
 			Properties fields = opts.getProperties("F");
 			for(String tableName : fields.stringPropertyNames()) {
 				if(!this.dataFields.containsKey(tableName.trim())) {
@@ -168,7 +164,7 @@ public class JDBCFetch {
 				}
 				for(String fieldLine : fields.get(tableName.trim()).toString().split(",")) {
 					this.dataFields.get(tableName).add(fieldLine.trim());
-//					log.debug("field: '"+fieldLine.trim()+"'");
+					// log.debug("field: '"+fieldLine.trim()+"'");
 				}
 			}
 		}
@@ -177,7 +173,7 @@ public class JDBCFetch {
 			if(!opts.has("t")) {
 				throw new IllegalArgumentException("Cannot specify id without tableName");
 			}
-			this.idFields = new HashMap<String,List<String>>();
+			this.idFields = new HashMap<String, List<String>>();
 			Properties ids = opts.getProperties("I");
 			for(Object table : ids.keySet()) {
 				String tableName = table.toString().trim();
@@ -185,11 +181,11 @@ public class JDBCFetch {
 			}
 		}
 		
-		if (opts.has("W")) {
+		if(opts.has("W")) {
 			if(!opts.has("t")) {
 				throw new IllegalArgumentException("Cannot specify whereClauses without tableName");
 			}
-			this.whereClauses = new HashMap<String,List<String>>();
+			this.whereClauses = new HashMap<String, List<String>>();
 			Properties wheres = opts.getProperties("W");
 			for(Object table : wheres.keySet()) {
 				String tableName = table.toString().trim();
@@ -202,11 +198,11 @@ public class JDBCFetch {
 			}
 		}
 		
-		if (opts.has("R")) {
+		if(opts.has("R")) {
 			if(!opts.has("t")) {
 				throw new IllegalArgumentException("Cannot specify relations without tableName");
 			}
-			this.relations = new HashMap<String,Map<String,String>>();
+			this.relations = new HashMap<String, Map<String, String>>();
 			Properties rels = opts.getProperties("R");
 			for(Object table : rels.keySet()) {
 				String tableName = table.toString().trim();
@@ -216,7 +212,7 @@ public class JDBCFetch {
 				for(String relLine : rels.get(table).toString().split(",")) {
 					String[] relPair = relLine.split("~", 2);
 					if(relPair.length != 2) {
-						throw new IllegalArgumentException("Bad Relation Line: "+relLine);
+						throw new IllegalArgumentException("Bad Relation Line: " + relLine);
 					}
 					this.relations.get(tableName).put(relPair[0].trim(), relPair[1].trim());
 				}
@@ -225,21 +221,21 @@ public class JDBCFetch {
 		
 		Connection dbConn;
 		try {
-//			System.out.println("dbDriver: '"+jdbcDriverClass+"'");
-//			System.out.println("ConnLine: '"+connLine+"'");
-//			System.out.println("UserName: '"+username+"'");
-//			System.out.println("PassWord: '"+password+"'");
+			// System.out.println("dbDriver: '"+jdbcDriverClass+"'");
+			// System.out.println("ConnLine: '"+connLine+"'");
+			// System.out.println("UserName: '"+username+"'");
+			// System.out.println("PassWord: '"+password+"'");
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
 			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
-		this.uriNS = connLine+"/";
+		this.uriNS = connLine + "/";
 	}
 	
 	/**
@@ -252,7 +248,7 @@ public class JDBCFetch {
 		}
 		return this.queryPre;
 	}
-
+	
 	/**
 	 * Set the field prefix
 	 * @param fieldPrefix the field prefix to use
@@ -271,7 +267,7 @@ public class JDBCFetch {
 		}
 		return this.querySuf;
 	}
-
+	
 	/**
 	 * Set the field suffix
 	 * @param fieldSuffix the field suffix to use
@@ -288,7 +284,7 @@ public class JDBCFetch {
 	 */
 	private List<String> getDataFields(String tableName) throws SQLException {
 		if(this.dataFields == null) {
-			this.dataFields = new HashMap<String,List<String>>();
+			this.dataFields = new HashMap<String, List<String>>();
 		}
 		if(!this.dataFields.containsKey(tableName)) {
 			this.dataFields.put(tableName, new LinkedList<String>());
@@ -309,22 +305,22 @@ public class JDBCFetch {
 	 * @return the relation field mapping
 	 * @throws SQLException error connecting to DB
 	 */
-	private Map<String,String> getRelationFields(String tableName) throws SQLException {
+	private Map<String, String> getRelationFields(String tableName) throws SQLException {
 		if(this.relations == null) {
-			this.relations = new HashMap<String,Map<String,String>>();
+			this.relations = new HashMap<String, Map<String, String>>();
 		}
 		if(!this.relations.containsKey(tableName)) {
-			this.relations.put(tableName, new HashMap<String,String>());
+			this.relations.put(tableName, new HashMap<String, String>());
 			ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 			while(foreignKeys.next()) {
-//				StringBuilder sb = new StringBuilder();
-//				for(int x = 1; x <= foreignKeys.getMetaData().getColumnCount(); x++) {
-//					sb.append(foreignKeys.getMetaData().getColumnName(x));
-//					sb.append(" - ");
-//					sb.append(foreignKeys.getString(x));
-//					sb.append(" || ");
-//				}
-//				log.debug(sb.toString());
+				// StringBuilder sb = new StringBuilder();
+				// for(int x = 1; x <= foreignKeys.getMetaData().getColumnCount(); x++) {
+				// sb.append(foreignKeys.getMetaData().getColumnName(x));
+				// sb.append(" - ");
+				// sb.append(foreignKeys.getString(x));
+				// sb.append(" || ");
+				// }
+				// log.debug(sb.toString());
 				this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
 			}
 		}
@@ -354,7 +350,7 @@ public class JDBCFetch {
 	 */
 	private List<String> getIDFields(String tableName) throws SQLException {
 		if(this.idFields == null) {
-			this.idFields = new HashMap<String,List<String>>();
+			this.idFields = new HashMap<String, List<String>>();
 		}
 		if(!this.idFields.containsKey(tableName)) {
 			this.idFields.put(tableName, new LinkedList<String>());
@@ -364,7 +360,7 @@ public class JDBCFetch {
 			}
 		}
 		if(this.idFields.get(tableName).isEmpty()) {
-			throw new IllegalArgumentException("ID fields for table '"+tableName+"' were not provided and no primary keys are present... please provide an ID field set for this table");
+			throw new IllegalArgumentException("ID fields for table '" + tableName + "' were not provided and no primary keys are present... please provide an ID field set for this table");
 		}
 		return this.idFields.get(tableName);
 	}
@@ -426,15 +422,15 @@ public class JDBCFetch {
 			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
-		sb.delete(sb.lastIndexOf(", "),sb.length());
+		sb.delete(sb.lastIndexOf(", "), sb.length());
 		sb.append(" FROM ");
 		sb.append(tableName);
 		if(multiTable) {
 			sb.append(", ");
 			sb.append(this.fromClauses.get(tableName));
 		}
-
-		if (getWhereClauses(tableName).size() > 0) {
+		
+		if(getWhereClauses(tableName).size() > 0) {
 			sb.append(" WHERE ");
 			sb.append(StringUtils.join(" AND ", getWhereClauses(tableName)));
 		}
@@ -448,7 +444,7 @@ public class JDBCFetch {
 	 * @return the namespace
 	 */
 	private String buildTableRecordNS(String tableName) {
-		return this.uriNS+tableName;
+		return this.uriNS + tableName;
 	}
 	
 	/**
@@ -457,7 +453,7 @@ public class JDBCFetch {
 	 * @return the namespace
 	 */
 	private String buildTableFieldNS(String tableName) {
-		return this.uriNS+"fields/"+tableName+"/";
+		return this.uriNS + "fields/" + tableName + "/";
 	}
 	
 	/**
@@ -466,30 +462,30 @@ public class JDBCFetch {
 	 * @return the namespace
 	 */
 	private String buildTableType(String tableName) {
-		return this.uriNS+"types#"+tableName;
+		return this.uriNS + "types#" + tableName;
 	}
-
+	
 	/**
 	 * Executes the task
 	 */
 	public void execute() {
 		log.info("Fetch: Start");
-		//For each Table
+		// For each Table
 		try {
 			for(String tableName : getTableNames()) {
 				StringBuilder sb = new StringBuilder();
-				//For each Record
-				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next(); ) {
+				// For each Record
+				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next();) {
 					StringBuilder recID = new StringBuilder();
 					recID.append("id");
 					for(String idField : getIDFields(tableName)) {
 						recID.append("_-_");
 						recID.append(SpecialEntities.xmlEncode(rs.getString(idField).trim()));
 					}
-//					log.trace("Creating RDF for "+tableName+": "+recID);
-					//Build RDF BEGIN
-					//Header info
-					String tableNS = "db-"+tableName;
+					// log.trace("Creating RDF for "+tableName+": "+recID);
+					// Build RDF BEGIN
+					// Header info
+					String tableNS = "db-" + tableName;
 					sb = new StringBuilder();
 					sb.append("<?xml version=\"1.0\"?>\n");
 					sb.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n");
@@ -502,39 +498,38 @@ public class JDBCFetch {
 					sb.append(buildTableRecordNS(tableName));
 					sb.append("\">\n");
 					
-					//Record info BEGIN
+					// Record info BEGIN
 					sb.append("  <rdf:Description rdf:ID=\"");
 					sb.append(recID);
 					sb.append("\">\n");
 					
-					
-					//insert type value
+					// insert type value
 					sb.append("    <rdf:type rdf:resource=\"");
-					sb.append(buildTableType(tableName));	
+					sb.append(buildTableType(tableName));
 					sb.append("\"/>\n");
 					
-					//DataFields
+					// DataFields
 					for(String dataField : getDataFields(tableName)) {
-						//Field BEGIN
-						String field = tableNS+":"+dataField.replaceAll(" ", "_");
+						// Field BEGIN
+						String field = tableNS + ":" + dataField.replaceAll(" ", "_");
 						sb.append("    <");
 						sb.append(field);
 						sb.append(">");
 						
-						//insert field value
-						if (rs.getString(dataField) != null) {
-							sb.append(SpecialEntities.xmlEncode(rs.getString(dataField).trim()));	
+						// insert field value
+						if(rs.getString(dataField) != null) {
+							sb.append(SpecialEntities.xmlEncode(rs.getString(dataField).trim()));
 						}
 						
-						//Field END
+						// Field END
 						sb.append("</");
 						sb.append(field);
 						sb.append(">\n");
 					}
 					
-					//Relation Fields
+					// Relation Fields
 					for(String relationField : getRelationFields(tableName).keySet()) {
-						//Field BEGIN
+						// Field BEGIN
 						sb.append("    <");
 						sb.append(tableNS);
 						sb.append(":");
@@ -542,29 +537,29 @@ public class JDBCFetch {
 						sb.append(" rdf:resource=\"");
 						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
 						
-						//insert field value
-						sb.append("#id-"+rs.getString(relationField).trim());
+						// insert field value
+						sb.append("#id-" + rs.getString(relationField).trim());
 						
-						//Field END
+						// Field END
 						sb.append("\"/>\n");
 					}
 					
-					//Record info END
+					// Record info END
 					sb.append("  </rdf:Description>\n");
 					
-					//Footer info
+					// Footer info
 					sb.append("</rdf:RDF>");
-					//Build RDF END
+					// Build RDF END
 					
-					//Write RDF to RecordHandler
-					log.trace("Adding record for "+tableName+": "+recID);
-					this.rh.addRecord(tableName+"_"+recID,sb.toString(), this.getClass());
+					// Write RDF to RecordHandler
+					log.trace("Adding record for " + tableName + ": " + recID);
+					this.rh.addRecord(tableName + "_" + recID, sb.toString(), this.getClass());
 				}
 			}
 		} catch(SQLException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		} catch(IOException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 		log.info("Fetch: End");
 	}
@@ -577,10 +572,10 @@ public class JDBCFetch {
 		try {
 			new JDBCFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(),e);
+			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 	}
 }

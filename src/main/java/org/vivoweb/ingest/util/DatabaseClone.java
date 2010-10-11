@@ -65,7 +65,6 @@ public class DatabaseClone {
 		this.tables = argList.getAll("tableName").toArray(new String[]{});
 	}
 	
-
 	/**
 	 * Clone a database
 	 * @throws SQLException error connecting
@@ -113,10 +112,10 @@ public class DatabaseClone {
 		try {
 			new DatabaseClone(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(),e);
+			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 	}
 }

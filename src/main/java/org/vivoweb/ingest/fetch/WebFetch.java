@@ -35,8 +35,7 @@ public class WebFetch {
 	/**
 	 * @author Dale Scheppler
 	 * @Description This method reads from the default error log location on an AT&T 2Wire modem, and saves the results.
-	 *              Good for arguing with the phone company.
-	 *              It will auto-run every 15 minutes until you kill it.
+	 * Good for arguing with the phone company. It will auto-run every 15 minutes until you kill it.
 	 * @todo At some point this should read configuration data from a configuration file. If I ever plan to release it.
 	 */
 	private static void scrape() {

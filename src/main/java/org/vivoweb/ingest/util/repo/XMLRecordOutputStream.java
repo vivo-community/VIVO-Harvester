@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
@@ -26,7 +22,8 @@ public class XMLRecordOutputStream extends OutputStream {
 	/**
 	 * Log4J Logger
 	 */
-	@SuppressWarnings("unused") //log lines are commented because it slowed down the process significantly
+	@SuppressWarnings("unused")
+	// log lines are commented because it slowed down the process significantly
 	private static Log log = LogFactory.getLog(XMLRecordOutputStream.class);
 	/**
 	 * Buffer to hold data until a complete record is formed
@@ -70,26 +67,26 @@ public class XMLRecordOutputStream extends OutputStream {
 		this.buf = new ByteArrayOutputStream();
 		this.rh = recordHandler;
 		this.idRegex = Pattern.compile(idLocationRegex);
-		this.closeTag = ("</"+tagToSplitOn+">").getBytes();
+		this.closeTag = ("</" + tagToSplitOn + ">").getBytes();
 		this.header = headerInfo;
 		this.footer = footerInfo;
 		this.opClass = operator;
 	}
-
+	
 	@Override
 	public void write(int arg0) throws IOException {
 		this.buf.write(arg0);
 		byte[] a = this.buf.toByteArray();
 		if(compareByteArrays(a, this.closeTag)) {
 			// Slows things down ALOT to have these
-//			log.debug("Complete Record Written to buffer");
+			// log.debug("Complete Record Written to buffer");
 			String record = new String(a);
 			Matcher m = this.idRegex.matcher(record);
 			m.find();
 			String id = m.group(1);
 			// Slows things down ALOT to have these
-//			log.debug("Adding record id: "+id);
-			this.rh.addRecord(id.trim(), this.header+record.trim()+this.footer, this.opClass);
+			// log.debug("Adding record id: "+id);
+			this.rh.addRecord(id.trim(), this.header + record.trim() + this.footer, this.opClass);
 			this.buf.reset();
 		}
 	}
@@ -104,9 +101,9 @@ public class XMLRecordOutputStream extends OutputStream {
 		if(arrayOne.length < arrayTwo.length) {
 			return false;
 		}
-		int o = arrayOne.length-arrayTwo.length;
+		int o = arrayOne.length - arrayTwo.length;
 		for(int i = 0; i < arrayTwo.length; i++) {
-			if(arrayOne[o+i] != arrayTwo[i]) {
+			if(arrayOne[o + i] != arrayTwo[i]) {
 				return false;
 			}
 		}

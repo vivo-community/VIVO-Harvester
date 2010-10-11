@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.test.fetch;
 
@@ -15,8 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-//import org.vivoweb.ingest.fetch.OAIFetch;
+import org.apache.commons.logging.LogFactory; // import org.vivoweb.ingest.fetch.OAIFetch;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 
 /**
@@ -28,8 +23,10 @@ public class OAIFetchTest extends TestCase {
 	 * Log4J Logger
 	 */
 	private static Log log = LogFactory.getLog(OAIFetchTest.class);
-	/** */private RecordHandler rh;
-	/** */private File configFile;
+	/** */
+	private RecordHandler rh;
+	/** */
+	private File configFile;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -53,35 +50,36 @@ public class OAIFetchTest extends TestCase {
 	public final void testOAIFetchMain() {
 		try {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
-			//FIXME cah: fix this later
-//			OAIFetch.main(new String[]{"-u", "archivesic.ccsd.cnrs.fr/oai/oai.php", "-s", "2000-01-01", "-e", "2002-12-12", "-o", this.configFile.getAbsolutePath()});
-//			assertTrue(this.rh.iterator().hasNext());
-//			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-//			for(Record r : this.rh) {
-//				log.info("=====================================");
-//				log.info(r.getData());
-//				log.info("=====================================");
-//				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-//				Element elem = doc.getDocumentElement();
-//				traverseNodes(elem.getChildNodes());
-//			}
+			// FIXME cah: fix this later
+			// OAIFetch.main(new String[]{"-u", "archivesic.ccsd.cnrs.fr/oai/oai.php", "-s", "2000-01-01", "-e",
+			// "2002-12-12", "-o", this.configFile.getAbsolutePath()});
+			// assertTrue(this.rh.iterator().hasNext());
+			// DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			// for(Record r : this.rh) {
+			// log.info("=====================================");
+			// log.info(r.getData());
+			// log.info("=====================================");
+			// Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
+			// Element elem = doc.getDocumentElement();
+			// traverseNodes(elem.getChildNodes());
+			// }
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
 	}
 	
-//	/**
-//	 * @param nodeList the nodes
-//	 */
-//	private void traverseNodes(NodeList nodeList) {
-//		for(int x = 0; x < nodeList.getLength(); x++) {
-//			Node child = nodeList.item(x);
-//			String name = child.getNodeName();
-//			if(!name.contains("#text")) {
-//				log.info(name);
-//				traverseNodes(child.getChildNodes());
-//			}
-//		}
-//	}
+	// /**
+	// * @param nodeList the nodes
+	// */
+	// private void traverseNodes(NodeList nodeList) {
+	// for(int x = 0; x < nodeList.getLength(); x++) {
+	// Node child = nodeList.item(x);
+	// String name = child.getNodeName();
+	// if(!name.contains("#text")) {
+	// log.info(name);
+	// traverseNodes(child.getChildNodes());
+	// }
+	// }
+	// }
 }

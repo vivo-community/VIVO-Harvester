@@ -1,10 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * Contributors:
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
@@ -37,7 +34,6 @@ import org.xml.sax.SAXException;
 
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology
- * 
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  */
 public class XSLTranslator {
@@ -46,8 +42,7 @@ public class XSLTranslator {
 	 */
 	private static Log log = LogFactory.getLog(XSLTranslator.class);
 	/**
-	 * The translation file is the map that will reconstruct our input stream's document into
-	 * the appropriate format
+	 * The translation file is the map that will reconstruct our input stream's document into the appropriate format
 	 */
 	private File translationFile;
 	/**
@@ -79,19 +74,17 @@ public class XSLTranslator {
 	
 	/**
 	 * Constructor
-	 * 
-	 * @param argumentList
-	 *           <ul>
-	 *           <li>translationFile the file that details the translation from the original xml to the target format</li>
-	 *           <li>inRecordHandler the files/records that require translation</li>
-	 *           <li>outRecordHandler the output record for the translated files</li>
-	 *           </ul>
+	 * @param argumentList <ul>
+	 * <li>translationFile the file that details the translation from the original xml to the target format</li>
+	 * <li>inRecordHandler the files/records that require translation</li>
+	 * <li>outRecordHandler the output record for the translated files</li>
+	 * </ul>
 	 * @throws IOException error reading files
 	 * @throws SAXException error with parser
 	 * @throws ParserConfigurationException error with parser config
 	 */
 	public XSLTranslator(ArgList argumentList) throws ParserConfigurationException, SAXException, IOException {
-		//set Translation file
+		// set Translation file
 		this.setTranslationFile(VFS.getManager().resolveFile(new File("."), argumentList.get("xslFile")).getContent().getInputStream());
 		
 		// create record handlers
@@ -100,16 +93,10 @@ public class XSLTranslator {
 	}
 	
 	/**
-	 * @deprecated
-	 * Constructor
-	 * Initializing constructor for the translate method
-	 * 
-	 * @param transFile
-	 *           The file that contains the mapping for translation
-	 * @param iStream
-	 *           the incoming stream that the file is passed into
-	 * @param oStream
-	 *           the outgoing stream that the translation is passed to
+	 * @deprecated Constructor Initializing constructor for the translate method
+	 * @param transFile The file that contains the mapping for translation
+	 * @param iStream the incoming stream that the file is passed into
+	 * @param oStream the outgoing stream that the translation is passed to
 	 */
 	@Deprecated
 	public XSLTranslator(File transFile, InputStream iStream, OutputStream oStream) {
@@ -118,12 +105,9 @@ public class XSLTranslator {
 		this.outStream = oStream;
 	}
 	
-	
 	/***
 	 * Set translation file from a file
-	 * 
-	 * @param transFileStream
-	 *           valid type of translation file is xslt
+	 * @param transFileStream valid type of translation file is xslt
 	 * @throws IOException error creating temp file
 	 */
 	public void setTranslationFile(InputStream transFileStream) throws IOException {
@@ -141,14 +125,11 @@ public class XSLTranslator {
 	
 	/***
 	 * Set translation file from a file
-	 * 
-	 * @param transFile
-	 *           valid type of translation file is xslt
+	 * @param transFile valid type of translation file is xslt
 	 */
 	public void setTranslationFile(File transFile) {
 		this.translationFile = transFile;
 	}
-	
 	
 	/***
 	 * checks again for the necessary file and makes sure that they exist
@@ -160,10 +141,10 @@ public class XSLTranslator {
 		try {
 			// get from the in record and translate
 			for(Record r : this.inStore) {
-				if (r.needsProcessed(this.getClass())){
+				if(r.needsProcessed(this.getClass())) {
 					log.info("Translating Record " + r.getID());
 					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
-					this.outStream = new ByteArrayOutputStream(); 
+					this.outStream = new ByteArrayOutputStream();
 					this.xmlTranslate();
 					this.outStream.flush();
 					this.outStore.addRecord(r.getID(), this.outStream.toString(), this.getClass());
@@ -174,15 +155,14 @@ public class XSLTranslator {
 				}
 			}
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 		log.info("Translation: End");
 	}
 	
 	/***
-	 * using the javax xml transform factory this method uses the xsl file to translate
-	 * XML into the desired format designated in the xsl file.
-	 * 
+	 * using the javax xml transform factory this method uses the xsl file to translate XML into the desired format
+	 * designated in the xsl file.
 	 */
 	private void xmlTranslate() {
 		StreamResult outputResult = new StreamResult(this.outStream);
@@ -216,13 +196,12 @@ public class XSLTranslator {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
 		return parser;
-	}	
+	}
 	
 	/**
-	 * Currently the main method accepts two methods of execution, file translation and record handler translation
-	 * The main method actually passes its arg string to another method so that Translator can
-	 * use this same method of execution
-	 * 
+	 * Currently the main method accepts two methods of execution, file translation and record handler translation The
+	 * main method actually passes its arg string to another method so that Translator can use this same method of
+	 * execution
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
@@ -231,11 +210,9 @@ public class XSLTranslator {
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 		
-		
-		
 	}
-
+	
 }

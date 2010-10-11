@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
@@ -83,9 +79,9 @@ public class JDBCRecordHandler extends RecordHandler {
 	 * Default Constructor
 	 */
 	protected JDBCRecordHandler() {
-		//Nothing to do here
-		//Used by config construction
-		//Should only be used in conjunction with setParams()
+		// Nothing to do here
+		// Used by config construction
+		// Should only be used in conjunction with setParams()
 	}
 	
 	/**
@@ -97,7 +93,6 @@ public class JDBCRecordHandler extends RecordHandler {
 	 * @param tableName name of table to use
 	 * @param dataFieldName name of field to store data in
 	 * @throws IOException invalidly configured database
-	 * 
 	 */
 	public JDBCRecordHandler(String jdbcDriverClass, String connLine, String username, String password, String tableName, String dataFieldName) throws IOException {
 		initAll(jdbcDriverClass, connLine, username, password, tableName, dataFieldName);
@@ -135,7 +130,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	 * @return jdbc connection line
 	 */
 	private static String buildConnLine(String connType, String host, String port, String dbName) {
-		return "jdbc:"+connType+"://"+host+":"+port+"/"+dbName;
+		return "jdbc:" + connType + "://" + host + ":" + port + "/" + dbName;
 	}
 	
 	/**
@@ -160,11 +155,11 @@ public class JDBCRecordHandler extends RecordHandler {
 			checkMetaTableExists();
 			checkMetaTableConfigured();
 		} catch(ClassNotFoundException e) {
-			log.error("Unable to initialize DB Driver Class",e);
-			throw new IOException("Unable to initialize DB Driver Class",e);
+			log.error("Unable to initialize DB Driver Class", e);
+			throw new IOException("Unable to initialize DB Driver Class", e);
 		} catch(SQLException e) {
-			log.error("Unable to connect to DB",e);
-			throw new IOException("Unable to connect to DB",e);
+			log.error("Unable to connect to DB", e);
+			throw new IOException("Unable to connect to DB", e);
 		}
 	}
 	
@@ -174,24 +169,23 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void createTable() throws IOException {
 		try {
-//			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"` ( `"+recordAutoID+"` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY, `"+recordIdField+"` varchar(100) NOT NULL, `"+this.dataField+"` blob NOT NULL)");
-			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"` ( `"+recordIdField+"` varchar(100) NOT NULL PRIMARY KEY, `"+this.dataField+"` blob NOT NULL)");
+			// this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"` ( `"+recordAutoID+"` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY, `"+recordIdField+"` varchar(100) NOT NULL, `"+this.dataField+"` blob NOT NULL)");
+			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "` ( `" + recordIdField + "` varchar(100) NOT NULL PRIMARY KEY, `" + this.dataField + "` blob NOT NULL)");
 		} catch(SQLException e) {
-			throw new IOException("Cannot Create Table: "+this.table,e);
+			throw new IOException("Cannot Create Table: " + this.table, e);
 		}
 	}
 	
-
 	/**
 	 * Checks if the record table is properly configured
 	 * @throws IOException table not configured correctly
 	 */
 	private void checkTableConfigured() throws IOException {
 		try {
-//			this.cursor.execute("select "+recordAutoID+", "+recordIdField+", "+this.dataField+" from "+this.table);
-			this.cursor.execute("select "+recordIdField+", "+this.dataField+" from "+this.table);
+			// this.cursor.execute("select "+recordAutoID+", "+recordIdField+", "+this.dataField+" from "+this.table);
+			this.cursor.execute("select " + recordIdField + ", " + this.dataField + " from " + this.table);
 		} catch(SQLException e) {
-			throw new IOException("Table '"+this.table+"' Is Not Structured Correctly",e);
+			throw new IOException("Table '" + this.table + "' Is Not Structured Correctly", e);
 		}
 	}
 	
@@ -202,20 +196,20 @@ public class JDBCRecordHandler extends RecordHandler {
 	private void checkTableExists() throws IOException {
 		boolean a;
 		try {
-			// ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL
-			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '"+this.table+"')) then 1 else 0 end");
+			// ANSI SQL way. Works in PostgreSQL, MSSQL, MySQL
+			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '" + this.table + "')) then 1 else 0 end");
 			a = this.cursor.getResultSet().getBoolean(1);
 		} catch(SQLException e) {
 			try {
 				// Other RDBMS. Graceful degradation
 				a = true;
-				this.cursor.execute("select 1 from "+this.table+" where 1 = 0");
+				this.cursor.execute("select 1 from " + this.table + " where 1 = 0");
 			} catch(SQLException e1) {
 				a = false;
 			}
 		}
 		if(!a) {
-			log.warn("Database Does Not Contain Table: "+this.table+". Attempting to create.");
+			log.warn("Database Does Not Contain Table: " + this.table + ". Attempting to create.");
 			createTable();
 		}
 	}
@@ -226,13 +220,13 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void createMetaTable() throws IOException {
 		try {
-			this.cursor.executeUpdate("DROP TABLE IF EXISTS `"+this.table+"_rmd`");
-//			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"_rmd` ( `"+rmdAutoID+"` int(10) NOT NULL AUTO_INCREMENT, `"+rmdRelField+"` int(10) NOT NULL, `"+rmdCalField+"` int(25) NOT NULL, `"+rmdOperationField+"` varchar(10) NOT NULL, `"+rmdOperatorField+"` varchar(100) NOT NULL, `"+rmdMD5Field+"` varchar(32) NOT NULL, PRIMARY KEY (`"+rmdAutoID+"`), CONSTRAINT fk_RecordRel FOREIGN KEY (`"+rmdRelField+"`) REFERENCES `"+this.table+"` (`"+recordAutoID+"`))");
-			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"_rmd` ( `"+rmdRelField+"` varchar(100) NOT NULL, `"+rmdCalField+"` varchar(25) NOT NULL, `"+rmdOperationField+"` varchar(10) NOT NULL, `"+rmdOperatorField+"` varchar(100) NOT NULL, `"+rmdMD5Field+"` varchar(32) NOT NULL, CONSTRAINT fk_RecordRel FOREIGN KEY (`"+rmdRelField+"`) REFERENCES `"+this.table+"` (`"+recordIdField+"`))");
-			this.cursor.executeUpdate("CREATE INDEX `ind_"+rmdCalField+"` ON `"+this.table+"_rmd` (`"+rmdCalField+"`)");
-			this.cursor.executeUpdate("CREATE INDEX `ind_"+rmdRelField+"` ON `"+this.table+"_rmd` (`"+rmdRelField+"`)");
+			this.cursor.executeUpdate("DROP TABLE IF EXISTS `" + this.table + "_rmd`");
+			// this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"_rmd` ( `"+rmdAutoID+"` int(10) NOT NULL AUTO_INCREMENT, `"+rmdRelField+"` int(10) NOT NULL, `"+rmdCalField+"` int(25) NOT NULL, `"+rmdOperationField+"` varchar(10) NOT NULL, `"+rmdOperatorField+"` varchar(100) NOT NULL, `"+rmdMD5Field+"` varchar(32) NOT NULL, PRIMARY KEY (`"+rmdAutoID+"`), CONSTRAINT fk_RecordRel FOREIGN KEY (`"+rmdRelField+"`) REFERENCES `"+this.table+"` (`"+recordAutoID+"`))");
+			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "_rmd` ( `" + rmdRelField + "` varchar(100) NOT NULL, `" + rmdCalField + "` varchar(25) NOT NULL, `" + rmdOperationField + "` varchar(10) NOT NULL, `" + rmdOperatorField + "` varchar(100) NOT NULL, `" + rmdMD5Field + "` varchar(32) NOT NULL, CONSTRAINT fk_RecordRel FOREIGN KEY (`" + rmdRelField + "`) REFERENCES `" + this.table + "` (`" + recordIdField + "`))");
+			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdCalField + "` ON `" + this.table + "_rmd` (`" + rmdCalField + "`)");
+			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdRelField + "` ON `" + this.table + "_rmd` (`" + rmdRelField + "`)");
 		} catch(SQLException e) {
-			throw new IOException("Cannot Create Table: "+this.table+"_rmd",e);
+			throw new IOException("Cannot Create Table: " + this.table + "_rmd", e);
 		}
 	}
 	
@@ -242,10 +236,10 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void checkMetaTableConfigured() throws IOException {
 		try {
-//			this.cursor.execute("select "+rmdAutoID+", "+rmdCalField+", "+rmdMD5Field+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdRelField+" from "+this.table+"_rmd");
-			this.cursor.execute("select "+rmdCalField+", "+rmdMD5Field+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdRelField+" from "+this.table+"_rmd");
+			// this.cursor.execute("select "+rmdAutoID+", "+rmdCalField+", "+rmdMD5Field+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdRelField+" from "+this.table+"_rmd");
+			this.cursor.execute("select " + rmdCalField + ", " + rmdMD5Field + ", " + rmdOperationField + ", " + rmdOperatorField + ", " + rmdRelField + " from " + this.table + "_rmd");
 		} catch(SQLException e) {
-			throw new IOException("Table '"+this.table+"_rmd' Is Not Structured Correctly",e);
+			throw new IOException("Table '" + this.table + "_rmd' Is Not Structured Correctly", e);
 		}
 	}
 	
@@ -256,20 +250,20 @@ public class JDBCRecordHandler extends RecordHandler {
 	private void checkMetaTableExists() throws IOException {
 		boolean a;
 		try {
-			// ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL
-			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '"+this.table+"_rmd')) then 1 else 0 end");
+			// ANSI SQL way. Works in PostgreSQL, MSSQL, MySQL
+			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '" + this.table + "_rmd')) then 1 else 0 end");
 			a = this.cursor.getResultSet().getBoolean(1);
 		} catch(SQLException e) {
 			try {
 				// Other RDBMS. Graceful degradation
 				a = true;
-				this.cursor.execute("select 1 from "+this.table+"_rmd where 1 = 0");
+				this.cursor.execute("select 1 from " + this.table + "_rmd where 1 = 0");
 			} catch(SQLException e1) {
 				a = false;
 			}
 		}
 		if(!a) {
-			log.warn("Database Does Not Contain Table: `"+this.table+"_rmd`. Attempting to create.");
+			log.warn("Database Does Not Contain Table: `" + this.table + "_rmd`. Attempting to create.");
 			createMetaTable();
 		}
 	}
@@ -280,7 +274,7 @@ public class JDBCRecordHandler extends RecordHandler {
 			return false;
 		}
 		try {
-			PreparedStatement ps = this.db.prepareStatement("insert into "+this.table+"("+recordIdField+", "+this.dataField+") values (?, ?)");
+			PreparedStatement ps = this.db.prepareStatement("insert into " + this.table + "(" + recordIdField + ", " + this.dataField + ") values (?, ?)");
 			ps.setString(1, rec.getID());
 			ps.setBytes(2, rec.getData().getBytes());
 			ps.executeUpdate();
@@ -288,17 +282,17 @@ public class JDBCRecordHandler extends RecordHandler {
 			if(overwrite) {
 				log.trace("Unable to add record: atempting to update existing record");
 				try {
-					PreparedStatement ps = this.db.prepareStatement("update "+this.table+" set "+this.dataField+" = ? where "+recordIdField+" = ?");
+					PreparedStatement ps = this.db.prepareStatement("update " + this.table + " set " + this.dataField + " = ? where " + recordIdField + " = ?");
 					ps.setString(2, rec.getID());
 					ps.setBytes(1, rec.getData().getBytes());
 					ps.executeUpdate();
 				} catch(SQLException e2) {
-					log.error("Unable to update record: "+rec.getID(),e2);
-					throw new IOException("Unable to update record: "+rec.getID()+" - "+e2.getMessage());
+					log.error("Unable to update record: " + rec.getID(), e2);
+					throw new IOException("Unable to update record: " + rec.getID() + " - " + e2.getMessage());
 				}
 			} else {
-				log.error("Unable to add record: "+rec.getID(),e);
-				throw new IOException("Unable to add record: "+rec.getID()+" - "+e.getMessage());
+				log.error("Unable to add record: " + rec.getID(), e);
+				throw new IOException("Unable to add record: " + rec.getID() + " - " + e.getMessage());
 			}
 		}
 		addMetaData(rec, creator, RecordMetaDataType.written);
@@ -309,31 +303,29 @@ public class JDBCRecordHandler extends RecordHandler {
 	public void delRecord(String recID) throws IOException {
 		delMetaData(recID);
 		try {
-			this.cursor.execute("delete from "+this.table+" where "+recordIdField+" = '"+recID+"'");
+			this.cursor.execute("delete from " + this.table + " where " + recordIdField + " = '" + recID + "'");
 		} catch(SQLException e) {
-			log.error("Unable to delete record: "+recID,e);
-			throw new IOException("Unable to delete record: "+recID+" - "+e.getMessage());
+			log.error("Unable to delete record: " + recID, e);
+			throw new IOException("Unable to delete record: " + recID + " - " + e.getMessage());
 		}
 	}
-	
 	
 	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
 		try {
-			ResultSet existrs = this.cursor.executeQuery("select count(*) from "+this.table+" where "+recordIdField+" = '"+recID+"'");
+			ResultSet existrs = this.cursor.executeQuery("select count(*) from " + this.table + " where " + recordIdField + " = '" + recID + "'");
 			existrs.first();
 			if(existrs.getInt(1) < 1) {
-				throw new IllegalArgumentException("Record "+recID+" does not exist!");
+				throw new IllegalArgumentException("Record " + recID + " does not exist!");
 			}
-			ResultSet rs = this.cursor.executeQuery("select "+this.dataField+" from "+this.table+" where "+recordIdField+" = '"+recID+"'");
+			ResultSet rs = this.cursor.executeQuery("select " + this.dataField + " from " + this.table + " where " + recordIdField + " = '" + recID + "'");
 			rs.first();
 			return new String(rs.getBytes(1));
 		} catch(SQLException e) {
-			log.error("Unable to retrieve record: "+recID,e);
-			throw new IOException("Unable to retrieve record: "+recID+" - "+e.getMessage());
+			log.error("Unable to retrieve record: " + recID, e);
+			throw new IOException("Unable to retrieve record: " + recID + " - " + e.getMessage());
 		}
 	}
-	
 	
 	@Override
 	public Iterator<Record> iterator() {
@@ -341,11 +333,10 @@ public class JDBCRecordHandler extends RecordHandler {
 		try {
 			ri = new JDBCRecordIterator();
 		} catch(SQLException e) {
-			log.error("Unable to retrieve records",e);
+			log.error("Unable to retrieve records", e);
 		}
 		return ri;
 	}
-	
 	
 	/**
 	 * Iterator for JDBCRecordHandler
@@ -362,7 +353,7 @@ public class JDBCRecordHandler extends RecordHandler {
 		 * @throws SQLException failed to read records
 		 */
 		protected JDBCRecordIterator() throws SQLException {
-			this.rs = JDBCRecordHandler.this.db.createStatement().executeQuery("select "+JDBCRecordHandler.recordIdField+" from "+JDBCRecordHandler.this.table);
+			this.rs = JDBCRecordHandler.this.db.createStatement().executeQuery("select " + JDBCRecordHandler.recordIdField + " from " + JDBCRecordHandler.this.table);
 		}
 		
 		@Override
@@ -370,7 +361,7 @@ public class JDBCRecordHandler extends RecordHandler {
 			try {
 				return this.rs.next();
 			} catch(SQLException e) {
-				log.error("Unable to retrieve next record",e);
+				log.error("Unable to retrieve next record", e);
 				return false;
 			}
 		}
@@ -380,10 +371,10 @@ public class JDBCRecordHandler extends RecordHandler {
 			try {
 				return JDBCRecordHandler.this.getRecord(this.rs.getString(JDBCRecordHandler.recordIdField));
 			} catch(SQLException e) {
-				log.debug(e.getMessage(),e);
+				log.debug(e.getMessage(), e);
 				throw new NoSuchElementException(e.getMessage());
 			} catch(IOException e) {
-				log.debug(e.getMessage(),e);
+				log.debug(e.getMessage(), e);
 				throw new NoSuchElementException(e.getMessage());
 			}
 		}
@@ -394,19 +385,18 @@ public class JDBCRecordHandler extends RecordHandler {
 		}
 	}
 	
-	
 	@Override
 	public void setParams(Map<String, String> params) throws IllegalArgumentException, IOException {
-		String jdbcDriverClass = getParam(params,"jdbcDriverClass",true);
-		String connLine = getParam(params,"connLine",false);
-		String connType = getParam(params,"connType",false);
-		String host = getParam(params,"host",false);
-		String port = getParam(params,"port",false);
-		String dbName = getParam(params,"dbName",false);
-		String username = getParam(params,"username",true);
-		String password = getParam(params,"password",true);
-		String tableName = getParam(params,"tableName",true);
-		String dataFieldName = getParam(params,"dataFieldName",true);
+		String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
+		String connLine = getParam(params, "connLine", false);
+		String connType = getParam(params, "connType", false);
+		String host = getParam(params, "host", false);
+		String port = getParam(params, "port", false);
+		String dbName = getParam(params, "dbName", false);
+		String username = getParam(params, "username", true);
+		String password = getParam(params, "password", true);
+		String tableName = getParam(params, "tableName", true);
+		String dataFieldName = getParam(params, "dataFieldName", true);
 		boolean has4part = !(connType == null || host == null || port == null || dbName == null);
 		if(connLine == null) {
 			if(!has4part) {
@@ -421,30 +411,29 @@ public class JDBCRecordHandler extends RecordHandler {
 		}
 	}
 	
-
 	@Override
 	protected void addMetaData(Record rec, RecordMetaData rmd) throws IOException {
 		try {
-			this.cursor.executeUpdate("insert into "+this.table+"_rmd ("+rmdRelField+", "+rmdCalField+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdMD5Field+") values ('"+rec.getID()+"', '"+rmd.getDate().getTimeInMillis()+"', '"+rmd.getOperation()+"', '"+rmd.getOperator().getName()+"', '"+rmd.getMD5()+"')");
+			this.cursor.executeUpdate("insert into " + this.table + "_rmd (" + rmdRelField + ", " + rmdCalField + ", " + rmdOperationField + ", " + rmdOperatorField + ", " + rmdMD5Field + ") values ('" + rec.getID() + "', '" + rmd.getDate().getTimeInMillis() + "', '" + rmd.getOperation() + "', '" + rmd.getOperator().getName() + "', '" + rmd.getMD5() + "')");
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	
 	@Override
 	protected void delMetaData(String recID) throws IOException {
 		try {
-			this.cursor.executeUpdate("delete from "+this.table+"_rmd where "+rmdRelField+"='"+recID+"'");
+			this.cursor.executeUpdate("delete from " + this.table + "_rmd where " + rmdRelField + "='" + recID + "'");
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
-
+	
 	@Override
 	public SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		SortedSet<RecordMetaData> retVal = new TreeSet<RecordMetaData>();
 		try {
-			ResultSet rs = this.cursor.executeQuery("select "+rmdCalField+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdMD5Field+" from "+this.table+"_rmd where "+rmdRelField+"='"+recID+"' order by "+rmdCalField+" desc");
+			ResultSet rs = this.cursor.executeQuery("select " + rmdCalField + ", " + rmdOperationField + ", " + rmdOperatorField + ", " + rmdMD5Field + " from " + this.table + "_rmd where " + rmdRelField + "='" + recID + "' order by " + rmdCalField + " desc");
 			while(rs.next()) {
 				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
 				cal.setTimeInMillis(Long.parseLong(rs.getString(rmdCalField)));
@@ -454,25 +443,25 @@ public class JDBCRecordHandler extends RecordHandler {
 				retVal.add(new RecordMetaData(cal, operator, operation, md5));
 			}
 		} catch(SQLException e) {
-			log.debug(e.getMessage(),e);
-			throw new IOException(e.getMessage(),e);
+			log.debug(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		} catch(ClassNotFoundException e) {
-			log.debug(e.getMessage(),e);
-			throw new IOException(e.getMessage(),e);
+			log.debug(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		}
 		if(retVal.isEmpty()) {
 			throw new IOException("No Matching MetaData Found");
 		}
 		return retVal;
 	}
-
+	
 	@Override
 	public void close() throws IOException {
 		try {
 			this.cursor.close();
 			this.db.close();
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 }

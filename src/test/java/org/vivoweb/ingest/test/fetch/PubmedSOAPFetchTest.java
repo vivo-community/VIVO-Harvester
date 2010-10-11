@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.test.fetch;
 
@@ -36,8 +32,10 @@ public class PubmedSOAPFetchTest extends TestCase {
 	 * Log4J Logger
 	 */
 	private static Log log = LogFactory.getLog(PubmedSOAPFetchTest.class);
-	/** */private File configFile;
-	/** */private RecordHandler rh;
+	/** */
+	private File configFile;
+	/** */
+	private RecordHandler rh;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -61,7 +59,7 @@ public class PubmedSOAPFetchTest extends TestCase {
 	public final void testPubmedSOAPFetchMain() {
 		try {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
-			PubmedSOAPFetch.main(new String[]{"-m","test@test.com","-t","1:8000[dp]", "-l", "Planet Test", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-l", "Planet Test", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
 			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			for(Record r : this.rh) {
@@ -70,7 +68,7 @@ public class PubmedSOAPFetchTest extends TestCase {
 				traverseNodes(elem.getChildNodes());
 			}
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
 	}

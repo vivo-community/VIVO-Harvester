@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.transfer;
 
@@ -92,66 +88,66 @@ public class Transfer {
 	 * @throws IOException error creating task
 	 */
 	public Transfer(ArgList argList) throws IOException {
-		//Require input args
+		// Require input args
 		if(!argList.has("r") && !argList.has("i") && !argList.has("h")) {
 			throw new IllegalArgumentException("Must provide input via -i, -r, or -h");
 		}
-		//Require output args
-		if (!argList.has("o") && !argList.has("O") && !argList.has("d")) {
+		// Require output args
+		if(!argList.has("o") && !argList.has("O") && !argList.has("d")) {
 			throw new IllegalArgumentException("Must provide one of -o, -O, or -d");
 		}
 		
 		try {
-			//setup input model
+			// setup input model
 			if(argList.has("i")) {
 				this.input = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
 			} else {
 				this.input = null;
 			}
 			
-			//setup output
+			// setup output
 			if(argList.has("o")) {
 				this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
 			} else {
 				this.output = null;
 			}
 			
-			//load any specified rdf file data
+			// load any specified rdf file data
 			if(argList.has("r")) {
 				this.inRDF = argList.get("r");
 			} else {
 				this.inRDF = null;
 			}
 			
-			//load data from recordhandler
+			// load data from recordhandler
 			if(argList.has("h")) {
 				this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getProperties("H"));
 			} else {
 				this.inRH = null;
 			}
 			
-			//output to file, if requested
-			if (argList.has("d")) {
+			// output to file, if requested
+			if(argList.has("d")) {
 				this.dumpFile = argList.get("d");
 			} else {
 				this.dumpFile = null;
 			}
 			
-			//get namespace
+			// get namespace
 			if(argList.has("n")) {
 				this.namespace = argList.get("n");
 			} else {
 				this.namespace = null;
 			}
 			
-			//empty model
+			// empty model
 			this.clearModel = argList.has("w");
 			this.emptyModel = argList.has("e");
 			
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	
@@ -198,12 +194,12 @@ public class Transfer {
 			transferJCToJC(this.input, this.output);
 		}
 		
-		//empty model
-		if (this.clearModel && !inputIsOutput) {
+		// empty model
+		if(this.clearModel && !inputIsOutput) {
 			emptyJC(this.input);
 		}
 		
-		//close the models;
+		// close the models;
 		if(this.input != null) {
 			this.input.close();
 		}
@@ -218,7 +214,7 @@ public class Transfer {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Transfer");
-		//Inputs
+		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "MODEL_NAME").setDescription("rdf filename for input").setRequired(false));
@@ -226,12 +222,12 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("recordHandlerOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "URI_BASE").setDescription("use URI_BASE when importing relative uris").setRequired(false));
 		
-		//Outputs
+		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
 		
-		//options
+		// options
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-transfered-model").withParameter(false, "WIPE_FLAG").setDescription("If set, this will clear the input model after transfer is complete"));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("empty-input-model").withParameter(false, "EMPTY_FLAG").setDescription("If set, this will clear the input model before transfer is started").setRequired(false));
 		return parser;
@@ -247,7 +243,7 @@ public class Transfer {
 			log.info("Loading RDF from " + fileName);
 			jc.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), this.namespace);
 		} catch(FileSystemException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -257,7 +253,7 @@ public class Transfer {
 	 * @param jc the jena model
 	 */
 	private void dumpRHToJC(RecordHandler rh, JenaConnect jc) {
-		//Read in records that need processing
+		// Read in records that need processing
 		log.info("Loading Records from RecordHandler");
 		int processCount = jc.importRDF(rh, this.namespace);
 		log.info("Loaded " + processCount + " records");
@@ -291,7 +287,7 @@ public class Transfer {
 		try {
 			jc.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
 		} catch(FileSystemException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -307,10 +303,10 @@ public class Transfer {
 			log.fatal(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(IOException e) {
-			log.fatal(e.getMessage(),e);
-//			System.out.println(getParser().getUsage());	
+			log.fatal(e.getMessage(), e);
+			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 		log.info("Transfer: End");
 	}

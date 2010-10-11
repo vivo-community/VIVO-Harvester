@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
@@ -14,9 +10,10 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import org.apache.commons.codec.digest.DigestUtils;
-//import org.apache.commons.codec.digest.DigestUtils;
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
+
+// import org.apache.commons.codec.digest.DigestUtils;
+// import org.apache.commons.logging.Log;
+// import org.apache.commons.logging.LogFactory;
 
 /**
  * Contains a metadata statement about a record
@@ -26,7 +23,7 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 	/**
 	 * Log4J Logger
 	 */
-//	private static Log log = LogFactory.getLog(RecordMetaData.class);
+	// private static Log log = LogFactory.getLog(RecordMetaData.class);
 	/**
 	 * The date the operation was performed
 	 */
@@ -126,7 +123,7 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 	
 	@Override
 	public int compareTo(RecordMetaData o) {
-		return (this.date.compareTo(o.date)*-1);
+		return (this.date.compareTo(o.date) * -1);
 	}
 	
 	/**
@@ -140,6 +137,6 @@ public class RecordMetaData implements Comparable<RecordMetaData> {
 	
 	@Override
 	public String toString() {
-		return "<Date='"+this.date.getTimeInMillis()+"'><Operator='"+this.operator.getName()+"'><Operation='"+this.operation+"'><MD5='"+this.md5hash+"'>";
+		return "<Date='" + this.date.getTimeInMillis() + "'><Operator='" + this.operator.getName() + "'><Operation='" + this.operation + "'><MD5='" + this.md5hash + "'>";
 	}
 }

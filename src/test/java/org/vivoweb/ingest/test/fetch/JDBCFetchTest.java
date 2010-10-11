@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.test.fetch;
 
@@ -37,8 +33,10 @@ public class JDBCFetchTest extends TestCase {
 	 * Log4J Logger
 	 */
 	private static Log log = LogFactory.getLog(JDBCFetchTest.class);
-	/** */private Connection conn;
-	/** */private RecordHandler rh;
+	/** */
+	private Connection conn;
+	/** */
+	private RecordHandler rh;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -57,7 +55,9 @@ public class JDBCFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.ingest.util.repo.RecordHandler, java.lang.String) JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
+	 * Test method for
+	 * {@link org.vivoweb.ingest.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.ingest.util.repo.RecordHandler, java.lang.String)
+	 * JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
 	 */
 	public final void testJDBCFetchConstRun() {
 		Exception error = null;
@@ -92,11 +92,11 @@ public class JDBCFetchTest extends TestCase {
 				try {
 					this.conn.rollback(save);
 				} catch(Exception e) {
-					log.error(e.getMessage(),e);
+					log.error(e.getMessage(), e);
 				}
 			}
 			if(error != null) {
-				log.error(error.getMessage(),error);
+				log.error(error.getMessage(), error);
 				fail(error.getMessage());
 			}
 		}

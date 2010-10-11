@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.args;
 
@@ -36,7 +32,7 @@ public class ArgParser {
 	/**
 	 * Mapping of option flags to ArgDefs
 	 */
-	private Map<String,ArgDef> optMap;
+	private Map<String, ArgDef> optMap;
 	/**
 	 * The Options made from this parser
 	 */
@@ -49,7 +45,7 @@ public class ArgParser {
 	public ArgParser(String appName) {
 		this.app = appName;
 		this.options = new LinkedList<ArgDef>();
-		this.optMap = new HashMap<String,ArgDef>();
+		this.optMap = new HashMap<String, ArgDef>();
 		this.parser = new Options();
 		this.options.add(new ArgDef().setShortOption('X').setLongOpt("config").withParameter(true, "CONFIG_FILE").setDescription("XML Configuration File"));
 		this.options.add(new ArgDef().setShortOption('?').setLongOpt("help").setDescription("Help Message"));
@@ -65,7 +61,7 @@ public class ArgParser {
 		}
 		return this.parser;
 	}
-
+	
 	/**
 	 * Get the argument definitions
 	 * @return the argument definitions
@@ -78,7 +74,7 @@ public class ArgParser {
 	 * Get the mapping of option flag to ArgDef
 	 * @return the mapping
 	 */
-	public Map<String,ArgDef> getOptMap() {
+	public Map<String, ArgDef> getOptMap() {
 		return this.optMap;
 	}
 	
@@ -144,7 +140,7 @@ public class ArgParser {
 						}
 					}
 				} else {
-					if (arg.isParameterRequired()) {
+					if(arg.isParameterRequired()) {
 						ob = ob.hasArgs(num);
 					} else {
 						ob = ob.hasOptionalArgs(num);
