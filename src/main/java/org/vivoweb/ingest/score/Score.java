@@ -358,46 +358,17 @@ public class Score {
 	 * @param toVIVOProperty the predicate that connects the object in score to the object in vivo
 	 * @param toScoreProperty the predicate that connects the object in vivo to the object in score
 	 */
-	@SuppressWarnings("unused")
 	private static void linkThenCommitResourceIter(Model result, StmtIterator scoreSet, Resource scoreNode, String toVIVOProperty, String toScoreProperty) {
 		// loop thru resources
 		while(scoreSet.hasNext()) {
 			// Grab person URI
 			Resource vivoNode = scoreSet.next().getSubject();
-			log.info("Found " + scoreNode + " for VIVO entity" + vivoNode);
-			log.info("Adding entity " + scoreNode);
+			log.info("Found <" + scoreNode + "> for VIVO entity <" + vivoNode + ">");
+			log.info("Adding entity <" + scoreNode + "> to output");
 			
 			result.add(recursiveSanitizeBuild(scoreNode, null));
 			
-			log.info("Linking entity " + scoreNode + "to VIVO entity " + vivoNode);
-			
-			result.add(scoreNode, ResourceFactory.createProperty(toVIVOProperty), vivoNode);
-			result.add(vivoNode, ResourceFactory.createProperty(toScoreProperty), scoreNode);
-			
-			// take results and store in matched model
-			result.commit();
-		}
-	}
-	
-	/**
-	 * Links the two items and saves the model
-	 * @param result the model to send things to VIVO
-	 * @param scoreSet the resource iterator of matching items
-	 * @param scoreNode the node of the object in scoring
-	 * @param toVIVOProperty the predicate that connects the object in score to the object in vivo
-	 * @param toScoreProperty the predicate that connects the object in vivo to the object in score
-	 */
-	private void linkThenCommitResultSet(Model result, ResultSet scoreSet, Resource scoreNode, String toVIVOProperty, String toScoreProperty) {
-		// loop thru results
-		while(scoreSet.hasNext()) {
-			// Grab person URI
-			Resource vivoNode = scoreSet.next().getResource("sub");
-			log.info("Found " + scoreNode + " for VIVO entity" + vivoNode);
-			log.info("Adding entity " + scoreNode);
-			
-			result.add(recursiveSanitizeBuild(scoreNode, null));
-			
-			log.info("Linking entity " + scoreNode + "to VIVO entity " + vivoNode);
+			log.info("Linking entity <" + scoreNode + "> to VIVO entity <" + vivoNode + ">");
 			
 			result.add(scoreNode, ResourceFactory.createProperty(toVIVOProperty), vivoNode);
 			result.add(vivoNode, ResourceFactory.createProperty(toScoreProperty), scoreNode);
@@ -732,7 +703,7 @@ public class Score {
 		// Foreign Key Match
 		log.info("Executing foriegnKeyMatch for " + scoreAttribute + " against " + vivoAttribute);
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
-		//		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
+		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
 		//		String stmtQuery = "SELECT ?sub ?obj\nWHERE\n{\n  ?sub <" + scoreAttribute + "> ?obj\n}";
 		//		System.out.println(stmtQuery);
@@ -741,7 +712,7 @@ public class Score {
 			log.info("No matches found for " + scoreAttribute + " in input");
 			return;
 		}
-		log.info("Looping thru matching " + scoreAttribute + " from input");
+		log.info("Matches found for " + scoreAttribute + " in input");
 		
 		// look for exact match in vivo
 		while(stmtitr.hasNext()) {
@@ -749,15 +720,15 @@ public class Score {
 			Resource sub = stmt.getSubject();
 			String obj = stmt.getLiteral().getString();
 			log.info("Checking for " + obj + " from " + sub + " in VIVO");
-			//			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
-			String matchQuery = "SELECT ?sub\nWHERE\n{\n  ?sub <" + vivoAttribute + "> \"" + obj + "\"\n}";
+			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
+			//			String matchQuery = "SELECT ?sub\nWHERE\n{\n  ?sub <" + vivoAttribute + "> \"" + obj + "\"\n}";
 			//			System.out.println(matchQuery);
-			ResultSet matchesRS = executeQuery(this.vivo.getJenaModel(), matchQuery);
-			if(!matchesRS.hasNext()) {
+			//			ResultSet matchesRS = executeQuery(this.vivo.getJenaModel(), matchQuery);
+			if(!matches.hasNext()) {
 				log.info("No matches in VIVO found");
 			} else {
-				log.info("initiating link then commit resultset");
-				linkThenCommitResultSet(this.scoreOutput.getJenaModel(), matchesRS, sub, scoreToVIVONode, vivoToScoreNode);
+				log.info("Matches in VIVO found");
+				linkThenCommitResourceIter(this.scoreOutput.getJenaModel(), matches, sub, scoreToVIVONode, vivoToScoreNode);
 			}
 		}
 	}
