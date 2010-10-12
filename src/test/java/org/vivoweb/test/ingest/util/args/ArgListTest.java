@@ -4,7 +4,7 @@
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
-package org.vivoweb.ingest.test.util.args;
+package org.vivoweb.test.ingest.util.args;
 
 import java.util.List;
 import org.apache.commons.logging.Log;
