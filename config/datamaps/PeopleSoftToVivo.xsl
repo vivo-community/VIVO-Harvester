@@ -35,7 +35,7 @@
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
-	<xsl:variable name="baseURI">http://vivotest.ctrip.ufl.edu/vivo/individual/</xsl:variable>
+	<xsl:variable name="baseURI">http://vivo.ufl.edu/individual/</xsl:variable>
 
 	<!-- The main node of the record loaded 
 		This serves as the header of the RDF file produced
