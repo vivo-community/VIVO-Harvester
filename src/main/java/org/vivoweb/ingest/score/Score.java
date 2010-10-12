@@ -16,7 +16,6 @@ import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.IterableAdaptor;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -714,9 +713,9 @@ public class Score {
 			return;
 		}
 		log.info("Matches found for <" + scoreAttribute + "> in input");
-		for(Statement s : IterableAdaptor.adapt(this.vivo.getJenaModel().listStatements(null, vivoAttr, (RDFNode)null))) {
-			log.debug("VIVO Match: " + s);
-		}
+		//		for(Statement s : IterableAdaptor.adapt(this.vivo.getJenaModel().listStatements(null, vivoAttr, (RDFNode)null))) {
+		//			log.debug("VIVO Match: " + s);
+		//		}
 		// look for exact match in vivo
 		while(stmtitr.hasNext()) {
 			Statement stmt = stmtitr.next();

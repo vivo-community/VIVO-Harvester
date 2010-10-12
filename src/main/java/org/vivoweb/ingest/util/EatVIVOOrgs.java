@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
@@ -22,6 +24,10 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  * @author Christopher Haines
  */
 public class EatVIVOOrgs {
+	/**
+	 * Log4J Logger
+	 */
+	private static Log log = LogFactory.getLog(EatVIVOOrgs.class);
 	/**
 	 * properties to consume
 	 */
@@ -42,7 +48,7 @@ public class EatVIVOOrgs {
 	 * @throws IOException error
 	 */
 	private static void eatOrg(String URI) throws MalformedURLException, IOException {
-		System.out.println("eating: " + URI);
+		log.debug("eating: " + URI);
 		Resource orgRes = inmodel.getJenaModel().getResource(URI);
 		// eat suborgs
 		StmtIterator subOrgItr = orgRes.listProperties(inmodel.getJenaModel().createProperty("http://vivoweb.org/ontology/core#", "hasSubOrganization"));

@@ -55,7 +55,7 @@
 			<core:relatedRole rdf:resource="{$baseURI}grantRolePIFor{db-dbo.vwVIVO:PI_UFID}in{@rdf:ID}"/>
 		</rdf:Description>
 		<rdf:Description rdf:about="{$baseURI}grantRolePIFor{db-dbo.vwVIVO:PI_UFID}in{@rdf:ID}">
-			<score:ufid><xsl:value-of select="db-dbo.vwVIVO:PI_UFID"/></score:ufid>
+			<score:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="db-dbo.vwVIVO:PI_UFID"/></score:ufid>
 			<core:roleIn rdf:resource="{$baseURI}grant{@rdf:ID}"/>
 		</rdf:Description>
 	</xsl:template>

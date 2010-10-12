@@ -7,23 +7,24 @@
 package org.vivoweb.test.ingest.score;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException; // import java.io.Writer;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
-import org.vivoweb.ingest.score.Score;
-import org.vivoweb.ingest.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
+import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.vivoweb.ingest.score.Score;
+import org.vivoweb.ingest.util.repo.JenaConnect;
+import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.util.StringUtils;
-import junit.framework.TestCase;
 
 /**
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
@@ -239,17 +240,21 @@ public class ScoreTest extends TestCase {
 			Test.getScoreOutput().getJenaModel().removeAll();
 			
 			// testing Foriegn Key Score Method
-			input.getJenaModel().write(System.out, "RDF/XML");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			input.getJenaModel().write(baos, "RDF/XML");
+			baos.flush();
+			log.debug(baos.toString());
+			baos.close();
 			
 			Score.main(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-f", "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid", "-x", "http://vivoweb.org/ontology/core#worksFor", "-y", "http://vivoweb.org/ontology/core#departmentOf"});
 			
 			StmtIterator stmnts = Test.getScoreOutput().getJenaModel().listStatements();
 			while(stmnts.hasNext()) {
 				Statement stmnt = stmnts.next();
-				System.out.println("Statement Found");
-				System.out.println(" - sub: " + stmnt.getSubject().getURI());
-				System.out.println(" - pre: " + stmnt.getPredicate());
-				System.out.println(" - obj: " + stmnt.getObject());
+				log.debug("Statement Found");
+				log.debug(" - sub: " + stmnt.getSubject().getURI());
+				log.debug(" - pre: " + stmnt.getPredicate());
+				log.debug(" - obj: " + stmnt.getObject());
 			}
 			
 			// check output model
