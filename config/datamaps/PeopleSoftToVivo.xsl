@@ -284,8 +284,6 @@
 					<rdfs:label>Employee</rdfs:label>
 				</xsl:otherwise>
 			</xsl:choose>
-			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
 			<ufl:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufl:deptIDofPosition>
 			<!-- <core:positionInOrganization rdf:resource="{$baseURI}org{$fullorgnum}"/> -->
 			<core:positionForPerson rdf:resource="{$baseURI}ufid{$ufid}"/>
@@ -342,8 +340,6 @@
 					<rdfs:label>Employee</rdfs:label>
 				</xsl:otherwise>
 			</xsl:choose>
-			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
 			<ufl:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufl:deptIDofPosition>
 			<!-- <core:positionInOrganization rdf:resource="{$baseURI}org{$fullorgnum}"/> -->
 			<core:positionForPerson rdf:resource="{$baseURI}ufid{$ufid}"/>
