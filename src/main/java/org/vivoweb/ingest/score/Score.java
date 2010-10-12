@@ -344,38 +344,11 @@ public class Score {
 	 * @return queryExec the executed query result set
 	 */
 	private static ResultSet executeQuery(Model model, String queryString) {
+		log.debug("query:\n" + queryString);
 		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, model);
 		
 		return queryExec.execSelect();
-	}
-	
-	/**
-	 * Links the two items and saves the model
-	 * @param result the model to send things to VIVO
-	 * @param scoreSet the resource iterator of matching items
-	 * @param scoreNode the node of the object in scoring
-	 * @param toVIVOProperty the predicate that connects the object in score to the object in vivo
-	 * @param toScoreProperty the predicate that connects the object in vivo to the object in score
-	 */
-	private static void linkThenCommitResourceIter(Model result, StmtIterator scoreSet, Resource scoreNode, String toVIVOProperty, String toScoreProperty) {
-		// loop thru resources
-		while(scoreSet.hasNext()) {
-			// Grab person URI
-			Resource vivoNode = scoreSet.next().getSubject();
-			log.info("Found <" + scoreNode + "> for VIVO entity <" + vivoNode + ">");
-			log.info("Adding entity <" + scoreNode + "> to output");
-			
-			result.add(recursiveSanitizeBuild(scoreNode, null));
-			
-			log.info("Linking entity <" + scoreNode + "> to VIVO entity <" + vivoNode + ">");
-			
-			result.add(scoreNode, ResourceFactory.createProperty(toVIVOProperty), vivoNode);
-			result.add(vivoNode, ResourceFactory.createProperty(toScoreProperty), scoreNode);
-			
-			// take results and store in matched model
-			result.commit();
-		}
 	}
 	
 	/**
@@ -703,7 +676,7 @@ public class Score {
 		// Foreign Key Match
 		log.info("Executing foriegnKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
-		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
+		//		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
 		//		String stmtQuery = "SELECT ?sub ?obj\nWHERE\n{\n  ?sub <" + scoreAttribute + "> ?obj\n}";
 		//		System.out.println(stmtQuery);
@@ -722,15 +695,30 @@ public class Score {
 			Resource sub = stmt.getSubject();
 			String obj = stmt.getLiteral().getString();
 			log.info("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
-			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
-			//			String matchQuery = "SELECT ?sub\nWHERE\n{\n  ?sub <" + vivoAttribute + "> \"" + obj + "\"\n}";
-			//			System.out.println(matchQuery);
-			//			ResultSet matchesRS = executeQuery(this.vivo.getJenaModel(), matchQuery);
+			//			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
+			ResultSet matches = executeQuery(this.vivo.getJenaModel(), "SELECT ?sub\nWHERE\n{\n  ?sub <" + vivoAttribute + "> \"" + obj + "\"\n}");
 			if(!matches.hasNext()) {
 				log.info("No matches in VIVO found");
 			} else {
 				log.info("Matches in VIVO found");
-				linkThenCommitResourceIter(this.scoreOutput.getJenaModel(), matches, sub, scoreToVIVONode, vivoToScoreNode);
+				// loop thru resources
+				while(matches.hasNext()) {
+					// Grab person URI
+					//					Resource vivoNode = matchesRS.next().getSubject();
+					Resource vivoNode = matches.next().getResource("sub");
+					log.info("Found <" + sub + "> for VIVO entity <" + vivoNode + ">");
+					log.info("Adding entity <" + sub + "> to output");
+					
+					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, null));
+					
+					log.info("Linking entity <" + sub + "> to VIVO entity <" + vivoNode + ">");
+					
+					this.scoreOutput.getJenaModel().add(sub, ResourceFactory.createProperty(scoreToVIVONode), vivoNode);
+					this.scoreOutput.getJenaModel().add(vivoNode, ResourceFactory.createProperty(vivoToScoreNode), sub);
+					
+					// take results and store in matched model
+					this.scoreOutput.getJenaModel().commit();
+				}
 			}
 		}
 	}
