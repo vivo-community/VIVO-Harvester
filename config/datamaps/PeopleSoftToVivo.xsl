@@ -216,13 +216,15 @@
 		<xsl:param name='this' />
 		<xsl:variable name="fullorgnum" select="$this/db-t_UF_DIR_EMP_STU_5:PS_DEPTID"/>
 		<xsl:variable name="typeCode" select="$this/db-t_UF_DIR_EMP_STU_5:UF_TYPE_CD"/>
+		<xsl:variable name="startYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_5:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
+		<xsl:variable name="startDate"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_5:UF_BEGIN_TS" regex="^(....-..-..).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
 		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/ufid{$ufid}">
-			<core:personInPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}"/>
+			<core:personInPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
 		</rdf:Description>
 		<!-- <rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}">
-			<core:organizationForPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}"/>
+			<core:organizationForPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
 		</rdf:Description> -->
-		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}">
+		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
 			<xsl:choose>
 				<xsl:when test="$typeCode=192">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
@@ -246,7 +248,7 @@
 			<ufl:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufl:deptIDofPosition>
 			<!-- <core:positionInOrganization rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}"/> -->
 			<core:positionForPerson rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/ufid{$ufid}"/>
-			<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_5:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></core:startYear>
+			<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="$startYear"/></core:startYear>
 		</rdf:Description>
 	</xsl:template>
 	
@@ -255,13 +257,16 @@
 		<xsl:param name='this' />
 		<xsl:variable name="fullorgnum" select="$this/db-t_UF_DIR_EMP_STU_6:PS_DEPTID"/>
 		<xsl:variable name="typeCode" select="$this/db-t_UF_DIR_EMP_STU_6:UF_TYPE_CD"/>
+		<xsl:variable name="startYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
+		<xsl:variable name="endYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_END_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
+		<xsl:variable name="startDate"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_BEGIN_TS" regex="^(....-..-..).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
 		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/ufid{$ufid}">
-			<core:personInPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}"/>
+			<core:personInPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
 		</rdf:Description>
 		<!-- <rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}">
-			<core:organizationForPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}"/>
+			<core:organizationForPosition rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
 		</rdf:Description> -->
-		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}">
+		<rdf:Description rdf:about="http://vivotest.ctrip.ufl.edu/vivo/individual/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
 			<xsl:choose>
 				<xsl:when test="$typeCode=192">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
@@ -285,8 +290,8 @@
 			<ufl:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufl:deptIDofPosition>
 			<!-- <core:positionInOrganization rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/org{$fullorgnum}"/> -->
 			<core:positionForPerson rdf:resource="http://vivotest.ctrip.ufl.edu/vivo/individual/ufid{$ufid}"/>
-			<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></core:startYear>
-			<core:endYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_END_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></core:endYear>
+			<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="$startYear"/></core:startYear>
+			<core:endYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="$endYear"/></core:endYear>
 		</rdf:Description>
 	</xsl:template>
 	
