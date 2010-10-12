@@ -137,11 +137,12 @@
 		<xsl:param name='ufid' />
 		<xsl:param name='this' />
 		<rdf:Description rdf:about="{$baseURI}ufid{$ufid}">
+			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 			<rdfs:label xml:lang="en-US"><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_NAME_TXT" /></rdfs:label>
 			<ufl:businessName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_NAME_TXT" /></ufl:businessName>
 			<core:workEmail><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_EMAIL" /></core:workEmail>
 			<ufl:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid" /></ufl:ufid>
-			<core:preferredTitle rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_WORK_TITLE" /></core:preferredTitle>
+			<!-- <core:preferredTitle rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_WORK_TITLE" /></core:preferredTitle> -->
 		</rdf:Description>
 	</xsl:template>
 	
@@ -220,6 +221,29 @@
 		<xsl:variable name="startYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_5:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
 		<xsl:variable name="startDate"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_5:UF_BEGIN_TS" regex="^(....-..-..).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
 		<rdf:Description rdf:about="{$baseURI}ufid{$ufid}">
+			<xsl:choose>
+				<xsl:when test="$typeCode=192">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=193">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=194">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=195">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=197">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=200">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EmeritusProfessor"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=219">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+				</xsl:when>
+			</xsl:choose>
 			<core:personInPosition rdf:resource="{$baseURI}positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
 		</rdf:Description>
 		<!-- <rdf:Description rdf:about="{$baseURI}org{$fullorgnum}">
@@ -229,20 +253,36 @@
 			<xsl:choose>
 				<xsl:when test="$typeCode=192">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=193">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+					<rdfs:label>Staff</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=194">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+					<rdfs:label>Staff</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=195">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+					<rdfs:label>Staff</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=197">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyAdministrativePosition"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
 				</xsl:when>
+				<xsl:when test="$typeCode=200">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
+				</xsl:when>
+				<xsl:when test="$typeCode=219">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
+				</xsl:when>
+				<xsl:otherwise>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
+					<rdfs:label>Employee</rdfs:label>
+				</xsl:otherwise>
 			</xsl:choose>
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
@@ -271,20 +311,36 @@
 			<xsl:choose>
 				<xsl:when test="$typeCode=192">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=193">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+					<rdfs:label>Staff</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=194">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+					<rdfs:label>Staff</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=195">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+					<rdfs:label>Staff</rdfs:label>
 				</xsl:when>
 				<xsl:when test="$typeCode=197">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyAdministrativePosition"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
 				</xsl:when>
+				<xsl:when test="$typeCode=200">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
+				</xsl:when>
+				<xsl:when test="$typeCode=219">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+					<rdfs:label>Faculty</rdfs:label>
+				</xsl:when>
+				<xsl:otherwise>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
+					<rdfs:label>Employee</rdfs:label>
+				</xsl:otherwise>
 			</xsl:choose>
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>

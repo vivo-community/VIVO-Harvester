@@ -18,6 +18,7 @@
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:score="http://vivoweb.org/ontology/score#"
+	xmlns:ufl="http://vivo.ufl.edu/ontology/vivo-ufl/"
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
 	xmlns:db-dbo.vwVIVO='jdbc:jtds:sqlserver://10.241.46.60:1433/DSR/fields/dbo.vwVIVO/'>
 	<!--
@@ -27,31 +28,35 @@
 	 -->
 	
 	<!-- This will create indenting in xml readers -->
-	<xsl:output method="xml" indent="yes"/>  
+	<xsl:output method="xml" indent="yes"/>
+	<xsl:variable name="baseURI">http://vivo.ufl.edu/individual/</xsl:variable>
 	
 	<xsl:template match="rdf:RDF">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     		xmlns:core="http://vivoweb.org/ontology/core#"
     		xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+			xmlns:ufl="http://vivo.ufl.edu/ontology/vivo-ufl/"
     		xmlns:score='http://vivoweb.org/ontology/score#' > 
 			<xsl:apply-templates select="rdf:Description" />		
 		</rdf:RDF>
 	</xsl:template>
 	
 	<xsl:template match="rdf:Description">
-		<rdf:Description rdf:about="http://vivo.ufl.edu/individual/grant/n{@rdf:ID}">
+		<rdf:Description rdf:about="{$baseURI}grant{@rdf:ID}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 			<rdfs:label><xsl:value-of select="db-dbo.vwVIVO:Title" /></rdfs:label>
+			<ufl:dsrNumber><xsl:value-of select="{@rdf:ID}"/></ufl:dsrNumber>
+			<ufl:psContractNumber><xsl:value-of select="db-dbo.vwVIVO:PS__Contract" /></ufl:psContractNumber>
+			<ufl:psProjectNumber><xsl:value-of select="db-dbo.vwVIVO:PS__Project" /></ufl:psProjectNumber>
 			<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="db-dbo.vwVIVO:ProjectBegin"/></core:startDate>
 			<core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="db-dbo.vwVIVO:ProjectEnd"/></core:endDate>
 			<core:totalAwardAmount><xsl:value-of select="db-dbo.vwVIVO:TotalAwarded"/></core:totalAwardAmount>
-			<score:AdministeredBy><xsl:value-of select="db-dbo.vwVIVO:PI__Dept"/></score:AdministeredBy>
-			<score:AdminDeptID><xsl:value-of select="db-dbo.vwVIVO:PI_DeptID"/></score:AdminDeptID>
-			<core:relatedRole rdf:resource="http://vivo.ufl.edu/individual/grantpi/n{@rdf:ID}{db-dbo.vwVIVO:PI_UFID}"/>
+			<score:administeredBy><xsl:value-of select="db-dbo.vwVIVO:PI_DeptID"/></score:administeredBy>
+			<core:relatedRole rdf:resource="{$baseURI}grantRolePIFor{db-dbo.vwVIVO:PI_UFID}in{@rdf:ID}"/>
 		</rdf:Description>
-		<rdf:Description rdf:about="http://vivo.ufl.edu/individual/grantpi/n{@rdf:ID}{db-dbo.vwVIVO:PI_UFID}">
+		<rdf:Description rdf:about="{$baseURI}grantRolePIFor{db-dbo.vwVIVO:PI_UFID}in{@rdf:ID}">
 			<score:ufid><xsl:value-of select="db-dbo.vwVIVO:PI_UFID"/></score:ufid>
-			<core:roleIn rdf:resource="http://vivo.ufl.edu/individual/grant/n{@rdf:ID}"/>
+			<core:roleIn rdf:resource="{$baseURI}grant{@rdf:ID}"/>
 		</rdf:Description>
 	</xsl:template>
 </xsl:stylesheet>
