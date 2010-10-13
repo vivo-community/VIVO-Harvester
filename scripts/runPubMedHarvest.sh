@@ -16,7 +16,7 @@ cd /usr/share/vivoingest
 java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.PubmedSOAPFetch -X config/tasks/PubmedFetch.xml
 
 # Execute Translate using the PubMedToVIVO.xsl file
-java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/Pubmed-XML-TFRH.xml -x config/datamaps/PubMedToVivo.xsl -o config/recordHandlers/Pubmed-XML-TFRH.xml
+java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/Pubmed-XML-TFRH.xml -x config/datamaps/PubMedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml
 
 # Execute Transfer to import from record handler into local temp model
 java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -o config/jenaModels/h2.xml -O modelName=pubMedTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2pubmed/all/store;MODE=HSQLDB" -h config/recordHandlers/PubMed-RDF-h2RH.xml
