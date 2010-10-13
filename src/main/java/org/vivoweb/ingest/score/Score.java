@@ -80,9 +80,9 @@ public class Score {
 	 */
 	private final String authorName;
 	/**
-	 * Arguments for Foriegn Key
+	 * Arguments for foreign Key
 	 */
-	private final List<String> foriegnKey;
+	private final List<String> foreignKey;
 	/**
 	 * the predicate that connects the object in score to the object in vivo
 	 */
@@ -139,19 +139,19 @@ public class Score {
 		}
 		
 		// call for ForeignKey linking
-		if(this.foriegnKey != null && !this.foriegnKey.isEmpty()) {
+		if(this.foreignKey != null && !this.foreignKey.isEmpty()) {
 			if(this.objToScore == null) {
 				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from VIVO to the scoring model");
 			}
 			if(this.objToVIVO == null) {
 				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from the scoring model to VIVO");
 			}
-			for(String attributePair : this.foriegnKey) {
+			for(String attributePair : this.foreignKey) {
 				String[] fKey = attributePair.split("=");
 				if(fKey.length != 2) {
 					throw new IllegalArgumentException("Invalid Parameters, You must supply the 2 data property one for the scoring and vivo models @ '" + attributePair + "'");
 				}
-				this.foriegnKeyMatch(fKey[0], fKey[1], this.objToVIVO, this.objToScore);
+				this.foreignKeyMatch(fKey[0], fKey[1], this.objToVIVO, this.objToScore);
 			}
 		}
 		
@@ -213,7 +213,7 @@ public class Score {
 		// parser.addArgument(new
 		// ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true,
 		// "REGEX"));
-		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foriegn link").withParameters(true, "RDF_PREDICATES"));
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foreign link").withParameters(true, "RDF_PREDICATES"));
 		
 		// Object Property
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("objPropToVIVO").setDescription("set the Object Property to the VIVO Model").withParameter(true, "OBJ_PROPERTIES"));
@@ -240,11 +240,11 @@ public class Score {
 	 * @param pairwiseArg perform a pairwise scoring
 	 * @param regexArg perform a regular expression scoring
 	 * @param authorNameArg perform a author name scoring
-	 * @param foriegnKeyArg arguments for foreign key match
+	 * @param foreignKeyArg arguments for foreign key match
 	 * @param objToVIVOArg the predicate that connects the object in score to the object in vivo
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, @SuppressWarnings("unused") List<String> regexArg, String authorNameArg, List<String> foriegnKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
 		this.scoreOutput = jenaScoreOutput;
@@ -254,7 +254,7 @@ public class Score {
 		//TODO cah: uncomment when regex implemented
 		//		this.regex = regexArg;
 		this.authorName = authorNameArg;
-		this.foriegnKey = foriegnKeyArg;
+		this.foreignKey = foreignKeyArg;
 		this.objToVIVO = objToVIVOArg;
 		this.objToScore = objToScoreArg;
 	}
@@ -332,7 +332,7 @@ public class Score {
 		//TODO cah: uncomment when regex implemented
 		//		this.regex = opts.getAll("r");
 		this.authorName = opts.get("a");
-		this.foriegnKey = opts.getAll("f");
+		this.foreignKey = opts.getAll("f");
 		this.objToVIVO = opts.get("x");
 		this.objToScore = opts.get("y");
 	}
@@ -672,9 +672,9 @@ public class Score {
 	 * @param scoreToVIVONode the predicate that connects the object in score to the object in vivo
 	 * @param vivoToScoreNode the predicate that connects the object in vivo to the object in score
 	 */
-	public void foriegnKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
+	public void foreignKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
 		// Foreign Key Match
-		log.info("Executing foriegnKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
+		log.info("Executing foreignKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
 		//		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);

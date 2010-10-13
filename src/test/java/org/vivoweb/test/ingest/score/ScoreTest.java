@@ -239,7 +239,7 @@ public class ScoreTest extends TestCase {
 			// empty output model
 			Test.getScoreOutput().getJenaModel().removeAll();
 			
-			// testing Foriegn Key Score Method
+			// testing foreign Key Score Method
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			input.getJenaModel().write(baos, "RDF/XML");
 			baos.flush();
@@ -259,8 +259,8 @@ public class ScoreTest extends TestCase {
 			
 			// check output model
 			if(output.getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with foriegn key scoring");
-				fail("Didn't match anything with foriegn key scoring");
+				log.error("Didn't match anything with foreign key scoring");
+				fail("Didn't match anything with foreign key scoring");
 			}
 			
 			Test.close();
