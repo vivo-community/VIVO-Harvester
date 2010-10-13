@@ -8,10 +8,8 @@
 /usr/share/vivoingest/config/datamaps/PeopleSoftToVivo.xsl
 /usr/share/vivoingest/config/datamaps/PubMedToVivo.xsl
 /usr/share/vivoingest/config/datamaps/rdfp.xsl
-/usr/share/vivoingest/config/jenaModels
 /usr/share/vivoingest/config/jenaModels/h2.xml
 /usr/share/vivoingest/config/jenaModels/VIVO.xml
-/usr/share/vivoingest/config/recordHandlers
 /usr/share/vivoingest/config/recordHandlers/JDBCXMLRecordHandler.xml
 /usr/share/vivoingest/config/recordHandlers/OAIXMLRecordHandler.xml
 /usr/share/vivoingest/config/recordHandlers/PeopleSoft-RDF-h2RH.xml
@@ -20,7 +18,6 @@
 /usr/share/vivoingest/config/recordHandlers/PeopleSoft-XML-TFRH.xml
 /usr/share/vivoingest/config/recordHandlers/PubmedRDFRecordHandler.xml
 /usr/share/vivoingest/config/recordHandlers/PubmedXMLRecordHandler.xml
-/usr/share/vivoingest/config/tasks
 /usr/share/vivoingest/config/tasks/D2RMapFetchTask.d2r.xml
 /usr/share/vivoingest/config/tasks/JDBCFetchTask.xml
 /usr/share/vivoingest/config/tasks/JDBCTest.xml
