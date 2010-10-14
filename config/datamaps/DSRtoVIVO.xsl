@@ -44,7 +44,7 @@
 	<xsl:template match="rdf:Description">
 		<rdf:Description rdf:about="{$baseURI}grant{@rdf:ID}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
-			<rdfs:label><xsl:value-of select="db-dbo.vwVIVO:Title" /></rdfs:label>
+			<rdfs:label><xsl:value-of select="db-dbo.vwVIVO:Title"/></rdfs:label>
 			<ufl:dsrNumber><xsl:value-of select="@rdf:ID"/></ufl:dsrNumber>
 			<ufl:psContractNumber><xsl:value-of select="db-dbo.vwVIVO:PS__Contract" /></ufl:psContractNumber>
 			<ufl:psProjectNumber><xsl:value-of select="db-dbo.vwVIVO:PS__Project" /></ufl:psProjectNumber>

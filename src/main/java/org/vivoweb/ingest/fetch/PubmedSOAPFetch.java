@@ -49,11 +49,11 @@ public class PubmedSOAPFetch {
 	/**
 	 * Email address pubmed with contact in case of issues
 	 */
-	private String strEmailAddress;
+	private final String strEmailAddress;
 	/**
 	 * Location information pubmed will use to contact in case of issues
 	 */
-	private String strToolLocation;
+	private final String strToolLocation = "VIVO_Harvester_(vivo.sourceforge.net)";
 	/**
 	 * Writer for our output stream
 	 */
@@ -61,15 +61,15 @@ public class PubmedSOAPFetch {
 	/**
 	 * Query to run on pubmed data
 	 */
-	private String strSearchTerm;
+	private final String strSearchTerm;
 	/**
 	 * Maximum number of records to fetch
 	 */
-	private String strMaxRecords;
+	private final String strMaxRecords;
 	/**
 	 * Number of records to fetch per batch
 	 */
-	private String strBatchSize;
+	private final String strBatchSize;
 	
 	/**
 	 * Constructor Primary method for running a PubMed SOAP Fetch. The email address and location of the person
@@ -78,12 +78,12 @@ public class PubmedSOAPFetch {
 	 * @author Dale Scheppler
 	 * @author Chris Haines
 	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
-	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
 	 * @param outStream The output stream for the method.
 	 */
-	public PubmedSOAPFetch(String strEmail, String strToolLoc, OutputStream outStream) {
+	// @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
+	public PubmedSOAPFetch(String strEmail, /* String strToolLoc, */OutputStream outStream) {
 		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
-		this.strToolLocation = strToolLoc; // This provides further information to NIH
+		//		this.strToolLocation = strToolLoc; // This provides further information to NIH
 		this.strSearchTerm = queryAll();
 		this.strMaxRecords = getHighestPMID() + "";
 		this.strBatchSize = "1000";
@@ -97,15 +97,15 @@ public class PubmedSOAPFetch {
 	 * @author Dale Scheppler
 	 * @author Chris Haines
 	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
-	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
 	 * @param searchTerm query to run on pubmed data
 	 * @param maxRecords maximum number of records to fetch
 	 * @param batchSize number of records to fetch per batch
 	 * @param outStream The output stream for the method.
 	 */
-	public PubmedSOAPFetch(String strEmail, String strToolLoc, String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
+	// @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
+	public PubmedSOAPFetch(String strEmail, /* String strToolLoc, */String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
 		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
-		this.strToolLocation = strToolLoc; // This provides further information to NIH
+		//		this.strToolLocation = strToolLoc; // This provides further information to NIH
 		this.strSearchTerm = searchTerm;
 		this.strMaxRecords = maxRecords;
 		this.strBatchSize = batchSize;
@@ -119,7 +119,7 @@ public class PubmedSOAPFetch {
 	 */
 	public PubmedSOAPFetch(ArgList argList) throws IOException {
 		this.strEmailAddress = argList.get("m");
-		this.strToolLocation = argList.get("l");
+		//		this.strToolLocation = argList.get("l");
 		String repositoryConfig = argList.get("o");
 		this.strSearchTerm = argList.get("t");
 		this.strMaxRecords = argList.get("n");
@@ -253,8 +253,8 @@ public class PubmedSOAPFetch {
 	 * @return highest PMID
 	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
 	 */
-	public static int getHighestRecordNumber() {
-		return new PubmedSOAPFetch("", "", queryAll(), "1", "1", new NullOutputStream()).getHighestPMID();
+	public int getHighestRecordNumber() {
+		return new PubmedSOAPFetch(this.strEmailAddress, queryAll(), "1", "1", new NullOutputStream()).getHighestPMID();
 	}
 	
 	/**
@@ -388,7 +388,8 @@ public class PubmedSOAPFetch {
 		log.info("Fetch: Start");
 		int recToFetch;
 		if(this.strMaxRecords.equalsIgnoreCase("all")) {
-			recToFetch = getHighestRecordNumber();
+			//			recToFetch = getHighestRecordNumber();
+			recToFetch = getHighestPMID();
 		} else {
 			recToFetch = Integer.parseInt(this.strMaxRecords);
 		}
@@ -421,7 +422,7 @@ public class PubmedSOAPFetch {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("PubmedSOAPFetch");
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("location").setDescription("contact location/institution").withParameter(true, "LOCATION"));
+		//		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("location").setDescription("contact location/institution").withParameter(true, "LOCATION"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against pubmed").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("numRecords").setDescription("maximum records to return").withParameter(true, "NUMBER").setDefaultValue("100"));

@@ -59,7 +59,7 @@ public class PubmedSOAPFetchTest extends TestCase {
 	public final void testPubmedSOAPFetchMain() {
 		try {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
-			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-l", "Planet Test", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
 			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			for(Record r : this.rh) {

@@ -244,7 +244,7 @@ public class Score {
 	 * @param objToVIVOArg the predicate that connects the object in score to the object in vivo
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, @SuppressWarnings("unused") List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
 		this.scoreOutput = jenaScoreOutput;
@@ -344,7 +344,7 @@ public class Score {
 	 * @return queryExec the executed query result set
 	 */
 	private static ResultSet executeQuery(Model model, String queryString) {
-		log.debug("query:\n" + queryString);
+		//		log.debug("query: " + queryString);
 		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, model);
 		
@@ -696,7 +696,7 @@ public class Score {
 			String obj = stmt.getLiteral().getString();
 			log.info("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
 			//			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
-			ResultSet matches = executeQuery(this.vivo.getJenaModel(), "SELECT ?sub\nWHERE\n{\n  ?sub <" + vivoAttribute + "> \"" + obj + "\"\n}");
+			ResultSet matches = executeQuery(this.vivo.getJenaModel(), "SELECT ?sub WHERE { ?sub <" + vivoAttribute + "> \"" + obj + "\" }");
 			if(!matches.hasNext()) {
 				log.info("No matches in VIVO found");
 			} else {
