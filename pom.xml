@@ -4,7 +4,7 @@
 
   <groupId>org.vivoweb</groupId>
   <artifactId>ingest</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
   <packaging>jar</packaging>
 
   <name>VIVOHarvester</name>
@@ -352,5 +352,26 @@
     	<version>1.2.140</version>
     	<type>jar</type>
     </dependency>
+    <dependency>
+    	<groupId>net.sourceforge.jtds</groupId>
+    	<artifactId>jtds</artifactId>
+    	<version>1.2.4</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+	<dependency>
+    	<groupId>de.fuberlin.wiwiss</groupId>
+    	<artifactId>d2r</artifactId>
+    	<version>0.3</version>
+    	<scope>system</scope>
+    	<systemPath>${basedir}/lib/d2rmap-V03.jar</systemPath>
+    </dependency>
+	<dependency>
+		<groupId>org.dbunit</groupId>
+		<artifactId>dbunit</artifactId>
+		<version>2.4.8</version>
+		<type>jar</type>
+		<scope>compile</scope>
+	</dependency>
   </dependencies>
 </project>

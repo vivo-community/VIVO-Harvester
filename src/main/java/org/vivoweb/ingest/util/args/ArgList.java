@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.args;
 
@@ -17,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -29,6 +26,7 @@ import org.apache.commons.vfs.VFS;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
  * Parsed arguments from commandline and config files
@@ -62,7 +60,9 @@ public class ArgList {
 	public ArgList(ArgParser p, String[] args) throws IllegalArgumentException, IOException {
 		try {
 			this.argParser = p;
-			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(),args);
+			log.debug("running " + p.getAppName());
+			log.debug("command line args: " + StringUtils.join(" ", args));
+			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(), args);
 			if(this.oCmdSet.hasOption("help")) {
 				String usage = this.argParser.getUsage();
 				log.info(usage);
@@ -71,6 +71,7 @@ public class ArgList {
 				String[] confArgs = {""};
 				if(this.oCmdSet.hasOption("X")) {
 					confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
+					log.debug("config file args: " + StringUtils.join(" ", confArgs));
 					this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
 				} else {
 					this.oConfSet = null;
@@ -84,7 +85,7 @@ public class ArgList {
 							argName = arg.getLongOption();
 						}
 						if(!has(argName)) {
-							throw new IllegalArgumentException("Missing Argument: "+argName);
+							throw new IllegalArgumentException("Missing Argument: " + argName);
 						}
 					}
 				}
@@ -106,6 +107,15 @@ public class ArgList {
 	 * @return the value
 	 */
 	public String get(String arg) {
+		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+			throw new IllegalArgumentException(arg + " has no parameters");
+		}
+		if(this.argParser.getOptMap().get(arg).hasParameters()) {
+			throw new IllegalArgumentException(arg + " potentially has more than one value, use getAll()");
+		}
+		if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
+			throw new IllegalArgumentException(arg + " is a properties parameter, use getProperties()");
+		}
 		String retVal;
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal = this.oCmdSet.getOptionValue(arg);
@@ -117,6 +127,29 @@ public class ArgList {
 			}
 		}
 		return retVal;
+	}
+	
+	/**
+	 * Gets the properties for the argument
+	 * @param arg argument to get
+	 * @return the values
+	 */
+	public Properties getProperties(String arg) {
+		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+			throw new IllegalArgumentException(arg + " has no parameters");
+		}
+		if(!this.argParser.getOptMap().get(arg).isParameterProperties()) {
+			if(this.argParser.getOptMap().get(arg).hasParameters()) {
+				throw new IllegalArgumentException(arg + " is not a properties parameter, use getAll()");
+			}
+			throw new IllegalArgumentException(arg + " is not a properties parameter, use get()");
+		}
+		Properties p = new Properties();
+		if(this.oConfSet != null) {
+			p.putAll(this.oConfSet.getOptionProperties(arg));
+		}
+		p.putAll(this.oCmdSet.getOptionProperties(arg));
+		return p;
 	}
 	
 	/**
@@ -135,6 +168,15 @@ public class ArgList {
 	 * @return the values
 	 */
 	public List<String> getAll(String arg, boolean includeDefaultValue) {
+		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+			throw new IllegalArgumentException(arg + " has no parameters");
+		}
+		if(!this.argParser.getOptMap().get(arg).hasParameters()) {
+			if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
+				throw new IllegalArgumentException(arg + " is a properties parameter, use getProperties()");
+			}
+			throw new IllegalArgumentException(arg + " has only one parameter, use get()");
+		}
 		List<String> retVal = new LinkedList<String>();
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal.addAll(Arrays.asList(this.oCmdSet.getOptionValues(arg)));
@@ -165,7 +207,7 @@ public class ArgList {
 		/**
 		 * The param list from config file
 		 */
-		private Map<String,String> params;
+		private Map<String, List<String>> params;
 		/**
 		 * Temporary container for cdata
 		 */
@@ -173,13 +215,13 @@ public class ArgList {
 		/**
 		 * Temporary container for parameter id
 		 */
-		private String tempParamID;
+		private String tempParamName;
 		
 		/**
 		 * Default Constructor
 		 */
 		protected ConfigParser() {
-			this.params = new HashMap<String,String>();
+			this.params = new HashMap<String, List<String>>();
 			this.tempVal = "";
 		}
 		
@@ -194,20 +236,19 @@ public class ArgList {
 		 * @throws ParserConfigurationException parser config error
 		 */
 		public String[] configToArgs(String filePath) throws SecurityException, IllegalArgumentException, ParserConfigurationException, SAXException, IOException {
-			Map<String, String> parameters = parseConfig(filePath);
-			String[] paramArray = {};
+			Map<String, List<String>> parameters = parseConfig(filePath);
 			List<String> paramList = new LinkedList<String>();
 			for(String key : parameters.keySet()) {
-				String value = parameters.get(key);
-				if(!value.equalsIgnoreCase("false")) {
-					paramList.add("--"+key);
-					if(!value.equalsIgnoreCase("true")) {
-						paramList.add(value);
+				for(String value : parameters.get(key)) {
+					if(!value.equalsIgnoreCase("false")) {
+						paramList.add("--" + key);
+						if(!value.equalsIgnoreCase("true")) {
+							paramList.add(value);
+						}
 					}
 				}
 			}
-			paramArray = paramList.toArray(paramArray);
-			return paramArray;
+			return paramList.toArray(new String[]{});
 		}
 		
 		/**
@@ -218,23 +259,33 @@ public class ArgList {
 		 * @throws SAXException xml parsing error
 		 * @throws ParserConfigurationException xml parsing error
 		 */
-		private Map<String, String> parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
+		private Map<String, List<String>> parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse the file and also register this class for call backs
+			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse
+			// the
+			// file
+			// and
+			// also
+			// register
+			// this
+			// class
+			// for
+			// call
+			// backs
 			return this.params;
 		}
 		
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			this.tempVal = "";
-			this.tempParamID = "";
+			this.tempParamName = "";
 			if(qName.equalsIgnoreCase("Task")) {
-				//Do nothing, but keep to prevent falling into else
+				// Do nothing, but keep to prevent falling into else
 			} else if(qName.equalsIgnoreCase("Param")) {
-				this.tempParamID = attributes.getValue("id");
+				this.tempParamName = attributes.getValue("name");
 			} else {
-				throw new SAXException("Unknown Tag: "+qName);
+				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
 		
@@ -246,11 +297,14 @@ public class ArgList {
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if(qName.equalsIgnoreCase("Task")) {
-				//Do nothing, but leave it here so it doesn't fall into else statement
+				// Do nothing, but leave it here so it doesn't fall into else statement
 			} else if(qName.equalsIgnoreCase("Param")) {
-				this.params.put(this.tempParamID, this.tempVal);
+				if(!this.params.containsKey(this.tempParamName)) {
+					this.params.put(this.tempParamName, new LinkedList<String>());
+				}
+				this.params.get(this.tempParamName).add(this.tempVal);
 			} else {
-				throw new SAXException("Unknown Tag: "+qName);
+				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
 	}

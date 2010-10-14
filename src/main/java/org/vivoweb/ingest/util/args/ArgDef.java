@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.args;
 
@@ -47,6 +43,10 @@ public class ArgDef {
 	 * Description of argument's parameter
 	 */
 	private String parameterDescription;
+	/**
+	 * Is this argument a parameter map
+	 */
+	private boolean parameterPropertiesType;
 	
 	/**
 	 * Default Constructor
@@ -60,6 +60,7 @@ public class ArgDef {
 		this.numParameters = 0;
 		this.parameterRequired = false;
 		this.parameterDescription = null;
+		this.parameterPropertiesType = false;
 	}
 	
 	/**
@@ -67,7 +68,7 @@ public class ArgDef {
 	 * @return true if this argument has at least a parameter
 	 */
 	public boolean hasParameter() {
-		return (this.numParameters != 0);
+		return (numParameters() != 0);
 	}
 	
 	/**
@@ -75,7 +76,7 @@ public class ArgDef {
 	 * @return true if this argument has many paramters
 	 */
 	public boolean hasParameters() {
-		return (this.numParameters > 1);
+		return (numParameters() > 1 || numParameters() == -1);
 	}
 	
 	/**
@@ -90,7 +91,7 @@ public class ArgDef {
 	 * Does this argument require a parameter
 	 * @return true if this argument has a parameter and it is required
 	 */
- 	public boolean isParameterRequired() {
+	public boolean isParameterRequired() {
 		return (hasParameter() && this.parameterRequired);
 	}
 	
@@ -103,13 +104,21 @@ public class ArgDef {
 	}
 	
 	/**
+	 * Is this argument a parameter map
+	 * @return true if parameter map
+	 */
+	public boolean isParameterProperties() {
+		return this.parameterPropertiesType;
+	}
+	
+	/**
 	 * Get the short -X type option flag
 	 * @return the shortOption (null if not set)
 	 */
 	public Character getShortOption() {
 		return this.shortOption;
 	}
-
+	
 	/**
 	 * Get the long --Foo type option flag
 	 * @return the longOption (null if not set)
@@ -117,7 +126,7 @@ public class ArgDef {
 	public String getLongOption() {
 		return this.longOption;
 	}
-
+	
 	/**
 	 * Is this argument required
 	 * @return the required
@@ -133,7 +142,7 @@ public class ArgDef {
 	public boolean hasDefaultValue() {
 		return (hasParameter() && (getDefaultValue() != null));
 	}
-
+	
 	/**
 	 * Get the default value
 	 * @return the default value (null if never set)
@@ -141,7 +150,7 @@ public class ArgDef {
 	public String getDefaultValue() {
 		return this.defaultValue;
 	}
-
+	
 	/**
 	 * Get the argument description
 	 * @return the description
@@ -228,9 +237,26 @@ public class ArgDef {
 	 * @return this ArgDef
 	 */
 	public ArgDef withParameters(boolean required, String description, int numParams) {
+		if(this.parameterDescription != null) {
+			throw new IllegalArgumentException("Parameter Already Defined");
+		}
+		if(description == null) {
+			throw new IllegalArgumentException("Parameter Must Have Description");
+		}
 		this.numParameters = numParams;
 		this.parameterRequired = required;
 		this.parameterDescription = description;
 		return this;
+	}
+	
+	/**
+	 * Sets thsi argument to have a parameter map
+	 * @param propertyName name of property
+	 * @param valueName name of value
+	 * @return this ArgDef
+	 */
+	public ArgDef withParameterProperties(String propertyName, String valueName) {
+		this.parameterPropertiesType = true;
+		return withParameters(false, propertyName + "=" + valueName, -1);
 	}
 }

@@ -1,10 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * Contributors:
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.translate;
@@ -28,13 +25,9 @@ import com.hp.gloze.Gloze;
 import com.hp.hpl.jena.rdf.model.*;
 
 /**
- * Gloze Tranlator
- * This class translates XML into its own natural RDF ontology
- * using the gloze library. Translation into the VIVO ontology
- * is completed using the RDF Translator.
- * TODO Stephen: Identify additional parameters required for translation
- * TODO Stephen: Identify methods to invoke in the gloze library
- * 
+ * Gloze Tranlator This class translates XML into its own natural RDF ontology using the gloze library. Translation into
+ * the VIVO ontology is completed using the RDF Translator. TODO Stephen: Identify additional parameters required for
+ * translation TODO Stephen: Identify methods to invoke in the gloze library
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  */
 public class GlozeTranslator {
@@ -43,8 +36,7 @@ public class GlozeTranslator {
 	 */
 	private static Log log = LogFactory.getLog(GlozeTranslator.class);
 	/**
-	 * the file to be translated
-	 * FIXME Stephen: remove this and use the incoming stream
+	 * the file to be translated FIXME Stephen: remove this and use the incoming stream
 	 */
 	protected File incomingXMLFile;
 	/**
@@ -79,18 +71,16 @@ public class GlozeTranslator {
 		this.setURIBase("http://vivoweb.org/glozeTranslation/noURI/");
 	}
 	
-	
 	/**
-	 * @param argumentList
-	 * <ul>
-	 *           <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
-	 *           <li><em>schema</em> the incoming schema for gloze translation</li>
-	 *           <li><em>outRecordHandler</em> the out record handler</li>
-	 *           <li><em>uriBase</em> required for gloze translation the unset URIBASE used is
-	 *           http://vivoweb.org/glozeTranslation/noURI/</li>
-	 *           </ul>
+	 * @param argumentList <ul>
+	 * <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
+	 * <li><em>schema</em> the incoming schema for gloze translation</li>
+	 * <li><em>outRecordHandler</em> the out record handler</li>
+	 * <li><em>uriBase</em> required for gloze translation the unset URIBASE used is
+	 * http://vivoweb.org/glozeTranslation/noURI/</li>
+	 * </ul>
 	 */
-	public GlozeTranslator(ArgList argumentList){
+	public GlozeTranslator(ArgList argumentList) {
 		// the uri base if not set is http://vivoweb.org/glozeTranslation/noURI/"
 		if(argumentList.has("uriBase")) {
 			this.setURIBase(argumentList.get("uriBase"));
@@ -98,21 +88,20 @@ public class GlozeTranslator {
 		// pull in the translation xsl
 		if(argumentList.has("xmlSchema")) {
 			this.setIncomingSchema(new File(argumentList.get("xmlSchema")));
-		}		
-
+		}
+		
 		// create record handlers
 		try {
 			this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
-			this.outStore = RecordHandler.parseConfig(argumentList.get("output"));	
-		} catch (Exception e) {
+			this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
+		} catch(Exception e) {
 			log.error(e);
 		}
 	}
 	
 	/**
 	 * Setter for xmlFile
-	 * @param xmlFile
-	 *           the file to translate
+	 * @param xmlFile the file to translate
 	 */
 	public void setIncomingXMLFile(File xmlFile) {
 		this.incomingXMLFile = xmlFile;
@@ -120,8 +109,7 @@ public class GlozeTranslator {
 	
 	/**
 	 * Setter for schema
-	 * @param schema
-	 *           the schema that gloze can use, but doesn't need to translate the xml
+	 * @param schema the schema that gloze can use, but doesn't need to translate the xml
 	 */
 	public void setIncomingSchema(File schema) {
 		this.incomingSchema = schema;
@@ -129,8 +117,7 @@ public class GlozeTranslator {
 	
 	/**
 	 * Setter for uriBase
-	 * @param base
-	 *           the base uri to apply to all relative entities
+	 * @param base the base uri to apply to all relative entities
 	 */
 	public void setURIBase(String base) {
 		try {
@@ -141,9 +128,8 @@ public class GlozeTranslator {
 	}
 	
 	/**
-	 * The main translation method for the gloze translation class
-	 * setups up the necessary conditions for using the gloze library
-	 * then executes its translation class
+	 * The main translation method for the gloze translation class setups up the necessary conditions for using the
+	 * gloze library then executes its translation class
 	 */
 	public void translateFile() {
 		Gloze gl = new Gloze();
@@ -185,7 +171,7 @@ public class GlozeTranslator {
 				ByteArrayOutputStream buff = new ByteArrayOutputStream();
 				// get from the in record and translate
 				for(Record r : this.inStore) {
-					if (r.needsProcessed(this.getClass())) {
+					if(r.needsProcessed(this.getClass())) {
 						this.inStream = new ByteArrayInputStream(r.getData().getBytes());
 						this.outStream = buff;
 						this.translateFile();
@@ -198,7 +184,7 @@ public class GlozeTranslator {
 				buff.close();
 			} catch(Exception e) {
 				log.error("", e);
-			}	
+			}
 			
 			log.trace("Translation: End");
 		} else {
@@ -218,7 +204,7 @@ public class GlozeTranslator {
 		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("xmlSchema").withParameter(false, "XML_SCHEMA").setDescription("xsl file").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("uriBase").withParameter(false, "URI_BASE").setDescription("uri base").setRequired(true));
 		return parser;
-	}	
+	}
 	
 	/**
 	 * Main Method
@@ -230,7 +216,7 @@ public class GlozeTranslator {
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 	}
 	
