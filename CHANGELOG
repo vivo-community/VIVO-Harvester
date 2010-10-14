@@ -1,11 +1,43 @@
 0.6.0
 Score
 	new ForeignKey matching function
-D2RMap
-	new method to allow D2RMap use inside of harvester
-JDBC
-	example scripts added
-	bug fixes
+	uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	--keep-input-model (-k) is removed
+	--wipe-input-model (-w) is added as inverse of -k (if you had -k, dont have -w and vice-versa)
+Transfer
+	uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	--keep-input-model (-k) is removed
+	--wipe-input-model (-w) is added as inverse of -k (if you had -k, dont have -w and vice-versa)
+Translate
+	Gloze
+		added wrapper for gloze
+	XSLT
+		
+Fetch
+	Pubmed
+		location option removed
+		please register with pubmed ( send email to: eutilities@ncbi.nlm.nih.gov stating the email you have
+			in your config and that you are using the tool called "VIVO_Harvester_(vivo.sourceforge.net)" )
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	D2RMap
+		new method to allow D2RMap use inside of harvester
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	JDBC
+		many new options to further refine your fetch queries
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+		example scripts added
+		bug fixes
+	OAI
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+Qualify
+	uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+Utils
+	DatabaseClone
+		Alpha version of a tool to duplicate a database from one jdbc connection to another (mssql -> mysql?)
+	RecordHandler
+		TextFileRecordHandler
+			Improved some of the record iteration code, but it is still not suggested to use this for large
+				datasets (over 10,000 records)
 Updated deb package to respect changed configuration files
 
 

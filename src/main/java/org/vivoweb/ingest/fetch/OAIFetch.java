@@ -88,7 +88,7 @@ public class OAIFetch {
 		String repositoryConfig = argList.get("o");
 		RecordHandler rhRecordHandler;
 		try {
-			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
+			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig, argList.getProperties("O"));
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
@@ -130,6 +130,7 @@ public class OAIFetch {
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
 	

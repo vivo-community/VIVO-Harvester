@@ -8,7 +8,6 @@ Edit config/jenaModels/VIVO.xml and set it to point to your vivo database
 Edit config/tasks/PubmedFetch.xml and change the options as follows:
 
 	<Param id="email">YOUREMAIL</Param>
-	<Param id="location">YOURLOCATION</Param>
 	<Param id="output">config/recordHandlers/PubmedXMLRecordHandler.xml</Param>
 	<Param id="termSearch">youraffliationstring.edu[ad]</Param>
 	<Param id="numRecords">ALL</Param>

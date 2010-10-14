@@ -19,7 +19,7 @@ java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.OAIFetch
 java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  
 
 # Execute Transfer to transfer rdf into "scoring" JENA model
-java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O scoring  
+java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O modelName=scoring  
 
 # Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
 java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -a 3
@@ -30,7 +30,7 @@ java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v
 #java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 # Execute Transfer to load "staging" JENA model into VIVO
-java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I staging -o config/jenaModels/VIVO.xml
+java -cp bin/ingest-0.6.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I modelName=staging -o config/jenaModels/VIVO.xml
 
 # Execute Transfer to dump "staging" JENA model rdf into file
 # Shown as example

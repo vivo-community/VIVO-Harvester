@@ -244,7 +244,7 @@ public class Score {
 	 * @param objToVIVOArg the predicate that connects the object in score to the object in vivo
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, @SuppressWarnings("unused") List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
 		this.scoreOutput = jenaScoreOutput;

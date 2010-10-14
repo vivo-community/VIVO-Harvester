@@ -126,7 +126,7 @@ public class PubmedSOAPFetch {
 		this.strBatchSize = argList.get("b");
 		RecordHandler rhRecordHandler;
 		try {
-			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
+			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig,argList.getProperties("O"));
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
@@ -424,6 +424,7 @@ public class PubmedSOAPFetch {
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
 		//		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("location").setDescription("contact location/institution").withParameter(true, "LOCATION"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against pubmed").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("numRecords").setDescription("maximum records to return").withParameter(true, "NUMBER").setDefaultValue("100"));
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batchSize").setDescription("number of records to fetch per batch").withParameter(true, "NUMBER").setDefaultValue("1000"));
