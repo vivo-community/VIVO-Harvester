@@ -24,7 +24,7 @@ public class NIHFetch {
 	/**
 	 * Log4J Logger
 	 */
-	protected static Log log = LogFactory.getLog(PubmedFetch.class);							//Initialize the logger
+	protected static Log log = LogFactory.getLog(NIHFetch.class);							//Initialize the logger
 	/**
 	 * Email address pubmed with contact in case of issues
 	 */

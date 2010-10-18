@@ -47,6 +47,11 @@ import org.xml.sax.SAXException;
  */
 public class PubmedFetch extends NIHFetch{
 	
+
+	/**
+	 * Log4J Logger
+	 */
+	protected static Log log = LogFactory.getLog(NIHFetch.class);							//Initialize the logger
 	
 	/**
 	 * Constructor

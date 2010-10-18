@@ -17,7 +17,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
@@ -25,6 +26,12 @@ import org.xml.sax.SAXException;
 
 public class NLMJournalFetch extends NIHFetch {
 
+	/**
+	 * Log4J Logger
+	 */
+	protected static Log log = LogFactory.getLog(NIHFetch.class);							//Initialize the logger
+
+	
 	/**
 	 * Constructor
 	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
@@ -79,7 +86,7 @@ public class NLMJournalFetch extends NIHFetch {
 		} catch(SAXException e) {
 			throw new IOException(e.getMessage(),e);
 		}
-		OutputStream os = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler, this.getClass());
+		OutputStream os = new XMLRecordOutputStream("Serial", "<?xml version=\"1.0\"?>\n<!DOCTYPE SerialSet PUBLIC \"-//NLM//DTD Serial, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<SerialSet>\n", "\n</SerialSet>", ".*?<NlmUniqueID>(.*?)</NlmUniqueID>.*?", rhRecordHandler, this.getClass());
 		setXMLWriter(os);
 	}
 	
