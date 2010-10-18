@@ -63,6 +63,10 @@ public class Score {
 	 */
 	private final boolean wipeInputModel;
 	/**
+	 * Option to push Matches and Non-Matches to output model
+	 */
+	private final boolean pushAll;
+	/**
 	 * Arguments for exact match algorithm
 	 */
 	private final List<String> exactMatch;
@@ -221,6 +225,7 @@ public class Score {
 		
 		// options
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription("If set, this will clear the input model after scoring is complete"));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("push-all").setDescription("If set, this will push all matches and non matches to output model"));
 		
 		// exactMatch foreignLink
 		// exactMatch subNodeLink
@@ -257,6 +262,7 @@ public class Score {
 		this.foreignKey = foreignKeyArg;
 		this.objToVIVO = objToVIVOArg;
 		this.objToScore = objToScoreArg;
+		this.pushAll = false;
 	}
 	
 	/**
@@ -327,6 +333,7 @@ public class Score {
 		log.debug("output has " + outputCount + " statements in it");
 		
 		this.wipeInputModel = opts.has("w");
+		this.pushAll = opts.has("l");
 		this.exactMatch = opts.getAll("e");
 		this.pairwise = opts.getAll("p");
 		//TODO cah: uncomment when regex implemented
@@ -382,6 +389,10 @@ public class Score {
 	private static void commitResultSet(Model result, ResultSet storeResult, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
 		RDFNode authorNode;
 		QuerySolution vivoSolution;
+		
+		if(!storeResult.hasNext()){
+			result.add(recursiveSanitizeBuild(paperResource,null));
+		}
 		
 		// loop thru resultset
 		while(storeResult.hasNext()) {
@@ -699,6 +710,9 @@ public class Score {
 			ResultSet matches = executeQuery(this.vivo.getJenaModel(), "SELECT ?sub WHERE { ?sub <" + vivoAttribute + "> \"" + obj + "\" }");
 			if(!matches.hasNext()) {
 				log.info("No matches in VIVO found");
+				if (this.pushAll){
+					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, null));
+				}
 			} else {
 				log.info("Matches in VIVO found");
 				// loop thru resources
