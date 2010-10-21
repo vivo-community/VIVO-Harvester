@@ -30,3 +30,5 @@
 /usr/share/vivoingest/scripts/runPeopleSoftHarvest.sh
 /usr/share/vivoingest/scripts/runPubMedHarvest.sh
 /usr/share/vivoingest/scripts/runRDBMSHarvest.sh
+
+
