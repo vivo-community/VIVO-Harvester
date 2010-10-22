@@ -249,6 +249,7 @@
     	<groupId>mysql</groupId>
     	<artifactId>mysql-connector-java</artifactId>
     	<version>5.1.13</version>
+    	<scope>runtime</scope>
     </dependency>
     <dependency>
     	<groupId>org.apache.axis2</groupId>
@@ -279,11 +280,6 @@
     <dependency>
     	<groupId>org.apache.axis2</groupId>
     	<artifactId>axis2-fastinfoset</artifactId>
-    	<version>1.5.1</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.apache.axis2</groupId>
-    	<artifactId>axis2-integration</artifactId>
     	<version>1.5.1</version>
     </dependency>
     <dependency>
@@ -351,13 +347,14 @@
     	<artifactId>h2</artifactId>
     	<version>1.2.140</version>
     	<type>jar</type>
+    	<scope>runtime</scope>
     </dependency>
     <dependency>
     	<groupId>net.sourceforge.jtds</groupId>
     	<artifactId>jtds</artifactId>
     	<version>1.2.4</version>
     	<type>jar</type>
-    	<scope>compile</scope>
+    	<scope>runtime</scope>
     </dependency>
 	<dependency>
     	<groupId>de.fuberlin.wiwiss</groupId>
