@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordHandler type="org.vivoweb.ingest.util.repo.TextFileRecordHandler">
+	<Param name="fileDir">XMLVault/PeopleSoft-XML-TFRH</Param>
+</RecordHandler>

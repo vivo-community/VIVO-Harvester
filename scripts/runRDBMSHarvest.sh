@@ -1,41 +1,30 @@
-# Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
+#!/bin/bash
+
+# Copyright (c) 2010 Eliza Chan
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the new BSD license
 # which accompanies this distribution, and is available at
 # http://www.opensource.org/licenses/bsd-license.html
 # 
 # Contributors:
-#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
-
-#!/bin/bash
+#     Eliza Chan
 
 # Set working directory
 cd /usr/share/vivoingest
 
-# Execute Fetch for RDBMS
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -X config/tasks/JDBCFetchTask.xml
+# Execute Fetch/Translate using D2RMap
+java -cp lib/d2rmap-V03.jar:bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.fetch.D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -u config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf
 
-# Execute Translate - to translate from an unknown data source you must convert the xml/rdf to the vivo ontology by defining an xsl file
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  
+# Execute Transfer to transfer rdf into "d2rStaging" JENA model
+java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/JDBCXMLRecordHandler.xml -o config/jenaModels/VIVO.xml -O modelName=d2rStaging
 
-# Execute Transfer to transfer rdf into "scoring" JENA model
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O scoring  
+# Execute Transfer to load "d2rStaging" JENA model into VIVO
+java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I modelName=d2rStaging -o config/jenaModels/VIVO.xml
 
-# Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -a 3
-
-# Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
-# Off by default, examples show below
-#java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
-#java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
-
-# Execute Transfer to load "staging" JENA model into VIVO
-java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I staging -o config/jenaModels/VIVO.xml
-
-# Execute Transfer to dump "staging" JENA model rdf into file
+# Execute Transfer to dump "d2rStaging" JENA model rdf into file
 # Shown as example
-#java -cp bin/ingest-0.5.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -d dump.rdf
+#java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I modelName=d2rStaging -d dump.rdf
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-/etc/init.d/tomcat restart
+#/etc/init.d/tomcat restart

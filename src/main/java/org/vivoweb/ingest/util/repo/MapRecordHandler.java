@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
@@ -24,20 +20,20 @@ import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
  */
 public class MapRecordHandler extends RecordHandler {
 	/**
-	 * The map to store records in 
+	 * The map to store records in
 	 */
-	Map<String,String> map;
+	Map<String, String> map;
 	/**
 	 * The map to store metadata in
 	 */
-	Map<String,SortedSet<RecordMetaData>> metaDataMap;
+	Map<String, SortedSet<RecordMetaData>> metaDataMap;
 	
 	/**
 	 * Default Constructor
 	 */
 	public MapRecordHandler() {
-		this.map = new HashMap<String,String>();
-		this.metaDataMap = new HashMap<String,SortedSet<RecordMetaData>>();
+		this.map = new HashMap<String, String>();
+		this.metaDataMap = new HashMap<String, SortedSet<RecordMetaData>>();
 	}
 	
 	@Override
@@ -62,7 +58,7 @@ public class MapRecordHandler extends RecordHandler {
 	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
 		if(!this.map.containsKey(recID)) {
-			throw new IllegalArgumentException("Record "+recID+" does not exist!");
+			throw new IllegalArgumentException("Record " + recID + " does not exist!");
 		}
 		return this.map.get(recID);
 	}
@@ -98,7 +94,7 @@ public class MapRecordHandler extends RecordHandler {
 		public Record next() {
 			String key = this.keyIter.next();
 			String data = MapRecordHandler.this.map.get(key);
-			return new Record(key,data,MapRecordHandler.this);
+			return new Record(key, data, MapRecordHandler.this);
 		}
 		
 		@Override
@@ -109,7 +105,7 @@ public class MapRecordHandler extends RecordHandler {
 	
 	@Override
 	public void setParams(Map<String, String> params) throws IllegalArgumentException, IOException {
-		//No params to set
+		// No params to set
 	}
 	
 	@Override

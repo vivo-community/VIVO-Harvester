@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
@@ -39,8 +35,8 @@ import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 
 /**
- * Module for fetching PubMed Citations using the PubMed SOAP Interface
- * Based on the example code available at the PubMed Website.
+ * Module for fetching PubMed Citations using the PubMed SOAP Interface Based on the example code available at the
+ * PubMed Website.
  * @author Stephen V. Williams (swilliams@ctrip.ufl.edu)
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
@@ -49,15 +45,15 @@ public class PubmedSOAPFetch {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(PubmedSOAPFetch.class);							//Initialize the logger
+	private static Log log = LogFactory.getLog(PubmedSOAPFetch.class); // Initialize the logger
 	/**
 	 * Email address pubmed with contact in case of issues
 	 */
-	private String strEmailAddress;
+	private final String strEmailAddress;
 	/**
 	 * Location information pubmed will use to contact in case of issues
 	 */
-	private String strToolLocation;
+	private final String strToolLocation = "VIVO_Harvester_(vivo.sourceforge.net)";
 	/**
 	 * Writer for our output stream
 	 */
@@ -65,56 +61,51 @@ public class PubmedSOAPFetch {
 	/**
 	 * Query to run on pubmed data
 	 */
-	private String strSearchTerm;
+	private final String strSearchTerm;
 	/**
 	 * Maximum number of records to fetch
 	 */
-	private String strMaxRecords;
+	private final String strMaxRecords;
 	/**
 	 * Number of records to fetch per batch
 	 */
-	private String strBatchSize;
+	private final String strBatchSize;
 	
 	/**
-	 * Constructor
-	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
-	 * person responsible for this install of the program is required by PubMed guidelines so
-	 * the person can be contacted if there is a problem, such as sending too many queries
-	 * too quickly. 
+	 * Constructor Primary method for running a PubMed SOAP Fetch. The email address and location of the person
+	 * responsible for this install of the program is required by PubMed guidelines so the person can be contacted if
+	 * there is a problem, such as sending too many queries too quickly.
 	 * @author Dale Scheppler
 	 * @author Chris Haines
 	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
-	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
 	 * @param outStream The output stream for the method.
 	 */
-	public PubmedSOAPFetch(String strEmail, String strToolLoc, OutputStream outStream) {
+	// @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
+	public PubmedSOAPFetch(String strEmail, /* String strToolLoc, */OutputStream outStream) {
 		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
-		this.strToolLocation = strToolLoc; // This provides further information to NIH
+		//		this.strToolLocation = strToolLoc; // This provides further information to NIH
 		this.strSearchTerm = queryAll();
-		this.strMaxRecords = getHighestPMID()+"";
+		this.strMaxRecords = getHighestPMID() + "";
 		this.strBatchSize = "1000";
 		setXMLWriter(outStream);
 	}
 	
 	/**
-	 * Constructor
-	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
-	 * person responsible for this install of the program is required by PubMed guidelines so
-	 * the person can be contacted if there is a problem, such as sending too many queries
-	 * too quickly. 
+	 * Constructor Primary method for running a PubMed SOAP Fetch. The email address and location of the person
+	 * responsible for this install of the program is required by PubMed guidelines so the person can be contacted if
+	 * there is a problem, such as sending too many queries too quickly.
 	 * @author Dale Scheppler
 	 * @author Chris Haines
 	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
-	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
 	 * @param searchTerm query to run on pubmed data
 	 * @param maxRecords maximum number of records to fetch
 	 * @param batchSize number of records to fetch per batch
 	 * @param outStream The output stream for the method.
 	 */
-	public PubmedSOAPFetch(String strEmail, String strToolLoc, String searchTerm, String maxRecords, String batchSize, OutputStream outStream)
-	{
+	// @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
+	public PubmedSOAPFetch(String strEmail, /* String strToolLoc, */String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
 		this.strEmailAddress = strEmail; // NIH Will email this person if there is a problem
-		this.strToolLocation = strToolLoc; // This provides further information to NIH
+		//		this.strToolLocation = strToolLoc; // This provides further information to NIH
 		this.strSearchTerm = searchTerm;
 		this.strMaxRecords = maxRecords;
 		this.strBatchSize = batchSize;
@@ -128,18 +119,18 @@ public class PubmedSOAPFetch {
 	 */
 	public PubmedSOAPFetch(ArgList argList) throws IOException {
 		this.strEmailAddress = argList.get("m");
-		this.strToolLocation = argList.get("l");
+		//		this.strToolLocation = argList.get("l");
 		String repositoryConfig = argList.get("o");
 		this.strSearchTerm = argList.get("t");
 		this.strMaxRecords = argList.get("n");
-		this.strBatchSize  = argList.get("b");
+		this.strBatchSize = argList.get("b");
 		RecordHandler rhRecordHandler;
 		try {
-			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
+			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig,argList.getProperties("O"));
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 		OutputStream os = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", rhRecordHandler, this.getClass());
 		setXMLWriter(os);
@@ -149,7 +140,8 @@ public class PubmedSOAPFetch {
 	 * Performs an ESearch against PubMed database and returns the query web environment/query key data
 	 * @param term The search term to run against pubmed
 	 * @param maxNumRecords The maximum number of records to fetch
-	 * @return String[] = {WebEnv, QueryKey, number of records found, first PMID} from the search - used by fetchPubMedEnv
+	 * @return String[] = {WebEnv, QueryKey, number of records found, first PMID} from the search - used by
+	 * fetchPubMedEnv
 	 */
 	public String[] runESearch(String term, int maxNumRecords) {
 		return runESearch(term, maxNumRecords, 0);
@@ -160,15 +152,14 @@ public class PubmedSOAPFetch {
 	 * @param term The search term to run against pubmed
 	 * @param maxNumRecords The maximum number of records to fetch
 	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID
-	 * @return String[] = {WebEnv, QueryKey, number of records found, first PMID} from the search - used by fetchPubMedEnv
+	 * @return String[] = {WebEnv, QueryKey, number of records found, first PMID} from the search - used by
+	 * fetchPubMedEnv
 	 * @author Chris Haines
 	 * @author Dale Scheppler
 	 */
-	public String[] runESearch(String term, int maxNumRecords, int retStart)
-	{
+	public String[] runESearch(String term, int maxNumRecords, int retStart) {
 		String[] env = new String[4];
-		try
-		{
+		try {
 			// create service connection
 			EUtilsServiceStub service = new EUtilsServiceStub();
 			// create a new search
@@ -178,9 +169,9 @@ public class PubmedSOAPFetch {
 			// set search term
 			req.setTerm(term);
 			// set max number of records to return from search
-			req.setRetMax(maxNumRecords+"");
+			req.setRetMax(maxNumRecords + "");
 			// set number to start at
-			req.setRetStart(retStart+"");
+			req.setRetStart(retStart + "");
 			// save this search so we can use the returned set
 			req.setUsehistory("y");
 			// run the search and get result set
@@ -188,14 +179,12 @@ public class PubmedSOAPFetch {
 			// save the environment data
 			env[0] = res.getWebEnv();
 			env[1] = res.getQueryKey();
-			env[2] = ""+res.getIdList().getId().length;
+			env[2] = "" + res.getIdList().getId().length;
 			env[3] = res.getIdList().getId()[0];
 			
 			log.info("Query resulted in a total of " + env[2] + " records.");
-		}
-		catch (RemoteException e)
-		{
-			log.error("PubMedSOAPFetch ESearchEnv failed with error: ",e);
+		} catch(RemoteException e) {
+			log.error("PubMedSOAPFetch ESearchEnv failed with error: ", e);
 		}
 		return env;
 	}
@@ -218,8 +207,8 @@ public class PubmedSOAPFetch {
 		log.info("Fetching records from search");
 		try {
 			serializeFetchRequest(req);
-		}catch(RemoteException e) {
-			log.error("Could not run search",e);
+		} catch(RemoteException e) {
+			log.error("Could not run search", e);
 		}
 	}
 	
@@ -239,7 +228,7 @@ public class PubmedSOAPFetch {
 	/**
 	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
 	 * @param env {WebEnv, QueryKey, number of records found} - from ESearch
-	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID 
+	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID
 	 * @param numRecords The number of records to fetch
 	 * @throws IllegalArgumentException env is invalid
 	 */
@@ -255,8 +244,7 @@ public class PubmedSOAPFetch {
 	 * @return highest PMID
 	 * @author Dale Scheppler
 	 */
-	private int getHighestPMID()
-	{
+	private int getHighestPMID() {
 		return Integer.parseInt(runESearch(queryAll(), 1)[3]);
 	}
 	
@@ -265,16 +253,15 @@ public class PubmedSOAPFetch {
 	 * @return highest PMID
 	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
 	 */
-	public static int getHighestRecordNumber() {
-		return new PubmedSOAPFetch("", "", queryAll(), "1", "1", new NullOutputStream()).getHighestPMID();
+	public int getHighestRecordNumber() {
+		return new PubmedSOAPFetch(this.strEmailAddress, queryAll(), "1", "1", new NullOutputStream()).getHighestPMID();
 	}
 	
 	/**
 	 * Get query to fetch all records in pubmed
 	 * @return query string for all pubmed records
 	 */
-	public static String queryAll()
-	{
+	public static String queryAll() {
 		return "1:8000[dp]";
 	}
 	
@@ -284,10 +271,9 @@ public class PubmedSOAPFetch {
 	 * @param end end date
 	 * @return query string for date range
 	 */
-	public static String queryAllByDateRange(Calendar start, Calendar end)
-	{
+	public static String queryAllByDateRange(Calendar start, Calendar end) {
 		SimpleDateFormat dfm = new SimpleDateFormat("yyyy/M/d");
-		return dfm.format(start.getTime())+"[PDAT]:"+dfm.format(end.getTime())+"[PDAT]";		
+		return dfm.format(start.getTime()) + "[PDAT]:" + dfm.format(end.getTime()) + "[PDAT]";
 	}
 	
 	/**
@@ -295,21 +281,19 @@ public class PubmedSOAPFetch {
 	 * @param date date to fetch since
 	 * @return String query to fetch all from given date
 	 */
-	public static String queryAllSinceDate(Calendar date)
-	{
+	public static String queryAllSinceDate(Calendar date) {
 		SimpleDateFormat dfm = new SimpleDateFormat("yyyy/M/d");
-		return dfm.format(date.getTime())+"[PDAT]:8000[PDAT]";
+		return dfm.format(date.getTime()) + "[PDAT]:8000[PDAT]";
 	}
 	
 	/**
-	 * Get query string to locate all records matching the given affiliation
-	 * Ex: "vivoweb.org" matches records with "vivoweb.org" in the affiliation field
+	 * Get query string to locate all records matching the given affiliation Ex: "vivoweb.org" matches records with
+	 * "vivoweb.org" in the affiliation field
 	 * @param strAffiliation The affiliation information
 	 * @return A query string that will allow a search by affiliation.
 	 */
-	public static String queryByAffiliation(String strAffiliation)
-	{
-		return strAffiliation+"[ad]";
+	public static String queryByAffiliation(String strAffiliation) {
+		return strAffiliation + "[ad]";
 	}
 	
 	/**
@@ -318,14 +302,13 @@ public class PubmedSOAPFetch {
 	 * @param intStopPMID end PMID
 	 * @return String query to fetch all in range
 	 */
-	public static String queryByRange(int intStartPMID, int intStopPMID)
-	{
-		return intStartPMID+":"+intStopPMID+"[uid]";
+	public static String queryByRange(int intStartPMID, int intStopPMID) {
+		return intStartPMID + ":" + intStopPMID + "[uid]";
 	}
 	
 	/**
-	 * Sanitizes XML in preparation for writing to output stream
-	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
+	 * Sanitizes XML in preparation for writing to output stream Removes xml namespace attributes, XML wrapper tag, and
+	 * splits each record on a new line
 	 * @param strInput The XML to Sanitize.
 	 * @author Chris Haines
 	 * @author Stephen Williams
@@ -339,12 +322,13 @@ public class PubmedSOAPFetch {
 		try {
 			log.trace("Writing to output");
 			this.xmlWriter.write(newS);
-			//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
+			// file close statements. Warning, not closing the file will leave incomplete xml files and break the
+			// translate method
 			this.xmlWriter.write("\n");
 			this.xmlWriter.flush();
 			log.trace("Writing complete");
 		} catch(IOException e) {
-			log.error("Unable to write XML to file.",e);
+			log.error("Unable to write XML to file.", e);
 		}
 	}
 	
@@ -354,33 +338,33 @@ public class PubmedSOAPFetch {
 	 * @throws RemoteException error running EFetch
 	 */
 	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws RemoteException {
-		//Create buffer for raw, pre-sanitized output
-		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
-		//Connect to pubmed
+		// Create buffer for raw, pre-sanitized output
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		// Connect to pubmed
 		EFetchPubmedServiceStub service = new EFetchPubmedServiceStub();
-		//Run the EFetch request
+		// Run the EFetch request
 		EFetchResult result = service.run_eFetch(req);
-		//Get the article set
+		// Get the article set
 		PubmedArticleSet_type0 articleSet = result.getPubmedArticleSet();
 		XMLStreamWriter writer;
 		try {
-			//Create a temporary xml writer to our buffer
+			// Create a temporary xml writer to our buffer
 			writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
 			MTOMAwareXMLSerializer serial = new MTOMAwareXMLSerializer(writer);
 			log.debug("Buffering records");
-			//Output data
+			// Output data
 			articleSet.serialize(new QName("RemoveMe"), null, serial);
 			serial.flush();
 			log.debug("Buffering complete");
-			log.debug("buffer size: "+buffer.size());
-			//Dump buffer to String
+			log.debug("buffer size: " + buffer.size());
+			// Dump buffer to String
 			String iString = buffer.toString("UTF-8");
-			//Sanitize string (which writes it to xmlWriter)
+			// Sanitize string (which writes it to xmlWriter)
 			sanitizeXML(iString);
 		} catch(XMLStreamException e) {
-			log.error("Unable to write to output",e);
+			log.error("Unable to write to output", e);
 		} catch(UnsupportedEncodingException e) {
-			log.error("Cannot get xml from buffer",e);
+			log.error("Cannot get xml from buffer", e);
 		}
 	}
 	
@@ -393,7 +377,7 @@ public class PubmedSOAPFetch {
 			// Writer to the stream we're getting from the controller.
 			this.xmlWriter = new OutputStreamWriter(os, "UTF-8");
 		} catch(UnsupportedEncodingException e) {
-			log.error("",e);
+			log.error("", e);
 		}
 	}
 	
@@ -404,11 +388,12 @@ public class PubmedSOAPFetch {
 		log.info("Fetch: Start");
 		int recToFetch;
 		if(this.strMaxRecords.equalsIgnoreCase("all")) {
-			recToFetch = getHighestRecordNumber();
+			//			recToFetch = getHighestRecordNumber();
+			recToFetch = getHighestPMID();
 		} else {
 			recToFetch = Integer.parseInt(this.strMaxRecords);
 		}
-		int intBatchSize = Integer.parseInt(this.strBatchSize); 
+		int intBatchSize = Integer.parseInt(this.strBatchSize);
 		if(recToFetch <= intBatchSize) {
 			fetchPubMed(runESearch(this.strSearchTerm, recToFetch));
 		} else {
@@ -416,15 +401,15 @@ public class PubmedSOAPFetch {
 			String WebEnv = env[0];
 			String QueryKey = env[1];
 			// sanity check for max records
-			if (Integer.parseInt(env[2]) < recToFetch) {
+			if(Integer.parseInt(env[2]) < recToFetch) {
 				recToFetch = Integer.parseInt(env[2]);
 			}
-			for(int x = recToFetch; x > 0; x-=intBatchSize) {
-				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
+			for(int x = recToFetch; x > 0; x -= intBatchSize) {
+				int maxRec = (x <= intBatchSize) ? x : intBatchSize;
 				int startRec = recToFetch - x;
-				log.debug("maxRec: "+maxRec);
-				log.debug("startRec: "+startRec);
-				fetchPubMed(WebEnv, QueryKey, startRec+"", maxRec+"");
+				log.debug("maxRec: " + maxRec);
+				log.debug("startRec: " + startRec);
+				fetchPubMed(WebEnv, QueryKey, startRec + "", maxRec + "");
 			}
 		}
 		log.info("Fetch: End");
@@ -437,8 +422,9 @@ public class PubmedSOAPFetch {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("PubmedSOAPFetch");
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("location").setDescription("contact location/institution").withParameter(true, "LOCATION"));
+		//		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("location").setDescription("contact location/institution").withParameter(true, "LOCATION"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against pubmed").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("numRecords").setDescription("maximum records to return").withParameter(true, "NUMBER").setDefaultValue("100"));
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batchSize").setDescription("number of records to fetch per batch").withParameter(true, "NUMBER").setDefaultValue("1000"));
@@ -453,10 +439,10 @@ public class PubmedSOAPFetch {
 		try {
 			new PubmedSOAPFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(),e);
+			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 	}
 }

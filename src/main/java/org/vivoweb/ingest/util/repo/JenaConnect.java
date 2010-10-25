@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.util.repo;
 
@@ -20,6 +16,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -46,7 +43,7 @@ public class JenaConnect {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(JenaConnect.class);
+	protected static Log log = LogFactory.getLog(JenaConnect.class);
 	/**
 	 * Model we are connecting to
 	 */
@@ -133,10 +130,11 @@ public class JenaConnect {
 	/**
 	 * Constructor (Load rdf from input stream)
 	 * @param in input stream to load rdf from
+	 * @param namespace the base uri to use for imported uris
 	 */
-	public JenaConnect(InputStream in) {
+	public JenaConnect(InputStream in, String namespace) {
 		this();
-		this.loadRDF(in);
+		this.loadRDF(in, namespace);
 	}
 	
 	/**
@@ -148,7 +146,20 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(FileObject configFile) throws ParserConfigurationException, SAXException, IOException {
-		return build(new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream()));
+		return parseConfig(configFile, null);
+	}
+	
+	/**
+	 * Config File Based Factory that overrides parameters
+	 * @param configFile the vfs config file descriptor
+	 * @param overrideParams the parameters to override the file with
+	 * @return JenaConnect instance
+	 * @throws IOException error connecting
+	 * @throws SAXException xml parse error
+	 * @throws ParserConfigurationException xml parse error
+	 */
+	public static JenaConnect parseConfig(FileObject configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		return build(new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream(), overrideParams));
 	}
 	
 	/**
@@ -165,6 +176,19 @@ public class JenaConnect {
 	
 	/**
 	 * Config File Based Factory
+	 * @param configFile the config file descriptor
+	 * @param overrideParams the parameters to override the file with
+	 * @return JenaConnect instance
+	 * @throws IOException error connecting
+	 * @throws SAXException xml parse error
+	 * @throws ParserConfigurationException xml parse error
+	 */
+	public static JenaConnect parseConfig(File configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		return parseConfig(VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()), overrideParams);
+	}
+	
+	/**
+	 * Config File Based Factory
 	 * @param configFileName the config file path
 	 * @return JenaConnect instance
 	 * @throws ParserConfigurationException error connecting
@@ -176,12 +200,28 @@ public class JenaConnect {
 	}
 	
 	/**
+	 * Config File Based Factory
+	 * @param configFileName the config file path
+	 * @param overrideParams the parameters to override the file with
+	 * @return JenaConnect instance
+	 * @throws ParserConfigurationException error connecting
+	 * @throws SAXException xml parse error
+	 * @throws IOException xml parse error
+	 */
+	public static JenaConnect parseConfig(String configFileName, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		return parseConfig(VFS.getManager().resolveFile(new File("."), configFileName), overrideParams);
+	}
+	
+	/**
 	 * Build a JenaConnect based on the given parameter set
 	 * @param params the parameter set
 	 * @return the JenaConnect
 	 */
-	private static JenaConnect build(Map<String,String> params) {
-		if(!params.containsKey("type")){
+	private static JenaConnect build(Map<String, String> params) {
+		// for(String param : params.keySet()) {
+		// log.debug(param+" => "+params.get(param));
+		// }
+		if(!params.containsKey("type")) {
 			throw new IllegalArgumentException("must define type!");
 		}
 		JenaConnect jc;
@@ -198,7 +238,7 @@ public class JenaConnect {
 				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"));
 			}
 		} else {
-			throw new IllegalArgumentException("unknown type: "+params.get("type"));
+			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
 		return jc;
 	}
@@ -206,10 +246,11 @@ public class JenaConnect {
 	/**
 	 * Load in RDF
 	 * @param in input stream to read rdf from
+	 * @param namespace the base uri to use for imported uris
 	 */
-	public void loadRDF(InputStream in) {
-		getJenaModel().read(in, null);
-		log.info("RDF Data was loaded");
+	public void loadRDF(InputStream in, String namespace) {
+		getJenaModel().read(in, namespace);
+		log.debug("RDF Data was loaded");
 	}
 	
 	/**
@@ -218,23 +259,37 @@ public class JenaConnect {
 	 */
 	public void exportRDF(OutputStream out) {
 		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
-		fasterWriter.setProperty("showXmlDeclaration","true");
+		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
 		fasterWriter.setProperty("relativeURIs", "");
 		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
 		fasterWriter.write(this.jenaModel, osw, "");
-		log.info("RDF/XML Data was exported");
+		log.debug("RDF/XML Data was exported");
 	}
 	
 	/**
 	 * Adds all records in a RecordHandler to the model
 	 * @param rh the RecordHandler to pull records from
+	 * @param namespace the base uri to use for imported uris
+	 * @return number of records added
 	 */
-	public void importRDF(RecordHandler rh) {
+	public int importRDF(RecordHandler rh, String namespace) {
+		int processCount = 0;
 		for(Record r : rh) {
-			ByteArrayInputStream bais = new  ByteArrayInputStream(r.getData().getBytes());
-			this.getJenaModel().read(bais,null);
+			log.trace("loading record: " + r.getID());
+			if(namespace != null) {
+				// log.trace("using namespace '"+namespace+"'");
+			}
+			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
+			this.getJenaModel().read(bais, namespace);
+			try {
+				bais.close();
+			} catch(IOException e) {
+				// ignore
+			}
+			processCount++;
 		}
+		return processCount;
 	}
 	
 	/**
@@ -245,9 +300,26 @@ public class JenaConnect {
 		try {
 			this.conn.close();
 		} catch(Exception e) {
-			//ignore
+			// ignore
 		}
 	}
+	
+	// /**
+	// * Sets the namespace for relative uris
+	// * @param namespace the namesapce to use
+	// */
+	// public void setRelativeURINamespaces(String namespace) {
+	//		
+	// }
+	//	
+	// /**
+	// * Move nodes in one namespace to another
+	// * @param oldNamespace the old namespace
+	// * @param newNamespace the new namespace
+	// */
+	// public void swapURINamespace(String oldNamespace, String newNamespace) {
+	//		
+	// }
 	
 	/**
 	 * Accessor for Jena Model
@@ -300,7 +372,7 @@ public class JenaConnect {
 		/**
 		 * Param list from the config file
 		 */
-		private Map<String,String> params;
+		private final Map<String, String> params;
 		/**
 		 * temporary storage for cdata
 		 */
@@ -314,7 +386,7 @@ public class JenaConnect {
 		 * Default Constructor
 		 */
 		protected JenaConnectConfigParser() {
-			this.params = new HashMap<String,String>();
+			this.params = new HashMap<String, String>();
 			this.tempVal = "";
 			this.tempParamName = "";
 		}
@@ -322,15 +394,26 @@ public class JenaConnect {
 		/**
 		 * Build a JenaConnect using the input stream data
 		 * @param inputStream stream to read config from
+		 * @param overrideParams parameters that override the params in the config file
 		 * @return the JenaConnect described by the stream
 		 * @throws ParserConfigurationException parser incorrectly configured
 		 * @throws SAXException xml error
 		 * @throws IOException error reading stream
 		 */
-		protected Map<String, String> parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
+		protected Map<String, String> parseConfig(InputStream inputStream, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
 			sp.parse(inputStream, this); // parse the file and also register this class for call backs
+			if(overrideParams != null) {
+				for(String key : overrideParams.stringPropertyNames()) {
+					this.params.put(key, overrideParams.getProperty(key));
+				}
+			}
+			for(String param : this.params.keySet()) {
+				if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
+					JenaConnect.log.debug("'" + param + "' - '" + this.params.get(param) + "'");
+				}
+			}
 			return this.params;
 		}
 		
@@ -341,7 +424,7 @@ public class JenaConnect {
 			if(qName.equalsIgnoreCase("Param")) {
 				this.tempParamName = attributes.getValue("name");
 			} else if(!qName.equalsIgnoreCase("Model")) {
-				throw new SAXException("Unknown Tag: "+qName);
+				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
 		
@@ -357,7 +440,7 @@ public class JenaConnect {
 			} else if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
 			} else {
-				throw new SAXException("Unknown Tag: "+qName);
+				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
 	}

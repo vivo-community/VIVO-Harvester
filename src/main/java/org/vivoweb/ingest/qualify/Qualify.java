@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.qualify;
 
@@ -95,7 +91,7 @@ public class Qualify {
 		setModel(argList.get("j"));
 		this.dataPredicate = argList.get("d");
 		this.regex = argList.has("r");
-		this.matchTerm = (this.regex?argList.get("r"):argList.get("t"));
+		this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
 		this.newVal = argList.get("v");
 	}
 	
@@ -106,19 +102,19 @@ public class Qualify {
 	 */
 	private void setModel(String configFileName) throws IOException {
 		try {
-			//connect to proper model, if specified on command line
-			if (this.modelName != null) {
+			// connect to proper model, if specified on command line
+			if(this.modelName != null) {
 				log.trace("Using " + this.modelName + " for input Model");
-				this.model = new JenaConnect(JenaConnect.parseConfig(configFileName),this.modelName);
+				this.model = new JenaConnect(JenaConnect.parseConfig(configFileName), this.modelName);
 			} else {
 				this.model = JenaConnect.parseConfig(configFileName);
 			}
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(IOException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	
@@ -131,16 +127,16 @@ public class Qualify {
 	private void strReplace(String dataType, String oldValue, String newValue) {
 		StmtIterator stmtItr = this.model.getJenaModel().listStatements(null, this.model.getJenaModel().createProperty(dataType), oldValue);
 		
-		while (stmtItr.hasNext()) {
+		while(stmtItr.hasNext()) {
 			Statement stmt = stmtItr.next();
 			log.trace("Replacing record");
-			log.debug("oldValue: "+oldValue);
-			log.debug("newValue: "+newValue);
+			log.debug("oldValue: " + oldValue);
+			log.debug("newValue: " + newValue);
 			this.model.getJenaModel().add(stmt.getSubject(), stmt.getPredicate(), newValue);
 			stmt.remove();
 		}
 	}
-
+	
 	/**
 	 * Replace records matching dataType & the regexMatch with newValue
 	 * @param dataType data type to match
@@ -156,12 +152,12 @@ public class Qualify {
 			String obj = stmt.getString();
 			if(obj.matches(regexMatch)) {
 				log.trace("Replacing record");
-				log.debug("oldValue: "+obj);
-				log.debug("newValue: "+newValue);
+				log.debug("oldValue: " + obj);
+				log.debug("newValue: " + newValue);
 				this.model.getJenaModel().add(stmt.getSubject(), stmt.getPredicate(), newValue);
 				stmt.remove();
 			} else {
-				log.debug("no match: "+obj);
+				log.debug("no match: " + obj);
 			}
 		}
 	}
@@ -171,10 +167,10 @@ public class Qualify {
 	 */
 	public void executeTask() {
 		if(this.regex) {
-			log.info("Running Regex replace '"+this.dataPredicate+"': '"+this.matchTerm+"' with '"+this.newVal+"'");
+			log.info("Running Regex replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
 			regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
 		} else {
-			log.info("Running text replace '"+this.dataPredicate+"': '"+this.matchTerm+"' with '"+this.newVal+"'");
+			log.info("Running text replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
 			strReplace(this.dataPredicate, this.matchTerm, this.newVal);
 		}
 	}
@@ -203,10 +199,10 @@ public class Qualify {
 		try {
 			new Qualify(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 		log.info("SPARQLQualify: End");
 	}

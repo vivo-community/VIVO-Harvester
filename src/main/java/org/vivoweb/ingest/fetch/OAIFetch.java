@@ -1,12 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the new BSD license
- * which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html
- * 
- * Contributors:
- *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
@@ -92,13 +88,13 @@ public class OAIFetch {
 		String repositoryConfig = argList.get("o");
 		RecordHandler rhRecordHandler;
 		try {
-			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
+			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig, argList.getProperties("O"));
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(IOException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 		this.osOutStream = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler, this.getClass());
 	}
@@ -111,15 +107,15 @@ public class OAIFetch {
 		try {
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
 		} catch(IOException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		} catch(SAXException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		} catch(TransformerException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		} catch(NoSuchFieldException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 		log.info("Fetch: End");
 	}
@@ -134,6 +130,7 @@ public class OAIFetch {
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
 	
@@ -147,7 +144,7 @@ public class OAIFetch {
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.fatal(e.getMessage(), e);
 		}
 	}
 }
