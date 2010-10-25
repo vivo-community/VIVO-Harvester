@@ -15,7 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.fetch.PubmedFetch;
+import org.vivoweb.ingest.fetch.PubmedSOAPFetch;
 import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.w3c.dom.Document;
@@ -59,7 +59,7 @@ public class PubmedSOAPFetchTest extends TestCase {
 	public final void testPubmedSOAPFetchMain() {
 		try {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
-			PubmedFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
 			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			for(Record r : this.rh) {

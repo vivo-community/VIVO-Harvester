@@ -3,7 +3,7 @@ Version: 0.6.1
 Section: misc
 Priority: misc
 Architecture: all
-Depends: sun-java6-jre
+Depends: openjdk-6-jre
 Maintainer: VIVO sourceforge team <vivo-dev-all@sourceforge.net>
 Description: The VIVO harvester ingests data from various sources and imports the data into a VIVO database.
 Distribution: development

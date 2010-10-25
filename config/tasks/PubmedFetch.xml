@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Task type="org.vivoweb.ingest.fetch.PubmedSOAPFetch">
 	<Param name="email">hainesc@ctrip.ufl.edu</Param>
-	<Param name="location">University of Florida</Param>
 	<Param name="output">config/recordHandlers/Pubmed-XML-TFRH.xml</Param>
 	<Param name="termSearch">ufl.edu[ad]</Param>
 	<Param name="numRecords">500</Param>
