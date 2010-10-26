@@ -45,7 +45,7 @@ import org.xml.sax.SAXException;
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class PubmedFetch extends NIHFetch{
+public class PubmedFetch extends NIHFetch {
 	
 
 	/**
