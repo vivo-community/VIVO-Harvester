@@ -319,8 +319,8 @@ public class ScoreTest extends TestCase {
 					 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Document\"/>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
 					 "<bibo:pmid>12345678</bibo:pmid>" +
-					 "<rdfs:label>Batch 5: effects in controlled human testing</rdfs:label>" +
-					 "<core:Title>Batch 5: effects in controlled human testing</core:Title>" +
+					 "<rdfs:label>Batch 5 effects in controlled human testing</rdfs:label>" +
+					 "<core:Title>Batch 5 effects in controlled human testing</core:Title>" +
 					 "<score:Affiliation>Room 5 Downing Street, London, England. v@ufl.edu</score:Affiliation>" +
 					 "<bibo:volume>40</bibo:volume>" +
 					 "<bibo:number>2</bibo:number>" +
@@ -464,18 +464,6 @@ public class ScoreTest extends TestCase {
 					 "<score:ufid>78212990</score:ufid>" +
 					 "<foaf:firstName>Guy</foaf:firstName>" +
 					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubMed/article/pmid23656776\">" +
-					 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Document\"/>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<bibo:pmid>23656776</bibo:pmid>" +
-					 "<rdfs:label>Test Paper for Non Matches</rdfs:label>" +
-					 "<core:Title>Test Paper for Non Matches</core:Title>" +
-					 "<score:Affiliation>Room 5 Downing Street, London, England. gfawkes@ufl.edu<</score:Affiliation>" +
-					 "<bibo:volume>40</bibo:volume>" +
-					 "<bibo:number>2</bibo:number>" +
-					 "<core:Year>2010</core:Year>" +
-					 "<score:workEmail>gfawkes@ufl.edu</score:workEmail>" +
 					 "</rdf:Description>" +
 					 "</rdf:RDF>");
 			out.close();
