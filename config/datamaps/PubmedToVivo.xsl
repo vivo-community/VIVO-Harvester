@@ -81,8 +81,18 @@
 	
 	<!-- Email Extraction Regular Expression -->
 	<xsl:template match="MedlineCitation/Article/Affiliation">
-		<xsl:variable name="elValue" select="."/>	
-		<xsl:analyze-string select="$elValue" regex="\s*([a-zA-Z\d\.]*@[a-z\.]*)">			
+		<xsl:variable name="elValue" select="."/>
+		<!--
+		Possible better email match regex.
+		Needs tested. Not sure if &quot will work for "
+		--Dale
+		-->
+		<xsl:analyze-string select="$elValue" regex="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|&quot(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*&quot)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])">	
+		<!--
+		Here's the old expression
+		\s*([a-zA-Z\d\.]*@[a-z\.]*)
+		It was in quotes. Like the one above. 
+		-->			
 			<xsl:matching-substring>
 				<score:workEmail>
 					<xsl:value-of select="regex-group(1)" />
