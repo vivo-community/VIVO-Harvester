@@ -19,7 +19,7 @@
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
-	xnlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'
+	xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'
 	xmlns:db-dbo.vwVIVO='jdbc:jtds:sqlserver://10.241.46.60:1433/DSR/fields/dbo.vwVIVO/'>
 	<!--
 	xmlns:bibo='http://purl.org/ontology/bibo/'
@@ -34,7 +34,7 @@
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     		xmlns:core="http://vivoweb.org/ontology/core#"
     		xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    		xnlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'
+    		xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'
     		xmlns:score='http://vivoweb.org/ontology/score#' > 
 			<xsl:apply-templates select="rdf:Description" />		
 		</rdf:RDF>
@@ -55,7 +55,6 @@
 					<score:AdminDeptID><xsl:value-of select="db-dbo.vwVIVO:PI_DeptID"/></score:AdminDeptID>
 					<core:sponsorAwardId><xsl:value-of select="db-dbo.vwVIVO:PS__Contract"/></core:sponsorAwardId>
 					<ufVivo:dsrNumber><xsl:value-of select="$grantid"/></ufVivo:dsrNumber>
-					
 				</rdf:Description>
 			</xsl:matching-substring>
 		</xsl:analyze-string>
