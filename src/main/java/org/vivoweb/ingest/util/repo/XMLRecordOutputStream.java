@@ -109,4 +109,12 @@ public class XMLRecordOutputStream extends OutputStream {
 		}
 		return true;
 	}
+
+	/**
+	 * Set the record handler
+	 * @param rh new record handler
+	 */
+	public void setRecordHandler(RecordHandler rh) {
+		this.rh = rh;
+	}
 }

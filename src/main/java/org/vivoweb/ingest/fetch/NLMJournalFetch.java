@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the new BSD license
+ * which accompanies this distribution, and is available at
+ * http://www.opensource.org/licenses/bsd-license.html
+ * 
+ * Contributors:
+ *     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchJournalsServiceStub;
@@ -8,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 
 import javax.xml.namespace.QName;
@@ -25,49 +36,41 @@ import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 
 public class NLMJournalFetch extends NIHFetch {
-
 	/**
 	 * Log4J Logger
 	 */
-	protected static Log log = LogFactory.getLog(NIHFetch.class);							//Initialize the logger
+	private static Log log = LogFactory.getLog(NLMJournalFetch.class);
+	/**
+	 * The name of the NLM Journals Database
+	 */
+	private static String database = "???NLMJouranals???";
 
 	
 	/**
-	 * Constructor
-	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
-	 * person responsible for this install of the program is required by PubMed guidelines so
-	 * the person can be contacted if there is a problem, such as sending too many queries
-	 * too quickly. 
-	 * @author Dale Scheppler
-	 * @author Chris Haines
-	 * @author Stephen Williams
-	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
-	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
-	 * @param outStream The output stream for the method.
+	 * Constructor:
+	 * Primary method for running a Journal Fetch. The email address of the person responsible
+	 * for this install of the program is required by NIH guidelines so the person can be
+	 * contacted if there is a problem, such as sending too many queries too quickly.
+	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
+	 * @param outStream output stream to write to
 	 */
-	public NLMJournalFetch(String strEmail, String strToolLoc, OutputStream outStream) {
-		super(strEmail,strToolLoc,outStream);
-		this.strBatchSize = "1000";
+	public NLMJournalFetch(String emailAddress, OutputStream outStream) {
+		super(emailAddress, outStream, database);
 	}
 	
 	/**
-	 * Constructor
-	 * Primary method for running a PubMed SOAP Fetch. The email address and location of the
-	 * person responsible for this install of the program is required by PubMed guidelines so
-	 * the person can be contacted if there is a problem, such as sending too many queries
-	 * too quickly. 
-	 * @author Dale Scheppler
-	 * @author Chris Haines
-	 * @param strEmail Contact email address of the person responsible for this install of the PubMed Harvester
-	 * @param strToolLoc Location of the current tool installation (Eg: UF or Cornell or Pensyltucky U.)
+	 * Constructor:
+	 * Primary method for running a Journal Fetch. The email address of the person responsible
+	 * for this install of the program is required by NIH guidelines so the person can be
+	 * contacted if there is a problem, such as sending too many queries too quickly.
+	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
 	 * @param searchTerm query to run on pubmed data
 	 * @param maxRecords maximum number of records to fetch
 	 * @param batchSize number of records to fetch per batch
-	 * @param outStream The output stream for the method.
+	 * @param outStream output stream to write to
 	 */
-	public NLMJournalFetch(String strEmail, String strToolLoc, String searchTerm, String maxRecords, String batchSize, OutputStream outStream)
-	{
-		super(strEmail,strToolLoc,searchTerm,maxRecords,batchSize,outStream);
+	public NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
+		super(emailAddress, searchTerm, maxRecords, batchSize, outStream, database);
 	}
 	
 	/**
@@ -76,34 +79,17 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public NLMJournalFetch(ArgList argList) throws IOException {
-		super(argList);
-		String repositoryConfig = argList.get("o");
-		RecordHandler rhRecordHandler;
-		try {
-			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig);
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
-		}
-		OutputStream os = new XMLRecordOutputStream("Serial", "<?xml version=\"1.0\"?>\n<!DOCTYPE SerialSet PUBLIC \"-//NLM//DTD Serial, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<SerialSet>\n", "\n</SerialSet>", ".*?<NlmUniqueID>(.*?)</NlmUniqueID>.*?", rhRecordHandler, this.getClass());
-		setXMLWriter(os);
+		super(argList, database, new XMLRecordOutputStream("Serial", "<?xml version=\"1.0\"?>\n<!DOCTYPE SerialSet PUBLIC \"-//NLM//DTD Serial, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<SerialSet>\n", "\n</SerialSet>", ".*?<NlmUniqueID>(.*?)</NlmUniqueID>.*?", null, NLMJournalFetch.class));
 	}
 	
 	
-	/**
-	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
-	 * @param WebEnv web environment from an ESearch
-	 * @param QueryKey query key from an ESearch
-	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID
-	 * @param numRecords The number of records to fetch
-	 */
-	public void fetchJournals(String WebEnv, String QueryKey, String retStart, String numRecords) {
+	@Override
+	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) {
 		EFetchJournalsServiceStub.EFetchRequest req = new EFetchJournalsServiceStub.EFetchRequest();
 		req.setQuery_key(QueryKey);
 		req.setWebEnv(WebEnv);
-		req.setEmail(this.strEmailAddress);
-		req.setTool(this.strToolLocation);
+		req.setEmail(getEmailAddress());
+		req.setTool(getToolName());
 		req.setRetstart(retStart);
 		req.setRetmax(numRecords);
 		log.info("Fetching records from search");
@@ -111,58 +97,6 @@ public class NLMJournalFetch extends NIHFetch {
 			serializeFetchRequest(req);
 		}catch(RemoteException e) {
 			log.error("Could not run search",e);
-		}
-	}
-	
-	/**
-	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
-	 * @param env {WebEnv, QueryKey, number of records found, first PMID} - from ESearch
-	 * @throws IllegalArgumentException env is invalid
-	 * @author Chris Haines
-	 */
-	public void fetchJournals(String[] env) throws IllegalArgumentException {
-		if(env.length < 3) {
-			throw new IllegalArgumentException("Invalid env. Must contain {WebEnv, QueryKey, number of records found}");
-		}
-		fetchJournals(env[0], env[1], "0", env[2]);
-	}
-	
-	/**
-	 * Performs a PubMed Fetch using a previously defined esearch environment and querykey
-	 * @param env {WebEnv, QueryKey, number of records found} - from ESearch
-	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the PMID 
-	 * @param numRecords The number of records to fetch
-	 * @throws IllegalArgumentException env is invalid
-	 */
-	public void fetchJournals(String[] env, String retStart, String numRecords) throws IllegalArgumentException {
-		if(env.length < 2) {
-			throw new IllegalArgumentException("Invalid env. Must contain {WebEnv, QueryKey}");
-		}
-		fetchJournals(env[0], env[1], retStart, numRecords);
-	}
-	
-	/**
-	 * Sanitizes XML in preparation for writing to output stream
-	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
-	 * @param strInput The XML to Sanitize.
-	 * @author Chris Haines
-	 * @author Stephen Williams
-	 */
-	private void sanitizeXML(String strInput) {
-		log.debug("Sanitizing Output");
-		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
-		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</Serial>.*?<Serial", "</Serial>\n<Serial");
-		log.debug("XML File Length - Post Sanitze: " + newS.length());
-		log.debug("Sanitization Complete");
-		try {
-			log.trace("Writing to output");
-			this.xmlWriter.write(newS);
-			//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
-			this.xmlWriter.write("\n");
-			this.xmlWriter.flush();
-			log.trace("Writing complete");
-		} catch(IOException e) {
-			log.error("Unable to write XML to file.",e);
 		}
 	}
 	
@@ -203,42 +137,34 @@ public class NLMJournalFetch extends NIHFetch {
 		}
 	}
 	
-	
 	/**
-	 * Executes the task
+	 * Sanitizes XML in preparation for writing to output stream
+	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
+	 * @param strInput The XML to Sanitize.
 	 */
-	public void execute() {
-		log.info("Fetch: Start");
-		int recToFetch;
-		if(this.strMaxRecords.equalsIgnoreCase("all")) {
-			//todo change
-			recToFetch = 10000;
-		} else {
-			recToFetch = Integer.parseInt(this.strMaxRecords);
+	private void sanitizeXML(String strInput) {
+		log.debug("Sanitizing Output");
+		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
+		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</Serial>.*?<Serial", "</Serial>\n<Serial");
+		log.debug("XML File Length - Post Sanitze: " + newS.length());
+		log.debug("Sanitization Complete");
+		try {
+			log.trace("Writing to output");
+			getOsWriter().write(newS);
+			//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
+			getOsWriter().write("\n");
+			getOsWriter().flush();
+			log.trace("Writing complete");
+		} catch(IOException e) {
+			log.error("Unable to write XML to file.",e);
 		}
-		int intBatchSize = Integer.parseInt(this.strBatchSize); 
-		if(recToFetch <= intBatchSize) {
-			fetchJournals(runESearch(this.strSearchTerm, recToFetch, "journals"));
-		} else {
-			String[] env = runESearch(this.strSearchTerm, recToFetch,"journals");
-			String WebEnv = env[0];
-			String QueryKey = env[1];
-			// sanity check for max records
-			if (Integer.parseInt(env[2]) < recToFetch) {
-				recToFetch = Integer.parseInt(env[2]);
-			}
-			for(int x = recToFetch; x > 0; x-=intBatchSize) {
-				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
-				int startRec = recToFetch - x;
-				log.debug("maxRec: "+maxRec);
-				log.debug("startRec: "+startRec);
-				fetchJournals(WebEnv, QueryKey, startRec+"", maxRec+"");
-			}
-		}
-		log.info("Fetch: End");
 	}
 	
-	
+	@Override
+	protected int getLatestRecord() {
+		//FIXME: make this work for NLM Journal Fetch? Is relevant? if not, try to move out of NIHFetch
+		return Integer.parseInt(runESearch("1:8000[dp]", 1)[3]);
+	}
 	
 	/**
 	 * Main method

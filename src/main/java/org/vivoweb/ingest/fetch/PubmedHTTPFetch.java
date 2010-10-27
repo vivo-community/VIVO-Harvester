@@ -10,19 +10,12 @@
  ******************************************************************************/
 package org.vivoweb.ingest.fetch;
 
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub;
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.EFetchResult;
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.PubmedArticleSet_type0;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.rmi.RemoteException;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.args.ArgList;
@@ -35,11 +28,11 @@ import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class PubmedFetch extends NIHFetch {
+public class PubmedHTTPFetch extends NIHFetch {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(PubmedFetch.class);
+	private static Log log = LogFactory.getLog(PubmedHTTPFetch.class);
 	/**
 	 * The name of the PubMed database
 	 */
@@ -53,7 +46,7 @@ public class PubmedFetch extends NIHFetch {
 	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
 	 * @param outStream output stream to write to
 	 */
-	public PubmedFetch(String emailAddress, OutputStream outStream) {
+	public PubmedHTTPFetch(String emailAddress, OutputStream outStream) {
 		super(emailAddress,outStream,database);
 		setMaxRecords(getLatestRecord()+"");
 	}
@@ -69,7 +62,7 @@ public class PubmedFetch extends NIHFetch {
 	 * @param batchSize number of records to fetch per batch
 	 * @param outStream output stream to write to
 	 */
-	public PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
+	public PubmedHTTPFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
 		super(emailAddress, searchTerm, maxRecords, batchSize, outStream, database);
 	}
 	
@@ -78,60 +71,48 @@ public class PubmedFetch extends NIHFetch {
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
-	public PubmedFetch(ArgList argList) throws IOException {
-		super(argList, database, new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", null, PubmedFetch.class));
+	public PubmedHTTPFetch(ArgList argList) throws IOException {
+		super(argList, database, new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", null, PubmedHTTPFetch.class));
 	}
 	
 	@Override
 	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) {
-		EFetchPubmedServiceStub.EFetchRequest req = new EFetchPubmedServiceStub.EFetchRequest();
-		req.setQuery_key(QueryKey);
-		req.setWebEnv(WebEnv);
-		req.setEmail(getEmailAddress());
-		req.setTool(getToolName());
-		req.setRetstart(retStart);
-		req.setRetmax(numRecords);
+		StringBuilder urlSb = new StringBuilder();
+		urlSb.append("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?");
+		urlSb.append("&db=");
+		urlSb.append(database);
+		urlSb.append("&query_key=");
+		urlSb.append(QueryKey);
+		urlSb.append("&WebEnv=");
+		urlSb.append(WebEnv);
+		urlSb.append("&tool=");
+		urlSb.append(getToolName());
+		urlSb.append("&email=");
+		urlSb.append(getEmailAddress());
+		urlSb.append("&rettype=xml");
+		log.debug(urlSb.toString());
 		log.info("Fetching records from search");
-		try {
-			serializeFetchRequest(req);
-		}catch(RemoteException e) {
-			log.error("Could not run search",e);
-		}
+		serializeFetchRequest(urlSb.toString());
 	}
 	
 	/**
 	 * Runs, sanitizes, and outputs the results of a EFetch request to the xmlWriter
-	 * @param req the request to run and output results
-	 * @throws RemoteException error running EFetch
+	 * @param url the request url to fetch and output results
 	 */
-	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws RemoteException {
-		//Create buffer for raw, pre-sanitized output
-		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
-		//Connect to pubmed
-		EFetchPubmedServiceStub service = new EFetchPubmedServiceStub();
-		//Run the EFetch request
-		EFetchResult result = service.run_eFetch(req);
-		//Get the article set
-		PubmedArticleSet_type0 articleSet = result.getPubmedArticleSet();
-		XMLStreamWriter writer;
+	private void serializeFetchRequest(String url) {
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br;
 		try {
-			//Create a temporary xml writer to our buffer
-			writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
-			MTOMAwareXMLSerializer serial = new MTOMAwareXMLSerializer(writer);
-			log.debug("Buffering records");
-			//Output data
-			articleSet.serialize(new QName("RemoveMe"), null, serial);
-			serial.flush();
-			log.debug("Buffering complete");
-			log.debug("buffer size: "+buffer.size());
-			//Dump buffer to String
-			String iString = buffer.toString("UTF-8");
-			//Sanitize string (which writes it to xmlWriter)
-			sanitizeXML(iString);
-		} catch(XMLStreamException e) {
-			log.error("Unable to write to output",e);
-		} catch(UnsupportedEncodingException e) {
-			log.error("Cannot get xml from buffer",e);
+			br = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+			String s;
+			while((s = br.readLine()) != null) {
+				sb.append(s);
+			}
+			sanitizeXML(sb.toString());
+		} catch(MalformedURLException e) {
+			log.error("Query URL incorrectly formatted", e);
+		} catch(IOException e) {
+			log.error("Unable to read from URL", e);
 		}
 	}
 	
@@ -141,9 +122,13 @@ public class PubmedFetch extends NIHFetch {
 	 * @param strInput The XML to Sanitize.
 	 */
 	private void sanitizeXML(String strInput) {
+		//used to remove header from xml
+		String headerRegEx = "<\\?xml version=\"1.0\"\\?>.*?<!DOCTYPE.*?PubmedArticleSet.*?PUBLIC.*?\"-//NLM//DTD PubMedArticle, 1st January 2010//EN\".*?\"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">.*?<PubmedArticleSet>";
+		//used to remove footer from xml
+		String footerRegEx = "</PubmedArticleSet>";
 		log.debug("Sanitizing Output");
 		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
-		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
+		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle").replaceAll(headerRegEx, "").replaceAll(footerRegEx, "");
 		log.debug("XML File Length - Post Sanitze: " + newS.length());
 		log.debug("Sanitization Complete");
 		try {
@@ -169,7 +154,7 @@ public class PubmedFetch extends NIHFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			new PubmedFetch(new ArgList(getParser(), args)).execute();
+			new PubmedHTTPFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(),e);
 			System.out.println(getParser().getUsage());
