@@ -76,6 +76,46 @@ public class PubmedHTTPFetch extends NIHFetch {
 	}
 	
 	@Override
+	public String[] runESearch(String term, int maxNumRecords, int retStart) {
+		String[] env = new String[4];
+		StringBuilder urlSb = new StringBuilder();
+		BufferedReader br;
+		
+		urlSb.append("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?");
+		urlSb.append("&db=");
+		urlSb.append(database);
+		urlSb.append("&retmax=" + maxNumRecords);
+		urlSb.append("&retstart=" + retStart);
+		urlSb.append("&usehistory=y");
+		urlSb.append("&term=" + term);
+		log.debug(urlSb.toString());
+		log.info("Fetching records from search");
+		
+		try {
+			br = new BufferedReader(new InputStreamReader(new URL(urlSb.toString()).openStream()));
+			StringBuilder sb = new StringBuilder();
+			String s;
+			while((s = br.readLine()) != null) {
+				sb.append(s);
+			}
+			log.info(sb.toString());
+			
+			System.exit(0);
+			
+		} catch(MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return env;
+	}
+	
+	
+	@Override
 	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) {
 		StringBuilder urlSb = new StringBuilder();
 		urlSb.append("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?");
@@ -89,8 +129,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 		urlSb.append(getToolName());
 		urlSb.append("&email=");
 		urlSb.append(getEmailAddress());
-		urlSb.append("&rettype=xml");
-		urlSb.append("&ret=xml");
+		urlSb.append("&retmode=xml");
 		// set max number of records to return from search
 		urlSb.append("&retmax=" + numRecords);
 		// set number to start at

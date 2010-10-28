@@ -165,15 +165,18 @@ public abstract class NIHFetch {
 			// set search term
 			req.setTerm(term);
 			// set max number of records to return from search
+			log.info("maxrec " + maxNumRecords);
 			req.setRetMax(maxNumRecords+"");
 			// set number to start at
 			req.setRetStart(retStart+"");
+			log.info("retStart " + retStart);
 			// save this search so we can use the returned set
 			req.setUsehistory("y");
 			// run the search and get result set
 			EUtilsServiceStub.ESearchResult res = service.run_eSearch(req);
 			// save the environment data
 			env[0] = res.getWebEnv();
+			log.info("WebQuery " + env[0]);
 			env[1] = res.getQueryKey();
 			env[2] = ""+res.getIdList().getId().length;
 			env[3] = res.getIdList().getId()[0];
