@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.rmi.RemoteException;
-import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +27,7 @@ import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 
 /**
- * Shared code for modules for fetching NIH data using the SOAP Interface
+ * Shared code for modules for fetching NIH data using the SOAP or HTML Interface
  * Based on the example code available at the NIH Website.
  * @author Stephen V. Williams (swilliams@ctrip.ufl.edu)
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
@@ -275,7 +274,7 @@ public abstract class NIHFetch {
 	 * @return the ArgParser
 	 */
 	protected static ArgParser getParser() {
-		ArgParser parser = new ArgParser("PubmedSOAPFetch");
+		ArgParser parser = new ArgParser("NIHFetch");
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against pubmed").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));

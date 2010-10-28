@@ -22,7 +22,7 @@ import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 
 /**
- * Module for fetching PubMed Citations using the PubMed SOAP Interface
+ * Module for fetching PubMed Citations using the PubMed HTTP Interface
  * Based on the example code available at the PubMed Website.
  * @author Stephen V. Williams (swilliams@ctrip.ufl.edu)
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
@@ -90,6 +90,11 @@ public class PubmedHTTPFetch extends NIHFetch {
 		urlSb.append("&email=");
 		urlSb.append(getEmailAddress());
 		urlSb.append("&rettype=xml");
+		urlSb.append("&ret=xml");
+		// set max number of records to return from search
+		urlSb.append("&retmax=" + numRecords);
+		// set number to start at
+		urlSb.append("&retstart=" + retStart);
 		log.debug(urlSb.toString());
 		log.info("Fetching records from search");
 		serializeFetchRequest(urlSb.toString());
