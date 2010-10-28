@@ -11,15 +11,25 @@
 package org.vivoweb.ingest.fetch;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Module for fetching PubMed Citations using the PubMed HTTP Interface
@@ -72,8 +82,36 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public PubmedHTTPFetch(ArgList argList) throws IOException {
-		super(argList, database, new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", null, PubmedHTTPFetch.class));
+		super(argList, database,
+				new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n",
+				"\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", null, PubmedHTTPFetch.class));
 	}
+	
+	// Function to read DOM Tree from File
+	public Document readingXMLFromFile() {
+	DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
+	dBF.setIgnoringComments(true); // Ignore the comments present in the
+	// XML File when reading the xml
+	DocumentBuilder builder = null;
+	try {
+	builder = dBF.newDocumentBuilder();
+	} catch (ParserConfigurationException e) {
+	e.printStackTrace();
+	}
+
+	InputSource input = new InputSource();
+	Document doc = null;
+	try {
+	doc = builder.parse(input);
+	} catch (SAXException e) {
+	e.printStackTrace();
+	} catch (IOException e) {
+	e.printStackTrace();
+	}
+	return doc;
+
+	}
+	
 	
 	@Override
 	public String[] runESearch(String term, int maxNumRecords, int retStart) {
@@ -90,17 +128,17 @@ public class PubmedHTTPFetch extends NIHFetch {
 		urlSb.append("&term=" + term);
 		log.debug(urlSb.toString());
 		log.info("Fetching records from search");
-		
+		StringBuilder sb = null;	
 		try {
 			br = new BufferedReader(new InputStreamReader(new URL(urlSb.toString()).openStream()));
-			StringBuilder sb = new StringBuilder();
+			sb = new StringBuilder();
 			String s;
 			while((s = br.readLine()) != null) {
 				sb.append(s);
 			}
-			log.info(sb.toString());
+//			log.info(sb.toString());
 			
-			System.exit(0);
+//			System.exit(0);
 			
 		} catch(MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -110,9 +148,42 @@ public class PubmedHTTPFetch extends NIHFetch {
 			e.printStackTrace();
 		}
 		
+		DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
+		docBuildFactory.setIgnoringComments(true);
+		DocumentBuilder builder = null;
+		try {
+		builder = docBuildFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+		e.printStackTrace();
+		}
+		InputSource input = new InputSource(new ByteArrayInputStream(sb.toString().getBytes() ) );
+		Document doc = null;
+		try {
+		doc = builder.parse(input);
+		} catch (SAXException e) {
+		e.printStackTrace();
+		} catch (IOException e) {
+		e.printStackTrace();
+		}
+//		env[0] = res.getWebEnv();
+//		env[1] = res.getQueryKey();
+//		env[2] = "" + res.getIdList().getId().length;
+//		env[3] = res.getIdList().getId()[0];
+		NodeList nodes = doc.getElementsByTagName("WebEnv");
+		env[0] = nodes.item(0).getTextContent();
+		nodes = doc.getElementsByTagName("QueryKey");
+		env[1] = nodes.item(0).getTextContent();
+		nodes = doc.getElementsByTagName("Count");
+		env[2] = nodes.item(0).getTextContent();
+		
+		log.info("WebEnv = " + env[0]);
+		log.info("QueryKey = " + env[1]);
+		log.info("Count = " + env[2]);
 		
 		return env;
 	}
+	
+	
 	
 	
 	@Override
