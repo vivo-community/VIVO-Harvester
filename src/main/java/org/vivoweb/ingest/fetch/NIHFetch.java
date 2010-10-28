@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.rmi.RemoteException;
+import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -119,7 +120,12 @@ public abstract class NIHFetch {
 			this.maxRecords = argList.get("n");
 			this.batchSize  = argList.get("b");
 			this.databaseName = database;
-			os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"),argList.getProperties("O")));
+			if (argList.has("0")) {
+				os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"),argList.getProperties("O")));
+			} else {
+				os.setRecordHandler(RecordHandler.parseConfig(argList.get("o")));
+			}
+			
 			setOsWriter(os);
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);

@@ -31,6 +31,7 @@ import com.hp.hpl.jena.sparql.util.StringUtils;
 /**
  * Parsed arguments from commandline and config files
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+ * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
  */
 public class ArgList {
 	/**
@@ -135,7 +136,10 @@ public class ArgList {
 	 * @return the values
 	 */
 	public Properties getProperties(String arg) {
-		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+		Map<String, ArgDef> a =this.argParser.getOptMap();
+		ArgDef b = a.get(arg);
+		if(!b.hasParameter()) {
+		//if(!this.argParser.getOptMap().get(arg).hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
 		if(!this.argParser.getOptMap().get(arg).isParameterProperties()) {
@@ -196,7 +200,16 @@ public class ArgList {
 	 * @return true if a value has been set (from any of command line, config files, or default value)
 	 */
 	public boolean has(String arg) {
-		return (this.oCmdSet.hasOption(arg) || (this.oConfSet != null && this.oConfSet.hasOption(arg)) || this.argParser.getOptMap().get(arg).hasDefaultValue());
+		ArgDef hasArg = this.argParser.getOptMap().get(arg);
+		
+		if (this.oCmdSet.hasOption(arg)) {
+			return true;
+		} else if (this.oConfSet != null && this.oConfSet.hasOption(arg)) {
+			return true;
+		} else if (hasArg != null && hasArg.hasDefaultValue()) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**

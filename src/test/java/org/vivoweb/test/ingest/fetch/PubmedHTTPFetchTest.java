@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.fetch.PubmedHTTPFetch;
-import org.vivoweb.ingest.fetch.PubmedSOAPFetch;
 import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.w3c.dom.Document;
@@ -25,8 +24,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * @author Dale Scheppler (dscheppler@ctrip.ufl.edu)
- * @author Christopher Haines (hainesc@ctrip.ufl.edu)
+ * @author James Pence (jrpence@ctrip.ufl.edu)
+ * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
  */
 public class PubmedHTTPFetchTest extends TestCase {
 	/**
