@@ -160,7 +160,7 @@ public class PubmedFetch extends NIHFetch {
 	
 	@Override
 	protected int getLatestRecord() {
-		return Integer.parseInt(runESearch("1:8000[dp]", 1)[3]);
+		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
 	}
 		
 	/**

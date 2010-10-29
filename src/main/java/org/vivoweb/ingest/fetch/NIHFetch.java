@@ -11,6 +11,7 @@
 package org.vivoweb.ingest.fetch;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -119,12 +120,7 @@ public abstract class NIHFetch {
 			this.maxRecords = argList.get("n");
 			this.batchSize  = argList.get("b");
 			this.databaseName = database;
-			if (argList.has("0")) {
-				os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"),argList.getProperties("O")));
-			} else {
-				os.setRecordHandler(RecordHandler.parseConfig(argList.get("o")));
-			}
-			
+			os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"),argList.getProperties("O")));
 			setOsWriter(os);
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(),e);
@@ -133,25 +129,38 @@ public abstract class NIHFetch {
 		}
 	}
 	
-	
 	/**
-	 * Performs an ESearch against NIH database and returns the query web environment/query key data
-	 * @param term search term to run against database
-	 * @param maxNumRecords maximum number of records to fetch
-	 * @return String[] = {WebEnv, QueryKey, number of records found, first record ID} from the search
+	 * Constructor
+	 * @param argList parsed argument list
+	 * @param database database name
+	 * @param outputFile output file path
+	 * @throws IOException error creating task
 	 */
-	public String[] runESearch(String term, int maxNumRecords) {
-		return runESearch(term, maxNumRecords, 0);
+	protected NIHFetch(ArgList argList, String database, String outputFile) throws IOException {
+		this.emailAddress = argList.get("m");
+			this.searchTerm = argList.get("t");
+			this.maxRecords = argList.get("n");
+			this.batchSize  = argList.get("b");
+			this.databaseName = database;
+			setOsWriter(new FileOutputStream(outputFile, true));
 	}
 	
 	/**
 	 * Performs an ESearch against NIH database and returns the query web environment/query key data
 	 * @param term search term to run against database
-	 * @param maxNumRecords maximum number of records to fetch
-	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the record ID
 	 * @return String[] = {WebEnv, QueryKey, number of records found, first record ID} from the search
 	 */
-	public String[] runESearch(String term, int maxNumRecords, int retStart)
+	public String[] runESearch(String term) {
+		return runESearch(term, true);
+	}
+	
+	/**
+	 * Performs an ESearch against NIH database and returns the query web environment/query key data
+	 * @param term search term to run against database
+	 * @param logMessage do we write log messages
+	 * @return String[] = {WebEnv, QueryKey, number of records found, first record ID} from the search
+	 */
+	public String[] runESearch(String term, boolean logMessage)
 	{
 		String[] env = new String[4];
 		try
@@ -164,28 +173,22 @@ public abstract class NIHFetch {
 			req.setDb(this.databaseName);
 			// set search term
 			req.setTerm(term);
-			// set max number of records to return from search
-			log.info("maxrec " + maxNumRecords);
-			req.setRetMax(maxNumRecords+"");
-			// set number to start at
-			req.setRetStart(retStart+"");
-			log.info("retStart " + retStart);
 			// save this search so we can use the returned set
 			req.setUsehistory("y");
 			// run the search and get result set
 			EUtilsServiceStub.ESearchResult res = service.run_eSearch(req);
 			// save the environment data
 			env[0] = res.getWebEnv();
-			log.info("WebQuery " + env[0]);
 			env[1] = res.getQueryKey();
-			env[2] = ""+res.getIdList().getId().length;
+			env[2] = ""+res.getCount();//getIdList().getId().length;
 			env[3] = res.getIdList().getId()[0];
-			
-			log.info("Query resulted in a total of " + env[2] + " records.");
+			if(logMessage) {
+				log.info("Query resulted in a total of " + env[2] + " records.");
+			}
 		}
 		catch (RemoteException e)
 		{
-			log.error("NIH Fetch ESearchEnv failed with error: ",e);
+			log.error("NIH Fetch ESearch failed with error: ",e);
 		}
 		return env;
 	}
@@ -202,21 +205,24 @@ public abstract class NIHFetch {
 			recToFetch = Integer.parseInt(this.maxRecords);
 		}
 		int intBatchSize = Integer.parseInt(this.batchSize); 
+//		log.debug("recToFetch: "+recToFetch);
+//		log.debug("intBatchSize: "+intBatchSize);
 		if(recToFetch <= intBatchSize) {
-			fetchRecords(runESearch(this.searchTerm, recToFetch));
+			fetchRecords(runESearch(this.searchTerm), "0", ""+recToFetch);
 		} else {
-			String[] env = runESearch(this.searchTerm, recToFetch);
+			String[] env = runESearch(this.searchTerm);
 			String WebEnv = env[0];
 			String QueryKey = env[1];
 			// sanity check for max records
 			if (Integer.parseInt(env[2]) < recToFetch) {
 				recToFetch = Integer.parseInt(env[2]);
 			}
+//			log.debug("recToFetch: "+recToFetch);
 			for(int x = recToFetch; x > 0; x-=intBatchSize) {
 				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
 				int startRec = recToFetch - x;
-				log.debug("maxRec: "+maxRec);
-				log.debug("startRec: "+startRec);
+//				log.debug("maxRec: "+maxRec);
+//				log.debug("startRec: "+startRec);
 				fetchRecords(WebEnv, QueryKey, startRec+"", maxRec+"");
 			}
 		}
@@ -280,6 +286,7 @@ public abstract class NIHFetch {
 		ArgParser parser = new ArgParser("NIHFetch");
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against pubmed").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("numRecords").setDescription("maximum records to return").withParameter(true, "NUMBER").setDefaultValue("100"));
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batchSize").setDescription("number of records to fetch per batch").withParameter(true, "NUMBER").setDefaultValue("1000"));

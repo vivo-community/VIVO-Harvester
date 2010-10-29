@@ -3,6 +3,6 @@
 	<Param name="email">hainesc@ctrip.ufl.edu</Param>
 	<Param name="output">config/recordHandlers/Pubmed-XML-TFRH.xml</Param>
 	<Param name="termSearch">ufl.edu[ad]</Param>
-	<Param name="numRecords">500</Param>
+	<Param name="numRecords">all</Param>
 	<Param name="batchSize">1000</Param>
 </Task>

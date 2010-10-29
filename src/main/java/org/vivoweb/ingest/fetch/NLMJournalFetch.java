@@ -163,7 +163,7 @@ public class NLMJournalFetch extends NIHFetch {
 	@Override
 	protected int getLatestRecord() {
 		//FIXME: make this work for NLM Journal Fetch? Is relevant? if not, try to move out of NIHFetch
-		return Integer.parseInt(runESearch("1:8000[dp]", 1)[3]);
+		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
 	}
 	
 	/**
