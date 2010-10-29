@@ -15,7 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.fetch.PubmedSOAPFetch;
+import org.vivoweb.ingest.fetch.PubmedFetch;
 import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.w3c.dom.Document;
@@ -27,11 +27,11 @@ import org.w3c.dom.NodeList;
  * @author Dale Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class PubmedSOAPFetchTest extends TestCase {
+public class PubmedFetchTest extends TestCase {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(PubmedSOAPFetchTest.class);
+	private static Log log = LogFactory.getLog(PubmedFetchTest.class);
 	/** */
 	private File configFile;
 	/** */
@@ -54,12 +54,12 @@ public class PubmedSOAPFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.fetch.PubmedSOAPFetch#main(java.lang.String[]) main(String... args)}.
+	 * Test method for {@link org.vivoweb.ingest.fetch.PubmedFetch#main(java.lang.String[]) main(String... args)}.
 	 */
-	public final void testPubmedSOAPFetchMain() {
+	public final void testPubmedFetchMain() {
 		try {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
-			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			PubmedFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
 			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			for(Record r : this.rh) {
