@@ -29,6 +29,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.IDBConnection;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
@@ -302,6 +308,17 @@ public class JenaConnect {
 		} catch(Exception e) {
 			// ignore
 		}
+	}
+	
+	/**
+	 * Executes a sparql query against the JENA model and returns a result set
+	 * @param queryString the query to execute against the model
+	 * @return queryExec the executed query result set
+	 */
+	public ResultSet executeQuery(String queryString) {
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
+		QueryExecution queryExec = QueryExecutionFactory.create(query, this.jenaModel);
+		return queryExec.execSelect();
 	}
 	
 	// /**

@@ -9,6 +9,8 @@ package org.vivoweb.ingest.util.repo;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -134,5 +136,16 @@ public class MapRecordHandler extends RecordHandler {
 	public void close() throws IOException {
 		this.map.clear();
 		this.metaDataMap.clear();
+	}
+
+	@Override
+	public List<String> find(String idText) {
+		List<String> retVal = new LinkedList<String>();
+		for(String id : this.map.keySet()) {
+			if(id.contains(idText)) {
+				retVal.add(id);
+			}
+		}
+		return retVal;
 	}
 }

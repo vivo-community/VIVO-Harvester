@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -611,5 +612,16 @@ public class TextFileRecordHandler extends RecordHandler {
 	public void close() throws IOException {
 		this.fileDirObj.close();
 		this.metaDirObj.close();
+	}
+
+	@Override
+	public List<String> find(String idText) {
+		List<String> retVal = new LinkedList<String>();
+		for(Record r : this) {
+			if(r.getID().contains(idText)) {
+				retVal.add(r.getID());
+			}
+		}
+		return retVal;
 	}
 }

@@ -63,6 +63,10 @@ public class Score {
 	 */
 	private final boolean wipeInputModel;
 	/**
+	 * Option to push Matches and Non-Matches to output model
+	 */
+	private final boolean pushAll;
+	/**
 	 * Arguments for exact match algorithm
 	 */
 	private final List<String> exactMatch;
@@ -221,6 +225,7 @@ public class Score {
 		
 		// options
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription("If set, this will clear the input model after scoring is complete"));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("push-all").setDescription("If set, this will push all matches and non matches to output model"));
 		
 		// exactMatch foreignLink
 		// exactMatch subNodeLink
@@ -244,6 +249,7 @@ public class Score {
 	 * @param objToVIVOArg the predicate that connects the object in score to the object in vivo
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
+	@SuppressWarnings("unused")
 	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
@@ -257,6 +263,7 @@ public class Score {
 		this.foreignKey = foreignKeyArg;
 		this.objToVIVO = objToVIVOArg;
 		this.objToScore = objToScoreArg;
+		this.pushAll = false;
 	}
 	
 	/**
@@ -327,6 +334,7 @@ public class Score {
 		log.debug("output has " + outputCount + " statements in it");
 		
 		this.wipeInputModel = opts.has("w");
+		this.pushAll = opts.has("l");
 		this.exactMatch = opts.getAll("e");
 		this.pairwise = opts.getAll("p");
 		//TODO cah: uncomment when regex implemented
@@ -382,6 +390,10 @@ public class Score {
 	private static void commitResultSet(Model result, ResultSet storeResult, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
 		RDFNode authorNode;
 		QuerySolution vivoSolution;
+		
+		if(!storeResult.hasNext()){
+			result.add(recursiveSanitizeBuild(paperResource,null));
+		}
 		
 		// loop thru resultset
 		while(storeResult.hasNext()) {
@@ -680,7 +692,7 @@ public class Score {
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
 		//		String stmtQuery = "SELECT ?sub ?obj\nWHERE\n{\n  ?sub <" + scoreAttribute + "> ?obj\n}";
 		//		System.out.println(stmtQuery);
-		//		ResultSet stmtRS = executeQuery(this.vivo.getJenaModel(), stmtQuery);
+		//		ResultSet stmtRS = this.vivo.executeQuery(stmtQuery);
 		if(!stmtitr.hasNext()) {
 			log.info("No matches found for <" + scoreAttribute + "> in input");
 			return;
@@ -696,9 +708,19 @@ public class Score {
 			String obj = stmt.getLiteral().getString();
 			log.info("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
 			//			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
-			ResultSet matches = executeQuery(this.vivo.getJenaModel(), "SELECT ?sub WHERE { ?sub <" + vivoAttribute + "> \"" + obj + "\" }");
+			String query = ""+
+				"SELECT ?sub"+"\n"+
+				"WHERE {"+"\n\t"+
+					"?sub <" + vivoAttribute + "> ?obj ."+"\n\t"+
+					"FILTER regex(?obj, \"" + obj + "\")"+"\n"+
+				"}";
+			log.debug(query);
+			ResultSet matches = executeQuery(this.vivo.getJenaModel(), query);
 			if(!matches.hasNext()) {
 				log.info("No matches in VIVO found");
+				if (this.pushAll){
+					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, null));
+				}
 			} else {
 				log.info("Matches in VIVO found");
 				// loop thru resources

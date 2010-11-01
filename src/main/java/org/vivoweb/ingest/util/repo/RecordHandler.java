@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -426,4 +427,11 @@ public abstract class RecordHandler implements Iterable<Record> {
 			return true;
 		}
 	}
+
+	/**
+	 * Find records with idText in their id
+	 * @param idText the text to find
+	 * @return list of ids that match
+	 */
+	public abstract List<String> find(String idText);
 }

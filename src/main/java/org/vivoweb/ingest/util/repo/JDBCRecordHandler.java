@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -463,5 +465,20 @@ public class JDBCRecordHandler extends RecordHandler {
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public List<String> find(String idText) {
+		List<String> retVal = new LinkedList<String>();
+		String query = "select " + JDBCRecordHandler.recordIdField + " from " + JDBCRecordHandler.this.table + " where " + JDBCRecordHandler.recordIdField + " LIKE '%"+idText+"%'";
+		try {
+			ResultSet rs = this.cursor.executeQuery(query);
+			while(rs.next()) {
+				retVal.add(rs.getString(1));
+			}
+		} catch(SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+		return retVal;
 	}
 }

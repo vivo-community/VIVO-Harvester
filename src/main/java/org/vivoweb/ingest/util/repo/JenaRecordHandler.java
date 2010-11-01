@@ -9,6 +9,7 @@ package org.vivoweb.ingest.util.repo;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vivoweb.ingest.util.IterableAdaptor;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
@@ -400,5 +402,23 @@ public class JenaRecordHandler extends RecordHandler {
 	@Override
 	public void close() throws IOException {
 		this.model.close();
+	}
+
+	@Override
+	public List<String> find(String idText) {
+		List<String> retVal = new LinkedList<String>();
+		String query = ""+
+		"PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + ">"+"\n"+
+		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"+"\n"+
+		"SELECT ?idField"+"\n"+
+		"WHERE {"+"\n\t"+
+			"?record rdf:type rhns:" + JenaRecordHandler.this.recType.getLocalName() + " ."+"\n\t"+
+			"?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField ."+"\n\t"+
+			"FILTER regex(?idField, \"" + idText + "\")"+"\n"+
+		"}";
+		for(QuerySolution record : IterableAdaptor.adapt(this.model.executeQuery(query))) {
+			retVal.add(record.getLiteral("idField").getString());
+		}
+		return retVal;
 	}
 }
