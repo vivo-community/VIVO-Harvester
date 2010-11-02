@@ -180,7 +180,7 @@ public class Qualify {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("SPARQLQualify");
+		ArgParser parser = new ArgParser("Qualify");
 		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jenaConfig").setDescription("config file for jena model").withParameter(true, "CONFIG_FILE"));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("modelName").setDescription("specify model to connect to. this requires you specify a jenaConfig and will override the jena config modelname").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataType").setDescription("data type (rdf predicate)").withParameter(true, "RDF_PREDICATE"));
@@ -195,7 +195,7 @@ public class Qualify {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		log.info("SPARQLQualify: Start");
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new Qualify(new ArgList(getParser(), args)).executeTask();
 		} catch(IllegalArgumentException e) {
@@ -204,6 +204,6 @@ public class Qualify {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		log.info("SPARQLQualify: End");
+		log.info(getParser().getAppName()+": End");
 	}
 }

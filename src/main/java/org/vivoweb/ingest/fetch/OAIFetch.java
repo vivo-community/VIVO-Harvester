@@ -103,7 +103,6 @@ public class OAIFetch {
 	 * Executes the task
 	 */
 	public void execute() {
-		log.info("Fetch: Start");
 		try {
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
 		} catch(IOException e) {
@@ -117,7 +116,6 @@ public class OAIFetch {
 		} catch(NoSuchFieldException e) {
 			log.error(e.getMessage(), e);
 		}
-		log.info("Fetch: End");
 	}
 	
 	/**
@@ -139,6 +137,7 @@ public class OAIFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new OAIFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -146,5 +145,6 @@ public class OAIFetch {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
+		log.info(getParser().getAppName()+": End");
 	}
 }

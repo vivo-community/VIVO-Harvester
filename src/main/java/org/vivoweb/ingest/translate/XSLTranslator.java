@@ -135,9 +135,6 @@ public class XSLTranslator {
 	 * checks again for the necessary file and makes sure that they exist
 	 */
 	public void execute() {
-		// checking for valid input parameters
-		log.info("Translation: Start");
-		
 		try {
 			// get from the in record and translate
 			for(Record r : this.inStore) {
@@ -157,7 +154,6 @@ public class XSLTranslator {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		log.info("Translation: End");
 	}
 	
 	/***
@@ -205,6 +201,7 @@ public class XSLTranslator {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new XSLTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -212,7 +209,7 @@ public class XSLTranslator {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		
+		log.info(getParser().getAppName()+": Start");
 	}
 	
 }

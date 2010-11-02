@@ -40,7 +40,7 @@ public class Diff {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("Transfer");
+		ArgParser parser = new ArgParser("Diff");
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
@@ -75,13 +75,11 @@ public class Diff {
 		
 	}
 	
-	
-	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		log.info("Diff: Start");
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new Diff(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -93,7 +91,7 @@ public class Diff {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		log.info("Diff: End");
+		log.info(getParser().getAppName()+": End");
 	}
 
 }

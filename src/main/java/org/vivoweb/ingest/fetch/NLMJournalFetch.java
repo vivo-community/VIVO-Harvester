@@ -13,28 +13,24 @@ package org.vivoweb.ingest.fetch;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchJournalsServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchJournalsServiceStub.EFetchResult;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchJournalsServiceStub.SerialsSet_type0;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.rmi.RemoteException;
-
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vivoweb.ingest.util.args.ArgList;
-import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
-import org.xml.sax.SAXException;
 
+/**
+ * NLMJournalFetch
+ */
 public class NLMJournalFetch extends NIHFetch {
 	/**
 	 * Log4J Logger
@@ -171,14 +167,16 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info("NLMJournalFetch: Start");
 		try {
-			new NLMJournalFetch(new ArgList(getParser(), args)).execute();
+			new NLMJournalFetch(new ArgList(getParser("NLMJournalFetch"), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(),e);
-			System.out.println(getParser().getUsage());
+			System.out.println(getParser("NLMJournalFetch").getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}
+		log.info("NLMJournalFetch: End");
 	}
 
 }

@@ -469,7 +469,6 @@ public class JDBCFetch {
 	 * Executes the task
 	 */
 	public void execute() {
-		log.info("Fetch: Start");
 		// For each Table
 		try {
 			for(String tableName : getTableNames()) {
@@ -561,7 +560,6 @@ public class JDBCFetch {
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
 		}
-		log.info("Fetch: End");
 	}
 	
 	/**
@@ -569,6 +567,7 @@ public class JDBCFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new JDBCFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -577,5 +576,6 @@ public class JDBCFetch {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
+		log.info(getParser().getAppName()+": End");
 	}
 }

@@ -101,7 +101,7 @@ public class Score {
 	 * @param args command line arguments
 	 */
 	public static void main(String... args) {
-		log.info("Scoring: Start");
+		log.info(getParser().getAppName()+": Start");
 		try {
 			Score Scoring = new Score(args);
 			Scoring.execute();
@@ -118,7 +118,7 @@ public class Score {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		log.info("Scoring: End");
+		log.info(getParser().getAppName()+": End");
 	}
 	
 	/**

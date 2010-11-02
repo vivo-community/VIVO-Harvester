@@ -164,8 +164,6 @@ public class GlozeTranslator {
 	 */
 	public void execute() {
 		if(this.uriBase != null && this.inStream != null) {
-			log.trace("Translation: Start");
-			
 			try {
 				// create a output stream for writing to the out store
 				ByteArrayOutputStream buff = new ByteArrayOutputStream();
@@ -185,8 +183,6 @@ public class GlozeTranslator {
 			} catch(Exception e) {
 				log.error("", e);
 			}
-			
-			log.trace("Translation: End");
 		} else {
 			log.error("Invalid Arguments: Gloze Translation requires a URIBase and XMLFile");
 			throw new IllegalArgumentException();
@@ -211,6 +207,7 @@ public class GlozeTranslator {
 	 * @param args list of arguments required to execute glozetranslate
 	 */
 	public static void main(String[] args) {
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new GlozeTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -218,6 +215,7 @@ public class GlozeTranslator {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
+		log.info(getParser().getAppName()+": End");
 	}
 	
 }

@@ -168,13 +168,15 @@ public class PubmedFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info("PubmedFetch: Start");
 		try {
-			new PubmedFetch(new ArgList(getParser(), args)).execute();
+			new PubmedFetch(new ArgList(getParser("PubmedFetch"), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(),e);
-			System.out.println(getParser().getUsage());
+			System.out.println(getParser("PubmedFetch").getUsage());
 		} catch(Exception e) {
 			log.fatal(e.getMessage(),e);
 		}
+		log.info("PubmedFetch: End");
 	}
 }

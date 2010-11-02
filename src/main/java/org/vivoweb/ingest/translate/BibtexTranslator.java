@@ -15,7 +15,7 @@ public class BibtexTranslator {
 	/**
 	 * 
 	 */
-	public void executeTask() {
+	public void execute() {
 		// TODO Stephen: Stub out parsing method for reading in the Bibtex Records
 	}
 }

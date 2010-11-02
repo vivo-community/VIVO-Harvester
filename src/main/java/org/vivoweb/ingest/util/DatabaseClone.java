@@ -109,6 +109,7 @@ public class DatabaseClone {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new DatabaseClone(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -117,5 +118,6 @@ public class DatabaseClone {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
+		log.info(getParser().getAppName()+": End");
 	}
 }

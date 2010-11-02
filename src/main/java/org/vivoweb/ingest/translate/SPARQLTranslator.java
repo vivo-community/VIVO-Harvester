@@ -141,7 +141,7 @@ public class SPARQLTranslator {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("XSLTranslator");
+		ArgParser parser = new ArgParser("SPARQLTranslator");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
@@ -157,6 +157,7 @@ public class SPARQLTranslator {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new SPARQLTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -164,7 +165,7 @@ public class SPARQLTranslator {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		
+		log.info(getParser().getAppName()+": End");
 	}
 	
 }

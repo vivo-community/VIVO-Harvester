@@ -380,6 +380,15 @@ public class JenaConnect {
 		Class.forName(dbClass).newInstance();
 		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
 	}
+
+	/**
+	 * Checks if the model contains the given uri
+	 * @param uri the uri to check for
+	 * @return true if found, false otherwise
+	 */
+	public boolean containsURI(String uri) {
+		return this.jenaModel.containsResource(this.jenaModel.createResource(uri));
+	}
 	
 	/**
 	 * Config parser for Jena Models

@@ -121,7 +121,7 @@ public class Merge {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		log.info("Merge: Start");
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new Merge(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -133,6 +133,6 @@ public class Merge {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		log.info("Merge: End");
+		log.info(getParser().getAppName()+": End");
 	}
 }

@@ -51,7 +51,7 @@ public class VCardTranslator {
 	/**
 	 * 
 	 */
-	public void executeTask() {
+	public void execute() {
 		// Nothing yet
 	}
 	

@@ -81,7 +81,6 @@ public class D2RMapFetch {
 	 * Executes the task
 	 */
 	public void execute() {
-		log.info("Fetch: Start");
 		D2rProcessor proc = new D2rProcessor();
 		proc.harvesterInit();
 		try {
@@ -90,7 +89,6 @@ public class D2RMapFetch {
 		} catch(Exception e) {
 			log.error(e.getMessage());
 		}
-		log.info("Fetch: End");
 	}
 	
 	/**
@@ -98,6 +96,7 @@ public class D2RMapFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		log.info(getParser().getAppName()+": Start");
 		try {
 			new D2RMapFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -106,5 +105,6 @@ public class D2RMapFetch {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
+		log.info(getParser().getAppName()+": End");
 	}
 }

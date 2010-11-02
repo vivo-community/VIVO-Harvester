@@ -197,7 +197,6 @@ public abstract class NIHFetch {
 	 * Executes the task
 	 */
 	public void execute() {
-		log.info("Fetch: Start");
 		int recToFetch;
 		if(this.getMaxRecords().equalsIgnoreCase("all")) {
 			recToFetch = getLatestRecord();
@@ -226,7 +225,6 @@ public abstract class NIHFetch {
 				fetchRecords(WebEnv, QueryKey, startRec+"", maxRec+"");
 			}
 		}
-		log.info("Fetch: End");
 	}
 	
 	/**
@@ -280,10 +278,11 @@ public abstract class NIHFetch {
 	
 	/**
 	 * Get the ArgParser for this task
+	 * @param appName the application name
 	 * @return the ArgParser
 	 */
-	protected static ArgParser getParser() {
-		ArgParser parser = new ArgParser("NIHFetch");
+	protected static ArgParser getParser(String appName) {
+		ArgParser parser = new ArgParser(appName);
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
