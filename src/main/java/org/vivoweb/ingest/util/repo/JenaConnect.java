@@ -40,6 +40,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * Connection Helper for Jena Models
@@ -403,7 +404,7 @@ public class JenaConnect {
 	 * @return true if found, false otherwise
 	 */
 	public boolean containsURI(String uri) {
-		return this.jenaModel.containsResource(this.jenaModel.createResource(uri));
+		return this.jenaModel.containsResource(ResourceFactory.createResource(uri));
 	}
 	
 	/**

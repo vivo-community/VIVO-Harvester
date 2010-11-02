@@ -48,6 +48,7 @@ public class QualifyTest extends TestCase {
 	public void tearDown() throws Exception {
 		this.jena.close();
 		this.jena = null;
+		System.gc();
 	}
 	
 	/**

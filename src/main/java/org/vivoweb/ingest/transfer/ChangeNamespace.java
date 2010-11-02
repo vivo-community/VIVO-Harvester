@@ -52,23 +52,21 @@ public class ChangeNamespace {
 	
 	/**
 	 * Gets an unused URI in the the given namespace for a model
-	 * @param newNamespace the namespace
+	 * @param namespace the namespace
 	 * @param model the model
 	 * @return the uri
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static String getUnusedURI(String newNamespace, JenaConnect model) throws IllegalArgumentException {
-		if(newNamespace == null || newNamespace.equals("")) {
-			throw new IllegalArgumentException("new namespace cannot be empty");
+	public static String getUnusedURI(String namespace, JenaConnect model) throws IllegalArgumentException {
+		if(namespace == null || namespace.equals("")) {
+			throw new IllegalArgumentException("namespace cannot be empty");
 		}
 		String uri = null;
 		Random random = new Random();
-		int attempts = 0;
-		while(uri == null && attempts < 30) {
-			uri = newNamespace + "n" + random.nextInt(Math.min(Integer.MAX_VALUE, (int)Math.pow(2, attempts + 13)));
+		while(uri == null) {
+			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
 			if(model.containsURI(uri)) {
 				uri = null;
-				attempts++;
 			}
 		}
 		return uri;
