@@ -23,6 +23,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -271,6 +272,21 @@ public class JenaConnect {
 		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
 		fasterWriter.write(this.jenaModel, osw, "");
 		log.debug("RDF/XML Data was exported");
+	}
+	
+	/**
+	 * Export the RDF to a file
+	 * @throws FileSystemException 
+	 */
+	public void exportRDF(String fileName) throws FileSystemException{
+		this.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
+	}
+	
+	/*
+	 * add rdf from another jenaconnect
+	 */
+	public void importRDF(JenaConnect inputJC){
+		this.jenaModel.add(inputJC.getJenaModel());
 	}
 	
 	/**

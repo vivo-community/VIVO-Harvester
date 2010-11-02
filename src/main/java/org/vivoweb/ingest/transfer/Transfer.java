@@ -192,11 +192,15 @@ public class Transfer {
 		}
 		
 		if(this.dumpFile != null) {
-			dumpJCToFile(this.input, this.dumpFile);
+			try {
+				this.input.exportRDF(this.dumpFile);
+			} catch(FileSystemException e) {
+				log.error(e.getMessage(), e);
+			}
 		}
 		
 		if(!inputIsOutput) {
-			transferJCToJC(this.input, this.output);
+			this.output.importRDF(this.input);
 		}
 		
 		// empty model
@@ -265,13 +269,14 @@ public class Transfer {
 	}
 	
 	/**
+	 * maybe be deprecated
 	 * copies contents of a jena model into another jena model
 	 * @param in the input model
 	 * @param out the output model
 	 */
-	private void transferJCToJC(JenaConnect in, JenaConnect out) {
+	/*private void transferJCToJC(JenaConnect in, JenaConnect out) {
 		out.getJenaModel().add(in.getJenaModel());
-	}
+	}*/
 	
 	/**
 	 * clears all statements from a jena model
@@ -283,18 +288,19 @@ public class Transfer {
 	}
 	
 	/**
+	 * maybe be deprecated
 	 * dumps the contents of a jena model into a file
 	 * @param jc the jena model
 	 * @param fileName the file to dump into
 	 */
-	private void dumpJCToFile(JenaConnect jc, String fileName) {
+	/*private void dumpJCToFile(JenaConnect jc, String fileName) {
 		log.info("Outputting RDF to " + fileName);
 		try {
 			jc.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
 		} catch(FileSystemException e) {
 			log.error(e.getMessage(), e);
 		}
-	}
+	}*/
 	
 	/**
 	 * Main method
