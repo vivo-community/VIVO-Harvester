@@ -74,42 +74,18 @@ public class PubmedSOAPFetchTest extends TestCase {
 			//test 0 records, batch 1
 			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
-			docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			for(Record r : this.rh) {
-				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-				Element elem = doc.getDocumentElement();
-				traverseNodes(elem.getChildNodes());
-			}
 			
 			//test 1 records, batch 0
 			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
-			docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			for(Record r : this.rh) {
-				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-				Element elem = doc.getDocumentElement();
-				traverseNodes(elem.getChildNodes());
-			}
 
 			//test 0 records, batch 0
 			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "0", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
-			docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			for(Record r : this.rh) {
-				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-				Element elem = doc.getDocumentElement();
-				traverseNodes(elem.getChildNodes());
-			}
 			
 			//test 1200 records, batch 500
 			PubmedSOAPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1200", "-b", "500", "-o", this.configFile.getAbsolutePath()});
 			assertTrue(this.rh.iterator().hasNext());
-			docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			for(Record r : this.rh) {
-				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-				Element elem = doc.getDocumentElement();
-				traverseNodes(elem.getChildNodes());
-			}
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
