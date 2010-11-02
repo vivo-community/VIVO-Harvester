@@ -1,3 +1,11 @@
+0.6.2
+	Correct pubmed error -- would not fetch more than 1000 records
+	Correct null exception pointer on scoring when first name was blank
+
+0.6.1
+	Correct example scripts
+
+
 0.6.0
 Score
 	new ForeignKey matching function

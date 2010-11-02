@@ -21,19 +21,19 @@ mysql -u USERNAME -pPASSWORD -e 'drop database peopleSoftRDF;'
 mysql -u USERNAME -pPASSWORD -e 'create database peopleSoftRDF;'
 
 # Execute Fetch
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -X config/tasks/PeopleSoft-JDBCFetch.xml
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.fetch.JDBCFetch -X config/tasks/PeopleSoft-JDBCFetch.xml
 
 # Execute Translate
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/PeopleSoft-XML-RH.xml -o config/recordHandlers/PeopleSoft-RDF-RH.xml -x config/datamaps/PeopleSoftToVivo.xsl
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/PeopleSoft-XML-RH.xml -o config/recordHandlers/PeopleSoft-RDF-RH.xml -x config/datamaps/PeopleSoftToVivo.xsl
 
 # Execute Transfer to import from record handler into local temp model
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -o config/jenaModels/h2.xml -O modelName=peopleSoftTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -h config/recordHandlers/PeopleSoft-RDF-RH.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -o config/jenaModels/h2.xml -O modelName=peopleSoftTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -h config/recordHandlers/PeopleSoft-RDF-RH.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/
 
 # Execute Score to match jobs with organizations
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2scored/store;MODE=HSQLDB" -O modelName=peopleSoftStaging -f "http://vivoweb.org/ontology/score#deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID" -x "http://vivoweb.org/ontology/core#positionInOrganization" -y "http://vivoweb.org/ontology/core#organizationForPosition"
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2scored/store;MODE=HSQLDB" -O modelName=peopleSoftStaging -f "http://vivoweb.org/ontology/score#deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID" -x "http://vivoweb.org/ontology/core#positionInOrganization" -y "http://vivoweb.org/ontology/core#organizationForPosition"
 
 # Execute Score to match jobs with organizations
-java -Xms1024m -Xmx1020M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I peopleSoftTempTransfer -o config/jenaModels/VIVO.xml -O peopleSoftStaging -f "http://vivoweb.org/ontology/score#deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID" -x "http://vivoweb.org/ontology/core#positionInOrganization" -y "http://vivoweb.org/ontology/core#organizationForPosition" -k
+java -Xms1024m -Xmx1020M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I peopleSoftTempTransfer -o config/jenaModels/VIVO.xml -O peopleSoftStaging -f "http://vivoweb.org/ontology/score#deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID" -x "http://vivoweb.org/ontology/core#positionInOrganization" -y "http://vivoweb.org/ontology/core#organizationForPosition" -k
 
 #date=`date +%Y-%m-%d_%k%M.%S`
 #mysqldump -u USERNAME -pPASSWORD vitrodb > backups/vitrodb.$date.sql
@@ -42,14 +42,14 @@ java -Xms1024m -Xmx1020M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.i
 #mysql -u USERNAME -pPASSWORD -e 'drop database vitrodb;'
 #mysql -u USERNAME -pPASSWORD -e 'create database vitrodb;'
 #mysql -u USERNAME -pPASSWORD vitrodb < backups/blankVivo.sql
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -r backups/uf.owl.rdf.xml -o config/jenaModels/VIVO.xml
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -r backups/ufOrgs.rdf.xml -o config/jenaModels/VIVO.xml
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -r backups/uf.owl.rdf.xml -o config/jenaModels/VIVO.xml
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -r backups/ufOrgs.rdf.xml -o config/jenaModels/VIVO.xml
 
 # Execute Transfer from local temp model into main vivo model
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml
 
 # Execute Transfer to copy into peopleSoft model
-java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml -O modelName=peopleSoft
+java -Xms1024m -Xmx1024M -cp bin/ingest-0.6.2.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2all/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml -O modelName=peopleSoft
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
