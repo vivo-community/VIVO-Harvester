@@ -131,6 +131,11 @@ public class Diff {
 		
 		diffModel = minuendModel.difference(subtrahendModel);	
 		
+		//System.out.println("minuendModel");
+		//this.minuendJC.exportRDF(System.out);
+		
+		//System.out.println("subtrahendModel");
+		//this.subtrahendJC.exportRDF(System.out);
 
 		try {
 			if (this.dumpFile != null){
