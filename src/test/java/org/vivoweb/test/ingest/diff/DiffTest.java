@@ -5,8 +5,11 @@ package org.vivoweb.test.ingest.diff;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -39,7 +42,11 @@ public class DiffTest extends TestCase {
 	/**
 	 * expected rdf statements to load for test
 	 */
-	private File expectedRDF;
+	private StringBuffer expectedAddRDF;
+	/**
+	 * vivo test configuration file
+	 */
+	private StringBuffer expectedSubRDF;
 	/**
 	 * vivo test configuration file
 	 */
@@ -152,33 +159,12 @@ public class DiffTest extends TestCase {
 			log.fatal(e.getMessage(), e);
 		}
 		
-		/*  to add (new items)
-		<?xml version="1.0"?>
-			<rdf:RDF
-			    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-			    xmlns:j.0="http://xmlns.com/foaf/0.1/"
-			    xmlns:j.1="http://vivoweb.org/ontology/core#" > 
-			  <rdf:Description rdf:about="http://vivo.mydomain.edu/individual/n3574">
-			    <j.1:workEmail>v1105@ufl.edu</j.1:workEmail>
-			    <j.0:prefix>Mr.</j.0:prefix>
-			  </rdf:Description>
-			</rdf:RDF>
-		*/
+		this.expectedAddRDF = new StringBuffer();
+		this.expectedAddRDF.append("<ModelCom   {http://vivo.mydomain.edu/individual/n3574 @http://xmlns.com/foaf/0.1/prefix \"Mr.\"; http://vivo.mydomain.edu/individual/n3574 @http://vivoweb.org/ontology/core#workEmail \"v1105@ufl.edu\"} | >");
 		
-		
-		
-		/*  to delete (old items)
-		<?xml version="1.0"?>
-		<rdf:RDF
-		    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-		    xmlns:j.0="http://vivoweb.org/ontology/core#" > 
-		  <rdf:Description rdf:about="http://vivo.mydomain.edu/individual/n3574">
-		    <j.0:middleName>J</j.0:middleName>
-		    <j.0:workEmail>v@ufl.edu</j.0:workEmail>
-		  </rdf:Description>
-		</rdf:RDF>
-		*/
-		
+		this.expectedSubRDF = new StringBuffer();
+		this.expectedSubRDF.append("<ModelCom   {http://vivo.mydomain.edu/individual/n3574 @http://vivoweb.org/ontology/core#middleName \"J\"; http://vivo.mydomain.edu/individual/n3574 @http://vivoweb.org/ontology/core#workEmail \"v@ufl.edu\"} | >");
+				
 		// create VIVO.xml
 		try {
 			this.vivoXML = File.createTempFile("scoretest_vivo", ".xml");
@@ -208,6 +194,7 @@ public class DiffTest extends TestCase {
 		JenaConnect diffJC;
 		
 		try {
+			
 			Properties previousProp = new Properties();
 			previousProp.put("modelName", "hr20101101");
 			previousJC = JenaConnect.parseConfig(this.vivoXML, previousProp);
@@ -233,19 +220,19 @@ public class DiffTest extends TestCase {
 			Diff.main(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101101","-m",this.vivoXML.getAbsolutePath(),
 					"-M","modelName=hr20101104","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"});
 			
-			System.out.println("diffModel - new items");
-			diffJC.exportRDF(System.out);
+			if (!this.expectedAddRDF.toString().equals(diffJC.getJenaModel().toString())){
+				fail("Add entries do not match");
+			}
 			
 			diffJC.getJenaModel().remove(diffJC.getJenaModel());
-			
-						
+									
 			//testing old items
 			Diff.main(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101104","-m",this.vivoXML.getAbsolutePath(),
 					"-M","modelName=hr20101101","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"});
 			
-			System.out.println("diffModel - old items");
-			diffJC.exportRDF(System.out);
-			
+			if (!this.expectedSubRDF.toString().equals(diffJC.getJenaModel().toString())){
+				fail("Subtract entries do not match");
+			}
 			//testing delete items
 			
 			
