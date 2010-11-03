@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
@@ -15,13 +13,15 @@ import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
-
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 
+/**
+ * Set math to find difference (subtraction) of one model from another
+ * @author Stephen Williams
+ */
 public class Diff {
-	
 	/**
 	 * Log4J Logger
 	 */
@@ -34,7 +34,6 @@ public class Diff {
 	 * Models to read records from
 	 */
 	private JenaConnect subtrahendJC;
-	
 	/**
 	 * Model to write records to
 	 */
@@ -45,9 +44,11 @@ public class Diff {
 	private String dumpFile;
 	
 	/**
-	 * 
+	 * Constructor
+	 * @param argList parsed commandline arguments
+	 * @throws IOException error reading config files
 	 */
-	public Diff (ArgList argList) throws IOException{
+	public Diff(ArgList argList) throws IOException {
 		// Require inputs args
 		if(!argList.has("s") || !argList.has("m")) {
 			throw new IllegalArgumentException("Must provide input via -s and -m");
@@ -71,7 +72,7 @@ public class Diff {
 			} else {
 				this.minuendJC = null;
 			}
-				
+			
 			// setup output
 			if(argList.has("o")) {
 				this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
@@ -104,14 +105,14 @@ public class Diff {
 		parser.addArgument(new ArgDef().setShortOption('M').setLongOpt("minuendOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("subtrahend").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("subtrahendOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-				
+		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
 		
 		return parser;
-	}	
+	}
 	
 	/**
 	 * 
@@ -119,26 +120,22 @@ public class Diff {
 	public void execute() {
 		
 		/*
-		 * c - b = a
-		 * minuend - subtrahend = difference
-		 * 
-		 * ie 	minuend.diff(subtrahend) = differenece
-		 * 		c.diff(b) = a
+		 * c - b = a minuend - subtrahend = difference ie minuend.diff(subtrahend) = differenece c.diff(b) = a
 		 */
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = this.minuendJC.getJenaModel();
 		Model subtrahendModel = this.subtrahendJC.getJenaModel();
 		
-		diffModel = minuendModel.difference(subtrahendModel);	
+		diffModel = minuendModel.difference(subtrahendModel);
 		
 		//System.out.println("minuendModel");
 		//this.minuendJC.exportRDF(System.out);
 		
 		//System.out.println("subtrahendModel");
 		//this.subtrahendJC.exportRDF(System.out);
-
+		
 		try {
-			if (this.dumpFile != null){
+			if(this.dumpFile != null) {
 				RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
 				fasterWriter.setProperty("showXmlDeclaration", "true");
 				fasterWriter.setProperty("allowBadURIs", "true");
@@ -146,23 +143,20 @@ public class Diff {
 				OutputStreamWriter osw = new OutputStreamWriter(VFS.getManager().resolveFile(new File("."), this.dumpFile).getContent().getOutputStream(false), Charset.availableCharsets().get("UTF-8"));
 				fasterWriter.write(diffModel, osw, "");
 				log.debug("RDF/XML Data was exported");
-			} else{
+			} else {
 				this.output.getJenaModel().add(diffModel);
 			}
-		} catch (Exception e){
+		} catch(Exception e) {
 			log.fatal(e.getMessage());
 		}
-						
-	}	
+	}
 	
-
-
-
 	/**
-	 * @param args
+	 * Main Method
+	 * @param args commandline arguments
 	 */
 	public static void main(String[] args) {
-		log.info(getParser().getAppName()+": Start");
+		log.info(getParser().getAppName() + ": Start");
 		try {
 			new Diff(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
@@ -174,7 +168,6 @@ public class Diff {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		log.info(getParser().getAppName()+": End");
+		log.info(getParser().getAppName() + ": End");
 	}
-	
 }

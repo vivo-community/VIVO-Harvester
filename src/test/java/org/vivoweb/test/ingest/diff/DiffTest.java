@@ -5,21 +5,16 @@ package org.vivoweb.test.ingest.diff;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.Properties;
-
+import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.diff.Diff;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.test.ingest.score.ScoreTest;
-
-import junit.framework.TestCase;
 
 /**
  * @author drspeedo
@@ -51,24 +46,9 @@ public class DiffTest extends TestCase {
 	 * vivo test configuration file
 	 */
 	private File vivoXML;
-	
-	
-	
-	
-	
-	/**
-	 * @param name
-	 */
-	public DiffTest(String name) {
-		super(name);
-	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
-		super.setUp();
-		
 		// Create vivo rdf file
 		try {
 			this.previousRDF = File.createTempFile("scoretest_vivo", ".rdf");
@@ -237,13 +217,11 @@ public class DiffTest extends TestCase {
 			
 			
 		} catch(Exception e) {
-			
+			log.error(e.getMessage(), e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

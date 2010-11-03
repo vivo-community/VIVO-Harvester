@@ -77,7 +77,7 @@ public class TranslateTest extends TestCase {
 			// compare the record data with expected output
 			System.out.println(this.outRH.getRecordData("1").toString());
 			
-			//assertEquals(outputData, this.outRH.getRecordData("1"));
+			assertEquals(outputData, this.outRH.getRecordData("1"));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());

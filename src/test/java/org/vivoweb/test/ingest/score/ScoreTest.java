@@ -22,11 +22,6 @@ import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.score.Score;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
-
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**

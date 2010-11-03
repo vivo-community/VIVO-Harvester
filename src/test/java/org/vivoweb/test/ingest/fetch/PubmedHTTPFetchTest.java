@@ -54,7 +54,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.fetch.PubmedSOAPFetch#main(java.lang.String[]) main(String... args)}.
+	 * Test method for {@link org.vivoweb.ingest.fetch.PubmedHTTPFetch#main(java.lang.String[]) main(String... args)}.
 	 */
 	public final void testPubmedHTTPFetchMain() {
 		try {

@@ -2,14 +2,16 @@ package org.vivoweb.ingest.update;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.diff.Diff;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
-
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
+/**
+ *
+ */
+@SuppressWarnings("unused")
 public class Update {
 
 	/**
@@ -63,6 +65,9 @@ public class Update {
 		return parser;
 	}
 	
+	/**
+	 * Execute the task
+	 */
 	public void execute() {
 		Model subtractions = ModelFactory.createDefaultModel();
 		Model additions = ModelFactory.createDefaultModel();
@@ -84,7 +89,8 @@ public class Update {
 	}
 	
 	/**
-	 * @param args
+	 * Main Method
+	 * @param args commandline arguments
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

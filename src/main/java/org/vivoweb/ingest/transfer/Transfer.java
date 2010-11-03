@@ -8,22 +8,17 @@ package org.vivoweb.ingest.transfer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
-import org.vivoweb.ingest.util.IterableAdaptor;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
  * Transfer data from one Jena model to another

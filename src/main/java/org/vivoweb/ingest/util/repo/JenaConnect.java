@@ -277,14 +277,16 @@ public class JenaConnect {
 	
 	/**
 	 * Export the RDF to a file
-	 * @throws FileSystemException 
+	 * @param fileName the file to read from
+	 * @throws FileSystemException error accessing file
 	 */
 	public void exportRDF(String fileName) throws FileSystemException{
 		this.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
 	}
 	
-	/*
-	 * add rdf from another jenaconnect
+	/**
+	 * Add RDF from another JenaConnect
+	 * @param inputJC the Model to read from
 	 */
 	public void importRDF(JenaConnect inputJC){
 		this.jenaModel.add(inputJC.getJenaModel());
