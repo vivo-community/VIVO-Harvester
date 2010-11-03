@@ -49,6 +49,14 @@
 	<!-- The Article -->
 	<xsl:template match="PubmedArticle">
 		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{child::MedlineCitation/PMID}">
+				<xsl:choose>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType=Addresses]">
+						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Journal Article']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+				</xsl:choose>
 				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
 				<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 				<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
@@ -57,9 +65,30 @@
 				<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
 				<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
 				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
+				<!-- TODO:  DOI (which is a sub of <bibo:doi><xsl:value-of select="MedlineCitation/PubMedData/ArticleIDList/ArticleID"</bibo:doi>  -->
+				<!-- select the MedlineCitation/PubMedData/ArticleIDList/ArticleID 
+					if the attribute IdType="doi"
+					<bibo:doi>
+				-->
 				<xsl:choose>
+					<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
+						<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
+					</xsl:when>
+					<xsl:when test="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)">
+						<core:freetextKeyword><xsl:value-of select="MedlineCitation/ChemicalList/Chemical/NameOfSubstance" /></core:freetextKeyword>
+					</xsl:when>
+					<xsl:when test="string(MedlineCitation/KeywordList/Keyword)">
+						<core:freetextKeyword><xsl:value-of select="MedlineCitation/KeywordList/Keyword" /></core:freetextKeyword>  <!-- Test -->
+					</xsl:when>
 					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
 						<core:Year><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:Year>
+						<!-- TODO: parse more than just the year -->
+					</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)">
+						<core:Month><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Month"/></core:Month>
+					</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day)">
+						<core:Day><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:Day>
 					</xsl:when>
 				</xsl:choose>
 				<xsl:apply-templates select="MedlineCitation/Article/Affiliation" />
