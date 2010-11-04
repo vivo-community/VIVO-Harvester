@@ -133,7 +133,6 @@ public class ScoreTest extends TestCase {
 			
 			log.info("Testing keep working model");
 			// keep input model
-			
 			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
 			log.info(StringUtils.join(" ", args));
@@ -162,6 +161,43 @@ public class ScoreTest extends TestCase {
 					fail("Model not empty -w arg violated");
 				}
 				Test.close();
+			} catch(Exception e) {
+				log.error(e.getMessage(), e);
+				fail(e.getMessage());
+			}
+			
+			log.info("Testing empty output model");
+			// empty output model
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
+			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+				//get size
+				long modelSize = Test.getScoreOutput().getJenaModel().size();
+				Test.execute();
+				if (modelSize > Test.getScoreOutput().getJenaModel().size()) {
+					log.error("Output model not emptied before run");
+					fail("Output model not emptied before run");
+				}
+			} catch(Exception e) {
+				log.error(e.getMessage(), e);
+				fail(e.getMessage());
+			}
+			
+			// don't empty output model
+			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
+			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
+			log.info(StringUtils.join(" ", args));
+			try {
+				Test = new Score(args);
+				//get size
+				long modelSize = Test.getScoreOutput().getJenaModel().size();
+				Test.execute();
+				if (modelSize < Test.getScoreOutput().getJenaModel().size()) {
+					log.error("Output model emptied before run");
+					fail("Output model emptied before run");
+				}
 			} catch(Exception e) {
 				log.error(e.getMessage(), e);
 				fail(e.getMessage());
@@ -212,7 +248,7 @@ public class ScoreTest extends TestCase {
 			output = JenaConnect.parseConfig(this.vivoXML, outputProp);
 			
 			// run author score
-			Test = new Score(input, vivo, output, false, blank, blank, blank, "1", null, null, null);
+			Test = new Score(input, vivo, output, false, false, blank, blank, blank, "1", null, null, null);
 			Test.execute();
 			
 			// check output model
@@ -225,7 +261,7 @@ public class ScoreTest extends TestCase {
 			Test.getScoreOutput().getJenaModel().removeAll();
 			
 			// run exactmatch score
-			Test = new Score(input, vivo, output, false, workEmail, blank, blank, null, null, null, null);
+			Test = new Score(input, vivo, output, false, false, workEmail, blank, blank, null, null, null, null);
 			Test.execute();
 			
 			// check output model
@@ -494,7 +530,6 @@ public class ScoreTest extends TestCase {
 					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
 					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-					 "<core:middleName>J</core:middleName>" +
 					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
 					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
@@ -502,6 +537,18 @@ public class ScoreTest extends TestCase {
 					 "<foaf:firstName>Guy</foaf:firstName>" +
 					 "<foaf:lastName>Fawkes</foaf:lastName>" +
 					 "<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
+					 "</rdf:Description>" +
+					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3575\">" +
+					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
+					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+					 "<core:middleName>J</core:middleName>" +
+					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
+					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+					 "<foaf:firstName>Guy</foaf:firstName>" +
+					 "<foaf:lastName>F</foaf:lastName>" +
+					 "<ufVIVO:ufid>58454252</ufVIVO:ufid>" +
 					 "</rdf:Description>" +
 					 "</rdf:RDF>");
 			out.close();

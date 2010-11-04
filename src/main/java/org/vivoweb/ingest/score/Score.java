@@ -59,9 +59,13 @@ public class Score {
 	 */
 	private final JenaConnect scoreOutput;
 	/**
-	 * Option to retain working model
+	 * Option to remove input model after scoring
 	 */
 	private final boolean wipeInputModel;
+	/**
+	 * Option to remove output model before filling
+	 */
+	private boolean wipeOutputModel;
 	/**
 	 * Option to push Matches and Non-Matches to output model
 	 */
@@ -95,6 +99,7 @@ public class Score {
 	 * the predicate that connects the object in vivo to the object in score
 	 */
 	private final String objToScore;
+	
 	
 	/**
 	 * Main method
@@ -136,6 +141,12 @@ public class Score {
 	 */
 	public void execute() {
 		log.info("Running specified algorithims");
+		
+		// Empty input model
+		if(this.wipeOutputModel) {
+			log.info("Emptying output model");	
+			this.scoreOutput.getJenaModel().removeAll();
+		}
 		
 		// Call authorname matching
 		if(this.authorName != null) {
@@ -184,8 +195,9 @@ public class Score {
 		// }
 		// }
 		
-		// Empty working model
+		// Empty input model
 		if(this.wipeInputModel) {
+			log.info("Emptying input model");	
 			this.scoreInput.getJenaModel().removeAll();
 		}
 	}
@@ -225,6 +237,7 @@ public class Score {
 		
 		// options
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription("If set, this will clear the input model after scoring is complete"));
+		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("wipe-output-model").setDescription("If set, this will clear the output model before scoring begins"));
 		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("push-all").setDescription("If set, this will push all matches and non matches to output model"));
 		
 		// exactMatch foreignLink
@@ -240,7 +253,8 @@ public class Score {
 	 * @param jenaVivo model containing vivo statements
 	 * @param jenaScoreInput model containing statements to be scored
 	 * @param jenaScoreOutput output model
-	 * @param clearWorkingModelArg If set, this will clear the working model after scoring is complete
+	 * @param clearInputModelArg If set, this will clear the input model after scoring is complete
+	 * @param clearOutputModelArg If set, this will clear the output model before scoring begins
 	 * @param exactMatchArg perform an exact match scoring
 	 * @param pairwiseArg perform a pairwise scoring
 	 * @param regexArg perform a regular expression scoring
@@ -250,11 +264,12 @@ public class Score {
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
 	@SuppressWarnings("unused")
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearWorkingModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
 		this.scoreInput = jenaScoreInput;
 		this.vivo = jenaVivo;
 		this.scoreOutput = jenaScoreOutput;
-		this.wipeInputModel = clearWorkingModelArg;
+		this.wipeInputModel = clearInputModelArg;
+		this.wipeOutputModel = clearOutputModelArg;
 		this.exactMatch = exactMatchArg;
 		this.pairwise = pairwiseArg;
 		//TODO cah: uncomment when regex implemented
@@ -334,6 +349,7 @@ public class Score {
 		log.debug("output has " + outputCount + " statements in it");
 		
 		this.wipeInputModel = opts.has("w");
+		this.wipeOutputModel = opts.has("q");
 		this.pushAll = opts.has("l");
 		this.exactMatch = opts.getAll("e");
 		this.pairwise = opts.getAll("p");
@@ -595,10 +611,15 @@ public class Score {
 		Resource paperResource;
 		RDFNode lastNameNode;
 		RDFNode foreNameNode;
+		RDFNode middleNameNode;
 		RDFNode paperNode;
 		RDFNode authorNode = null;
 		RDFNode matchNode = null;
 		RDFNode loopNode;
+		String vivoInitials;
+		String pubmedInitials;
+		String lastName;
+		String middleName;
 		ResultSet vivoResult;
 		QuerySolution scoreSolution;
 		QuerySolution vivoSolution;
@@ -634,6 +655,20 @@ public class Score {
 			
 			log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
 			
+			//parse out middle initial / name from foreName
+			String splitName[] = foreNameNode.toString().split(" ");
+			
+			
+			if (splitName.length == 2) {
+				lastName = splitName[0];
+				middleName = splitName[1];
+				pubmedInitials = lastName.substring(0,1) + middleName.substring(0,1);
+			} else {
+				lastName = null;
+				middleName = null;
+				pubmedInitials = null;
+			}
+			
 			// ensure first name and last name are not blank
 			if (lastNameNode.toString() == null || foreNameNode.toString() == null) {
 				log.info("Incomplete name, skipping");
@@ -641,7 +676,7 @@ public class Score {
 				scoreMatch = lastNameNode.toString();
 				
 				// Select all matching authors from vivo store
-				queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?x ?firstName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName}";
+				queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT ?x ?firstName ?middleName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName . ?x core:middleName ?middleName}";
 				
 				log.debug(queryString);
 				
@@ -652,8 +687,10 @@ public class Score {
 					vivoSolution = vivoResult.next();
 					log.trace(vivoSolution.toString());
 					loopNode = vivoSolution.get("firstName");
+					middleNameNode = vivoSolution.get("middleName");
+					
 					if(loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
-						log.trace("Checking " + loopNode);
+						log.trace("Checking " + loopNode + ", " + middleNameNode.toString());
 						if(foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
 							matchNodes.add(vivoSolution);
 						} else {
@@ -668,6 +705,18 @@ public class Score {
 				while(matches.hasNext()) {
 					vivoSolution = matches.next();
 					loopNode = vivoSolution.get("firstName");
+					
+					//Grab the initials, and check that as best match
+					middleNameNode = vivoSolution.get("middleName");
+					vivoInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
+					
+					//If initials match, set as match, unless we match to a name below
+					if (vivoInitials == pubmedInitials) { 
+						log.trace("Setting " + loopNode.toString() + " as best match, matched initials " + vivoInitials);
+						matchNode = loopNode;
+						authorNode = vivoSolution.get("x");
+					}
+					
 					loop = 0;
 					while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
 						loop++;
