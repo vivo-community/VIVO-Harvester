@@ -80,25 +80,27 @@ public class ChangeNamespace {
 	 * Get either a matching uri from the given model or an unused uri
 	 * @param current the current resource
 	 * @param namespace the namespace to match in
-	 * @param model the model to match in
 	 * @param properties the propeties to match on
+	 * @param vivo the model to match in
+	 * @param model models to check for duplicates
 	 * @return the uri of the first matched resource or an unused uri if none found
 	 */
-	public static String getURI(Resource current, String namespace, JenaConnect model, List<Property> properties) {
-		String matchURI = getMatchingURI(current, namespace, model, properties);
-		String uri = (matchURI == null)?getUnusedURI(namespace, model):matchURI;
+	public static String getURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo, JenaConnect model) {
+		String matchURI = getMatchingURI(current, namespace, properties, vivo);
+		String uri = (matchURI == null)?getUnusedURI(namespace, vivo, model):matchURI;
 		log.debug("Using URI: <"+uri+">");
 		return uri;
 	}
 	
 	/**
-	 * Gets an unused URI in the the given namespace for a model
+	 * Gets an unused URI in the the given namespace for the given models
 	 * @param namespace the namespace
-	 * @param model the model
+	 * @param vivo primary model to check in
+	 * @param models additional models to check in
 	 * @return the uri
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static String getUnusedURI(String namespace, JenaConnect model) throws IllegalArgumentException {
+	public static String getUnusedURI(String namespace, JenaConnect vivo, JenaConnect... models) throws IllegalArgumentException {
 		if(namespace == null || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
@@ -106,8 +108,13 @@ public class ChangeNamespace {
 		Random random = new Random();
 		while(uri == null) {
 			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
-			if(model.containsURI(uri)) {
+			if(vivo.containsURI(uri)) {
 				uri = null;
+			}
+			for(JenaConnect model : models) {
+				if(model.containsURI(uri)) {
+					uri = null;
+				}
 			}
 		}
 		log.debug("Using new URI: <"+uri+">");
@@ -118,12 +125,12 @@ public class ChangeNamespace {
 	 * Matches the current resource to a resource in the given namespace in the given model based on the given properties
 	 * @param current the current resource
 	 * @param namespace the namespace to match in
-	 * @param model the model to match in
 	 * @param properties the propeties to match on
+	 * @param vivo the model to match in
 	 * @return the uri of the first matched resource or null if none found
 	 */
-	public static String getMatchingURI(Resource current, String namespace, JenaConnect model, List<Property> properties) {
-		List<String> uris = getMatchingURIs(current, namespace, model, properties);
+	public static String getMatchingURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo) {
+		List<String> uris = getMatchingURIs(current, namespace, properties, vivo);
 		String uri = uris.isEmpty()?null:uris.get(0);
 		log.debug("Matched URI: <"+uri+">");
 		return uri;
@@ -133,11 +140,11 @@ public class ChangeNamespace {
 	 * Matches the current resource to resources in the given namespace in the given model based on the given properties
 	 * @param current the current resource
 	 * @param namespace the namespace to match in
-	 * @param model the model to match in
 	 * @param properties the propeties to match on
+	 * @param vivo the model to match in
 	 * @return the uris of the matched resources (empty set if none found)
 	 */
-	public static List<String> getMatchingURIs(Resource current, String namespace, JenaConnect model, List<Property> properties) {
+	public static List<String> getMatchingURIs(Resource current, String namespace, List<Property> properties, JenaConnect vivo) {
 		StringBuilder sbQuery = new StringBuilder();
 		ArrayList<String> filters = new ArrayList<String>();
 		int valueCount = 0;
@@ -173,7 +180,7 @@ public class ChangeNamespace {
 		int count = 0;
 		log.debug("Query:\n"+sbQuery.toString());
 		log.debug("namespace: "+namespace);
-		for(QuerySolution qs : IterableAdaptor.adapt(model.executeQuery(sbQuery.toString()))) {
+		for(QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
 			Resource res = qs.getResource("uri");
 			if(res.getNameSpace().equals(namespace)) {
 				String uri = res.getURI();
@@ -210,7 +217,7 @@ public class ChangeNamespace {
 				String uri = null;
 				boolean urlFound = false;
 				while (!urlFound) {
-					uri = getURI(res, newNamespace, vivo, properties);
+					uri = getURI(res, newNamespace, properties, vivo, model);
 					if (!urlCheck.contains(uri)) {
 						urlCheck.add(uri);
 						urlFound = true;

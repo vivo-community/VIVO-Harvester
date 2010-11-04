@@ -117,11 +117,11 @@ public class ChangeNamespaceTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getMatchingURIs(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, org.vivoweb.ingest.util.repo.JenaConnect, java.util.List) getMatchingURIs(Resource current, String namespace, JenaConnect model, List&lt;Propetry&gt; properties)}.
+	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getMatchingURIs(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, org.vivoweb.ingest.util.repo.JenaConnect) getMatchingURIs(Resource current, String namespace, List&lt;Propetry&gt; properties, JenaConnect vivo)}.
 	 */
 	public void testGetMatchingURIs() {
 		log.info("testing getMatchingURIs Start");
-		List<String> uris = ChangeNamespace.getMatchingURIs(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.vivo, this.properties);
+		List<String> uris = ChangeNamespace.getMatchingURIs(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
 		assertTrue(uris.contains("http://vivo.test.edu/individual/n321456"));
 		assertTrue(uris.contains("http://vivo.test.edu/individual/n654321"));
 		assertFalse(uris.contains("http://vivobad.test.edu/wrong/n987456"));
@@ -130,17 +130,17 @@ public class ChangeNamespaceTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getMatchingURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, org.vivoweb.ingest.util.repo.JenaConnect, java.util.List)  getMatchingURI(Resource current, String namespace, JenaConnect model, List&lt;Propetry&gt; properties)}.
+	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getMatchingURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, org.vivoweb.ingest.util.repo.JenaConnect)  getMatchingURI(Resource current, String namespace, List&lt;Propetry&gt; properties, JenaConnect vivo)}.
 	 */
 	public void testGetMatchingURI() {
 		log.info("testing getMatchingURI Start");
-		String uri = ChangeNamespace.getMatchingURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.vivo, this.properties);
+		String uri = ChangeNamespace.getMatchingURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
 		assertTrue(uri.equals("http://vivo.test.edu/individual/n654321") || uri.equals("http://vivo.test.edu/individual/n321456"));
 		log.info("testing getMatchingURI End");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getUnusedURI(java.lang.String, org.vivoweb.ingest.util.repo.JenaConnect) getUnusedURI(String namespace, JenaConnect model)}.
+	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getUnusedURI(java.lang.String, org.vivoweb.ingest.util.repo.JenaConnect, org.vivoweb.ingest.util.repo.JenaConnect...) getUnusedURI(String namespace, JenaConnect vivo, JenaConnect... models)}.
 	 */
 	public void testGetUnusedURI() {
 		log.info("testing getUnusedURI Start");
@@ -150,13 +150,13 @@ public class ChangeNamespaceTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, org.vivoweb.ingest.util.repo.JenaConnect, java.util.List) getURI(Resource current, String namespace, JenaConnect model, List&lt;Propetry&gt; properties)}.
+	 * Test method for {@link org.vivoweb.ingest.update.ChangeNamespace#getURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, org.vivoweb.ingest.util.repo.JenaConnect, org.vivoweb.ingest.util.repo.JenaConnect) getURI(Resource current, String namespace, List&lt;Propetry&gt; properties, JenaConnect vivo, JenaConnect model)}.
 	 */
 	public void testGetURI() {
 		log.info("testing getURI Start");
-		String matchuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.vivo, this.properties);
+		String matchuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo, this.model);
 		assertTrue(matchuri.equals("http://vivo.test.edu/individual/n654321") || matchuri.equals("http://vivo.test.edu/individual/n321456"));
-		String newuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test321"), this.newNamespace, this.vivo, this.properties);
+		String newuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test321"), this.newNamespace, this.properties, this.vivo, this.model);
 		assertFalse(this.vivo.containsURI(newuri));
 		log.info("testing getURI End");
 	}
