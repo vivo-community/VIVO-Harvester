@@ -48,7 +48,7 @@
 	
 	<!-- The Article -->
 	<xsl:template match="PubmedArticle">
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmed/pmid{child::MedlineCitation/PMID}">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedPub/pmid{child::MedlineCitation/PMID}">
 				<xsl:choose>
 					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType=Addresses]">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
@@ -356,22 +356,22 @@
 	
 	<!-- Links to From the Paper to the Terms and Authors -->
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef">
-		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
+		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef">
-		<core:hasSubjectArea rdf:nodeID="pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />
+		<core:hasSubjectArea rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
-		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/pubMed/journal/j{child::ISSN}" />
+		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/harvest/pubmedJournal/journal{child::ISSN}" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateCreated" mode="createdRef">
-		<score:hasCreateDate rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/dateCreated" />
+		<score:hasCreateDate rdf:resource="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCreated" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateCompleted"  mode="completedRef">
-		<score:hasCompleteDate rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/dateCompleted" />
+		<score:hasCompleteDate rdf:resource="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCompleted" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateRevised"  mode="revisedRef">
-		<score:hasReviseDate rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/dateRevised" />
+		<score:hasReviseDate rdf:resource="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateRevised" />
 	</xsl:template>
 	
 	<!-- Author List Navigation --> 
@@ -381,13 +381,13 @@
 	
 	<!-- The Authors -->
 	<xsl:template match="Author" mode="fullAuthor">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
-			<core:linkedAuthor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}" />
-			<core:linkedInformationResource rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
+			<core:linkedAuthor rdf:resource="http://vivoweb.org/harvest/pubmedAuthor/pmid{ancestor::MedlineCitation/PMID}author{position()}" />
+			<core:linkedInformationResource rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid{ancestor::MedlineCitation/PMID}"/>
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
@@ -401,7 +401,7 @@
 			</xsl:choose>
 			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthor/pmid{ancestor::MedlineCitation/PMID}author{position()}">
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
@@ -426,9 +426,9 @@
 			</xsl:choose>
 			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
+			<core:authorInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 		</rdf:Description>
-	</xsl:template>	
+	</xsl:template>
 
 	
 	<!-- The Mesh List -->
@@ -438,13 +438,13 @@
 	
 	<!-- The Mesh Terms -->
 	<xsl:template match="MeshHeading" mode="fullTerm">
-		<rdf:Description rdf:nodeID="pmid{ancestor::MedlineCitation/PMID}mesh{position()}">
+		<rdf:Description rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
-			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
+			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid{ancestor::MedlineCitation/PMID}" />
 			<rdfs:label><xsl:value-of select="DescriptorName"/></rdfs:label>
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<score:meshTermOf rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}" />
+			<score:meshTermOf rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid{ancestor::MedlineCitation/PMID}" />
 			<score:Descriptor><xsl:value-of select="DescriptorName"/></score:Descriptor>
 			<score:DescriptorIsMajorTerm><xsl:value-of select="DescriptorName/@MajorTopicYN"/></score:DescriptorIsMajorTerm>
 			<score:Qualifier><xsl:value-of select="QualifierName"/></score:Qualifier>
@@ -457,21 +457,21 @@
 		sure that the publication date is not before the authors birth date.
 	-->
 	<xsl:template match="MedlineCitation/DateCreated" mode="fullCreated">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/dateCreated" >
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCreated" >
 			<core:Year>"<xsl:value-of select="Year"/>"</core:Year>
 			<core:Month>"<xsl:value-of select="Month"/>"</core:Month>
 			<core:Day>"<xsl:value-of select="Day"/>"</core:Day>
 		</rdf:Description>
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateCompleted"  mode="fullCompleted">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/dateCompleted" >
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCompleted" >
 			<core:Year><xsl:value-of select="Year"/></core:Year>
 			<core:Month><xsl:value-of select="Month"/></core:Month>
 			<core:Day><xsl:value-of select="Day"/></core:Day>
 		</rdf:Description>
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateRevised"  mode="fullRevised">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/dateRevised" >
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateRevised" >
 			<core:Year><xsl:value-of select="Year"/></core:Year>
 			<core:Month><xsl:value-of select="Month"/></core:Month>
 			<core:Day><xsl:value-of select="Day"/></core:Day>
@@ -487,13 +487,13 @@
 		
 	<!-- The Main Journal Entity -->
 	<xsl:template match="Journal" mode="fullJournal">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/journal/j{child::ISSN}" >
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedJournal/journal{child::ISSN}" >
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:Title><xsl:value-of select="Title" /></core:Title>
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
 			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
-			<core:publicationVenueFor rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}"/>
+			<core:publicationVenueFor rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
 	</xsl:template>	
 	
