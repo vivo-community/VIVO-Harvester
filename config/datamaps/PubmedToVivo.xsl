@@ -48,7 +48,7 @@
 	
 	<!-- The Article -->
 	<xsl:template match="PubmedArticle">
-		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{child::MedlineCitation/PMID}">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmed/pmid{child::MedlineCitation/PMID}">
 				<xsl:choose>
 					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType=Addresses]">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />

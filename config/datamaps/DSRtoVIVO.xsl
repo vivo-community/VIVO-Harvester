@@ -44,7 +44,7 @@
 		<xsl:analyze-string select="$rdfid" regex="^id_-_(.*?)(_-_.+)*?$">
 			<xsl:matching-substring>
 				<xsl:variable name="grantid" select="regex-group(1)" />
-				<rdf:Description rdf:about="http://vivoweb.org/harvest/grant{$grantid}">
+				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant{$grantid}">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 					<rdfs:label><xsl:value-of select="db-dbo.vwVIVO:Title" /></rdfs:label>
 					<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="db-dbo.vwVIVO:ProjectBegin"/></core:startDate>
