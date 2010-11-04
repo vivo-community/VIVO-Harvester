@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.vivoweb.test.ingest.update;
+package org.vivoweb.test.ingest.diff;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
 import org.vivoweb.ingest.diff.Diff;
 import org.vivoweb.ingest.util.repo.JenaConnect;
-import org.vivoweb.test.ingest.score.ScoreTest;
 
 /**
  * @author drspeedo
@@ -25,7 +24,7 @@ public class DiffTest extends TestCase {
 	/**
 	 * Log4J Logger
 	 */
-	private static Log log = LogFactory.getLog(ScoreTest.class);
+	private static Log log = LogFactory.getLog(DiffTest.class);
 	/**
 	 * previous ingest rdf statements to load for test
 	 */
@@ -224,6 +223,9 @@ public class DiffTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		this.incomingRDF.delete();
+		this.previousRDF.delete();
+		this.vivoXML.delete();
 	}
 
 }

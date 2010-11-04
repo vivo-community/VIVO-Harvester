@@ -49,6 +49,20 @@ public class Diff {
 	 */
 	private String dumpFile;
 	
+	
+	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC){
+		this.minuendJC = mJC;
+		this.subtrahendJC = sJC;
+		this.output = oJC;
+	}
+	
+	public Diff(JenaConnect mJC, JenaConnect sJC, String dF){
+		this.minuendJC = mJC;
+		this.subtrahendJC = sJC;
+		this.dumpFile = dF;
+	}
+	
+	
 	/**
 	 * Constructor
 	 * @param argList parsed commandline arguments
@@ -60,8 +74,8 @@ public class Diff {
 			throw new IllegalArgumentException("Must provide input via -s and -m");
 		}
 		// Require output args
-		if(!argList.has("o") && !argList.has("O") && !argList.has("d")) {
-			throw new IllegalArgumentException("Must provide one of -o, -O, or -d");
+		if(!argList.has("o") && !argList.has("d")) {
+			throw new IllegalArgumentException("Must provide one of -o or -d");
 		}
 		
 		try {
@@ -120,41 +134,40 @@ public class Diff {
 		return parser;
 	}
 	
-	/**
-	 * 
-	 */
-	public void execute() {
-		
+	public static void diff(JenaConnect mJC,JenaConnect sJC,JenaConnect oJC, String dF){
 		/*
 		 * c - b = a minuend - subtrahend = difference ie minuend.diff(subtrahend) = differenece c.diff(b) = a
 		 */
 		Model diffModel = ModelFactory.createDefaultModel();
-		Model minuendModel = this.minuendJC.getJenaModel();
-		Model subtrahendModel = this.subtrahendJC.getJenaModel();
+		Model minuendModel = mJC.getJenaModel();
+		Model subtrahendModel = sJC.getJenaModel();
 		
 		diffModel = minuendModel.difference(subtrahendModel);
 		
-		//System.out.println("minuendModel");
-		//this.minuendJC.exportRDF(System.out);
-		
-		//System.out.println("subtrahendModel");
-		//this.subtrahendJC.exportRDF(System.out);
 		
 		try {
-			if(this.dumpFile != null) {
+			if(dF != null) {
 				RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
 				fasterWriter.setProperty("showXmlDeclaration", "true");
 				fasterWriter.setProperty("allowBadURIs", "true");
 				fasterWriter.setProperty("relativeURIs", "");
-				OutputStreamWriter osw = new OutputStreamWriter(VFS.getManager().resolveFile(new File("."), this.dumpFile).getContent().getOutputStream(false), Charset.availableCharsets().get("UTF-8"));
+				OutputStreamWriter osw = new OutputStreamWriter(VFS.getManager().resolveFile(new File("."), dF).getContent().getOutputStream(false), Charset.availableCharsets().get("UTF-8"));
 				fasterWriter.write(diffModel, osw, "");
 				log.debug("RDF/XML Data was exported");
-			} else {
-				this.output.getJenaModel().add(diffModel);
+			} 
+			if (oJC != null){
+				oJC.getJenaModel().add(diffModel);
 			}
 		} catch(Exception e) {
 			log.fatal(e.getMessage());
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void execute() {
+		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile);		
 	}
 	
 	/**

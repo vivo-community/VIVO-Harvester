@@ -6,11 +6,25 @@
  ******************************************************************************/
 package org.vivoweb.ingest.update;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.vfs.VFS;
+import org.vivoweb.ingest.diff.Diff;
+import org.vivoweb.ingest.transfer.Transfer;
 import org.vivoweb.ingest.util.args.ArgDef;
+import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
+import org.vivoweb.ingest.util.repo.RecordHandler;
+import org.xml.sax.SAXException;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -39,35 +53,79 @@ public class Update {
 	/**
 	 * 
 	 */
-	private boolean applyToVIVO;
-	/**
-	 * 
-	 */
+	
 	private boolean keepSubtractions;
+	private boolean keepAdditions;
+	private boolean wipeIncomingModel;
+	
+	
+	/**
+	 * Constructor
+	 * @param argList parsed argument list
+	 * @throws IOException error creating task
+	 */
+	public Update(ArgList argList) throws IOException {
+		// Require input args
+		if(!argList.has("p") || !argList.has("i")) {
+			throw new IllegalArgumentException("Must provide input via -i and -p");
+		}
+		try {
+			// setup incomingJC
+			if(argList.has("i")) {
+				this.incomingJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
+			} else {
+				this.incomingJC = null;
+			}
+			
+			// setup previousJC
+			if(argList.has("p")) {
+				this.previousJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("p")), argList.getProperties("P"));
+			} else {
+				this.previousJC = null;
+			}
+			
+			// setup vivoJC
+			if(argList.has("v")) {
+				this.vivoJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("v")), argList.getProperties("V"));
+			} else {
+				this.vivoJC = null;
+			}
+			
+			this.wipeIncomingModel = argList.has("w");
+			
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(), e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+	}
+	
 	
 	/**
 	 * Get the ArgParser for this task
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("Diff");
+		ArgParser parser = new ArgParser("Update");
 		
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("previousModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("previousModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("previousModelOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("incomingModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("incomingModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("incomingModelOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoModel").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
-
 		
 		// switches
-		// applyToVIVO Model (for before provinance)
 		// keepSubtractions (don't subtract)
-		// deleteIncomingModel
 		
+		// keepAdditions
+		
+		// delete the incoming model
+		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-incoming-model").withParameter(false, "WIPE_FLAG").setDescription("If set, this will clear the input model after transfer is complete"));
+				
 		return parser;
 	}
 	
@@ -75,22 +133,45 @@ public class Update {
 	 * Execute the task
 	 */
 	public void execute() {
-		Model subtractions = ModelFactory.createDefaultModel();
-		Model additions = ModelFactory.createDefaultModel();
+		try {
+			File subtractionsXML = File.createTempFile("update_Subtractions", ".xml");
+			File additionsXML = File.createTempFile("update_Additions", ".xml");
 		
-		Model previousModel = this.previousJC.getJenaModel();
-		Model incomingModel = this.incomingJC.getJenaModel();
+			Model subModel = ModelFactory.createDefaultModel();
+			Model addModel = ModelFactory.createDefaultModel();
+			
+			if (this.previousJC == null){
+				System.out.println("previous is null");
+			}
+				
+			//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
+			Diff.diff(this.previousJC, this.incomingJC,null,subtractionsXML.getAbsolutePath());
+			FileInputStream subFIS = new FileInputStream(subtractionsXML.getAbsolutePath());
+			subModel.read(new InputStreamReader(subFIS), "");
+				
+			//run diff for additions incomingJC - previous jc
+			Diff.diff(this.incomingJC, this.previousJC, null, additionsXML.getAbsolutePath());
+			FileInputStream addFIS = new FileInputStream(additionsXML.getAbsolutePath());
+			addModel.read(new InputStreamReader(addFIS), "");
 		
-		//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
+			//if applyToVIVO
+			if (this.vivoJC != null){
+				this.vivoJC.getJenaModel().remove(subModel);
+				this.vivoJC.getJenaModel().add(addModel);
+			}
 		
-		
-		
-		//run diff for additions incomingJC - previous jc
-		
-		//if applyToVIVO
-		//subtract
-		//add
-		
+			this.previousJC.getJenaModel().remove(subModel);
+			this.previousJC.getJenaModel().add(addModel);
+			
+			if (this.wipeIncomingModel){
+				this.incomingJC.getJenaModel().removeAll();
+			}
+			
+			
+		} catch (Exception e) {
+			log.fatal(e.getMessage(),e);
+		}
+			
 		//apply to previous too
 		
 		//delete Incoming Model?
@@ -102,7 +183,19 @@ public class Update {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		log.info(getParser().getAppName()+": Start");
+		try {
+			new Update(new ArgList(getParser(), args)).execute();
+		} catch(IllegalArgumentException e) {
+			log.fatal(e.getMessage());
+			System.out.println(getParser().getUsage());
+		} catch(IOException e) {
+			log.fatal(e.getMessage(), e);
+			// System.out.println(getParser().getUsage());
+		} catch(Exception e) {
+			log.fatal(e.getMessage(), e);
+		}
+		log.info(getParser().getAppName()+": End");
 	}
 
 }
