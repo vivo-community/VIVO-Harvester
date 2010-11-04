@@ -213,6 +213,7 @@ public abstract class NIHFetch {
 				recToFetch = Integer.parseInt(env[2]);
 			}
 //			log.debug("recToFetch: "+recToFetch);
+			log.info("Fetching " + recToFetch + " records from search");
 			for(int x = recToFetch; x > 0; x-=intBatchSize) {
 				int maxRec = (x<=intBatchSize) ? x : intBatchSize;
 				int startRec = recToFetch - x;

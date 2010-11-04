@@ -137,7 +137,8 @@ public class PubmedHTTPFetch extends NIHFetch {
 		// set number to start at
 		urlSb.append("&retstart=" + retStart);
 //		log.debug(urlSb.toString());
-		log.info("Fetching records from http search");
+		int retEnd = Integer.parseInt(retStart) + Integer.parseInt(numRecords);
+		log.info("Fetching " + retStart + " to " + retEnd + " records from search");
 		try {
 			sanitizeXML(getURLContents(urlSb.toString()));
 		} catch(MalformedURLException e) {

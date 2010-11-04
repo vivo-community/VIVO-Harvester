@@ -91,7 +91,8 @@ public class PubmedFetch extends NIHFetch {
 		req.setTool(getToolName());
 		req.setRetstart(retStart);
 		req.setRetmax(numRecords);
-		log.info("Fetching records from search");
+		int retEnd = Integer.parseInt(retStart) + Integer.parseInt(numRecords);
+		log.info("Fetching " + retStart + " to " + retEnd + " records from search");
 		try {
 			serializeFetchRequest(req);
 		}catch(RemoteException e) {
