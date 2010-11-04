@@ -421,6 +421,7 @@ public class Score {
 	 */
 	private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace) {
 		Resource authorship;
+		String authorQuery;
 		Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
 		Property authorshipForPerson = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorInAuthorship");
 		
@@ -441,7 +442,17 @@ public class Score {
 		// string that finds the last name of the person in VIVO
 		Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
 		
-		String authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?badNode " + "WHERE {?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " + "?badNode core:authorInAuthorship ?authorship . " + "?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
+		if (authorLName == null) {
+			Statement authorworkEmail = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://vivoweb.org/ontology/core#workEmail"));
+			log.debug("Author Last name property is null, trying to find via email");
+			if (authorworkEmail == null) {
+				log.warn("Cannot find author -- linking failed");
+				return;
+			}
+			authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT ?badNode " + "WHERE {?badNode core:workEmail \"" + authorworkEmail.getObject().toString() + "\" . " + "?badNode core:authorInAuthorship ?authorship . " + "?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
+		} else {
+			authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?badNode " + "WHERE {?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " + "?badNode core:authorInAuthorship ?authorship . " + "?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
+		}
 		
 		log.debug(authorQuery);
 		
@@ -623,56 +634,61 @@ public class Score {
 			
 			log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
 			
-			scoreMatch = lastNameNode.toString();
-			
-			// Select all matching authors from vivo store
-			queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?x ?firstName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName}";
-			
-			log.debug(queryString);
-			
-			vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
-			
-			// Loop thru results and only keep if the last name, and first initial match
-			while(vivoResult.hasNext()) {
-				vivoSolution = vivoResult.next();
-				log.trace(vivoSolution.toString());
-				loopNode = vivoSolution.get("firstName");
-				if(loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
-					log.trace("Checking " + loopNode);
-					if(foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
-						matchNodes.add(vivoSolution);
+			// ensure first name and last name are not blank
+			if (lastNameNode.toString() == null || foreNameNode.toString() == null) {
+				log.info("Incomplete name, skipping");
+			} else {
+				scoreMatch = lastNameNode.toString();
+				
+				// Select all matching authors from vivo store
+				queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?x ?firstName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName}";
+				
+				log.debug(queryString);
+				
+				vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
+				
+				// Loop thru results and only keep if the last name, and first initial match
+				while(vivoResult.hasNext()) {
+					vivoSolution = vivoResult.next();
+					log.trace(vivoSolution.toString());
+					loopNode = vivoSolution.get("firstName");
+					if(loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
+						log.trace("Checking " + loopNode);
+						if(foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
+							matchNodes.add(vivoSolution);
+						} else {
+							// do nothing
+						}
+					}
+				}
+				
+				// Did we find a keeper? if so, store if meets threshold
+				// if more than 1 person find, keep the highest "best" match
+				Iterator<QuerySolution> matches = matchNodes.iterator();
+				while(matches.hasNext()) {
+					vivoSolution = matches.next();
+					loopNode = vivoSolution.get("firstName");
+					loop = 0;
+					while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+						loop++;
+					}
+					loop--;
+					if(loop < minChars) {
+						log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
 					} else {
-						// do nothing
+						// if loopNode matches more of foreNameNode, it's the new best match
+						// TODO Nicholas: Fix the preference for the first "best" match
+						if(matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+							log.trace("Setting " + loopNode.toString() + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
+							matchNode = loopNode;
+							authorNode = vivoSolution.get("x");
+						}
 					}
 				}
-			}
-			
-			// Did we find a keeper? if so, store if meets threshold
-			// if more than 1 person find, keep the highest "best" match
-			Iterator<QuerySolution> matches = matchNodes.iterator();
-			while(matches.hasNext()) {
-				vivoSolution = matches.next();
-				loopNode = vivoSolution.get("firstName");
-				loop = 0;
-				while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-					loop++;
+				if(matchNode != null && authorNode != null) {
+					log.trace("Keeping " + matchNode.toString());
+					commitResultNode(this.scoreOutput.getJenaModel(), authorNode, paperResource, matchNode, paperNode);
 				}
-				loop--;
-				if(loop < minChars) {
-					log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
-				} else {
-					// if loopNode matches more of foreNameNode, it's the new best match
-					// TODO Nicholas: Fix the preference for the first "best" match
-					if(matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-						log.trace("Setting " + loopNode.toString() + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
-						matchNode = loopNode;
-						authorNode = vivoSolution.get("x");
-					}
-				}
-			}
-			if(matchNode != null && authorNode != null) {
-				log.trace("Keeping " + matchNode.toString());
-				commitResultNode(this.scoreOutput.getJenaModel(), authorNode, paperResource, matchNode, paperNode);
 			}
 		}
 	}
