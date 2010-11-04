@@ -191,6 +191,9 @@
 				<xsl:when test="$typeCode=36">
 					<foaf:lastName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></foaf:lastName>
 				</xsl:when>
+				<xsl:when test="$typeCode=37">
+					<core:middleName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></core:middleName>
+				</xsl:when>
 				<xsl:when test="$typeCode=38">
 					<bibo:prefixName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></bibo:prefixName>
 				</xsl:when>
