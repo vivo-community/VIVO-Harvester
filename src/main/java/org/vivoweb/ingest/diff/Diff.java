@@ -4,7 +4,7 @@
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation
  ******************************************************************************/
-package org.vivoweb.ingest.update;
+package org.vivoweb.ingest.diff;
 
 import java.io.File;
 import java.io.IOException;

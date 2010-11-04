@@ -401,7 +401,7 @@
 			</xsl:choose>
 			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
-		<!-- <rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
+		<rdf:Description rdf:about="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/author{position()}">
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
@@ -424,9 +424,10 @@
 					<rdfs:label><xsl:value-of select="CollectiveName" /></rdfs:label>
 				</xsl:when>
 			</xsl:choose>
+			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:authorInAuthorship rdf:resource="http://vivoweb.org/pubMed/article/pmid{ancestor::MedlineCitation/PMID}/authorship{position()}" />
-		</rdf:Description> -->
+		</rdf:Description>
 	</xsl:template>	
 
 	

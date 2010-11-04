@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
-import org.vivoweb.ingest.update.Diff;
+import org.vivoweb.ingest.diff.Diff;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.test.ingest.score.ScoreTest;
 

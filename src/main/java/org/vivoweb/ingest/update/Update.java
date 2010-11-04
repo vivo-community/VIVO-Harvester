@@ -83,6 +83,8 @@ public class Update {
 		
 		//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
 		
+		
+		
 		//run diff for additions incomingJC - previous jc
 		
 		//if applyToVIVO
