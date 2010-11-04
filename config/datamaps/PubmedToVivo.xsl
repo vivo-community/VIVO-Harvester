@@ -53,11 +53,239 @@
 					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType=Addresses]">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
 					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Atlases']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Bibliography']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Biobibliography']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Biography']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Book Reviews']">
+						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Case Reports']">
+						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CaseStudy" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Charts']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Classical Article']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Conference']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase I']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase II']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase III']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase IV']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Collected Correspondene']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Collected Works']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Comment']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Comparative Study']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Congresses']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Consensus Development Conference']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Consensus Development Conference, NIH']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Controlled Clinical Trial']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Cookbooks']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Corrected and Republished Article']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Database']">
+						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Database" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Diaries']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Dictionary']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Directory']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Documentaries and Factual Films']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Film" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Drawings']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Duplicate Publication']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Editorial']">
+						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EditorialArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Encyclopedias']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Essays']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>			
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Evaluation Studies']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Academic Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Festschrift']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Fictional Work']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Formularies']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<!-- Government Publications -->
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='GuideBooks']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Guideline']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Handbooks']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Historical Article']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Incunabula']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Indexes']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Instruction']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
+					</xsl:when>
+					<!-- Interactive Tutorial -->
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Interview']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Introductory Journal Article']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
 					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Journal Article']">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
+					<!-- Lectures -->
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Legal Cases']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/LegalCaseDocument" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Legislation']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Legislation" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Maps']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Map" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Meeting Abstracts']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ConferenceProceedings" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Meta-Analysis']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Multicenter Study']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='News']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Newspaper Article']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Patents']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Patient Education Handout']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Periodical Index']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Periodicals']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Periodicals" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Pharmacopoeias']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Pictorial Works']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Portraits']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Practice Guideline']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Randomized Controlled Trial']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Review']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Statistics']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Study Characteristics']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Technical Report']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Report" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Textbooks']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Twin Study']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Validation Studies']">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+					</xsl:when>
+					<!--  Webcasts -->
+					<xsl:otherwise>
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+					</xsl:otherwise>
 				</xsl:choose>
-				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
 				<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 				<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
 				<rdfs:label><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></rdfs:label>
@@ -65,11 +293,6 @@
 				<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
 				<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
 				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
-				<!-- TODO:  DOI (which is a sub of <bibo:doi><xsl:value-of select="MedlineCitation/PubMedData/ArticleIDList/ArticleID"</bibo:doi>  -->
-				<!-- select the MedlineCitation/PubMedData/ArticleIDList/ArticleID 
-					if the attribute IdType="doi"
-					<bibo:doi>
-				-->
 				<xsl:choose>
 					<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
 						<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
