@@ -265,9 +265,6 @@ public class Score {
 	 */
 	@SuppressWarnings("unused")
 	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
-		this.scoreInput = jenaScoreInput;
-		this.vivo = jenaVivo;
-		this.scoreOutput = jenaScoreOutput;
 		this.wipeInputModel = clearInputModelArg;
 		this.wipeOutputModel = clearOutputModelArg;
 		this.exactMatch = exactMatchArg;
@@ -279,6 +276,37 @@ public class Score {
 		this.objToVIVO = objToVIVOArg;
 		this.objToScore = objToScoreArg;
 		this.pushAll = false;
+		
+		// Connect to vivo
+		this.vivo = jenaVivo;
+		StmtIterator vivoStmtItr = this.vivo.getJenaModel().listStatements();
+		int vivoCount = 0;
+		while(vivoStmtItr.hasNext()) {
+			vivoStmtItr.next();
+			vivoCount++;
+		}
+		log.debug("vivo has " + vivoCount + " statements in it");
+		
+		// Create working model
+		this.scoreInput = jenaScoreInput;
+		StmtIterator inputStmtItr = this.scoreInput.getJenaModel().listStatements();
+		int inputCount = 0;
+		while(inputStmtItr.hasNext()) {
+			inputStmtItr.next();
+			inputCount++;
+		}
+		log.debug("input has " + inputCount + " statements in it");
+		
+		// Create output model
+		this.scoreOutput = jenaScoreOutput;
+		StmtIterator outputStmtItr = this.scoreOutput.getJenaModel().listStatements();
+		int outputCount = 0;
+		while(outputStmtItr.hasNext()) {
+			outputStmtItr.next();
+			outputCount++;
+		}
+		log.debug("output has " + outputCount + " statements in it");
+		
 	}
 	
 	/**
@@ -628,7 +656,7 @@ public class Score {
 		ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
 		int loop;
 		
-		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT ?x ?lastName ?foreName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName}";
+		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT REDUCED ?x ?lastName ?foreName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName . OPTIONAL { ?x core:middleName ?middleName}}";
 		
 		// Exact Match
 		log.info("Executing authorNameMatch");
@@ -647,13 +675,18 @@ public class Score {
 			scoreSolution = scoreInputResult.next();
 			lastNameNode = scoreSolution.get("lastName");
 			foreNameNode = scoreSolution.get("foreName");
+			middleNameNode = scoreSolution.get("middleName");
 			paperNode = scoreSolution.get("x");
 			paperResource = scoreSolution.getResource("x");
 			matchNodes.clear();
 			matchNode = null;
 			authorNode = null;
-			
-			log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
+
+			if (middleNameNode != null) {
+				log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
+			} else {
+				log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
+			}		
 			
 			//parse out middle initial / name from foreName
 			String splitName[] = foreNameNode.toString().split(" ");
@@ -676,7 +709,7 @@ public class Score {
 				scoreMatch = lastNameNode.toString();
 				
 				// Select all matching authors from vivo store
-				queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT ?x ?firstName ?middleName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName . ?x core:middleName ?middleName}";
+				queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT REDUCED ?x ?firstName ?middleName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName . OPTIONAL { ?x core:middleName ?middleName}}";
 				
 				log.debug(queryString);
 				
@@ -690,7 +723,12 @@ public class Score {
 					middleNameNode = vivoSolution.get("middleName");
 					
 					if(loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
-						log.trace("Checking " + loopNode + ", " + middleNameNode.toString());
+						if (middleNameNode != null) {
+							log.trace("Checking " + loopNode + " " + middleNameNode.toString() + " " + vivoSolution.get("x"));
+						}
+						else {
+							log.trace("Checking " + loopNode + " " + vivoSolution.get("x"));
+						}
 						if(foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
 							matchNodes.add(vivoSolution);
 						} else {
@@ -708,13 +746,18 @@ public class Score {
 					
 					//Grab the initials, and check that as best match
 					middleNameNode = vivoSolution.get("middleName");
-					vivoInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
-					
-					//If initials match, set as match, unless we match to a name below
-					if (vivoInitials == pubmedInitials) { 
-						log.trace("Setting " + loopNode.toString() + " as best match, matched initials " + vivoInitials);
-						matchNode = loopNode;
-						authorNode = vivoSolution.get("x");
+					if (middleNameNode != null) {
+						middleName = middleNameNode.toString();
+						vivoInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
+						
+						//If initials match, set as match, unless we match to a name below
+						if (vivoInitials == pubmedInitials) { middleNameNode = vivoSolution.get("middleName");
+							log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoInitials);
+							matchNode = loopNode;
+							authorNode = vivoSolution.get("x");
+						}
+					} else {
+						middleName = "";
 					}
 					
 					loop = 0;
@@ -728,7 +771,7 @@ public class Score {
 						// if loopNode matches more of foreNameNode, it's the new best match
 						// TODO Nicholas: Fix the preference for the first "best" match
 						if(matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-							log.trace("Setting " + loopNode.toString() + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
+							log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
 							matchNode = loopNode;
 							authorNode = vivoSolution.get("x");
 						}

@@ -383,6 +383,7 @@ public class ScoreTest extends TestCase {
 					 "<rdfs:label>Fawkes, Guy</rdfs:label>" +
 					 "<foaf:lastName>Fawkes</foaf:lastName>" +
 					 "<score:foreName>Guy</score:foreName>" +
+					 "<core:middleName>J</core:middleName>" +
 					 "<score:initials>GF</score:initials>" +
 					 "<score:suffix/>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
@@ -547,7 +548,7 @@ public class ScoreTest extends TestCase {
 					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
 					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
 					 "<foaf:firstName>Guy</foaf:firstName>" +
-					 "<foaf:lastName>F</foaf:lastName>" +
+					 "<foaf:lastName>Fawkes</foaf:lastName>" +
 					 "<ufVIVO:ufid>58454252</ufVIVO:ufid>" +
 					 "</rdf:Description>" +
 					 "</rdf:RDF>");
