@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RecordHandler type="org.vivoweb.ingest.util.repo.JDBCRecordHandler">
 	<Param name="jdbcDriverClass">org.h2.Driver</Param>
-	<Param name="connLine">jdbc:h2:XMLVault/PeopleSoft-XML-RH/store</Param>
+	<Param name="connLine">jdbc:h2:XMLVault/h2ps/XML/store</Param>
 	<Param name="username">sa</Param>
 	<Param name="password"></Param>
 	<Param name="tableName">recordTable</Param>
