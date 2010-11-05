@@ -13,7 +13,7 @@
 cd /usr/share/vivoingest
 
 # Execute Fetch for Pubmed
-java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.PubmedSOAPFetch -X config/tasks/PubmedFetch.xml
+java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.PubmedFetch -X config/tasks/PubmedFetch.xml
 
 # Execute Translate using the PubmedToVIVO.xsl file
 java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/Pubmed-XML-TFRH.xml -x config/datamaps/PubmedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml

@@ -63,6 +63,10 @@ public class XSLTranslator {
 	 * record handler for storing records
 	 */
 	protected RecordHandler outStore;
+	/**
+	 * force process records
+	 */
+	private boolean force;
 	
 	/**
 	 * Default constructor
@@ -90,6 +94,9 @@ public class XSLTranslator {
 		// create record handlers
 		this.inStore = RecordHandler.parseConfig(argumentList.get("input"), argumentList.getProperties("I"));
 		this.outStore = RecordHandler.parseConfig(argumentList.get("output"), argumentList.getProperties("O"));
+		if (argumentList.has("f")) {
+			this.force = true;
+		}
 	}
 	
 	/**
@@ -138,7 +145,7 @@ public class XSLTranslator {
 		try {
 			// get from the in record and translate
 			for(Record r : this.inStore) {
-				if(r.needsProcessed(this.getClass())) {
+				if(r.needsProcessed(this.getClass()) || this.force) {
 					log.info("Translating Record " + r.getID());
 					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
 					this.outStream = new ByteArrayOutputStream();
@@ -191,6 +198,8 @@ public class XSLTranslator {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force").setDescription("force translation of all input records, even if previously processed").setRequired(false));
 		return parser;
 	}
 	
