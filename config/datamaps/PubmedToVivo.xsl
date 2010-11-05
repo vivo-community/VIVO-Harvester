@@ -293,19 +293,14 @@
 				<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
 				<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
 				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
+				<xsl:apply-templates select="MedlineCitation/ChemicalList/Chemical" />
+				<xsl:apply-templates select="MedlineCitation/KeywordList/Keyword" />
 				<xsl:choose>
 					<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
 						<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
 					</xsl:when>
-					<xsl:when test="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)">
-						<core:freetextKeyword><xsl:value-of select="MedlineCitation/ChemicalList/Chemical/NameOfSubstance" /></core:freetextKeyword>
-					</xsl:when>
-					<xsl:when test="string(MedlineCitation/KeywordList/Keyword)">
-						<core:freetextKeyword><xsl:value-of select="MedlineCitation/KeywordList/Keyword" /></core:freetextKeyword>  <!-- Test -->
-					</xsl:when>
 					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
 						<core:Year><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:Year>
-						<!-- TODO: parse more than just the year -->
 					</xsl:when>
 					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)">
 						<core:Month><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Month"/></core:Month>
@@ -452,6 +447,24 @@
 		</rdf:Description>		
 	</xsl:template>
 	
+	<!-- Chemical List -->
+	<xsl:template match="MedlineCitation/ChemicalList/Chemical">
+		<xsl:choose>
+			<xsl:when test="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)">
+				<core:freetextKeyword><xsl:value-of select="MedlineCitation/ChemicalList/Chemical/NameOfSubstance" /></core:freetextKeyword>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+	
+	<!-- Keyword -->
+	<xsl:template match="MedlineCitation/KeywordList/Keyword">
+		<xsl:choose>
+			<xsl:when test="string(MedlineCitation/KeywordList/Keyword)">
+				<core:freetextKeyword><xsl:value-of select="MedlineCitation/KeywordList/Keyword" /></core:freetextKeyword>  
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
 	<!-- Date Section:
 		Dates in Pubmed can be used for scoring, such as checking to make
 		sure that the publication date is not before the authors birth date.

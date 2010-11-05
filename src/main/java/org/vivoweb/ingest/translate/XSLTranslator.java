@@ -144,9 +144,12 @@ public class XSLTranslator {
 	public void execute() {
 		try {
 			// get from the in record and translate
+			int translated = 0;
+			int passed = 0;
+			
 			for(Record r : this.inStore) {
 				if(r.needsProcessed(this.getClass()) || this.force) {
-					log.info("Translating Record " + r.getID());
+					log.trace("Translating Record " + r.getID());
 					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
 					this.outStream = new ByteArrayOutputStream();
 					this.xmlTranslate();
@@ -154,10 +157,14 @@ public class XSLTranslator {
 					this.outStore.addRecord(r.getID(), this.outStream.toString(), this.getClass());
 					r.setProcessed(this.getClass());
 					this.outStream.close();
+					translated++;
 				} else {
-					log.debug("No Translation Needed: " + r.getID());
+					log.trace("No Translation Needed: " + r.getID());
+					passed++;
 				}
 			}
+			log.info(Integer.toString(translated) + " records translated.");
+			log.info(Integer.toString(passed) + " records did not need translation");
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -218,7 +225,7 @@ public class XSLTranslator {
 		} catch(Exception e) {
 			log.fatal(e.getMessage(), e);
 		}
-		log.info(getParser().getAppName()+": Start");
+		log.info(getParser().getAppName()+": Stop");
 	}
 	
 }
