@@ -13,29 +13,29 @@
 cd /usr/share/vivoingest
 
 # Execute Fetch for Pubmed
-java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.fetch.PubmedSOAPFetch -X config/tasks/PubmedFetch.xml
+java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.fetch.PubmedSOAPFetch -X config/tasks/PubmedFetch.xml
 
 # Execute Translate using the PubmedToVIVO.xsl file
-java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/Pubmed-XML-TFRH.xml -x config/datamaps/PubmedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml
+java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.translate.XSLTranslator -i config/recordHandlers/Pubmed-XML-TFRH.xml -x config/datamaps/PubmedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml
 
 # Execute Transfer to import from record handler into local temp model
-java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -o config/jenaModels/h2.xml -O modelName=PubmedTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -h config/recordHandlers/Pubmed-RDF-h2RH.xml
+java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -o config/jenaModels/h2.xml -O modelName=PubmedTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -h config/recordHandlers/Pubmed-RDF-h2RH.xml
 
 # Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
-java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -e workEmail
-#java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -a 3
+java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -e workEmail
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -a 3
 
 # Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
 # Off by default, examples show below
-#java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
-#java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 # Execute Transfer from local temp model into main vivo model
-java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml
+java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml
 
 # Execute Transfer to dump model rdf into file
 # Shown as example
-#java -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -d dump.rdf
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -d dump.rdf
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
