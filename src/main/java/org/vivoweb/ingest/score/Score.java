@@ -635,6 +635,9 @@ public class Score {
 	 * @param minChars minimum number of chars to require for first name portion of match
 	 */
 	public void authorNameMatch(int minChars) {
+		
+		//TODO: Nicholas This function needs some logical cleanup.. :-)
+		
 		String queryString;
 		Resource paperResource;
 		RDFNode lastNameNode;
@@ -655,6 +658,7 @@ public class Score {
 		String scoreMatch;
 		ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
 		int loop;
+		int minimum = minChars;
 		
 		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT REDUCED ?x ?lastName ?foreName ?middleName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName . OPTIONAL { ?x core:middleName ?middleName}}";
 		
@@ -681,7 +685,13 @@ public class Score {
 			matchNodes.clear();
 			matchNode = null;
 			authorNode = null;
-
+			
+			//reset minChars if first name is less than than the passed in minimum
+			if (foreNameNode.toString().length() < minChars) {
+				minimum = foreNameNode.toString().length();
+			}
+			
+			//support middlename parse out of forename or from pubmed
 			if (middleNameNode != null) {
 				log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
 				pubmedInitials = foreNameNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
@@ -763,8 +773,9 @@ public class Score {
 						vivoInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
 						log.trace(loopNode.toString() + " has first and middle initial of " + vivoInitials);
 						
-						//If initials match, set as match, unless we've matched to a name below
-						if (vivoInitials.equalsIgnoreCase(pubmedInitials) && matchNode == null) {
+						//If initials match, set as match, unless we've matched to a name below of at least 2 chars
+						// TODO Nicholas: Fix the preference for the last "best" match
+						if (vivoInitials.equalsIgnoreCase(pubmedInitials) && (matchNode == null && (minimum == 1 || loopNode.toString().length() == 1))) {
 							log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoInitials);
 							matchNode = loopNode;
 							authorNode = vivoSolution.get("x");
@@ -773,7 +784,7 @@ public class Score {
 						middleName = "";
 					}
 					
-					if(loop < minChars) {
+					if(loop < minimum) {
 						log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
 					} else {
 						// if loopNode matches more of foreNameNode, it's the new best match
