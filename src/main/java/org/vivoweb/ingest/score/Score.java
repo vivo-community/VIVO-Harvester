@@ -748,6 +748,14 @@ public class Score {
 					vivoSolution = matches.next();
 					loopNode = vivoSolution.get("firstName");
 					
+					loop = 0;
+					while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+						loop++;
+					}
+					loop--;
+					
+					middleName = "";
+					
 					//Grab the initials, and check that as best match
 					middleNameNode = vivoSolution.get("middleName");
 					if (middleNameNode != null) {
@@ -755,8 +763,8 @@ public class Score {
 						vivoInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
 						log.trace(loopNode.toString() + " has first and middle initial of " + vivoInitials);
 						
-						//If initials match, set as match, unless we match to a name below
-						if (vivoInitials.equalsIgnoreCase(pubmedInitials)) {
+						//If initials match, set as match, unless we've matched to a name below
+						if (vivoInitials.equalsIgnoreCase(pubmedInitials) && matchNode == null) {
 							log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoInitials);
 							matchNode = loopNode;
 							authorNode = vivoSolution.get("x");
@@ -765,11 +773,6 @@ public class Score {
 						middleName = "";
 					}
 					
-					loop = 0;
-					while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-						loop++;
-					}
-					loop--;
 					if(loop < minChars) {
 						log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
 					} else {
@@ -779,6 +782,8 @@ public class Score {
 							log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
 							matchNode = loopNode;
 							authorNode = vivoSolution.get("x");
+						} else {
+							log.trace(loopNode.toString() + " matched " + loop + " of " + foreNameNode.toString().length());
 						}
 					}
 				}

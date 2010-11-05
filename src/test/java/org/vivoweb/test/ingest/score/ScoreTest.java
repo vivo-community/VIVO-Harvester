@@ -528,6 +528,18 @@ public class ScoreTest extends TestCase {
 					 "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
 					 "xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
 					 "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
+					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3573\">" +
+					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
+					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+					 "<core:middleName>J</core:middleName>" +
+					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Girl</rdfs:label>" +
+					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+					 "<foaf:firstName>Girl</foaf:firstName>" +
+					 "<foaf:lastName>Fawkes</foaf:lastName>" +
+					 "<ufVIVO:ufid>58454252</ufVIVO:ufid>" +
+					 "</rdf:Description>" +
 					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
 					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
@@ -538,18 +550,6 @@ public class ScoreTest extends TestCase {
 					 "<foaf:firstName>Guy</foaf:firstName>" +
 					 "<foaf:lastName>Fawkes</foaf:lastName>" +
 					 "<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3575\">" +
-					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-					 "<core:middleName>J</core:middleName>" +
-					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
-					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
-					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
-					 "<foaf:firstName>Guy</foaf:firstName>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "<ufVIVO:ufid>58454252</ufVIVO:ufid>" +
 					 "</rdf:Description>" +
 					 "</rdf:RDF>");
 			out.close();
