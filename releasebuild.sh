@@ -24,8 +24,11 @@ RELEASENAME=${RELEASENAME:0:12}
 ar -x $RELEASENAME.deb
 
 #rename tarball
-mv data.tar.gz $RELEASENAME.tar.gz
+mv data.tar.gz $RELEASENAME-alpha.tar.gz
+
+#rename deb
+mv $RELEASENAME.deb $RELEASENAME-alpha.deb
 
 #Upload tarball and deb package to sourceforge
-scp $RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
-scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+scp $RELEASENAME-alpha.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+#scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"

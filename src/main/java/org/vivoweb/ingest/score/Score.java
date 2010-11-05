@@ -656,7 +656,7 @@ public class Score {
 		ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
 		int loop;
 		
-		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT REDUCED ?x ?lastName ?foreName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName . OPTIONAL { ?x core:middleName ?middleName}}";
+		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT REDUCED ?x ?lastName ?foreName ?middleName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName . OPTIONAL { ?x core:middleName ?middleName}}";
 		
 		// Exact Match
 		log.info("Executing authorNameMatch");
@@ -684,22 +684,26 @@ public class Score {
 
 			if (middleNameNode != null) {
 				log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
+				pubmedInitials = foreNameNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
+				log.trace("Using " + pubmedInitials + " as first and middle initial");			
 			} else {
 				log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
-			}		
 			
-			//parse out middle initial / name from foreName
-			String splitName[] = foreNameNode.toString().split(" ");
-			
-			
-			if (splitName.length == 2) {
-				lastName = splitName[0];
-				middleName = splitName[1];
-				pubmedInitials = lastName.substring(0,1) + middleName.substring(0,1);
-			} else {
-				lastName = null;
-				middleName = null;
-				pubmedInitials = null;
+				//parse out middle initial / name from foreName
+				String splitName[] = foreNameNode.toString().split(" ");
+				
+				log.trace(splitName[0]);
+				
+				if (splitName.length == 2) {
+					lastName = splitName[0];
+					middleName = splitName[1];
+					pubmedInitials = lastName.substring(0,1) + middleName.substring(0,1);
+					log.trace("Using " + pubmedInitials + " as first and middle initial");
+				} else {
+					lastName = null;
+					middleName = null;
+					pubmedInitials = null;
+				}
 			}
 			
 			// ensure first name and last name are not blank
@@ -749,9 +753,10 @@ public class Score {
 					if (middleNameNode != null) {
 						middleName = middleNameNode.toString();
 						vivoInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
+						log.trace(loopNode.toString() + " has first and middle initial of " + vivoInitials);
 						
 						//If initials match, set as match, unless we match to a name below
-						if (vivoInitials == pubmedInitials) { middleNameNode = vivoSolution.get("middleName");
+						if (vivoInitials.equalsIgnoreCase(pubmedInitials)) {
 							log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoInitials);
 							matchNode = loopNode;
 							authorNode = vivoSolution.get("x");
