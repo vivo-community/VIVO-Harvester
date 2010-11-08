@@ -725,8 +725,6 @@ public class Score {
 				//parse out middle initial / name from foreName
 				String splitName[] = foreNameNode.toString().split(" ");
 				
-				log.trace(splitName[0]);
-				
 				if (splitName.length == 2) {
 					lastName = splitName[0];
 					middleName = splitName[1];
