@@ -841,7 +841,7 @@ public class Score {
 				"SELECT ?sub"+"\n"+
 				"WHERE {"+"\n\t"+
 					"?sub <" + vivoAttribute + "> ?obj ."+"\n\t"+
-					"FILTER regex(?obj, \"" + obj + "\")"+"\n"+
+					"FILTER (str(?obj) = \"" + obj + "\")"+"\n"+
 				"}";
 			log.debug(query);
 			ResultSet matches = executeQuery(this.vivo.getJenaModel(), query);
