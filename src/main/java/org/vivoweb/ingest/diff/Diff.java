@@ -130,6 +130,7 @@ public class Diff {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
+		//TOOD:  Apply to minuend Model
 		
 		return parser;
 	}
@@ -143,8 +144,7 @@ public class Diff {
 		Model subtrahendModel = sJC.getJenaModel();
 		
 		diffModel = minuendModel.difference(subtrahendModel);
-		
-		
+				
 		try {
 			if(dF != null) {
 				RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");

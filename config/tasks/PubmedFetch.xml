@@ -3,6 +3,6 @@
 	<Param name="email">YOU@YOUR.DOMAIN</Param>
 	<Param name="output">config/recordHandlers/Pubmed-XML-h2RH.xml</Param>
 	<Param name="termSearch">YOUR_PUBMED_QUERY</Param>
-	<Param name="numRecords">all</Param>
+	<Param name="numRecords">5000</Param>
 	<Param name="batchSize">1000</Param>
 </Task>

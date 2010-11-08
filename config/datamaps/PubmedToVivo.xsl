@@ -295,6 +295,7 @@
 				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
 				<xsl:apply-templates select="MedlineCitation/ChemicalList/Chemical" />
 				<xsl:apply-templates select="MedlineCitation/KeywordList/Keyword" />
+				<xsl:apply-templates  select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword" />
 				<xsl:choose>
 					<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
 						<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
@@ -311,7 +312,7 @@
 				</xsl:choose>
 				<xsl:apply-templates select="MedlineCitation/Article/Affiliation" />
 				<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
-				<xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" />
+				<!-- <xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" /> -->
 				<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="journalRef"/>
 				<xsl:apply-templates select="MedlineCitation/DateCreated" mode="createdRef" />
 				<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="completedRef" />
@@ -353,9 +354,9 @@
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef">
 		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 	</xsl:template>
-	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef">
-		<core:hasSubjectArea rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />
-	</xsl:template>
+	<!-- <xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef">
+		<core:hasSubjectArea rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />  
+	</xsl:template> -->
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
 		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/harvest/pubmedJournal/journal{child::ISSN}" />
 	</xsl:template>
@@ -427,12 +428,12 @@
 
 	
 	<!-- The Mesh List -->
-	<xsl:template match="MedlineCitation/MeshHeadingList" mode="fullTerm">
+	<!-- <xsl:template match="MedlineCitation/MeshHeadingList" mode="fullTerm">
 		<xsl:apply-templates select="MeshHeading" mode="fullTerm" />
 	</xsl:template>
-	
+	 -->
 	<!-- The Mesh Terms -->
-	<xsl:template match="MeshHeading" mode="fullTerm">
+	<!-- <xsl:template match="MeshHeading" mode="fullTerm">
 		<rdf:Description rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
@@ -445,7 +446,17 @@
 			<score:Qualifier><xsl:value-of select="QualifierName"/></score:Qualifier>
 			<score:QualifierIsMajorTerm><xsl:value-of select="QualifierName/@MajorTopicYN"/></score:QualifierIsMajorTerm>			
 		</rdf:Description>		
+	</xsl:template> -->
+	
+	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword">
+		<xsl:choose>
+			<xsl:when test="string(DescriptorName)">
+				<core:freetextKeyword><xsl:value-of select="DescriptorName" /></core:freetextKeyword>  
+			</xsl:when>
+		</xsl:choose>	
+		<!-- <core:hasSubjectArea rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />  -->
 	</xsl:template>
+	
 	
 	<!-- Chemical List -->
 	<xsl:template match="MedlineCitation/ChemicalList/Chemical">
