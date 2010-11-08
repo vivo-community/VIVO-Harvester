@@ -346,7 +346,7 @@ public class ScoreTest extends TestCase {
 					 "xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
 					 "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
 					 "xmlns:score=\"http://vivoweb.org/ontology/score#\">" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubMed/article/pmid20113680\">" +
+					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid20113680\">" +
 					 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Document\"/>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
 					 "<bibo:pmid>12345678</bibo:pmid>" +
@@ -357,7 +357,7 @@ public class ScoreTest extends TestCase {
 					 "<bibo:number>2</bibo:number>" +
 					 "<core:Year>2010</core:Year>" +
 					 "<score:workEmail>v@ufl.edu</score:workEmail>" +
-					 "<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubMed/article/pmid20113680/authorship1\"/>" +
+					 "<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship1\"/>" +
 					 "<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh1\"/>" +
 					 "<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh2\"/>" +
 					 "<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh3\"/>" +
@@ -365,20 +365,20 @@ public class ScoreTest extends TestCase {
 					 "<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh5\"/>" +
 					 "<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh6\"/>" +
 					 "<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh7\"/>" +
-					 "<core:hasPublicationVenue rdf:resource=\"http://vivoweb.org/pubMed/journal/j1558-4623\"/>" +
-					 "<score:hasCreateDate rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776/dateCreated\"/>" +
-					 "<score:hasCompleteDate rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776/dateCompleted\"/>" +
+					 "<core:hasPublicationVenue rdf:resource=\"http://vivoweb.org/pubmed/journal/j1558-4623\"/>" +
+					 "<score:hasCreateDate rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCreated\"/>" +
+					 "<score:hasCompleteDate rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCompleted\"/>" +
 					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubMed/article/pmid23656776/authorship1\">" +
+					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship1\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
-					 "<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776/author1\"/>" +
-					 "<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author1\"/>" +
+					 "<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">1</core:authorRank>" +
 					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubMed/article/pmid23656776/author1\">" +
+					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author1\">" +
 					 "<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
 					 "<rdfs:label>Fawkes, Guy</rdfs:label>" +
 					 "<foaf:lastName>Fawkes</foaf:lastName>" +
@@ -387,15 +387,15 @@ public class ScoreTest extends TestCase {
 					 "<score:initials>GF</score:initials>" +
 					 "<score:suffix/>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776/authorship1\"/>" +
+					 "<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship1\"/>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh1\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<rdfs:label>Animals</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<score:Descriptor>Animals</score:Descriptor>" +
 					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
 					 "<score:Qualifier/>" +
@@ -404,10 +404,10 @@ public class ScoreTest extends TestCase {
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh2\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<rdfs:label>Antibodies, Monoclonal</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<score:Descriptor>Antibodies, Monoclonal</score:Descriptor>" +
 					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
 					 "<score:Qualifier>adverse effects therapeutic use</score:Qualifier>" +
@@ -416,10 +416,10 @@ public class ScoreTest extends TestCase {
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh3\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<rdfs:label>Humans</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<score:Descriptor>Humans</score:Descriptor>" +
 					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
 					 "<score:Qualifier/>" +
@@ -428,10 +428,10 @@ public class ScoreTest extends TestCase {
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh4\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<rdfs:label>Lymphoma</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<score:Descriptor>Lymphoma</score:Descriptor>" +
 					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
 					 "<score:Qualifier>radiotherapy therapy</score:Qualifier>" +
@@ -440,10 +440,10 @@ public class ScoreTest extends TestCase {
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh5\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<rdfs:label>Nuclear Medicine</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<score:Descriptor>Nuclear Medicine</score:Descriptor>" +
 					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
 					 "<score:Qualifier/>" +
@@ -452,10 +452,10 @@ public class ScoreTest extends TestCase {
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh6\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<rdfs:label>Radioimmunotherapy</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<score:Descriptor>Radioimmunotherapy</score:Descriptor>" +
 					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
 					 "<score:Qualifier>adverse effects methods</score:Qualifier>" +
@@ -464,29 +464,29 @@ public class ScoreTest extends TestCase {
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh7\">" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<rdfs:label>Treatment Outcome</rdfs:label>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "<score:Descriptor>Treatment Outcome</score:Descriptor>" +
 					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
 					 "<score:Qualifier/>" +
 					 "<score:QualifierIsMajorTerm/>" +
 					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubMed/journal/j1558-4623\">" +
+					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/journal/j1558-4623\">" +
 					 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Journal\"/>" +
 					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
 					 "<core:Title>Seminars in nuclear medicine</core:Title>" +
 					 "<rdfs:label>Seminars in nuclear medicine</rdfs:label>" +
 					 "<bibo:ISSN>1558-4623</bibo:ISSN>" +
-					 "<core:publicationVenueFor rdf:resource=\"http://vivoweb.org/pubMed/article/pmid23656776\"/>" +
+					 "<core:publicationVenueFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubMed/article/pmid23656776/dateCreated\">" +
+					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCreated\">" +
 					 "<core:Year>\"2010\"</core:Year>" +
 					 "<core:Month>\"02\"</core:Month>" +
 					 "<core:Day>\"01\"</core:Day>" +
 					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubMed/article/pmid23656776/dateCompleted\">" +
+					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCompleted\">" +
 					 "<core:Year>2010</core:Year>" +
 					 "<core:Month>07</core:Month>" +
 					 "<core:Day>08</core:Day>" +
@@ -540,7 +540,7 @@ public class ScoreTest extends TestCase {
 					 "<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3573\">" +
-					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
+					 "<core:workEmail>vgirl@ufl.edu</core:workEmail>" +
 					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
 					 "<core:middleName>J</core:middleName>" +
 					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Girl</rdfs:label>" +

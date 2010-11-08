@@ -653,8 +653,10 @@ public class Score {
 		String middleName;
 		ResultSet vivoResult;
 		QuerySolution scoreSolution;
+		QuerySolution scorePaperSolution;
 		QuerySolution vivoSolution;
 		ResultSet scoreInputResult;
+		ResultSet scorePaperResult;
 		String scoreMatch;
 		ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
 		int loop;
@@ -662,7 +664,6 @@ public class Score {
 		
 		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT REDUCED ?x ?lastName ?foreName ?middleName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName . OPTIONAL { ?x core:middleName ?middleName}}";
 		
-		// Exact Match
 		log.info("Executing authorNameMatch");
 		log.debug(matchQuery);
 		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
@@ -675,20 +676,42 @@ public class Score {
 		}
 		
 		// look for exact match in vivo
-		while(scoreInputResult.hasNext()) {
+		while (scoreInputResult.hasNext()) {
 			scoreSolution = scoreInputResult.next();
 			lastNameNode = scoreSolution.get("lastName");
 			foreNameNode = scoreSolution.get("foreName");
 			middleNameNode = scoreSolution.get("middleName");
-			paperNode = scoreSolution.get("x");
-			paperResource = scoreSolution.getResource("x");
+			authorNode = scoreSolution.get("x");
+			
+			//Find paper
+			//TODO: Have Stephen show Nicholas what a fool he is for writing this
+			matchQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT ?x ?paper " + "WHERE { ?x core:linkedAuthor <" + authorNode + "> . ?x core:linkedInformationResource ?paper}";
+			
+			log.debug(matchQuery);
+			scorePaperResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
+			
+			if (scorePaperResult.hasNext()) {
+				scorePaperSolution = scorePaperResult.next();
+				paperNode = scorePaperSolution.get("paper");
+				paperResource = scorePaperSolution.getResource("paper");
+			} else {
+				//go to next one, can't find paper
+				log.error("Can't find paper for " + authorNode);
+				continue;
+			}
+			
 			matchNodes.clear();
 			matchNode = null;
-			authorNode = null;
 			
 			//reset minChars if first name is less than than the passed in minimum
 			if (foreNameNode.toString().length() < minChars) {
 				minimum = foreNameNode.toString().length();
+			}
+			
+			StmtIterator st = paperResource.listProperties();
+			
+			while (st.hasNext()) {
+				log.info(st.nextStatement().toString());
 			}
 			
 			//support middlename parse out of forename or from pubmed
