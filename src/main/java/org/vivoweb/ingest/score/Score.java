@@ -412,8 +412,8 @@ public class Score {
 	 * @param paperNode the node of the paper
 	 */
 	private static void commitResultNode(Model result, RDFNode authorNode, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
-		log.info("Found " + matchNode.toString() + " for person " + authorNode.toString());
-		log.info("Adding paper " + paperNode.toString());
+		log.trace("Found " + matchNode.toString() + " for person " + authorNode.toString());
+		log.trace("Adding paper " + paperNode.toString());
 		
 		result.add(recursiveSanitizeBuild(paperResource, null));
 		
@@ -445,8 +445,8 @@ public class Score {
 			
 			// Grab person URI
 			authorNode = vivoSolution.get("x");
-			log.info("Found " + matchNode.toString() + " for person " + authorNode.toString());
-			log.info("Adding paper " + paperNode.toString());
+			log.trace("Found " + matchNode.toString() + " for person " + authorNode.toString());
+			log.trace("Adding paper " + paperNode.toString());
 			
 			result.add(recursiveSanitizeBuild(paperResource, null));
 			
@@ -480,7 +480,7 @@ public class Score {
 		Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 		int authorRank = 1;
 		
-		log.info("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
+		log.trace("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
 		authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/l1");
 		
 		// string that finds the last name of the person in VIVO
@@ -669,9 +669,9 @@ public class Score {
 		
 		// Log extra info message if none found
 		if(!scoreInputResult.hasNext()) {
-			log.info("No author names found in input");
+			log.trace("No author names found in input");
 		} else {
-			log.info("Looping thru matching authors from input");
+			log.trace("Looping thru matching authors from input");
 		}
 		
 		// look for exact match in vivo
@@ -693,7 +693,7 @@ public class Score {
 			
 			//support middlename parse out of forename or from pubmed
 			if (middleNameNode != null) {
-				log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
+				log.trace("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
 				pubmedInitials = foreNameNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
 				log.trace("Using " + pubmedInitials + " as first and middle initial");			
 			} else {
@@ -823,10 +823,10 @@ public class Score {
 		//		System.out.println(stmtQuery);
 		//		ResultSet stmtRS = this.vivo.executeQuery(stmtQuery);
 		if(!stmtitr.hasNext()) {
-			log.info("No matches found for <" + scoreAttribute + "> in input");
+			log.trace("No matches found for <" + scoreAttribute + "> in input");
 			return;
 		}
-		log.info("Matches found for <" + scoreAttribute + "> in input");
+		log.trace("Matches found for <" + scoreAttribute + "> in input");
 		//		for(Statement s : IterableAdaptor.adapt(this.vivo.getJenaModel().listStatements(null, vivoAttr, (RDFNode)null))) {
 		//			log.debug("VIVO Match: " + s);
 		//		}
@@ -835,7 +835,7 @@ public class Score {
 			Statement stmt = stmtitr.next();
 			Resource sub = stmt.getSubject();
 			String obj = stmt.getLiteral().getString();
-			log.info("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
+			log.trace("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
 			//			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
 			String query = ""+
 				"SELECT ?sub"+"\n"+
@@ -846,23 +846,23 @@ public class Score {
 			log.debug(query);
 			ResultSet matches = executeQuery(this.vivo.getJenaModel(), query);
 			if(!matches.hasNext()) {
-				log.info("No matches in VIVO found");
+				log.trace("No matches in VIVO found");
 				if (this.pushAll){
 					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, null));
 				}
 			} else {
-				log.info("Matches in VIVO found");
+				log.trace("Matches in VIVO found");
 				// loop thru resources
 				while(matches.hasNext()) {
 					// Grab person URI
 					//					Resource vivoNode = matchesRS.next().getSubject();
 					Resource vivoNode = matches.next().getResource("sub");
-					log.info("Found <" + sub + "> for VIVO entity <" + vivoNode + ">");
-					log.info("Adding entity <" + sub + "> to output");
+					log.trace("Found <" + sub + "> for VIVO entity <" + vivoNode + ">");
+					log.trace("Adding entity <" + sub + "> to output");
 					
 					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, null));
 					
-					log.info("Linking entity <" + sub + "> to VIVO entity <" + vivoNode + ">");
+					log.trace("Linking entity <" + sub + "> to VIVO entity <" + vivoNode + ">");
 					
 					this.scoreOutput.getJenaModel().add(sub, ResourceFactory.createProperty(scoreToVIVONode), vivoNode);
 					this.scoreOutput.getJenaModel().add(vivoNode, ResourceFactory.createProperty(vivoToScoreNode), sub);
@@ -902,9 +902,9 @@ public class Score {
 		
 		// Log extra info message if none found
 		if(!scoreInputResult.hasNext()) {
-			log.info("No matches found for " + scoreAttribute + " in input");
+			log.trace("No matches found for " + scoreAttribute + " in input");
 		} else {
-			log.info("Looping thru matching " + scoreAttribute + " from input");
+			log.trace("Looping thru matching " + scoreAttribute + " from input");
 		}
 		
 		// look for exact match in vivo
@@ -916,7 +916,7 @@ public class Score {
 			
 			scoreMatch = matchNode.toString();
 			
-			log.info("Checking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
+			log.trace("Checking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
 			
 			// Select all matching attributes from vivo store
 			queryString = "SELECT ?x " + "WHERE { ?x " + vivoAttribute + " \"" + scoreMatch + "\" }";
