@@ -15,6 +15,17 @@
 echo -n "Enter sourceforge username: "
 read NAME
 
+#edit release info to add alpha tag
+
+#build
+mvn clean dependency:copy-dependencies package
+
+#check for fail
+if [ "$?" -eq "1" ]; then
+	echo "Exiting - Maven failure:" $?
+	exit
+fi
+
 #get release name (hack alert!) :-)
 cd bin
 RELEASENAME=`ls | grep ingest`
@@ -31,4 +42,4 @@ mv $RELEASENAME.deb $RELEASENAME-alpha.deb
 
 #Upload tarball and deb package to sourceforge
 scp $RELEASENAME-alpha.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
-#scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+scp $RELEASENAME-alpha.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
