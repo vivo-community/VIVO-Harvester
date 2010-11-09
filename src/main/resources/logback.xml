@@ -22,16 +22,30 @@
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">      
-      <evaluator class="ch.qos.logback.classic.boolex.GEventEvaluator"> 
-        <expression>
-           e.level.toInt() >= INFO.toInt()
-             &amp;&amp;  <!-- Stands for && in XML -->
-           WARN.toInt() > e.level.toInt()
-        </expression>
-      </evaluator>
-      <OnMismatch>DENY</OnMismatch>
-      <OnMatch>ACCEPT</OnMatch>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>TRACE</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>DEBUG</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>INFO</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>WARN</level>
+      <onMatch>DENY</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>DENY</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
     </filter>
   </appender>
   
@@ -45,10 +59,8 @@
     </filter>
   </appender>
   
-  <logger name="org.vivoweb.ingest" level="${ingest-level:-ALL}">
-  </logger>
-  <logger name="org.vivoweb.test.ingest" level="${test-level:-WARN}">
-  </logger>
+  <logger name="org.vivoweb.ingest" level="${ingest-level:-ALL}"/>
+  <logger name="org.vivoweb.test.ingest" level="${test-level:-WARN}"/>
   <root level="${root-level:-ALL}">
     <!-- <appender-ref ref="Console"/> -->
     <appender-ref ref="Error"/>
