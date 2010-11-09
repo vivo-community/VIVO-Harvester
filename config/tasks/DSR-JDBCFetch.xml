@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task type="org.vivoweb.ingest.fetch.JDBCFetch">
+	<Param name="driver">net.sourceforge.jtds.jdbc.Driver</Param>
+	<Param name="connection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
+	<Param name="username">USERNAME</Param>
+	<Param name="password">PASSWORD</Param>
+	<Param name="output">config/recordHandlers/DSR-XML.xml</Param>
+	<Param name="tableName">dbo.vwVIVO</Param>
+	<Param name="id">dbo.vwVIVO=DSR_ Number</Param>
+	<Param name="fields">dbo.vwVIVO=PI,Award_ Date,PS_ Contract,PS_ Project,Title,RecordStatus,SubcontractType,ProjectBegin,ProjectEnd,TotalAwarded,ProjFundingToDate,PI_UFID,PI_College,PI_ Dept,ProjectDEPTID,ContractPI,ContractUFID,ContractDEPTID,ProjectUFID,FiscalYear,FullTitle</Param>
+	<Param name="delimiterPrefix">[</Param>
+	<Param name="delimiterSuffix">]</Param>
+</Task>
