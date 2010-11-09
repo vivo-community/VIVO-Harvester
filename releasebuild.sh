@@ -41,7 +41,7 @@ ar -x $RELEASENAME.deb
 mv data.tar.gz $RELEASENAME-alpha$NUM.tar.gz
 
 #rename deb
-mv $RELEASENAME.deb $RELEASENAME-alpha.deb
+mv $RELEASENAME.deb $RELEASENAME-alpha$NUM.deb
 
 #Upload tarball and deb package to sourceforge
 scp $RELEASENAME-alpha$NUM.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
