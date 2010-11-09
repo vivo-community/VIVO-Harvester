@@ -501,7 +501,7 @@
 		Dates in Pubmed can be used for scoring, such as checking to make
 		sure that the publication date is not before the authors birth date.
 	-->
-	<xsl:template match="MedlineCitation/DateCreated" mode="fullCreated">
+	<!-- <xsl:template match="MedlineCitation/DateCreated" mode="fullCreated">
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCreated" >
 			<core:Year>"<xsl:value-of select="Year"/>"</core:Year>
 			<core:Month>"<xsl:value-of select="Month"/>"</core:Month>
@@ -522,7 +522,7 @@
 			<core:Day><xsl:value-of select="Day"/></core:Day>
 		</rdf:Description>
 	</xsl:template>
-	
+	-->
 	
 	<!-- The Main Article Entity -->
 	<xsl:template match="MedlineCitation/Article" mode="fullJournal">
