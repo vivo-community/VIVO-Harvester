@@ -20,7 +20,8 @@
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
-	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'>
+	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+	xmlns:ufVIVO='http://vivo.ufl.edu/ontology/vivo-ufl/'>
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>  
@@ -41,7 +42,8 @@
 			xmlns:core='http://vivoweb.org/ontology/core#'
 			xmlns:foaf='http://xmlns.com/foaf/0.1/'
 			xmlns:score='http://vivoweb.org/ontology/score#'
-			xmlns:xs="http://www.w3.org/2001/XMLSchema#">
+			xmlns:xs='http://www.w3.org/2001/XMLSchema#'
+			xmlns:ufVIVO='http://vivo.ufl.edu/ontology/vivo-ufl/'>
 			<xsl:apply-templates select="PubmedArticle" />			
 		</rdf:RDF>
 	</xsl:template>
@@ -287,6 +289,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 				<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
+				<ufVIVO:harvestedBy rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="current-dateTime()"/></ufVIVO:harvestedBy>
 				<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
 				<rdfs:label><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></rdfs:label>
 				<core:Title><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></core:Title>
@@ -300,14 +303,32 @@
 					<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
 						<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
 					</xsl:when>
+				</xsl:choose>
+				<xsl:variable name="MonthNumber">
+					<xsl:choose>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jan">01</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Feb">02</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Mar">03</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Apr">04</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=May">05</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jun">06</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jul">07</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Aug">08</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Sep">09</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Oct">10</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Nov">11</xsl:when>
+						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Dec">12</xsl:when>
+					</xsl:choose>
+				</xsl:variable>
+				<xsl:choose>
 					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-						<core:Year><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:Year>
+						<core:Year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:Year>
 					</xsl:when>
-					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)">
-						<core:Month><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Month"/></core:Month>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
+						<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth>
 					</xsl:when>
-					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day)">
-						<core:Day><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:Day>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
+						<core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:date>
 					</xsl:when>
 				</xsl:choose>
 				<xsl:apply-templates select="MedlineCitation/Article/Affiliation" />
