@@ -335,9 +335,9 @@
 				<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
 				<!-- <xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" /> -->
 				<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="journalRef"/>
-				<xsl:apply-templates select="MedlineCitation/DateCreated" mode="createdRef" />
+				<!-- <xsl:apply-templates select="MedlineCitation/DateCreated" mode="createdRef" />
 				<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="completedRef" />
-				<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="revisedRef" />				
+				<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="revisedRef" />		-->		
 			</rdf:Description>
 			<xsl:apply-templates select="MedlineCitation/Article/AuthorList" mode="fullAuthor" />
 			<xsl:apply-templates select="MedlineCitation/MeshHeadingList" mode="fullTerm" />	
@@ -381,7 +381,7 @@
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
 		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/harvest/pubmedJournal/journal{child::ISSN}" />
 	</xsl:template>
-	<xsl:template match="MedlineCitation/DateCreated" mode="createdRef">
+	<!-- <xsl:template match="MedlineCitation/DateCreated" mode="createdRef">
 		<score:hasCreateDate rdf:resource="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCreated" />
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateCompleted"  mode="completedRef">
@@ -389,7 +389,7 @@
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateRevised"  mode="revisedRef">
 		<score:hasReviseDate rdf:resource="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateRevised" />
-	</xsl:template>
+	</xsl:template>  -->
 	
 	<!-- Author List Navigation --> 
 	<xsl:template match="MedlineCitation/Article/AuthorList" mode="fullAuthor">
