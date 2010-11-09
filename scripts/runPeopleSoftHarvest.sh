@@ -70,6 +70,10 @@ ln -s vitrodb.ps.posttransfer.$date.sql backups/vitrodb.ps.posttransfer.latest.s
 # Execute Transfer to copy into peopleSoft model
 java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=peopleSoftStaging -I dbUrl="jdbc:h2:XMLVault/h2ps/scored/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml -O modelName=peopleSoft
 
+#Update the example on the board
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="PreviousModelName" -i config/jenaModels/VIVO.xml -I modelName="peoplesoft" -v config/jenaModels/VIVO.xml
+
+
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 /etc/init.d/tomcat restart

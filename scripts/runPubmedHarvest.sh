@@ -30,12 +30,18 @@ java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v
 #java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
 #java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
-# Execute Transfer from local temp model into main vivo model
-java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml
+# Execute Transfer from local temp model into main vivo model (Commented out in favor of Update)
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml
 
 # Execute Transfer to dump model rdf into file
 # Shown as example
 #java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -d dump.rdf
+
+
+#Update the example on the board
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="PreviousModelName" -i config/jenaModels/VIVO.xml -I modelName="NewModelName" -v config/jenaModels/VIVO.xml
+
+
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO

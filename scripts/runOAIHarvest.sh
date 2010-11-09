@@ -32,6 +32,9 @@ java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v
 # Execute Transfer to load "staging" JENA model into VIVO
 java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I modelName=staging -o config/jenaModels/VIVO.xml
 
+#Update the example on the board
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="PreviousModelName" -i config/jenaModels/VIVO.xml -I modelName="staging" -v config/jenaModels/VIVO.xml
+
 # Execute Transfer to dump "staging" JENA model rdf into file
 # Shown as example
 #java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -d dump.rdf

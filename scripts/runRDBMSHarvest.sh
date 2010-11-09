@@ -25,6 +25,9 @@ java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Trans
 # Shown as example
 #java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/VIVO.xml -I modelName=d2rStaging -d dump.rdf
 
+#Update the example on the board
+#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="PreviousModelName" -i config/jenaModels/VIVO.xml -I modelName="d2rStaging" -v config/jenaModels/VIVO.xml
+
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 #/etc/init.d/tomcat restart
