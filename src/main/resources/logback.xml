@@ -10,7 +10,7 @@
     </filter>
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <maxIndex>10</maxIndex>
-      <FileNamePattern>logs/MainLog.log.%i</FileNamePattern>
+      <FileNamePattern>logs/${ingest-task:-ingest}.log.%i</FileNamePattern>
     </rollingPolicy>
     <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
       <MaxFileSize>10240MB</MaxFileSize>
@@ -61,8 +61,9 @@
   
   <logger name="org.vivoweb.ingest" level="${ingest-level:-ALL}"/>
   <logger name="org.vivoweb.test.ingest" level="${test-level:-WARN}"/>
+  <logger name="org.apache.commons.vfs" level="OFF"/>
   <root level="${root-level:-ALL}">
-    <!-- <appender-ref ref="Console"/> -->
+    <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
   </root>
