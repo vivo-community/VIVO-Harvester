@@ -8,6 +8,7 @@
 # 
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+#	  James Pence
 
 # Set working directory
 cd /usr/share/vivoingest
@@ -35,7 +36,7 @@ java -Xms1024m -Xmx3072M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.i
 #java -Xms1024m -Xmx3072M -cp bin/ingest-0.6.1.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/myVIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -I modelName=dsrTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -O modelName=dsrStaging -f "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid" -x "http://vivoweb.org/ontology/core#principalInvestigatorRoleOf" -y "http://vivoweb.org/ontology/core#relatedRole"
 
 #date=`date +%Y-%m-%d_%k%M.%S`
-#mysqldump -u root -pv3nd3tt4 vitrodb > backups/vitrodb.dsrrun.$date.sql
+#mysqldump -u root -p PASSWORD vitrodb > backups/vitrodb.dsrrun.$date.sql
 #rm -rf backups/vitrodb.current.sql
 #ln -s vitrodb.$date.sql backups/vitrodb.current.sql
 
