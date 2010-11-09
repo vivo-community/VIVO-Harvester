@@ -13,8 +13,9 @@ import java.io.FileWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.fetch.PubmedHTTPFetch;
 import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
@@ -29,9 +30,9 @@ import org.w3c.dom.NodeList;
  */
 public class PubmedHTTPFetchTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(PubmedHTTPFetchTest.class);
+	private static Logger log = LoggerFactory.getLogger(PubmedHTTPFetchTest.class);
 	/** */
 	private File configFile;
 	/** */
@@ -39,6 +40,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		this.configFile = File.createTempFile("rhConfig", "xml");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.ingest.util.repo.JDBCRecordHandler\">\n	<Param name=\"jdbcDriverClass\">org.h2.Driver</Param>\n	<Param name=\"connLine\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"username\">sa</Param>\n	<Param name=\"password\"></Param>\n	<Param name=\"tableName\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");

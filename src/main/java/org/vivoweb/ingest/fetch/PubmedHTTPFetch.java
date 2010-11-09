@@ -15,8 +15,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 import org.w3c.dom.Document;
@@ -32,9 +33,9 @@ import org.xml.sax.SAXException;
  */
 public class PubmedHTTPFetch extends NIHFetch {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(PubmedHTTPFetch.class);
+	private static Logger log = LoggerFactory.getLogger(PubmedHTTPFetch.class);
 	/**
 	 * The name of the PubMed database
 	 */
@@ -202,6 +203,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info("PubmedHTTPFetch: Start");
 		try {
 			new PubmedHTTPFetch(new ArgList(getParser("PubmedHTTPFetch"), args)).execute();
@@ -209,7 +211,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser("PubmedHTTPFetch").getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info("PubmedHTTPFetch: End");
 	}

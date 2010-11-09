@@ -10,19 +10,22 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory; // import org.vivoweb.ingest.fetch.OAIFetch;
+import org.vivoweb.ingest.fetch.OAIFetch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 
 /**
  * @author Dale Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
+@SuppressWarnings("unused")
 public class OAIFetchTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(OAIFetchTest.class);
+	private static Logger log = LoggerFactory.getLogger(OAIFetchTest.class);
 	/** */
 	private RecordHandler rh;
 	/** */
@@ -30,6 +33,7 @@ public class OAIFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		this.configFile = File.createTempFile("oaiRHConfig", "xml");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.ingest.util.repo.JDBCRecordHandler\">\n	<Param name=\"jdbcDriverClass\">org.h2.Driver</Param>\n	<Param name=\"connLine\">jdbc:h2:mem:TestOAIFetchRH</Param>\n	<Param name=\"username\">sa</Param>\n	<Param name=\"password\"></Param>\n	<Param name=\"tableName\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");

@@ -5,21 +5,24 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.update.Update;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 
 import junit.framework.TestCase;
 
+/**
+ *
+ */
 public class UpdateTest extends TestCase {
 
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(UpdateTest.class);
+	private static Logger log = LoggerFactory.getLogger(UpdateTest.class);
 	/**
 	 * previous ingest rdf statements to load for test
 	 */
@@ -38,8 +41,9 @@ public class UpdateTest extends TestCase {
 	private File vivoXML;
 	
 	
+	@Override
 	protected void setUp() throws Exception {
-		super.setUp();
+		InitLog.initLogger();
 		
 		try {
 			this.previousRDF = File.createTempFile("scoretest_vivo", ".rdf");
@@ -80,7 +84,7 @@ public class UpdateTest extends TestCase {
 					 "</rdf:RDF>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		
 		// Create incoming rdf file
@@ -127,7 +131,7 @@ public class UpdateTest extends TestCase {
 					 "</rdf:RDF>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		
 		this.expectedRDF = new StringBuffer();
@@ -149,10 +153,13 @@ public class UpdateTest extends TestCase {
 					 "</Model>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	
+/**
+ * 
+ */
 public void testEverything(){
 		
 		JenaConnect previousJC;
@@ -189,6 +196,7 @@ public void testEverything(){
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		this.incomingRDF.delete();

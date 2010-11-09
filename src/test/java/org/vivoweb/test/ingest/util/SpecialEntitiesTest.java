@@ -6,19 +6,20 @@
  ******************************************************************************/
 package org.vivoweb.test.ingest.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.vivoweb.ingest.util.SpecialEntities;
 import junit.framework.TestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
+import org.vivoweb.ingest.util.SpecialEntities;
 
 /**
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class SpecialEntitiesTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(SpecialEntitiesTest.class);
+	private static Logger log = LoggerFactory.getLogger(SpecialEntitiesTest.class);
 	/** */
 	private static final String toBeHtmlEnc = "\"woot\" & 'awesome' ^are <VERY> ~ready* {for %fun} @ the +store!";
 	/** */
@@ -27,6 +28,11 @@ public class SpecialEntitiesTest extends TestCase {
 	private static final String toBeXmlEnc = "<tag field=\"value\">text & more 'test', test</tag>";
 	/** */
 	private static final String toBeXmlDec = "&lt;tag field=&quot;value&quot;&gt;text &amp; more &apos;test&apos;, test&lt;/tag&gt;";
+	
+	@Override
+	protected void setUp() throws Exception {
+		InitLog.initLogger();
+	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.ingest.util.SpecialEntities#htmlEncode(java.lang.String) htmlEncode(String s)}

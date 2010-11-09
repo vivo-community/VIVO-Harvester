@@ -21,7 +21,7 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 public class RecordMetaData implements Comparable<RecordMetaData> {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
 	// private static Log log = LogFactory.getLog(RecordMetaData.class);
 	/**

@@ -1,13 +1,14 @@
 /** */
-package org.vivoweb.test.ingest.transfer;
+package org.vivoweb.test.ingest.update;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.update.ChangeNamespace;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
@@ -18,9 +19,9 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 /** */
 public class ChangeNamespaceTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(ChangeNamespaceTest.class);
+	private static Logger log = LoggerFactory.getLogger(ChangeNamespaceTest.class);
 	/** */
 	private JenaConnect model;
 	/** */
@@ -34,6 +35,7 @@ public class ChangeNamespaceTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		this.namespace = "http://testChNS.vivoweb.org/individual/";
 		this.newNamespace = "http://vivo.test.edu/individual/";
 		this.model = new JenaConnect("jdbc:h2:mem:testChNSh2change;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSchange");

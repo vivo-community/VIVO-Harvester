@@ -9,8 +9,9 @@ package org.vivoweb.test.ingest.util.repo;
 import java.io.IOException;
 import java.util.ArrayList;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.JDBCRecordHandler;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.ingest.util.repo.JenaRecordHandler;
@@ -25,14 +26,15 @@ import org.vivoweb.ingest.util.repo.TextFileRecordHandler;
  */
 public class RecordHandlerTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(RecordHandlerTest.class);
+	private static Logger log = LoggerFactory.getLogger(RecordHandlerTest.class);
 	/** */
 	private RecordHandler rh;
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		this.rh = null;
 	}
 	

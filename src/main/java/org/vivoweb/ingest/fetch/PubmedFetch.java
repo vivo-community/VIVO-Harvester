@@ -23,8 +23,9 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 
@@ -37,9 +38,9 @@ import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
  */
 public class PubmedFetch extends NIHFetch {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(PubmedFetch.class);
+	private static Logger log = LoggerFactory.getLogger(PubmedFetch.class);
 	/**
 	 * The name of the PubMed database
 	 */
@@ -169,6 +170,7 @@ public class PubmedFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info("PubmedFetch: Start");
 		try {
 			new PubmedFetch(new ArgList(getParser("PubmedFetch"), args)).execute();
@@ -176,7 +178,7 @@ public class PubmedFetch extends NIHFetch {
 			log.debug(e.getMessage(),e);
 			System.out.println(getParser("PubmedFetch").getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.error(e.getMessage(),e);
 		}
 		log.info("PubmedFetch: End");
 	}

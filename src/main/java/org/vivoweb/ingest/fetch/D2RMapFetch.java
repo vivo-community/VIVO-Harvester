@@ -7,8 +7,9 @@ package org.vivoweb.ingest.fetch;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -22,9 +23,9 @@ import de.fuberlin.wiwiss.d2r.D2rProcessor;
  */
 public class D2RMapFetch {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(D2RMapFetch.class);
+	private static Logger log = LoggerFactory.getLogger(D2RMapFetch.class);
 	/**
 	 * Record Handler to write records to
 	 */
@@ -96,6 +97,7 @@ public class D2RMapFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new D2RMapFetch(new ArgList(getParser(), args)).execute();
@@ -103,7 +105,7 @@ public class D2RMapFetch {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

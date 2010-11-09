@@ -10,6 +10,7 @@
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
 VERSION=0.7.0
+INGEST_TASK=peoplesoft
 
 # Set working directory
 cd /usr/share/vivoingest
@@ -51,6 +52,13 @@ ln -s ps.scored.$date.tar.gz backups/ps.scored.latest.tar.gz
 #tar -xzpf backups/ps.scored.latest.tar.gz XMLVault/h2ps/scored
 
 # Execute ChangeNamespace to get into corrent namespace
+java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftStaging -I dbUrl="jdbc:h2:XMLVault/h2ps/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/person/ -p http://vivo.ufl.edu/ontology/vivo-ufl/ufid
+#java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftStaging -I dbUrl="jdbc:h2:XMLVault/h2ps/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/address/ -p http://vivoweb.org/ontology/core#mailingAddressFor
+java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftStaging -I dbUrl="jdbc:h2:XMLVault/h2ps/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/position/ -p http://vivoweb.org/ontology/core#positionInOrganization -p http://vivoweb.org/ontology/core#positionForPerson -p http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
+java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftStaging -I dbUrl="jdbc:h2:XMLVault/h2ps/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/org/ -p http://vivo.ufl.edu/ontology/vivo-ufl/deptID
+
+# Execute Update
+#java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.Update
 
 # Backup pretransfer vivo database
 date=`date +%Y-%m-%d_%k%M.%S`

@@ -20,9 +20,9 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -35,9 +35,9 @@ import com.hp.hpl.jena.sparql.util.StringUtils;
  */
 public class ArgList {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(ArgList.class);
+	private static Logger log = LoggerFactory.getLogger(ArgList.class);
 	/**
 	 * Argument set from commandline arguments
 	 */

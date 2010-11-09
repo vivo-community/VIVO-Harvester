@@ -1,0 +1,58 @@
+<configuration>
+  
+  <appender name="AllAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>logs/${ingest-task:-ingest}.log</File>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>10</maxIndex>
+      <FileNamePattern>logs/MainLog.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>10240MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <Target>System.out</Target>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">      
+      <evaluator class="ch.qos.logback.classic.boolex.GEventEvaluator"> 
+        <expression>
+           e.level.toInt() >= INFO.toInt()
+             &amp;&amp;  <!-- Stands for && in XML -->
+           WARN.toInt() > e.level.toInt()
+        </expression>
+      </evaluator>
+      <OnMismatch>DENY</OnMismatch>
+      <OnMatch>ACCEPT</OnMatch>
+    </filter>
+  </appender>
+  
+  <appender name="Error" class="ch.qos.logback.core.ConsoleAppender">
+    <Target>System.err</Target>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
+  </appender>
+  
+  <logger name="org.vivoweb.ingest" level="${ingest-level:-ALL}">
+  </logger>
+  <logger name="org.vivoweb.test.ingest" level="${test-level:-WARN}">
+  </logger>
+  <root level="${root-level:-ALL}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </root>
+  
+</configuration>

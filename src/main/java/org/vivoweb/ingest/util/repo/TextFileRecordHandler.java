@@ -36,14 +36,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,9 +56,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class TextFileRecordHandler extends RecordHandler {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	protected static Log log = LogFactory.getLog(TextFileRecordHandler.class);
+	protected static Logger log = LoggerFactory.getLogger(TextFileRecordHandler.class);
 	/**
 	 * The directory to store record files in
 	 */

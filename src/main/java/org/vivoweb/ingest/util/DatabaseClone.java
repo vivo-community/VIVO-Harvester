@@ -3,14 +3,15 @@ package org.vivoweb.ingest.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -21,9 +22,9 @@ import org.vivoweb.ingest.util.args.ArgParser;
  */
 public class DatabaseClone {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(DatabaseClone.class);
+	private static Logger log = LoggerFactory.getLogger(DatabaseClone.class);
 	/**
 	 * database to export from
 	 */
@@ -42,9 +43,8 @@ public class DatabaseClone {
 	 * @param inputConn database to input from
 	 * @param outputConn database to output to
 	 * @param tableNames list of tables to export (null exports all)
-	 * @throws DatabaseUnitException error
 	 */
-	public DatabaseClone(Connection inputConn, Connection outputConn, String[] tableNames) throws DatabaseUnitException {
+	public DatabaseClone(Connection inputConn, Connection outputConn, String[] tableNames) {
 		this.db1 = new DatabaseConnection(inputConn);
 		this.db2 = new DatabaseConnection(outputConn);
 		this.tables = tableNames;
@@ -55,9 +55,8 @@ public class DatabaseClone {
 	 * @param argList option set of parsed args
 	 * @throws ClassNotFoundException error loading driver
 	 * @throws SQLException error connecting to database
-	 * @throws DatabaseUnitException error parsing database
 	 */
-	public DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException, DatabaseUnitException {
+	public DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException {
 		Class.forName(argList.get("inputDriver"));
 		this.db1 = new DatabaseConnection(DriverManager.getConnection(argList.get("inputConnection"), argList.get("inputUsername"), argList.get("inputPassword")));
 		Class.forName(argList.get("outputDriver"));
@@ -109,6 +108,7 @@ public class DatabaseClone {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new DatabaseClone(new ArgList(getParser(), args)).execute();
@@ -116,7 +116,7 @@ public class DatabaseClone {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

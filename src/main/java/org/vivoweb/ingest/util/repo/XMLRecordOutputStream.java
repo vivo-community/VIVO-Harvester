@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An Output Stream that breaks XML blobs into individual Records and writes to a RecordHandler
@@ -20,11 +20,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class XMLRecordOutputStream extends OutputStream {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	@SuppressWarnings("unused")
 	// log lines are commented because it slowed down the process significantly
-	private static Log log = LogFactory.getLog(XMLRecordOutputStream.class);
+	@SuppressWarnings("unused")
+	private static Logger log = LoggerFactory.getLogger(XMLRecordOutputStream.class);
 	/**
 	 * Buffer to hold data until a complete record is formed
 	 */

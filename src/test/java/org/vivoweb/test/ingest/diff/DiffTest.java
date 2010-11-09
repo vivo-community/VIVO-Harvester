@@ -9,9 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.diff.Diff;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 
@@ -22,9 +23,9 @@ import org.vivoweb.ingest.util.repo.JenaConnect;
 public class DiffTest extends TestCase {
 
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(DiffTest.class);
+	private static Logger log = LoggerFactory.getLogger(DiffTest.class);
 	/**
 	 * previous ingest rdf statements to load for test
 	 */
@@ -48,6 +49,7 @@ public class DiffTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		// Create vivo rdf file
 		try {
 			this.previousRDF = File.createTempFile("scoretest_vivo", ".rdf");
@@ -88,7 +90,7 @@ public class DiffTest extends TestCase {
 					 "</rdf:RDF>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		
 		// Create incoming rdf file
@@ -135,7 +137,7 @@ public class DiffTest extends TestCase {
 					 "</rdf:RDF>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		
 		this.expectedAddRDF = new StringBuffer();
@@ -159,7 +161,7 @@ public class DiffTest extends TestCase {
 					 "</Model>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	

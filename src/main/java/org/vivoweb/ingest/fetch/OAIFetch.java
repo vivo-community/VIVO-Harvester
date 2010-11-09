@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -27,9 +28,9 @@ import ORG.oclc.oai.harvester2.app.RawWrite;
  */
 public class OAIFetch {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(OAIFetch.class);
+	private static Logger log = LoggerFactory.getLogger(OAIFetch.class);
 	/**
 	 * The website address of the OAI Repository without the protocol prefix (No http://)
 	 */
@@ -137,13 +138,14 @@ public class OAIFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new OAIFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

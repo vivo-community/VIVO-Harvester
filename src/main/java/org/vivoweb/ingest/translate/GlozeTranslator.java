@@ -14,8 +14,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -34,7 +35,7 @@ public class GlozeTranslator {
 	/**
 	 * the log property for logging errors, information, debugging
 	 */
-	private static Log log = LogFactory.getLog(GlozeTranslator.class);
+	private static Logger log = LoggerFactory.getLogger(GlozeTranslator.class);
 	/**
 	 * the file to be translated FIXME Stephen: remove this and use the incoming stream
 	 */
@@ -95,7 +96,7 @@ public class GlozeTranslator {
 			this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
 			this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
 		} catch(Exception e) {
-			log.error(e);
+			log.error(e.getMessage(),e);
 		}
 	}
 	
@@ -207,13 +208,14 @@ public class GlozeTranslator {
 	 * @param args list of arguments required to execute glozetranslate
 	 */
 	public static void main(String[] args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new GlozeTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

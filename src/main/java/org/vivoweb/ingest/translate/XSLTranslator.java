@@ -22,9 +22,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -40,7 +41,7 @@ public class XSLTranslator {
 	/**
 	 * the log property for logging errors, information, debugging
 	 */
-	private static Log log = LogFactory.getLog(XSLTranslator.class);
+	private static Logger log = LoggerFactory.getLogger(XSLTranslator.class);
 	/**
 	 * The translation file is the map that will reconstruct our input stream's document into the appropriate format
 	 */
@@ -217,13 +218,14 @@ public class XSLTranslator {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new XSLTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": Stop");
 	}

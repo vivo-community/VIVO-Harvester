@@ -7,8 +7,9 @@
 package org.vivoweb.test.ingest.qualify;
 
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.qualify.Qualify;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -20,9 +21,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
  */
 public class QualifyTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(QualifyTest.class);
+	private static Logger log = LoggerFactory.getLogger(QualifyTest.class);
 	/** */
 	private static final String dbClass = "org.h2.Driver";
 	/** */
@@ -40,6 +41,7 @@ public class QualifyTest extends TestCase {
 	
 	@Override
 	public void setUp() throws Exception {
+		InitLog.initLogger();
 		this.jena = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 	}

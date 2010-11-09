@@ -19,8 +19,9 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
 
@@ -29,9 +30,9 @@ import org.vivoweb.ingest.util.repo.XMLRecordOutputStream;
  */
 public class NLMJournalFetch extends NIHFetch {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(NLMJournalFetch.class);
+	private static Logger log = LoggerFactory.getLogger(NLMJournalFetch.class);
 	/**
 	 * The name of the NLM Journals Database
 	 */
@@ -163,6 +164,7 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info("NLMJournalFetch: Start");
 		try {
 			new NLMJournalFetch(new ArgList(getParser("NLMJournalFetch"), args)).execute();
@@ -170,7 +172,7 @@ public class NLMJournalFetch extends NIHFetch {
 			log.debug(e.getMessage(),e);
 			System.out.println(getParser("NLMJournalFetch").getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.error(e.getMessage(),e);
 		}
 		log.info("NLMJournalFetch: End");
 	}

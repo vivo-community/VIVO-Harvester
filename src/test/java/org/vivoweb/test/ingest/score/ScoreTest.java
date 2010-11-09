@@ -16,9 +16,10 @@ import java.util.List;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.score.Score;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
@@ -29,9 +30,9 @@ import com.hp.hpl.jena.sparql.util.StringUtils;
  */
 public class ScoreTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(ScoreTest.class);
+	private static Logger log = LoggerFactory.getLogger(ScoreTest.class);
 	/**
 	 * Score input test file
 	 */
@@ -325,6 +326,7 @@ public class ScoreTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() {
+		InitLog.initLogger();
 		
 		// create objects under test
 		// Create input rdf file
@@ -500,7 +502,7 @@ public class ScoreTest extends TestCase {
 					 "</rdf:RDF>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		
 		// Create vivo rdf file
@@ -554,7 +556,7 @@ public class ScoreTest extends TestCase {
 					 "</rdf:RDF>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		
 		// create VIVO.xml
@@ -572,7 +574,7 @@ public class ScoreTest extends TestCase {
 					 "</Model>");
 			out.close();
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	

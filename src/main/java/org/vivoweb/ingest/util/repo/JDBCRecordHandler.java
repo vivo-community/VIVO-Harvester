@@ -23,8 +23,8 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 
 /**
@@ -33,9 +33,9 @@ import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
  */
 public class JDBCRecordHandler extends RecordHandler {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	protected static Log log = LogFactory.getLog(JDBCRecordHandler.class);
+	protected static Logger log = LoggerFactory.getLogger(JDBCRecordHandler.class);
 	/**
 	 * Database connection
 	 */

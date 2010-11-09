@@ -14,8 +14,8 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -32,9 +32,9 @@ import org.xml.sax.SAXException;
  */
 public abstract class NIHFetch {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(NIHFetch.class);
+	private static Logger log = LoggerFactory.getLogger(NIHFetch.class);
 	/**
 	 * Email address to contact in case of issues
 	 */

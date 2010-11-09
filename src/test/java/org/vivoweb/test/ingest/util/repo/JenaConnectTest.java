@@ -13,8 +13,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import junit.framework.TestCase;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.JDBCRecordHandler;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.ingest.util.repo.RecordHandler;
@@ -27,9 +28,9 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  */
 public class JenaConnectTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(JenaConnectTest.class);
+	private static Logger log = LoggerFactory.getLogger(JenaConnectTest.class);
 	/** */
 	private static final String nl = System.getProperty("line.separator");
 	/** */
@@ -59,6 +60,7 @@ public class JenaConnectTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		this.configFile = File.createTempFile("jcConfig", "xml");
 		this.jc = null;
 	}

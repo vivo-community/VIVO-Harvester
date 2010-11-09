@@ -45,6 +45,7 @@
 			<xsl:matching-substring>
 				<xsl:variable name="grantid" select="regex-group(1)" />
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant{$grantid}">
+					<ufl:harvestedBy>DSR-Harvester</ufl:harvestedBy>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 					<rdfs:label><xsl:value-of select="db-dbo.vwVIVO:Title" /></rdfs:label>
 					<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="db-dbo.vwVIVO:ProjectBegin"/></core:startDate>

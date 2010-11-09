@@ -10,12 +10,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.diff.Diff;
 import org.vivoweb.ingest.transfer.Transfer;
 import org.vivoweb.ingest.util.args.ArgDef;
@@ -24,7 +23,6 @@ import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
-
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -35,9 +33,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 public class Update {
 
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(Update.class);
+	private static Logger log = LoggerFactory.getLogger(Update.class);
 	/**
 	 * Models to read records from
 	 */
@@ -51,11 +49,16 @@ public class Update {
 	 */
 	private JenaConnect vivoJC;
 	/**
-	 * 
+	 * keep the subtractions
 	 */
-	
 	private boolean keepSubtractions;
+	/**
+	 * keep the additions
+	 */
 	private boolean keepAdditions;
+	/**
+	 * wipe the incoming model
+	 */
 	private boolean wipeIncomingModel;
 	
 	
@@ -169,7 +172,7 @@ public class Update {
 			
 			
 		} catch (Exception e) {
-			log.fatal(e.getMessage(),e);
+			log.error(e.getMessage(),e);
 		}
 			
 		//apply to previous too
@@ -182,18 +185,18 @@ public class Update {
 	 * @param args commandline arguments
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new Update(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.fatal(e.getMessage());
+			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

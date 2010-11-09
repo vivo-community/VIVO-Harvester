@@ -9,6 +9,8 @@
 # Contributors:
 #     Eliza Chan
 
+INGEST_TASK=d2rmap
+
 # Set working directory
 cd /usr/share/vivoingest
 

@@ -18,8 +18,8 @@ import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.ingest.util.IterableAdaptor;
 import org.vivoweb.ingest.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.SAXException;
@@ -40,11 +40,10 @@ import com.hp.hpl.jena.shared.PropertyNotFoundException;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class JenaRecordHandler extends RecordHandler {
-	
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(JenaRecordHandler.class);
+	private static Logger log = LoggerFactory.getLogger(JenaRecordHandler.class);
 	/**
 	 * the jena model we are using to store records
 	 */

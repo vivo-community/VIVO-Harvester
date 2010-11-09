@@ -11,8 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.IterableAdaptor;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
@@ -33,9 +34,9 @@ import com.hp.hpl.jena.util.ResourceUtils;
  */
 public class ChangeNamespace {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(ChangeNamespace.class);
+	private static Logger log = LoggerFactory.getLogger(ChangeNamespace.class);
 	/**
 	 * The model to change uris in
 	 */
@@ -259,17 +260,18 @@ public class ChangeNamespace {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new ChangeNamespace(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.fatal(e.getMessage());
+			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

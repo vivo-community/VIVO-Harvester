@@ -11,9 +11,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -29,9 +30,9 @@ import com.hp.hpl.jena.rdf.model.RDFWriter;
  */
 public class Diff {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(Diff.class);
+	private static Logger log = LoggerFactory.getLogger(Diff.class);
 	/**
 	 * Models to read records from
 	 */
@@ -50,12 +51,24 @@ public class Diff {
 	private String dumpFile;
 	
 	
+	/**
+	 * Constructor
+	 * @param mJC minuend jenaconnect
+	 * @param sJC subtrahend jenaconnect
+	 * @param oJC output jenaconnect
+	 */
 	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC){
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
 		this.output = oJC;
 	}
 	
+	/**
+	 * Constructor
+	 * @param mJC minuend jenaconnect
+	 * @param sJC subtrahend jenaconnect
+	 * @param dF dump file path
+	 */
 	public Diff(JenaConnect mJC, JenaConnect sJC, String dF){
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
@@ -135,6 +148,13 @@ public class Diff {
 		return parser;
 	}
 	
+	/**
+	 * Perform diff of mJC and sJC and put result in oJC and/or dF
+	 * @param mJC minuend jenaconnect
+	 * @param sJC subtrahend jenaconnect
+	 * @param oJC output jenaconnect
+	 * @param dF dump file path
+	 */
 	public static void diff(JenaConnect mJC,JenaConnect sJC,JenaConnect oJC, String dF){
 		/*
 		 * c - b = a minuend - subtrahend = difference ie minuend.diff(subtrahend) = differenece c.diff(b) = a
@@ -159,7 +179,7 @@ public class Diff {
 				oJC.getJenaModel().add(diffModel);
 			}
 		} catch(Exception e) {
-			log.fatal(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 	
@@ -175,17 +195,18 @@ public class Diff {
 	 * @param args commandline arguments
 	 */
 	public static void main(String[] args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName() + ": Start");
 		try {
 			new Diff(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.fatal(e.getMessage());
+			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName() + ": End");
 	}

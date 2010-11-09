@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -28,9 +29,9 @@ import org.xml.sax.SAXException;
  */
 public class Merge {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	protected static Log log = LogFactory.getLog(Merge.class);
+	protected static Logger log = LoggerFactory.getLogger(Merge.class);
 	/**
 	 * Input RecordHandler
 	 */
@@ -48,7 +49,7 @@ public class Merge {
 	 * Constructor
 	 * @param input input recordhandler
 	 * @param output output recordhandler
-	 * @param regex record regex
+	 * @param regex regex for finding primary records (with a grouping for the subsection to use to find sub-records)
 	 */
 	public Merge(RecordHandler input, RecordHandler output, String regex) {
 		this.input = input;
@@ -75,21 +76,24 @@ public class Merge {
 	}
 	
 	/**
-	 * Runs the merge
+	 * Merge records in input using regex and write to output
+	 * @param input input recordhandler
+	 * @param output output recordhandler
+	 * @param regex regex for finding primary records (with a grouping for the subsection to use to find sub-records)
 	 */
-	private void execute() {
+	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) {
 		try {
-			for(Record r : this.input) {
+			for(Record r : input) {
 				JenaConnect jc = new JenaConnect();
-				Matcher m = this.regex.matcher(r.getID());
+				Matcher m = regex.matcher(r.getID());
 				if(m.matches()) {
-					for(String id : this.input.find(m.group(1))) {
-						jc.loadRDF(new ByteArrayInputStream(this.input.getRecord(id).getData().getBytes()), null);
+					for(String id : input.find(m.group(1))) {
+						jc.loadRDF(new ByteArrayInputStream(input.getRecord(id).getData().getBytes()), null);
 					}
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					jc.exportRDF(baos);
 					baos.flush();
-					this.output.addRecord(m.group(1), baos.toString("UTF-8"), this.getClass());
+					output.addRecord(m.group(1), baos.toString("UTF-8"), Merge.class);
 				}
 			}
 		} catch(IllegalArgumentException e) {
@@ -97,6 +101,13 @@ public class Merge {
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
 		}
+	}
+	
+	/**
+	 * Runs the merge
+	 */
+	private void execute() {
+		merge(this.input,this.output,this.regex);
 	}
 	
 	/**
@@ -121,17 +132,18 @@ public class Merge {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new Merge(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
-			log.fatal(e.getMessage());
+			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(IOException e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

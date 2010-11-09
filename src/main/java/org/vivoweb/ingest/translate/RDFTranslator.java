@@ -11,8 +11,9 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -28,7 +29,7 @@ public class RDFTranslator {
 	/**
 	 * the log property for logging errors, information, debugging
 	 */
-	private static Log log = LogFactory.getLog(RDFTranslator.class);
+	private static Logger log = LoggerFactory.getLogger(RDFTranslator.class);
 	/**
 	 * the workfslow descriptor file
 	 */
@@ -109,6 +110,7 @@ public class RDFTranslator {
 	 * @param args argument array
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		if(args.length < 3 || args.length > 4) {
 			log.error("Invalid Arguments: RDFTranslate requires at least 1 arguments.  The system was supplied with " + args.length);
 			// throw new IllegalArgumentException();

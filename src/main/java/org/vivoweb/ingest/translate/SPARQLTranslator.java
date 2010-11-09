@@ -11,11 +11,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.xml.parsers.ParserConfigurationException; // import javax.xml.transform.Source;
-// import javax.xml.transform.stream.StreamResult;
-// import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -31,7 +30,7 @@ public class SPARQLTranslator {
 	/**
 	 * the log property for logging errors, information, debugging
 	 */
-	private static Log log = LogFactory.getLog(SPARQLTranslator.class);
+	private static Logger log = LoggerFactory.getLogger(SPARQLTranslator.class);
 	/**
 	 * The translation file is the map that will reconstruct our input stream's document into the appropriate format
 	 */
@@ -157,13 +156,14 @@ public class SPARQLTranslator {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new SPARQLTranslator(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

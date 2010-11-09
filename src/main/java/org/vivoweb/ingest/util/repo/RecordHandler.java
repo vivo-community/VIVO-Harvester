@@ -30,7 +30,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public abstract class RecordHandler implements Iterable<Record> {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
 	// private static Log log = LogFactory.getLog(RecordHandler.class);
 	/**

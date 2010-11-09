@@ -19,8 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.SpecialEntities;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
@@ -35,9 +36,9 @@ import com.hp.hpl.jena.sparql.util.StringUtils;
  */
 public class JDBCFetch {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(JDBCFetch.class);
+	private static Logger log = LoggerFactory.getLogger(JDBCFetch.class);
 	/**
 	 * Record Handler to write records to
 	 */
@@ -434,7 +435,7 @@ public class JDBCFetch {
 			sb.append(" WHERE ");
 			sb.append(StringUtils.join(" AND ", getWhereClauses(tableName)));
 		}
-		log.info("SQL Query: " + sb.toString());
+		log.debug("SQL Query: " + sb.toString());
 		return sb.toString();
 	}
 	
@@ -567,6 +568,7 @@ public class JDBCFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		InitLog.initLogger();
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new JDBCFetch(new ArgList(getParser(), args)).execute();
@@ -574,7 +576,7 @@ public class JDBCFetch {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.fatal(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
 	}

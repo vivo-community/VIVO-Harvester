@@ -7,8 +7,9 @@
 package org.vivoweb.test.ingest.util.args;
 
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
@@ -19,14 +20,15 @@ import junit.framework.TestCase;
  */
 public class ArgListTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(ArgListTest.class);
+	private static Logger log = LoggerFactory.getLogger(ArgListTest.class);
 	/** */
 	private static ArgParser parser;
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		parser = new ArgParser("ArgListTest");
 	}
 	

@@ -14,8 +14,9 @@ import java.sql.Statement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.fetch.JDBCFetch;
 import org.vivoweb.ingest.util.repo.JDBCRecordHandler;
 import org.vivoweb.ingest.util.repo.Record;
@@ -30,9 +31,9 @@ import org.w3c.dom.NodeList;
  */
 public class JDBCFetchTest extends TestCase {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(JDBCFetchTest.class);
+	private static Logger log = LoggerFactory.getLogger(JDBCFetchTest.class);
 	/** */
 	private Connection conn;
 	/** */
@@ -40,6 +41,7 @@ public class JDBCFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger();
 		this.conn = null;
 		this.rh = null;
 	}

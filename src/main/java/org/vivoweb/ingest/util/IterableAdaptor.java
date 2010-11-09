@@ -59,17 +59,21 @@ public class IterableAdaptor<T> implements Iterable<T> {
 	}
 	
 	// return an adaptor for the Enumeration
+	@Override
 	public Iterator<T> iterator() {
 		if(this.en != null) {
 			return new Iterator<T>() {
+				@Override
 				public boolean hasNext() {
 					return getEn().hasMoreElements();
 				}
 				
+				@Override
 				public T next() {
 					return getEn().nextElement();
 				}
 				
+				@Override
 				public void remove() {
 					throw new UnsupportedOperationException();
 				}
@@ -78,14 +82,17 @@ public class IterableAdaptor<T> implements Iterable<T> {
 			return this.it;
 		} else {
 			return new Iterator<T>() {
+				@Override
 				public boolean hasNext() {
 					return false;
 				}
 				
+				@Override
 				public T next() {
 					return null;
 				}
 				
+				@Override
 				public void remove() {
 					throw new UnsupportedOperationException();
 				}

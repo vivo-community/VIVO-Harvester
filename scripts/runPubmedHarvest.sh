@@ -9,6 +9,8 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
+INGEST_TASK=pubmed
+
 # Set working directory
 cd /usr/share/vivoingest
 

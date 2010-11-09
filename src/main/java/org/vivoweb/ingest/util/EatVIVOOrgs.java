@@ -9,9 +9,10 @@ import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -25,9 +26,9 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  */
 public class EatVIVOOrgs {
 	/**
-	 * Log4J Logger
+	 * SLF4J Logger
 	 */
-	private static Log log = LogFactory.getLog(EatVIVOOrgs.class);
+	private static Logger log = LoggerFactory.getLogger(EatVIVOOrgs.class);
 	/**
 	 * properties to consume
 	 */
@@ -75,6 +76,7 @@ public class EatVIVOOrgs {
 	 * @throws ParserConfigurationException error
 	 */
 	public static void main(String[] args) throws MalformedURLException, IOException, ParserConfigurationException, SAXException {
+		InitLog.initLogger();
 		inmodel = JenaConnect.parseConfig("config/jenaModels/myVIVO.xml");
 		outmodel = new JenaConnect();
 		otherProperties = new LinkedList<Property>();
