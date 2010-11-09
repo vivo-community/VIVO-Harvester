@@ -35,15 +35,14 @@ java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v
 # Execute Transfer from local temp model into main vivo model (Commented out in favor of Update)
 #java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml
 
-# Execute Transfer to dump model rdf into file
-# Shown as example
-#java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.transfer.Transfer -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -d dump.rdf
-
+# Execute ChangeNamespace to get into corrent namespace
+java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedPub/ -p http://purl.org/ontology/bibo/pmid
+java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthorship/ -p http://vivoweb.org/ontology/core#linkedInformationResource -p http://vivoweb.org/ontology/core#authorRank
+java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthor/ -p http://vivoweb.org/ontology/core#authorInAuthorship
+java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/ -p http://purl.org/ontology/bibo/ISSN
 
 #Update the example on the board
 #java -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="PreviousModelName" -i config/jenaModels/VIVO.xml -I modelName="NewModelName" -v config/jenaModels/VIVO.xml
-
-
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO

@@ -87,8 +87,13 @@ public class ChangeNamespace {
 	 * @return the uri of the first matched resource or an unused uri if none found
 	 */
 	public static String getURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo, JenaConnect model) {
-		String matchURI = getMatchingURI(current, namespace, properties, vivo);
-		String uri = (matchURI == null)?getUnusedURI(namespace, vivo, model):matchURI;
+		String uri = null;
+		String matchURI = null;
+		if(properties != null && !properties.isEmpty() && (matchURI = getMatchingURI(current, namespace, properties, vivo)) != null) {
+			uri = matchURI;
+		} else {
+			uri = getUnusedURI(namespace, vivo, model);
+		}
 		log.debug("Using URI: <"+uri+">");
 		return uri;
 	}
