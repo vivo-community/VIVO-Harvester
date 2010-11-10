@@ -120,12 +120,12 @@
 									<xsl:with-param name="this" select="$this" />
 								</xsl:call-template>
 							</xsl:when>
-							<xsl:when test="$table = 't_PS_H_UF_ACAD_ORG'">
+							<!--<xsl:when test="$table = 't_PS_H_UF_ACAD_ORG'">
 								<xsl:call-template name="t_PS_H_UF_ACAD_ORG">
 									<xsl:with-param name="orgid" select="$ufid" />
 									<xsl:with-param name="this" select="$this" />
 								</xsl:call-template>
-							</xsl:when>
+							</xsl:when>-->
 						</xsl:choose>
 					</xsl:matching-substring>
 				</xsl:analyze-string>
