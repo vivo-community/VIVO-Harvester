@@ -64,7 +64,7 @@ ln -s ps.all.$date.tar.gz backups/ps.all.latest.tar.gz
 rm -rd XMLVault/h2ps/scored
 
 # Execute Score to match jobs with organizations
-java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2ps/scored/store;MODE=HSQLDB" -O modelName=peopleSoftStaging -f "http://vivoweb.org/ontology/score#deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID" -x "http://vivoweb.org/ontology/core#positionInOrganization" -y "http://vivoweb.org/ontology/core#organizationForPosition"
+java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.score.Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2ps/scored/store;MODE=HSQLDB" -O modelName=peopleSoftStaging -f "http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition=http://vivo.ufl.edu/ontology/vivo-ufl/deptID" -x "http://vivoweb.org/ontology/core#positionInOrganization" -y "http://vivoweb.org/ontology/core#organizationForPosition"
 
 # back H2 score models
 date=`date +%Y-%m-%d_%k%M.%S`
