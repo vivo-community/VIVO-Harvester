@@ -165,7 +165,7 @@ public class ChangeNamespace {
 					sbQuery.append(s.getObject().asResource().getURI());
 					sbQuery.append(">");
 				} else {
-					filters.add("( str(?value"+valueCount+") = \""+s.getObject().asLiteral().toString()+"\" )");
+					filters.add("( str(?value"+valueCount+") = str(\""+s.getObject().asLiteral().toString()+"\") )");
 					sbQuery.append("?value");
 					sbQuery.append(valueCount);
 					valueCount++;
