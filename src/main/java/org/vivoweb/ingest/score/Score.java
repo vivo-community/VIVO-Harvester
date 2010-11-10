@@ -581,11 +581,10 @@ public class Score {
 		
 		while(mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
-			//			log.trace("Statement " + stmt.toString());
 			
 			// Don't add any scoring statements
 			if(!stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
-				log.debug(stmt.toString());
+//				log.debug(stmt.toString());
 				returnModel.add(stmt);
 				
 				if((stmt.getObject().isResource() && !((Resource)stmt.getObject()).equals(linkRes)) && !((Resource)stmt.getObject()).equals(mainRes)) {

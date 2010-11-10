@@ -94,7 +94,7 @@ rm -rf backups/vitrodb.ps.pretransfer.latest.sql
 ln -s vitrodb.ps.pretransfer.$date.sql backups/vitrodb.ps.pretransfer.latest.sql
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
-java -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/pubmed" -i config/jenaModels/h2.xml -I modelName="PubmedStaging" -v config/jenaModels/VIVO.xml
+java -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/pubmed" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -I modelName=PubmedStaging -v config/jenaModels/VIVO.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
