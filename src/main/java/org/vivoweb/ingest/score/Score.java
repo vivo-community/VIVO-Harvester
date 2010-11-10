@@ -438,7 +438,7 @@ public class Score {
 		QuerySolution vivoSolution;
 		
 		if(!storeResult.hasNext()){
-			result.add(recursiveSanitizeBuild(paperResource,null));
+			result.add(recursiveSanitizeBuild(paperResource,new StringBuilder()));
 		}
 		
 		// loop thru resultset
@@ -450,7 +450,7 @@ public class Score {
 			log.trace("Found " + matchNode.toString() + " for person " + authorNode.toString());
 			log.trace("Adding paper " + paperNode.toString());
 			
-			result.add(recursiveSanitizeBuild(paperResource, null));
+			result.add(recursiveSanitizeBuild(paperResource, new StringBuilder()));
 			
 			replaceResource(authorNode, paperNode, result);
 			
@@ -574,8 +574,9 @@ public class Score {
 	 * @param mainRes the main resource
 	 * @param linkRes the resource to link it to
 	 * @return the model containing the sanitized info so far
+	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
 	 */
-	private static Model recursiveSanitizeBuild(Resource mainRes, Resource linkRes) {
+	private static Model recursiveSanitizeBuild(Resource mainRes, StringBuilder linkRes) {
 		Model returnModel = ModelFactory.createDefaultModel();
 		StmtIterator mainStmts = mainRes.listProperties();
 		
@@ -584,14 +585,15 @@ public class Score {
 			
 			// Don't add any scoring statements
 			if(!stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
-//				log.debug(stmt.toString());
+				// log.debug(stmt.toString());
 				returnModel.add(stmt);
 				
-				if((stmt.getObject().isResource() && !((Resource)stmt.getObject()).equals(linkRes)) && !((Resource)stmt.getObject()).equals(mainRes)) {
-					returnModel.add(recursiveSanitizeBuild((Resource)stmt.getObject(), mainRes));
+				//todo change the equals t o
+				if(stmt.getObject().isResource() && !linkRes.toString().contains("<" + ((Resource)stmt.getObject()).getURI() + ">") && !((Resource)stmt.getObject()).equals(mainRes)) {
+					returnModel.add(recursiveSanitizeBuild((Resource)stmt.getObject(), linkRes.append("<" + mainRes.getURI() + ">")));
 				}
-				if(!stmt.getSubject().equals(linkRes) && !stmt.getSubject().equals(mainRes)) {
-					returnModel.add(recursiveSanitizeBuild(stmt.getSubject(), mainRes));
+				if(!linkRes.toString().contains("<" + stmt.getSubject().getURI() + ">") && !stmt.getSubject().equals(mainRes)) {
+					returnModel.add(recursiveSanitizeBuild(stmt.getSubject(), linkRes.append("<" + mainRes.getURI() + ">")));
 				}
 			}
 		}
@@ -871,7 +873,7 @@ public class Score {
 			if(!matches.hasNext()) {
 				log.trace("No matches in VIVO found");
 				if (this.pushAll){
-					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, null));
+					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new StringBuilder()));
 				}
 			} else {
 				log.trace("Matches in VIVO found");
@@ -883,7 +885,7 @@ public class Score {
 					log.trace("Found <" + sub + "> for VIVO entity <" + vivoNode + ">");
 					log.trace("Adding entity <" + sub + "> to output");
 					
-					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, null));
+					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new StringBuilder()));
 					
 					log.trace("Linking entity <" + sub + "> to VIVO entity <" + vivoNode + ">");
 					
