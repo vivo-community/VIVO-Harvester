@@ -226,7 +226,7 @@ public class ChangeNamespace {
 				while (!urlFound) {
 					uri = getURI(res, newNamespace, properties, vivo, model);
 					log.debug("urlCheck: "+urlCheck.contains(uri));
-					if (!urlCheck.contains(uri)) {
+					if (vivo.containsURI(uri) || !urlCheck.contains(uri)) {
 						urlCheck.add(uri);
 						urlFound = true;
 					}
