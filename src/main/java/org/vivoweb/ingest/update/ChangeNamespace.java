@@ -220,10 +220,12 @@ public class ChangeNamespace {
 		ArrayList<String> urlCheck = new ArrayList<String>();
 		for(Resource res : IterableAdaptor.adapt(model.getJenaModel().listSubjects())) {
 			if(oldNamespace.equals(res.getNameSpace())) {
+				log.info("Finding match for <"+res.getURI()+">");
 				String uri = null;
 				boolean urlFound = false;
 				while (!urlFound) {
 					uri = getURI(res, newNamespace, properties, vivo, model);
+					log.debug("urlCheck: "+urlCheck.contains(uri));
 					if (!urlCheck.contains(uri)) {
 						urlCheck.add(uri);
 						urlFound = true;

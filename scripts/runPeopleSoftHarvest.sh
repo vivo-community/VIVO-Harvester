@@ -60,11 +60,46 @@ ln -s ps.all.$date.tar.gz backups/ps.all.latest.tar.gz
 # uncomment to restore previous H2 translate models
 #tar -xzpf backups/ps.all.latest.tar.gz XMLVault/h2ps/all
 
-# Execute ChangeNamespace to get into corrent namespace
-java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/person/ -p http://vivo.ufl.edu/ontology/vivo-ufl/ufid
-#java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/address/ -p http://vivoweb.org/ontology/core#mailingAddressFor
-java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/position/ -p http://vivoweb.org/ontology/core#positionInOrganization -p http://vivoweb.org/ontology/core#positionForPerson -p http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
-java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/org/ -p http://vivo.ufl.edu/ontology/vivo-ufl/deptID
+# Execute ChangeNamespace to get into current namespace
+#java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http$
+# backup H2 change namesace Models
+#date=`date +%Y-%m-%d_%k%M.%S`
+#tar -czpf backups/ps.cnpeople.$date.tar.gz XMLVault/h2ps/all
+#rm -rf backups/ps.cnpeople.latest.tar.gz
+#ln -s ps.cnpeople.$date.tar.gz backups/ps.cnpeople.latest.tar.gz
+
+# uncomment to restore previous changenamespace model
+tar -xzpf backups/ps.cnpeople.latest.tar.gz XMLVault/h2ps/all
+
+##java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n htt$
+# backup H2 change namesace Models
+##date=`date +%Y-%m-%d_%k%M.%S`
+##tar -czpf backups/ps.cnaddr.$date.tar.gz XMLVault/h2ps/all
+##rm -rf backups/pscnaddr.latest.tar.gz
+##ln -s ps.cnaddr.$date.tar.gz backups/ps.cnaddr.latest.tar.gz
+
+# uncomment to restore previous changenamespace model
+##tar -xzpf backups/ps.cnaddr.latest.tar.gz XMLVault/h2ps/all
+
+java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http:$
+# backup H2 change namesace Models
+date=`date +%Y-%m-%d_%k%M.%S`
+tar -czpf backups/ps.cnorg.$date.tar.gz XMLVault/h2ps/all
+rm -rf backups/ps.cnorg.latest.tar.gz
+ln -s ps.cnorg.$date.tar.gz backups/ps.cnorg.latest.tar.gz
+
+# uncomment to restore previous changenamespace model
+#tar -xzpf backups/ps.cnorg.latest.tar.gz XMLVault/h2ps/all
+
+java -Xms1024m -Xmx3072M -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http:$
+# backup H2 change namesace Models
+date=`date +%Y-%m-%d_%k%M.%S`
+tar -czpf backups/ps.cnpos.$date.tar.gz XMLVault/h2ps/all
+rm -rf backups/ps.cnpos.latest.tar.gz
+ln -s ps.cnpos.$date.tar.gz backups/ps.cnpos.latest.tar.gz
+
+# uncomment to restore previous changenamespace model
+#tar -xzpf backups/ps.cnpos.latest.tar.gz XMLVault/h2ps/all
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
