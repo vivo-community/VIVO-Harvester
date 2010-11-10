@@ -133,7 +133,7 @@
 		</xsl:analyze-string>
 	</xsl:template>
 	
-	<xsl:template name="t_UF_DIR_EMP_STU_1">Peop
+	<xsl:template name="t_UF_DIR_EMP_STU_1">
 		<xsl:param name='ufid' />
 		<xsl:param name='this' />
 		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
