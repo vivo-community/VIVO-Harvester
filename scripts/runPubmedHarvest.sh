@@ -81,7 +81,7 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 #java -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
 #java -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.qualify.Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
-# Execute ChangeNamespace to get into corrent namespace
+# Execute ChangeNamespace to get into current namespace
 java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedPub/ -p http://purl.org/ontology/bibo/pmid
 java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthorship/ -p http://vivoweb.org/ontology/core#linkedInformationResource -p http://vivoweb.org/ontology/core#authorRank
 java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.ingest.update.ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthor/ -p http://vivoweb.org/ontology/core#authorInAuthorship
@@ -89,18 +89,18 @@ java -Xms1024m -Xmx3072M -cp bin/ingest-0.7.0.jar:bin/dependency/* org.vivoweb.i
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
-mysqldump -u USERNAME -pPASSWORD vitrodb > backups/vitrodb.ps.pretransfer.$date.sql
-rm -rf backups/vitrodb.ps.pretransfer.latest.sql
-ln -s vitrodb.ps.pretransfer.$date.sql backups/vitrodb.ps.pretransfer.latest.sql
+mysqldump -h SERVER -u USERNAME -pPASSWORD vivodb > backups/vivodb.pubmed.pretransfer.$date.sql
+rm -rf backups/vivodb.pubmed.pretransfer.latest.sql
+ln -s vivodb.pubmed.pretransfer.$date.sql backups/vivodb.pubmed.pretransfer.latest.sql
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
 java -cp bin/ingest-$VERSION.jar:bin/dependency/* org.vivoweb.ingest.update.Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/pubmed" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -I modelName=PubmedStaging -v config/jenaModels/VIVO.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
-mysqldump -u USERNAME -pPASSWORD vitrodb > backups/vitrodb.ps.posttransfer.$date.sql
-rm -rf backups/vitrodb.ps.posttransfer.latest.sql
-ln -s vitrodb.ps.posttransfer.$date.sql backups/vitrodb.ps.posttransfer.latest.sql
+mysqldump -h SERVER -u USERNAME -pPASSWORD vivodb > backups/vivodb.pubmed.posttransfer.$date.sql
+rm -rf backups/vivodb.pubmed.posttransfer.latest.sql
+ln -s vivodb.pubmed.posttransfer.$date.sql backups/vivodb.pubmed.posttransfer.latest.sql
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
