@@ -286,6 +286,7 @@
 							<rdfs:label>Employee</rdfs:label>
 						</xsl:otherwise>
 					</xsl:choose>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
 					<ufl:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufl:deptIDofPosition>
 					<core:positionInOrganization>
 						<rdf:Description rdf:about="{$baseURI}org/org{$fullorgnum}">
@@ -369,6 +370,7 @@
 							<rdfs:label>Employee</rdfs:label>
 						</xsl:otherwise>
 					</xsl:choose>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
 					<ufl:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufl:deptIDofPosition>
 					<core:positionInOrganization>
 						<rdf:Description rdf:about="{$baseURI}org/org{$fullorgnum}">
