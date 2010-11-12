@@ -15,6 +15,14 @@
 echo -n "Enter sourceforge username: "
 read NAME
 
+#ask for version name
+#echo -n "Enter release version: "
+#read VERSION
+
+#update pom.xml and deb control file with new version
+
+#update changelog
+
 #check out from dev svn
 
 #merge down to staging

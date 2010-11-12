@@ -21,7 +21,7 @@ read BUILDNAME
 echo -n "Run junit tests before build?: "
 read RUNTEST
 
-#edit release info to add release tag
+#update pom.xml and deb control file with build name
 
 #build
 if [ "$RUNTEST" = "y" ]; then
