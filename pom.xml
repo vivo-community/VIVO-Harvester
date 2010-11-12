@@ -80,7 +80,6 @@
                                 <data>
                                     <src>${project.basedir}/scripts</src>
                                     <type>directory</type>
-                                    <includes>*.sh</includes>
                                     <mapper>
                                       <type>perm</type>
                                       <prefix>/usr/share/vivo/harvester/scripts</prefix>
