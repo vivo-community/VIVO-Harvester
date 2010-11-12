@@ -7,6 +7,7 @@
   
   Contributors:
       Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+      James Pence
 -->
 <!-- <?xml version="1.0"?> -->
 <!-- Header information for the Style Sheet
@@ -57,7 +58,16 @@
 					<core:sponsorAwardId><xsl:value-of select="db-dbo.vwVIVO:PS__Contract"/></core:sponsorAwardId>
 					<ufVivo:dsrNumber><xsl:value-of select="$grantid"/></ufVivo:dsrNumber>
 				</rdf:Description>
+				<xsl:apply-templates select="db-dbo.vwVIVO:PI_UFID" />
+				<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/grant{$grantid}/role{db-dbo.vwVIVO:PI_UFID}"/>
 			</xsl:matching-substring>
 		</xsl:analyze-string>
+	</xsl:template>
+	<xsl:template match="db-dbo.vwVIVO:PI_UFID">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant{$grantid}/role{db-dbo.vwVIVO:PI_UFID}">
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
+			<ufVivo:ufid><xsl:value-of select="db-dbo.vwVIVO:PI_UFID"/></ufVivo:ufid>
+			<core:roleIn rdf:resource="http://vivoweb.org/harvest/dsr/grant{$grantid}" />
+		</rdf:Description>
 	</xsl:template>
 </xsl:stylesheet>
