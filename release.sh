@@ -15,7 +15,15 @@
 echo -n "Enter sourceforge username: "
 read NAME
 
-#check out from svn
+#check out from dev svn
+
+#merge down to staging
+
+#merge down to trunk
+
+#tag inside trunk
+
+#check out from trunk svn
 svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 
 #build
@@ -42,3 +50,5 @@ mv data.tar.gz $RELEASENAME.tar.gz
 #Upload tarball and deb package to sourceforge
 scp $RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+
+#merge back to dev

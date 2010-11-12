@@ -1,8 +1,23 @@
 0.7.0
-	Update is now working
+	Update
+		added Diff to run a diff between models
+		added Merge to perform addition and subtraction of statements between jena Models
+		added changenamespace for node renaming
 	Updated XSL files for pubmed
-	Fix author name scoring bug where it would miss duplicate names
-	Add initials logic to author name scoring
+		add DOI
+		fix for dates
+		moved mesh terms to free text keyword
+		added back author stubs 
+		people created in pubmed now have a class that can be added to ignore list inside lucene
+	Scoring
+		add -q option to clear output model before scoring
+		fix author name scoring bug where it would miss duplicate names
+		add initials logic to author name scoring
+		fix scoring infinite loop when recursively looping thru
+	update all scripts to support backups 
+	migrated to logback from log4j
+		each tool now logs to inidividual file	
+	
 
 0.6.2
 	Correct pubmed error -- would not fetch more than 1000 records
@@ -10,7 +25,6 @@
 
 0.6.1
 	Correct example scripts
-
 
 0.6.0
 Score

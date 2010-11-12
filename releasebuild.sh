@@ -21,7 +21,7 @@ read BUILDNAME
 echo -n "Run junit tests before build?: "
 read RUNTEST
 
-#edit release info to add alpha tag
+#edit release info to add release tag
 
 #build
 if [ "$RUNTEST" = "y" ]; then
