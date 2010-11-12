@@ -51,7 +51,7 @@ public class JenaRecordHandler extends RecordHandler {
 	/**
 	 * namespace for recordhandlers
 	 */
-	protected static final String rhNameSpace = "http://ingest.vivoweb.org/util/jenarecordhandler#";
+	protected static final String rhNameSpace = "http://harvester.vivoweb.org/util/jenarecordhandler#";
 	/**
 	 * record type
 	 */

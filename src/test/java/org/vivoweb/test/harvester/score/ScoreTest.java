@@ -494,7 +494,7 @@ public class ScoreTest extends TestCase {
 					 "<core:Day>08</core:Day>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/d78212990\">" +
-					 "<rdfs:label>ingested mans</rdfs:label>" +
+					 "<rdfs:label>harvested mans</rdfs:label>" +
 					 "<score:ufid>78212990</score:ufid>" +
 					 "<foaf:firstName>Guy</foaf:firstName>" +
 					 "<foaf:lastName>Fawkes</foaf:lastName>" +

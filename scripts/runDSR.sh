@@ -16,7 +16,7 @@ else
   exit 1
 fi
 
-INGEST_TASK=dsr
+harvester_TASK=dsr
 
 # Execute Fetch
 rm -rd XMLVault/h2dsr/xml

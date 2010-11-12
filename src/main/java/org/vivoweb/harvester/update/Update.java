@@ -165,9 +165,9 @@ public class Update {
 				this.vivoJC.getJenaModel().add(addJC.getJenaModel());
 			}
 			
-			log.info("Removing Subtractions from Ingest Model");
+			log.info("Removing Subtractions from harvester Model");
 			this.previousJC.getJenaModel().remove(subJC.getJenaModel());
-			log.info("Inputing Additions to Ingest Model");
+			log.info("Inputing Additions to harvester Model");
 			this.previousJC.getJenaModel().add(addJC.getJenaModel());
 			
 			if (this.wipeIncomingModel){

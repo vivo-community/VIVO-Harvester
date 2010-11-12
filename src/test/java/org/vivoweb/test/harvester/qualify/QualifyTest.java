@@ -60,9 +60,9 @@ public class QualifyTest extends TestCase {
 	 */
 	public void testRegexReplace() {
 		try {
-			Resource res1 = this.jena.getJenaModel().createResource("http://ingest.vivoweb.org/testSPARQLQualify/item#1");
-			Resource res2 = this.jena.getJenaModel().createResource("http://ingest.vivoweb.org/testSPARQLQualify/item#2");
-			Resource res3 = this.jena.getJenaModel().createResource("http://ingest.vivoweb.org/testSPARQLQualify/item#3");
+			Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
+			Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
+			Resource res3 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#3");
 			this.jena.getJenaModel().add(res1, this.label, "IATRR");
 			this.jena.getJenaModel().add(res2, this.label, "wooIATRRblah");
 			this.jena.getJenaModel().add(res3, this.label, "I A T R R");
@@ -83,9 +83,9 @@ public class QualifyTest extends TestCase {
 	 */
 	public void testStringReplace() {
 		try {
-			Resource res1 = this.jena.getJenaModel().createResource("http://ingest.vivoweb.org/testSPARQLQualify/item#1");
-			Resource res2 = this.jena.getJenaModel().createResource("http://ingest.vivoweb.org/testSPARQLQualify/item#2");
-			Resource res3 = this.jena.getJenaModel().createResource("http://ingest.vivoweb.org/testSPARQLQualify/item#3");
+			Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
+			Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
+			Resource res3 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#3");
 			this.jena.getJenaModel().add(res1, this.label, "IATTR");
 			this.jena.getJenaModel().add(res2, this.label, "wooIATTRblah");
 			this.jena.getJenaModel().add(res3, this.label, "I A T T R");

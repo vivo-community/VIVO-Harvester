@@ -49,7 +49,7 @@ public class JenaConnectTest extends TestCase {
 	/** */
 	private static final String dbPass = "";
 	/** */
-	private static final String namespace = "http://ingest.vivoweb.org/test/repo/JenaConnect#";
+	private static final String namespace = "http://harvester.vivoweb.org/test/repo/JenaConnect#";
 	/** */
 	private static final String rdfIn = "" + "<?xml version=\"1.0\"?>\n" + "<rdf:RDF\n" + "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" + "    xmlns:si=\"http://www.w3schools.com/rdf/\" > \n" + "  <rdf:Description rdf:about=\"http://www.w3schools.com\">\n" + "    <si:author>Jan Egil Refsnes</si:author>\n" + "    <si:title>W3Schools</si:title>\n" + "  </rdf:Description>\n" + "</rdf:RDF>\n";
 	/** */

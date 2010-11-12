@@ -25,10 +25,10 @@
         This uses XSLT 2.0 and XPath 2.0 so use Saxon.
         Here is an example of how to do use XSLT 2.0 in ant:
         
-        <xslt style="${ingest.dir}/xsl/activityInsight2n3Rdf.xsl" 
-            in ="${ingest.dir}/ai_xml/document1.xml"
-            out="${ingest.dir}/ai_xml/document1.n3"      
-            <classpath location="${ingest.dir}/lib/saxon8.jar" /> 
+        <xslt style="${harvester.dir}/xsl/activityInsight2n3Rdf.xsl" 
+            in ="${harvester.dir}/ai_xml/document1.xml"
+            out="${harvester.dir}/ai_xml/document1.n3"      
+            <classpath location="${harvester.dir}/lib/saxon8.jar" /> 
         
         Here is an example of how to run saxon from the command line:
         java -Xmx512m -jar /home/bdc34/bin/saxon9he.jar \

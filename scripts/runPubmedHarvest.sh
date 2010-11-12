@@ -15,7 +15,7 @@ else
   exit 1
 fi
 
-INGEST_TASK=pubmed
+harvester_TASK=pubmed
 
 #clear old fetches
 rm -rd XMLVault/h2Pubmed/XML
@@ -96,7 +96,7 @@ rm -rf backups/vivodb.pubmed.pretransfer.latest.sql
 ln -s vivodb.pubmed.pretransfer.$date.sql backups/vivodb.pubmed.pretransfer.latest.sql
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
-Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/pubmed" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -I modelName=PubmedStaging -v config/jenaModels/VIVO.xml
+Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/harvester/pubmed" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -I modelName=PubmedStaging -v config/jenaModels/VIVO.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`

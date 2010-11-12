@@ -23,8 +23,8 @@ public class InitLog {
 	 */
 	public static void initLogger() {
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-		System.out.println("ingest-task: "+System.getenv("INGEST_TASK"));
-		context.putProperty("ingest-task", System.getenv("INGEST_TASK"));
+		System.out.println("harvester-task: "+System.getenv("harvester_TASK"));
+		context.putProperty("harvester-task", System.getenv("harvester_TASK"));
 		JoranConfigurator jc = new JoranConfigurator();
 		jc.setContext(context);
 		context.reset();

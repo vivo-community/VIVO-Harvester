@@ -27,11 +27,11 @@ public class DiffTest extends TestCase {
 	 */
 	private static Logger log = LoggerFactory.getLogger(DiffTest.class);
 	/**
-	 * previous ingest rdf statements to load for test
+	 * previous harvester rdf statements to load for test
 	 */
 	private File previousRDF;
 	/**
-	 * incoming ingest rdf statements to load for test
+	 * incoming harvester rdf statements to load for test
 	 */
 	private File incomingRDF;
 	/**
