@@ -13,7 +13,7 @@ VERSION=0.7.0
 INGEST_TASK=d2rmap
 
 # Set working directory
-cd /usr/share/vivoingest
+cd /usr/share/vivo/harvester
 
 # Execute Fetch/Translate using D2RMap
 java -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -u config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf

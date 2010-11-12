@@ -13,7 +13,7 @@ VERSION=0.7.0
 INGEST_TASK=peoplesoft
 
 # Set working directory
-cd /usr/share/vivoingest
+cd /usr/share/vivo/harvester
 
 #clear old fetches
 rm -rd XMLVault/h2ps/XML

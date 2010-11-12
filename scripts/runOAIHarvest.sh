@@ -13,7 +13,7 @@ VERSION=0.7.0
 INGEST_TASK=oai
 
 # Set working directory
-cd /usr/share/vivoingest
+cd /usr/share/vivo/harvester
 
 # Execute Fetch for OAI
 java -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.OAIFetch -X config/tasks/OAIFetchTask.xml

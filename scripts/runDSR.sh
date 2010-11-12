@@ -14,7 +14,7 @@ VERSION=0.7.0
 INGEST_TASK=dsr
 
 # Set working directory
-cd /usr/share/vivoingest
+cd /usr/share/vivo/harvester
 
 # Execute Fetch
 #rm -rd XMLVault/h2dsr/xml

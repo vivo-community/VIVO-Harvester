@@ -73,7 +73,7 @@
                                     <type>file</type>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/bin</prefix>
+                                      <prefix>/usr/share/vivo/harvester/bin</prefix>
                                     </mapper>
                                 </data>
 
@@ -85,7 +85,7 @@
                                     <mapper>
                                       <type>perm</type>
 
-                                      <prefix>/usr/share/vivoingest/bin/dependency</prefix>
+                                      <prefix>/usr/share/vivo/harvester/bin/dependency</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -96,7 +96,7 @@
                                     <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/config</prefix>
+                                      <prefix>/usr/share/vivo/harvester/config</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -106,7 +106,7 @@
                                     <includes>*.sh</includes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/scripts</prefix>
+                                      <prefix>/usr/share/vivo/harvester/scripts</prefix>
 
                                     </mapper>
                                 </data>
@@ -118,7 +118,7 @@
                                     <mapper>
 
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/docs</prefix>
+                                      <prefix>/usr/share/vivo/harvester/docs</prefix>
                                     </mapper>
                                 </data>
                             </dataSet>

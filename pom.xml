@@ -54,7 +54,7 @@
                                     <type>file</type>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/bin</prefix>
+                                      <prefix>/usr/share/vivo/harvester/bin</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -64,7 +64,7 @@
                                     <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/bin/dependency</prefix>
+                                      <prefix>/usr/share/vivo/harvester/bin/dependency</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -74,7 +74,7 @@
                                     <excludes>**/*.svn*/**</excludes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/config</prefix>
+                                      <prefix>/usr/share/vivo/harvester/config</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -83,7 +83,7 @@
                                     <includes>*.sh</includes>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/scripts</prefix>
+                                      <prefix>/usr/share/vivo/harvester/scripts</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -93,7 +93,7 @@
                                     <includes>AUTHORS,CHANGELOG,INSTALL,LICENSE,README,THANKS</includes> -->
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/docs</prefix>
+                                      <prefix>/usr/share/vivo/harvester/docs</prefix>
                                     </mapper>
                                 </data>
                                 <!-- Hacked in support for logging failure, need to sort out -->
@@ -102,7 +102,7 @@
                                     <type>file</type>
                                     <mapper>
                                       <type>perm</type>
-                                      <prefix>/usr/share/vivoingest/</prefix>
+                                      <prefix>/usr/share/vivo/harvester/</prefix>
                                     </mapper>
                                 </data>
                             </dataSet>
@@ -127,14 +127,14 @@
                     <distribution>VIVO Release 1.1</distribution>
                     <group>Development</group>
                     <packager>VIVO Harvester Team</packager>
-                    <prefix>/usr/share/vivoingest</prefix>
+                    <prefix>/usr/share/vivo/harvester</prefix>
                     <changelogFile>CHANGELOG</changelogFile>
                     <defineStatements>
                        <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
                     </defineStatements>
                     <mappings>
                         <mapping>
-                            <directory>/usr/share/vivoingest/bin/</directory>
+                            <directory>/usr/share/vivo/harvester/bin/</directory>
                             <filemode>444</filemode>
                             <sources>
                                 <source>
@@ -143,7 +143,7 @@
                             </sources>
                         </mapping>
                         <mapping>
-                            <directory>/usr/share/vivoingest/bin/dependency</directory>
+                            <directory>/usr/share/vivo/harvester/bin/dependency</directory>
                             <filemode>750</filemode>
                             <sources>
                                 <source>
@@ -152,7 +152,7 @@
                             </sources>
                         </mapping>
                         <mapping>
-                            <directory>/usr/share/vivoingest/docs</directory>
+                            <directory>/usr/share/vivo/harvester/docs</directory>
                             <documentation>true</documentation>
                             <filemode>444</filemode>
                             <sources>
@@ -177,7 +177,7 @@
                             </sources>
                         </mapping>
                         <mapping>
-                            <directory>/usr/share/vivoingest/conf</directory>
+                            <directory>/usr/share/vivo/harvester/conf</directory>
                             <configuration>true</configuration>
                             <filemode>644</filemode>
                             <sources>
@@ -187,7 +187,7 @@
                             </sources>
                         </mapping>
                         <mapping>
-                            <directory>/usr/share/vivoingest/scripts</directory>
+                            <directory>/usr/share/vivo/harvester/scripts</directory>
                             <filemode>644</filemode>
                             <sources>
                                 <source>
