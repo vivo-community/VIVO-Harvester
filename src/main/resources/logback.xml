@@ -59,8 +59,8 @@
     </filter>
   </appender>
   
-  <logger name="org.vivoweb.ingest" level="${ingest-level:-ALL}"/>
-  <logger name="org.vivoweb.test.ingest" level="${test-level:-WARN}"/>
+  <logger name="org.vivoweb.harvester" level="${ingest-level:-ALL}"/>
+  <logger name="org.vivoweb.test.harvester" level="${test-level:-WARN}"/>
   <logger name="org.apache.commons.vfs" level="OFF"/>
   <root level="${root-level:-ALL}">
     <appender-ref ref="Console"/>

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.vivoweb</groupId>
-  <artifactId>ingest</artifactId>
+  <artifactId>harvester</artifactId>
   <version>0.7.0</version>
   <packaging>jar</packaging>
 

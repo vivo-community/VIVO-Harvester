@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Task type="org.vivoweb.ingest.fetch.JDBCFetch">
+<Task type="org.vivoweb.harvester.fetch.JDBCFetch">
 	<Param name="driver">net.sourceforge.jtds.jdbc.Driver</Param>
 	<Param name="connection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
 	<Param name="username">USERNAME</Param>

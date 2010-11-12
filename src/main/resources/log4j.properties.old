@@ -19,7 +19,7 @@
 #
 # Examples of setting levels:
 #    log4j.logger.org.vivoweb.ingest=ALL
-#          -- sets ALL level for all classes in "org.vivoweb.ingest" package
+#          -- sets ALL level for all classes in "org.vivoweb.harvester" package
 #             and any sub-packages.
 #
 # Documentation for this file can be found here:

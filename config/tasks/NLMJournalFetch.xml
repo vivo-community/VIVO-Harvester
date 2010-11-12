@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Task type="org.vivoweb.ingest.fetch.PubmedSOAPFetch">
+<Task type="org.vivoweb.harvester.fetch.PubmedSOAPFetch">
 	<Param name="email">hainesc@ctrip.ufl.edu</Param>
 	<Param name="location">University of Florida</Param>
 	<Param name="output">config/recordHandlers/NLMJournal-XML-TFRH.xml</Param>

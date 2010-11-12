@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RecordHandler type="org.vivoweb.ingest.util.repo.JDBCRecordHandler">
+<RecordHandler type="org.vivoweb.harvester.util.repo.JDBCRecordHandler">
 	<Param name="jdbcDriverClass">com.mysql.jdbc.Driver</Param>
 	<Param name="connLine">jdbc:mysql://127.0.0.1:3306/jdbcrecordstore</Param>
 	<Param name="username">jdbcRecordStore</Param>
