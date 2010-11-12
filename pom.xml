@@ -99,7 +99,7 @@
                                 <!-- Hacked in support for logging failure, need to sort out -->
                                 <data>
                                     <src>${project.basedir}/src/main/resources</src>
-                                    <type>directory</type>
+                                    <type>file</type>
                                     <!-- <excludes>pom.xml,Changes.txt</excludes> -->
                                     <includes>logback.xml</includes>
                                     <mapper>
