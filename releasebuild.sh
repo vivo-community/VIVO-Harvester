@@ -18,10 +18,17 @@ read NAME
 echo -n "Enter release build name: "
 read BUILDNAME
 
+echo -n "Run junit tests before build?: "
+read RUNTEST
+
 #edit release info to add alpha tag
 
 #build
-mvn clean dependency:copy-dependencies package
+if [ "$RUNTEST" = "y" ]; then
+	mvn clean dependency:copy-dependencies package
+else
+	mvn clean dependency:copy-dependencies package -DskipTests=true
+fi
 
 #check for fail
 if [ "$?" -eq "1" ]; then
@@ -31,8 +38,8 @@ fi
 
 #get release name (hack alert!) :-)
 cd bin
-RELEASENAME=`ls | grep ingest`
-RELEASENAME=${RELEASENAME:0:12}
+RELEASENAME=`ls | grep harvester`
+RELEASENAME=${RELEASENAME:0:15}
 
 #unpack debian package
 ar -x $RELEASENAME.deb
