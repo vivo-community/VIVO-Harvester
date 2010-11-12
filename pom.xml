@@ -98,10 +98,8 @@
                                 </data>
                                 <!-- Hacked in support for logging failure, need to sort out -->
                                 <data>
-                                    <src>${project.basedir}/src/main/resources</src>
+                                    <src>${project.basedir}/src/main/resources/logback.xml</src>
                                     <type>file</type>
-                                    <!-- <excludes>pom.xml,Changes.txt</excludes> -->
-                                    <includes>logback.xml</includes>
                                     <mapper>
                                       <type>perm</type>
                                       <prefix>/usr/share/vivoingest/</prefix>
