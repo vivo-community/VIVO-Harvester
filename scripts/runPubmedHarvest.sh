@@ -9,7 +9,7 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
-if[ -e env ]; then
+if [ -f env ]; then
   . env
 else
   exit 1

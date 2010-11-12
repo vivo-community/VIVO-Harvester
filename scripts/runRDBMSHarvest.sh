@@ -9,7 +9,7 @@
 # Contributors:
 #     Eliza Chan
 
-if[ -e env ]; then
+if [ -f env ]; then
   . env
 else
   exit 1
