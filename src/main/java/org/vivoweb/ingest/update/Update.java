@@ -137,47 +137,41 @@ public class Update {
 	 */
 	public void execute() {
 		try {
-			File subtractionsXML = File.createTempFile("update_Subtractions", ".xml");
-			File additionsXML = File.createTempFile("update_Additions", ".xml");
-		
-			Model subModel = ModelFactory.createDefaultModel();
-			Model addModel = ModelFactory.createDefaultModel();
+			JenaConnect subJC = new JenaConnect("jdbc:h2:"+File.createTempFile("update_Subtractions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "subModel");
+			JenaConnect addJC = new JenaConnect("jdbc:h2:"+File.createTempFile("update_Additions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "addModel");
 			
 			if (this.previousJC == null){
 				System.out.println("previous is null");
 			}
 				
 			//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
-			Diff.diff(this.previousJC, this.incomingJC,null,subtractionsXML.getAbsolutePath());
-			FileInputStream subFIS = new FileInputStream(subtractionsXML.getAbsolutePath());
-			subModel.read(new InputStreamReader(subFIS), "");
+			log.info("Finding Subtractions");
+			Diff.diff(this.previousJC, this.incomingJC,subJC,null);
 				
 			//run diff for additions incomingJC - previous jc
-			Diff.diff(this.incomingJC, this.previousJC, null, additionsXML.getAbsolutePath());
-			FileInputStream addFIS = new FileInputStream(additionsXML.getAbsolutePath());
-			addModel.read(new InputStreamReader(addFIS), "");
+			log.info("Finding Additions");
+			Diff.diff(this.incomingJC, this.previousJC, addJC, null);
 		
 			//if applyToVIVO
 			if (this.vivoJC != null){
-				this.vivoJC.getJenaModel().remove(subModel);
-				this.vivoJC.getJenaModel().add(addModel);
+				log.info("Removing Subtractions from VIVO");
+				this.vivoJC.getJenaModel().remove(subJC.getJenaModel());
+				log.info("Inputing Additions to VIVO");
+				this.vivoJC.getJenaModel().add(addJC.getJenaModel());
 			}
-		
-			this.previousJC.getJenaModel().remove(subModel);
-			this.previousJC.getJenaModel().add(addModel);
+			
+			log.info("Removing Subtractions from Ingest Model");
+			this.previousJC.getJenaModel().remove(subJC.getJenaModel());
+			log.info("Inputing Additions to Ingest Model");
+			this.previousJC.getJenaModel().add(addJC.getJenaModel());
 			
 			if (this.wipeIncomingModel){
+				log.info("Wiping Input Model");
 				this.incomingJC.getJenaModel().removeAll();
 			}
-			
-			
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
 		}
-			
-		//apply to previous too
-		
-		//delete Incoming Model?
 	}
 	
 	/**
