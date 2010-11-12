@@ -30,8 +30,8 @@ fi
 
 #get release name (hack alert!) :-)
 cd bin
-RELEASENAME=`ls | grep ingest`
-RELEASENAME=${RELEASENAME:0:12}
+RELEASENAME=`ls | grep harvester`
+RELEASENAME=${RELEASENAME:0:15}
 
 #unpack debian package
 ar -x $RELEASENAME.deb
