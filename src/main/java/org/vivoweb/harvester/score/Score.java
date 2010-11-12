@@ -812,14 +812,16 @@ public class Score {
 						}
 					} else {
 						middleName = "";
+						vivoInitials = "";
 					}
 					
 					if(loop < minimum) {
 						log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
 					} else {
 						// if loopNode matches more of foreNameNode, it's the new best match
+						//loopNode must also not cotradict Pubmed
 						// TODO Nicholas: Fix the preference for the first "best" match
-						if(matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+						if (matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop) && (vivoInitials.equalsIgnoreCase(pubmedInitials) || vivoInitials.isEmpty())) {
 							log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
 							matchNode = loopNode;
 							authorNode = vivoSolution.get("x");
