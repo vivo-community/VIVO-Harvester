@@ -24,12 +24,12 @@
     </encoder>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>TRACE</level>
-      <onMatch>ACCEPT</onMatch>
+      <onMatch>DENY</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>DEBUG</level>
-      <onMatch>ACCEPT</onMatch>
+      <onMatch>DENY</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -59,12 +59,27 @@
     </filter>
   </appender>
   
-  <logger name="org.vivoweb.harvester" level="${ingest-level:-ALL}"/>
-  <logger name="org.vivoweb.test.harvester" level="${test-level:-WARN}"/>
-  <logger name="org.apache.commons.vfs" level="OFF"/>
-  <root level="${root-level:-ALL}">
+  <logger name="org.vivoweb.harvester" level="${ingest-level:-ALL}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="org.vivoweb.test.harvester" level="${test-level:-WARN}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="com.hp.hpl.jena" level="${jena-level:-INFO}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="org.apache.commons.vfs" level="OFF">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <root level="${root-level:-ALL}">
     <appender-ref ref="AllAppender"/>
   </root>
   
