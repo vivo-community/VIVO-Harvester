@@ -157,10 +157,10 @@ public class UpdateTest extends TestCase {
 		}
 	}
 	
-/**
- * 
- */
-public void testEverything(){
+	/**
+	 * 
+	 */
+	public void testEverything(){
 		
 		JenaConnect previousJC;
 		JenaConnect incomingJC;
@@ -170,12 +170,12 @@ public void testEverything(){
 			Properties previousProp = new Properties();
 			previousProp.put("modelName", "hr20101101");
 			previousJC = JenaConnect.parseConfig(this.vivoXML, previousProp);
-			previousJC.loadRDF(VFS.getManager().toFileObject(this.previousRDF).getContent().getInputStream(), null);
+			previousJC.loadRDF(VFS.getManager().toFileObject(this.previousRDF).getContent().getInputStream(), null, null);
 			
 			Properties incomingProp = new Properties();
 			incomingProp.put("modelName", "hr20101104");
 			incomingJC = JenaConnect.parseConfig(this.vivoXML, incomingProp);
-			incomingJC.loadRDF(VFS.getManager().toFileObject(this.incomingRDF).getContent().getInputStream(), null);
+			incomingJC.loadRDF(VFS.getManager().toFileObject(this.incomingRDF).getContent().getInputStream(), null, null);
 						
 			System.out.println("prevModel");
 			previousJC.exportRDF(System.out);

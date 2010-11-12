@@ -56,6 +56,10 @@ public class Transfer {
 	 */
 	private String inRDF;
 	/**
+	 * the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 */
+	private String inRDFlang;
+	/**
 	 * input record handler
 	 */
 	private RecordHandler inRH;
@@ -116,8 +120,10 @@ public class Transfer {
 			// load any specified rdf file data
 			if(argList.has("r")) {
 				this.inRDF = argList.get("r");
+				this.inRDFlang = argList.get("R");
 			} else {
 				this.inRDF = null;
+				this.inRDFlang = null;
 			}
 			
 			// load data from recordhandler
@@ -180,7 +186,7 @@ public class Transfer {
 		}
 		
 		if(this.inRDF != null) {
-			dumpFileToJC(this.inRDF, this.input);
+			dumpFileToJC(this.inRDF, this.input, this.inRDFlang);
 		}
 		
 		if(this.inRH != null) {
@@ -222,7 +228,8 @@ public class Transfer {
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "MODEL_NAME").setDescription("rdf filename for input").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "RDF_FILE").setDescription("rdf filename for input").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("rdfLang").withParameter(true, "LANGUAGE").setDescription("rdf language").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("recordHandler").withParameter(true, "RECORD_HANDLER").setDescription("record handler for input").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("recordHandlerOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "URI_BASE").setDescription("use URI_BASE when importing relative uris").setRequired(false));
@@ -242,11 +249,12 @@ public class Transfer {
 	 * dumps the contents of a file into a jena model
 	 * @param fileName the file to dump
 	 * @param jc the jena model
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
-	private void dumpFileToJC(String fileName, JenaConnect jc) {
+	private void dumpFileToJC(String fileName, JenaConnect jc, String language) {
 		try {
 			log.info("Loading RDF from " + fileName);
-			jc.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), this.namespace);
+			jc.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), this.namespace, language);
 		} catch(FileSystemException e) {
 			log.error(e.getMessage(), e);
 		}

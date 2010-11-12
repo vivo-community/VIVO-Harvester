@@ -138,10 +138,11 @@ public class JenaConnect {
 	 * Constructor (Load rdf from input stream)
 	 * @param in input stream to load rdf from
 	 * @param namespace the base uri to use for imported uris
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
-	public JenaConnect(InputStream in, String namespace) {
+	public JenaConnect(InputStream in, String namespace, String language) {
 		this();
-		this.loadRDF(in, namespace);
+		this.loadRDF(in, namespace, language);
 	}
 	
 	/**
@@ -254,9 +255,10 @@ public class JenaConnect {
 	 * Load in RDF
 	 * @param in input stream to read rdf from
 	 * @param namespace the base uri to use for imported uris
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
-	public void loadRDF(InputStream in, String namespace) {
-		getJenaModel().read(in, namespace);
+	public void loadRDF(InputStream in, String namespace, String language) {
+		getJenaModel().read(in, namespace, language);
 		log.debug("RDF Data was loaded");
 	}
 	

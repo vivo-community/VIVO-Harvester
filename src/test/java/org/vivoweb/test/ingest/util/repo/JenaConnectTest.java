@@ -133,11 +133,11 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.ingest.util.repo.JenaConnect#JenaConnect(java.io.InputStream, java.lang.String)
+	 * {@link org.vivoweb.ingest.util.repo.JenaConnect#JenaConnect(java.io.InputStream, java.lang.String, java.lang.String)
 	 * JenaConnect(InputStream in, String namespace)}.
 	 */
 	public void testJenaConnectConstInputStream() {
-		this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null);
+		this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		runWriteTest();
 	}
 	
@@ -159,12 +159,12 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.ingest.util.repo.JenaConnect#loadRDF(java.io.InputStream, java.lang.String)
+	 * Test method for {@link org.vivoweb.ingest.util.repo.JenaConnect#loadRDF(java.io.InputStream, java.lang.String, java.lang.String)
 	 * loadRDF(InputStream in, String namespace)}.
 	 */
 	public void testLoadRDF() {
 		this.jc = new JenaConnect();
-		this.jc.loadRDF(new ByteArrayInputStream(rdfIn.getBytes()), null);
+		this.jc.loadRDF(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		StmtIterator stmnt = this.jc.getJenaModel().listStatements();
 		assertTrue(stmnt.hasNext());
 	}
@@ -175,7 +175,7 @@ public class JenaConnectTest extends TestCase {
 	 */
 	public final void testExportRDF() {
 		try {
-			this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null);
+			this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			this.jc.exportRDF(baos);
 			baos.flush();

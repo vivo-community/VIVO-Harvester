@@ -88,7 +88,7 @@ public class Merge {
 				Matcher m = regex.matcher(r.getID());
 				if(m.matches()) {
 					for(String id : input.find(m.group(1))) {
-						jc.loadRDF(new ByteArrayInputStream(input.getRecord(id).getData().getBytes()), null);
+						jc.loadRDF(new ByteArrayInputStream(input.getRecord(id).getData().getBytes()), null, null);
 					}
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					jc.exportRDF(baos);
