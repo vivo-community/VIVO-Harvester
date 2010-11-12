@@ -717,12 +717,6 @@ public class Score {
 				minimum = foreNameNode.toString().length();
 			}
 			
-			StmtIterator st = paperResource.listProperties();
-			
-			while (st.hasNext()) {
-				log.info(st.nextStatement().toString());
-			}
-			
 			//support middlename parse out of forename or from pubmed
 			if (middleNameNode != null) {
 				log.trace("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
