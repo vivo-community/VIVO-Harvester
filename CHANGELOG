@@ -16,7 +16,9 @@
 		fix scoring infinite loop when recursively looping thru
 	update all scripts to support backups 
 	migrated to logback from log4j
-		each tool now logs to inidividual file	
+		each tool now logs to inidividual file
+	remapped /usr/share/vivoingest to /usr/share/vivo/harvester
+	tool is now known as harvester inside code, rather than ingest
 	
 
 0.6.2
