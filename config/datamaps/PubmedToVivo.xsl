@@ -289,7 +289,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 				<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-				<ufVivo:harvestedBy rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="current-dateTime()"/></ufVivo:harvestedBy>
+				<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 				<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
 				<rdfs:label><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></rdfs:label>
 				<core:Title><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></core:Title>
@@ -399,6 +399,7 @@
 	<!-- The Authors -->
 	<xsl:template match="Author" mode="fullAuthor">
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}">
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource" />
@@ -419,6 +420,7 @@
 			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthor/pmid{ancestor::MedlineCitation/PMID}author{position()}">
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
@@ -456,6 +458,7 @@
 	<!-- The Mesh Terms -->
 	<!-- <xsl:template match="MeshHeading" mode="fullTerm">
 		<rdf:Description rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}">
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/score#MeshTerm" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#SubjectArea" />
 			<core:SubjectAreaFor rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid{ancestor::MedlineCitation/PMID}" />
@@ -503,6 +506,7 @@
 	-->
 	<!-- <xsl:template match="MedlineCitation/DateCreated" mode="fullCreated">
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCreated" >
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<core:Year>"<xsl:value-of select="Year"/>"</core:Year>
 			<core:Month>"<xsl:value-of select="Month"/>"</core:Month>
 			<core:Day>"<xsl:value-of select="Day"/>"</core:Day>
@@ -510,6 +514,7 @@
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateCompleted"  mode="fullCompleted">
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCompleted" >
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<core:Year><xsl:value-of select="Year"/></core:Year>
 			<core:Month><xsl:value-of select="Month"/></core:Month>
 			<core:Day><xsl:value-of select="Day"/></core:Day>
@@ -517,6 +522,7 @@
 	</xsl:template>
 	<xsl:template match="MedlineCitation/DateRevised"  mode="fullRevised">
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateRevised" >
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<core:Year><xsl:value-of select="Year"/></core:Year>
 			<core:Month><xsl:value-of select="Month"/></core:Month>
 			<core:Day><xsl:value-of select="Day"/></core:Day>
@@ -533,6 +539,7 @@
 	<!-- The Main Journal Entity -->
 	<xsl:template match="Journal" mode="fullJournal">
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedJournal/journal{child::ISSN}" >
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:Title><xsl:value-of select="Title" /></core:Title>

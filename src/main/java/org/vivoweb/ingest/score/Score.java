@@ -591,12 +591,12 @@ public class Score {
 				returnModel.add(stmt);
 				
 				//todo change the equals t o
-				if(stmt.getObject().isResource() && linkRes.search((Resource)stmt.getObject()) == -1 && !((Resource)stmt.getObject()).equals(mainRes)) {
+				if(stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
 					linkRes.push(mainRes);
-					returnModel.add(recursiveSanitizeBuild((Resource)stmt.getObject(), linkRes));
+					returnModel.add(recursiveSanitizeBuild(stmt.getObject().asResource(), linkRes));
 					linkRes.pop();
 				}
-				if(linkRes.search(stmt.getSubject()) == -1 && !stmt.getSubject().equals(mainRes)) {
+				if(!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
 					linkRes.push(mainRes);
 					returnModel.add(recursiveSanitizeBuild(stmt.getSubject(), linkRes));
 					linkRes.pop();

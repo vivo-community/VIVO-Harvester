@@ -46,28 +46,38 @@
 			<xsl:matching-substring>
 				<xsl:variable name="grantid" select="regex-group(1)" />
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant{$grantid}">
-					<ufl:harvestedBy>DSR-Harvester</ufl:harvestedBy>
+					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
-					<rdfs:label><xsl:value-of select="db-dbo.vwVIVO:Title" /></rdfs:label>
-					<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="db-dbo.vwVIVO:ProjectBegin"/></core:startDate>
-					<core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="db-dbo.vwVIVO:ProjectEnd"/></core:endDate>
+					<rdfs:label><xsl:value-of select="db-dbo.vwVIVO:Title"/></rdfs:label>
+					<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
+						<xsl:analyze-string select="db-dbo.vwVIVO:ProjectBegin" regex="(..)[-/](..)[-/](....)">
+							<xsl:matching-substring>
+								<xsl:value-of select="regex-group(3)"/>-<xsl:value-of select="regex-group(2)"/>-<xsl:value-of select="regex-group(1)"/>
+							</xsl:matching-substring>
+						</xsl:analyze-string>
+					</core:startDate>
+					<core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
+						<xsl:analyze-string select="db-dbo.vwVIVO:ProjectEnd" regex="(..)[-/](..)[-/](....)">
+							<xsl:matching-substring>
+								<xsl:value-of select="regex-group(3)"/>-<xsl:value-of select="regex-group(2)"/>-<xsl:value-of select="regex-group(1)"/>
+							</xsl:matching-substring>
+						</xsl:analyze-string>
+					</core:endDate>
 					<core:totalAwardAmount><xsl:value-of select="db-dbo.vwVIVO:TotalAwarded"/></core:totalAwardAmount>
 					<ufVivo:ufid><xsl:value-of select="db-dbo.vwVIVO:PI_UFID"/></ufVivo:ufid>
 					<score:AdministeredBy><xsl:value-of select="db-dbo.vwVIVO:PI__Dept"/></score:AdministeredBy>
 					<score:AdminDeptID><xsl:value-of select="db-dbo.vwVIVO:PI_DeptID"/></score:AdminDeptID>
 					<core:sponsorAwardId><xsl:value-of select="db-dbo.vwVIVO:PS__Contract"/></core:sponsorAwardId>
 					<ufVivo:dsrNumber><xsl:value-of select="$grantid"/></ufVivo:dsrNumber>
+					<core:relatedRole>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant{$grantid}/role{db-dbo.vwVIVO:PI_UFID}">
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
+							<ufVivo:ufid><xsl:value-of select="db-dbo.vwVIVO:PI_UFID"/></ufVivo:ufid>
+							<core:roleIn rdf:resource="http://vivoweb.org/harvest/dsr/grant{$grantid}" />
+						</rdf:Description>
+					</core:relatedRole>
 				</rdf:Description>
-				<xsl:apply-templates select="db-dbo.vwVIVO:PI_UFID" />
-				<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/grant{$grantid}/role{db-dbo.vwVIVO:PI_UFID}"/>
 			</xsl:matching-substring>
 		</xsl:analyze-string>
-	</xsl:template>
-	<xsl:template match="db-dbo.vwVIVO:PI_UFID">
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant{$grantid}/role{db-dbo.vwVIVO:PI_UFID}">
-			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
-			<ufVivo:ufid><xsl:value-of select="db-dbo.vwVIVO:PI_UFID"/></ufVivo:ufid>
-			<core:roleIn rdf:resource="http://vivoweb.org/harvest/dsr/grant{$grantid}" />
-		</rdf:Description>
 	</xsl:template>
 </xsl:stylesheet>
