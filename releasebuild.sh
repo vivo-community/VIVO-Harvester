@@ -15,8 +15,8 @@
 echo -n "Enter sourceforge username: "
 read NAME
 
-echo -n "Enter alpha number: "
-read NUM
+echo -n "Enter release build name: "
+read BUILDNAME
 
 #edit release info to add alpha tag
 
@@ -38,11 +38,11 @@ RELEASENAME=${RELEASENAME:0:12}
 ar -x $RELEASENAME.deb
 
 #rename tarball
-mv data.tar.gz $RELEASENAME-alpha$NUM.tar.gz
+mv data.tar.gz $RELEASENAME-$BUILDNAME.tar.gz
 
 #rename deb
-mv $RELEASENAME.deb $RELEASENAME-alpha$NUM.deb
+mv $RELEASENAME.deb $RELEASENAME-$BUILDNAME.deb
 
 #Upload tarball and deb package to sourceforge
-scp $RELEASENAME-alpha$NUM.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
-scp $RELEASENAME-alpha$NUM.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+scp $RELEASENAME-$BUILDNAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+scp $RELEASENAME-$BUILDNAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
