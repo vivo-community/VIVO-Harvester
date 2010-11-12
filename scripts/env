@@ -4,11 +4,8 @@ VERSION=0.7.0
 MIN_MEM=1024m
 MAX_MEM=3072M
 
-# Set working directory
-cd /usr/share/vivo/harvester
-
 # Check for backups dir
-if[ -d backups ]; then
+if [ -d backups ]; then
   
 else
   mkdir backups

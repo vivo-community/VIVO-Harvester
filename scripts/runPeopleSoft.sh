@@ -9,8 +9,11 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
-if [ -f env ]; then
-  . env
+# Set working directory
+cd /usr/share/vivo/harvester
+
+if [ -f scripts/env ]; then
+  . scripts/env
 else
   exit 1
 fi
