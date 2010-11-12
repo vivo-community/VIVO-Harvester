@@ -15,7 +15,7 @@ else
   exit 1
 fi
 
-harvester_TASK=peoplesoft
+HARVESTER_TASK=peoplesoft
 
 #clear old fetches
 rm -rd XMLVault/h2ps/XML
@@ -110,7 +110,7 @@ rm -rf backups/vivodb.ps.pretransfer.latest.sql
 ln -s vivodb.ps.pretransfer.$date.sql backups/vivodb.ps.pretransfer.latest.sql
 
 # Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
-Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/harvester/ufl/peoplesoft" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -v config/jenaModels/VIVO.xml
+Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -v config/jenaModels/VIVO.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`

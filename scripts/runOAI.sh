@@ -15,7 +15,7 @@ else
   exit 1
 fi
 
-harvester_TASK=oai
+HARVESTER_TASK=oai
 
 # Execute Fetch for OAI
 OAIFetch -X config/tasks/OAIFetchTask.xml

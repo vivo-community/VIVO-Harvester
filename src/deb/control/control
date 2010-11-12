@@ -1,4 +1,4 @@
-Package: vivoingest
+Package: vivo-harvester
 Version: 0.7.0
 Section: misc
 Priority: misc
