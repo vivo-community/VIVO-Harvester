@@ -6,6 +6,7 @@
  ******************************************************************************/
 package org.vivoweb.ingest.update;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -143,14 +144,24 @@ public class Update {
 			if (this.previousJC == null){
 				System.out.println("previous is null");
 			}
-				
+			
+			ByteArrayOutputStream baos;
+			
 			//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
 			log.info("Finding Subtractions");
 			Diff.diff(this.previousJC, this.incomingJC,subJC,null);
+			baos = new ByteArrayOutputStream();
+			subJC.exportRDF(baos);
+			baos.flush();
+			log.debug("Subtraction RDF:\n"+baos.toString());
 				
 			//run diff for additions incomingJC - previous jc
 			log.info("Finding Additions");
 			Diff.diff(this.incomingJC, this.previousJC, addJC, null);
+			baos = new ByteArrayOutputStream();
+			addJC.exportRDF(baos);
+			baos.flush();
+			log.debug("Addition RDF:\n"+baos.toString());
 		
 			//if applyToVIVO
 			if (this.vivoJC != null){
