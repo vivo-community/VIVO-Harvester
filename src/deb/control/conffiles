@@ -30,3 +30,4 @@
 /usr/share/vivo/harvester/scripts/runPeopleSoftHarvest.sh
 /usr/share/vivo/harvester/scripts/runPubMedHarvest.sh
 /usr/share/vivo/harvester/scripts/runRDBMSHarvest.sh
+#end

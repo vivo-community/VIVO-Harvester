@@ -418,7 +418,7 @@ public class Score {
 		log.trace("Found " + matchNode.toString() + " for person " + authorNode.toString());
 		log.trace("Adding paper " + paperNode.toString());
 		
-		result.add(recursiveSanitizeBuild(paperResource, null));
+		result.add(recursiveSanitizeBuild(paperResource, new Stack<Resource>()));
 		
 		replaceResource(authorNode, paperNode, result);
 		
