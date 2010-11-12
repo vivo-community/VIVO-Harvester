@@ -89,11 +89,17 @@ public class ChangeNamespace {
 	public static String getURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo, JenaConnect model) {
 		String uri = null;
 		String matchURI = null;
-		if(properties != null && !properties.isEmpty() && (matchURI = getMatchingURI(current, namespace, properties, vivo)) != null) {
+		
+		if (properties != null && !properties.isEmpty()) {
+			matchURI = getMatchingURI(current, namespace, properties, vivo);
+		}
+		
+		if (matchURI != null) {
 			uri = matchURI;
 		} else {
 			uri = getUnusedURI(namespace, vivo, model);
 		}
+		
 		log.debug("Using URI: <"+uri+">");
 		return uri;
 	}
@@ -217,18 +223,22 @@ public class ChangeNamespace {
 		if(oldNamespace.equals(newNamespace)) {
 			return;
 		}
-		ArrayList<String> urlCheck = new ArrayList<String>();
+		ArrayList<String> uriCheck = new ArrayList<String>();
 		for(Resource res : IterableAdaptor.adapt(model.getJenaModel().listSubjects())) {
 			if(oldNamespace.equals(res.getNameSpace())) {
 				log.info("Finding match for <"+res.getURI()+">");
 				String uri = null;
-				boolean urlFound = false;
-				while (!urlFound) {
+				boolean uriFound = false;
+				//find valid URI
+				while (!uriFound) {
 					uri = getURI(res, newNamespace, properties, vivo, model);
-					log.debug("urlCheck: "+urlCheck.contains(uri));
-					if (vivo.containsURI(uri) || !urlCheck.contains(uri)) {
-						urlCheck.add(uri);
-						urlFound = true;
+					log.debug("urlCheck: "+uriCheck.contains(uri));
+					//if matched in VIVO or not previously used
+					if (vivo.containsURI(uri) || !uriCheck.contains(uri)) {
+						//note URI as being used
+						uriCheck.add(uri);
+						//use this URI
+						uriFound = true;
 					}
 				}
 				ResourceUtils.renameResource(res, uri);

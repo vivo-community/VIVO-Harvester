@@ -23,7 +23,8 @@ import org.vivoweb.ingest.util.args.ArgParser;
 import org.vivoweb.ingest.util.repo.Record;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 import com.hp.gloze.Gloze;
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 /**
  * Gloze Tranlator This class translates XML into its own natural RDF ontology using the gloze library. Translation into

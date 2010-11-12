@@ -7,13 +7,13 @@
 package org.vivoweb.test.ingest.util.args;
 
 import java.util.List;
+import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.args.ArgDef;
 import org.vivoweb.ingest.util.args.ArgList;
 import org.vivoweb.ingest.util.args.ArgParser;
-import junit.framework.TestCase;
 
 /**
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)

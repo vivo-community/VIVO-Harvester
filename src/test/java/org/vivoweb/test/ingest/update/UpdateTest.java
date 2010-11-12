@@ -5,14 +5,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+import junit.framework.TestCase;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.update.Update;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.JenaConnect;
-
-import junit.framework.TestCase;
 
 /**
  *

@@ -12,7 +12,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Property;

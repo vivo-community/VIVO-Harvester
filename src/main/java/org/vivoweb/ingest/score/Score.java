@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
-
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,8 +14,8 @@ import java.io.Writer;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.translate.XSLTranslator;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.RecordHandler;
 
 /**

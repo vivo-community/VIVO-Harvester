@@ -10,7 +10,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import junit.framework.TestCase;
-import org.vivoweb.ingest.fetch.OAIFetch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.ingest.util.InitLog;
@@ -20,7 +19,7 @@ import org.vivoweb.ingest.util.repo.RecordHandler;
  * @author Dale Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-@SuppressWarnings("unused")
+
 public class OAIFetchTest extends TestCase {
 	/**
 	 * SLF4J Logger

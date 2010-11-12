@@ -12,8 +12,8 @@ import junit.framework.TestCase;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.diff.Diff;
+import org.vivoweb.ingest.util.InitLog;
 import org.vivoweb.ingest.util.repo.JenaConnect;
 
 /**
