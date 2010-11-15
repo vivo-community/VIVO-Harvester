@@ -3,6 +3,8 @@
 VERSION=0.7.0
 MIN_MEM=1024m
 MAX_MEM=3072M
+DATE=`date +%Y-%m-%d_%k%M.%S`
+HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 
 # Check for backups dir
 if [ -d backups ]; then
@@ -10,12 +12,6 @@ if [ -d backups ]; then
 else
   mkdir backups
 fi
-
-echo "bash harvester task: $HARVESTER_TASK"
-
-DATE=`date +%Y-%m-%d_%k%M.%S`
-
-HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 
 # define shorthand aliases
 Diff="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Diff -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.diff.Diff"
