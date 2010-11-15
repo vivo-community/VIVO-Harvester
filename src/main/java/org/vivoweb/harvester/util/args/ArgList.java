@@ -23,7 +23,6 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -60,7 +59,6 @@ public class ArgList {
 	 * @throws IOException error parsing args
 	 */
 	public ArgList(ArgParser p, String[] args) throws IllegalArgumentException, IOException {
-		InitLog.initLogger(ArgList.class);
 		try {
 			this.argParser = p;
 			log.debug("running " + p.getAppName());

@@ -22,7 +22,7 @@ public class InitLog {
 	 * Setup the logger
 	 * @param classname the classname initializing the log
 	 */
-	public static void initLogger(Class<?> classname) {
+	public static void initLogger(@SuppressWarnings("unused") Class<?> classname) {
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
 //		System.out.println("trying to get task from ENV");
 		String task = System.getenv("HARVESTER_TASK");
@@ -36,10 +36,17 @@ public class InitLog {
 		}
 //		System.out.println("harvester-task: "+task);
 		context.putProperty("harvester-task", task);
-		if(classname != null) {
-			System.out.println("process-task: "+classname.getSimpleName());
-			context.putProperty("process-task", classname.getSimpleName());
+		System.out.println("trying to get process from ENV");
+		String process = System.getenv("PROCESS_TASK");
+		if(process == null || process.trim().equals("")) {
+			System.out.println("ENV not set, using Property");
+			process = System.getProperty("process-task");
 		}
+		if(process == null || process.trim().equals("")) {
+			System.out.println("Property not set, using default");
+			process = "all";
+		}
+		context.putProperty("process-task", process);
 		JoranConfigurator jc = new JoranConfigurator();
 		jc.setContext(context);
 		context.reset();
