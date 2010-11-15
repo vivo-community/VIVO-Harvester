@@ -94,7 +94,7 @@ $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
-mysqldump -h SERVER -u USERNAME -pPASSWORD vivodb > backups/vivodb.pubmed.pretransfer.$date.sql
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD vivodb > backups/vivodb.pubmed.pretransfer.$date.sql
 rm -rf backups/vivodb.pubmed.pretransfer.latest.sql
 ln -s vivodb.pubmed.pretransfer.$date.sql backups/vivodb.pubmed.pretransfer.latest.sql
 
@@ -103,7 +103,7 @@ $Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/pu
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
-mysqldump -h SERVER -u USERNAME -pPASSWORD vivodb > backups/vivodb.pubmed.posttransfer.$date.sql
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD vivodb > backups/vivodb.pubmed.posttransfer.$date.sql
 rm -rf backups/vivodb.pubmed.posttransfer.latest.sql
 ln -s vivodb.pubmed.posttransfer.$date.sql backups/vivodb.pubmed.posttransfer.latest.sql
 

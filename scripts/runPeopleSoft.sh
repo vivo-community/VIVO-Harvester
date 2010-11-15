@@ -98,7 +98,7 @@ ln -s ps.cnpos.$date.tar.gz backups/ps.cnpos.latest.tar.gz
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
-mysqldump -h SERVER -u USERNAME -pPASSWORD vivodb > backups/vivodb.ps.pretransfer.$date.sql
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD vivodb > backups/vivodb.ps.pretransfer.$date.sql
 rm -rf backups/vivodb.ps.pretransfer.latest.sql
 ln -s vivodb.ps.pretransfer.$date.sql backups/vivodb.ps.pretransfer.latest.sql
 
@@ -107,7 +107,7 @@ $Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/uf
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%k%M.%S`
-mysqldump -h SERVER -u USERNAME -pPASSWORD vivodb > backups/vivodb.ps.posttransfer.$date.sql
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD vivodb > backups/vivodb.ps.posttransfer.$date.sql
 rm -rf backups/vivodb.ps.posttransfer.latest.sql
 ln -s vivodb.ps.posttransfer.$date.sql backups/vivodb.ps.posttransfer.latest.sql
 
