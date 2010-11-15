@@ -53,15 +53,20 @@ elif [ "$CODELOC" = "trunk" ]; then
 	cd trunk
 fi
 
-#update pom.xml and deb control file with new version
-sed 's_<version>.*</version>_<version>'$RELEASENAME'</version>_' <pom.xml>pomtmp.xml
-mv pomtmp.xml pom.xml
+#update pom.xml,deb control, and env file with new version
+#hack alert -- this will be fixed later
+sed 10q pom.xml | sed "s/<version>.*<\/version>/<version>$RELEASENAME<\/version>/" > pom1.xml
+sed '1,10d' pom.xml > pom2.xml
+cat pom1.xml pom2.xml > pom.xml
+rm pom1.xml pom2.xml
 
-sed 's_Version: .*_Version: '$RELEASENAME'_' <src/deb/control/control>src/deb/control/controltmp
-mv src/deb/control/controltmp src/deb/control/control
+sed -i "s/Version: .*/Version: $RELEASENAME/" src/deb/control/control
+
+sed -i "s/VERSION=.*/VERSION=$RELEASENAME/" scripts/env
+
 
 #commit pom file and deb control file
-svn commit -m "Update pom.xml and deb control file for release"
+#svn commit -m "Update pom.xml and deb control file for release"
 
 #build
 if [ "$RUNTEST" = "y" ]; then
