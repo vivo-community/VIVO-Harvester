@@ -7,7 +7,7 @@ USERNAME=
 PASSWORD=
 VERSION=0.7.0
 MIN_MEM=1024m
-MAX_MEM=3072M
+MAX_MEM=2048M
 DATE=`date +%Y-%m-%d_%k%M.%S`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 
@@ -18,7 +18,7 @@ if [ "$SERVER" = "" -o "$DBNAME" = "" -o "$USERNAME" = "" -o "$PASSWORD" = "" ];
 fi
 
 # Check for backups dir
-if [! -d backups ]; then
+if [ ! -d backups ]; then
   mkdir backups
 fi
 
