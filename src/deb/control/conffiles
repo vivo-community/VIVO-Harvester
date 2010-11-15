@@ -33,6 +33,7 @@
 /usr/share/vivo/harvester/config/tasks/PubmedFetch.xml
 
 #scripts
+/usr/share/vivo/harvester/scripts/env
 /usr/share/vivo/harvester/scripts/runOAI.sh
 /usr/share/vivo/harvester/scripts/runDSR.sh
 /usr/share/vivo/harvester/scripts/runPeopleSoft.sh
