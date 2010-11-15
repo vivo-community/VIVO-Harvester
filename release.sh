@@ -64,6 +64,8 @@ sed -i "s/Version: .*/Version: $RELEASENAME/" src/deb/control/control
 
 sed -i "s/VERSION=.*/VERSION=$RELEASENAME/" scripts/env
 
+#update conffiles from config
+
 
 #commit pom file and deb control file
 svn commit -m "Update pom.xml and deb control file for release"
