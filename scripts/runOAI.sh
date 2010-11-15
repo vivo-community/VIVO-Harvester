@@ -20,32 +20,53 @@ else
   exit 1
 fi
 
+#clear old fetches
+rm -rf XMLVault/h2oai/XML
+
 # Execute Fetch for OAI
-$OAIFetch -X config/tasks/OAIFetchTask.xml
+$OAIFetch -X config/tasks/OAIFetch.xml
+
+# backup fetch
+date=`date +%Y-%m-%d_%k%M.%S`
+tar -czpf backups/oai.xml.$date.tar.gz XMLVault/h2oai/XML
+rm -rf backups/oai.xml.latest.tar.gz
+ln -s oai.xml.$date.tar.gz backups/oai.xml.latest.tar.gz
+
+# uncomment to restore previous fetch
+#tar -xzpf backups/oai.xml.latest.tar.gz XMLVault/h2oai/XML
+
+# clear old translates
+rm -rf XMLVault/h2oai/RDF
 
 # Execute Translate
-$XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml  
+$XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml
+
+# backup translate
+date=`date +%Y-%m-%d_%k%M.%S`
+tar -czpf backups/oai.rdf.$date.tar.gz XMLVault/h2oai/RDF
+rm -rf backups/oai.rdf.latest.tar.gz
+ln -s oai.rdf.$date.tar.gz backups/oai.rdf.latest.tar.gz
+
+# uncomment to restore previous translate
+#tar -xzpf backups/oai.rdf.latest.tar.gz XMLVault/h2oai/RDF
+
+# Clear old H2 models
+rm -rf XMLVault/h2oai/all
 
 # Execute Transfer to transfer rdf into "scoring" JENA model
-$Transfer -h config/recordHandlers/PubmedRDFRecordHandler.xml -o config/jenaModels/VIVO.xml -O modelName=scoring  
+$Transfer -h config/recordHandlers/OAIRDFRecordHandler.xml -o config/jenaModels/h2.xml -O modelName=oaiTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2oai/all/store;MODE=HSQLDB"
 
-# Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
-$Score -v config/jenaModels/VIVO.xml -a 3
+# backup H2 translate Models
+date=`date +%Y-%m-%d_%k%M.%S`
+tar -czpf backups/oai.all.$date.tar.gz XMLVault/h2oai/all
+rm -rf backups/oai.all.latest.tar.gz
+ln -s oai.all.$date.tar.gz backups/oai.all.latest.tar.gz
 
-# Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
-# Off by default, examples show below
-#$Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
-#$Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
+# uncomment to restore previous H2 translate models
+#tar -xzpf backups/oai.all.latest.tar.gz XMLVault/h2oai/all
 
 # Execute Transfer to load "staging" JENA model into VIVO
-$Transfer -i config/jenaModels/VIVO.xml -I modelName=staging -o config/jenaModels/VIVO.xml
-
-#Update the example on the board
-#$Update -p config/jenaModels/VIVO.xml -P modelName="PreviousModelName" -i config/jenaModels/VIVO.xml -I modelName="staging" -v config/jenaModels/VIVO.xml
-
-# Execute Transfer to dump "staging" JENA model rdf into file
-# Shown as example
-#$Transfer -i config/jenaModels/VIVO.xml -d dump.rdf
+$Transfer -i config/jenaModels/h2.xml -I modelName=oaiTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2oai/all/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml -O modelName=oaiDemo
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
