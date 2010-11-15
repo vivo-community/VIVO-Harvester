@@ -37,7 +37,7 @@ fi
 
 #get code
 if [ "$CODELOC" = "dev" ]; then
-	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk/branches/Development
+	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
 	cd Development
 	#if we're pulling from dev, ask if releasing stable 
 	echo -n "Build a stable release? (merge down, tag and release from trunk): "
@@ -81,31 +81,40 @@ if [ "$?" -eq "1" ]; then
 	exit
 fi
 
-#unpack debian package
 cd bin
-ar -x $RELEASENAME.deb
+#rename deb to use -
+mv harvester_$RELEASENAME.deb harvester-$RELEASENAME.deb
+
+#unpack debian package
+ar -x harvester-$RELEASENAME.deb
 
 #rename tarball
-mv data.tar.gz $RELEASENAME.tar.gz
+mv data.tar.gz harvester-$RELEASENAME.tar.gz
 
 #Upload tarball and deb package to sourceforge
-#scp $RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
-#scp $RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+#scp harvester-$RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+#scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 
 
 if [ "$BUILDSTABLE" = "y" ]; then
 	#merge down to Staging
-	svn merge --dry-run  https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
+	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
+	cd Staging
+	svn merge --dry-run  https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
 
 	#merge down to trunk
-	svn merge --dry-run https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
+	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
+	cd trunk
+	svn merge --dry-run https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 
 	#tag inside trunk
 	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
 	#svn commit -m "Tag Release"
 elif [ "$BUILDPOINT" = "y" ]; then
 	#merge down to trunk
-	svn merge --dry-run  https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
+	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
+	cd trunk
+	svn merge --dry-run https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 	
 	#tag inside trunk
 	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
