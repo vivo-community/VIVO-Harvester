@@ -88,12 +88,12 @@
     <appender-ref ref="AllAppender"/>
     <appender-ref ref="ClassAppender"/>
   </logger>
-  <logger name="com.hp.hpl.jena" level="${jena-level:-INFO}">
+  <logger name="com.hp.hpl.jena" level="${jena-level:-ALL}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
   </logger>
-  <logger name="org.apache.commons.vfs" level="ALL">
+  <logger name="org.apache.commons.vfs" level="ERROR">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
