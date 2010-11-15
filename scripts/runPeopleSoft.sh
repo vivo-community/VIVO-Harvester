@@ -21,7 +21,7 @@ else
 fi
 
 #clear old fetches
-rm -rd XMLVault/h2ps/XML
+rm -rf XMLVault/h2ps/XML
 
 # Execute Fetch
 $JDBCFetch -X config/tasks/PeopleSoftFetch.xml
@@ -36,7 +36,7 @@ ln -s ps.xml.$date.tar.gz backups/ps.xml.latest.tar.gz
 #tar -xzpf backups/ps.xml.latest.tar.gz XMLVault/h2ps/XML
 
 # clear old translates
-rm -rd XMLVault/h2ps/RDF
+rm -rf XMLVault/h2ps/RDF
 
 # Execute Translate
 $XSLTranslator -i config/recordHandlers/PeopleSoft-XML.xml -o config/recordHandlers/PeopleSoft-RDF.xml -x config/datamaps/PeopleSoftToVivo.xsl
@@ -51,7 +51,7 @@ ln -s ps.rdf.$date.tar.gz backups/ps.rdf.latest.tar.gz
 #tar -xzpf backups/ps.rdf.latest.tar.gz XMLVault/h2ps/RDF
 
 # Clear old H2 models
-rm -rd XMLVault/h2ps/all
+rm -rf XMLVault/h2ps/all
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o config/jenaModels/h2.xml -O modelName=peopleSoftTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -h config/recordHandlers/PeopleSoft-RDF.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/

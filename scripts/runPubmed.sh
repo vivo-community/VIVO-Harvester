@@ -21,7 +21,7 @@ else
 fi
 
 #clear old fetches
-rm -rd XMLVault/h2Pubmed/XML
+rm -rf XMLVault/h2Pubmed/XML
 
 # Execute Fetch for Pubmed
 $PubmedFetch -X config/tasks/PubmedFetch.xml
@@ -36,7 +36,7 @@ ln -s pubmed.xml.$date.tar.gz backups/pubmed.xml.latest.tar.gz
 #tar -xzpf backups/pubmed.xml.latest.tar.gz XMLVault/h2Pubmed/XML
 
 # clear old translates
-rm -rd XMLVault/h2Pubmed/RDF
+rm -rf XMLVault/h2Pubmed/RDF
 
 # Execute Translate using the PubmedToVIVO.xsl file
 $XSLTranslator -i config/recordHandlers/Pubmed-XML-h2RH.xml -x config/datamaps/PubmedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml
@@ -51,7 +51,7 @@ ln -s pubmed.rdf.$date.tar.gz backups/pubmed.rdf.latest.tar.gz
 #tar -xzpf backups/pubmed.rdf.latest.tar.gz XMLVault/h2Pubmed/RDF
 
 # Clear old H2 models
-rm -rd XMLVault/h2Pubmed/all
+rm -rf XMLVault/h2Pubmed/all
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o config/jenaModels/h2.xml -O modelName=PubmedTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -h config/recordHandlers/Pubmed-RDF-h2RH.xml
@@ -66,7 +66,7 @@ ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
 #tar -xzpf backups/pubmed.all.latest.tar.gz XMLVault/h2Pubmed/all
 
 # clear old Score models
-rm -rd XMLVault/h2Pubmed/scored
+rm -rf XMLVault/h2Pubmed/scored
 
 # Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
 $Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -e workEmail

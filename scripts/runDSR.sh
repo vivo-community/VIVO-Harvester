@@ -22,25 +22,25 @@ else
 fi
 
 # Execute Fetch
-rm -rd XMLVault/h2dsr/xml
+rm -rf XMLVault/h2dsr/xml
 $JDBCFetch -X config/tasks/DSR-JDBCFetch.xml
 tar -czpf backups/h2dsr-xml.tar.gz XMLVault/h2dsr/xml
 #tar -xzpf backups/h2dsr-xml.tar.gz XMLVault/h2dsr/xml
 
 # Execute Translate
-rm -rd XMLVault/h2dsr/rdf
+rm -rf XMLVault/h2dsr/rdf
 $XSLTranslator -i config/recordHandlers/DSR-XML.xml -o config/recordHandlers/DSR-RDF.xml -x config/datamaps/DSRtoVIVO.xsl
 tar -czpf backups/h2dsr-rdf.tar.gz XMLVault/h2dsr/rdf
 #tar -xzpf backups/h2dsr-rdf.tar.gz XMLVault/h2dsr/rdf
 
 # Execute Transfer to import from record handler into local temp model
-rm -rd XMLVault/h2dsr/All
+rm -rf XMLVault/h2dsr/All
 $Transfer -o config/jenaModels/h2.xml -O modelName=dsrTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -h config/recordHandlers/DSR-RDF.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/
 tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 #tar -xzpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 
 # Execute Score to match jobs with organizations
-rm -rd XMLVault/h2dsr/Scored
+rm -rf XMLVault/h2dsr/Scored
 $Score -v config/jenaModels/myVIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -I modelName=dsrTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -O modelName=dsrStaging -f "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid" -x "http://vivoweb.org/ontology/core#principalInvestigatorRoleOf" -y "http://vivoweb.org/ontology/core#relatedRole"
 
 date=`date +%Y-%m-%d_%k%M.%S`
