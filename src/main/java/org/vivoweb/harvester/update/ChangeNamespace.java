@@ -186,8 +186,9 @@ public class ChangeNamespace {
 			sbQuery.append("\tFILTER (");
 //			sbQuery.append(" && ");
 			sbQuery.append(StringUtils.join(" && ", filters));
+			sbQuery.append(")\n");
 		}
-		sbQuery.append(")\n}");
+		sbQuery.append("}");
 		ArrayList<String> retVal = new ArrayList<String>();
 		int count = 0;
 		log.debug("Query:\n"+sbQuery.toString());
