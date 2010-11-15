@@ -6,6 +6,7 @@
 #
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+#	  James Pence
 
 #author: nskaggs@ctrip.ufl.edu
 
@@ -16,10 +17,15 @@ echo -n "Enter sourceforge username: "
 read NAME
 
 #ask for version name
-#echo -n "Enter release version: "
-#read VERSION
+echo -n "Enter release version: "
+read RELEASENAME
 
 #update pom.xml and deb control file with new version
+sed 's_<version>.*</version>_<version>'$RELEASENAME'</version>_' <pom.xml>pomtmp.xml
+mv pomtmp.xml pom.xml
+
+sed 's_Version: .*_Version: '$RELEASENAME'_' <src/deb/control/control>src/deb/control/controltmp
+mv src/deb/control/controltmp src/deb/control/control
 
 #update changelog
 
@@ -44,10 +50,7 @@ if [ "$?" -eq "1" ]; then
 	exit
 fi
 
-#get release name (hack alert!) :-)
 cd bin
-RELEASENAME=`ls | grep harvester`
-RELEASENAME=${RELEASENAME:0:15}
 
 #unpack debian package
 ar -x $RELEASENAME.deb
