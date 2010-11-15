@@ -19,6 +19,7 @@
 		migrated to logback from log4j
 		logging speed is much faster
 		by default, only info level and warnings are output to console. this can be changed by setting the level in logback.xml in the root installation folder
+		tasks and run both log to there own files
 	Example Scripts
 		 now utilize environment variables
 		 have been enhance to use H2 db by default; which greatly increases harvest speed
