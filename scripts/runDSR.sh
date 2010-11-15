@@ -44,9 +44,9 @@ rm -rf XMLVault/h2dsr/Scored
 $Score -v config/jenaModels/myVIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -I modelName=dsrTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -O modelName=dsrStaging -f "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid" -x "http://vivoweb.org/ontology/core#principalInvestigatorRoleOf" -y "http://vivoweb.org/ontology/core#relatedRole"
 
 date=`date +%Y-%m-%d_%k%M.%S`
-mysqldump -h $SERVER -u $USERNAME -p $PASSWORD vitrodb > backups/vitrodb.dsrrun.$date.sql
-rm -rf backups/vitrodb.current.sql
-ln -s vitrodb.$date.sql backups/vitrodb.current.sql
+mysqldump -h $SERVER -u $USERNAME -p $PASSWORD $DBNAME > backups/$DBNAME.dsr.$date.sql
+rm -rf backups/$DBNAME.current.sql
+ln -s $DBNAME.$date.sql backups/$DBNAME.current.sql
 
 # Execute Transfer from local temp model into main vivo model
 $Transfer -i config/jenaModels/h2.xml -I modelName=dsrStaging -I dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -o config/jenaModels/myVIVO.xml

@@ -2,6 +2,7 @@
 
 #Mysql username, password, and server address for backups in scripts
 SERVER=
+DBNAME=
 USERNAME=
 PASSWORD=
 VERSION=0.7.0
@@ -11,7 +12,7 @@ DATE=`date +%Y-%m-%d_%k%M.%S`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 
 # Check to make sure everything was set by user
-if [ "$SERVER" = "" -o "$USERNAME" = "" -o "$PASSWORD" = "" ]; then
+if [ "$SERVER" = "" -o "$DBNAME" = "" -o "$USERNAME" = "" -o "$PASSWORD" = "" ]; then
 	echo 'Please set variables in env file in the scripts folder before running'
 	exit
 fi
