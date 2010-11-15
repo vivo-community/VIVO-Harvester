@@ -342,9 +342,9 @@
 			<xsl:apply-templates select="MedlineCitation/Article/AuthorList" mode="fullAuthor" />
 			<xsl:apply-templates select="MedlineCitation/MeshHeadingList" mode="fullTerm" />	
 			<xsl:apply-templates select="MedlineCitation/Article" mode="fullJournal" />
-			<xsl:apply-templates select="MedlineCitation/DateCreated" mode="fullCreated" />
+			<!-- <xsl:apply-templates select="MedlineCitation/DateCreated" mode="fullCreated" />
 			<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="fullCompleted" />
-			<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="fullRevised" />
+			<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="fullRevised" /> -->
 	</xsl:template>
 	
 	
