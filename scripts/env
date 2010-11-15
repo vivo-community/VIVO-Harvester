@@ -13,6 +13,10 @@ fi
 
 echo "bash harvester task: $HARVESTER_TASK"
 
+DATE=`date +%Y-%m-%d_%k%M.%S`
+
+HARVESTER_TASK="$HARVESTER_TASK.$DATE"
+
 # define shorthand aliases
 Diff="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.diff.Diff"
 D2RMapFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch"
