@@ -179,11 +179,11 @@ public class ChangeNamespace {
 				sbQuery.append(" .\n");
 			}
 		}
-		sbQuery.append("\tFILTER (");
 //		sbQuery.append("regex( ?uri , \"");
 //		sbQuery.append(namespace);
 //		sbQuery.append("\" )");
 		if(!filters.isEmpty()) {
+			sbQuery.append("\tFILTER (");
 //			sbQuery.append(" && ");
 			sbQuery.append(StringUtils.join(" && ", filters));
 		}
