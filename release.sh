@@ -108,8 +108,8 @@ if [ "$BUILDSTABLE" = "y" ]; then
 	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 
 	#tag inside trunk
-	svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	svn commit -m "Tag Release"
+	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	#svn commit -m "Tag Release"
 elif [ "$BUILDPOINT" = "y" ]; then
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
@@ -117,6 +117,6 @@ elif [ "$BUILDPOINT" = "y" ]; then
 	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 	
 	#tag inside trunk
-	svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	svn commit -m "Tag Release"
+	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	#svn commit -m "Tag Release"
 fi

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.7.0
+VERSION=0.7
 MIN_MEM=1024m
 MAX_MEM=3072M
 DATE=`date +%Y-%m-%d_%k%M.%S`
