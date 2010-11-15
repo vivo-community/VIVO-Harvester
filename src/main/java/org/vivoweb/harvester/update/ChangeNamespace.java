@@ -224,15 +224,16 @@ public class ChangeNamespace {
 			return;
 		}
 		ArrayList<String> uriCheck = new ArrayList<String>();
+		int count = 0;
 		for(Resource res : IterableAdaptor.adapt(model.getJenaModel().listSubjects())) {
 			if(oldNamespace.equals(res.getNameSpace())) {
-				log.info("Finding match for <"+res.getURI()+">");
+				log.debug("Finding match for <"+res.getURI()+">");
 				String uri = null;
 				boolean uriFound = false;
 				//find valid URI
 				while (!uriFound) {
 					uri = getURI(res, newNamespace, properties, vivo, model);
-					log.debug("urlCheck: "+uriCheck.contains(uri));
+					log.trace("urlCheck: "+uriCheck.contains(uri));
 					//if matched in VIVO or not previously used
 					if (vivo.containsURI(uri) || !uriCheck.contains(uri)) {
 						//note URI as being used
@@ -242,8 +243,10 @@ public class ChangeNamespace {
 					}
 				}
 				ResourceUtils.renameResource(res, uri);
+				count++;
 			}
 		}
+		log.info("Changed namespace for "+count+" rdf nodes");
 	}
 	
 	/**
