@@ -10,6 +10,7 @@ MIN_MEM=1024m
 MAX_MEM=2048M
 DATE=`date +%Y-%m-%d_%k%M.%S`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
+echo "Full Logging in $HARVESTER_TASK.log"
 
 # Check to make sure everything was set by user
 if [ "$SERVER" = "" -o "$DBNAME" = "" -o "$USERNAME" = "" -o "$PASSWORD" = "" ]; then
