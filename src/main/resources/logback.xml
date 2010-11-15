@@ -93,7 +93,7 @@
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
   </logger>
-  <logger name="org.apache.commons.vfs" level="ERROR">
+  <logger name="org.apache.commons.vfs" level="ALL">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
