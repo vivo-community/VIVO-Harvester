@@ -75,7 +75,7 @@ public class EatVIVOOrgs {
 	 * @throws ParserConfigurationException error
 	 */
 	public static void main(String[] args) throws MalformedURLException, IOException, ParserConfigurationException, SAXException {
-		InitLog.initLogger();
+		InitLog.initLogger(EatVIVOOrgs.class);
 		inmodel = JenaConnect.parseConfig("config/jenaModels/myVIVO.xml");
 		outmodel = new JenaConnect();
 		otherProperties = new LinkedList<Property>();

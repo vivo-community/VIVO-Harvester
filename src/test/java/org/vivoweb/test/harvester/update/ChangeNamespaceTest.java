@@ -36,7 +36,7 @@ public class ChangeNamespaceTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger();
+		InitLog.initLogger(ChangeNamespaceTest.class);
 		this.namespace = "http://testChNS.vivoweb.org/individual/";
 		this.newNamespace = "http://vivo.test.edu/individual/";
 		this.model = new JenaConnect("jdbc:h2:mem:testChNSh2change;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSchange");

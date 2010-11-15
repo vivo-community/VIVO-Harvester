@@ -196,7 +196,7 @@ public class Qualify {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(Qualify.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new Qualify(new ArgList(getParser(), args)).executeTask();

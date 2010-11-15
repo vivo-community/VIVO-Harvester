@@ -49,7 +49,7 @@ public class DiffTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger();
+		InitLog.initLogger(DiffTest.class);
 		// Create vivo rdf file
 		try {
 			this.previousRDF = File.createTempFile("scoretest_vivo", ".rdf");

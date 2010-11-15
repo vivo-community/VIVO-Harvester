@@ -210,7 +210,7 @@ public class GlozeTranslator {
 	 * @param args list of arguments required to execute glozetranslate
 	 */
 	public static void main(String[] args) {
-		InitLog.initLogger();
+		InitLog.initLogger(GlozeTranslator.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new GlozeTranslator(new ArgList(getParser(), args)).execute();

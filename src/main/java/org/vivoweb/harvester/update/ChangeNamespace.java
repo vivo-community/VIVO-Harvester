@@ -277,7 +277,7 @@ public class ChangeNamespace {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(ChangeNamespace.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new ChangeNamespace(new ArgList(getParser(), args)).execute();

@@ -164,7 +164,7 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(NLMJournalFetch.class);
 		log.info("NLMJournalFetch: Start");
 		try {
 			new NLMJournalFetch(new ArgList(getParser("NLMJournalFetch"), args)).execute();

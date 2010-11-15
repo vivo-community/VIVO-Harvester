@@ -184,7 +184,7 @@ public class Update {
 	 * @param args commandline arguments
 	 */
 	public static void main(String[] args) {
-		InitLog.initLogger();
+		InitLog.initLogger(Update.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new Update(new ArgList(getParser(), args)).execute();

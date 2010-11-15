@@ -326,7 +326,7 @@ public class ScoreTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() {
-		InitLog.initLogger();
+		InitLog.initLogger(ScoreTest.class);
 		
 		// create objects under test
 		// Create input rdf file

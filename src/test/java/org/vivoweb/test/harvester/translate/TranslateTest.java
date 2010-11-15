@@ -291,7 +291,7 @@ public class TranslateTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger();
+		InitLog.initLogger(TranslateTest.class);
 		// create config file for input record handler
 		this.inFile = File.createTempFile("inputRHConfig", "xml");
 		Writer output = new BufferedWriter(new FileWriter(this.inFile));

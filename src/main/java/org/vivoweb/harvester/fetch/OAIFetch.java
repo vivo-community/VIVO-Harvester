@@ -138,7 +138,7 @@ public class OAIFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(OAIFetch.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new OAIFetch(new ArgList(getParser(), args)).execute();

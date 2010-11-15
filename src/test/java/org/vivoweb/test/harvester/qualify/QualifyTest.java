@@ -42,7 +42,7 @@ public class QualifyTest extends TestCase {
 	
 	@Override
 	public void setUp() throws Exception {
-		InitLog.initLogger();
+		InitLog.initLogger(QualifyTest.class);
 		this.jena = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 	}

@@ -42,7 +42,7 @@ public class UpdateTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger();
+		InitLog.initLogger(UpdateTest.class);
 		
 		try {
 			this.previousRDF = File.createTempFile("scoretest_vivo", ".rdf");

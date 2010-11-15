@@ -111,7 +111,7 @@ public class RDFTranslator {
 	 * @param args argument array
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(RDFTranslator.class);
 		if(args.length < 3 || args.length > 4) {
 			log.error("Invalid Arguments: RDFTranslate requires at least 1 arguments.  The system was supplied with " + args.length);
 			// throw new IllegalArgumentException();

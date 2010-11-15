@@ -34,7 +34,7 @@ public class RecordHandlerTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger();
+		InitLog.initLogger(RecordHandlerTest.class);
 		this.rh = null;
 	}
 	

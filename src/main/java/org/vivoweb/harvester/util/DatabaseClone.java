@@ -107,7 +107,7 @@ public class DatabaseClone {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(DatabaseClone.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new DatabaseClone(new ArgList(getParser(), args)).execute();

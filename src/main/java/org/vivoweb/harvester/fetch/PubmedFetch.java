@@ -170,7 +170,7 @@ public class PubmedFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(PubmedFetch.class);
 		log.info("PubmedFetch: Start");
 		try {
 			new PubmedFetch(new ArgList(getParser("PubmedFetch"), args)).execute();

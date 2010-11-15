@@ -97,7 +97,7 @@ public class D2RMapFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(D2RMapFetch.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new D2RMapFetch(new ArgList(getParser(), args)).execute();

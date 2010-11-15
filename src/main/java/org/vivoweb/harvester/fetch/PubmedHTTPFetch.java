@@ -203,7 +203,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(PubmedHTTPFetch.class);
 		log.info("PubmedHTTPFetch: Start");
 		try {
 			new PubmedHTTPFetch(new ArgList(getParser("PubmedHTTPFetch"), args)).execute();

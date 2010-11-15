@@ -156,7 +156,7 @@ public class SPARQLTranslator {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(SPARQLTranslator.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new SPARQLTranslator(new ArgList(getParser(), args)).execute();

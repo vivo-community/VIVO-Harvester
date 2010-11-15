@@ -131,7 +131,7 @@ public class Merge {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(Merge.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new Merge(new ArgList(getParser(), args)).execute();

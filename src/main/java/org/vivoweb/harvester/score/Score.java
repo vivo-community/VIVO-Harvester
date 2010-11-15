@@ -108,7 +108,7 @@ public class Score {
 	 * @param args command line arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(Score.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			Score Scoring = new Score(args);

@@ -218,7 +218,7 @@ public class XSLTranslator {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(XSLTranslator.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new XSLTranslator(new ArgList(getParser(), args)).execute();

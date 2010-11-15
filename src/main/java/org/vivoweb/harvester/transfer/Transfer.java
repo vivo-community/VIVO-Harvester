@@ -311,7 +311,7 @@ public class Transfer {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger();
+		InitLog.initLogger(Transfer.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new Transfer(new ArgList(getParser(), args)).execute();
