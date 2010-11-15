@@ -11,6 +11,8 @@ else
   mkdir backups
 fi
 
+echo 'bash harvester task: $HARVERSTER_TASK'
+
 # define shorthand aliases
 Diff="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVERSTER_TASK -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.diff.Diff"
 D2RMapFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVERSTER_TASK -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch"
