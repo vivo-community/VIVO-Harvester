@@ -88,7 +88,7 @@
     <appender-ref ref="AllAppender"/>
     <appender-ref ref="ClassAppender"/>
   </logger>
-  <logger name="com.hp.hpl.jena" level="${jena-level:-ALL}">
+  <logger name="com.hp.hpl.jena" level="${jena-level:-INFO}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
