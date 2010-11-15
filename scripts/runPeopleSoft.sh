@@ -12,13 +12,13 @@
 # Set working directory
 cd /usr/share/vivo/harvester
 
+HARVESTER_TASK=peoplesoft
+
 if [ -f scripts/env ]; then
   . scripts/env
 else
   exit 1
 fi
-
-HARVESTER_TASK=peoplesoft
 
 #clear old fetches
 rm -rd XMLVault/h2ps/XML

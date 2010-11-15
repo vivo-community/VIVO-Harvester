@@ -12,13 +12,13 @@
 # Set working directory
 cd /usr/share/vivo/harvester
 
+HARVESTER_TASK=d2rmap
+
 if [ -f scripts/env ]; then
   . scripts/env
 else
   exit 1
 fi
-
-HARVESTER_TASK=d2rmap
 
 # Execute Fetch/Translate using D2RMap
 java -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -u config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf

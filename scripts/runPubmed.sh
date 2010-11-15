@@ -12,13 +12,13 @@
 # Set working directory
 cd /usr/share/vivo/harvester
 
+HARVESTER_TASK=pubmed
+
 if [ -f scripts/env ]; then
   . scripts/env
 else
   exit 1
 fi
-
-HARVESTER_TASK=pubmed
 
 #clear old fetches
 rm -rd XMLVault/h2Pubmed/XML

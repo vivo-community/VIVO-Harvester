@@ -25,11 +25,11 @@ public class InitLog {
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
 		System.out.println("trying to get task from ENV");
 		String task = System.getenv("HARVESTER_TASK");
-		if(task == null) {
+		if(task == null || task.trim().equals("")) {
 			System.out.println("ENV not set, using Property");
 			task = System.getProperty("harvester-task");
 		}
-		if(task == null) {
+		if(task == null || task.trim().equals("")) {
 			System.out.println("Property not set, using default");
 			task = "harvester";
 		}

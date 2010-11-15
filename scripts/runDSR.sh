@@ -13,13 +13,13 @@
 # Set working directory
 cd /usr/share/vivo/harvester
 
+HARVESTER_TASK=dsr
+
 if [ -f scripts/env ]; then
   . scripts/env
 else
   exit 1
 fi
-
-HARVESTER_TASK=dsr
 
 # Execute Fetch
 rm -rd XMLVault/h2dsr/xml

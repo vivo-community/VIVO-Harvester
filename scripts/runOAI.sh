@@ -12,13 +12,13 @@
 # Set working directory
 cd /usr/share/vivo/harvester
 
+HARVESTER_TASK=oai
+
 if [ -f scripts/env ]; then
   . scripts/env
 else
   exit 1
 fi
-
-HARVESTER_TASK=oai
 
 # Execute Fetch for OAI
 $OAIFetch -X config/tasks/OAIFetchTask.xml
