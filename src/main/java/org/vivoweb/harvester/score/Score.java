@@ -723,7 +723,7 @@ public class Score {
 				pubmedInitials = foreNameNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
 				log.trace("Using " + pubmedInitials + " as first and middle initial");			
 			} else {
-				log.info("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
+				log.trace("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
 			
 				//parse out middle initial / name from foreName
 				String splitName[] = foreNameNode.toString().split(" ");
@@ -742,7 +742,7 @@ public class Score {
 			
 			// ensure first name and last name are not blank
 			if (lastNameNode.toString() == null || foreNameNode.toString() == null) {
-				log.info("Incomplete name, skipping");
+				log.trace("Incomplete name, skipping");
 			} else {
 				scoreMatch = lastNameNode.toString();
 				
