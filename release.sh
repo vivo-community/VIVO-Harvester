@@ -17,7 +17,7 @@
 echo -n "Enter sourceforge username: "
 read NAME
 
-echo -n "Build from? (input local, dev, trunk, Staging): "
+echo -n "Build from? (dev, trunk, staging | blank for local): "
 read CODELOC
 
 echo -n "Enter release version: "
@@ -25,6 +25,15 @@ read RELEASENAME
 
 echo -n "Run junit tests before build?: "
 read RUNTEST
+
+#update changelog, exit if not been updated
+echo -n "Has changelog been updated?: "
+read CHANGELOG
+
+if [ "$CHANGELOG" != "y" ]; then
+	echo -n "Please update CHANGELOG and re-run"
+	exit
+fi 
 
 #get code
 if [ "$CODELOC" = "dev" ]; then
@@ -50,15 +59,6 @@ mv pomtmp.xml pom.xml
 
 sed 's_Version: .*_Version: '$RELEASENAME'_' <src/deb/control/control>src/deb/control/controltmp
 mv src/deb/control/controltmp src/deb/control/control
-
-#update changelog, exit if not been updated
-echo -n "Has changelog been updated?: "
-read CHANGELOG
-
-if [ "$CHANGELOG" != "y" ]; then
-	echo -n "Please update CHANGELOG and re-run"
-	exit
-fi 
 
 #build
 if [ "$RUNTEST" = "y" ]; then
