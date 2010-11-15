@@ -9,10 +9,14 @@ MAX_MEM=3072M
 DATE=`date +%Y-%m-%d_%k%M.%S`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 
+# Check to make sure everything was set by user
+if [ "$SERVER" = "" -o "$USERNAME" = "" -o "$PASSWORD" = "" ]; then
+	echo 'Please set env file in the scripts folder before running'
+	exit
+fi
+
 # Check for backups dir
-if [ -d backups ]; then
-  sleep 0s
-else
+if [! -d backups ]; then
   mkdir backups
 fi
 
