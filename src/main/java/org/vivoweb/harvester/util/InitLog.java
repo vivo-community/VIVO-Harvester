@@ -24,17 +24,17 @@ public class InitLog {
 	 */
 	public static void initLogger(Class<?> classname) {
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-		System.out.println("trying to get task from ENV");
+//		System.out.println("trying to get task from ENV");
 		String task = System.getenv("HARVESTER_TASK");
 		if(task == null || task.trim().equals("")) {
-			System.out.println("ENV not set, using Property");
+//			System.out.println("ENV not set, using Property");
 			task = System.getProperty("harvester-task");
 		}
 		if(task == null || task.trim().equals("")) {
-			System.out.println("Property not set, using default");
+//			System.out.println("Property not set, using default");
 			task = "harvester";
 		}
-		System.out.println("harvester-task: "+task);
+//		System.out.println("harvester-task: "+task);
 		context.putProperty("harvester-task", task);
 		if(classname != null) {
 			System.out.println("process-task: "+classname.getSimpleName());
