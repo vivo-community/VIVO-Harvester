@@ -23,15 +23,25 @@ public class InitLog {
 	 */
 	public static void initLogger() {
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-		System.out.println("harvester-task: "+System.getenv("HARVESTER_TASK"));
-		context.putProperty("harvester-task", System.getenv("HARVESTER_TASK"));
+		System.out.println("trying to get task from ENV");
+		String task = System.getenv("HARVESTER_TASK");
+		if(task == null) {
+			System.out.println("ENV not set, using Property");
+			task = System.getProperty("harvester-task");
+		}
+		if(task == null) {
+			System.out.println("Property not set, using default");
+			task = "harvester";
+		}
+		System.out.println("harvester-task: "+task);
+		context.putProperty("harvester-task", task);
 		JoranConfigurator jc = new JoranConfigurator();
 		jc.setContext(context);
 		context.reset();
 		try {
 			for(FileObject file : VFS.getManager().toFileObject(new File(".")).findFiles(new AllFileSelector())) {
 				if(file.getName().getBaseName().equals("logback.xml")) {
-					System.out.println("configuring");
+					System.out.println("configuring: "+file.getName().getPath());
 					jc.doConfigure(file.getContent().getInputStream());
 					break;
 				}
