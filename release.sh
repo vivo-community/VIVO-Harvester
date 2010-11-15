@@ -66,7 +66,7 @@ sed -i "s/VERSION=.*/VERSION=$RELEASENAME/" scripts/env
 
 
 #commit pom file and deb control file
-#svn commit -m "Update pom.xml and deb control file for release"
+svn commit -m "Update pom.xml and deb control file for release"
 
 #build
 if [ "$RUNTEST" = "y" ]; then
@@ -92,31 +92,31 @@ ar -x harvester-$RELEASENAME.deb
 mv data.tar.gz harvester-$RELEASENAME.tar.gz
 
 #Upload tarball and deb package to sourceforge
-#scp harvester-$RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
-#scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+scp harvester-$RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 
 
 if [ "$BUILDSTABLE" = "y" ]; then
 	#merge down to Staging
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 	cd Staging
-	svn merge --dry-run  https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
+	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
 
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
-	svn merge --dry-run https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
+	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 
 	#tag inside trunk
-	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	#svn commit -m "Tag Release"
+	svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	svn commit -m "Tag Release"
 elif [ "$BUILDPOINT" = "y" ]; then
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
-	svn merge --dry-run https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
+	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 	
 	#tag inside trunk
-	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	#svn commit -m "Tag Release"
+	svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	svn commit -m "Tag Release"
 fi
