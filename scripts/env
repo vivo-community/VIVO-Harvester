@@ -8,7 +8,7 @@ HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 
 # Check for backups dir
 if [ -d backups ]; then
-  echo ''
+  sleep 0s
 else
   mkdir backups
 fi
