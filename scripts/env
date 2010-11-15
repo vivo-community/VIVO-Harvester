@@ -6,7 +6,7 @@ MAX_MEM=3072M
 
 # Check for backups dir
 if [ -d backups ]; then
-  echo 'backups exists'
+#  echo 'backups exists'
 else
   mkdir backups
 fi

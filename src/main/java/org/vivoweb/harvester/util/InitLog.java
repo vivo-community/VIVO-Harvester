@@ -36,14 +36,14 @@ public class InitLog {
 		}
 //		System.out.println("harvester-task: "+task);
 		context.putProperty("harvester-task", task);
-		System.out.println("trying to get process from ENV");
+//		System.out.println("trying to get process from ENV");
 		String process = System.getenv("PROCESS_TASK");
 		if(process == null || process.trim().equals("")) {
-			System.out.println("ENV not set, using Property");
+//			System.out.println("ENV not set, using Property");
 			process = System.getProperty("process-task");
 		}
 		if(process == null || process.trim().equals("")) {
-			System.out.println("Property not set, using default");
+//			System.out.println("Property not set, using default");
 			process = "all";
 		}
 		context.putProperty("process-task", process);
@@ -53,7 +53,7 @@ public class InitLog {
 		try {
 			for(FileObject file : VFS.getManager().toFileObject(new File(".")).findFiles(new AllFileSelector())) {
 				if(file.getName().getBaseName().equals("logback.xml")) {
-					System.out.println("configuring: "+file.getName().getPath());
+//					System.out.println("configuring: "+file.getName().getPath());
 					jc.doConfigure(file.getContent().getInputStream());
 					break;
 				}
