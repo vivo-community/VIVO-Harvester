@@ -98,8 +98,6 @@
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
   </logger>
-  <root level="${root-level:-OFF}">
-    <appender-ref ref="AllAppender"/>
-  </root>
+  <root level="${root-level:-OFF}"/>
   
 </configuration>
