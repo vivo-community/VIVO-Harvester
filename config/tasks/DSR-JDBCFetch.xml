@@ -5,9 +5,18 @@
 	<Param name="username">USERNAME</Param>
 	<Param name="password">PASSWORD</Param>
 	<Param name="output">config/recordHandlers/DSR-XML.xml</Param>
+	<Param name="tableName">dbo.vwContracts</Param>
+	<Param name="id">dbo.vwContracts=ContractNumber</Param>
+	<Param name="fields">dbo.vwContracts=Confidential,ContractPI,Title,ContractDeptID,TotalAwarded,ContractUFID,BEGIN_DT,END_DT,SponsorID,Sponsor,FlowThruSponsorID,FlowThruSponsor</Param>
+	<Param name="tableName">dbo.vwProjects</Param>
+	<Param name="id">dbo.vwProjects=RecID</Param>
+	<Param name="fields">dbo.vwProjects=ID_Source,PS_ContractNumber,PrimaryProject,PS_ProjectNumber,ProjectUPN,Title,DeptID,Investigator,InvestigatorID,Sponsor,SponsorID,FlowThruSponsor,FlowThruSponsorID,TotalAwarded,GM_PRIMARY_FLAG</Param>
+	<Param name="tableName">dbo.vwProjectTeam</Param>
+	<Param name="id">dbo.vwProjectTeam=ContractNumberr</Param>
+	<Param name="fields">dbo.vwProjectTeam=ContractUFID,PS_ProjectNumber,ProjectUPN,PrimaryProject,InvestigatorID,Investigator,isPI</Param>
 	<Param name="tableName">dbo.vwVIVO</Param>
 	<Param name="id">dbo.vwVIVO=DSR_ Number</Param>
-	<Param name="fields">dbo.vwVIVO=PI,Award_ Date,PS_ Contract,PS_ Project,Title,RecordStatus,SubcontractType,ProjectBegin,ProjectEnd,TotalAwarded,ProjFundingToDate,PI_UFID,PI_College,PI_ Dept,ProjectDEPTID,ContractPI,ContractUFID,ContractDEPTID,ProjectUFID,FiscalYear,FullTitle</Param>
+	<Param name="fields">dbo.vwVIVO=PS_ Contract,PS_ Project,Title,RecordStatus,SubcontractType,Award_ Date,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_ Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyContractNumber,Sponsor,FlowThruSponsor,PI</Param>
 	<Param name="delimiterPrefix">[</Param>
 	<Param name="delimiterSuffix">]</Param>
 </Task>
