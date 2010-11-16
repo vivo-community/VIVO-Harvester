@@ -51,6 +51,11 @@ elif [ "$CODELOC" = "Staging" ]; then
 elif [ "$CODELOC" = "trunk" ]; then
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
+else
+	echo -n "Build a stable release? (merge down, tag and release from trunk): "
+	read BUILDSTABLE
+	echo -n "Build a point release? (merge down, tag and release from trunk): "
+	read BUILDPOINT
 fi
 
 #update pom.xml,deb control, and env file with new version
