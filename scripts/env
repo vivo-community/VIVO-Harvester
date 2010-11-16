@@ -8,7 +8,7 @@ PASSWORD=
 VERSION=0.7.0
 MIN_MEM=1024m
 MAX_MEM=2048M
-DATE=`date +%Y-%m-%d_%k%M.%S`
+DATE=`date +%Y-%m-%d_%T`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 echo "Full Logging in $HARVESTER_TASK.log"
 
