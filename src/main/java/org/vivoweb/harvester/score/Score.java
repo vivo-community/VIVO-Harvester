@@ -815,7 +815,7 @@ public class Score {
 						// if loopNode matches more of foreNameNode, it's the new best match
 						//loopNode must also not cotradict Pubmed
 						// TODO Nicholas: Fix the preference for the first "best" match
-						if (matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop) && (vivoInitials.equalsIgnoreCase(pubmedInitials) || vivoInitials.isEmpty())) {
+						if ((matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) && (vivoInitials.equalsIgnoreCase(pubmedInitials) || vivoInitials.isEmpty())) {
 							log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
 							matchNode = loopNode;
 							authorNode = vivoSolution.get("x");

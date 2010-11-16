@@ -227,7 +227,7 @@ public class XSLTranslator {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		log.info(getParser().getAppName()+": Stop");
+		log.info(getParser().getAppName()+": End");
 	}
 	
 }
