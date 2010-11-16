@@ -480,7 +480,12 @@ public class JDBCFetch {
 					recID.append("id");
 					for(String idField : getIDFields(tableName)) {
 						recID.append("_-_");
-						recID.append(SpecialEntities.xmlEncode(rs.getString(idField).trim()));
+						String id = rs.getString(idField);
+						if(id != null) {
+							id = id.trim();
+						}
+						id = SpecialEntities.xmlEncode(id);
+						recID.append(id);
 					}
 					// log.trace("Creating RDF for "+tableName+": "+recID);
 					// Build RDF BEGIN
