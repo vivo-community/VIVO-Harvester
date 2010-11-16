@@ -108,22 +108,25 @@ if [ "$BUILDSTABLE" = "y" ]; then
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 	cd Staging
 	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
+	#svn commit -m $RELEASENAME
 
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
 	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
+	#svn commit -m $RELEASENAME
 
 	#tag inside trunk
-	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	#svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
 	#svn commit -m "Tag Release"
 elif [ "$BUILDPOINT" = "y" ]; then
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
 	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
+	#svn commit -m $RELEASENAME
 	
 	#tag inside trunk
-	#svn cp https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	#svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
 	#svn commit -m "Tag Release"
 fi
