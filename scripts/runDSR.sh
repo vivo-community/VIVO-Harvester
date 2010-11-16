@@ -43,7 +43,7 @@ tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 rm -rf XMLVault/h2dsr/Scored
 $Score -v config/jenaModels/myVIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -I modelName=dsrTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -O modelName=dsrStaging -f "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid" -x "http://vivoweb.org/ontology/core#principalInvestigatorRoleOf" -y "http://vivoweb.org/ontology/core#relatedRole"
 
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 mysqldump -h $SERVER -u $USERNAME -p $PASSWORD $DBNAME > backups/$DBNAME.dsr.$date.sql
 rm -rf backups/$DBNAME.current.sql
 ln -s $DBNAME.$date.sql backups/$DBNAME.current.sql

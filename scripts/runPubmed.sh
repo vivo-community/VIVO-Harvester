@@ -27,8 +27,8 @@ rm -rf XMLVault/h2Pubmed/XML
 $PubmedFetch -X config/tasks/PubmedFetch.xml
 
 # backup fetch
-date=`date +%Y-%m-%d_%k%M.%S`
-tar -czpf backups/pubmed.xml.$date.tar.gz XMLVault/h2Pubmed/XML
+date=`date +%Y-%m-%d_%T`
+tar -czpf backups/.$date.tar.gz XMLVault/h2Pubmed/XML
 rm -rf backups/pubmed.xml.latest.tar.gz
 ln -s pubmed.xml.$date.tar.gz backups/pubmed.xml.latest.tar.gz
 
@@ -42,7 +42,7 @@ rm -rf XMLVault/h2Pubmed/RDF
 $XSLTranslator -i config/recordHandlers/Pubmed-XML-h2RH.xml -x config/datamaps/PubmedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml
 
 # backup translate
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/pubmed.rdf.$date.tar.gz XMLVault/h2Pubmed/RDF
 rm -rf backups/pubmed.rdf.latest.tar.gz
 ln -s pubmed.rdf.$date.tar.gz backups/pubmed.rdf.latest.tar.gz
@@ -57,7 +57,7 @@ rm -rf XMLVault/h2Pubmed/all
 $Transfer -o config/jenaModels/h2.xml -O modelName=PubmedTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -h config/recordHandlers/Pubmed-RDF-h2RH.xml
 
 # backup H2 translate Models
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/pubmed.all.$date.tar.gz XMLVault/h2Pubmed/all
 rm -rf backups/pubmed.all.latest.tar.gz
 ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
@@ -73,7 +73,7 @@ $Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:
 #$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -a 3
 
 # back H2 score models
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/pubmed.scored.$date.tar.gz XMLVault/h2Pubmed/scored
 rm -rf backups/pubmed.scored.latest.tar.gz
 ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
@@ -93,7 +93,7 @@ $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl
 $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=PubmedStaging -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/ -p http://purl.org/ontology/bibo/ISSN
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.pretransfer.$date.sql
 rm -rf backups/$DBNAME.pubmed.pretransfer.latest.sql
 ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.latest.sql
@@ -102,7 +102,7 @@ ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.la
 $Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/pubmed" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -I modelName=PubmedStaging -v config/jenaModels/VIVO.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.posttransfer.$date.sql
 rm -rf backups/$DBNAME.pubmed.posttransfer.latest.sql
 ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.latest.sql

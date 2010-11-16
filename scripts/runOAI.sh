@@ -27,7 +27,7 @@ rm -rf XMLVault/h2oai/XML
 $OAIFetch -X config/tasks/OAIFetch.xml
 
 # backup fetch
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/oai.xml.$date.tar.gz XMLVault/h2oai/XML
 rm -rf backups/oai.xml.latest.tar.gz
 ln -s oai.xml.$date.tar.gz backups/oai.xml.latest.tar.gz
@@ -42,7 +42,7 @@ rm -rf XMLVault/h2oai/RDF
 $XSLTranslator -i config/recordHandlers/OAIXMLRecordHandler.xml -x DataMaps/OAIDublinCoreToVIVO.xsl -o config/recordHandlers/OAIRDFRecordHandler.xml
 
 # backup translate
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/oai.rdf.$date.tar.gz XMLVault/h2oai/RDF
 rm -rf backups/oai.rdf.latest.tar.gz
 ln -s oai.rdf.$date.tar.gz backups/oai.rdf.latest.tar.gz
@@ -57,7 +57,7 @@ rm -rf XMLVault/h2oai/all
 $Transfer -h config/recordHandlers/OAIRDFRecordHandler.xml -o config/jenaModels/h2.xml -O modelName=oaiTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2oai/all/store;MODE=HSQLDB"
 
 # backup H2 translate Models
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/oai.all.$date.tar.gz XMLVault/h2oai/all
 rm -rf backups/oai.all.latest.tar.gz
 ln -s oai.all.$date.tar.gz backups/oai.all.latest.tar.gz

@@ -27,7 +27,7 @@ rm -rf XMLVault/h2ps/XML
 $JDBCFetch -X config/tasks/PeopleSoftFetch.xml
 
 # backup fetch
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/ps.xml.$date.tar.gz XMLVault/h2ps/XML
 rm -rf backups/ps.xml.latest.tar.gz
 ln -s ps.xml.$date.tar.gz backups/ps.xml.latest.tar.gz
@@ -42,7 +42,7 @@ rm -rf XMLVault/h2ps/RDF
 $XSLTranslator -i config/recordHandlers/PeopleSoft-XML.xml -o config/recordHandlers/PeopleSoft-RDF.xml -x config/datamaps/PeopleSoftToVivo.xsl
 
 # backup translate
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/ps.rdf.$date.tar.gz XMLVault/h2ps/RDF
 rm -rf backups/ps.rdf.latest.tar.gz
 ln -s ps.rdf.$date.tar.gz backups/ps.rdf.latest.tar.gz
@@ -57,7 +57,7 @@ rm -rf XMLVault/h2ps/all
 $Transfer -o config/jenaModels/h2.xml -O modelName=peopleSoftTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -h config/recordHandlers/PeopleSoft-RDF.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/
 
 # backup H2 translate Models
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/ps.all.$date.tar.gz XMLVault/h2ps/all
 rm -rf backups/ps.all.latest.tar.gz
 ln -s ps.all.$date.tar.gz backups/ps.all.latest.tar.gz
@@ -68,7 +68,7 @@ ln -s ps.all.$date.tar.gz backups/ps.all.latest.tar.gz
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/person/ -p http://vivo.ufl.edu/ontology/vivo-ufl/ufid
 # backup H2 change namesace Models
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/ps.cnpeople.$date.tar.gz XMLVault/h2ps/all
 rm -rf backups/ps.cnpeople.latest.tar.gz
 ln -s ps.cnpeople.$date.tar.gz backups/ps.cnpeople.latest.tar.gz
@@ -78,7 +78,7 @@ ln -s ps.cnpeople.$date.tar.gz backups/ps.cnpeople.latest.tar.gz
 
 $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/org/ -p http://vivo.ufl.edu/ontology/vivo-ufl/deptID
 # backup H2 change namesace Models
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/ps.cnorg.$date.tar.gz XMLVault/h2ps/all
 rm -rf backups/ps.cnorg.latest.tar.gz
 ln -s ps.cnorg.$date.tar.gz backups/ps.cnorg.latest.tar.gz
@@ -88,7 +88,7 @@ ln -s ps.cnorg.$date.tar.gz backups/ps.cnorg.latest.tar.gz
 
 $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/position/ -p http://vivoweb.org/ontology/core#positionInOrganization -p http://vivoweb.org/ontology/core#positionForPerson -p http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
 # backup H2 change namesace Models
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 tar -czpf backups/ps.cnpos.$date.tar.gz XMLVault/h2ps/all
 rm -rf backups/ps.cnpos.latest.tar.gz
 ln -s ps.cnpos.$date.tar.gz backups/ps.cnpos.latest.tar.gz
@@ -97,7 +97,7 @@ ln -s ps.cnpos.$date.tar.gz backups/ps.cnpos.latest.tar.gz
 #tar -xzpf backups/ps.cnpos.latest.tar.gz XMLVault/h2ps/all
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.ps.pretransfer.$date.sql
 rm -rf backups/$DBNAME.ps.pretransfer.latest.sql
 ln -s $DBNAME.ps.pretransfer.$date.sql backups/$DBNAME.ps.pretransfer.latest.sql
@@ -106,7 +106,7 @@ ln -s $DBNAME.ps.pretransfer.$date.sql backups/$DBNAME.ps.pretransfer.latest.sql
 $Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -v config/jenaModels/VIVO.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%k%M.%S`
+date=`date +%Y-%m-%d_%T`
 mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.ps.posttransfer.$date.sql
 rm -rf backups/$DBNAME.ps.posttransfer.latest.sql
 ln -s $DBNAME.ps.posttransfer.$date.sql backups/$DBNAME.ps.posttransfer.latest.sql
