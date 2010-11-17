@@ -137,6 +137,7 @@
 		<xsl:param name='ufid' />
 		<xsl:param name='this' />
 		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
+			<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid"/></ufVivo:ufid>
 			<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 			<ufVivo:businessName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_NAME_TXT" /></ufVivo:businessName>
@@ -403,7 +404,6 @@
 		<xsl:param name='this' />
 		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
 		    <core:overview><xsl:value-of select="$this/db-t_UF_PER_UFAU:UF_JOB_LONG"/></core:overview>
-			<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid"/></ufVivo:ufid>
 		</rdf:Description>
 	</xsl:template>
 	
