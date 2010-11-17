@@ -170,6 +170,7 @@ public class ChangeNamespace {
 		ArrayList<String> filters = new ArrayList<String>();
 		int valueCount = 0;
 		sbQuery.append("SELECT ?uri\nWHERE\n{");
+		log.debug("properties size: "+properties.size());
 		for(Property p : properties) {
 			for(Statement s : IterableAdaptor.adapt(current.listProperties(p))) {
 				sbQuery.append("\t?uri <");
@@ -204,6 +205,9 @@ public class ChangeNamespace {
 		log.debug("namespace: "+namespace);
 		for(QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
 			Resource res = qs.getResource("uri");
+			if(res == null) {
+				System.out.println("res is null");
+			}
 			String resns = res.getNameSpace();
 			if(resns.equals(namespace)) {
 				String uri = res.getURI();
