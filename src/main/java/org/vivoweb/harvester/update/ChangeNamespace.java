@@ -204,7 +204,8 @@ public class ChangeNamespace {
 		log.debug("namespace: "+namespace);
 		for(QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
 			Resource res = qs.getResource("uri");
-			if(res.getNameSpace().equals(namespace)) {
+			String resns = res.getNameSpace();
+			if(resns.equals(namespace)) {
 				String uri = res.getURI();
 				retVal.add(uri);
 				log.debug("Matched URI["+count+"]: <"+uri+">");
