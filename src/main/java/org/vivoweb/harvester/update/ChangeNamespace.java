@@ -25,6 +25,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.util.StringUtils;
 import com.hp.hpl.jena.util.ResourceUtils;
 
@@ -172,7 +173,9 @@ public class ChangeNamespace {
 		sbQuery.append("SELECT ?uri\nWHERE\n{");
 		log.debug("properties size: "+properties.size());
 		for(Property p : properties) {
-			for(Statement s : IterableAdaptor.adapt(current.listProperties(p))) {
+			StmtIterator stmntit = current.listProperties(p);
+			log.debug("stmntit hasNext: "+stmntit.hasNext());
+			for(Statement s : IterableAdaptor.adapt(stmntit)) {
 				sbQuery.append("\t?uri <");
 				sbQuery.append(p.getURI());
 				sbQuery.append("> ");
@@ -206,15 +209,16 @@ public class ChangeNamespace {
 		for(QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
 			Resource res = qs.getResource("uri");
 			if(res == null) {
-				System.out.println("res is null");
+				log.debug("res is null");
 			}
-			String resns = res.getNameSpace();
-			if(resns.equals(namespace)) {
-				String uri = res.getURI();
-				retVal.add(uri);
-				log.debug("Matched URI["+count+"]: <"+uri+">");
-				count++;
-			}
+				String resns = res.getNameSpace();
+				if(resns.equals(namespace)) {
+					String uri = res.getURI();
+					retVal.add(uri);
+					log.debug("Matched URI["+count+"]: <"+uri+">");
+					count++;
+				}
+//			}
 		}
 		return retVal;
 	}
