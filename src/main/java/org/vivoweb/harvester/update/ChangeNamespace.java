@@ -172,9 +172,14 @@ public class ChangeNamespace {
 		int valueCount = 0;
 		sbQuery.append("SELECT ?uri\nWHERE\n{");
 		log.debug("properties size: "+properties.size());
+		if(properties.size() < 1) {
+			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
+		}
 		for(Property p : properties) {
 			StmtIterator stmntit = current.listProperties(p);
-			log.debug("stmntit hasNext: "+stmntit.hasNext());
+			if(!stmntit.hasNext()) {
+				throw new IllegalArgumentException("Resource <"+current.getURI()+"> does not have property <"+p.getURI()+">! SELECT cannot be created!");
+			}
 			for(Statement s : IterableAdaptor.adapt(stmntit)) {
 				sbQuery.append("\t?uri <");
 				sbQuery.append(p.getURI());
@@ -209,16 +214,15 @@ public class ChangeNamespace {
 		for(QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
 			Resource res = qs.getResource("uri");
 			if(res == null) {
-				log.debug("res is null");
+				throw new IllegalArgumentException("res is null! SELECT for resource <"+current.getURI()+"> is most likely corrupted!");
 			}
-				String resns = res.getNameSpace();
-				if(resns.equals(namespace)) {
-					String uri = res.getURI();
-					retVal.add(uri);
-					log.debug("Matched URI["+count+"]: <"+uri+">");
-					count++;
-				}
-//			}
+			String resns = res.getNameSpace();
+			if(resns.equals(namespace)) {
+				String uri = res.getURI();
+				retVal.add(uri);
+				log.debug("Matched URI["+count+"]: <"+uri+">");
+				count++;
+			}
 		}
 		return retVal;
 	}
