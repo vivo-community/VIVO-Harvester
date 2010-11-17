@@ -76,7 +76,7 @@ ln -s ps.cnpeople.$date.tar.gz backups/ps.cnpeople.latest.tar.gz
 # uncomment to restore previous changenamespace model
 #tar -xzpf backups/ps.cnpeople.latest.tar.gz XMLVault/h2ps/all
 
-$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/org/ -p http://vivo.ufl.edu/ontology/vivo-ufl/deptID
+$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/peoplesoft/org/ -p http://vivo.ufl.edu/ontology/vivo-ufl/deptID -e
 # backup H2 change namesace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/ps.cnorg.$date.tar.gz XMLVault/h2ps/all
