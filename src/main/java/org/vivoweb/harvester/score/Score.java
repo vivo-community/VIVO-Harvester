@@ -10,7 +10,6 @@ package org.vivoweb.harvester.score;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
@@ -658,8 +657,6 @@ public class Score {
 		RDFNode loopNode;
 		String vivoForeNameInitials;
 		String pubmedFornameInitials;
-		String vivoInitials;
-		String pubmedInitials;
 		String lastName;
 		String middleName;
 		ResultSet vivoResult;
@@ -720,11 +717,6 @@ public class Score {
 				log.trace("Reset minimum characters to match to " + minimum);
 			}
 			
-			
-			//Set pubmed Initials
-			pubmedInitials = foreNameNode.toString().substring(0,1) + lastNameNode.toString().substring(0,1);
-			log.trace("Using " + pubmedInitials + " as pubmed author first and middle initial");
-			
 			//support middlename parse out of forename or from pubmed
 			if (middleNameNode != null) {
 				log.trace("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
@@ -768,70 +760,62 @@ public class Score {
 					loopNode = vivoSolution.get("firstName");
 					middleNameNode = vivoSolution.get("middleName");
 					
-					if(loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
-						if (middleNameNode != null) {
-							log.trace("Checking " + loopNode + " " + middleNameNode.toString() + " " + vivoSolution.get("x"));
-						}
-						else {
-							log.trace("Checking " + loopNode + " " + vivoSolution.get("x"));
-						}
-						if(foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {
-							matchNodes.add(vivoSolution);
+					if (loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
+						if (foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {								
+							loop = 0;
+							while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+								loop++;
+							}
+							loop--;
+							
+							if (middleNameNode != null) {
+								log.trace("Checking " + loopNode + " " + middleNameNode.toString() + " " + vivoSolution.get("x"));
+							}
+							else {
+								log.trace("Checking " + loopNode + " " + vivoSolution.get("x"));
+							}
+							
+							//Grab the initials, and check that as best match
+							if (middleNameNode != null) {
+								middleName = middleNameNode.toString();
+								vivoForeNameInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
+								log.trace(loopNode.toString() + " has first and middle initial of " + vivoForeNameInitials);
+								
+								//If initials match, set as match, unless we've matched to a name below of at least 2 chars
+								//TODO Nicholas: Fix the preference for the last "best" match
+								if (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) && loopNode.toString().length() == 1) {
+									log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoForeNameInitials);
+									matchNode = loopNode;
+									authorNode = vivoSolution.get("x");
+								}
+							} else {
+								middleName = "";
+								vivoForeNameInitials = "";
+							}
+							
+							if(loop < minimum) {
+								log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
+							} else {
+								// if loopNode matches more of foreNameNode, it's the new best match
+								//loopNode must also not cotradict Pubmed
+								// TODO Nicholas: Fix the preference for the first "best" match
+								if ((matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) && (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) || pubmedFornameInitials.isEmpty() || vivoForeNameInitials.isEmpty())) {
+									log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
+									matchNode = loopNode;
+									authorNode = vivoSolution.get("x");
+								} else {
+									//check for better match
+									if (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials)) {
+										log.trace("Setting " + loopNode.toString() + " " + middleName + " as new best match, matched " + loop + " of " + foreNameNode.toString().length() + " and initials " + pubmedFornameInitials);
+										matchNode = loopNode;
+										authorNode = vivoSolution.get("x");
+									} else {
+										log.trace(loopNode.toString() + " matched " + loop + " of " + foreNameNode.toString().length());
+									}
+								}
+							}
 						} else {
 							// do nothing
-						}
-					}
-				}
-				
-				// Did we find a keeper? if so, store if meets threshold
-				// if more than 1 person find, keep the highest "best" match
-				Iterator<QuerySolution> matches = matchNodes.iterator();
-				while(matches.hasNext()) {
-					vivoSolution = matches.next();
-					loopNode = vivoSolution.get("firstName");
-					//Set vivo Initials
-					vivoInitials = loopNode.toString().substring(0,1) + lastNameNode.toString().substring(0,1);
-					log.trace("Using " + vivoInitials + " as vivo author first and last initial");
-					
-					loop = 0;
-					while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-						loop++;
-					}
-					loop--;
-					
-					middleName = "";
-					
-					//Grab the initials, and check that as best match
-					middleNameNode = vivoSolution.get("middleName");
-					if (middleNameNode != null) {
-						middleName = middleNameNode.toString();
-						vivoForeNameInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
-						log.trace(loopNode.toString() + " has first and middle initial of " + vivoForeNameInitials);
-						
-						//If initials match, set as match, unless we've matched to a name below of at least 2 chars
-						//TODO Nicholas: Fix the preference for the last "best" match
-						if (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) && loopNode.toString().length() == 1) {
-							log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoForeNameInitials);
-							matchNode = loopNode;
-							authorNode = vivoSolution.get("x");
-						}
-					} else {
-						middleName = "";
-						vivoForeNameInitials = "";
-					}
-					
-					if(loop < minimum) {
-						log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
-					} else {
-						// if loopNode matches more of foreNameNode, it's the new best match
-						//loopNode must also not cotradict Pubmed
-						// TODO Nicholas: Fix the preference for the first "best" match
-						if ((matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) && (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) || (vivoForeNameInitials.isEmpty() && pubmedFornameInitials.isEmpty()))) {
-							log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
-							matchNode = loopNode;
-							authorNode = vivoSolution.get("x");
-						} else {
-							log.trace(loopNode.toString() + " matched " + loop + " of " + foreNameNode.toString().length());
 						}
 					}
 				}
