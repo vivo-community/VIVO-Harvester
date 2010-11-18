@@ -169,7 +169,7 @@ public class DiffTest extends TestCase {
 	 * 
 	 */
 	public void testEverything(){
-		
+		log.info("BEGIN testEverything");
 		JenaConnect previousJC;
 		JenaConnect incomingJC;
 		JenaConnect diffJC;
@@ -220,6 +220,7 @@ public class DiffTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testEverything");
 	}
 
 	@Override

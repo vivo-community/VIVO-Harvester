@@ -124,52 +124,52 @@ public class ChangeNamespaceTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getMatchingURIs(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, org.vivoweb.harvester.util.repo.JenaConnect) getMatchingURIs(Resource current, String namespace, List&lt;Propetry&gt; properties, JenaConnect vivo)}.
 	 */
 	public void testGetMatchingURIs() {
-		log.info("testing getMatchingURIs Start");
+		log.info("BEGIN testGetMatchingURIs");
 		List<String> uris = ChangeNamespace.getMatchingURIs(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
 		assertTrue(uris.contains("http://vivo.test.edu/individual/n321456"));
 		assertTrue(uris.contains("http://vivo.test.edu/individual/n654321"));
 		assertFalse(uris.contains("http://vivobad.test.edu/wrong/n987456"));
 		assertTrue(uris.size() == 2);
-		log.info("testing getMatchingURIs End");
+		log.info("END testGetMatchingURIs");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getMatchingURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, org.vivoweb.harvester.util.repo.JenaConnect)  getMatchingURI(Resource current, String namespace, List&lt;Propetry&gt; properties, JenaConnect vivo)}.
 	 */
 	public void testGetMatchingURI() {
-		log.info("testing getMatchingURI Start");
+		log.info("BEGIN testGetMatchingURI");
 		String uri = ChangeNamespace.getMatchingURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
 		assertTrue(uri.equals("http://vivo.test.edu/individual/n654321") || uri.equals("http://vivo.test.edu/individual/n321456"));
-		log.info("testing getMatchingURI End");
+		log.info("END testGetMatchingURI");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getUnusedURI(java.lang.String, java.util.ArrayList, org.vivoweb.harvester.util.repo.JenaConnect...) getUnusedURI(String namespace, ArrayList&lt;String&gt; uriCheck, JenaConnect... models)}.
 	 */
 	public void testGetUnusedURI() {
-		log.info("testing getUnusedURI Start");
+		log.info("BEGIN testGetUnusedURI");
 		String uri = ChangeNamespace.getUnusedURI(this.newNamespace, new ArrayList<String>(), this.vivo);
 		assertFalse(this.vivo.containsURI(uri));
-		log.info("testing getUnusedURI End");
+		log.info("END testGetUnusedURI");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, java.util.ArrayList, boolean, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect) getURI(Resource current, String namespace, List&lt;Propetry&gt; properties, ArrayList&lt;String&gt; uriCheck, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model)}.
 	 */
 	public void testGetURI() {
-		log.info("testing getURI Start");
+		log.info("BEGIN testGetURI");
 		String matchuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, new ArrayList<String>(), false, this.vivo, this.model);
 		assertTrue(matchuri.equals("http://vivo.test.edu/individual/n654321") || matchuri.equals("http://vivo.test.edu/individual/n321456"));
 		String newuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test321"), this.newNamespace, this.properties, new ArrayList<String>(), false, this.vivo, this.model);
 		assertFalse(this.vivo.containsURI(newuri));
-		log.info("testing getURI End");
+		log.info("END testGetURI");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String, java.util.List, boolean) changeNS(JenaConnect model, String oldNamespace, String newNamespace, List&lt;Property&gt; properties, boolean errorOnNewURI)}.
 	 */
 	public void testChangeNS() {
-		log.info("testing changeNS Start");
+		log.info("BEGIN testChangeNS");
 		ByteArrayOutputStream baos;
 		baos = new ByteArrayOutputStream();
 		this.model.exportRDF(baos);
@@ -193,6 +193,6 @@ public class ChangeNamespaceTest extends TestCase {
 			String ns = rs.next().getResource("uri").getNameSpace();
 			assertTrue(ns.equals(this.newNamespace) || ns.equals("http://norename.blah.com/blah/"));
 		}
-		log.info("testing changeNS End");
+		log.info("END testChangeNS");
 	}
 }

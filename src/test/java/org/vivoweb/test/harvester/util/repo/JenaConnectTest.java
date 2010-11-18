@@ -87,6 +87,7 @@ public class JenaConnectTest extends TestCase {
 	 * JenaConnect.parseConfig(FileObject configFile)}.
 	 */
 	public void testParseConfigFile() {
+		log.info("BEGIN testParseConfigFile");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
 			bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
@@ -96,6 +97,7 @@ public class JenaConnectTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testParseConfigFile");
 	}
 	
 	/**
@@ -104,8 +106,10 @@ public class JenaConnectTest extends TestCase {
 	 * JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)}.
 	 */
 	public void testJenaConnectDBConstNoModelName() {
+		log.info("BEGIN testJenaConnectDBConstNoModelName");
 		this.jc = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		runWriteTest();
+		log.info("END testJenaConnectDBConstNoModelName");
 	}
 	
 	/**
@@ -114,8 +118,10 @@ public class JenaConnectTest extends TestCase {
 	 * JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName)}.
 	 */
 	public void testJenaConnectDBConstWithModelName() {
+		log.info("BEGIN testJenaConnectDBConstWithModelName");
 		this.jc = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName);
 		runWriteTest();
+		log.info("END testJenaConnectDBConstWithModelName");
 	}
 	
 	/**
@@ -124,12 +130,14 @@ public class JenaConnectTest extends TestCase {
 	 * JenaConnect(JenaConnect old, String modelName)}.
 	 */
 	public void testJenaConnectConstSibling() {
+		log.info("BEGIN testJenaConnectConstSibling");
 		try {
 			this.jc = new JenaConnect(new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName), modelName2);
 			runWriteTest();
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testJenaConnectConstSibling");
 	}
 	
 	/**
@@ -138,16 +146,20 @@ public class JenaConnectTest extends TestCase {
 	 * JenaConnect(InputStream in, String namespace)}.
 	 */
 	public void testJenaConnectConstInputStream() {
+		log.info("BEGIN testJenaConnectConstInputStream");
 		this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		runWriteTest();
+		log.info("END testJenaConnectConstInputStream");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#JenaConnect() JenaConnect()}.
 	 */
 	public void testJenaConnectMemConstNoModelName() {
+		log.info("BEGIN testJenaConnectMemConstNoModelName");
 		this.jc = new JenaConnect();
 		runWriteTest();
+		log.info("END testJenaConnectMemConstNoModelName");
 	}
 	
 	/**
@@ -155,8 +167,10 @@ public class JenaConnectTest extends TestCase {
 	 * modelName)}.
 	 */
 	public void testJenaConnectMemConstWithModelName() {
+		log.info("BEGIN testJenaConnectMemConstWithModelName");
 		this.jc = new JenaConnect(modelName2);
 		runWriteTest();
+		log.info("END testJenaConnectMemConstWithModelName");
 	}
 	
 	/**
@@ -164,10 +178,12 @@ public class JenaConnectTest extends TestCase {
 	 * loadRDF(InputStream in, String namespace)}.
 	 */
 	public void testLoadRDF() {
+		log.info("BEGIN testLoadRDF");
 		this.jc = new JenaConnect();
 		this.jc.loadRDF(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		StmtIterator stmnt = this.jc.getJenaModel().listStatements();
 		assertTrue(stmnt.hasNext());
+		log.info("END testLoadRDF");
 	}
 	
 	/**
@@ -175,6 +191,7 @@ public class JenaConnectTest extends TestCase {
 	 * exportRDF(OutputStream out)}.
 	 */
 	public final void testExportRDF() {
+		log.info("BEGIN testExportRDF");
 		try {
 			this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -185,6 +202,7 @@ public class JenaConnectTest extends TestCase {
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testExportRDF");
 	}
 	
 	/**
@@ -193,6 +211,7 @@ public class JenaConnectTest extends TestCase {
 	 * importRDF(RecordHandler rh, String namespace)}.
 	 */
 	public final void testImportRDF() {
+		log.info("BEGIN testImportRDF");
 		try {
 			RecordHandler rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJC-TFRH", "sa", "", "recordTable", "dataField");
 			rh.addRecord("department_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-department=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/department/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-department:name>CTRIP</db-department:name>\n    <db-department:description>UF Clinical &amp; Translational Research Informatics Program</db-department:description>\n  </rdf:Description>\n</rdf:RDF>", getClass());
@@ -207,6 +226,7 @@ public class JenaConnectTest extends TestCase {
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testImportRDF");
 	}
 	
 }

@@ -53,6 +53,7 @@ public class ArgListTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#get(java.lang.String) get(String arg)}.
 	 */
 	public final void testGet() {
+		log.info("BEGIN testGet");
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUT_FILE").setDescription("output file").setRequired(true));
 		try {
 			ArgList a = new ArgList(parser, new String[]{"-o", "Testing"});
@@ -60,12 +61,14 @@ public class ArgListTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testGet");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String) getAll(String arg)}.
 	 */
 	public final void testGetAllString() {
+		log.info("BEGIN testGetAllString");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
 			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
@@ -77,6 +80,7 @@ public class ArgListTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testGetAllString");
 	}
 	
 	/**
@@ -84,6 +88,7 @@ public class ArgListTest extends TestCase {
 	 * boolean includeDefaultValue)}.
 	 */
 	public final void testGetAllStringBoolean() {
+		log.info("BEGIN testGetAllStringBoolean");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
 			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
@@ -100,12 +105,14 @@ public class ArgListTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testGetAllStringBoolean");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#has(java.lang.String) has(String arg)}.
 	 */
 	public final void testHas() {
+		log.info("BEGIN testHas");
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("flag").setDescription("test flag"));
 		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("zig").setDescription("test missing flag"));
 		try {
@@ -115,6 +122,7 @@ public class ArgListTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testHas");
 	}
 	
 }

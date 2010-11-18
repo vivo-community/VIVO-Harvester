@@ -59,6 +59,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedHTTPFetch#main(java.lang.String[]) main(String... args)}.
 	 */
 	public final void testPubmedHTTPFetchMain() {
+		log.info("BEGIN testPubmedHTTPFetchMain");
 		try {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
 			
@@ -91,6 +92,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
+		log.info("END testPubmedHTTPFetchMain");
 	}
 	
 	/**
@@ -101,7 +103,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 			Node child = nodeList.item(x);
 			String name = child.getNodeName();
 			if(!name.contains("#text")) {
-				log.info(name);
+				log.trace(name);
 				traverseNodes(child.getChildNodes());
 			}
 		}

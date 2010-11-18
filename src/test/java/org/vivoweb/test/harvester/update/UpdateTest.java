@@ -160,7 +160,7 @@ public class UpdateTest extends TestCase {
 	 * 
 	 */
 	public void testEverything(){
-		
+		log.info("BEGIN testEverything");
 		JenaConnect previousJC;
 		JenaConnect incomingJC;
 		
@@ -193,6 +193,7 @@ public class UpdateTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testEverything");
 	}
 
 	@Override

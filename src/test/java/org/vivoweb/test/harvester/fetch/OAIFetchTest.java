@@ -51,6 +51,7 @@ public class OAIFetchTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.fetch.OAIFetch#main(java.lang.String[]) main(String... args)}.
 	 */
 	public final void testOAIFetchMain() {
+		log.info("BEGIN testOAIFetchMain");
 		try {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
 			// FIXME cah: fix this later
@@ -70,6 +71,7 @@ public class OAIFetchTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
+		log.info("END testOAIFetchMain");
 	}
 	
 	// /**

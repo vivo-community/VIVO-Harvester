@@ -39,11 +39,12 @@ public class SpecialEntitiesTest extends TestCase {
 	 * .
 	 */
 	public final void testHtmlEncode() {
-		log.info("Testing HTML Encoding");
-		log.info("HTML Encoding: " + toBeHtmlEnc);
+		log.info("BEGIN testHtmlEncode");
+		log.debug("HTML Encoding: " + toBeHtmlEnc);
 		String enc = SpecialEntities.htmlEncode(toBeHtmlEnc);
-		log.info(enc);
+		log.debug(enc);
 		assertEquals(enc, toBeHtmlDec);
+		log.info("END testHtmlEncode");
 	}
 	
 	/**
@@ -51,87 +52,92 @@ public class SpecialEntitiesTest extends TestCase {
 	 * .
 	 */
 	public final void testHtmlDecode() {
-		log.info("Testing HTML Decoding");
-		log.info("HTML Decoding: " + toBeHtmlDec);
+		log.info("BEGIN testHtmlDecode");
+		log.debug("HTML Decoding: " + toBeHtmlDec);
 		String dec = SpecialEntities.htmlDecode(toBeHtmlDec);
-		log.info(dec);
+		log.debug(dec);
 		assertEquals(dec, toBeHtmlEnc);
+		log.info("END testHtmlDecode");
 	}
 	
 	/**
 	 * Test method for html equivalence
 	 */
 	public final void testBiDirectionalHtml() {
-		log.info("Testing HTML Equvalence");
+		log.info("BEGIN testBiDirectionalHtml");
 		String dec;
 		String enc;
 		dec = null;
 		enc = null;
-		log.info("HTML Encoding: " + toBeHtmlEnc);
+		log.debug("HTML Encoding: " + toBeHtmlEnc);
 		enc = SpecialEntities.htmlEncode(toBeHtmlEnc);
 		log.info(enc);
-		log.info("HTML Decoding: " + enc);
+		log.debug("HTML Decoding: " + enc);
 		dec = SpecialEntities.htmlDecode(enc);
-		log.info(dec);
+		log.debug(dec);
 		assertEquals(dec, toBeHtmlEnc);
 		dec = null;
 		enc = null;
-		log.info("HTML Decoding: " + toBeHtmlDec);
+		log.debug("HTML Decoding: " + toBeHtmlDec);
 		dec = SpecialEntities.htmlDecode(toBeHtmlDec);
-		log.info(dec);
-		log.info("HTML Encoding: " + dec);
+		log.debug(dec);
+		log.debug("HTML Encoding: " + dec);
 		enc = SpecialEntities.htmlEncode(dec);
-		log.info(enc);
+		log.debug(enc);
 		assertEquals(enc, toBeHtmlDec);
+		log.info("END testBiDirectionalHtml");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlEncode(java.lang.String) xmlEncode(String s)}.
 	 */
 	public final void testXmlEncode() {
-		log.info("Testing XML Encoding");
-		log.info("XML Encoding: " + toBeXmlEnc);
+		log.info("BEGIN testXmlEncode");
+		log.debug("XML Encoding: " + toBeXmlEnc);
 		String enc = SpecialEntities.xmlEncode(toBeXmlEnc);
-		log.info(enc);
+		log.debug(enc);
 		assertEquals(enc, toBeXmlDec);
+		log.info("END testXmlEncode");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlDecode(java.lang.String) xmlDecode(String s)}.
 	 */
 	public final void testXmlDecode() {
-		log.info("Testing XML Decoding");
-		log.info("XML Decoding: " + toBeXmlDec);
+		log.info("BEGIN testXmlDecode");
+		log.debug("XML Decoding: " + toBeXmlDec);
 		String dec = SpecialEntities.xmlDecode(toBeXmlDec);
-		log.info(dec);
+		log.debug(dec);
 		assertEquals(dec, toBeXmlEnc);
+		log.info("END testXmlDecode");
 	}
 	
 	/**
 	 * Test method for Xml equivalence
 	 */
 	public final void testBiDirectionalXml() {
-		log.info("Testing XML Equvalence");
+		log.info("BEGIN testBiDirectionalXml");
 		String dec;
 		String enc;
 		dec = null;
 		enc = null;
-		log.info("XML Encoding: " + toBeXmlEnc);
+		log.debug("XML Encoding: " + toBeXmlEnc);
 		enc = SpecialEntities.xmlEncode(toBeXmlEnc);
-		log.info(enc);
-		log.info("XML Decoding: " + enc);
+		log.debug(enc);
+		log.debug("XML Decoding: " + enc);
 		dec = SpecialEntities.xmlDecode(enc);
-		log.info(dec);
+		log.debug(dec);
 		assertEquals(dec, toBeXmlEnc);
 		dec = null;
 		enc = null;
-		log.info("XML Decoding: " + toBeXmlDec);
+		log.debug("XML Decoding: " + toBeXmlDec);
 		dec = SpecialEntities.xmlDecode(toBeXmlDec);
-		log.info(dec);
-		log.info("XML Encoding: " + dec);
+		log.debug(dec);
+		log.debug("XML Encoding: " + dec);
 		enc = SpecialEntities.xmlEncode(dec);
-		log.info(enc);
+		log.debug(enc);
 		assertEquals(enc, toBeXmlDec);
+		log.info("END testBiDirectionalXml");
 	}
 	
 }

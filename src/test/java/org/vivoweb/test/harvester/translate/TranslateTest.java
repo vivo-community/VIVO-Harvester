@@ -313,6 +313,7 @@ public class TranslateTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.translate.XSLTranslator#main(java.lang.String[]) main(String... args)}.
 	 */
 	public void testPubMedXSLT() {
+		log.info("BEGIN testPubMedXSLT");
 		try {
 			// add a record to the record handler
 			this.inRH.addRecord("1", inputData, this.getClass());
@@ -331,6 +332,7 @@ public class TranslateTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
+		log.info("END testPubMedXSLT");
 	}
 	
 	@Override

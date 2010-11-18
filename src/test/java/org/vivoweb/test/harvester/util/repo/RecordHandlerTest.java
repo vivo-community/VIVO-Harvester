@@ -62,7 +62,7 @@ public class RecordHandlerTest extends TestCase {
 	 * String dataFieldName)}.
 	 */
 	public void testJDBCAddRecord() {
-		log.info("BEGIN JDBCRH Test");
+		log.info("BEGIN testJDBCAddRecord");
 		try {
 			this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestRH-JDBC", "sa", "", "testdb", "data");
 			runBattery();
@@ -70,7 +70,7 @@ public class RecordHandlerTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
-		log.info("END JDBCRH Test");
+		log.info("END testJDBCAddRecord");
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class RecordHandlerTest extends TestCase {
 	 * TextFileRecordHandler(String fileDir)}.
 	 */
 	public void testTextFileAddRecord() {
-		log.info("BEGIN TFRH Test");
+		log.info("BEGIN testTextFileAddRecord");
 		try {
 			this.rh = new TextFileRecordHandler("tmp://testTFRH");
 			runBattery();
@@ -87,14 +87,14 @@ public class RecordHandlerTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
-		log.info("END TFRH Test");
+		log.info("END testTextFileAddRecord");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.MapRecordHandler#MapRecordHandler() MapRecordHandler()}.
 	 */
 	public void testMapAddRecord() {
-		log.info("BEGIN MapRH Test");
+		log.info("BEGIN testMapAddRecord");
 		try {
 			this.rh = new MapRecordHandler();
 			runBattery();
@@ -102,7 +102,7 @@ public class RecordHandlerTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
-		log.info("END MapRH Test");
+		log.info("END testMapAddRecord");
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class RecordHandlerTest extends TestCase {
 	 * JenaRecordHandler(JenaConnect jena, String dataFieldType)}.
 	 */
 	public void testJenaAddRecord() {
-		log.info("BEGIN JenaRH Test");
+		log.info("BEGIN testJenaAddRecord");
 		try {
 			this.rh = new JenaRecordHandler(new JenaConnect("jdbc:h2:mem:TestRH-Jena;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver"), "http://localhost/jenarecordhandlerdemo#data");
 			runBattery();
@@ -119,7 +119,7 @@ public class RecordHandlerTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
-		log.info("END JenaRH Test");
+		log.info("END testJenaAddRecord");
 	}
 	
 	/**

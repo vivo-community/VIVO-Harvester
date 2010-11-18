@@ -50,6 +50,7 @@ public class ScoreTest extends TestCase {
 	 * Test Argument parsing for scoring
 	 */
 	public void testArguments() {
+		log.info("BEGIN testArguments");
 		String[] args;
 		Score Test;
 		
@@ -87,12 +88,11 @@ public class ScoreTest extends TestCase {
 			
 			output = JenaConnect.parseConfig(oArg, OArgProp);
 			
-			log.info("testArguments Start");
-			log.info("Testing good configs");
+			log.debug("Testing good configs");
 			
-			log.info("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
+			log.debug("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
 			args = new String[]{"-i", iArg, "-v", vArg, "-o", oArg, "-a", "1", "-e", "workEmail"};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 			} catch(Exception e) {
@@ -100,9 +100,9 @@ public class ScoreTest extends TestCase {
 				fail(e.getMessage());
 			}
 			
-			log.info("Test -v vArg -a 1");
+			log.debug("Test -v vArg -a 1");
 			args = new String[]{"-v", vArg, "-a", "1"};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 			} catch(Exception e) {
@@ -110,9 +110,9 @@ public class ScoreTest extends TestCase {
 				fail(e.getMessage());
 			}
 			
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
+			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-a", "1", "-e", "workEmail"};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 			} catch(Exception e) {
@@ -120,10 +120,10 @@ public class ScoreTest extends TestCase {
 				fail(e.getMessage());
 			}
 			
-			log.info("Testing bad configs");
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
+			log.debug("Testing bad configs");
+			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-Q"};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 				log.error("Invalid arguement passed -- score object invalid");
@@ -132,11 +132,11 @@ public class ScoreTest extends TestCase {
 				// we want exception
 			}
 			
-			log.info("Testing keep working model");
+			log.debug("Testing keep working model");
 			// keep input model
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
+			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 				Test.execute();
@@ -150,10 +150,10 @@ public class ScoreTest extends TestCase {
 			}
 			
 			// don't keep input model
-			log.info("Testing don't keep working model");
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
+			log.debug("Testing don't keep working model");
+			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-w"};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 				Test.execute();
@@ -167,11 +167,11 @@ public class ScoreTest extends TestCase {
 				fail(e.getMessage());
 			}
 			
-			log.info("Testing empty output model");
+			log.debug("Testing empty output model");
 			// empty output model
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
+			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 				//get size
@@ -187,9 +187,9 @@ public class ScoreTest extends TestCase {
 			}
 			
 			// don't empty output model
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
+			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.info(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(" ", args));
 			try {
 				Test = new Score(args);
 				//get size
@@ -217,14 +217,14 @@ public class ScoreTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
-		
-		log.info("testArguments End");
+		log.info("END testArguments");
 	}
 	
 	/**
 	 * Test Scoring Algorithms
 	 */
 	public void testAlgorithims() {
+		log.info("BEGIN testAlgorithims");
 		Score Test;
 		List<String> workEmail = Arrays.asList("workEmail");
 		List<String> blank = Arrays.asList();
@@ -319,6 +319,7 @@ public class ScoreTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
+		log.info("END testAlgorithims");
 	}
 	
 	/**

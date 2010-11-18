@@ -59,6 +59,7 @@ public class QualifyTest extends TestCase {
 	 * regex replace.
 	 */
 	public void testRegexReplace() {
+		log.info("BEGIN testRegexReplace");
 		try {
 			Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
 			Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
@@ -75,6 +76,7 @@ public class QualifyTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testRegexReplace");
 	}
 	
 	/**
@@ -82,6 +84,7 @@ public class QualifyTest extends TestCase {
 	 * string replace.
 	 */
 	public void testStringReplace() {
+		log.info("BEGIN testStringReplace");
 		try {
 			Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
 			Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
@@ -98,6 +101,7 @@ public class QualifyTest extends TestCase {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("END testStringReplace");
 	}
 	
 }

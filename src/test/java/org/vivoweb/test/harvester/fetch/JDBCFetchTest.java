@@ -62,6 +62,7 @@ public class JDBCFetchTest extends TestCase {
 	 * JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
 	 */
 	public final void testJDBCFetchConstRun() {
+		log.info("BEGIN testJDBCFetchConstRun");
 		Exception error = null;
 		Savepoint save = null;
 		try {
@@ -102,6 +103,7 @@ public class JDBCFetchTest extends TestCase {
 				fail(error.getMessage());
 			}
 		}
+		log.info("END testJDBCFetchConstRun");
 	}
 	
 	/**
@@ -112,7 +114,7 @@ public class JDBCFetchTest extends TestCase {
 			Node child = nodeList.item(x);
 			String name = child.getNodeName();
 			if(!name.contains("#text")) {
-				log.info(name);
+				log.trace(name);
 				traverseNodes(child.getChildNodes());
 			}
 		}
