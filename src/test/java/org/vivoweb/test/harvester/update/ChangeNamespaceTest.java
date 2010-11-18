@@ -3,6 +3,7 @@ package org.vivoweb.test.harvester.update;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import junit.framework.TestCase;
@@ -143,23 +144,23 @@ public class ChangeNamespaceTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getUnusedURI(java.lang.String, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect...) getUnusedURI(String namespace, JenaConnect vivo, JenaConnect... models)}.
+	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getUnusedURI(java.lang.String, java.util.ArrayList, org.vivoweb.harvester.util.repo.JenaConnect...) getUnusedURI(String namespace, ArrayList&lt;String&gt; uriCheck, JenaConnect... models)}.
 	 */
 	public void testGetUnusedURI() {
 		log.info("testing getUnusedURI Start");
-		String uri = ChangeNamespace.getUnusedURI(this.newNamespace, this.vivo);
+		String uri = ChangeNamespace.getUnusedURI(this.newNamespace, new ArrayList<String>(), this.vivo);
 		assertFalse(this.vivo.containsURI(uri));
 		log.info("testing getUnusedURI End");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, boolean) getURI(Resource current, String namespace, List&lt;Propetry&gt; properties, JenaConnect vivo, JenaConnect model, boolean errorOnNewURI)}.
+	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#getURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.List, java.util.ArrayList, boolean, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect) getURI(Resource current, String namespace, List&lt;Propetry&gt; properties, ArrayList&lt;String&gt; uriCheck, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model)}.
 	 */
 	public void testGetURI() {
 		log.info("testing getURI Start");
-		String matchuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo, this.model, false);
+		String matchuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, new ArrayList<String>(), false, this.vivo, this.model);
 		assertTrue(matchuri.equals("http://vivo.test.edu/individual/n654321") || matchuri.equals("http://vivo.test.edu/individual/n321456"));
-		String newuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test321"), this.newNamespace, this.properties, this.vivo, this.model, false);
+		String newuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test321"), this.newNamespace, this.properties, new ArrayList<String>(), false, this.vivo, this.model);
 		assertFalse(this.vivo.containsURI(newuri));
 		log.info("testing getURI End");
 	}

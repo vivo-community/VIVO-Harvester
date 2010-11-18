@@ -107,26 +107,32 @@ if [ "$BUILDSTABLE" = "y" ]; then
 	#merge down to Staging
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
 	cd Staging
-	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
-	#svn commit -m $RELEASENAME
+	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development@HEAD
+	svn commit -m $RELEASENAME
+	cd ..
+	rm -rf Staging
 
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
-	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
-	#svn commit -m $RELEASENAME
+	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging@HEAD
+	svn commit -m $RELEASENAME
 
 	#tag inside trunk
-	#svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	#svn commit -m "Tag Release"
+	svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	svn commit -m "Tag Release"
+	cd ..
+	rm -rf trunk
 elif [ "$BUILDPOINT" = "y" ]; then
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
-	svn merge https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
-	#svn commit -m $RELEASENAME
-	
+	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging@HEAD
+	svn commit -m $RELEASENAME
+
 	#tag inside trunk
-	#svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	#svn commit -m "Tag Release"
+	svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+	svn commit -m "Tag Release"
+	cd ..
+	rm -rf trunk
 fi

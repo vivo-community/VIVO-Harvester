@@ -88,28 +88,25 @@ public class ChangeNamespace {
 	 * @param current the current resource
 	 * @param namespace the namespace to match in
 	 * @param properties the propeties to match on
-	 * @param vivo the model to match in
-	 * @param model models to check for duplicates
+	 * @param uriCheck list of new uris generated during this changenamespace run
 	 * @param errorOnNewURI Log ERROR messages when a new URI is generated
+	 * @param vivo the model to match in
+	 * @param model model to check for duplicates
 	 * @return the uri of the first matched resource or an unused uri if none found
 	 */
-	public static String getURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo, JenaConnect model, boolean errorOnNewURI) {
+	public static String getURI(Resource current, String namespace, List<Property> properties, ArrayList<String> uriCheck, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model) {
 		String uri = null;
-		String matchURI = null;
 		
 		if (properties != null && !properties.isEmpty()) {
-			matchURI = getMatchingURI(current, namespace, properties, vivo);
+			uri = getMatchingURI(current, namespace, properties, vivo);
 		}
 		
-		if (matchURI != null) {
-			uri = matchURI;
-		} else {
-			uri = getUnusedURI(namespace, vivo, model);
+		if (uri == null) {
+			uri = getUnusedURI(namespace, uriCheck, vivo, model);
 			if(errorOnNewURI) {
 				log.error("Generated New Unused URI <"+uri+"> for rdf node <"+current.getURI()+">");
 			}
 		}
-		
 		log.debug("Using URI: <"+uri+">");
 		return uri;
 	}
@@ -117,12 +114,12 @@ public class ChangeNamespace {
 	/**
 	 * Gets an unused URI in the the given namespace for the given models
 	 * @param namespace the namespace
-	 * @param vivo primary model to check in
-	 * @param models additional models to check in
+	 * @param uriCheck list of new uris generated during this changenamespace run
+	 * @param models models to check in
 	 * @return the uri
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static String getUnusedURI(String namespace, JenaConnect vivo, JenaConnect... models) throws IllegalArgumentException {
+	public static String getUnusedURI(String namespace, ArrayList<String> uriCheck, JenaConnect... models) throws IllegalArgumentException {
 		if(namespace == null || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
@@ -130,17 +127,17 @@ public class ChangeNamespace {
 		Random random = new Random();
 		while(uri == null) {
 			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
-			if(vivo.containsURI(uri)) {
+			log.trace("urlCheck: "+uriCheck.contains(uri));
+			if(uriCheck.contains(uri)) {
 				uri = null;
-				log.debug("Collision with existing vivo uri");
 			}
 			for(JenaConnect model : models) {
 				if(model.containsURI(uri)) {
 					uri = null;
-					log.debug("Collision with existing model uri");
 				}
 			}
 		}
+		uriCheck.add(uri);
 		log.debug("Using new URI: <"+uri+">");
 		return uri;
 	}
@@ -156,7 +153,11 @@ public class ChangeNamespace {
 	public static String getMatchingURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo) {
 		List<String> uris = getMatchingURIs(current, namespace, properties, vivo);
 		String uri = uris.isEmpty()?null:uris.get(0);
-		log.debug("Matched URI: <"+uri+">");
+		if(uri != null) {
+			log.debug("Matched URI: <"+uri+">");
+		} else {
+			log.debug("No Matched URI");
+		}
 		return uri;
 	}
 	
@@ -254,20 +255,7 @@ public class ChangeNamespace {
 		for(Resource res : IterableAdaptor.adapt(model.getJenaModel().listSubjects())) {
 			if(oldNamespace.equals(res.getNameSpace())) {
 				log.debug("Finding match for <"+res.getURI()+">");
-				String uri = null;
-				boolean uriFound = false;
-				//find valid URI
-				while (!uriFound) {
-					uri = getURI(res, newNamespace, properties, vivo, model, errorOnNewURI);
-					log.trace("urlCheck: "+uriCheck.contains(uri));
-					//if matched in VIVO or not previously used
-					if (vivo.containsURI(uri) || !uriCheck.contains(uri)) {
-						//note URI as being used
-						uriCheck.add(uri);
-						//use this URI
-						uriFound = true;
-					}
-				}
+				String uri = getURI(res, newNamespace, properties, uriCheck, errorOnNewURI, vivo, model);
 				ResourceUtils.renameResource(res, uri);
 				count++;
 			}

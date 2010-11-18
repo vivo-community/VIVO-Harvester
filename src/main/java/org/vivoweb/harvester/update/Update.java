@@ -149,7 +149,7 @@ public class Update {
 			subJC.exportRDF(baos);
 			baos.flush();
 			log.debug("Subtraction RDF:\n"+baos.toString());
-			subJC.exportRDF("logs/update_subtractions.rdf.xml");
+			subJC.exportRDF("logs/update_Subtractions.rdf.xml");
 				
 			//run diff for additions incomingJC - previous jc
 			log.info("Finding Additions");
@@ -158,7 +158,7 @@ public class Update {
 			addJC.exportRDF(baos);
 			baos.flush();
 			log.debug("Addition RDF:\n"+baos.toString());
-			addJC.exportRDF("logs/update_additions.rdf.xml");
+			addJC.exportRDF("logs/update_Additions.rdf.xml");
 		
 			//if applyToVIVO
 			if (this.vivoJC != null){

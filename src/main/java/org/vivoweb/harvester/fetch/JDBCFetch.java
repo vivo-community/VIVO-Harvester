@@ -576,14 +576,7 @@ public class JDBCFetch {
 		InitLog.initLogger(JDBCFetch.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			JDBCFetch fetch = new JDBCFetch(new ArgList(getParser(), args));
-			fetch.execute();
-//			for(String tName : fetch.getTableNames() ){
-//				System.out.println("TableName = "+tName);
-//				for(String fName : fetch.getDataFields(tName) ){
-//					System.out.println("\tFieldName = "+fName);
-//				}
-//			}
+			new JDBCFetch(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
