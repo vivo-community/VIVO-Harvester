@@ -2,8 +2,8 @@
 <Model>
 	<Param name="dbClass">com.mysql.jdbc.Driver</Param>
 	<Param name="dbType">MySQL</Param>
-	<Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vivodb</Param>
+	<Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vitrodb</Param>
 	<Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
-	<Param name="dbUser">vivo</Param>
-	<Param name="dbPass">penguin</Param>
+	<Param name="dbUser">USERNAME</Param>
+	<Param name="dbPass">PASSWORD</Param>
 </Model>

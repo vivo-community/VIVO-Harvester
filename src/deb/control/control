@@ -1,5 +1,5 @@
-Package: vivoingest
-Version: 0.6.2
+Package: vivo-harvester
+Version: 0.7.0
 Section: misc
 Priority: misc
 Architecture: all
