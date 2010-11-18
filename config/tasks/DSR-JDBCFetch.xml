@@ -2,21 +2,22 @@
 <Task type="org.vivoweb.harvester.fetch.JDBCFetch">
 	<Param name="driver">net.sourceforge.jtds.jdbc.Driver</Param>
 	<Param name="connection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
-	<Param name="username">USERNAME</Param>
-	<Param name="password">PASSWORD</Param>
+	<Param name="username">ichp-vivo</Param>
+	<Param name="password">ichp!d@ta</Param>
 	<Param name="output">config/recordHandlers/DSR-XML.xml</Param>
+	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='N'</Param>
 	<Param name="tableName">dbo.vwContracts</Param>
 	<Param name="id">dbo.vwContracts=ContractNumber</Param>
 	<Param name="fields">dbo.vwContracts=Confidential,ContractPI,Title,ContractDeptID,TotalAwarded,ContractUFID,BEGIN_DT,END_DT,SponsorID,Sponsor,FlowThruSponsorID,FlowThruSponsor</Param>
-	<Param name="tableName">dbo.vwProjects</Param>
-	<Param name="id">dbo.vwProjects=RecID</Param>
-	<Param name="fields">dbo.vwProjects=ID_Source,PS_ContractNumber,PrimaryProject,PS_ProjectNumber,ProjectUPN,Title,DeptID,Investigator,InvestigatorID,Sponsor,SponsorID,FlowThruSponsor,FlowThruSponsorID,TotalAwarded,GM_PRIMARY_FLAG</Param>
+<!--	<Param name="tableName">dbo.vwProjects</Param>-->
+<!--	<Param name="id">dbo.vwProjects=RecID</Param>-->
+<!--	<Param name="fields">dbo.vwProjects=ID_Source,PS_ContractNumber,PrimaryProject,PS_ProjectNumber,ProjectUPN,Title,DeptID,Investigator,InvestigatorID,Sponsor,SponsorID,FlowThruSponsor,FlowThruSponsorID,TotalAwarded,GM_PRIMARY_FLAG</Param>-->
 	<Param name="tableName">dbo.vwProjectTeam</Param>
 	<Param name="id">dbo.vwProjectTeam=PS_ProjectNumber</Param>
 	<Param name="fields">dbo.vwProjectTeam=ContractUFID,ContractNumber,ProjectUPN,PrimaryProject,InvestigatorID,Investigator,isPI</Param>
-	<Param name="tableName">dbo.vwVIVO</Param>
-	<Param name="id">dbo.vwVIVO=DSR_ Number</Param>
-	<Param name="fields">dbo.vwVIVO=PS_ Contract,PS_ Project,Title,RecordStatus,SubcontractType,Award_ Date,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_ Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyContractNumber,Sponsor,FlowThruSponsor,PI</Param>
+<!--	<Param name="tableName">dbo.vwVIVO</Param>-->
+<!--	<Param name="id">dbo.vwVIVO=DSR_ Number</Param>-->
+<!--	<Param name="fields">dbo.vwVIVO=PS_ Contract,PS_ Project,Title,RecordStatus,SubcontractType,Award_ Date,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_ Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyContractNumber,Sponsor,FlowThruSponsor,PI</Param>-->
 	<Param name="delimiterPrefix">[</Param>
 	<Param name="delimiterSuffix">]</Param>
 </Task>

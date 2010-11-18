@@ -66,7 +66,7 @@
       </rdf:Description>
     </xsl:template>   
     
-    <!-- recursive tempate to turn elements into bnodes -->
+    <!-- recursive template to turn elements into bnodes -->
     <xsl:template match="*">
         <xsl:element name="{if(namespace-uri()) then namespace-uri() else $defaultNS}{local-name()}" >
             <rdf:Description>
