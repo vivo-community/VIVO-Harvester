@@ -1,3 +1,40 @@
+0.7.0
+	Update -- new command
+		added Diff to run a diff between models
+		added Merge to perform addition and subtraction of statements between jena Models
+		added changenamespace for node renaming
+	XSL files
+		Pubmed
+			add DOI
+			fix for dates
+			moved mesh terms to free text keyword
+			added back author stubs 
+			people created in pubmed now have a class that can be added to ignore list inside lucene
+	Score
+		add -q option to clear output model before scoring
+		fix author name scoring bug where it would miss duplicate names
+		add initials logic to author name scoring
+		fix scoring infinite loop when recursively looping thru nodes
+	Logging 
+		migrated to logback from log4j
+		logging speed is much faster
+		by default, only info level and warnings are output to console. this can be changed by setting the level in logback.xml in the root installation folder
+		tasks and run both log to there own files
+	Example Scripts
+		 now utilize environment variables
+		 have been enhance to use H2 db by default; which greatly increases harvest speed
+		 update all scripts to support and use backups between tool runs
+	remapped /usr/share/vivoingest to /usr/share/vivo/harvester
+	tool is now known as harvester inside code, rather than ingest
+	
+
+0.6.2
+	Correct pubmed error -- would not fetch more than 1000 records
+	Correct null exception pointer on scoring when first name was blank
+
+0.6.1
+	Correct example scripts
+
 0.6.0
 Score
 	new ForeignKey matching function

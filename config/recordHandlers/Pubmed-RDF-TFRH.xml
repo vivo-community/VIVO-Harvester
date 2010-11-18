@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordHandler type="org.vivoweb.harvester.util.repo.TextFileRecordHandler">
+	<Param name="fileDir">XMLVault/Pubmed-RDF-TFRH</Param>
+</RecordHandler>

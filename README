@@ -1,4 +1,4 @@
-VIVO Harvester 0.5.0
+VIVO Harvester
 VIVO: Enabling National Networking of Scientists
 
 Quick start
@@ -9,21 +9,17 @@ Edit config/tasks/PubmedFetch.xml and change the options as follows:
 
 	<Param id="email">YOUREMAIL</Param>
 	<Param id="output">config/recordHandlers/PubmedXMLRecordHandler.xml</Param>
-	<Param id="termSearch">youraffliationstring.edu[ad]</Param>
+	<Param id="termSearch">YOURPUBMEDQUERY</Param>
 	<Param id="numRecords">ALL</Param>
 	<Param id="batchSize">1000</Param>
 	
 run scripts/runPubMedHarvest.sh
 
-The termSearch is the same search string you would use on pubmed. The above example will harvest everything affiliated to your institution into VIVO.
+The termSearch is the same search string you would use on pubmed. 
 
 Project Documentation
 For more information about the project, visit http://sourceforge/projects/vivo/.  
 Documentation can be found on the source forge wiki at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Documentation
-
-Configuration
-Each module (Fetch, Translate, Score) require various configuration files depending on the task you are attempting to accomplish.  Example configuration scripts exist in the config directory.  Record handlers are special configs that specify the location of the data either were to put it or where to read it.  Example translation maps exist in the DataMaps folder.
-More information about project configuration can be found at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Configuration
 
 Execution Scripts
 Several example scripts are provided in the scripts folder.

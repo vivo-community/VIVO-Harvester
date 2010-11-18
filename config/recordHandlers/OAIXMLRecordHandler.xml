@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RecordHandler type="org.vivoweb.ingest.util.repo.JDBCRecordHandler">
-	<Param name="jdbcDriverClass">com.mysql.jdbc.Driver</Param>
-	<Param name="connLine">jdbc:mysql://127.0.0.1:3306/jdbcrecordstore</Param>
-	<Param name="username">jdbcRecordStore</Param>
-	<Param name="password">5j63ucbNdZ5MCRda</Param>
+<RecordHandler type="org.vivoweb.harvester.util.repo.JDBCRecordHandler">
+	<Param name="jdbcDriverClass">org.h2.Driver</Param>
+	<Param name="connLine">jdbc:h2:XMLVault/h2oai/XML/store</Param>
+	<Param name="username">sa</Param>
+	<Param name="password"></Param>
 	<Param name="tableName">recordTable</Param>
 	<Param name="dataFieldName">dataField</Param>
 </RecordHandler>
