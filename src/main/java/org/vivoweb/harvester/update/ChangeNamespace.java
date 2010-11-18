@@ -132,10 +132,12 @@ public class ChangeNamespace {
 			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
 			if(vivo.containsURI(uri)) {
 				uri = null;
+				log.debug("Collision with existing vivo uri");
 			}
 			for(JenaConnect model : models) {
 				if(model.containsURI(uri)) {
 					uri = null;
+					log.debug("Collision with existing model uri");
 				}
 			}
 		}

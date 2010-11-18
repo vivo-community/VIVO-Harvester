@@ -20,6 +20,7 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
+import com.ibm.icu.util.Calendar;
 
 /**
  *
@@ -148,6 +149,7 @@ public class Update {
 			subJC.exportRDF(baos);
 			baos.flush();
 			log.debug("Subtraction RDF:\n"+baos.toString());
+			subJC.exportRDF("logs/update_subtractions.rdf.xml");
 				
 			//run diff for additions incomingJC - previous jc
 			log.info("Finding Additions");
@@ -156,6 +158,7 @@ public class Update {
 			addJC.exportRDF(baos);
 			baos.flush();
 			log.debug("Addition RDF:\n"+baos.toString());
+			addJC.exportRDF("logs/update_additions.rdf.xml");
 		
 			//if applyToVIVO
 			if (this.vivoJC != null){
