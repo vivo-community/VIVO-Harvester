@@ -102,6 +102,10 @@ mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.ps.pretr
 rm -rf backups/$DBNAME.ps.pretransfer.latest.sql
 ln -s $DBNAME.ps.pretransfer.$date.sql backups/$DBNAME.ps.pretransfer.latest.sql
 
+#mysql -h $SERVER -u $USERNAME -p$PASSWORD -e "drop database $DBNAME;"
+#mysql -h $SERVER -u $USERNAME -p$PASSWORD -e "create database $DBNAME;"
+#mysql -h $SERVER -u $USERNAME -p$PASSWORD < backups/$DBNAME.ps.pretransfer.latest.sql
+
 # Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
 $Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -v config/jenaModels/VIVO.xml
 
@@ -110,6 +114,10 @@ date=`date +%Y-%m-%d_%T`
 mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.ps.posttransfer.$date.sql
 rm -rf backups/$DBNAME.ps.posttransfer.latest.sql
 ln -s $DBNAME.ps.posttransfer.$date.sql backups/$DBNAME.ps.posttransfer.latest.sql
+
+#mysql -h $SERVER -u $USERNAME -p$PASSWORD -e "drop database $DBNAME;"
+#mysql -h $SERVER -u $USERNAME -p$PASSWORD -e "create database $DBNAME;"
+#mysql -h $SERVER -u $USERNAME -p$PASSWORD < backups/$DBNAME.ps.posttransfer.latest.sql
 
 # Restart Tomcat
 # Tomcat must be restarted in order for the harvested data to appear in VIVO
