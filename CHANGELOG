@@ -1,3 +1,14 @@
+0.7.1
+	XSL
+		Pubmed
+			fix for publication types
+	Score
+		fix authorname match selecting incorrectly
+		fix lang datatype issue not matching 
+		
+	changenamespace
+		small logic fixes and debugging info added
+
 0.7.0
 	Update -- new command
 		added Diff to run a diff between models
