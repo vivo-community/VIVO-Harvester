@@ -67,6 +67,10 @@ public class Transfer {
 	 * namespace for relative uri resolution
 	 */
 	private String namespace;
+	/**
+	 * remove rather than add
+	 */
+	private boolean removeMode;
 	
 	/**
 	 * Constructor
@@ -75,8 +79,9 @@ public class Transfer {
 	 * @param outputFile dump to file option
 	 * @param clear clear transferred data option
 	 * @param empty empty model before transfer
+	 * @param removeMode remove rather than add
 	 */
-	public Transfer(JenaConnect in, JenaConnect out, String outputFile, boolean clear, boolean empty) {
+	public Transfer(JenaConnect in, JenaConnect out, String outputFile, boolean clear, boolean empty, boolean removeMode) {
 		if(in == null) {
 			throw new IllegalArgumentException("Must provide non-null input jena connect");
 		}
@@ -85,6 +90,7 @@ public class Transfer {
 		this.dumpFile = outputFile;
 		this.clearModel = clear;
 		this.emptyModel = empty;
+		this.removeMode = removeMode;
 	}
 	
 	/**
@@ -106,50 +112,32 @@ public class Transfer {
 			// setup input model
 			if(argList.has("i")) {
 				this.input = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
-			} else {
-				this.input = null;
 			}
 			
 			// setup output
 			if(argList.has("o")) {
 				this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
-			} else {
-				this.output = null;
 			}
 			
 			// load any specified rdf file data
-			if(argList.has("r")) {
-				this.inRDF = argList.get("r");
-				this.inRDFlang = argList.get("R");
-			} else {
-				this.inRDF = null;
-				this.inRDFlang = null;
-			}
+			this.inRDF = argList.get("r");
+			this.inRDFlang = argList.get("R");
 			
 			// load data from recordhandler
 			if(argList.has("h")) {
 				this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getProperties("H"));
-			} else {
-				this.inRH = null;
 			}
 			
 			// output to file, if requested
-			if(argList.has("d")) {
-				this.dumpFile = argList.get("d");
-			} else {
-				this.dumpFile = null;
-			}
+			this.dumpFile = argList.get("d");
 			
 			// get namespace
-			if(argList.has("n")) {
-				this.namespace = argList.get("n");
-			} else {
-				this.namespace = null;
-			}
+			this.namespace = argList.get("n");
 			
 			// empty model
 			this.clearModel = argList.has("w");
 			this.emptyModel = argList.has("e");
+			this.emptyModel = argList.has("m");
 			
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
@@ -186,11 +174,27 @@ public class Transfer {
 		}
 		
 		if(this.inRDF != null) {
-			dumpFileToJC(this.inRDF, this.input, this.inRDFlang);
+			try {
+				if(this.removeMode) {
+					this.output.removeRDF(this.inRDF, this.namespace, this.inRDFlang);
+				} else {
+					this.input.loadRDF(this.inRDF, this.namespace, this.inRDFlang);
+				}
+			} catch(FileSystemException e) {
+				log.error(e.getMessage(), e);
+			}
 		}
 		
 		if(this.inRH != null) {
-			dumpRHToJC(this.inRH, this.input);
+			if(this.removeMode) {
+				log.info("Remving Records from RecordHandler");
+				int processCount = this.output.removeRDF(this.inRH, this.namespace);
+				log.info("Removed " + processCount + " records");
+			} else {
+				log.info("Loading Records from RecordHandler");
+				int processCount = this.input.importRDF(this.inRH, this.namespace);
+				log.info("Loaded " + processCount + " records");
+			}
 		}
 		
 		if(this.dumpFile != null) {
@@ -202,7 +206,11 @@ public class Transfer {
 		}
 		
 		if(!inputIsOutput) {
-			this.output.importRDF(this.input);
+			if(this.removeMode) {
+				this.output.removeRDF(this.input);
+			} else {
+				this.output.loadRDF(this.input);
+			}
 		}
 		
 		// empty model
@@ -233,6 +241,7 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("recordHandler").withParameter(true, "RECORD_HANDLER").setDescription("record handler for input").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("recordHandlerOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "URI_BASE").setDescription("use URI_BASE when importing relative uris").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("modeRemove").setDescription("remove rather than add").setRequired(false));
 		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
@@ -246,47 +255,10 @@ public class Transfer {
 	}
 	
 	/**
-	 * dumps the contents of a file into a jena model
-	 * @param fileName the file to dump
-	 * @param jc the jena model
-	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
-	 */
-	private void dumpFileToJC(String fileName, JenaConnect jc, String language) {
-		try {
-			log.info("Loading RDF from " + fileName);
-			jc.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), this.namespace, language);
-		} catch(FileSystemException e) {
-			log.error(e.getMessage(), e);
-		}
-	}
-	
-	/**
-	 * dumps the contents of a record handler into a jena model
-	 * @param rh the record handler to dump
-	 * @param jc the jena model
-	 */
-	private void dumpRHToJC(RecordHandler rh, JenaConnect jc) {
-		// Read in records that need processing
-		log.info("Loading Records from RecordHandler");
-		int processCount = jc.importRDF(rh, this.namespace);
-		log.info("Loaded " + processCount + " records");
-	}
-	
-	/**
-	 * maybe be deprecated
-	 * copies contents of a jena model into another jena model
-	 * @param in the input model
-	 * @param out the output model
-	 */
-	/*private void transferJCToJC(JenaConnect in, JenaConnect out) {
-		out.getJenaModel().add(in.getJenaModel());
-	}*/
-	
-	/**
 	 * clears all statements from a jena model
 	 * @param jc the jena model
 	 */
-	private void emptyJC(JenaConnect jc) {
+	public static void emptyJC(JenaConnect jc) {
 		log.trace("Emptying Model");
 		jc.getJenaModel().removeAll();
 	}
@@ -294,17 +266,12 @@ public class Transfer {
 	/**
 	 * maybe be deprecated
 	 * dumps the contents of a jena model into a file
-	 * @param jc the jena model
-	 * @param fileName the file to dump into
+	 * @param jc the jena model from which the other is removed
+	 * @param remove the jena model to remove
 	 */
-	/*private void dumpJCToFile(JenaConnect jc, String fileName) {
-		log.info("Outputting RDF to " + fileName);
-		try {
-			jc.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
-		} catch(FileSystemException e) {
-			log.error(e.getMessage(), e);
-		}
-	}*/
+	public static void removeJCFromJS(JenaConnect jc, JenaConnect remove) {
+		jc.getJenaModel().remove(remove.getJenaModel());
+	}
 	
 	/**
 	 * Main method

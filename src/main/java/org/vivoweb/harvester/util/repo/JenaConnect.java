@@ -263,6 +263,26 @@ public class JenaConnect {
 	}
 	
 	/**
+	 * Load the RDF from a file
+	 * @param fileName the file to read from
+	 * @param namespace the base uri to use for imported uris
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @throws FileSystemException error accessing file
+	 */
+	public void loadRDF(String fileName, String namespace, String language) throws FileSystemException{
+		this.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+	}
+	
+	/**
+	 * Load in RDF from a model
+	 * @param jc the model to load in
+	 */
+	public void loadRDF(JenaConnect jc) {
+		getJenaModel().add(jc.getJenaModel());
+		log.debug("RDF Data was loaded");
+	}
+	
+	/**
 	 * Export all RDF
 	 * @param out output stream to write rdf to
 	 */
@@ -286,11 +306,66 @@ public class JenaConnect {
 	}
 	
 	/**
+	 * Remove RDF from another JenaConnect
+	 * @param inputJC the Model to read from
+	 */
+	public void removeRDF(JenaConnect inputJC){
+		this.jenaModel.remove(inputJC.getJenaModel());
+	}
+	
+	/**
+	 * Remove RDF from an input stream
+	 * @param in input stream to read rdf from
+	 * @param namespace the base uri to use for imported uris
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 */
+	public void removeRDF(InputStream in, String namespace, String language) {
+		removeRDF(new JenaConnect(in, namespace, language));
+		log.debug("RDF Data was removed");
+	}
+	
+	/**
+	 * Remove the RDF from a file
+	 * @param fileName the file to read from
+	 * @param namespace the base uri to use for imported uris
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @throws FileSystemException error accessing file
+	 */
+	public void removeRDF(String fileName, String namespace, String language) throws FileSystemException{
+		this.removeRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+	}
+	
+	/**
 	 * Add RDF from another JenaConnect
 	 * @param inputJC the Model to read from
 	 */
 	public void importRDF(JenaConnect inputJC){
 		this.jenaModel.add(inputJC.getJenaModel());
+	}
+	
+	/**
+	 * Removes all records in a RecordHandler from the model
+	 * @param rh the RecordHandler to pull records from
+	 * @param namespace the base uri to use for imported uris
+	 * @return number of records removed
+	 */
+	public int removeRDF(RecordHandler rh, String namespace) {
+		int processCount = 0;
+		for(Record r : rh) {
+			log.trace("removing record: " + r.getID());
+			if(namespace != null) {
+				// log.trace("using namespace '"+namespace+"'");
+			}
+			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
+			this.getJenaModel().remove(new JenaConnect(bais, namespace, null).getJenaModel());
+			try {
+				bais.close();
+			} catch(IOException e) {
+				// ignore
+			}
+			processCount++;
+		}
+		return processCount;
 	}
 	
 	/**

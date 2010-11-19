@@ -144,34 +144,32 @@ public class Update {
 			
 			//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
 			log.info("Finding Subtractions");
-			Diff.diff(this.previousJC, this.incomingJC,subJC,null);
+			Diff.diff(this.previousJC, this.incomingJC,subJC,"logs/update_Subtractions.rdf.xml");
 			baos = new ByteArrayOutputStream();
 			subJC.exportRDF(baos);
 			baos.flush();
 			log.debug("Subtraction RDF:\n"+baos.toString());
-			subJC.exportRDF("logs/update_Subtractions.rdf.xml");
 				
 			//run diff for additions incomingJC - previous jc
 			log.info("Finding Additions");
-			Diff.diff(this.incomingJC, this.previousJC, addJC, null);
+			Diff.diff(this.incomingJC, this.previousJC, addJC, "logs/update_Additions.rdf.xml");
 			baos = new ByteArrayOutputStream();
 			addJC.exportRDF(baos);
 			baos.flush();
 			log.debug("Addition RDF:\n"+baos.toString());
-			addJC.exportRDF("logs/update_Additions.rdf.xml");
 		
 			//if applyToVIVO
 			if (this.vivoJC != null){
 				log.info("Removing Subtractions from VIVO");
-				this.vivoJC.getJenaModel().remove(subJC.getJenaModel());
+				this.vivoJC.removeRDF(subJC);
 				log.info("Inputing Additions to VIVO");
-				this.vivoJC.getJenaModel().add(addJC.getJenaModel());
+				this.vivoJC.loadRDF(addJC);
 			}
 			
 			log.info("Removing Subtractions from harvester Model");
-			this.previousJC.getJenaModel().remove(subJC.getJenaModel());
+			this.previousJC.removeRDF(subJC);
 			log.info("Inputing Additions to harvester Model");
-			this.previousJC.getJenaModel().add(addJC.getJenaModel());
+			this.previousJC.loadRDF(addJC);
 			
 			if (this.wipeIncomingModel){
 				log.info("Wiping Input Model");

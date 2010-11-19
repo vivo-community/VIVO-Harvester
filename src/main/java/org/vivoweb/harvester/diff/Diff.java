@@ -157,7 +157,10 @@ public class Diff {
 	 */
 	public static void diff(JenaConnect mJC,JenaConnect sJC,JenaConnect oJC, String dF){
 		/*
-		 * c - b = a minuend - subtrahend = difference ie minuend.diff(subtrahend) = differenece c.diff(b) = a
+		 * c - b = a
+		 * minuend - subtrahend = difference
+		 * minuend.diff(subtrahend) = differenece
+		 * c.diff(b) = a
 		 */
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();
@@ -174,7 +177,7 @@ public class Diff {
 				OutputStreamWriter osw = new OutputStreamWriter(VFS.getManager().resolveFile(new File("."), dF).getContent().getOutputStream(false), Charset.availableCharsets().get("UTF-8"));
 				fasterWriter.write(diffModel, osw, "");
 				log.debug("RDF/XML Data was exported");
-			} 
+			}
 			if (oJC != null){
 				oJC.getJenaModel().add(diffModel);
 			}

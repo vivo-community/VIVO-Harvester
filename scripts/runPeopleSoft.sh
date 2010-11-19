@@ -106,8 +106,18 @@ ln -s $DBNAME.ps.pretransfer.$date.sql backups/$DBNAME.ps.pretransfer.latest.sql
 #mysql -h $SERVER -u $USERNAME -p$PASSWORD -e "create database $DBNAME;"
 #mysql -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME < backups/$DBNAME.ps.pretransfer.latest.sql
 
-# Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
-$Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -I modelName=peopleSoftTempTransfer -v config/jenaModels/VIVO.xml
+# Find Subtractions
+$Diff -m config/jenaModels/VIVO.xml -M modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -s config/jenaModels/h2.xml -S dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -S modelName=peopleSoftTempTransfer -d XMLVault/update_Subtractions.rdf.xml
+# Find Additions
+$Diff -m config/jenaModels/h2.xml -M dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -M modelName=peopleSoftTempTransfer -s config/jenaModels/VIVO.xml -S modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -d XMLVault/update_Additions.rdf.xml
+# Apply Subtractions to Previous model
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -r XMLVault/update_Subtractions.rdf.xml -m
+# Apply Additions to Previous model
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -r XMLVault/update_Additions.rdf.xml
+# Apply Subtractions to VIVO
+$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Subtractions.rdf.xml -m
+# Apply Additions to VIVO
+$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Additions.rdf.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
