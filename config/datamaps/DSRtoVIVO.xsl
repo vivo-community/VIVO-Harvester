@@ -1,3 +1,19 @@
+<!--
+  Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the new BSD license
+  which accompanies this distribution, and is available at
+  http://www.opensource.org/licenses/bsd-license.html
+  
+  Contributors:
+      Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+      James Pence
+-->
+<!-- <?xml version="1.0"?> -->
+<!-- Header information for the Style Sheet
+	The style sheet requires xmlns for each prefix you use in constructing
+	the new elements
+-->
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet version="2.0"
