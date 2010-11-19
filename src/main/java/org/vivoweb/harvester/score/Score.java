@@ -17,20 +17,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -110,7 +104,7 @@ public class Score {
 		InitLog.initLogger(Score.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			Score Scoring = new Score(args);
+			Score Scoring = new Score(new ArgList(getParser(), args));
 			Scoring.execute();
 			Scoring.close();
 		} catch(ParserConfigurationException e) {
@@ -178,7 +172,7 @@ public class Score {
 				// this.exactMatch(attribute);
 				// TODO Nicolas: fix exact match to take in two attributes <>,<> check with chaines
 				// for proper format (? comma seperated list ?)
-				this.exactMatch("<http://vivoweb.org/ontology/score#" + attribute + ">", "<http://vivoweb.org/ontology/core#" + attribute + ">");
+				this.exactMatch("http://vivoweb.org/ontology/score#" + attribute, "http://vivoweb.org/ontology/core#" + attribute);
 			}
 		}
 		
@@ -320,8 +314,18 @@ public class Score {
 	 * @throws ParserConfigurationException error parsing configs
 	 */
 	public Score(String... args) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
-		ArgList opts = new ArgList(getParser(), args);
-		
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
+	 * @param opts parsed argument list
+	 * @throws IOException error parsing options
+	 * @throws IllegalArgumentException arguments invalid
+	 * @throws SAXException error parsing configs
+	 * @throws ParserConfigurationException error parsing configs
+	 */
+	public Score(ArgList opts) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
 		// Get optional inputs / set defaults
 		// Check for config files, before parsing name options
 		String jenaVIVO = opts.get("v");
@@ -391,54 +395,52 @@ public class Score {
 		this.objToScore = opts.get("y");
 	}
 	
-	/**
-	 * Executes a sparql query against a JENA model and returns a result set
-	 * @param model a model containing statements
-	 * @param queryString the query to execute against the model
-	 * @return queryExec the executed query result set
-	 */
-	private static ResultSet executeQuery(Model model, String queryString) {
-		//		log.debug("query: " + queryString);
-		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
-		QueryExecution queryExec = QueryExecutionFactory.create(query, model);
-		
-		return queryExec.execSelect();
-	}
+//	/**
+//	 * Executes a sparql query against a JENA model and returns a result set
+//	 * @param model a model containing statements
+//	 * @param queryString the query to execute against the model
+//	 * @return queryExec the executed query result set
+//	 */
+//	private static ResultSet executeQuery(Model model, String queryString) {
+//		//		log.debug("query: " + queryString);
+//		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
+//		QueryExecution queryExec = QueryExecutionFactory.create(query, model);
+//		
+//		return queryExec.execSelect();
+//	}
 	
 	/**
 	 * Commits node to a matched model
 	 * @param result a model containing vivo statements
 	 * @param authorNode the node of the author
-	 * @param paperResource the paper of the resource
 	 * @param matchNode the node to match
 	 * @param paperNode the node of the paper
 	 */
-	private static void commitResultNode(Model result, RDFNode authorNode, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
+	private static void commitResultNode(JenaConnect result, Resource authorNode, RDFNode matchNode, Resource paperNode) {
 		log.trace("Found " + matchNode.toString() + " for person " + authorNode.toString());
 		log.trace("Adding paper " + paperNode.toString());
 		
-		result.add(recursiveSanitizeBuild(paperResource, new Stack<Resource>()));
+		result.getJenaModel().add(recursiveSanitizeBuild(paperNode, new Stack<Resource>()).getJenaModel());
 		
 		replaceResource(authorNode, paperNode, result);
 		
 		// take results and store in matched model
-		result.commit();
+		result.getJenaModel().commit();
 	}
 	
 	/**
 	 * Commits resultset to a matched model
 	 * @param result a model containing vivo statements
 	 * @param storeResult the result to be stored
-	 * @param paperResource the paper of the resource
-	 * @param matchNode the node to match
+	 * @param matchValue the node to match
 	 * @param paperNode the node of the paper
 	 */
-	private static void commitResultSet(Model result, ResultSet storeResult, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
-		RDFNode authorNode;
+	private static void commitResultSet(JenaConnect result, ResultSet storeResult, String matchValue, Resource paperNode) {
+		Resource authorNode;
 		QuerySolution vivoSolution;
 		
 		if(!storeResult.hasNext()){
-			result.add(recursiveSanitizeBuild(paperResource,new Stack<Resource>()));
+			result.getJenaModel().add(recursiveSanitizeBuild(paperNode,new Stack<Resource>()).getJenaModel());
 		}
 		
 		// loop thru resultset
@@ -446,16 +448,16 @@ public class Score {
 			vivoSolution = storeResult.next();
 			
 			// Grab person URI
-			authorNode = vivoSolution.get("x");
-			log.trace("Found " + matchNode.toString() + " for person " + authorNode.toString());
-			log.trace("Adding paper " + paperNode.toString());
+			authorNode = vivoSolution.getResource("x");
+			log.trace("Found \"" + matchValue + "\" for person <" + authorNode + ">");
+			log.trace("Adding paper <" + paperNode + ">");
 			
-			result.add(recursiveSanitizeBuild(paperResource, new Stack<Resource>()));
+			result.getJenaModel().add(recursiveSanitizeBuild(paperNode, new Stack<Resource>()).getJenaModel());
 			
 			replaceResource(authorNode, paperNode, result);
 			
 			// take results and store in matched model
-			result.commit();
+			result.getJenaModel().commit();
 		}
 	}
 	
@@ -465,7 +467,7 @@ public class Score {
 	 * @param paperNode node of paper
 	 * @param toReplace model to replace
 	 */
-	private static void replaceResource(RDFNode mainNode, RDFNode paperNode, Model toReplace) {
+	private static void replaceResource(Resource mainNode, Resource paperNode, JenaConnect toReplace) {
 		Resource authorship;
 		String authorQuery;
 		Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
@@ -482,27 +484,40 @@ public class Score {
 		Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 		int authorRank = 1;
 		
-		log.trace("Link paper " + paperNode.toString() + " to person " + mainNode.toString() + " in VIVO");
+		log.trace("Link paper <" + paperNode + "> to person <" + mainNode + "> in VIVO");
 		authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/l1");
 		
 		// string that finds the last name of the person in VIVO
-		Statement authorLName = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
+		Statement authorLName = mainNode.getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
 		
 		if (authorLName == null) {
-			Statement authorworkEmail = ((Resource)mainNode).getProperty(ResourceFactory.createProperty("http://vivoweb.org/ontology/core#workEmail"));
+			Statement authorworkEmail = mainNode.getProperty(ResourceFactory.createProperty("http://vivoweb.org/ontology/core#workEmail"));
 			log.debug("Author Last name property is null, trying to find via email");
 			if (authorworkEmail == null) {
 				log.warn("Cannot find author -- linking failed");
 				return;
 			}
-			authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT ?badNode " + "WHERE {?badNode core:workEmail \"" + authorworkEmail.getObject().toString() + "\" . " + "?badNode core:authorInAuthorship ?authorship . " + "?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
+			authorQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> "+
+							"SELECT ?badNode " +
+							"WHERE {" +
+								"?badNode core:workEmail \"" + authorworkEmail.getObject().toString() + "\" . " +
+								"?badNode core:authorInAuthorship ?authorship . " +
+								"?authorship core:linkedInformationResource <" + paperNode.toString() + ">" +
+							" }";
 		} else {
-			authorQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "SELECT ?badNode " + "WHERE {?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " + "?badNode core:authorInAuthorship ?authorship . " + "?authorship core:linkedInformationResource <" + paperNode.toString() + "> }";
+			authorQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+							"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+							"SELECT ?badNode " +
+							"WHERE {" +
+								"?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " +
+								"?badNode core:authorInAuthorship ?authorship . " +
+								"?authorship core:linkedInformationResource <" + paperNode.toString() + ">" +
+							"}";
 		}
 		
 		log.debug(authorQuery);
 		
-		ResultSet killList = executeQuery(toReplace, authorQuery);
+		ResultSet killList = toReplace.executeQuery(authorQuery);
 		
 		while(killList.hasNext()) {
 			QuerySolution killSolution = killList.next();
@@ -516,7 +531,7 @@ public class Score {
 			// return a statement iterator with all the statements for the Author that matches, then remove those
 			// statements
 			// model.remove is broken so we are using statement.remove
-			StmtIterator deleteStmts = toReplace.listStatements(null, null, removeAuthor);
+			StmtIterator deleteStmts = toReplace.getJenaModel().listStatements(null, null, removeAuthor);
 			while(deleteStmts.hasNext()) {
 				Statement dStmt = deleteStmts.next();
 				log.debug("Delete Statement " + dStmt.toString());
@@ -531,7 +546,7 @@ public class Score {
 					}
 					dStmt.getSubject().removeProperties();
 					
-					StmtIterator deleteAuthorshipStmts = toReplace.listStatements(null, null, dStmt.getSubject());
+					StmtIterator deleteAuthorshipStmts = toReplace.getJenaModel().listStatements(null, null, dStmt.getSubject());
 					while(deleteAuthorshipStmts.hasNext()) {
 						Statement dASStmt = deleteAuthorshipStmts.next();
 						log.debug("Delete Statement " + dASStmt.toString());
@@ -549,24 +564,24 @@ public class Score {
 			removeAuthor.removeProperties();
 		}
 		
-		toReplace.add(authorship, linkedAuthorOf, mainNode);
+		toReplace.getJenaModel().add(authorship, linkedAuthorOf, mainNode);
 		log.trace("Link Statement [" + authorship.toString() + ", " + linkedAuthorOf.toString() + ", " + mainNode.toString() + "]");
-		toReplace.add((Resource)mainNode, authorshipForPerson, authorship);
+		toReplace.getJenaModel().add(mainNode, authorshipForPerson, authorship);
 		log.trace("Link Statement [" + mainNode.toString() + ", " + authorshipForPerson.toString() + ", " + authorship.toString() + "]");
-		toReplace.add(authorship, paperOf, paperNode);
+		toReplace.getJenaModel().add(authorship, paperOf, paperNode);
 		log.trace("Link Statement [" + authorship.toString() + ", " + paperOf.toString() + ", " + paperNode.toString() + "]");
-		toReplace.add((Resource)paperNode, authorshipForPaper, authorship);
+		toReplace.getJenaModel().add(paperNode, authorshipForPaper, authorship);
 		log.trace("Link Statement [" + paperNode.toString() + ", " + authorshipForPaper.toString() + ", " + authorship.toString() + "]");
-		toReplace.add(authorship, rdfType, flag1);
+		toReplace.getJenaModel().add(authorship, rdfType, flag1);
 		log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
-		toReplace.add(authorship, rdfType, authorshipClass);
+		toReplace.getJenaModel().add(authorship, rdfType, authorshipClass);
 		log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + authorshipClass.toString() + "]");
-		toReplace.add(authorship, rdfLabel, "Authorship for Paper");
+		toReplace.getJenaModel().add(authorship, rdfLabel, "Authorship for Paper");
 		log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
-		toReplace.addLiteral(authorship, rankOf, authorRank);
+		toReplace.getJenaModel().addLiteral(authorship, rankOf, authorRank);
 		log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", " + String.valueOf(authorRank) + "]");
 		
-		toReplace.commit();
+		toReplace.getJenaModel().commit();
 	}
 	
 	/**
@@ -576,8 +591,8 @@ public class Score {
 	 * @return the model containing the sanitized info so far
 	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
 	 */
-	private static Model recursiveSanitizeBuild(Resource mainRes, Stack<Resource> linkRes) {
-		Model returnModel = ModelFactory.createDefaultModel();
+	private static JenaConnect recursiveSanitizeBuild(Resource mainRes, Stack<Resource> linkRes) {
+		JenaConnect returnModel = new JenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
 		
 		while(mainStmts.hasNext()) {
@@ -586,17 +601,17 @@ public class Score {
 			// Don't add any scoring statements
 			if(!stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
 				// log.debug(stmt.toString());
-				returnModel.add(stmt);
+				returnModel.getJenaModel().add(stmt);
 				
 				//todo change the equals t o
 				if(stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
 					linkRes.push(mainRes);
-					returnModel.add(recursiveSanitizeBuild(stmt.getObject().asResource(), linkRes));
+					returnModel.getJenaModel().add(recursiveSanitizeBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
 					linkRes.pop();
 				}
 				if(!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
 					linkRes.push(mainRes);
-					returnModel.add(recursiveSanitizeBuild(stmt.getSubject(), linkRes));
+					returnModel.getJenaModel().add(recursiveSanitizeBuild(stmt.getSubject(), linkRes).getJenaModel());
 					linkRes.pop();
 				}
 			}
@@ -647,12 +662,11 @@ public class Score {
 		//TODO: Nicholas This function needs some logical cleanup.. :-)
 		
 		String queryString;
-		Resource paperResource;
 		RDFNode lastNameNode;
 		RDFNode foreNameNode;
 		RDFNode middleNameNode;
-		RDFNode paperNode;
-		RDFNode authorNode = null;
+		Resource paperNode;
+		Resource authorNode = null;
 		RDFNode matchNode = null;
 		RDFNode loopNode;
 		String vivoForeNameInitials;
@@ -670,11 +684,19 @@ public class Score {
 		int loop;
 		int minimum = minChars;
 		
-		String matchQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "PREFIX score: <http://vivoweb.org/ontology/score#> " + "SELECT REDUCED ?x ?lastName ?foreName ?middleName " + "WHERE { ?x foaf:lastName ?lastName . ?x score:foreName ?foreName . OPTIONAL { ?x core:middleName ?middleName}}";
+		String matchQuery =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+							"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+							"PREFIX score: <http://vivoweb.org/ontology/score#> " +
+							"SELECT REDUCED ?x ?lastName ?foreName ?middleName " +
+							"WHERE {" +
+								"?x foaf:lastName ?lastName . " +
+								"?x score:foreName ?foreName . " +
+								"OPTIONAL { ?x core:middleName ?middleName}" +
+							"}";
 		
 		log.info("Executing authorNameMatch");
 		log.debug(matchQuery);
-		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
+		scoreInputResult = this.scoreInput.executeQuery(matchQuery);
 		
 		// Log extra info message if none found
 		if(!scoreInputResult.hasNext()) {
@@ -689,19 +711,23 @@ public class Score {
 			lastNameNode = scoreSolution.get("lastName");
 			foreNameNode = scoreSolution.get("foreName");
 			middleNameNode = scoreSolution.get("middleName");
-			authorNode = scoreSolution.get("x");
+			authorNode = scoreSolution.getResource("x");
 			
 			//Find paper
 			//TODO: Have Stephen show Nicholas what a fool he is for writing this
-			matchQuery = "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT ?x ?paper " + "WHERE { ?x core:linkedAuthor <" + authorNode + "> . ?x core:linkedInformationResource ?paper}";
+			matchQuery = 	"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+							"SELECT ?x ?paper " + 
+							"WHERE {" +
+								"?x core:linkedAuthor <" + authorNode + "> . " +
+								"?x core:linkedInformationResource ?paper" +
+							"}";
 			
 			log.debug(matchQuery);
-			scorePaperResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
+			scorePaperResult = this.scoreInput.executeQuery(matchQuery);
 			
 			if (scorePaperResult.hasNext()) {
 				scorePaperSolution = scorePaperResult.next();
-				paperNode = scorePaperSolution.get("paper");
-				paperResource = scorePaperSolution.getResource("paper");
+				paperNode = scorePaperSolution.getResource("paper");
 			} else {
 				//go to next one, can't find paper
 				log.error("Can't find paper for " + authorNode);
@@ -747,11 +773,18 @@ public class Score {
 				scoreMatch = lastNameNode.toString();
 				
 				// Select all matching authors from vivo store
-				queryString = "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + "PREFIX core: <http://vivoweb.org/ontology/core#> " + "SELECT REDUCED ?x ?firstName ?middleName " + "WHERE { ?x foaf:lastName" + " \"" + scoreMatch + "\" . ?x foaf:firstName ?firstName . OPTIONAL { ?x core:middleName ?middleName}}";
+				queryString =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + 
+								"PREFIX core: <http://vivoweb.org/ontology/core#> " + 
+								"SELECT REDUCED ?x ?firstName ?middleName " + 
+								"WHERE { " +
+									"?x foaf:lastName" + " \"" + scoreMatch + "\" . " +
+									"?x foaf:firstName ?firstName . " +
+									"OPTIONAL { ?x core:middleName ?middleName}" +
+								"}";
 				
 				log.debug(queryString);
 				
-				vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
+				vivoResult = this.vivo.executeQuery(queryString);
 				
 				// Loop thru results and only keep if the last name, and first initial match
 				while(vivoResult.hasNext()) {
@@ -777,8 +810,8 @@ public class Score {
 							
 							//Grab the initials, and check that as best match
 							if (middleNameNode != null) {
-								middleName = middleNameNode.toString();
-								vivoForeNameInitials = loopNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
+								middleName = middleNameNode.asLiteral().getValue().toString();
+								vivoForeNameInitials = loopNode.toString().substring(0,1) + middleName.substring(0,1);
 								log.trace(loopNode.toString() + " has first and middle initial of " + vivoForeNameInitials);
 								
 								//If initials match, set as match, unless we've matched to a name below of at least 2 chars
@@ -786,7 +819,7 @@ public class Score {
 								if (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) && loopNode.toString().length() == 1) {
 									log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoForeNameInitials);
 									matchNode = loopNode;
-									authorNode = vivoSolution.get("x");
+									authorNode = vivoSolution.getResource("x");
 								}
 							} else {
 								middleName = "";
@@ -802,13 +835,13 @@ public class Score {
 								if ((matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) && (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) || pubmedFornameInitials.isEmpty() || vivoForeNameInitials.isEmpty())) {
 									log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
 									matchNode = loopNode;
-									authorNode = vivoSolution.get("x");
+									authorNode = vivoSolution.getResource("x");
 								} else {
 									//check for better match
 									if (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials)) {
 										log.trace("Setting " + loopNode.toString() + " " + middleName + " as new best match, matched " + loop + " of " + foreNameNode.toString().length() + " and initials " + pubmedFornameInitials);
 										matchNode = loopNode;
-										authorNode = vivoSolution.get("x");
+										authorNode = vivoSolution.getResource("x");
 									} else {
 										log.trace(loopNode.toString() + " matched " + loop + " of " + foreNameNode.toString().length());
 									}
@@ -821,7 +854,7 @@ public class Score {
 				}
 				if(matchNode != null && authorNode != null) {
 					log.trace("Keeping " + matchNode.toString());
-					commitResultNode(this.scoreOutput.getJenaModel(), authorNode, paperResource, matchNode, paperNode);
+					commitResultNode(this.scoreOutput, authorNode, matchNode, paperNode);
 				}
 			}
 		}
@@ -838,26 +871,17 @@ public class Score {
 		// Foreign Key Match
 		log.info("Executing foreignKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
-		//		Property vivoAttr = this.scoreInput.getJenaModel().getProperty(vivoAttribute);
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
-		//		String stmtQuery = "SELECT ?sub ?obj\nWHERE\n{\n  ?sub <" + scoreAttribute + "> ?obj\n}";
-		//		System.out.println(stmtQuery);
-		//		ResultSet stmtRS = this.vivo.executeQuery(stmtQuery);
 		if(!stmtitr.hasNext()) {
 			log.trace("No matches found for <" + scoreAttribute + "> in input");
 			return;
 		}
 		log.trace("Matches found for <" + scoreAttribute + "> in input");
-		//		for(Statement s : IterableAdaptor.adapt(this.vivo.getJenaModel().listStatements(null, vivoAttr, (RDFNode)null))) {
-		//			log.debug("VIVO Match: " + s);
-		//		}
 		// look for exact match in vivo
-		while(stmtitr.hasNext()) {
-			Statement stmt = stmtitr.next();
+		for(Statement stmt : IterableAdaptor.adapt(stmtitr)) {
 			Resource sub = stmt.getSubject();
-			String obj = stmt.getLiteral().getString();
+			String obj = stmt.getLiteral().getValue().toString();
 			log.trace("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
-			//			StmtIterator matches = this.vivo.getJenaModel().listStatements(null, vivoAttr, obj);
 			String query = ""+
 				"SELECT ?sub"+"\n"+
 				"WHERE {"+"\n\t"+
@@ -865,23 +889,22 @@ public class Score {
 					"FILTER (str(?obj) = \"" + obj + "\")"+"\n"+
 				"}";
 			log.debug(query);
-			ResultSet matches = executeQuery(this.vivo.getJenaModel(), query);
+			ResultSet matches = this.vivo.executeQuery(query);
 			if(!matches.hasNext()) {
 				log.trace("No matches in VIVO found");
 				if (this.pushAll){
-					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new Stack<Resource>()));
+					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new Stack<Resource>()).getJenaModel());
 				}
 			} else {
 				log.trace("Matches in VIVO found");
 				// loop thru resources
 				while(matches.hasNext()) {
 					// Grab person URI
-					//					Resource vivoNode = matchesRS.next().getSubject();
 					Resource vivoNode = matches.next().getResource("sub");
 					log.trace("Found <" + sub + "> for VIVO entity <" + vivoNode + ">");
 					log.trace("Adding entity <" + sub + "> to output");
 					
-					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new Stack<Resource>()));
+					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new Stack<Resource>()).getJenaModel());
 					
 					log.trace("Linking entity <" + sub + "> to VIVO entity <" + vivoNode + ">");
 					
@@ -905,48 +928,43 @@ public class Score {
 	 * match someone in vivo Working on that now
 	 */
 	public void exactMatch(String scoreAttribute, String vivoAttribute) {
-		String scoreMatch;
 		String queryString;
-		Resource paperResource;
-		RDFNode matchNode;
-		RDFNode paperNode;
-		ResultSet vivoResult;
-		QuerySolution scoreSolution;
+		String matchValue;
+		Resource paperNode;
+		
 		ResultSet scoreInputResult;
 		
-		String matchQuery = "SELECT ?x ?scoreAttribute " + "WHERE { ?x " + scoreAttribute + " ?scoreAttribute}";
+		String matchQuery = "SELECT ?x ?scoreAttribute " + "WHERE { ?x <" + scoreAttribute + "> ?scoreAttribute}";
 		
 		// Exact Match
-		log.info("Executing exactMatch for " + scoreAttribute + " against " + vivoAttribute);
+		log.info("Executing exactMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		log.debug(matchQuery);
-		scoreInputResult = executeQuery(this.scoreInput.getJenaModel(), matchQuery);
+		scoreInputResult = this.scoreInput.executeQuery(matchQuery);
 		
 		// Log extra info message if none found
 		if(!scoreInputResult.hasNext()) {
-			log.trace("No matches found for " + scoreAttribute + " in input");
+			log.trace("No matches found for <" + scoreAttribute + "> in input");
 		} else {
-			log.trace("Looping thru matching " + scoreAttribute + " from input");
+			log.trace("Looping thru matching <" + scoreAttribute + "> from input");
 		}
 		
 		// look for exact match in vivo
-		while(scoreInputResult.hasNext()) {
-			scoreSolution = scoreInputResult.next();
-			matchNode = scoreSolution.get("scoreAttribute");
-			paperNode = scoreSolution.get("x");
-			paperResource = scoreSolution.getResource("x");
+		for(QuerySolution scoreSolution : IterableAdaptor.adapt(scoreInputResult)) {
+			matchValue = scoreSolution.getLiteral("scoreAttribute").getValue().toString();
+			paperNode = scoreSolution.getResource("x");
 			
-			scoreMatch = matchNode.toString();
-			
-			log.trace("Checking for " + scoreMatch + " from " + paperNode.toString() + " in VIVO");
+			log.trace("Checking for \"" + matchValue + "\" from <" + paperNode + "> in VIVO");
 			
 			// Select all matching attributes from vivo store
-			queryString = "SELECT ?x " + "WHERE { ?x " + vivoAttribute + " \"" + scoreMatch + "\" }";
+			queryString =	"SELECT ?x " + 
+							"WHERE { " + 
+								"?x <" + vivoAttribute + "> ?value " + 
+								"FILTER (str(?value) = \"" + matchValue + "\")" +
+							"}";
 			
 			log.debug(queryString);
 			
-			vivoResult = executeQuery(this.vivo.getJenaModel(), queryString);
-			
-			commitResultSet(this.scoreOutput.getJenaModel(), vivoResult, paperResource, matchNode, paperNode);
+			commitResultSet(this.scoreOutput, this.vivo.executeQuery(queryString), matchValue, paperNode);
 		}
 	}
 	

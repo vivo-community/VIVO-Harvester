@@ -189,10 +189,10 @@ public class ChangeNamespace {
 				sbQuery.append("> ");
 				if(s.getObject().isResource()) {
 					sbQuery.append("<");
-					sbQuery.append(s.getObject().asResource().getURI());
+					sbQuery.append(s.getResource().getURI());
 					sbQuery.append(">");
 				} else {
-					filters.add("( str(?value"+valueCount+") = \""+s.getObject().asLiteral().getValue().toString()+"\" )");
+					filters.add("( str(?value"+valueCount+") = \""+s.getLiteral().getValue().toString()+"\" )");
 					sbQuery.append("?value");
 					sbQuery.append(valueCount);
 					valueCount++;
