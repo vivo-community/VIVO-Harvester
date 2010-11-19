@@ -231,7 +231,7 @@ public class PubmedScore extends Score {
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
 	@SuppressWarnings("unused")
-	public PubmedScore(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public PubmedScore(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
 		this.wipeInputModel = clearInputModelArg;
 		this.wipeOutputModel = clearOutputModelArg;
 		this.exactMatch = exactMatchArg;
