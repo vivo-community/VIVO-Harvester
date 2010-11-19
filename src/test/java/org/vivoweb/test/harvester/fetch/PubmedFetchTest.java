@@ -74,8 +74,8 @@ public class PubmedFetchTest extends TestCase {
 			}
 			
 			//test 0 records, batch 1
-			PubmedFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()});
-			assertTrue(this.rh.iterator().hasNext());
+			//PubmedFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			//assertTrue(this.rh.iterator().hasNext());
 			
 			//test 1 records, batch 0
 			PubmedFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()});
