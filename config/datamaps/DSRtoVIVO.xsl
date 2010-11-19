@@ -31,27 +31,30 @@
 			<xsl:matching-substring>
 				<xsl:variable name="table" select="regex-group(1)" />
 				<xsl:variable name="rdfid" select="$this/@rdf:ID" />
-				<xsl:variable name="grantid" select="$this/@" />
 				
 				<xsl:analyze-string select="$rdfid" regex="^id_-_(.*?)(_-_.+)*?$">
-					<xsl:choose>
-<!--						<xsl:when test="$table = 'dbo.vwVIVO'">-->
-<!--							<xsl:call-template name="t_vwVIVO">-->
-<!--								<xsl:with-param name="ufid" select="$ufid" />-->
-<!--								<xsl:with-param name="this" select="$this" />-->
-<!--							</xsl:call-template>-->
-<!--						</xsl:when>-->
-						<xsl:when test="$table = 'dbo.vwContracts'">
-							<xsl:call-template name="t_vwContracts">
-								<xsl:with-param name="grantid" select="regex-group(1)" />
-							</xsl:call-template>
-						</xsl:when>
-						<xsl:when test="$table = 'dbo.vwProjectTeam'">
-							<xsl:call-template name="t_vwProjectTeam">
-							</xsl:call-template>
-						</xsl:when>
-					</xsl:choose>
-							
+					<xsl:matching-substring>
+						<xsl:choose>
+	<!--						<xsl:when test="$table = 'dbo.vwVIVO'">-->
+	<!--							<xsl:call-template name="t_vwVIVO">-->
+	<!--								<xsl:with-param name="ufid" select="$ufid" />-->
+	<!--								<xsl:with-param name="this" select="$this" />-->
+	<!--							</xsl:call-template>-->
+	<!--						</xsl:when>-->
+							<xsl:when test="$table = 'dbo.vwContracts'">
+								<xsl:call-template name="t_vwContracts">
+									<xsl:with-param name="grantid" select="regex-group(1)" />
+									<xsl:with-param name="this" select="$this" />
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:when test="$table = 'dbo.vwProjectTeam'">
+								<xsl:call-template name="t_vwProjectTeam">
+									<xsl:with-param name="grantid" select="regex-group(1)" />
+									<xsl:with-param name="this" select="$this" />
+								</xsl:call-template>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:matching-substring>		
 				</xsl:analyze-string>
 			</xsl:matching-substring>
 		</xsl:analyze-string>
@@ -63,51 +66,53 @@
 		
 	<xsl:template name="t_vwContracts">
 		<xsl:param name='grantid' />
+		<xsl:param name='this' />
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
 		
 			<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
-			<core:hasPrincipalInvestigatorRole><xsl:value-of select="db-dbo.vwContracts:ContractPI"/></core:hasPrincipalInvestigatorRole>
-			<rdfs:label><xsl:value-of select="db-dbo.vwContracts:Title"/></rdfs:label>
-			<core:administeredBy><xsl:value-of select="db-dbo.vwContracts:ContractDeptID"/></core:administeredBy>
-			<core:totalawardamount><xsl:value-of select="db-dbo.vwContracts:TotalAwarded"/></core:totalawardamount>
-			<ufVivo:ufid><xsl:value-of select="db-dbo.vwContracts:ContractUFID"/></ufVivo:ufid>
-			<core:sponsorawardID><xsl:value-of select="db-dbo.vwContracts:SponsorID"/></core:sponsorawardID>
+			<core:hasPrincipalInvestigatorRole><xsl:value-of select="$this/db-dbo.vwContracts:ContractPI"/></core:hasPrincipalInvestigatorRole>
+			<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Title"/></rdfs:label>
+			<core:administeredBy><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></core:administeredBy>
+			<core:totalawardamount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalawardamount>
+			<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwContracts:ContractUFID"/></ufVivo:ufid>
+			<core:sponsorawardID><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorawardID>
 			
 						<xsl:choose>
-							<xsl:when test="db-dbo.vwProjectTeam:FlowThruSponsorID = '-'">
-								<core:grantAwardedBy><xsl:value-of select="db-dbo.vwContracts:Sponsor"/></core:grantAwardedBy>
+							<xsl:when test="$this/db-dbo.vwProjectTeam:FlowThruSponsorID = '-'">
+								<core:grantAwardedBy><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></core:grantAwardedBy>
 							</xsl:when>
 							<xsl:otherwise>
-								<core:grantSubcontractedThrough><xsl:value-of select="db-dbo.vwContracts:Sponsor"/></core:grantSubcontractedThrough>
-								<core:grantAwardedBy><xsl:value-of select="db-dbo.vwContracts:FlowThruSponsorID"/></core:grantAwardedBy>
-								<core:grantAwardedBy><xsl:value-of select="db-dbo.vwContracts:FlowThruSponsor"/></core:grantAwardedBy>
+								<core:grantSubcontractedThrough><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></core:grantSubcontractedThrough>
+								<core:grantAwardedBy><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsorID"/></core:grantAwardedBy>
+								<core:grantAwardedBy><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsor"/></core:grantAwardedBy>
 							</xsl:otherwise>
 						</xsl:choose>
 			
 			<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
-				<xsl:value-of select="db-dbo.vwContracts:BEGIN_DT" />
+				<xsl:value-of select="$this/db-dbo.vwContracts:BEGIN_DT" />
 			</core:startDate>
 			<core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
-				<xsl:value-of select="db-dbo.vwContracts:END_DT" />
+				<xsl:value-of select="$this/db-dbo.vwContracts:END_DT" />
 			</core:endDate>
 		</rdf:Description>
 	</xsl:template>
 		
 	<xsl:template name="t_vwProjectTeam">
 		<xsl:param name='grantid' />
-			<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{db-dbo.vwProjectTeam:InvestigatorID}">
+		<xsl:param name='this' />
+			<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
-				<score:ufid><xsl:value-of select="db-dbo.vwProjectTeam:InvestigatorID"/></score:ufid>
+				<score:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></score:ufid>
 				<core:roleIn>
 					<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
 						<xsl:choose>
-							<xsl:when test="db-dbo.vwProjectTeam:isPI = 'Y'">
-								<core:hasPrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{db-dbo.vwProjectTeam:InvestigatorID}"/>
+							<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
+								<core:hasPrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<core:hasCo-PrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{db-dbo.vwProjectTeam:InvestigatorID}"/>
+								<core:hasCo-PrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</rdf:Description>
