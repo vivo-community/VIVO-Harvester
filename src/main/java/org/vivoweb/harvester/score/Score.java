@@ -95,11 +95,6 @@ public class Score {
 	 */
 	private final String objToScore;
 	
-	
-
-	
-
-	
 	/**
 	 * Execute score object algorithms
 	 */
@@ -468,18 +463,20 @@ public class Score {
 			authorQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> "+
 							"SELECT ?badNode " +
 							"WHERE {" +
-								"?badNode core:workEmail \"" + authorworkEmail.getObject().toString() + "\" . " +
+								"?badNode core:workEmail ?value . " +
 								"?badNode core:authorInAuthorship ?authorship . " +
-								"?authorship core:linkedInformationResource <" + paperNode.toString() + ">" +
+								"?authorship core:linkedInformationResource <" + paperNode.toString() + "> ." +
+								"FILTER (str(?value) = \"" + authorworkEmail.getObject().asLiteral().getValue() + "\")" +
 							" }";
 		} else {
 			authorQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> " +
 							"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
 							"SELECT ?badNode " +
 							"WHERE {" +
-								"?badNode foaf:lastName \"" + authorLName.getObject().toString() + "\" . " +
+								"?badNode foaf:lastName ?value . " +
 								"?badNode core:authorInAuthorship ?authorship . " +
 								"?authorship core:linkedInformationResource <" + paperNode.toString() + ">" +
+								"FILTER (str(?value) = \"" + authorLName.getObject().asLiteral().getValue() + "\")" +
 							"}";
 		}
 		
