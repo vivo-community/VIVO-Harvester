@@ -137,7 +137,7 @@ public class Transfer {
 			// empty model
 			this.clearModel = argList.has("w");
 			this.emptyModel = argList.has("e");
-			this.emptyModel = argList.has("m");
+			this.removeMode = argList.has("m");
 			
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
@@ -175,6 +175,7 @@ public class Transfer {
 		
 		if(this.inRDF != null) {
 			try {
+				log.debug("removeMode?: " + this.removeMode);
 				if(this.removeMode) {
 					this.output.removeRDF(this.inRDF, this.namespace, this.inRDFlang);
 				} else {
