@@ -177,8 +177,10 @@ public class Transfer {
 			try {
 				log.debug("removeMode?: " + this.removeMode);
 				if(this.removeMode) {
+					log.trace("removing inputfile from output");
 					this.output.removeRDF(this.inRDF, this.namespace, this.inRDFlang);
 				} else {
+					log.trace("adding inputfile to input");
 					this.input.loadRDF(this.inRDF, this.namespace, this.inRDFlang);
 				}
 			} catch(FileSystemException e) {
@@ -200,6 +202,7 @@ public class Transfer {
 		
 		if(this.dumpFile != null) {
 			try {
+				log.trace("dumping input to dumpfile");
 				this.input.exportRDF(this.dumpFile);
 			} catch(FileSystemException e) {
 				log.error(e.getMessage(), e);
@@ -208,8 +211,10 @@ public class Transfer {
 		
 		if(!inputIsOutput) {
 			if(this.removeMode) {
+				log.trace("removing input from output");
 				this.output.removeRDF(this.input);
 			} else {
+				log.trace("adding input to output");
 				this.output.loadRDF(this.input);
 			}
 		}
