@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--<RecordHandler type="org.vivoweb.harvester.util.repo.TextFileRecordHandler">-->
-<!--	<Param name="fileDir">XMLVault/DSR-RH-XML</Param>-->
+<!--	<Param name="fileDir">XMLVault/DSR-RH-RDF</Param>-->
 <!--</RecordHandler>-->
 <RecordHandler type="org.vivoweb.harvester.util.repo.JDBCRecordHandler">
 	<Param name="jdbcDriverClass">org.h2.Driver</Param>
-	<Param name="connLine">jdbc:h2:XMLVault/h2dsr/xml/store</Param>
+	<Param name="connLine">jdbc:h2:XMLVault/h2dsr/rdf/store</Param>
 	<Param name="username">sa</Param>
 	<Param name="password"></Param>
 	<Param name="tableName">recordTable</Param>

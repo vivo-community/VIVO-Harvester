@@ -41,18 +41,22 @@ tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 
 # Execute Score to match jobs with organizations
 rm -rf XMLVault/h2dsr/Scored
-$Score -v config/jenaModels/myVIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -I modelName=dsrTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -O modelName=dsrStaging -f "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid" -x "http://vivoweb.org/ontology/core#principalInvestigatorRoleOf" -y "http://vivoweb.org/ontology/core#relatedRole"
+$Score -v config/jenaModels/myVIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -I modelName=dsrTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2dsr/scored/store;MODE=HSQLDB" -O modelName=dsrStaging -f "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid" -x "http://vivoweb.org/ontology/core#principalInvestigatorRoleOf" -y "http://vivoweb.org/ontology/core#relatedRole"
 
+# Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
-mysqldump -h $SERVER -u $USERNAME -p $PASSWORD $DBNAME > backups/$DBNAME.dsr.$date.sql
-rm -rf backups/$DBNAME.current.sql
-ln -s $DBNAME.$date.sql backups/$DBNAME.current.sql
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.dsr.pretransfer.$date.sql
+rm -rf backups/$DBNAME.dsr.pretransfer.latest.sql
+ln -s $DBNAME.dsr.pretransfer.$date.sql backups/$DBNAME.dsr.pretransfer.latest.sql
 
-# Execute Transfer from local temp model into main vivo model
-$Transfer -i config/jenaModels/h2.xml -I modelName=dsrStaging -I dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -o config/jenaModels/myVIVO.xml
+#Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
+$Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/dsr" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2dsr/scored/store;MODE=HSQLDB" -I modelName=DSRStaging -v config/jenaModels/VIVO.xml
 
-# Execute Transfer to copy into dsr model
-$Transfer -i config/jenaModels/h2.xml -I modelName=dsrStaging -I dbUrl="jdbc:h2:XMLVault/h2dsr/Scored/store;MODE=HSQLDB" -o config/jenaModels/myVIVO.xml -O modelName=dsr
+# Backup posttransfer vivo database, symlink latest to latest.sql
+date=`date +%Y-%m-%d_%T`
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.dsr.posttransfer.$date.sql
+rm -rf backups/$DBNAME.dsr.posttransfer.latest.sql
+ln -s $DBNAME.dsr.posttransfer.$date.sql backups/$DBNAME.dsr.posttransfer.latest.sql
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
