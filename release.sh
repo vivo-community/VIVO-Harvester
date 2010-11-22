@@ -35,6 +35,9 @@ if [ "$CHANGELOG" != "y" ]; then
 	exit
 fi 
 
+echo -n "Commit script version file changes?: "
+read COMMIT
+
 #get code
 if [ "$CODELOC" = "dev" ]; then
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
@@ -73,7 +76,9 @@ sed -i "s/VERSION=.*/VERSION=$RELEASENAME/" scripts/env
 
 
 #commit pom file and deb control file
-svn commit -m "Update pom.xml and deb control file for release"
+if [ "$COMMIT" = "y" ]; then
+	svn commit -m "Update pom.xml and deb control file for release"
+fi
 
 #build
 if [ "$RUNTEST" = "y" ]; then
