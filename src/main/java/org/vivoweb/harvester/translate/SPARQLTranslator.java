@@ -6,21 +6,32 @@
  ******************************************************************************/
 package org.vivoweb.harvester.translate;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology
@@ -39,20 +50,21 @@ public class SPARQLTranslator {
 	 * in stream is the stream containing the file (xml) that we are going to translate
 	 * @TODO possibly remove and switch to passing streams to xmlTranslate
 	 */
-	protected InputStream inStream;
+	protected JenaConnect inputJC;
 	/**
 	 * out stream is the stream that the controller will be handling and were we will dump the translation
 	 * @TODO possibly remove and switch to passing streams to xmlTranslate
 	 */
-	protected OutputStream outStream;
+	protected JenaConnect outputJC;
 	/**
-	 * record handler for incoming records
+	 * 
 	 */
-	protected RecordHandler inStore;
+	protected File sparqlFile;
 	/**
-	 * record handler for storing records
+	 * 
 	 */
-	protected RecordHandler outStore;
+	protected RecordHandler outputRC;
+	
 	
 	/**
 	 * Default constructor
@@ -74,9 +86,33 @@ public class SPARQLTranslator {
 	 * @throws ParserConfigurationException error with parser config
 	 */
 	public SPARQLTranslator(ArgList argumentList) throws ParserConfigurationException, SAXException, IOException {
-		// create record handlers
-		this.inStore = RecordHandler.parseConfig(argumentList.get("input"), argumentList.getProperties("I"));
-		this.outStore = RecordHandler.parseConfig(argumentList.get("output"), argumentList.getProperties("O"));
+		
+		// setup input model
+		if(argumentList.has("i")) {
+			this.inputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("i")), argumentList.getProperties("I"));
+		} else {
+			this.inputJC = null;
+		}
+		
+		// setup output
+		if(argumentList.has("o")) {
+			this.outputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("o")), argumentList.getProperties("O"));
+		} else {
+			this.outputJC = null;
+		}
+		
+		// load data from recordhandler
+		if(argumentList.has("h")) {
+			this.outputRC = RecordHandler.parseConfig(argumentList.get("h"), argumentList.getProperties("H"));
+		} else {
+			this.outputRC = null;
+		}
+		
+		if(argumentList.has("s")){
+			this.sparqlFile = new File(argumentList.get("s"));
+		} else {
+			this.sparqlFile = null;
+		}		
 	}
 	
 	/***
@@ -86,54 +122,39 @@ public class SPARQLTranslator {
 		// checking for valid input parameters
 		log.info("Translation: Start");
 		
+		//build Sparl Query
+		StringBuilder strQuery = new StringBuilder();
 		try {
-			// create a output stream for writing to the out store
-			ByteArrayOutputStream buff = new ByteArrayOutputStream();
-			
-			// get from the in record and translate
-			for(Record r : this.inStore) {
-				if(r.needsProcessed(this.getClass())) {
-					log.info("Translating Record " + r.getID());
-					this.inStream = new ByteArrayInputStream(r.getData().getBytes());
-					this.outStream = buff;
-					this.xmlTranslate();
-					buff.flush();
-					this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
-					r.setProcessed(this.getClass());
-					buff.reset();
-				} else {
-					log.debug("No Translation Needed: " + r.getID());
-				}
-			}
-			buff.close();
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-		}
+			FileInputStream fstream = new FileInputStream(this.sparqlFile);
+		    // Get the object of DataInputStream
+		    DataInputStream in = new DataInputStream(fstream);
+		        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		    String strLine;
+		    //Read File Line By Line
+		    while ((strLine = br.readLine()) != null)   {
+		      // Print the content on the console
+		      strQuery.append(strLine);
+		    }
+		    //Close the input stream
+		    in.close();
+	    }catch (Exception e){//Catch exception if any
+	      System.err.println("Error: " + e.getMessage());
+	    }
+		
+	    System.out.print(strQuery.toString());
+	    ResultSet rs = this.inputJC.executeQuery(strQuery.toString());
+		
+	    while(rs.hasNext()) {
+	    	QuerySolution qs = rs.next();
+	    
+	    	System.out.println(qs.toString());
+	    }
+		
+		
 		log.info("Translation: End");
 	}
 	
-	/***
-	 * using the javax xml transform factory this method uses the xsl file to translate XML into the desired format
-	 * designated in the xsl file.
-	 */
-	private void xmlTranslate() {
-		// StreamResult outputResult = new StreamResult(this.outStream);
-		try {
-			// JAXP reads data using the Source interface
-			// Source xmlSource = new StreamSource(this.inStream);
-			
-			System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
-			
-			// the factory pattern supports different XSLT processors
-			// TransformerFactory transFact = TransformerFactory.newInstance();
-			// Transformer trans = transFact.newTransformer(xslSource);
-			
-			// this outputs to oStream
-			// trans.transform(xmlSource, outputResult);
-		} catch(Exception e) {
-			log.error("Translation Error", e);
-		}
-	}
+
 	
 	/**
 	 * Get the ArgParser for this task
@@ -143,9 +164,11 @@ public class SPARQLTranslator {
 		ArgParser parser = new ArgParser("SPARQLTranslator");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("sparqlConstruct").withParameter(true, "SPARQL_CONSTRUCT").setDescription("the sparql construct to run").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("sparqlConstruct").withParameter(true, "SPARQL_CONSTRUCT_FILE").setDescription("the sparql construct to run").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("outputToRH").withParameter(true, "RECORD_HANDLER").setDescription("output the sparql statment to a record handler").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("outputToRHOverride").withParameterProperties("RH_PARAM", "RECORD_HANDLER").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
 	
