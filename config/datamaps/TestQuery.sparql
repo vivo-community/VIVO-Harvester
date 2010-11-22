@@ -15,10 +15,10 @@ PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
  PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/>
  PREFIX core: <http://vivoweb.org/ontology/core#>
  
- SELECT ?sNew ?o 
+ SELECT ?sNew
  WHERE
  {
    ?sNew ?p ?o .
-   FILTER regex(uri(?sNew), "http://vivo.ufl.edu/individual/n" )
+   FILTER regex(str(?sNew), "http://vivo.ufl.edu/individual/n" )
  }
  LIMIT 20

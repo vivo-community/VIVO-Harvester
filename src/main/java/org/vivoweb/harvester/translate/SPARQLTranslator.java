@@ -133,7 +133,7 @@ public class SPARQLTranslator {
 		    //Read File Line By Line
 		    while ((strLine = br.readLine()) != null)   {
 		      // Print the content on the console
-		      strQuery.append(strLine);
+	    		strQuery.append(strLine);	
 		    }
 		    //Close the input stream
 		    in.close();
@@ -141,12 +141,16 @@ public class SPARQLTranslator {
 	      System.err.println("Error: " + e.getMessage());
 	    }
 		
-	    System.out.print(strQuery.toString());
+	    System.out.println(strQuery.toString());
 	    ResultSet rs = this.inputJC.executeQuery(strQuery.toString());
 		
+	    if (!rs.hasNext())
+	    {
+	    	System.out.println("Failed to find");
+	    }
+	    
 	    while(rs.hasNext()) {
 	    	QuerySolution qs = rs.next();
-	    
 	    	System.out.println(qs.toString());
 	    }
 		
