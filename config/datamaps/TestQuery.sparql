@@ -20,9 +20,9 @@ PREFIX core: <http://vivoweb.org/ontology/core#>
 # and (if available) their labels
 #
 SELECT ?sNew ?o 
-WHERE
+WHERE 
 {
-  ?sNew ?p ?o.
-  FILTER regex(uri(?sNew), "http://vivo.ufl.edu/individual/n" )
-}
-LIMIT 20
+  ?sNew ?p ?o. 
+  FILTER regex(uri(?sNew), "http://vivo.ufl.edu/individual/n" ) 
+} 
+LIMIT 20 
