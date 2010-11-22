@@ -5,7 +5,7 @@
 	<Param name="username">USERNAME</Param>
 	<Param name="password">PASSWORD</Param>
 	<Param name="output">config/recordHandlers/DSR-XML.xml</Param>
-	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='N'</Param>
+	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential=''</Param>
 	<Param name="tableName">dbo.vwContracts</Param>
 	<Param name="id">dbo.vwContracts=ContractNumber</Param>
 	<Param name="fields">dbo.vwContracts=Confidential,ContractPI,Title,ContractDeptID,TotalAwarded,ContractUFID,BEGIN_DT,END_DT,SponsorID,Sponsor,FlowThruSponsorID,FlowThruSponsor</Param>
