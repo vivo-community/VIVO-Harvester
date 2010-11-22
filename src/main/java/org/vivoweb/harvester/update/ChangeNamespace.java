@@ -21,6 +21,7 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -78,7 +79,7 @@ public class ChangeNamespace {
 		this.errorOnNewURI = argList.has("e");
 		List<String> predicates = argList.getAll("p");
 		this.properties = new ArrayList<Property>(predicates.size());
-		for(String pred : predicates) {
+		for (String pred : predicates) {
 			this.properties.add(ResourceFactory.createProperty(pred));
 		}
 	}
@@ -103,7 +104,7 @@ public class ChangeNamespace {
 		
 		if (uri == null) {
 			uri = getUnusedURI(namespace, uriCheck, vivo, model);
-			if(errorOnNewURI) {
+			if (errorOnNewURI) {
 				log.error("Generated New Unused URI <"+uri+"> for rdf node <"+current.getURI()+">");
 			}
 		}
@@ -120,19 +121,19 @@ public class ChangeNamespace {
 	 * @throws IllegalArgumentException empty namespace
 	 */
 	public static String getUnusedURI(String namespace, ArrayList<String> uriCheck, JenaConnect... models) throws IllegalArgumentException {
-		if(namespace == null || namespace.equals("")) {
+		if (namespace == null || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
 		String uri = null;
 		Random random = new Random();
-		while(uri == null) {
+		while (uri == null) {
 			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
-			log.trace("urlCheck: "+uriCheck.contains(uri));
-			if(uriCheck.contains(uri)) {
+			log.trace("uriCheck: "+uriCheck.contains(uri));
+			if (uriCheck.contains(uri)) {
 				uri = null;
 			}
-			for(JenaConnect model : models) {
-				if(model.containsURI(uri)) {
+			for (JenaConnect model : models) {
+				if (model.containsURI(uri)) {
 					uri = null;
 				}
 			}
@@ -153,7 +154,7 @@ public class ChangeNamespace {
 	public static String getMatchingURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo) {
 		List<String> uris = getMatchingURIs(current, namespace, properties, vivo);
 		String uri = uris.isEmpty()?null:uris.get(0);
-		if(uri != null) {
+		if (uri != null) {
 			log.debug("Matched URI: <"+uri+">");
 		} else {
 			log.debug("No Matched URI");
@@ -175,19 +176,19 @@ public class ChangeNamespace {
 		int valueCount = 0;
 		sbQuery.append("SELECT ?uri\nWHERE\n{");
 		log.debug("properties size: "+properties.size());
-		if(properties.size() < 1) {
+		if (properties.size() < 1) {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
-		for(Property p : properties) {
+		for (Property p : properties) {
 			StmtIterator stmntit = current.listProperties(p);
-			if(!stmntit.hasNext()) {
+			if (!stmntit.hasNext()) {
 				throw new IllegalArgumentException("Resource <"+current.getURI()+"> does not have property <"+p.getURI()+">! SELECT cannot be created!");
 			}
-			for(Statement s : IterableAdaptor.adapt(stmntit)) {
+			for (Statement s : IterableAdaptor.adapt(stmntit)) {
 				sbQuery.append("\t?uri <");
 				sbQuery.append(p.getURI());
 				sbQuery.append("> ");
-				if(s.getObject().isResource()) {
+				if (s.getObject().isResource()) {
 					sbQuery.append("<");
 					sbQuery.append(s.getResource().getURI());
 					sbQuery.append(">");
@@ -203,7 +204,7 @@ public class ChangeNamespace {
 //		sbQuery.append("regex( ?uri , \"");
 //		sbQuery.append(namespace);
 //		sbQuery.append("\" )");
-		if(!filters.isEmpty()) {
+		if (!filters.isEmpty()) {
 			sbQuery.append("\tFILTER (");
 //			sbQuery.append(" && ");
 			sbQuery.append(StringUtils.join(" && ", filters));
@@ -214,13 +215,13 @@ public class ChangeNamespace {
 		int count = 0;
 		log.debug("Query:\n"+sbQuery.toString());
 		log.debug("namespace: "+namespace);
-		for(QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
+		for (QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
 			Resource res = qs.getResource("uri");
-			if(res == null) {
+			if (res == null) {
 				throw new IllegalArgumentException("res is null! SELECT for resource <"+current.getURI()+"> is most likely corrupted!");
 			}
 			String resns = res.getNameSpace();
-			if(resns.equals(namespace)) {
+			if (resns.equals(namespace)) {
 				String uri = res.getURI();
 				retVal.add(uri);
 				log.debug("Matched URI["+count+"]: <"+uri+">");
@@ -241,24 +242,52 @@ public class ChangeNamespace {
 	 * @throws IllegalArgumentException empty namespace
 	 */
 	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties, boolean errorOnNewURI) throws IllegalArgumentException {
-		if(oldNamespace == null || oldNamespace.equals("")) {
+		if (oldNamespace == null || oldNamespace.equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
-		if(newNamespace == null || newNamespace.equals("")) {
+		if (newNamespace == null || newNamespace.equals("")) {
 			throw new IllegalArgumentException("new namespace cannot be empty");
 		}
-		if(oldNamespace.equals(newNamespace)) {
+		if (oldNamespace.equals(newNamespace)) {
 			return;
 		}
 		ArrayList<String> uriCheck = new ArrayList<String>();
 		int count = 0;
-		for(Resource res : IterableAdaptor.adapt(model.getJenaModel().listSubjects())) {
-			if(oldNamespace.equals(res.getNameSpace())) {
-				log.debug("Finding match for <"+res.getURI()+">");
-				String uri = getURI(res, newNamespace, properties, uriCheck, errorOnNewURI, vivo, model);
-				ResourceUtils.renameResource(res, uri);
-				count++;
-			}
+		String uri;
+		Resource res;
+		QuerySolution solution;
+		
+		//Find all namespace matches
+		String subjectQuery =	"";
+
+		log.debug(subjectQuery);
+		
+		ResultSet matchList = model.executeQuery(subjectQuery);
+		
+		while (matchList.hasNext()) {
+			solution = matchList.next();
+			res = solution.getResource("sOld");
+			uri = solution.getResource("sNew").toString();
+			ResourceUtils.renameResource(res, uri);
+			count++;
+		}
+		
+		log.info("Matched namespace for "+count+" rdf nodes");
+		count = 0;
+		
+		//Grab all namespaces needing changed
+		subjectQuery =	"";
+		
+		log.debug(subjectQuery);
+		
+		ResultSet changeList = model.executeQuery(subjectQuery);
+		
+		while (changeList.hasNext()) {
+			solution = changeList.next();
+			res = solution.getResource("sOld");
+			uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
+			ResourceUtils.renameResource(res, uri);
+			count++;
 		}
 		log.info("Changed namespace for "+count+" rdf nodes");
 	}
@@ -299,13 +328,13 @@ public class ChangeNamespace {
 		log.info(getParser().getAppName()+": Start");
 		try {
 			new ChangeNamespace(new ArgList(getParser(), args)).execute();
-		} catch(IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch(IOException e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 			// System.out.println(getParser().getUsage());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 		log.info(getParser().getAppName()+": End");
