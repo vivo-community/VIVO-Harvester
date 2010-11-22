@@ -295,33 +295,12 @@ public class Score {
 		
 		// Connect to vivo
 		this.vivo = JenaConnect.parseConfig(jenaVIVO, opts.getProperties("V"));
-		StmtIterator vivoStmtItr = this.vivo.getJenaModel().listStatements();
-		int vivoCount = 0;
-		while (vivoStmtItr.hasNext()) {
-			vivoStmtItr.next();
-			vivoCount++;
-		}
-		log.debug("vivo has " + vivoCount + " statements in it");
 		
 		// Create working model
 		this.scoreInput = JenaConnect.parseConfig(jenaInput, inputOverrides);
-		StmtIterator inputStmtItr = this.scoreInput.getJenaModel().listStatements();
-		int inputCount = 0;
-		while (inputStmtItr.hasNext()) {
-			inputStmtItr.next();
-			inputCount++;
-		}
-		log.debug("input has " + inputCount + " statements in it");
 		
 		// Create output model
 		this.scoreOutput = JenaConnect.parseConfig(jenaOutput, outputOverrides);
-		StmtIterator outputStmtItr = this.scoreOutput.getJenaModel().listStatements();
-		int outputCount = 0;
-		while (outputStmtItr.hasNext()) {
-			outputStmtItr.next();
-			outputCount++;
-		}
-		log.debug("output has " + outputCount + " statements in it");
 		
 		this.wipeInputModel = opts.has("w");
 		this.wipeOutputModel = opts.has("q");
