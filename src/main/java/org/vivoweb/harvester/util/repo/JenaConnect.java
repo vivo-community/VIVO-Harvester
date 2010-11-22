@@ -41,6 +41,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
  * Connection Helper for Jena Models
@@ -248,6 +249,16 @@ public class JenaConnect {
 		} else {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
+		
+		//Display count
+		StmtIterator jenaStmtItr = jc.getJenaModel().listStatements();
+		int jenaCount = 0;
+		while (jenaStmtItr.hasNext()) {
+			jenaStmtItr.next();
+			jenaCount++;
+		}
+		log.debug("JennaConnect has " + jenaCount + " statements");
+		
 		return jc;
 	}
 	

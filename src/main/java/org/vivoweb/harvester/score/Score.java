@@ -102,27 +102,27 @@ public class Score {
 		log.info("Running specified algorithims");
 		
 		// Empty input model
-		if(this.wipeOutputModel) {
+		if (this.wipeOutputModel) {
 			log.info("Emptying output model");	
 			this.scoreOutput.getJenaModel().removeAll();
 		}
 		
 		// Call authorname matching
-		if(this.authorName != null) {
+		if (this.authorName != null) {
 			this.authorNameMatch(Integer.parseInt(this.authorName));
 		}
 		
 		// call for ForeignKey linking
-		if(this.foreignKey != null && !this.foreignKey.isEmpty()) {
-			if(this.objToScore == null) {
+		if (this.foreignKey != null && !this.foreignKey.isEmpty()) {
+			if (this.objToScore == null) {
 				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from VIVO to the scoring model");
 			}
-			if(this.objToVIVO == null) {
+			if (this.objToVIVO == null) {
 				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from the scoring model to VIVO");
 			}
-			for(String attributePair : this.foreignKey) {
+			for (String attributePair : this.foreignKey) {
 				String[] fKey = attributePair.split("=");
-				if(fKey.length != 2) {
+				if (fKey.length != 2) {
 					throw new IllegalArgumentException("Invalid Parameters, You must supply the 2 data property one for the scoring and vivo models @ '" + attributePair + "'");
 				}
 				this.foreignKeyMatch(fKey[0], fKey[1], this.objToVIVO, this.objToScore);
@@ -130,8 +130,8 @@ public class Score {
 		}
 		
 		// Call each exactMatch
-		if(this.exactMatch != null && !this.exactMatch.isEmpty()) {
-			for(String attribute : this.exactMatch) {
+		if (this.exactMatch != null && !this.exactMatch.isEmpty()) {
+			for (String attribute : this.exactMatch) {
 				// this.exactMatch(attribute);
 				// TODO Nicolas: fix exact match to take in two attributes <>,<> check with chaines
 				// for proper format (? comma seperated list ?)
@@ -140,22 +140,22 @@ public class Score {
 		}
 		
 		// Call each pairwise
-		if(this.pairwise != null && !this.pairwise.isEmpty()) {
-			for(String attribute : this.pairwise) {
+		if (this.pairwise != null && !this.pairwise.isEmpty()) {
+			for (String attribute : this.pairwise) {
 				this.pairwise(attribute);
 			}
 		}
 		
 		// Call each regex
 		// TODO Chris: uncomment when regex implemented
-		// if(this.regex != null && !this.regex.isEmpty()) {
-		// for(String attribute : this.regex) {
+		// if (this.regex != null && !this.regex.isEmpty()) {
+		// for (String attribute : this.regex) {
 		// this.regex(attribute);
 		// }
 		// }
 		
 		// Empty input model
-		if(this.wipeInputModel) {
+		if (this.wipeInputModel) {
 			log.info("Emptying input model");	
 			this.scoreInput.getJenaModel().removeAll();
 		}
@@ -238,34 +238,12 @@ public class Score {
 		
 		// Connect to vivo
 		this.vivo = jenaVivo;
-		StmtIterator vivoStmtItr = this.vivo.getJenaModel().listStatements();
-		int vivoCount = 0;
-		while(vivoStmtItr.hasNext()) {
-			vivoStmtItr.next();
-			vivoCount++;
-		}
-		log.debug("vivo has " + vivoCount + " statements in it");
 		
 		// Create working model
 		this.scoreInput = jenaScoreInput;
-		StmtIterator inputStmtItr = this.scoreInput.getJenaModel().listStatements();
-		int inputCount = 0;
-		while(inputStmtItr.hasNext()) {
-			inputStmtItr.next();
-			inputCount++;
-		}
-		log.debug("input has " + inputCount + " statements in it");
 		
 		// Create output model
-		this.scoreOutput = jenaScoreOutput;
-		StmtIterator outputStmtItr = this.scoreOutput.getJenaModel().listStatements();
-		int outputCount = 0;
-		while(outputStmtItr.hasNext()) {
-			outputStmtItr.next();
-			outputCount++;
-		}
-		log.debug("output has " + outputCount + " statements in it");
-		
+		this.scoreOutput = jenaScoreOutput;		
 	}
 	
 	/**
@@ -295,22 +273,22 @@ public class Score {
 		
 		Properties inputOverrides = opts.getProperties("I");
 		String jenaInput;
-		if(opts.has("i")) {
+		if (opts.has("i")) {
 			jenaInput = opts.get("i");
 		} else {
 			jenaInput = jenaVIVO;
-			if(!inputOverrides.containsKey("modelName")) {
+			if (!inputOverrides.containsKey("modelName")) {
 				inputOverrides.setProperty("modelName", "Scoring");
 			}
 		}
 		
 		Properties outputOverrides = opts.getProperties("O");
 		String jenaOutput;
-		if(opts.has("o")) {
+		if (opts.has("o")) {
 			jenaOutput = opts.get("o");
 		} else {
 			jenaOutput = jenaVIVO;
-			if(!outputOverrides.containsKey("modelName")) {
+			if (!outputOverrides.containsKey("modelName")) {
 				outputOverrides.setProperty("modelName", "Staging");
 			}
 		}
@@ -319,7 +297,7 @@ public class Score {
 		this.vivo = JenaConnect.parseConfig(jenaVIVO, opts.getProperties("V"));
 		StmtIterator vivoStmtItr = this.vivo.getJenaModel().listStatements();
 		int vivoCount = 0;
-		while(vivoStmtItr.hasNext()) {
+		while (vivoStmtItr.hasNext()) {
 			vivoStmtItr.next();
 			vivoCount++;
 		}
@@ -329,7 +307,7 @@ public class Score {
 		this.scoreInput = JenaConnect.parseConfig(jenaInput, inputOverrides);
 		StmtIterator inputStmtItr = this.scoreInput.getJenaModel().listStatements();
 		int inputCount = 0;
-		while(inputStmtItr.hasNext()) {
+		while (inputStmtItr.hasNext()) {
 			inputStmtItr.next();
 			inputCount++;
 		}
@@ -339,7 +317,7 @@ public class Score {
 		this.scoreOutput = JenaConnect.parseConfig(jenaOutput, outputOverrides);
 		StmtIterator outputStmtItr = this.scoreOutput.getJenaModel().listStatements();
 		int outputCount = 0;
-		while(outputStmtItr.hasNext()) {
+		while (outputStmtItr.hasNext()) {
 			outputStmtItr.next();
 			outputCount++;
 		}
@@ -402,12 +380,12 @@ public class Score {
 		Resource authorNode;
 		QuerySolution vivoSolution;
 		
-		if(!storeResult.hasNext()){
+		if (!storeResult.hasNext()) {
 			result.getJenaModel().add(recursiveSanitizeBuild(paperNode,new Stack<Resource>()).getJenaModel());
 		}
 		
 		// loop thru resultset
-		while(storeResult.hasNext()) {
+		while (storeResult.hasNext()) {
 			vivoSolution = storeResult.next();
 			
 			// Grab person URI
@@ -484,7 +462,7 @@ public class Score {
 		
 		ResultSet killList = toReplace.executeQuery(authorQuery);
 		
-		while(killList.hasNext()) {
+		while (killList.hasNext()) {
 			QuerySolution killSolution = killList.next();
 			
 			// Grab person URI
@@ -497,22 +475,22 @@ public class Score {
 			// statements
 			// model.remove is broken so we are using statement.remove
 			StmtIterator deleteStmts = toReplace.getJenaModel().listStatements(null, null, removeAuthor);
-			while(deleteStmts.hasNext()) {
+			while (deleteStmts.hasNext()) {
 				Statement dStmt = deleteStmts.next();
 				log.debug("Delete Statement " + dStmt.toString());
 				
-				if(!dStmt.getSubject().equals(removeAuthor)) {
+				if (!dStmt.getSubject().equals(removeAuthor)) {
 					Statement authorRankStmt = dStmt.getSubject().getProperty(rankOf);
 					authorRank = authorRankStmt.getObject().asLiteral().getInt();
 					
 					StmtIterator authorshipStmts = dStmt.getSubject().listProperties();
-					while(authorshipStmts.hasNext()) {
+					while (authorshipStmts.hasNext()) {
 						log.debug("Delete Statement " + authorshipStmts.next().toString());
 					}
 					dStmt.getSubject().removeProperties();
 					
 					StmtIterator deleteAuthorshipStmts = toReplace.getJenaModel().listStatements(null, null, dStmt.getSubject());
-					while(deleteAuthorshipStmts.hasNext()) {
+					while (deleteAuthorshipStmts.hasNext()) {
 						Statement dASStmt = deleteAuthorshipStmts.next();
 						log.debug("Delete Statement " + dASStmt.toString());
 						dASStmt.remove();
@@ -523,7 +501,7 @@ public class Score {
 			}
 			
 			StmtIterator authorStmts = removeAuthor.listProperties();
-			while(authorStmts.hasNext()) {
+			while (authorStmts.hasNext()) {
 				log.debug("Delete Statement " + authorStmts.next().toString());
 			}
 			removeAuthor.removeProperties();
@@ -560,21 +538,21 @@ public class Score {
 		JenaConnect returnModel = new JenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
 		
-		while(mainStmts.hasNext()) {
+		while (mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
 			
 			// Don't add any scoring statements
-			if(!stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
+			if (!stmt.getPredicate().getNameSpace().equalsIgnoreCase("http://vivoweb.org/ontology/score#")) {
 				// log.debug(stmt.toString());
 				returnModel.getJenaModel().add(stmt);
 				
 				//todo change the equals t o
-				if(stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
+				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
 					linkRes.push(mainRes);
 					returnModel.getJenaModel().add(recursiveSanitizeBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
 					linkRes.pop();
 				}
-				if(!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
+				if (!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
 					linkRes.push(mainRes);
 					returnModel.getJenaModel().add(recursiveSanitizeBuild(stmt.getSubject(), linkRes).getJenaModel());
 					linkRes.pop();
@@ -664,7 +642,7 @@ public class Score {
 		scoreInputResult = this.scoreInput.executeQuery(matchQuery);
 		
 		// Log extra info message if none found
-		if(!scoreInputResult.hasNext()) {
+		if (!scoreInputResult.hasNext()) {
 			log.trace("No author names found in input");
 		} else {
 			log.trace("Looping thru matching authors from input");
@@ -752,7 +730,7 @@ public class Score {
 				vivoResult = this.vivo.executeQuery(queryString);
 				
 				// Loop thru results and only keep if the last name, and first initial match
-				while(vivoResult.hasNext()) {
+				while (vivoResult.hasNext()) {
 					vivoSolution = vivoResult.next();
 					log.trace(vivoSolution.toString());
 					loopNode = vivoSolution.get("firstName");
@@ -761,7 +739,7 @@ public class Score {
 					if (loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
 						if (foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {								
 							loop = 0;
-							while(loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
+							while (loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
 								loop++;
 							}
 							loop--;
@@ -791,7 +769,7 @@ public class Score {
 								vivoForeNameInitials = "";
 							}
 							
-							if(loop < minimum) {
+							if (loop < minimum) {
 								log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
 							} else {
 								// if loopNode matches more of foreNameNode, it's the new best match
@@ -817,7 +795,7 @@ public class Score {
 						}
 					}
 				}
-				if(matchNode != null && authorNode != null) {
+				if (matchNode != null && authorNode != null) {
 					log.trace("Keeping " + matchNode.toString());
 					commitResultNode(this.scoreOutput, authorNode, matchNode, paperNode);
 				}
@@ -837,13 +815,13 @@ public class Score {
 		log.info("Executing foreignKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
 		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
-		if(!stmtitr.hasNext()) {
+		if (!stmtitr.hasNext()) {
 			log.trace("No matches found for <" + scoreAttribute + "> in input");
 			return;
 		}
 		log.trace("Matches found for <" + scoreAttribute + "> in input");
 		// look for exact match in vivo
-		for(Statement stmt : IterableAdaptor.adapt(stmtitr)) {
+		for (Statement stmt : IterableAdaptor.adapt(stmtitr)) {
 			Resource sub = stmt.getSubject();
 			String obj = stmt.getLiteral().getValue().toString();
 			log.trace("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
@@ -855,15 +833,15 @@ public class Score {
 				"}";
 			log.debug(query);
 			ResultSet matches = this.vivo.executeQuery(query);
-			if(!matches.hasNext()) {
+			if (!matches.hasNext()) {
 				log.trace("No matches in VIVO found");
-				if (this.pushAll){
+				if (this.pushAll) {
 					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new Stack<Resource>()).getJenaModel());
 				}
 			} else {
 				log.trace("Matches in VIVO found");
 				// loop thru resources
-				while(matches.hasNext()) {
+				while (matches.hasNext()) {
 					// Grab person URI
 					Resource vivoNode = matches.next().getResource("sub");
 					log.trace("Found <" + sub + "> for VIVO entity <" + vivoNode + ">");
@@ -907,14 +885,14 @@ public class Score {
 		scoreInputResult = this.scoreInput.executeQuery(matchQuery);
 		
 		// Log extra info message if none found
-		if(!scoreInputResult.hasNext()) {
+		if (!scoreInputResult.hasNext()) {
 			log.trace("No matches found for <" + scoreAttribute + "> in input");
 		} else {
 			log.trace("Looping thru matching <" + scoreAttribute + "> from input");
 		}
 		
 		// look for exact match in vivo
-		for(QuerySolution scoreSolution : IterableAdaptor.adapt(scoreInputResult)) {
+		for (QuerySolution scoreSolution : IterableAdaptor.adapt(scoreInputResult)) {
 			matchValue = scoreSolution.getLiteral("scoreAttribute").getValue().toString();
 			paperNode = scoreSolution.getResource("x");
 			

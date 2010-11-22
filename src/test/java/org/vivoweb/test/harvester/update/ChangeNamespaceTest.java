@@ -166,7 +166,7 @@ public class ChangeNamespaceTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String, java.util.List, boolean) changeNS(JenaConnect model, String oldNamespace, String newNamespace, List&lt;Property&gt; properties, boolean errorOnNewURI)}.
+	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String, java.util.List) changeNS(JenaConnect model, String oldNamespace, String newNamespace, List&lt;Property&gt; properties)}.
 	 */
 	public void testChangeNS() {
 		log.info("BEGIN testChangeNS");
@@ -174,7 +174,7 @@ public class ChangeNamespaceTest extends TestCase {
 		baos = new ByteArrayOutputStream();
 		this.model.exportRDF(baos);
 		log.debug(baos.toString());
-		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace, this.properties, false);
+		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace, this.properties);
 		baos = new ByteArrayOutputStream();
 		this.model.exportRDF(baos);
 		log.debug(baos.toString());

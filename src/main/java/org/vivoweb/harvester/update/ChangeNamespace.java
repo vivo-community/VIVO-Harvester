@@ -59,10 +59,6 @@ public class ChangeNamespace {
 	 * The search model
 	 */
 	private JenaConnect vivo;
-	/**
-	 * Log ERROR messages when a new URI is generated
-	 */
-	private boolean errorOnNewURI;
 
 	/**
 	 * Constructor
@@ -76,7 +72,6 @@ public class ChangeNamespace {
 		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getProperties("V"));
 		this.oldNamespace = argList.get("o");
 		this.newNamespace = argList.get("n");
-		this.errorOnNewURI = argList.has("e");
 		List<String> predicates = argList.getAll("p");
 		this.properties = new ArrayList<Property>(predicates.size());
 		for (String pred : predicates) {
@@ -237,11 +232,10 @@ public class ChangeNamespace {
 	 * @param vivo the model to search for uris in
 	 * @param oldNamespace the old namespace
 	 * @param newNamespace the new namespace
-	 * @param properties the propeties to match on
-	 * @param errorOnNewURI Log ERROR messages when a new URI is generated
+	 * @param properties the properties to match on
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties, boolean errorOnNewURI) throws IllegalArgumentException {
+	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties) throws IllegalArgumentException {
 		if (oldNamespace == null || oldNamespace.equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
@@ -296,7 +290,7 @@ public class ChangeNamespace {
 	 * Change namespace
 	 */
 	private void execute() {
-		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.properties, this.errorOnNewURI);
+		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.properties);
 	}
 	
 	/**
@@ -315,7 +309,6 @@ public class ChangeNamespace {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("oldNamespace").withParameter(true, "OLD_NAMESPACE").setDescription("The old namespace").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("newNamespace").withParameter(true, "NEW_NAMESPACE").setDescription("The new namespace").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("predicate").withParameters(true, "MATCH_PREDICATE").setDescription("Predicate to match on").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("errorOnNewURI").setDescription("Log ERROR messages when a new URI is generated").setRequired(false));
 		return parser;
 	}
 	
@@ -333,7 +326,6 @@ public class ChangeNamespace {
 			System.out.println(getParser().getUsage());
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-			// System.out.println(getParser().getUsage());
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
