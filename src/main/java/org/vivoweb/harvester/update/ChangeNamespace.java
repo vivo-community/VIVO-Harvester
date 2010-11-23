@@ -310,18 +310,23 @@ public class ChangeNamespace {
 		
 		ResultSet matchList = queryExec.execSelect();
 		
-		String uriArray[][] = new String[5][2];
+		ArrayList<String[]> uriArray = new ArrayList<String[]>();
+		String matchArray[];
+		
 		
 		while (matchList.hasNext()) {
 			solution = matchList.next();
-			uriArray[count][0] = solution.getResource("sOld").toString();
-			uriArray[count][1] = solution.getResource("sNew").toString();
+			matchArray = new String[2];
+			matchArray[0] = solution.getResource("sNew").toString();
+			matchArray[1] = solution.getResource("sOld").toString();
+			uriArray.add(matchArray);
 			count++;
 		}
 		
 		for(int i = 0; i < count; i++) {
-			res = model.getJenaModel().getResource(uriArray[i][0]);		
-			ResourceUtils.renameResource(res, uriArray[i][1]);
+			matchArray = uriArray.get(i);
+			res = model.getJenaModel().getResource(matchArray[0]);		
+			ResourceUtils.renameResource(res, matchArray[1]);
 		}
 		
 		
@@ -345,7 +350,7 @@ public class ChangeNamespace {
 						"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
 						"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> " +
 						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-						"SELECT ?sNew ?o  " +
+						"SELECT ?sNew " +
 						"WHERE " +
 						"{ " +
 						"?sNew ?p ?o .  " +
@@ -354,13 +359,18 @@ public class ChangeNamespace {
 		log.debug(subjectQuery);
 		
 		ResultSet changeList = model.executeQuery(subjectQuery);
+		ArrayList<String> changeArray = new ArrayList<String>();
 		
 		while (changeList.hasNext()) {
 			solution = changeList.next();
-			res = solution.getResource("sNew");
+			changeArray.add(solution.getResource("sNew").toString());
+			count++;
+		}
+		
+		for(int i = 0; i < count; i++) {
+			res = model.getJenaModel().getResource(changeArray.get(i));	
 			uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
 			ResourceUtils.renameResource(res, uri);
-			count++;
 		}
 		log.info("Changed namespace for "+count+" rdf nodes");
 	}
