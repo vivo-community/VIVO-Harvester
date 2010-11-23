@@ -261,7 +261,7 @@ public class ChangeNamespace {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
 		
-		batchMatch(model, vivo, oldNamespace, newNamespace, properties, count);
+		batchMatchRename(model, vivo, oldNamespace, newNamespace, properties, count);
 		
 		batchRename(model, vivo, oldNamespace, newNamespace, uriCheck, count);		
 	}
@@ -336,7 +336,7 @@ public class ChangeNamespace {
 	 * @param count
 	 * @return
 	 */
-	private static void batchMatch(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties, int count) {
+	private static void batchMatchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties, int count) {
 		Resource res;
 		QuerySolution solution;
 		log.trace("Begin Match Query Build");
