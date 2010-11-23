@@ -29,13 +29,13 @@ tar -czpf backups/h2dsr-xml.tar.gz XMLVault/h2dsr/xml
 
 # Execute Translate
 rm -rf XMLVault/h2dsr/rdf
-$XSLTranslator -i config/recordHandlers/DSR-XML.xml -o config/recordHandlers/DSR-RDF.xml -x config/datamaps/DSRtoVIVO.xsl
+$XSLTranslator -i config/recordHandlers/DSR-XML-h2RH.xml -o config/recordHandlers/DSR-RDF-h2RH.xml -x config/datamaps/DSRtoVIVO.xsl
 tar -czpf backups/h2dsr-rdf.tar.gz XMLVault/h2dsr/rdf
 #tar -xzpf backups/h2dsr-rdf.tar.gz XMLVault/h2dsr/rdf
 
 # Execute Transfer to import from record handler into local temp model
 rm -rf XMLVault/h2dsr/All
-$Transfer -o config/jenaModels/h2.xml -O modelName=dsrTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -h config/recordHandlers/DSR-RDF.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/
+$Transfer -o config/jenaModels/h2.xml -O modelName=dsrTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -h config/recordHandlers/DSR-RDF-h2RH.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/
 tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 #tar -xzpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 
