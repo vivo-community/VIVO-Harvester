@@ -261,6 +261,84 @@ public class ChangeNamespace {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
 		
+		batchMatch(model, vivo, oldNamespace, newNamespace, properties, count);
+		
+		batchRename(model, vivo, oldNamespace, newNamespace, uriCheck, count);		
+	}
+
+	
+	/**
+	 * @param model
+	 * @param vivo
+	 * @param oldNamespace
+	 * @param newNamespace
+	 * @param uriCheck
+	 * @param count
+	 */
+	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, ArrayList<String> uriCheck, int count) {
+		String uri;
+		Resource res;
+		QuerySolution solution;
+		//Grab all namespaces needing changed
+		log.trace("Begin Change Query Build");
+		String subjectQuery =	"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+						"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
+						"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> " +
+						"PREFIX owl:   <http://www.w3.org/2002/07/owl#> " +
+						"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> " +
+						"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> " +
+						"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> " +
+						"PREFIX bibo: <http://purl.org/ontology/bibo/> " +
+						"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> " +
+						"PREFIX dcterms: <http://purl.org/dc/terms/> " +
+						"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> " +
+						"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+						"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> " +
+						"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
+						"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> " +
+						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+						"SELECT ?sNew " +
+						"WHERE " +
+						"{ " +
+						"?sNew ?p ?o .  " +
+						"FILTER regex(str(?sNew), \"" + oldNamespace + "\" ) " + 
+						"}";
+		log.debug(subjectQuery);
+		log.trace("End Change Query Build");
+		
+		log.trace("Begin Execute Query");
+		ResultSet changeList = model.executeQuery(subjectQuery);
+		ArrayList<String> changeArray = new ArrayList<String>();
+		log.trace("End Execute Query");
+		
+		log.trace("Begin Rename Changes");
+		while (changeList.hasNext()) {
+			solution = changeList.next();
+			changeArray.add(solution.getResource("sNew").toString());
+			count++;
+		}
+		
+		for(int i = 0; i < count; i++) {
+			res = model.getJenaModel().getResource(changeArray.get(i));	
+			uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
+			ResourceUtils.renameResource(res, uri);
+		}
+		log.info("Changed namespace for "+count+" rdf nodes");
+		log.trace("End Rename Changes");
+	}
+
+	/**
+	 * @param model
+	 * @param vivo
+	 * @param oldNamespace
+	 * @param newNamespace
+	 * @param properties
+	 * @param count
+	 * @return
+	 */
+	private static void batchMatch(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties, int count) {
+		Resource res;
+		QuerySolution solution;
 		log.trace("Begin Match Query Build");
 		
 		//Find all namespace matches
@@ -338,53 +416,7 @@ public class ChangeNamespace {
 		log.info("Matched namespace for "+count+" rdf nodes");
 		log.trace("Begin Rename Matches");
 		count = 0;
-		
-		//Grab all namespaces needing changed
-		log.trace("Begin Change Query Build");
-		String subjectQuery =	"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-						"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
-						"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> " +
-						"PREFIX owl:   <http://www.w3.org/2002/07/owl#> " +
-						"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> " +
-						"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> " +
-						"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> " +
-						"PREFIX bibo: <http://purl.org/ontology/bibo/> " +
-						"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> " +
-						"PREFIX dcterms: <http://purl.org/dc/terms/> " +
-						"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> " +
-						"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-						"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> " +
-						"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
-						"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> " +
-						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-						"SELECT ?sNew " +
-						"WHERE " +
-						"{ " +
-						"?sNew ?p ?o .  " +
-						"FILTER regex(str(?sNew), \"" + oldNamespace + "\" ) " + 
-						"}";
-		log.debug(subjectQuery);
-		log.trace("End Change Query Build");
-		
-		log.trace("Begin Execute Query");
-		ResultSet changeList = model.executeQuery(subjectQuery);
-		ArrayList<String> changeArray = new ArrayList<String>();
-		log.trace("End Execute Query");
-		
-		log.trace("Begin Rename Changes");
-		while (changeList.hasNext()) {
-			solution = changeList.next();
-			changeArray.add(solution.getResource("sNew").toString());
-			count++;
-		}
-		
-		for(int i = 0; i < count; i++) {
-			res = model.getJenaModel().getResource(changeArray.get(i));	
-			uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
-			ResourceUtils.renameResource(res, uri);
-		}
-		log.info("Changed namespace for "+count+" rdf nodes");
-		log.trace("End Rename Changes");		
+		return count;
 	}
 	
 	/**
