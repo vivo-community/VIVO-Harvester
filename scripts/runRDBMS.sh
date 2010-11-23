@@ -10,7 +10,8 @@
 #     Eliza Chan
 
 # Set working directory
-cd /usr/share/vivo/harvester
+cd `dirname $(readlink -f $0)`
+cd ..
 
 HARVESTER_TASK=d2rmap
 

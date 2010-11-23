@@ -415,7 +415,7 @@ public class JenaRecordHandler extends RecordHandler {
 			"?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField ."+"\n\t"+
 			"FILTER regex(?idField, \"" + idText + "\")"+"\n"+
 		"}";
-		for(QuerySolution record : IterableAdaptor.adapt(this.model.executeQuery(query))) {
+		for(QuerySolution record : IterableAdaptor.adapt(this.model.executeSelectQuery(query))) {
 			retVal.add(record.getLiteral("idField").getString());
 		}
 		return retVal;

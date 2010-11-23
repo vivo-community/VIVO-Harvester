@@ -11,7 +11,8 @@
 #	  James Pence
 
 # Set working directory
-cd /usr/share/vivo/harvester
+cd `dirname $(readlink -f $0)`
+cd ..
 
 HARVESTER_TASK=dsr
 

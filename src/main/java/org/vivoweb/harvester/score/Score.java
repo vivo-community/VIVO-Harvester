@@ -439,7 +439,7 @@ public class Score {
 		
 		log.debug(authorQuery);
 		
-		ResultSet killList = toReplace.executeQuery(authorQuery);
+		ResultSet killList = toReplace.executeSelectQuery(authorQuery);
 		
 		while (killList.hasNext()) {
 			QuerySolution killSolution = killList.next();
@@ -618,7 +618,7 @@ public class Score {
 		
 		log.info("Executing authorNameMatch");
 		log.debug(matchQuery);
-		scoreInputResult = this.scoreInput.executeQuery(matchQuery);
+		scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
 		
 		// Log extra info message if none found
 		if (!scoreInputResult.hasNext()) {
@@ -645,7 +645,7 @@ public class Score {
 							"}";
 			
 			log.debug(matchQuery);
-			scorePaperResult = this.scoreInput.executeQuery(matchQuery);
+			scorePaperResult = this.scoreInput.executeSelectQuery(matchQuery);
 			
 			if (scorePaperResult.hasNext()) {
 				scorePaperSolution = scorePaperResult.next();
@@ -706,7 +706,7 @@ public class Score {
 				
 				log.debug(queryString);
 				
-				vivoResult = this.vivo.executeQuery(queryString);
+				vivoResult = this.vivo.executeSelectQuery(queryString);
 				
 				// Loop thru results and only keep if the last name, and first initial match
 				while (vivoResult.hasNext()) {
@@ -811,7 +811,7 @@ public class Score {
 					"FILTER (str(?obj) = \"" + obj + "\")"+"\n"+
 				"}";
 			log.debug(query);
-			ResultSet matches = this.vivo.executeQuery(query);
+			ResultSet matches = this.vivo.executeSelectQuery(query);
 			if (!matches.hasNext()) {
 				log.trace("No matches in VIVO found");
 				if (this.pushAll) {
@@ -861,7 +861,7 @@ public class Score {
 		// Exact Match
 		log.info("Executing exactMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		log.debug(matchQuery);
-		scoreInputResult = this.scoreInput.executeQuery(matchQuery);
+		scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
 		
 		// Log extra info message if none found
 		if (!scoreInputResult.hasNext()) {
@@ -886,7 +886,7 @@ public class Score {
 			
 			log.debug(queryString);
 			
-			commitResultSet(this.scoreOutput, this.vivo.executeQuery(queryString), matchValue, paperNode);
+			commitResultSet(this.scoreOutput, this.vivo.executeSelectQuery(queryString), matchValue, paperNode);
 		}
 	}
 	

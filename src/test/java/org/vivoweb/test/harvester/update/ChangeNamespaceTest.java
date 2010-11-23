@@ -187,7 +187,7 @@ public class ChangeNamespaceTest extends TestCase {
 		"WHERE {"+"\n\t"+
 			"?uri localVivo:uniqueId ?id ."+"\n\t"+
 		"}";
-		ResultSet rs = this.model.executeQuery(query);
+		ResultSet rs = this.model.executeSelectQuery(query);
 		assertTrue(rs.hasNext());
 		while(rs.hasNext()) {
 			String ns = rs.next().getResource("uri").getNameSpace();

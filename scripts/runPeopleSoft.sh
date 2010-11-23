@@ -10,7 +10,8 @@
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
 # Set working directory
-cd /usr/share/vivo/harvester
+cd `dirname $(readlink -f $0)`
+cd ..
 
 HARVESTER_TASK=peoplesoft
 

@@ -216,7 +216,7 @@ public class ChangeNamespace {
 		int count = 0;
 		log.debug("Query:\n"+sbQuery.toString());
 		log.debug("namespace: "+namespace);
-		for (QuerySolution qs : IterableAdaptor.adapt(vivo.executeQuery(sbQuery.toString()))) {
+		for (QuerySolution qs : IterableAdaptor.adapt(vivo.executeSelectQuery(sbQuery.toString()))) {
 			Resource res = qs.getResource("uri");
 			if (res == null) {
 				throw new IllegalArgumentException("res is null! SELECT for resource <"+current.getURI()+"> is most likely corrupted!");
@@ -307,7 +307,7 @@ public class ChangeNamespace {
 		log.trace("End Change Query Build");
 		
 		log.trace("Begin Execute Query");
-		ResultSet changeList = model.executeQuery(subjectQuery);
+		ResultSet changeList = model.executeSelectQuery(subjectQuery);
 		ArrayList<String> changeArray = new ArrayList<String>();
 		log.trace("End Execute Query");
 		

@@ -142,7 +142,7 @@ public class SPARQLTranslator {
 	    }
 		
 	    System.out.println(strQuery.toString());
-	    ResultSet rs = this.inputJC.executeQuery(strQuery.toString());
+	    ResultSet rs = this.inputJC.executeSelectQuery(strQuery.toString());
 		
 	    if (!rs.hasNext())
 	    {

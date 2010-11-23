@@ -25,6 +25,10 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.args.ArgDef;
+import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.args.ArgParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -35,6 +39,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -42,6 +47,7 @@ import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 
 /**
  * Connection Helper for Jena Models
@@ -139,7 +145,8 @@ public class JenaConnect {
 	 * Constructor (Load rdf from input stream)
 	 * @param in input stream to load rdf from
 	 * @param namespace the base uri to use for imported uris
-	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
 	public JenaConnect(InputStream in, String namespace, String language) {
 		this();
@@ -249,24 +256,28 @@ public class JenaConnect {
 		} else {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
-		
+		return jc;
+	}
+	
+	/**
+	 * Get the size of a jena model
+	 * @return the number of statement in this model
+	 */
+	public int size() {
 		//Display count
-		StmtIterator jenaStmtItr = jc.getJenaModel().listStatements();
 		int jenaCount = 0;
-		while (jenaStmtItr.hasNext()) {
-			jenaStmtItr.next();
+		for(StmtIterator jenaStmtItr = getJenaModel().listStatements(); jenaStmtItr.hasNext(); jenaStmtItr.next()) {
 			jenaCount++;
 		}
-		log.debug("JennaConnect has " + jenaCount + " statements");
-		
-		return jc;
+		return jenaCount;
 	}
 	
 	/**
 	 * Load in RDF
 	 * @param in input stream to read rdf from
 	 * @param namespace the base uri to use for imported uris
-	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
 	public void loadRDF(InputStream in, String namespace, String language) {
 		getJenaModel().read(in, namespace, language);
@@ -277,10 +288,11 @@ public class JenaConnect {
 	 * Load the RDF from a file
 	 * @param fileName the file to read from
 	 * @param namespace the base uri to use for imported uris
-	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 * @throws FileSystemException error accessing file
 	 */
-	public void loadRDF(String fileName, String namespace, String language) throws FileSystemException{
+	public void loadRDF(String fileName, String namespace, String language) throws FileSystemException {
 		this.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
 	}
 	
@@ -312,7 +324,7 @@ public class JenaConnect {
 	 * @param fileName the file to read from
 	 * @throws FileSystemException error accessing file
 	 */
-	public void exportRDF(String fileName) throws FileSystemException{
+	public void exportRDF(String fileName) throws FileSystemException {
 		this.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
 	}
 	
@@ -320,7 +332,7 @@ public class JenaConnect {
 	 * Remove RDF from another JenaConnect
 	 * @param inputJC the Model to read from
 	 */
-	public void removeRDF(JenaConnect inputJC){
+	public void removeRDF(JenaConnect inputJC) {
 		this.jenaModel.remove(inputJC.getJenaModel());
 	}
 	
@@ -328,7 +340,8 @@ public class JenaConnect {
 	 * Remove RDF from an input stream
 	 * @param in input stream to read rdf from
 	 * @param namespace the base uri to use for imported uris
-	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
 	public void removeRDF(InputStream in, String namespace, String language) {
 		removeRDF(new JenaConnect(in, namespace, language));
@@ -339,10 +352,11 @@ public class JenaConnect {
 	 * Remove the RDF from a file
 	 * @param fileName the file to read from
 	 * @param namespace the base uri to use for imported uris
-	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 * @throws FileSystemException error accessing file
 	 */
-	public void removeRDF(String fileName, String namespace, String language) throws FileSystemException{
+	public void removeRDF(String fileName, String namespace, String language) throws FileSystemException {
 		this.removeRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
 	}
 	
@@ -350,7 +364,7 @@ public class JenaConnect {
 	 * Add RDF from another JenaConnect
 	 * @param inputJC the Model to read from
 	 */
-	public void importRDF(JenaConnect inputJC){
+	public void importRDF(JenaConnect inputJC) {
 		this.jenaModel.add(inputJC.getJenaModel());
 	}
 	
@@ -417,32 +431,113 @@ public class JenaConnect {
 	}
 	
 	/**
-	 * Executes a sparql query against the JENA model and returns a result set
-	 * @param queryString the query to execute against the model
-	 * @return queryExec the executed query result set
+	 * Build a QueryExecution from a queryString
+	 * @param queryString the query to build execution for
+	 * @return the QueryExecution
 	 */
-	public ResultSet executeQuery(String queryString) {
-		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
-		QueryExecution queryExec = QueryExecutionFactory.create(query, this.jenaModel);
-		return queryExec.execSelect();
+	private QueryExecution buildQE(String queryString) {
+		return QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getJenaModel());
 	}
 	
-	// /**
-	// * Sets the namespace for relative uris
-	// * @param namespace the namesapce to use
-	// */
-	// public void setRelativeURINamespaces(String namespace) {
-	//		
-	// }
-	//	
-	// /**
-	// * Move nodes in one namespace to another
-	// * @param oldNamespace the old namespace
-	// * @param newNamespace the new namespace
-	// */
-	// public void swapURINamespace(String oldNamespace, String newNamespace) {
-	//		
-	// }
+	/**
+	 * Executes a sparql select query against the JENA model and returns the selected result set
+	 * @param queryString the query to execute against the model
+	 * @return the executed query result set
+	 */
+	public ResultSet executeSelectQuery(String queryString) {
+		return buildQE(queryString).execSelect();
+	}
+	
+	/**
+	 * Executes a sparql construct query against the JENA model and returns the constructed result model
+	 * @param queryString the query to execute against the model
+	 * @return the executed query result model
+	 */
+	public Model executeConstructQuery(String queryString) {
+		return buildQE(queryString).execConstruct();
+	}
+	
+	/**
+	 * Executes a sparql describe query against the JENA model and returns the description result model
+	 * @param queryString the query to execute against the model
+	 * @return the executed query result model
+	 */
+	public Model executeDescribeQuery(String queryString) {
+		return buildQE(queryString).execDescribe();
+	}
+	
+	/**
+	 * Executes a sparql describe query against the JENA model and returns the description result model
+	 * @param queryString the query to execute against the model
+	 * @return the executed query result model
+	 */
+	public boolean executeAskQuery(String queryString) {
+		return buildQE(queryString).execAsk();
+	}
+	
+	/**
+	 * RDF formats
+	 */
+	protected static HashMap<String, ResultSetFormat> formatSymbols = new HashMap<String, ResultSetFormat>();
+	static {
+		formatSymbols.put(ResultSetFormat.syntaxXML.getSymbol(), ResultSetFormat.syntaxXML);
+		formatSymbols.put(ResultSetFormat.syntaxRDF_XML.getSymbol(), ResultSetFormat.syntaxRDF_XML);
+		formatSymbols.put(ResultSetFormat.syntaxRDF_N3.getSymbol(), ResultSetFormat.syntaxRDF_N3);
+		formatSymbols.put(ResultSetFormat.syntaxCSV.getSymbol(), ResultSetFormat.syntaxCSV);
+		formatSymbols.put(ResultSetFormat.syntaxText.getSymbol(), ResultSetFormat.syntaxText);
+		formatSymbols.put(ResultSetFormat.syntaxJSON.getSymbol(), ResultSetFormat.syntaxJSON);
+	}
+	
+	/**
+	 * Execute a Query and output result to System.out
+	 * @param queryParam the query
+	 * @param resultFormatParam the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for
+	 * construct/describe queries)
+	 * @throws IOException error writing to output
+	 */
+	public void executeQuery(String queryParam, String resultFormatParam) throws IOException {
+		executeQuery(queryParam, resultFormatParam, System.out);
+	}
+	
+	/**
+	 * Execute a Query
+	 * @param queryParam the query
+	 * @param resultFormatParam the format to return the results in ('RS_TEXT' default for select queries / 'RDF/XML' default for construct/describe queries)
+	 * @param output output stream to write to - null uses System.out
+	 * @throws IOException error writing to output
+	 */
+	public void executeQuery(String queryParam, String resultFormatParam, OutputStream output) throws IOException {
+		OutputStream out = (output != null)?output:System.out;
+		QueryExecution qe = null;
+		try {
+			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
+			qe = QueryExecutionFactory.create(query, getJenaModel());
+			if(query.isSelectType()) {
+				ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
+				if(rsf == null) {
+					rsf = ResultSetFormat.syntaxText;
+				}
+				ResultSetFormatter.output(out, qe.execSelect(), rsf);
+			} else if(query.isAskType()) {
+				out.write(Boolean.toString(qe.execAsk()).getBytes());
+			} else {
+				Model resultModel = null;
+				if(query.isConstructType()) {
+					resultModel = qe.execConstruct();
+				} else if(query.isDescribeType()) {
+					resultModel = qe.execDescribe();
+				} else {
+					throw new IllegalArgumentException("Query Invalid: Not Select, Construct, Ask, or Describe");
+				}
+				
+				resultModel.write(out, resultFormatParam);
+			}
+		} finally {
+			if(qe != null) {
+				qe.close();
+			}
+		}
+	}
 	
 	/**
 	 * Accessor for Jena Model
@@ -486,7 +581,7 @@ public class JenaConnect {
 		Class.forName(dbClass).newInstance();
 		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
 	}
-
+	
 	/**
 	 * Checks if the model contains the given uri
 	 * @param uri the uri to check for
@@ -494,6 +589,39 @@ public class JenaConnect {
 	 */
 	public boolean containsURI(String uri) {
 		return this.jenaModel.containsResource(ResourceFactory.createResource(uri));
+	}
+	
+	/**
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
+	 */
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("JenaConnect");
+		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jena").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("query").withParameter(true, "SPARQL_QUERY").setDescription("sparql query to execute").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("queryResultFormat").withParameter(true, "RESULT_FORMAT").setDescription("the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for construct/describe queries)").setRequired(false));
+		return parser;
+	}
+	
+	/**
+	 * Main method
+	 * @param args commandline arguments
+	 */
+	public static void main(String... args) {
+		InitLog.initLogger(JenaConnect.class);
+		try {
+			ArgList argList = new ArgList(getParser(), args);
+			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getProperties("J"));
+			jc.executeQuery(argList.get("q"), argList.get("Q"));
+		} catch(IllegalArgumentException e) {
+			log.error(e.getMessage(), e);
+			System.err.println(getParser().getUsage());
+		} catch(IOException e) {
+			log.error(e.getMessage(), e);
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
 	}
 	
 	/**
