@@ -416,7 +416,6 @@ public class ChangeNamespace {
 		log.info("Matched namespace for "+count+" rdf nodes");
 		log.trace("Begin Rename Matches");
 		count = 0;
-		return count;
 	}
 	
 	/**
