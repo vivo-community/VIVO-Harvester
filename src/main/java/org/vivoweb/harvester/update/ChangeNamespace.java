@@ -261,6 +261,8 @@ public class ChangeNamespace {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
 		
+		log.trace("Begin Match Query Build");
+		
 		//Find all namespace matches
 		StringBuilder sQuery =	new StringBuilder("PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 								"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
@@ -302,18 +304,22 @@ public class ChangeNamespace {
 		sQuery.append(newNamespace + "\" ) }");
 		
 		log.debug(sQuery.toString());
+		log.trace("End Match Query Build");
 		
+		log.trace("Begin Union Model");
 		Model unionModel = model.getJenaModel().union(vivo.getJenaModel());
+		log.trace("End Union Model");
 		
+		log.trace("Begin Run Query to ResultSet");
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
-		
 		ResultSet matchList = queryExec.execSelect();
+		log.trace("End Run Query to ResultSet");
 		
+		log.trace("Begin Rename Matches");
 		ArrayList<String[]> uriArray = new ArrayList<String[]>();
 		String matchArray[];
-		
-		
+				
 		while (matchList.hasNext()) {
 			solution = matchList.next();
 			matchArray = new String[2];
@@ -327,13 +333,14 @@ public class ChangeNamespace {
 			matchArray = uriArray.get(i);
 			res = model.getJenaModel().getResource(matchArray[0]);		
 			ResourceUtils.renameResource(res, matchArray[1]);
-		}
-		
+		}		
 		
 		log.info("Matched namespace for "+count+" rdf nodes");
+		log.trace("Begin Rename Matches");
 		count = 0;
 		
 		//Grab all namespaces needing changed
+		log.trace("Begin Change Query Build");
 		String subjectQuery =	"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 						"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
 						"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> " +
@@ -357,10 +364,14 @@ public class ChangeNamespace {
 						"FILTER regex(str(?sNew), \"" + oldNamespace + "\" ) " + 
 						"}";
 		log.debug(subjectQuery);
+		log.trace("End Change Query Build");
 		
+		log.trace("Begin Execute Query");
 		ResultSet changeList = model.executeQuery(subjectQuery);
 		ArrayList<String> changeArray = new ArrayList<String>();
+		log.trace("End Execute Query");
 		
+		log.trace("Begin Rename Changes");
 		while (changeList.hasNext()) {
 			solution = changeList.next();
 			changeArray.add(solution.getResource("sNew").toString());
@@ -373,6 +384,7 @@ public class ChangeNamespace {
 			ResourceUtils.renameResource(res, uri);
 		}
 		log.info("Changed namespace for "+count+" rdf nodes");
+		log.trace("End Rename Changes");		
 	}
 	
 	/**
