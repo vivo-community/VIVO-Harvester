@@ -20,8 +20,14 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -250,27 +256,80 @@ public class ChangeNamespace {
 		String uri;
 		Resource res;
 		QuerySolution solution;
+
+		if (properties.size() < 1) {
+			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
+		}
 		
 		//Find all namespace matches
-		String subjectQuery =	"";
+		StringBuilder sQuery =	new StringBuilder("PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+								"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
+								"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> " +
+								"PREFIX owl:   <http://www.w3.org/2002/07/owl#> " +
+								"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> " +
+								"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> " +
+								"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> " +
+								"PREFIX bibo: <http://purl.org/ontology/bibo/> " +
+								"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> " +
+								"PREFIX dcterms: <http://purl.org/dc/terms/> " +
+								"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> " +
+								"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+								"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> " +
+								"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
+								"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> " +
+								"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+								"SELECT ?sNew ?sOld  " +
+								"WHERE " +
+								"{ ");
 
-		log.debug(subjectQuery);
+		int counter = 0;
+		for (Property p : properties) {
+				sQuery.append("\t?sNew <");
+				sQuery.append(p.getURI());
+				sQuery.append("> ");
+				sQuery.append("?o" + counter );
+				sQuery.append(" .\n");
+				sQuery.append("\t?sOld <");
+				sQuery.append(p.getURI());
+				sQuery.append("> ");
+				sQuery.append("\t?o" + counter );
+				sQuery.append(" .\n");
+		}
 		
-		ResultSet matchList = model.executeQuery(subjectQuery);
+		sQuery.append("FILTER regex(str(?sNew), \"");
+		sQuery.append(oldNamespace + "\" ) .");
+		sQuery.append("FILTER regex(str(?sOld), \"");
+		sQuery.append(newNamespace + "\" ) }");
+		
+		log.debug(sQuery.toString());
+		
+		Model unionModel = model.getJenaModel().union(vivo.getJenaModel());
+		
+		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
+		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
+		
+		ResultSet matchList = queryExec.execSelect();
+		
+		String uriArray[][] = new String[5][2];
 		
 		while (matchList.hasNext()) {
 			solution = matchList.next();
-			res = solution.getResource("sOld");
-			uri = solution.getResource("sNew").toString();
-			ResourceUtils.renameResource(res, uri);
+			uriArray[count][0] = solution.getResource("sOld").toString();
+			uriArray[count][1] = solution.getResource("sNew").toString();
 			count++;
 		}
+		
+		for(int i = 0; i < count; i++) {
+			res = model.getJenaModel().getResource(uriArray[i][0]);		
+			ResourceUtils.renameResource(res, uriArray[i][1]);
+		}
+		
 		
 		log.info("Matched namespace for "+count+" rdf nodes");
 		count = 0;
 		
 		//Grab all namespaces needing changed
-		subjectQuery =	"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+		String subjectQuery =	"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 						"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
 						"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> " +
 						"PREFIX owl:   <http://www.w3.org/2002/07/owl#> " +
@@ -290,7 +349,7 @@ public class ChangeNamespace {
 						"WHERE " +
 						"{ " +
 						"?sNew ?p ?o .  " +
-						"FILTER regex(uri(?sNew), str(\"http://vivo.ufl.edu/individual/n\") ) " +
+						"FILTER regex(str(?sNew), \"" + oldNamespace + "\" ) " + 
 						"}";
 		log.debug(subjectQuery);
 		
