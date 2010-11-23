@@ -545,6 +545,7 @@ public class PubmedScore {
 				log.trace(vivoResult.next().toString());
 			}
 		}
+//		This is cmw48's logic, don't blame this on CTRIP:		
 //		# Scoring Logic											  
 //		if lastnamematch then {
 //		    if fullemailmatch then {
