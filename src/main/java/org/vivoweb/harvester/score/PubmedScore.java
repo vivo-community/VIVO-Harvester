@@ -462,7 +462,7 @@ public class PubmedScore {
 		log.info("Executing Pubmed Scoring");	
 
 		log.debug(matchQuery);
-		scoreInputResult = this.scoreInput.executeQuery(matchQuery);
+		scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
 		
 		// Log info message if none found
 		if (!scoreInputResult.hasNext()) {
@@ -538,7 +538,7 @@ public class PubmedScore {
 			
 			log.debug(queryString);
 			
-			vivoResult = this.vivo.executeQuery(queryString);
+			vivoResult = this.vivo.executeSelectQuery(queryString);
 			
 			// Run comparisions
 			while (vivoResult.hasNext()) {
