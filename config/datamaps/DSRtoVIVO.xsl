@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
+  Copyright (c) 2010 Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the new BSD license
   which accompanies this distribution, and is available at
@@ -9,12 +9,10 @@
       Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
       James Pence
 -->
-<!-- <?xml version="1.0"?> -->
 <!-- Header information for the Style Sheet
 	The style sheet requires xmlns for each prefix you use in constructing
 	the new elements
 -->
-<?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -86,33 +84,60 @@
 		<xsl:param name='grantid' />
 		<xsl:param name='this' />
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
-		
 			<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
-			<core:hasPrincipalInvestigatorRole><xsl:value-of select="$this/db-dbo.vwContracts:ContractPI"/></core:hasPrincipalInvestigatorRole>
 			<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Title"/></rdfs:label>
-			<core:administeredBy><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></core:administeredBy>
+			<core:administeredBy>
+				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/org/org{$this/db-dbo.vwContracts:ContractDeptID}">
+					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+					<ufVivo:deptID><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></ufVivo:deptID>
+				</rdf:Description>
+			</core:administeredBy>
 			<core:totalawardamount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalawardamount>
-			<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwContracts:ContractUFID"/></ufVivo:ufid>
 			<core:sponsorawardID><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorawardID>
 			
-						<xsl:choose>
-							<xsl:when test="$this/db-dbo.vwProjectTeam:FlowThruSponsorID = '-'">
-								<core:grantAwardedBy><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></core:grantAwardedBy>
-							</xsl:when>
-							<xsl:otherwise>
-								<core:grantSubcontractedThrough><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></core:grantSubcontractedThrough>
-								<core:grantAwardedBy><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsorID"/></core:grantAwardedBy>
-								<core:grantAwardedBy><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsor"/></core:grantAwardedBy>
-							</xsl:otherwise>
-						</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="$this/db-dbo.vwProjectTeam:FlowThruSponsorID = '-'">
+					<core:grantAwardedBy>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:SponsorID}For{$grantid}">
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
+							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
+						</rdf:Description>
+					</core:grantAwardedBy>
+				</xsl:when>
+				<xsl:otherwise>
+					<core:grantSubcontractedThrough>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:SponsorID}For{$grantid}">
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
+							<core:subcontractsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
+						</rdf:Description>
+					</core:grantSubcontractedThrough>
+					<core:grantAwardedBy>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:FlowThruSponsorID}For{$grantid}">
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsor"/></rdfs:label>
+							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
+						</rdf:Description>
+					</core:grantAwardedBy>
+				</xsl:otherwise>
+			</xsl:choose>
 			
 			<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
-				<xsl:value-of select="$this/db-dbo.vwContracts:BEGIN_DT" />
+				<xsl:analyze-string select="$this/db-dbo.vwContracts:BEGIN_DT" regex="^(....-..-..).*?$">
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(1)"/>
+					</xsl:matching-substring>
+				</xsl:analyze-string>
 			</core:startDate>
 			<core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
-				<xsl:value-of select="$this/db-dbo.vwContracts:END_DT" />
+				<xsl:analyze-string select="$this/db-dbo.vwContracts:END_DT" regex="^(....-..-..).*?$">
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(1)"/>
+					</xsl:matching-substring>
+				</xsl:analyze-string>
 			</core:endDate>
 		</rdf:Description>
 	</xsl:template>
@@ -120,22 +145,43 @@
 	<xsl:template name="t_vwProjectTeam">
 		<xsl:param name='grantid' />
 		<xsl:param name='this' />
-			<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}">
-				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
-				<score:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></score:ufid>
-				<core:roleIn>
-					<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
-						<xsl:choose>
-							<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
-								<core:hasPrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<core:hasCo-PrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</rdf:Description>
-				</core:roleIn>
-			</rdf:Description>
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}">
+			<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+			<xsl:choose>
+				<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Co-PrincipleInvestigatorRole"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			<core:roleIn>
+				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
+					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+					<core:relatedRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+				</rdf:Description>
+			</core:roleIn>
+			<xsl:choose>
+				<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
+					<core:principalInvestigatorRoleOf>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<core:hasPrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+						</rdf:Description>
+					</core:principalInvestigatorRoleOf>
+				</xsl:when>
+				<xsl:otherwise>
+					<core:co-PrincipalInvestigatorRoleOf>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<core:hasCo-PrincipalInvestigatorRole rdf:description="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+						</rdf:Description>
+					</core:co-PrincipalInvestigatorRoleOf>
+				</xsl:otherwise>
+			</xsl:choose>
+		</rdf:Description>
 	</xsl:template>
 	
 </xsl:stylesheet>
