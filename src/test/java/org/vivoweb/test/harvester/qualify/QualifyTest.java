@@ -39,12 +39,16 @@ public class QualifyTest extends TestCase {
 	private JenaConnect jena;
 	/** */
 	private Property label;
+	/** */
+	private Property score;
 	
 	@Override
 	public void setUp() throws Exception {
 		InitLog.initLogger(QualifyTest.class);
 		this.jena = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
+		this.score = this.jena.getJenaModel().createProperty("http://vivoweb.org/harvester/score#Affiliation");
+
 	}
 	
 	@Override
@@ -69,7 +73,7 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T R R");
 			String expectedValue = "I Am Testing Regex Replace";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), ".*?IATRR.*?", expectedValue, null, true).executeTask();
+			new Qualify(this.jena, this.label.getURI(), ".*?IATRR.*?", expectedValue, null, true, null).executeTask();
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res2, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
@@ -94,10 +98,35 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 			String expectedValue = "I Am Testing Test Replace";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, null, false).executeTask();
+			new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, null, false, null).executeTask();
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res2, this.label).getString().equals(expectedValue));
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		log.info("END testStringReplace");
+	}
+	
+	/**
+	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
+	 * string replace.
+	 */
+	public void testRemoveNamespace() {
+		log.info("BEGIN testStringReplace");
+		try {
+			Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
+			Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
+			Resource res3 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#3");
+			this.jena.getJenaModel().add(res1, this.label, "IATTR");
+			this.jena.getJenaModel().add(res2, this.score, "wooIATTRblah");
+			this.jena.getJenaModel().add(res3, this.label, "I A T T R");
+			String namespace = "http://vivoweb.org/harvester/score";
+			// call qualify
+			new Qualify(this.jena, this.label.getURI(), null, null, null, false, namespace).executeTask();
+			assertTrue(this.jena.getJenaModel().containsResource(res1));
+			assertFalse(this.jena.getJenaModel().containsResource(res2));
+			assertTrue(this.jena.getJenaModel().containsResource(res3));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}

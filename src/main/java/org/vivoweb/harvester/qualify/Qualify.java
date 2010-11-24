@@ -7,6 +7,8 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +18,14 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
+
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
  * Qualify data using SPARQL queries
@@ -55,6 +61,10 @@ public class Qualify {
 	 * Is this to use Regex to match the string
 	 */
 	private boolean regex;
+	/**
+	 * the namespace you want removed
+	 */
+	private String namespace;
 	
 	/**
 	 * Constructor
@@ -66,7 +76,7 @@ public class Qualify {
 	 * @param isRegex is this to use Regex to match the string
 	 * @throws IOException error connecting to model
 	 */
-	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex) throws IOException {
+	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex, String rmNameSpace) throws IOException {
 		if(withModelName != null) {
 			this.model = new JenaConnect(jenaModel, withModelName);
 		} else {
@@ -77,6 +87,7 @@ public class Qualify {
 		this.newVal = newValue;
 		this.modelName = withModelName;
 		this.regex = isRegex;
+		this.namespace = rmNameSpace;
 	}
 	
 	/**
@@ -85,8 +96,8 @@ public class Qualify {
 	 * @throws IOException error creating task
 	 */
 	public Qualify(ArgList argList) throws IOException {
-		if(!(argList.has("r") ^ argList.has("t"))) {
-			throw new IllegalArgumentException("Must provide one of --regex or --text, but not both");
+		if(!((argList.has("r") ^ argList.has("t") ^ argList.has("p")))) {
+			throw new IllegalArgumentException("Must provide one of --regex, --text, or --namespace, but not more than 1");
 		}
 		this.modelName = argList.get("n");
 		setModel(argList.get("j"));
@@ -94,6 +105,7 @@ public class Qualify {
 		this.regex = argList.has("r");
 		this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
 		this.newVal = argList.get("v");
+		this.namespace = argList.get("p");
 	}
 	
 	/**
@@ -163,10 +175,42 @@ public class Qualify {
 		}
 	}
 	
+	private void rmNamespace(String namespace){
+		String predicateQuery =	"SELECT ?s " +
+				"WHERE " +
+				"{ " +
+				"?s ?p ?o .  " +
+				"FILTER regex(str(?p), \"" + namespace + "\" ) " + 
+				"}";
+		log.debug(predicateQuery);
+		
+		ResultSet propList = model.executeSelectQuery(predicateQuery);
+		ArrayList<Property> propArray = new ArrayList<Property>();
+		
+		int countUniqueProp = 0;
+		while (propList.hasNext()) {
+			QuerySolution solution = propList.next();
+			propArray.add(solution.getResource("p").as(Property.class));
+			countUniqueProp++;
+		}
+		
+		for(int i = 0; i < countUniqueProp; i++) {
+			this.model.getJenaModel().removeAll(null, propArray.get(i), null);
+		}
+		
+		this.model.getJenaModel().commit();
+		log.info("removed "+countUniqueProp+" unique properties");
+	}
+	
 	/**
 	 * Executes the task
 	 */
 	public void executeTask() {
+		if(!this.namespace.isEmpty()){
+			log.info("Running remove namespace for " + this.namespace);
+			rmNamespace(this.namespace);
+		}
+		
 		if(this.regex) {
 			log.info("Running Regex replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
 			regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
@@ -188,6 +232,7 @@ public class Qualify {
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX"));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING"));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").setDescription("replace matching record data with this value").withParameter(true, "REPLACE_VALUE"));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("rmNamespace").setDescription("remove all statements where the predicate is of the given namespace").withParameter(true, "RDF_NAMESPACE"));
 		return parser;
 	}
 	
