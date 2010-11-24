@@ -7,17 +7,11 @@
 package org.vivoweb.harvester.translate;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
@@ -27,7 +21,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.QuerySolution;

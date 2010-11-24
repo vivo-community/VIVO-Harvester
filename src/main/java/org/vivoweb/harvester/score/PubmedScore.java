@@ -4,9 +4,6 @@
 package org.vivoweb.harvester.score;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,7 +30,6 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import org.vivoweb.harvester.score.Score;
 
 /**
  * @author Chris Westling
@@ -69,6 +65,7 @@ public class PubmedScore {
 	/**
 	 * Option to push Matches and Non-Matches to output model
 	 */
+	@SuppressWarnings("unused")
 	private final boolean pushAll;
 
 
@@ -148,7 +145,7 @@ public class PubmedScore {
 	 * @param clearOutputModelArg If set, this will clear the output model before scoring begins
 	 * @param pushAllArg If set, this will push all statements into vivo
 	 */
-	public PubmedScore(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, boolean pushAllArg) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
+	public PubmedScore(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, boolean pushAllArg) {
 		this.wipeInputModel = clearInputModelArg;
 		this.wipeOutputModel = clearOutputModelArg;
 		this.pushAll = pushAllArg;
@@ -236,6 +233,7 @@ public class PubmedScore {
 	 * @param matchNode the node to match
 	 * @param paperNode the node of the paper
 	 */
+	@SuppressWarnings("unused")
 	private static void commitResultNode(Model result, RDFNode authorNode, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
 		log.trace("Found " + matchNode.toString() + " for person " + authorNode.toString());
 		log.trace("Adding paper " + paperNode.toString());
@@ -256,6 +254,7 @@ public class PubmedScore {
 	 * @param matchNode the node to match
 	 * @param paperNode the node of the paper
 	 */
+	@SuppressWarnings("unused")
 	private static void commitResultSet(Model result, ResultSet storeResult, Resource paperResource, RDFNode matchNode, RDFNode paperNode) {
 		RDFNode authorNode;
 		QuerySolution vivoSolution;
@@ -441,8 +440,9 @@ public class PubmedScore {
 		ResultSet vivoResult;
 		QuerySolution scoreSolution;
 		ResultSet scoreInputResult;
+		@SuppressWarnings("unused")
 		Resource author;
-		Resource paper;
+//		Resource paper;
 		String foreName;
 		String middleName;
 		String lastName;

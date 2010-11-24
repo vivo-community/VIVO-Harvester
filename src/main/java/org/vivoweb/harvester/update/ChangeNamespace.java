@@ -8,8 +8,11 @@ package org.vivoweb.harvester.update;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,13 +93,13 @@ public class ChangeNamespace {
 	 * @param current the current resource
 	 * @param namespace the namespace to match in
 	 * @param properties the propeties to match on
-	 * @param uriCheck list of new uris generated during this changenamespace run
+	 * @param uriCheck set of new uris generated during this changenamespace run
 	 * @param errorOnNewURI Log ERROR messages when a new URI is generated
 	 * @param vivo the model to match in
 	 * @param model model to check for duplicates
 	 * @return the uri of the first matched resource or an unused uri if none found
 	 */
-	public static String getURI(Resource current, String namespace, List<Property> properties, ArrayList<String> uriCheck, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model) {
+	public static String getURI(Resource current, String namespace, List<Property> properties, Set<String> uriCheck, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model) {
 		String uri = null;
 		
 		if (properties != null && !properties.isEmpty()) {
@@ -116,12 +119,12 @@ public class ChangeNamespace {
 	/**
 	 * Gets an unused URI in the the given namespace for the given models
 	 * @param namespace the namespace
-	 * @param uriCheck list of new uris generated during this changenamespace run
+	 * @param uriCheck set of new uris generated during this changenamespace run
 	 * @param models models to check in
 	 * @return the uri
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static String getUnusedURI(String namespace, ArrayList<String> uriCheck, JenaConnect... models) throws IllegalArgumentException {
+	public static String getUnusedURI(String namespace, Set<String> uriCheck, JenaConnect... models) throws IllegalArgumentException {
 		if (namespace == null || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
@@ -132,10 +135,12 @@ public class ChangeNamespace {
 			log.trace("uriCheck: "+uriCheck.contains(uri));
 			if (uriCheck.contains(uri)) {
 				uri = null;
+				continue;
 			}
 			for (JenaConnect model : models) {
 				if (model.containsURI(uri)) {
 					uri = null;
+					break;
 				}
 			}
 		}
@@ -242,146 +247,123 @@ public class ChangeNamespace {
 	 * @throws IllegalArgumentException empty namespace
 	 */
 	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties) throws IllegalArgumentException {
-		if (oldNamespace == null || oldNamespace.equals("")) {
+		if (oldNamespace == null || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
-		if (newNamespace == null || newNamespace.equals("")) {
+		if (newNamespace == null || newNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("new namespace cannot be empty");
 		}
-		if (oldNamespace.equals(newNamespace)) {
+		if (oldNamespace.trim().equals(newNamespace.trim())) {
 			return;
 		}
-		ArrayList<String> uriCheck = new ArrayList<String>();
-		int count = 0;
-		String uri;
-		Resource res;
-		QuerySolution solution;
-
-		if (properties.size() < 1) {
-			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
-		}
-		
-		batchMatchRename(model, vivo, oldNamespace, newNamespace, properties, count);
-		
-		batchRename(model, vivo, oldNamespace, newNamespace, uriCheck, count);		
+		batchMatchRename(model, vivo, oldNamespace.trim(), newNamespace.trim(), properties);
+		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim());
 	}
 
 	
 	/**
-	 * @param model
-	 * @param vivo
-	 * @param oldNamespace
-	 * @param newNamespace
-	 * @param uriCheck
-	 * @param count
+	 * Rename unmatched resources from a given namespace in the given model to another (vivo) model
+	 * @param model the model to change namespaces for
+	 * @param vivo the model to search for uris in
+	 * @param oldNamespace the old namespace
+	 * @param newNamespace the new namespace
 	 */
-	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, ArrayList<String> uriCheck, int count) {
-		String uri;
-		Resource res;
-		QuerySolution solution;
+	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace) {
 		//Grab all namespaces needing changed
 		log.trace("Begin Change Query Build");
-		String subjectQuery =	"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-						"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
-						"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> " +
-						"PREFIX owl:   <http://www.w3.org/2002/07/owl#> " +
-						"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> " +
-						"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> " +
-						"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> " +
-						"PREFIX bibo: <http://purl.org/ontology/bibo/> " +
-						"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> " +
-						"PREFIX dcterms: <http://purl.org/dc/terms/> " +
-						"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> " +
-						"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-						"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> " +
-						"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
-						"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> " +
-						"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-						"SELECT ?sNew " +
-						"WHERE " +
-						"{ " +
-						"?sNew ?p ?o .  " +
-						"FILTER regex(str(?sNew), \"" + oldNamespace + "\" ) " + 
-						"}";
-		log.debug(subjectQuery);
+		String subjectQuery =	""+
+			"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+			"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" +
+			"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> \n" +
+			"PREFIX owl:   <http://www.w3.org/2002/07/owl#> \n" +
+			"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> \n" +
+			"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> \n" +
+			"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> \n" +
+			"PREFIX bibo: <http://purl.org/ontology/bibo/> \n" +
+			"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> \n" +
+			"PREFIX dcterms: <http://purl.org/dc/terms/> \n" +
+			"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> \n" +
+			"PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n" +
+			"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> \n" +
+			"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" +
+			"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> \n" +
+			"PREFIX core: <http://vivoweb.org/ontology/core#> \n" +
+			"\n" +
+			"SELECT ?sNew \n" +
+			"WHERE {\n" +
+			"\t?sNew ?p ?o . \n" +
+			"\tFILTER regex(str(?sNew), \"" + oldNamespace + "\" ) \n" + 
+			"}";
+		log.debug("Change Query:\n"+subjectQuery);
 		log.trace("End Change Query Build");
 		
 		log.trace("Begin Execute Query");
 		ResultSet changeList = model.executeSelectQuery(subjectQuery);
-		ArrayList<String> changeArray = new ArrayList<String>();
 		log.trace("End Execute Query");
-		
+
+		HashSet<String> changeArray = new HashSet<String>();
 		log.trace("Begin Rename Changes");
-		while (changeList.hasNext()) {
-			solution = changeList.next();
-			changeArray.add(solution.getResource("sNew").toString());
-			count++;
+		for(QuerySolution solution : IterableAdaptor.adapt(changeList)) {
+			changeArray.add(solution.getResource("sNew").getURI());
 		}
 		
-		for(int i = 0; i < count; i++) {
-			res = model.getJenaModel().getResource(changeArray.get(i));	
-			uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
+		HashSet<String> uriCheck = new HashSet<String>();
+		for(String sNew : changeArray) {
+			Resource res = model.getJenaModel().getResource(sNew);	
+			String uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
 			ResourceUtils.renameResource(res, uri);
 		}
-		log.info("Changed namespace for "+count+" rdf nodes");
+		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
 		log.trace("End Rename Changes");
 	}
 
 	/**
-	 * @param model
-	 * @param vivo
-	 * @param oldNamespace
-	 * @param newNamespace
-	 * @param properties
-	 * @param count
-	 * @return
+	 * Rename resource matches from a given namespace in the given model to another (vivo) model based on the given properties
+	 * @param model the model to change namespaces for
+	 * @param vivo the model to search for uris in
+	 * @param oldNamespace the old namespace
+	 * @param newNamespace the new namespace
+	 * @param properties the properties to match on
 	 */
-	private static void batchMatchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties, int count) {
+	private static void batchMatchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties) {
+		if (properties.size() < 1) {
+			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
+		}
 		Resource res;
-		QuerySolution solution;
 		log.trace("Begin Match Query Build");
 		
 		//Find all namespace matches
-		StringBuilder sQuery =	new StringBuilder("PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-								"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> " +
-								"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> " +
-								"PREFIX owl:   <http://www.w3.org/2002/07/owl#> " +
-								"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> " +
-								"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> " +
-								"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> " +
-								"PREFIX bibo: <http://purl.org/ontology/bibo/> " +
-								"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> " +
-								"PREFIX dcterms: <http://purl.org/dc/terms/> " +
-								"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> " +
-								"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-								"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> " +
-								"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
-								"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> " +
-								"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-								"SELECT ?sNew ?sOld  " +
-								"WHERE " +
-								"{ ");
+		StringBuilder sQuery =	new StringBuilder(
+			"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+			"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" +
+			"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> \n" +
+			"PREFIX owl:   <http://www.w3.org/2002/07/owl#> \n" +
+			"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> \n" +
+			"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> \n" +
+			"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> \n" +
+			"PREFIX bibo: <http://purl.org/ontology/bibo/> \n" +
+			"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> \n" +
+			"PREFIX dcterms: <http://purl.org/dc/terms/> \n" +
+			"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> \n" +
+			"PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n" +
+			"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> \n" +
+			"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" +
+			"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> \n" +
+			"PREFIX core: <http://vivoweb.org/ontology/core#> \n" +
+			"SELECT ?sNew ?sOld \n" +
+			"WHERE {\n"
+		);
 
 		int counter = 0;
 		for (Property p : properties) {
-				sQuery.append("\t?sNew <");
-				sQuery.append(p.getURI());
-				sQuery.append("> ");
-				sQuery.append("?o" + counter );
-				sQuery.append(" .\n");
-				sQuery.append("\t?sOld <");
-				sQuery.append(p.getURI());
-				sQuery.append("> ");
-				sQuery.append("\t?o" + counter );
-				sQuery.append(" .\n");
+				sQuery.append("\t?sNew <").append(p.getURI()).append("> ").append("?o" + counter).append(" . \n");
+				sQuery.append("\t?sOld <").append(p.getURI()).append("> ").append("?o" + counter).append(" . \n");
 		}
 		
-		sQuery.append("FILTER regex(str(?sNew), \"");
-		sQuery.append(oldNamespace + "\" ) .");
-		sQuery.append("FILTER regex(str(?sOld), \"");
-		sQuery.append(newNamespace + "\" ) }");
+		sQuery.append("\tFILTER regex(str(?sNew), \"").append(oldNamespace + "\" ) . \n");
+		sQuery.append("\tFILTER regex(str(?sOld), \"").append(newNamespace + "\" ) \n}");
 		
-		log.debug(sQuery.toString());
+		log.debug("Match Query:\n"+sQuery.toString());
 		log.trace("End Match Query Build");
 		
 		log.trace("Begin Union Model");
@@ -391,31 +373,22 @@ public class ChangeNamespace {
 		log.trace("Begin Run Query to ResultSet");
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
-		ResultSet matchList = queryExec.execSelect();
 		log.trace("End Run Query to ResultSet");
 		
 		log.trace("Begin Rename Matches");
-		ArrayList<String[]> uriArray = new ArrayList<String[]>();
-		String matchArray[];
-				
-		while (matchList.hasNext()) {
-			solution = matchList.next();
-			matchArray = new String[2];
-			matchArray[0] = solution.getResource("sNew").toString();
-			matchArray[1] = solution.getResource("sOld").toString();
-			uriArray.add(matchArray);
-			count++;
+		
+		HashMap<String,String> uriArray = new HashMap<String,String>();
+		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
+			uriArray.put(solution.getResource("sOld").getURI(), solution.getResource("sNew").getURI());
 		}
 		
-		for(int i = 0; i < count; i++) {
-			matchArray = uriArray.get(i);
-			res = model.getJenaModel().getResource(matchArray[0]);		
-			ResourceUtils.renameResource(res, matchArray[1]);
+		for(String oldUri : uriArray.keySet()) {
+			res = model.getJenaModel().getResource(oldUri);		
+			ResourceUtils.renameResource(res, uriArray.get(oldUri));
 		}		
 		
-		log.info("Matched namespace for "+count+" rdf nodes");
-		log.trace("Begin Rename Matches");
-		count = 0;
+		log.info("Matched namespace for " + uriArray.keySet().size() + " rdf nodes");
+		log.trace("End Rename Matches");
 	}
 	
 	/**

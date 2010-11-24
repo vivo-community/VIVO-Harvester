@@ -7,12 +7,11 @@
 package org.vivoweb.test.harvester.score;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+//import java.util.Arrays;
+//import java.util.List;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
@@ -23,7 +22,6 @@ import org.vivoweb.harvester.score.PubmedScore;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
-import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
@@ -52,8 +50,8 @@ public class PubmedScoreTest extends TestCase {
 	public void testAlgorithims() {
 		log.info("BEGIN testAlgorithims");
 		PubmedScore Test;
-		List<String> workEmail = Arrays.asList("workEmail");
-		List<String> blank = Arrays.asList();
+//		List<String> workEmail = Arrays.asList("workEmail");
+//		List<String> blank = Arrays.asList();
 		JenaConnect input;
 		JenaConnect output;
 		JenaConnect vivo;

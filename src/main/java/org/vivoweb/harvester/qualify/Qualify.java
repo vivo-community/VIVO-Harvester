@@ -7,8 +7,7 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
+import java.util.HashSet;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +17,12 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
-
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
  * Qualify data using SPARQL queries
@@ -74,6 +71,7 @@ public class Qualify {
 	 * @param newValue the value to replace it with
 	 * @param withModelName the model name to connect to (will override jena config)
 	 * @param isRegex is this to use Regex to match the string
+	 * @param rmNameSpace remove statements with predicates in this namespace
 	 * @throws IOException error connecting to model
 	 */
 	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex, String rmNameSpace) throws IOException {
@@ -175,31 +173,33 @@ public class Qualify {
 		}
 	}
 	
-	private void rmNamespace(String namespace){
+	/**
+	 * Remove all predicates in a given namespace
+	 * @param ns the namespace to remove all statements from
+	 */
+	private void rmNamespace(String ns) {
 		String predicateQuery =	"SELECT ?s " +
 				"WHERE " +
 				"{ " +
 				"?s ?p ?o .  " +
-				"FILTER regex(str(?p), \"" + namespace + "\" ) " + 
+				"FILTER regex(str(?p), \"" + ns + "\" ) " + 
 				"}";
 		log.debug(predicateQuery);
 		
-		ResultSet propList = model.executeSelectQuery(predicateQuery);
-		ArrayList<Property> propArray = new ArrayList<Property>();
+		ResultSet propList = this.model.executeSelectQuery(predicateQuery);
+		HashSet<Property> propArray = new HashSet<Property>();
 		
-		int countUniqueProp = 0;
 		while (propList.hasNext()) {
 			QuerySolution solution = propList.next();
 			propArray.add(solution.getResource("p").as(Property.class));
-			countUniqueProp++;
 		}
 		
-		for(int i = 0; i < countUniqueProp; i++) {
-			this.model.getJenaModel().removeAll(null, propArray.get(i), null);
+		for(Property p : propArray) {
+			this.model.getJenaModel().removeAll(null, p, null);
 		}
 		
 		this.model.getJenaModel().commit();
-		log.info("removed "+countUniqueProp+" unique properties");
+		log.info("Removed " + propArray.size() + " unique properties");
 	}
 	
 	/**
