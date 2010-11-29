@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 
 import com.hp.hpl.jena.rdf.model.Property;
@@ -102,37 +104,37 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#JenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 * JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)}.
+	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)}.
 	 */
 	public void testJenaConnectDBConstNoModelName() {
 		log.info("BEGIN testJenaConnectDBConstNoModelName");
-		this.jc = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
+		this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		runWriteTest();
 		log.info("END testJenaConnectDBConstNoModelName");
 	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#JenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 * JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName)}.
+	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName)}.
 	 */
 	public void testJenaConnectDBConstWithModelName() {
 		log.info("BEGIN testJenaConnectDBConstWithModelName");
-		this.jc = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName);
+		this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName);
 		runWriteTest();
 		log.info("END testJenaConnectDBConstWithModelName");
 	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#JenaConnect(org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)
-	 * JenaConnect(JenaConnect old, String modelName)}.
+	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#connect(java.lang.String)
+	 * connect(String modelName)}.
 	 */
 	public void testJenaConnectConstSibling() {
 		log.info("BEGIN testJenaConnectConstSibling");
 		try {
-			this.jc = new JenaConnect(new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName), modelName2);
+			this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName).connect(modelName2);
 			runWriteTest();
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
@@ -142,33 +144,33 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#JenaConnect(java.io.InputStream, java.lang.String, java.lang.String)
+	 * {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.io.InputStream, java.lang.String, java.lang.String)
 	 * JenaConnect(InputStream in, String namespace)}.
 	 */
 	public void testJenaConnectConstInputStream() {
 		log.info("BEGIN testJenaConnectConstInputStream");
-		this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
+		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		runWriteTest();
 		log.info("END testJenaConnectConstInputStream");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#JenaConnect() JenaConnect()}.
+	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect() MemJenaConnect()}.
 	 */
 	public void testJenaConnectMemConstNoModelName() {
 		log.info("BEGIN testJenaConnectMemConstNoModelName");
-		this.jc = new JenaConnect();
+		this.jc = new MemJenaConnect();
 		runWriteTest();
 		log.info("END testJenaConnectMemConstNoModelName");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#JenaConnect(java.lang.String) JenaConnect(String
+	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.lang.String) MemJenaConnect(String
 	 * modelName)}.
 	 */
 	public void testJenaConnectMemConstWithModelName() {
 		log.info("BEGIN testJenaConnectMemConstWithModelName");
-		this.jc = new JenaConnect(modelName2);
+		this.jc = new MemJenaConnect(modelName2);
 		runWriteTest();
 		log.info("END testJenaConnectMemConstWithModelName");
 	}
@@ -179,7 +181,7 @@ public class JenaConnectTest extends TestCase {
 	 */
 	public void testLoadRDF() {
 		log.info("BEGIN testLoadRDF");
-		this.jc = new JenaConnect();
+		this.jc = new MemJenaConnect();
 		this.jc.loadRDF(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		StmtIterator stmnt = this.jc.getJenaModel().listStatements();
 		assertTrue(stmnt.hasNext());
@@ -193,7 +195,7 @@ public class JenaConnectTest extends TestCase {
 	public final void testExportRDF() {
 		log.info("BEGIN testExportRDF");
 		try {
-			this.jc = new JenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
+			this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			this.jc.exportRDF(baos);
 			baos.flush();
@@ -219,7 +221,7 @@ public class JenaConnectTest extends TestCase {
 			rh.addRecord("faculty_id-2", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-faculty=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/faculty/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/faculty\">\n  <rdf:Description rdf:ID=\"id-2\">\n    <db-faculty:badge_num>98765432</db-faculty:badge_num>\n    <db-faculty:fname>Fredrick</db-faculty:fname>\n    <db-faculty:mname>Markus</db-faculty:mname>\n    <db-faculty:lname>Brown</db-faculty:lname>\n    <db-faculty:jobtitle>Junior Software Engineer</db-faculty:jobtitle>\n    <db-faculty:salary>22500</db-faculty:salary>\n    <db-faculty:paygrade_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel#id-2\"/>\n    <db-faculty:dept_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department#id-1\"/>\n  </rdf:Description>\n</rdf:RDF>", getClass());
 			rh.addRecord("paylevel_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-paylevel:name>IT Expert</db-paylevel:name>\n    <db-paylevel:low>100000</db-paylevel:low>\n    <db-paylevel:high>300000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
 			rh.addRecord("paylevel_id-2", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-2\">\n    <db-paylevel:name>IT Noob</db-paylevel:name>\n    <db-paylevel:low>20000</db-paylevel:low>\n    <db-paylevel:high>25000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
-			this.jc = new JenaConnect();
+			this.jc = new MemJenaConnect();
 			this.jc.importRDF(rh, null);
 			StmtIterator stmnt = this.jc.getJenaModel().listStatements();
 			assertTrue(stmnt.hasNext());

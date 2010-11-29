@@ -13,6 +13,7 @@ import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -77,7 +78,7 @@ public class EatVIVOOrgs {
 	public static void main(String[] args) throws MalformedURLException, IOException, ParserConfigurationException, SAXException {
 		InitLog.initLogger(EatVIVOOrgs.class);
 		inmodel = JenaConnect.parseConfig("config/jenaModels/myVIVO.xml");
-		outmodel = new JenaConnect();
+		outmodel = new MemJenaConnect();
 		otherProperties = new LinkedList<Property>();
 		Property type = inmodel.getJenaModel().getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "type");
 		otherProperties.add(type);

@@ -103,41 +103,6 @@ public class JenaRecordHandler extends RecordHandler {
 	}
 	
 	/**
-	 * Constructor (w/ Named Model)
-	 * @param jdbcDriverClass jdbc driver class
-	 * @param connType type of jdbc connection
-	 * @param host host to conenct to
-	 * @param port port to connect on
-	 * @param dbName name of the database
-	 * @param modelName name of the model
-	 * @param username username to use
-	 * @param password password to use
-	 * @param dbType ex:"MySQL"
-	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
-	 */
-	public JenaRecordHandler(String jdbcDriverClass, String connType, String host, String port, String dbName, String username, String password, String dbType, String modelName, String dataFieldType) {
-		this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
-		initVars(dataFieldType);
-	}
-	
-	/**
-	 * Constructor (w/o Named Model)
-	 * @param jdbcDriverClass jdbc driver class
-	 * @param connType type of jdbc connection
-	 * @param host host to conenct to
-	 * @param port port to connect on
-	 * @param dbName name of the database
-	 * @param username username to use
-	 * @param password password to use
-	 * @param dbType ex:"MySQL"
-	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
-	 */
-	public JenaRecordHandler(String jdbcDriverClass, String connType, String host, String port, String dbName, String username, String password, String dbType, String dataFieldType) {
-		this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass);
-		initVars(dataFieldType);
-	}
-	
-	/**
 	 * Constructor (w/ Given Model)
 	 * @param jena the model to use
 	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
@@ -308,7 +273,7 @@ public class JenaRecordHandler extends RecordHandler {
 			try {
 				this.model = JenaConnect.parseConfig(jenaConfig);
 			} catch(ParserConfigurationException e) {
-				throw new IllegalArgumentException(e);
+				throw new IllegalArgumentException(e);							// FIXME cah: Make this use JenaConnect overrides instead of this mess
 			} catch(SAXException e) {
 				throw new IllegalArgumentException(e);
 			}
@@ -323,9 +288,9 @@ public class JenaRecordHandler extends RecordHandler {
 			String dbType = getParam(params, "dbType", true);
 			String modelName = getParam(params, "modelName", false);
 			if(modelName != null) {
-				this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
+				this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
 			} else {
-				this.model = new JenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass);
+				this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass);
 			}
 		}
 		initVars(dataFieldType);

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Qualify;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -45,7 +46,7 @@ public class QualifyTest extends TestCase {
 	@Override
 	public void setUp() throws Exception {
 		InitLog.initLogger(QualifyTest.class);
-		this.jena = new JenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
+		this.jena = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 		this.score = this.jena.getJenaModel().createProperty("http://vivoweb.org/harvester/score#Affiliation");
 
@@ -73,7 +74,7 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T R R");
 			String expectedValue = "I Am Testing Regex Replace";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), ".*?IATRR.*?", expectedValue, null, true, null).executeTask();
+			new Qualify(this.jena, this.label.getURI(), ".*?IATRR.*?", expectedValue, true, null).executeTask();
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res2, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
@@ -98,7 +99,7 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 			String expectedValue = "I Am Testing Test Replace";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, null, false, null).executeTask();
+			new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, false, null).executeTask();
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res2, this.label).getString().equals(expectedValue));
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
@@ -123,7 +124,7 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 			String namespace = "http://vivoweb.org/harvester/score";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), null, null, null, false, namespace).executeTask();
+			new Qualify(this.jena, this.label.getURI(), null, null, false, namespace).executeTask();
 			assertTrue(this.jena.getJenaModel().containsResource(res1));
 			assertFalse(this.jena.getJenaModel().containsResource(res2));
 			assertTrue(this.jena.getJenaModel().containsResource(res3));

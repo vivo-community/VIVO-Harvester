@@ -13,9 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -32,8 +30,6 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import com.hp.hpl.jena.db.DBConnection;
-import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -42,8 +38,6 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -53,104 +47,46 @@ import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
  * Connection Helper for Jena Models
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class JenaConnect {
+public abstract class JenaConnect {
 	/**
 	 * SLF4J Logger
 	 */
-	protected static Logger log = LoggerFactory.getLogger(JenaConnect.class);
+	private static Logger log = LoggerFactory.getLogger(JenaConnect.class);
 	/**
 	 * Model we are connecting to
 	 */
 	private Model jenaModel;
-	/**
-	 * The jdbc connection
-	 */
-	private IDBConnection conn;
 	
 	/**
-	 * Constructor (Memory Default Model)
-	 */
-	public JenaConnect() {
-		this.setJenaModel(ModelFactory.createMemModelMaker().createDefaultModel());
-	}
-	
-	/**
-	 * Constructor (Memory Named Model)
+	 * Factory (connects to the same jena triple store as another jena connect, but uses a different named model)
 	 * @param modelName the model name to use
-	 */
-	public JenaConnect(String modelName) {
-		this.setJenaModel(ModelFactory.createMemModelMaker().createModel(modelName));
-	}
-	
-	/**
-	 * Constructor (DB Default Model)
-	 * @param dbUrl jdbc connection url
-	 * @param dbUser username to use
-	 * @param dbPass password to use
-	 * @param dbType database type ex:"MySQL"
-	 * @param dbClass jdbc driver class
-	 */
-	public JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
-		try {
-			this.setJenaModel(initModel(initDB(dbUrl, dbUser, dbPass, dbType, dbClass)).createDefaultModel());
-		} catch(InstantiationException e) {
-			log.error(e.getMessage(), e);
-		} catch(IllegalAccessException e) {
-			log.error(e.getMessage(), e);
-		} catch(ClassNotFoundException e) {
-			log.error(e.getMessage(), e);
-		}
-	}
-	
-	/**
-	 * Constructor (DB Named Model)
-	 * @param dbUrl jdbc connection url
-	 * @param dbUser username to use
-	 * @param dbPass password to use
-	 * @param dbType database type ex:"MySQL"
-	 * @param dbClass jdbc driver class
-	 * @param modelName the model to connect to
-	 */
-	public JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName) {
-		try {
-			this.setJenaModel(initModel(initDB(dbUrl, dbUser, dbPass, dbType, dbClass)).openModel(modelName, false));
-		} catch(InstantiationException e) {
-			log.error(e.getMessage(), e);
-		} catch(IllegalAccessException e) {
-			log.error(e.getMessage(), e);
-		} catch(ClassNotFoundException e) {
-			log.error(e.getMessage(), e);
-		}
-	}
-	
-	/**
-	 * Constructor (connects to the same jena triple store as another jena connect, but uses a different named model)
-	 * @param old the other jenaconnect
-	 * @param modelName the model name to use
+	 * @return the new jenaconnect
 	 * @throws IOException unable to secure db connection
 	 */
-	public JenaConnect(JenaConnect old, String modelName) throws IOException {
-		if(old.conn != null) {
-			try {
-				this.setJenaModel(initModel(new DBConnection(old.conn.getConnection(), old.conn.getDatabaseType())).openModel(modelName, false));
-			} catch(SQLException e) {
-				throw new IOException(e);
-			}
-		} else {
-			this.setJenaModel(ModelFactory.createMemModelMaker().createModel(modelName));
-		}
-	}
+	public abstract JenaConnect connect(String modelName) throws IOException;
 	
 	/**
-	 * Constructor (Load rdf from input stream)
-	 * @param in input stream to load rdf from
-	 * @param namespace the base uri to use for imported uris
-	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
-	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * Config Stream Based Factory that overrides parameters
+	 * @param configStream the config input stream
+	 * @param overrideParams the parameters to override the file with
+	 * @return JenaConnect instance
+	 * @throws IOException error connecting
+	 * @throws SAXException xml parse error
+	 * @throws ParserConfigurationException xml parse error
 	 */
-	public JenaConnect(InputStream in, String namespace, String language) {
-		this();
-		this.loadRDF(in, namespace, language);
+	public static JenaConnect parseConfig(InputStream configStream, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+		Properties paramList = new JenaConnectConfigParser().parseConfig(configStream);
+		if(overrideParams != null) {
+			for(String key : overrideParams.stringPropertyNames()) {
+				paramList.setProperty(key, overrideParams.getProperty(key));
+			}
+		}
+		for(String param : paramList.stringPropertyNames()) {
+			if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
+				JenaConnect.log.debug("'" + param + "' - '" + paramList.getProperty(param) + "'");
+			}
+		}
+		return build(paramList);
 	}
 	
 	/**
@@ -175,7 +111,8 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(FileObject configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-		return build(new JenaConnectConfigParser().parseConfig(configFile.getContent().getInputStream(), overrideParams));
+		InputStream confStream = (configFile == null)?null:configFile.getContent().getInputStream();
+		return parseConfig(confStream, overrideParams);
 	}
 	
 	/**
@@ -187,7 +124,7 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(File configFile) throws ParserConfigurationException, SAXException, IOException {
-		return parseConfig(VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()));
+		return parseConfig(configFile, null);
 	}
 	
 	/**
@@ -200,7 +137,8 @@ public class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(File configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-		return parseConfig(VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()), overrideParams);
+		InputStream confStream = (configFile == null)?null:VFS.getManager().toFileObject(configFile).getContent().getInputStream();
+		return parseConfig(confStream, overrideParams);
 	}
 	
 	/**
@@ -212,7 +150,7 @@ public class JenaConnect {
 	 * @throws IOException xml parse error
 	 */
 	public static JenaConnect parseConfig(String configFileName) throws ParserConfigurationException, SAXException, IOException {
-		return parseConfig(VFS.getManager().resolveFile(new File("."), configFileName));
+		return parseConfig(configFileName, null);
 	}
 	
 	/**
@@ -225,38 +163,38 @@ public class JenaConnect {
 	 * @throws IOException xml parse error
 	 */
 	public static JenaConnect parseConfig(String configFileName, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-		return parseConfig(VFS.getManager().resolveFile(new File("."), configFileName), overrideParams);
+		InputStream confStream = (configFileName == null)?null:VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
+		return parseConfig(confStream, overrideParams);
 	}
 	
 	/**
 	 * Build a JenaConnect based on the given parameter set
 	 * @param params the parameter set
 	 * @return the JenaConnect
+	 * @throws IOException error connecting to jena model
 	 */
-	private static JenaConnect build(Map<String, String> params) {
-		// for(String param : params.keySet()) {
-		// log.debug(param+" => "+params.get(param));
-		// }
-		if(!params.containsKey("type")) {
-			throw new IllegalArgumentException("must define type!");
-		}
-		JenaConnect jc;
-		if(params.get("type").equalsIgnoreCase("memory")) {
-			if(params.containsKey("modelName")) {
-				jc = new JenaConnect(params.get("modelName"));
-			} else {
-				jc = new JenaConnect();
+	private static JenaConnect build(Properties params) throws IOException {
+		try {
+			// for(String param : params.keySet()) {
+			// log.debug(param+" => "+params.get(param));
+			// }
+			if(!params.containsKey("type")) {
+				params.put("type", "db");
 			}
-		} else if(params.get("type").equalsIgnoreCase("db")) {
-			if(params.containsKey("modelName")) {
-				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
+			JenaConnect jc;
+			if(params.getProperty("type").equalsIgnoreCase("memory")) {
+				jc = new MemJenaConnect(params.getProperty("modelName"));
+			} else if(params.getProperty("type").equalsIgnoreCase("rdb")) {
+				jc = new RDBJenaConnect(params.getProperty("dbUrl"), params.getProperty("dbUser"), params.getProperty("dbPass"), params.getProperty("dbType"), params.getProperty("dbClass"), params.getProperty("modelName"));
+			} else if(params.getProperty("type").equalsIgnoreCase("sdb")) {
+				jc = new SDBJenaConnect(params.getProperty("dbUrl"), params.getProperty("dbUser"), params.getProperty("dbPass"), params.getProperty("dbType"), params.getProperty("dbClass"), params.getProperty("modelName"));
 			} else {
-				jc = new JenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"));
+				throw new IllegalArgumentException("unknown type: " + params.get("type"));
 			}
-		} else {
-			throw new IllegalArgumentException("unknown type: " + params.get("type"));
+			return jc;
+		} catch(ClassNotFoundException e) {
+			throw new IOException(e);
 		}
-		return jc;
 	}
 	
 	/**
@@ -344,7 +282,7 @@ public class JenaConnect {
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
 	public void removeRDF(InputStream in, String namespace, String language) {
-		removeRDF(new JenaConnect(in, namespace, language));
+		this.removeRDF(new MemJenaConnect(in, namespace, language));
 		log.debug("RDF Data was removed");
 	}
 	
@@ -382,7 +320,7 @@ public class JenaConnect {
 				// log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
-			this.getJenaModel().remove(new JenaConnect(bais, namespace, null).getJenaModel());
+			this.getJenaModel().remove(new MemJenaConnect(bais, namespace, null).getJenaModel());
 			try {
 				bais.close();
 			} catch(IOException e) {
@@ -421,14 +359,15 @@ public class JenaConnect {
 	/**
 	 * Closes the model and the jdbc connection
 	 */
-	public void close() {
-		this.jenaModel.close();
-		try {
-			this.conn.close();
-		} catch(Exception e) {
-			// ignore
-		}
-	}
+	public abstract void close();
+//	{
+//		this.jenaModel.close();
+//		try {
+//			this.conn.close();
+//		} catch(Exception e) {
+//			// ignore
+//		}
+//	}
 	
 	/**
 	 * Build a QueryExecution from a queryString
@@ -551,35 +490,8 @@ public class JenaConnect {
 	 * Setter
 	 * @param jena the new model
 	 */
-	private void setJenaModel(Model jena) {
+	protected void setJenaModel(Model jena) {
 		this.jenaModel = jena;
-	}
-	
-	/**
-	 * Get ModelMaker for a database connection
-	 * @param dbConn the database connection
-	 * @return the ModelMaker
-	 */
-	private ModelMaker initModel(IDBConnection dbConn) {
-		this.conn = dbConn;
-		return ModelFactory.createModelRDBMaker(dbConn);
-	}
-	
-	/**
-	 * Setup database connection
-	 * @param dbUrl url of server
-	 * @param dbUser username to connect with
-	 * @param dbPass password to connect with
-	 * @param dbType database type
-	 * @param dbClass jdbc connection class
-	 * @return the database connection
-	 * @throws InstantiationException could not instantiate
-	 * @throws IllegalAccessException not authorized
-	 * @throws ClassNotFoundException no such class
-	 */
-	private IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		Class.forName(dbClass).newInstance();
-		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
 	}
 	
 	/**
@@ -597,7 +509,7 @@ public class JenaConnect {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("JenaConnect");
-		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jena").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jena").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("query").withParameter(true, "SPARQL_QUERY").setDescription("sparql query to execute").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("queryResultFormat").withParameter(true, "RESULT_FORMAT").setDescription("the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for construct/describe queries)").setRequired(false));
@@ -632,7 +544,7 @@ public class JenaConnect {
 		/**
 		 * Param list from the config file
 		 */
-		private final Map<String, String> params;
+		private final Properties params;
 		/**
 		 * temporary storage for cdata
 		 */
@@ -646,7 +558,7 @@ public class JenaConnect {
 		 * Default Constructor
 		 */
 		protected JenaConnectConfigParser() {
-			this.params = new HashMap<String, String>();
+			this.params = new Properties();
 			this.tempVal = "";
 			this.tempParamName = "";
 		}
@@ -654,25 +566,16 @@ public class JenaConnect {
 		/**
 		 * Build a JenaConnect using the input stream data
 		 * @param inputStream stream to read config from
-		 * @param overrideParams parameters that override the params in the config file
 		 * @return the JenaConnect described by the stream
 		 * @throws ParserConfigurationException parser incorrectly configured
 		 * @throws SAXException xml error
 		 * @throws IOException error reading stream
 		 */
-		protected Map<String, String> parseConfig(InputStream inputStream, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
-			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			sp.parse(inputStream, this); // parse the file and also register this class for call backs
-			if(overrideParams != null) {
-				for(String key : overrideParams.stringPropertyNames()) {
-					this.params.put(key, overrideParams.getProperty(key));
-				}
-			}
-			for(String param : this.params.keySet()) {
-				if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
-					JenaConnect.log.debug("'" + param + "' - '" + this.params.get(param) + "'");
-				}
+		protected Properties parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
+			if(inputStream != null) {
+				SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
+				SAXParser sp = spf.newSAXParser(); // get a new instance of parser
+				sp.parse(inputStream, this); // parse the file and also register this class for call backs
 			}
 			return this.params;
 		}
@@ -695,11 +598,9 @@ public class JenaConnect {
 		
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if(qName.equalsIgnoreCase("Model")) {
-				this.params.put("type", "db");
-			} else if(qName.equalsIgnoreCase("Param")) {
+			if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
-			} else {
+			} else if(!qName.equalsIgnoreCase("Model")) {
 				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}

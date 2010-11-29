@@ -29,10 +29,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public abstract class RecordHandler implements Iterable<Record> {
 	/**
-	 * SLF4J Logger
-	 */
-	// private static Log log = LogFactory.getLog(RecordHandler.class);
-	/**
 	 * Do we overwrite existing records by default
 	 */
 	private boolean overwriteDefault = true;

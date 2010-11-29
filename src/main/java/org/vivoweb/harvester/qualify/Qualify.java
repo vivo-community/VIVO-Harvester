@@ -51,10 +51,6 @@ public class Qualify {
 	 */
 	private String newVal;
 	/**
-	 * The model name
-	 */
-	private String modelName;
-	/**
 	 * Is this to use Regex to match the string
 	 */
 	private boolean regex;
@@ -69,21 +65,14 @@ public class Qualify {
 	 * @param dataType the data predicate
 	 * @param matchString the string to match
 	 * @param newValue the value to replace it with
-	 * @param withModelName the model name to connect to (will override jena config)
 	 * @param isRegex is this to use Regex to match the string
 	 * @param rmNameSpace remove statements with predicates in this namespace
-	 * @throws IOException error connecting to model
 	 */
-	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, String withModelName, boolean isRegex, String rmNameSpace) throws IOException {
-		if(withModelName != null) {
-			this.model = new JenaConnect(jenaModel, withModelName);
-		} else {
-			this.model = jenaModel;
-		}
+	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, boolean isRegex, String rmNameSpace) {
+		this.model = jenaModel;
 		this.dataPredicate = dataType;
 		this.matchTerm = matchString;
 		this.newVal = newValue;
-		this.modelName = withModelName;
 		this.regex = isRegex;
 		this.namespace = rmNameSpace;
 	}
@@ -94,32 +83,16 @@ public class Qualify {
 	 * @throws IOException error creating task
 	 */
 	public Qualify(ArgList argList) throws IOException {
-		if(!((argList.has("r") ^ argList.has("t") ^ argList.has("p")))) {
-			throw new IllegalArgumentException("Must provide one of --regex, --text, or --namespace, but not more than 1");
-		}
-		this.modelName = argList.get("n");
-		setModel(argList.get("j"));
-		this.dataPredicate = argList.get("d");
-		this.regex = argList.has("r");
-		this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
-		this.newVal = argList.get("v");
-		this.namespace = argList.get("p");
-	}
-	
-	/**
-	 * Setter for model
-	 * @param configFileName the config file that describes the model to set
-	 * @throws IOException error connecting to model
-	 */
-	private void setModel(String configFileName) throws IOException {
 		try {
-			// connect to proper model, if specified on command line
-			if(this.modelName != null) {
-				log.trace("Using " + this.modelName + " for input Model");
-				this.model = new JenaConnect(JenaConnect.parseConfig(configFileName), this.modelName);
-			} else {
-				this.model = JenaConnect.parseConfig(configFileName);
+			if(!((argList.has("r") ^ argList.has("t") ^ argList.has("p")))) {
+				throw new IllegalArgumentException("Must provide one of --regex, --text, or --namespace, but not more than 1");
 			}
+			this.model = JenaConnect.parseConfig(argList.get("j"), argList.getProperties("J"));
+			this.dataPredicate = argList.get("d");
+			this.regex = argList.has("r");
+			this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
+			this.newVal = argList.get("v");
+			this.namespace = argList.get("p");
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
@@ -226,13 +199,13 @@ public class Qualify {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Qualify");
-		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jenaConfig").setDescription("config file for jena model").withParameter(true, "CONFIG_FILE"));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("modelName").setDescription("specify model to connect to. this requires you specify a jenaConfig and will override the jena config modelname").withParameter(true, "MODEL_NAME").setDefaultValue("staging"));
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataType").setDescription("data type (rdf predicate)").withParameter(true, "RDF_PREDICATE"));
-		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX"));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING"));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").setDescription("replace matching record data with this value").withParameter(true, "REPLACE_VALUE"));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("rmNamespace").setDescription("remove all statements where the predicate is of the given namespace").withParameter(true, "RDF_NAMESPACE"));
+		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jenaConfig").setDescription("config file for jena model").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataType").setDescription("data type (rdf predicate)").withParameter(true, "RDF_PREDICATE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").setDescription("replace matching record data with this value").withParameter(true, "REPLACE_VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("rmNamespace").setDescription("remove all statements where the predicate is of the given namespace").withParameter(true, "RDF_NAMESPACE").setRequired(false));
 		return parser;
 	}
 	

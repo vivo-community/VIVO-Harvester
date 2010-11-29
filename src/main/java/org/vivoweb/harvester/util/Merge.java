@@ -18,6 +18,7 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
@@ -83,7 +84,7 @@ public class Merge {
 	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) {
 		try {
 			for(Record r : input) {
-				JenaConnect jc = new JenaConnect();
+				JenaConnect jc = new MemJenaConnect();
 				Matcher m = regex.matcher(r.getID());
 				if(m.matches()) {
 					for(String id : input.find(m.group(1))) {

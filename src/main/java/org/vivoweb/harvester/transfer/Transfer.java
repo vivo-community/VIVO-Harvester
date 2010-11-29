@@ -18,6 +18,7 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
 
@@ -162,7 +163,7 @@ public class Transfer {
 			}
 		}
 		if(newInput && this.input == null) {
-			this.input = new JenaConnect();
+			this.input = new MemJenaConnect();
 		}
 		boolean inputIsOutput = false;
 		if(this.input == null && this.output != null) {

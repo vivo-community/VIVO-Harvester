@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Model>
+	<Param name="dbFormat">SDB</Param>
 	<Param name="dbClass">org.h2.Driver</Param>
 	<Param name="dbType">HSQLDB</Param>
 	<Param name="dbUrl">jdbc:h2:h2tripleStore/store;MODE=HSQLDB</Param>
