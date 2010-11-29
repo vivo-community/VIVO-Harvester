@@ -4,7 +4,7 @@
 	<Param name="connection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
 	<Param name="username">USERNAME</Param>
 	<Param name="password">PASSWORD</Param>
-	<Param name="output">config/recordHandlers/DSR-XML.xml</Param>
+	<Param name="output">config/recordHandlers/DSR-XML-h2RH.xml</Param>
 	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential=''</Param>
 	<Param name="tableName">dbo.vwContracts</Param>
 	<Param name="id">dbo.vwContracts=ContractNumber</Param>
