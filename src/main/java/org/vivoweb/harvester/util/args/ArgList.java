@@ -55,10 +55,9 @@ public class ArgList {
 	 * Constructor
 	 * @param p parser
 	 * @param args commandline args
-	 * @throws IllegalArgumentException missing args
 	 * @throws IOException error parsing args
 	 */
-	public ArgList(ArgParser p, String[] args) throws IllegalArgumentException, IOException {
+	public ArgList(ArgParser p, String[] args) throws IOException {
 		try {
 			this.argParser = p;
 			log.debug("running " + p.getAppName());
@@ -91,12 +90,6 @@ public class ArgList {
 					}
 				}
 			}
-		} catch(SecurityException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
 		} catch(ParseException e) {
 			throw new IOException(e.getMessage(), e);
 		}
@@ -136,14 +129,12 @@ public class ArgList {
 	 * @return the values
 	 */
 	public Properties getProperties(String arg) {
-		Map<String, ArgDef> a =this.argParser.getOptMap();
-		ArgDef b = a.get(arg);
-		if(!b.hasParameter()) {
-		//if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
-		if(!this.argParser.getOptMap().get(arg).isParameterProperties()) {
-			if(this.argParser.getOptMap().get(arg).hasParameters()) {
+		if(!argdef.isParameterProperties()) {
+			if(argdef.hasParameters()) {
 				throw new IllegalArgumentException(arg + " is not a properties parameter, use getAll()");
 			}
 			throw new IllegalArgumentException(arg + " is not a properties parameter, use get()");
@@ -172,11 +163,12 @@ public class ArgList {
 	 * @return the values
 	 */
 	public List<String> getAll(String arg, boolean includeDefaultValue) {
-		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
-		if(!this.argParser.getOptMap().get(arg).hasParameters()) {
-			if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
+		if(!argdef.hasParameters()) {
+			if(argdef.isParameterProperties()) {
 				throw new IllegalArgumentException(arg + " is a properties parameter, use getProperties()");
 			}
 			throw new IllegalArgumentException(arg + " has only one parameter, use get()");
@@ -188,8 +180,8 @@ public class ArgList {
 		if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
 			retVal.addAll(Arrays.asList(this.oConfSet.getOptionValues(arg)));
 		}
-		if((includeDefaultValue || retVal.isEmpty()) && this.argParser.getOptMap().get(arg).hasDefaultValue()) {
-			retVal.add(this.argParser.getOptMap().get(arg).getDefaultValue());
+		if((includeDefaultValue || retVal.isEmpty()) && argdef.hasDefaultValue()) {
+			retVal.add(argdef.getDefaultValue());
 		}
 		return retVal;
 	}
@@ -200,13 +192,12 @@ public class ArgList {
 	 * @return true if a value has been set (from any of command line, config files, or default value)
 	 */
 	public boolean has(String arg) {
-		ArgDef hasArg = this.argParser.getOptMap().get(arg);
-		
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
 		if (this.oCmdSet.hasOption(arg)) {
 			return true;
 		} else if (this.oConfSet != null && this.oConfSet.hasOption(arg)) {
 			return true;
-		} else if (hasArg != null && hasArg.hasDefaultValue()) {
+		} else if (argdef != null && argdef.hasDefaultValue()) {
 			return true;
 		}
 		return false;
@@ -242,13 +233,9 @@ public class ArgList {
 		 * Converts the contents of a config file to commandline arguments
 		 * @param filePath path to the config file
 		 * @return equivalent commandline argument array
-		 * @throws SecurityException violates security manager
-		 * @throws IllegalArgumentException illegal arguments for method
 		 * @throws IOException error reading config file
-		 * @throws SAXException xml parse error
-		 * @throws ParserConfigurationException parser config error
 		 */
-		public String[] configToArgs(String filePath) throws SecurityException, IllegalArgumentException, ParserConfigurationException, SAXException, IOException {
+		public String[] configToArgs(String filePath) throws IOException {
 			Map<String, List<String>> parameters = parseConfig(filePath);
 			List<String> paramList = new LinkedList<String>();
 			for(String key : parameters.keySet()) {
@@ -269,23 +256,20 @@ public class ArgList {
 		 * @param filename the name of the file to parse
 		 * @return the Task described by the config file
 		 * @throws IOException xml parsing error
-		 * @throws SAXException xml parsing error
-		 * @throws ParserConfigurationException xml parsing error
 		 */
-		private Map<String, List<String>> parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
-			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
-			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse
-			// the
-			// file
-			// and
-			// also
-			// register
-			// this
-			// class
-			// for
-			// call
-			// backs
+		private Map<String, List<String>> parseConfig(String filename) throws IOException {
+			// get a factory
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			try {
+				// get a new instance of parser
+				SAXParser sp = spf.newSAXParser();
+				// parse the file and also register this class for call backs
+				sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this);
+			} catch(ParserConfigurationException e) {
+				throw new IOException(e.getMessage(), e);
+			} catch(SAXException e) {
+				throw new IOException(e.getMessage(), e);
+			}
 			return this.params;
 		}
 		

@@ -23,7 +23,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-
 import com.hp.gloze.Gloze;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -92,8 +91,9 @@ public class GlozeTranslator {
 	 * <li><em>uriBase</em> required for gloze translation the unset URIBASE used is
 	 * http://vivoweb.org/glozeTranslation/noURI/</li>
 	 * </ul>
+	 * @throws IOException error connecting to record handlers
 	 */
-	public GlozeTranslator(ArgList argumentList) {
+	public GlozeTranslator(ArgList argumentList) throws IOException {
 		// the uri base if not set is http://vivoweb.org/glozeTranslation/noURI/"
 		if(argumentList.has("uriBase")) {
 			this.setURIBase(argumentList.get("uriBase"));
@@ -104,12 +104,8 @@ public class GlozeTranslator {
 		}
 		
 		// create record handlers
-		try {
-			this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
-			this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-		}
+		this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
+		this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
 	}
 	
 	/**
@@ -136,7 +132,7 @@ public class GlozeTranslator {
 		try {
 			this.uriBase = new URI(base);
 		} catch(URISyntaxException e) {
-			log.error("", e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 	}
 	

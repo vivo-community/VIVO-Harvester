@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.xml.sax.SAXException;
 
 /**
  * Fetches rdf data from a JDBC database
@@ -238,10 +236,6 @@ public class JDBCFetch {
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
 			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
@@ -477,8 +471,9 @@ public class JDBCFetch {
 	
 	/**
 	 * Executes the task
+	 * @throws IOException error processing record handler or jdbc connection
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		// For each Table
 		try {
 			for(String tableName : getTableNames()) {
@@ -571,9 +566,7 @@ public class JDBCFetch {
 				}
 			}
 		} catch(SQLException e) {
-			log.error(e.getMessage(), e);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	

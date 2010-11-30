@@ -157,10 +157,8 @@ public class JDBCRecordHandler extends RecordHandler {
 			checkMetaTableExists();
 			checkMetaTableConfigured();
 		} catch(ClassNotFoundException e) {
-			log.error("Unable to initialize DB Driver Class", e);
 			throw new IOException("Unable to initialize DB Driver Class", e);
 		} catch(SQLException e) {
-			log.error("Unable to connect to DB", e);
 			throw new IOException("Unable to connect to DB", e);
 		}
 	}
@@ -171,7 +169,6 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void createTable() throws IOException {
 		try {
-			// this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"` ( `"+recordAutoID+"` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY, `"+recordIdField+"` varchar(100) NOT NULL, `"+this.dataField+"` blob NOT NULL)");
 			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "` ( `" + recordIdField + "` varchar(100) NOT NULL PRIMARY KEY, `" + this.dataField + "` blob NOT NULL)");
 		} catch(SQLException e) {
 			throw new IOException("Cannot Create Table: " + this.table, e);
@@ -184,7 +181,6 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void checkTableConfigured() throws IOException {
 		try {
-			// this.cursor.execute("select "+recordAutoID+", "+recordIdField+", "+this.dataField+" from "+this.table);
 			this.cursor.execute("select " + recordIdField + ", " + this.dataField + " from " + this.table);
 		} catch(SQLException e) {
 			throw new IOException("Table '" + this.table + "' Is Not Structured Correctly", e);
@@ -223,7 +219,6 @@ public class JDBCRecordHandler extends RecordHandler {
 	private void createMetaTable() throws IOException {
 		try {
 			this.cursor.executeUpdate("DROP TABLE IF EXISTS `" + this.table + "_rmd`");
-			// this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `"+this.table+"_rmd` ( `"+rmdAutoID+"` int(10) NOT NULL AUTO_INCREMENT, `"+rmdRelField+"` int(10) NOT NULL, `"+rmdCalField+"` int(25) NOT NULL, `"+rmdOperationField+"` varchar(10) NOT NULL, `"+rmdOperatorField+"` varchar(100) NOT NULL, `"+rmdMD5Field+"` varchar(32) NOT NULL, PRIMARY KEY (`"+rmdAutoID+"`), CONSTRAINT fk_RecordRel FOREIGN KEY (`"+rmdRelField+"`) REFERENCES `"+this.table+"` (`"+recordAutoID+"`))");
 			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "_rmd` ( `" + rmdRelField + "` varchar(100) NOT NULL, `" + rmdCalField + "` varchar(25) NOT NULL, `" + rmdOperationField + "` varchar(10) NOT NULL, `" + rmdOperatorField + "` varchar(100) NOT NULL, `" + rmdMD5Field + "` varchar(32) NOT NULL, CONSTRAINT fk_RecordRel FOREIGN KEY (`" + rmdRelField + "`) REFERENCES `" + this.table + "` (`" + recordIdField + "`))");
 			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdCalField + "` ON `" + this.table + "_rmd` (`" + rmdCalField + "`)");
 			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdRelField + "` ON `" + this.table + "_rmd` (`" + rmdRelField + "`)");
@@ -238,7 +233,6 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void checkMetaTableConfigured() throws IOException {
 		try {
-			// this.cursor.execute("select "+rmdAutoID+", "+rmdCalField+", "+rmdMD5Field+", "+rmdOperationField+", "+rmdOperatorField+", "+rmdRelField+" from "+this.table+"_rmd");
 			this.cursor.execute("select " + rmdCalField + ", " + rmdMD5Field + ", " + rmdOperationField + ", " + rmdOperatorField + ", " + rmdRelField + " from " + this.table + "_rmd");
 		} catch(SQLException e) {
 			throw new IOException("Table '" + this.table + "_rmd' Is Not Structured Correctly", e);
@@ -289,12 +283,10 @@ public class JDBCRecordHandler extends RecordHandler {
 					ps.setBytes(1, rec.getData().getBytes());
 					ps.executeUpdate();
 				} catch(SQLException e2) {
-					log.error("Unable to update record: " + rec.getID(), e2);
-					throw new IOException("Unable to update record: " + rec.getID() + " - " + e2.getMessage());
+					throw new IOException("Unable to update record: " + rec.getID(), e2);
 				}
 			} else {
-				log.error("Unable to add record: " + rec.getID(), e);
-				throw new IOException("Unable to add record: " + rec.getID() + " - " + e.getMessage());
+				throw new IOException("Unable to add record: " + rec.getID(), e);
 			}
 		}
 		addMetaData(rec, creator, RecordMetaDataType.written);
@@ -307,13 +299,12 @@ public class JDBCRecordHandler extends RecordHandler {
 		try {
 			this.cursor.execute("delete from " + this.table + " where " + recordIdField + " = '" + recID + "'");
 		} catch(SQLException e) {
-			log.error("Unable to delete record: " + recID, e);
-			throw new IOException("Unable to delete record: " + recID + " - " + e.getMessage());
+			throw new IOException("Unable to delete record: " + recID, e);
 		}
 	}
 	
 	@Override
-	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
+	public String getRecordData(String recID) throws IOException {
 		try {
 			ResultSet existrs = this.cursor.executeQuery("select count(*) from " + this.table + " where " + recordIdField + " = '" + recID + "'");
 			existrs.first();
@@ -324,8 +315,7 @@ public class JDBCRecordHandler extends RecordHandler {
 			rs.first();
 			return new String(rs.getBytes(1));
 		} catch(SQLException e) {
-			log.error("Unable to retrieve record: " + recID, e);
-			throw new IOException("Unable to retrieve record: " + recID + " - " + e.getMessage());
+			throw new IOException("Unable to retrieve record: " + recID, e);
 		}
 	}
 	
@@ -468,7 +458,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	}
 
 	@Override
-	public List<String> find(String idText) {
+	public List<String> find(String idText) throws IOException {
 		List<String> retVal = new LinkedList<String>();
 		String query = "select " + JDBCRecordHandler.recordIdField + " from " + JDBCRecordHandler.this.table + " where " + JDBCRecordHandler.recordIdField + " LIKE '%"+idText+"%'";
 		try {
@@ -477,7 +467,7 @@ public class JDBCRecordHandler extends RecordHandler {
 				retVal.add(rs.getString(1));
 			}
 		} catch(SQLException e) {
-			log.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		}
 		return retVal;
 	}

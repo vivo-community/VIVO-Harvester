@@ -2,16 +2,19 @@ package org.vivoweb.harvester.fetch;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * @author drs
@@ -42,9 +45,10 @@ public class RSSReader {
 	}
 	
 	/**
+	 * @throws IOException error
 	 * 
 	 */
-	public void writeNews() {
+	public void writeNews() throws IOException {
 		try {
 			Date date = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HH.mm.ss.SSS");
@@ -88,8 +92,10 @@ public class RSSReader {
 			out.close();
 			
 		}// try
-		catch(Exception ex) {
-			ex.printStackTrace();
+		catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(), e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(), e);
 		}
 		
 	}
@@ -136,6 +142,10 @@ public class RSSReader {
 	 */
 	public static void main(String[] args) {
 		RSSReader reader = RSSReader.getInstance();
-		reader.writeNews();
+		try {
+			reader.writeNews();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

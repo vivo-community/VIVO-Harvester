@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -73,10 +71,8 @@ public class ChangeNamespace {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
-	 * @throws SAXException error parsing config
-	 * @throws ParserConfigurationException error parsing config 
 	 */
-	public ChangeNamespace(String[] args) throws IOException, ParserConfigurationException, SAXException {
+	public ChangeNamespace(String[] args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
 
@@ -84,10 +80,8 @@ public class ChangeNamespace {
 	 * Constructor
 	 * @param argList parsed argument list
 	 * @throws IOException error reading config
-	 * @throws SAXException error parsing config
-	 * @throws ParserConfigurationException error parsing config 
 	 */
-	public ChangeNamespace(ArgList argList) throws ParserConfigurationException, SAXException, IOException {
+	public ChangeNamespace(ArgList argList) throws IOException {
 		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getProperties("I"));
 		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getProperties("V"));
 		this.oldNamespace = argList.get("o");
@@ -440,8 +434,6 @@ public class ChangeNamespace {
 		} catch (IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

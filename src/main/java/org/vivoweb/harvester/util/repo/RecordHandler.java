@@ -210,10 +210,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param filename filename of config file
 	 * @return RecordHandler described by config file
 	 * @throws IOException xml config parse error
-	 * @throws SAXException xml config parse error
-	 * @throws ParserConfigurationException xml config parse error
 	 */
-	public static RecordHandler parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
+	public static RecordHandler parseConfig(String filename) throws IOException {
 		return parseConfig(filename, null);
 	}
 	
@@ -223,10 +221,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param overrideParams the parameters to override the file with
 	 * @return RecordHandler described by config file
 	 * @throws IOException xml config parse error
-	 * @throws SAXException xml config parse error
-	 * @throws ParserConfigurationException xml config parse error
 	 */
-	public static RecordHandler parseConfig(String filename, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+	public static RecordHandler parseConfig(String filename, Properties overrideParams) throws IOException {
 		return new RecordHandlerParser().parseConfig(filename, overrideParams);
 	}
 	
@@ -293,23 +289,20 @@ public abstract class RecordHandler implements Iterable<Record> {
 		 * @param overrideParams parameters that override the params in the config file
 		 * @return the RecordHandler described by the config file
 		 * @throws IOException xml parsing error
-		 * @throws SAXException xml parsing error
-		 * @throws ParserConfigurationException xml parsing error
 		 */
-		protected RecordHandler parseConfig(String filename, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
-			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse
-			// the
-			// file
-			// and
-			// also
-			// register
-			// this
-			// class
-			// for
-			// call
-			// backs
+		protected RecordHandler parseConfig(String filename, Properties overrideParams) throws IOException {
+			// get a factory
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			try {
+				// get a new instance of parser
+				SAXParser sp = spf.newSAXParser();
+				// parse the file and also register this class for call backs
+				sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this);
+			} catch(SAXException e) {
+				throw new IOException(e.getMessage(), e);
+			} catch(ParserConfigurationException e) {
+				throw new IOException(e.getMessage(), e);
+			}
 			if(overrideParams != null) {
 				for(String key : overrideParams.stringPropertyNames()) {
 					this.params.put(key, overrideParams.getProperty(key));
@@ -319,22 +312,20 @@ public abstract class RecordHandler implements Iterable<Record> {
 				Class<?> className = Class.forName(this.type);
 				Object tempRH = className.newInstance();
 				if(!(tempRH instanceof RecordHandler)) {
-					throw new SAXException("Class must extend RecordHandler");
+					throw new IOException("Class must extend RecordHandler");
 				}
 				this.rh = (RecordHandler)tempRH;
 				this.rh.setParams(this.params);
 			} catch(ClassNotFoundException e) {
-				throw new SAXException("Unknown Class: " + this.type, e);
+				throw new IOException("Unknown Class: " + this.type, e);
 			} catch(SecurityException e) {
-				throw new SAXException(e.getMessage(), e);
+				throw new IOException(e.getMessage(), e);
 			} catch(IllegalArgumentException e) {
-				throw new SAXException(e.getMessage(), e);
+				throw new IOException(e.getMessage(), e);
 			} catch(InstantiationException e) {
-				throw new SAXException(e.getMessage(), e);
+				throw new IOException(e.getMessage(), e);
 			} catch(IllegalAccessException e) {
-				throw new SAXException(e.getMessage(), e);
-			} catch(IOException e) {
-				throw new SAXException(e.getMessage(), e);
+				throw new IOException(e.getMessage(), e);
 			}
 			this.rh.setOverwriteDefault(true);
 			return this.rh;
@@ -427,6 +418,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * Find records with idText in their id
 	 * @param idText the text to find
 	 * @return list of ids that match
+	 * @throws IOException error searching
 	 */
-	public abstract List<String> find(String idText);
+	public abstract List<String> find(String idText) throws IOException;
 }

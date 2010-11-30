@@ -68,7 +68,7 @@ public class RDBJenaConnect extends JenaConnect {
 	}
 
 	@Override
-	public JenaConnect connect(String modelName) throws IOException {
+	public JenaConnect neighborConnectClone(String modelName) throws IOException {
 		try {
 			return new RDBJenaConnect(new DBConnection(this.conn.getConnection(), this.conn.getDatabaseType()), modelName);
 		} catch(SQLException e) {
@@ -102,6 +102,11 @@ public class RDBJenaConnect extends JenaConnect {
 			throw new IllegalArgumentException(e);
 		}
 		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
+	}
+
+	@Override
+	public void truncate() {
+		this.getJenaModel().removeAll();
 	}
 	
 }

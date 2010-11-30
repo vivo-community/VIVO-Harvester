@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -21,7 +20,6 @@ import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.xml.sax.SAXException;
 
 /**
  * Merge multiple rdf files into one
@@ -69,19 +67,12 @@ public class Merge {
 	/**
 	 * Constructor
 	 * @param argList arguments
+	 * @throws IOException error connecting to record handler
 	 */
-	public Merge(ArgList argList) {
-		try {
-			this.input = RecordHandler.parseConfig(argList.get("i"), argList.getProperties("I"));
-			this.output = RecordHandler.parseConfig(argList.get("o"), argList.getProperties("O"));
-			this.regex = Pattern.compile(argList.get("b"));
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+	public Merge(ArgList argList) throws IOException {
+		this.input = RecordHandler.parseConfig(argList.get("i"), argList.getProperties("I"));
+		this.output = RecordHandler.parseConfig(argList.get("o"), argList.getProperties("O"));
+		this.regex = Pattern.compile(argList.get("b"));
 	}
 	
 	/**
@@ -89,33 +80,29 @@ public class Merge {
 	 * @param input input recordhandler
 	 * @param output output recordhandler
 	 * @param regex regex for finding primary records (with a grouping for the subsection to use to find sub-records)
+	 * @throws IOException error in record handling
 	 */
-	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) {
-		try {
-			for(Record r : input) {
-				JenaConnect jc = new MemJenaConnect();
-				Matcher m = regex.matcher(r.getID());
-				if(m.matches()) {
-					for(String id : input.find(m.group(1))) {
-						jc.loadRDF(new ByteArrayInputStream(input.getRecord(id).getData().getBytes()), null, null);
-					}
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					jc.exportRDF(baos);
-					baos.flush();
-					output.addRecord(m.group(1), baos.toString("UTF-8"), Merge.class);
+	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) throws IOException {
+		for(Record r : input) {
+			JenaConnect jc = new MemJenaConnect();
+			Matcher m = regex.matcher(r.getID());
+			if(m.matches()) {
+				for(String id : input.find(m.group(1))) {
+					jc.loadRdfFromStream(new ByteArrayInputStream(input.getRecord(id).getData().getBytes()), null, null);
 				}
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				jc.exportRdfToStream(baos);
+				baos.flush();
+				output.addRecord(m.group(1), baos.toString("UTF-8"), Merge.class);
 			}
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
 		}
 	}
 	
 	/**
 	 * Runs the merge
+	 * @throws IOException error executing
 	 */
-	private void execute() {
+	private void execute() throws IOException {
 		merge(this.input,this.output,this.regex);
 	}
 	
@@ -148,9 +135,6 @@ public class Merge {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}

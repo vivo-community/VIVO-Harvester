@@ -86,7 +86,7 @@ public class NLMJournalFetch extends NIHFetch {
 	
 	
 	@Override
-	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) {
+	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) throws IOException {
 		EFetchJournalsServiceStub.EFetchRequest req = new EFetchJournalsServiceStub.EFetchRequest();
 		req.setQuery_key(QueryKey);
 		req.setWebEnv(WebEnv);
@@ -98,7 +98,7 @@ public class NLMJournalFetch extends NIHFetch {
 		try {
 			serializeFetchRequest(req);
 		}catch(RemoteException e) {
-			log.error("Could not run search",e);
+			throw new IOException("Could not run search", e);
 		}
 	}
 	
@@ -163,7 +163,7 @@ public class NLMJournalFetch extends NIHFetch {
 	}
 	
 	@Override
-	protected int getLatestRecord() {
+	protected int getLatestRecord() throws IOException {
 		//FIXME: make this work for NLM Journal Fetch? Is relevant? if not, try to move out of NIHFetch
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
 	}

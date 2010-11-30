@@ -134,13 +134,13 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#connect(java.lang.String)
+	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#neighborConnectClone(java.lang.String)
 	 * connect(String modelName)}.
 	 */
 	public void testJenaConnectConstSibling() {
 		log.info("BEGIN testJenaConnectConstSibling");
 		try {
-			this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName).connect(modelName2);
+			this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName).neighborConnectClone(modelName2);
 			runWriteTest();
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
@@ -183,20 +183,20 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRDF(java.io.InputStream, java.lang.String, java.lang.String)
+	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRdfFromStream(java.io.InputStream, java.lang.String, java.lang.String)
 	 * loadRDF(InputStream in, String namespace)}.
 	 */
 	public void testLoadRDF() {
 		log.info("BEGIN testLoadRDF");
 		this.jc = new MemJenaConnect();
-		this.jc.loadRDF(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
+		this.jc.loadRdfFromStream(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		StmtIterator stmnt = this.jc.getJenaModel().listStatements();
 		assertTrue(stmnt.hasNext());
 		log.info("END testLoadRDF");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#exportRDF(java.io.OutputStream)
+	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#exportRdfToStream(java.io.OutputStream)
 	 * exportRDF(OutputStream out)}.
 	 */
 	public final void testExportRDF() {
@@ -204,7 +204,7 @@ public class JenaConnectTest extends TestCase {
 		try {
 			this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			this.jc.exportRDF(baos);
+			this.jc.exportRdfToStream(baos);
 			baos.flush();
 			String output = baos.toString();
 			assertEquals(rdfOut, output);
@@ -217,7 +217,7 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#importRDF(org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
+	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#importRdfFromRH(org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
 	 * importRDF(RecordHandler rh, String namespace)}.
 	 */
 	public final void testImportRDF() {
@@ -230,7 +230,7 @@ public class JenaConnectTest extends TestCase {
 			rh.addRecord("paylevel_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-paylevel:name>IT Expert</db-paylevel:name>\n    <db-paylevel:low>100000</db-paylevel:low>\n    <db-paylevel:high>300000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
 			rh.addRecord("paylevel_id-2", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-2\">\n    <db-paylevel:name>IT Noob</db-paylevel:name>\n    <db-paylevel:low>20000</db-paylevel:low>\n    <db-paylevel:high>25000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
 			this.jc = new MemJenaConnect();
-			this.jc.importRDF(rh, null);
+			this.jc.importRdfFromRH(rh, null);
 			StmtIterator stmnt = this.jc.getJenaModel().listStatements();
 			assertTrue(stmnt.hasNext());
 		} catch(IOException e) {

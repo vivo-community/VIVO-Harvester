@@ -8,7 +8,6 @@ package org.vivoweb.harvester.transfer;
 
 import java.io.File;
 import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.xml.sax.SAXException;
 
 /**
  * Transfer data from one Jena model to another
@@ -118,42 +116,35 @@ public class Transfer {
 			throw new IllegalArgumentException("Must provide one of -o, -O, or -d");
 		}
 		
-		try {
-			// setup input model
-			if(argList.has("i")) {
-				this.input = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
-			}
-			
-			// setup output
-			if(argList.has("o")) {
-				this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
-			}
-			
-			// load any specified rdf file data
-			this.inRDF = argList.get("r");
-			this.inRDFlang = argList.get("R");
-			
-			// load data from recordhandler
-			if(argList.has("h")) {
-				this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getProperties("H"));
-			}
-			
-			// output to file, if requested
-			this.dumpFile = argList.get("d");
-			
-			// get namespace
-			this.namespace = argList.get("n");
-			
-			// empty model
-			this.clearModel = argList.has("w");
-			this.emptyModel = argList.has("e");
-			this.removeMode = argList.has("m");
-			
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+		// setup input model
+		if(argList.has("i")) {
+			this.input = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
 		}
+		
+		// setup output
+		if(argList.has("o")) {
+			this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
+		}
+		
+		// load any specified rdf file data
+		this.inRDF = argList.get("r");
+		this.inRDFlang = argList.get("R");
+		
+		// load data from recordhandler
+		if(argList.has("h")) {
+			this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getProperties("H"));
+		}
+		
+		// output to file, if requested
+		this.dumpFile = argList.get("d");
+		
+		// get namespace
+		this.namespace = argList.get("n");
+		
+		// empty model
+		this.clearModel = argList.has("w");
+		this.emptyModel = argList.has("e");
+		this.removeMode = argList.has("m");
 	}
 	
 	/**
@@ -188,10 +179,10 @@ public class Transfer {
 				log.debug("removeMode?: " + this.removeMode);
 				if(this.removeMode) {
 					log.trace("removing inputfile from output");
-					this.output.removeRDF(this.inRDF, this.namespace, this.inRDFlang);
+					this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 				} else {
 					log.trace("adding inputfile to input");
-					this.input.loadRDF(this.inRDF, this.namespace, this.inRDFlang);
+					this.input.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 				}
 			} catch(FileSystemException e) {
 				log.error(e.getMessage(), e);
@@ -201,11 +192,11 @@ public class Transfer {
 		if(this.inRH != null) {
 			if(this.removeMode) {
 				log.info("Remving Records from RecordHandler");
-				int processCount = this.output.removeRDF(this.inRH, this.namespace);
+				int processCount = this.output.removeRdfFromRH(this.inRH, this.namespace);
 				log.info("Removed " + processCount + " records");
 			} else {
 				log.info("Loading Records from RecordHandler");
-				int processCount = this.input.importRDF(this.inRH, this.namespace);
+				int processCount = this.input.importRdfFromRH(this.inRH, this.namespace);
 				log.info("Loaded " + processCount + " records");
 			}
 		}
@@ -213,7 +204,7 @@ public class Transfer {
 		if(this.dumpFile != null) {
 			try {
 				log.trace("dumping input to dumpfile");
-				this.input.exportRDF(this.dumpFile);
+				this.input.exportRdfToFile(this.dumpFile);
 			} catch(FileSystemException e) {
 				log.error(e.getMessage(), e);
 			}
@@ -222,10 +213,10 @@ public class Transfer {
 		if(!inputIsOutput) {
 			if(this.removeMode) {
 				log.trace("removing input from output");
-				this.output.removeRDF(this.input);
+				this.output.removeRdfFromJC(this.input);
 			} else {
 				log.trace("adding input to output");
-				this.output.loadRDF(this.input);
+				this.output.loadRdfFromJC(this.input);
 			}
 		}
 		
@@ -301,9 +292,6 @@ public class Transfer {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}

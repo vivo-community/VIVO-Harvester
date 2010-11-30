@@ -49,7 +49,7 @@ public class MemJenaConnect extends JenaConnect {
 	 */
 	public MemJenaConnect(InputStream in, String namespace, String language) {
 		this();
-		this.loadRDF(in, namespace, language);
+		this.loadRdfFromStream(in, namespace, language);
 	}
 	
 	@Override
@@ -58,8 +58,13 @@ public class MemJenaConnect extends JenaConnect {
 	}
 
 	@Override
-	public JenaConnect connect(String modelName) throws IOException {
+	public JenaConnect neighborConnectClone(String modelName) throws IOException {
 		return new MemJenaConnect(modelName);
+	}
+
+	@Override
+	public void truncate() {
+		this.getJenaModel().removeAll();
 	}
 	
 }

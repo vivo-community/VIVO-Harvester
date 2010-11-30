@@ -25,7 +25,12 @@ public class WebFetch {
 	 */
 	public static void main(String[] args) {
 		while(true) {
-			scrape();
+			try {
+				scrape();
+			} catch(IOException e) {
+				System.out.println("Scrape failed");
+				e.printStackTrace();
+			}
 			System.out.println("Scrape complete, sleeping 15 minutes.");
 			try {
 				Thread.sleep(15 * 60 * 1000);
@@ -38,11 +43,12 @@ public class WebFetch {
 	
 	/**
 	 * @author Dale Scheppler
+	 * @throws IOException error
 	 * @Description This method reads from the default error log location on an AT&T 2Wire modem, and saves the results.
 	 * Good for arguing with the phone company. It will auto-run every 15 minutes until you kill it.
 	 * @todo At some point this should read configuration data from a configuration file. If I ever plan to release it.
 	 */
-	private static void scrape() {
+	private static void scrape() throws IOException {
 		
 		try {
 			Date date = new Date();
@@ -63,9 +69,7 @@ public class WebFetch {
 			out.flush();
 			out.close();
 		} catch(MalformedURLException e) {
-			e.printStackTrace();
-		} catch(IOException e) {
-			e.printStackTrace();
+			throw new IOException(e.getMessage(), e);
 		}
 		
 	}

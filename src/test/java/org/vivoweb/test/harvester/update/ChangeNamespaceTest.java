@@ -90,7 +90,7 @@ public class ChangeNamespaceTest extends TestCase {
 		"\n        <rdfs:label xml:lang=\"en-US\">Johnson, Rob</rdfs:label>"+
 		"\n    </rdf:Description>"+
 		"\n</rdf:RDF>";
-		this.vivo.loadRDF(new ByteArrayInputStream(vivoData.getBytes()), null, null);
+		this.vivo.loadRdfFromStream(new ByteArrayInputStream(vivoData.getBytes()), null, null);
 		Resource test123 = ResourceFactory.createResource(this.namespace+"test123");
 		this.model.getJenaModel().add(test123,ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"),"Johnson, Robert");
 		this.model.getJenaModel().add(test123,ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"),"2345678901");
@@ -172,11 +172,11 @@ public class ChangeNamespaceTest extends TestCase {
 		log.info("BEGIN testChangeNS");
 		ByteArrayOutputStream baos;
 		baos = new ByteArrayOutputStream();
-		this.model.exportRDF(baos);
+		this.model.exportRdfToStream(baos);
 		log.debug(baos.toString());
 		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace, this.properties);
 		baos = new ByteArrayOutputStream();
-		this.model.exportRDF(baos);
+		this.model.exportRdfToStream(baos);
 		log.debug(baos.toString());
 		assertFalse(this.model.containsURI(this.namespace+"test123"));
 		assertFalse(this.model.containsURI(this.namespace+"test321"));

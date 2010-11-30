@@ -17,12 +17,10 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
-import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -117,10 +115,8 @@ public class JenaRecordHandler extends RecordHandler {
 	 * @param configFile the model config file
 	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
 	 * @throws IOException error connecting
-	 * @throws SAXException xml parse error
-	 * @throws ParserConfigurationException xml parse error
 	 */
-	public JenaRecordHandler(String configFile, String dataFieldType) throws ParserConfigurationException, SAXException, IOException {
+	public JenaRecordHandler(String configFile, String dataFieldType) throws IOException {
 		this.model = JenaConnect.parseConfig(configFile);
 		initVars(dataFieldType);
 	}
@@ -270,15 +266,9 @@ public class JenaRecordHandler extends RecordHandler {
 		String jenaConfig = getParam(params, "jenaConfig", false);
 		String dataFieldType = getParam(params, "dataFieldType", true);
 		if(jenaConfig != null) {
-			try {
-				this.model = JenaConnect.parseConfig(jenaConfig);
-			} catch(ParserConfigurationException e) {
-				throw new IllegalArgumentException(e);							// FIXME cah: Make this use JenaConnect overrides instead of this mess
-			} catch(SAXException e) {
-				throw new IllegalArgumentException(e);
-			}
+			this.model = JenaConnect.parseConfig(jenaConfig);
 		} else {
-			String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
+			String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);// FIXME cah: Make this use JenaConnect overrides instead of this mess
 			String connType = getParam(params, "connType", true);
 			String host = getParam(params, "host", true);
 			String port = getParam(params, "port", true);

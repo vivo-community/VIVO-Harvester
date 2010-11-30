@@ -6,7 +6,6 @@
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -14,8 +13,8 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.xml.sax.SAXException;
 import de.fuberlin.wiwiss.d2r.D2rProcessor;
+import de.fuberlin.wiwiss.d2r.exception.D2RException;
 
 /**
  * Fetches rdf data using D2RMap
@@ -64,26 +63,22 @@ public class D2RMapFetch {
 	public D2RMapFetch(ArgList opts) throws IOException {
 		this.d2rConfigPath = opts.get("u");
 		this.d2rOutputFile = opts.get("s");
-		try {
-			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
-		}
+		this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
 	}
 	
 	/**
 	 * Executes the task
+	 * @throws IOException error processing
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		D2rProcessor proc = new D2rProcessor();
 		proc.harvesterInit();
+		String output;
 		try {
-			String output = proc.processMap("RDF/XML", this.d2rConfigPath);
+			output = proc.processMap("RDF/XML", this.d2rConfigPath);
 			this.rh.addRecord(this.d2rOutputFile, output, this.getClass());
-		} catch(Exception e) {
-			log.error(e.getMessage());
+		} catch(D2RException e) {
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	

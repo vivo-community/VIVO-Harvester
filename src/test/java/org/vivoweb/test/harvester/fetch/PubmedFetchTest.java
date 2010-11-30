@@ -10,8 +10,10 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * @author Dale Scheppler (dscheppler@ctrip.ufl.edu)
@@ -57,41 +60,39 @@ public class PubmedFetchTest extends TestCase {
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedFetch#main(java.lang.String[]) main(String... args)}.
+	 * @throws IOException error
+	 * @throws ParserConfigurationException error
+	 * @throws SAXException error
 	 */
-	public final void testPubmedFetchMain() {
+	public final void testPubmedFetchMain() throws IOException, ParserConfigurationException, SAXException {
 		log.info("BEGIN testPubmedFetchMain");
-		try {
-			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
+		this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
 			
-			//test 1 record
-			new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
-			assertTrue(this.rh.iterator().hasNext());
-			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			for(Record r : this.rh) {
-				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-				Element elem = doc.getDocumentElement();
-				traverseNodes(elem.getChildNodes());
-			}
-			
-			//test 0 records, batch 1
-			//new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
-			//assertTrue(this.rh.iterator().hasNext());
-			
-			//test 1 records, batch 0
-			new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
-			assertTrue(this.rh.iterator().hasNext());
-
-			//test 0 records, batch 0
-			new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "0", "-o", this.configFile.getAbsolutePath()}).execute();
-			assertTrue(this.rh.iterator().hasNext());
-			
-			//test 1200 records, batch 500
-			new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1200", "-b", "500", "-o", this.configFile.getAbsolutePath()}).execute();
-			assertTrue(this.rh.iterator().hasNext());
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
+		//test 1 record
+		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
+		assertTrue(this.rh.iterator().hasNext());
+		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		for(Record r : this.rh) {
+			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
+			Element elem = doc.getDocumentElement();
+			traverseNodes(elem.getChildNodes());
 		}
+		
+		//test 0 records, batch 1
+		//new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
+		//assertTrue(this.rh.iterator().hasNext());
+		
+		//test 1 records, batch 0
+		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
+		assertTrue(this.rh.iterator().hasNext());
+
+		//test 0 records, batch 0
+		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "0", "-o", this.configFile.getAbsolutePath()}).execute();
+		assertTrue(this.rh.iterator().hasNext());
+		
+		//test 1200 records, batch 500
+		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1200", "-b", "500", "-o", this.configFile.getAbsolutePath()}).execute();
+		assertTrue(this.rh.iterator().hasNext());
 		log.info("END testPubmedFetchMain");
 	}
 	

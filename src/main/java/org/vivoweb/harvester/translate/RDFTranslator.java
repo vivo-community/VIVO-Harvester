@@ -8,7 +8,9 @@ package org.vivoweb.harvester.translate;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.slf4j.Logger;
@@ -68,26 +70,26 @@ public class RDFTranslator {
 	}
 	
 	/**
-	 * 
+	 * Execute the translate
+	 * @throws IOException error reading rdf workflow
 	 */
-	public void executeTask() {
+	public void execute() throws IOException {
 		// checking for valid input parameters
 		if((this.translationWorkFlow != null && this.translationWorkFlow.isFile()) && this.inStream != null && this.inStream != null) {
 			log.info("Translation: Start");
+			Model wfModel = ModelFactory.createDefaultModel();
+			
 			try {
-				Model wfModel = ModelFactory.createDefaultModel();
-				
-				wfModel.read(new FileReader(this.translationWorkFlow), "http://vivoweb.org/harvester/rdfTranslation/", "RDF/XML"); // /working
-				// here
-				
-				Model mainModel = ModelFactory.createDefaultModel();
-				
-				mainModel.read(this.inStream, "http://vivoweb.org/harvester/rdfTranslation/", "RDF/XML");
-				
-				processWorkFlow(wfModel, mainModel);
-			} catch(Exception e) {
-				log.error(e.getMessage());
+				wfModel.read(new FileReader(this.translationWorkFlow), "http://vivoweb.org/harvester/rdfTranslation/", "RDF/XML"); // working here
+			} catch(FileNotFoundException e) {
+				throw new IOException(e.getMessage(), e);
 			}
+			
+			Model mainModel = ModelFactory.createDefaultModel();
+			
+			mainModel.read(this.inStream, "http://vivoweb.org/harvester/rdfTranslation/", "RDF/XML");
+			
+			processWorkFlow(wfModel, mainModel);
 			
 			log.info("Translation: End");
 		} else {
@@ -129,7 +131,7 @@ public class RDFTranslator {
 					// set the outstream as System.out
 					rdfTrans.outStream = System.out;
 					
-					rdfTrans.executeTask();
+					rdfTrans.execute();
 				} catch(Exception e) {
 					log.error(e.getMessage()); // TODO Stephen: make this more robust (better information for debugging
 					// problems)

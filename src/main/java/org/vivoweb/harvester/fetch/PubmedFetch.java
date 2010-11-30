@@ -53,8 +53,9 @@ public class PubmedFetch extends NIHFetch {
 	 * contacted if there is a problem, such as sending too many queries too quickly.
 	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
 	 * @param outStream output stream to write to
+	 * @throws IOException error finding latest record
 	 */
-	public PubmedFetch(String emailAddress, OutputStream outStream) {
+	public PubmedFetch(String emailAddress, OutputStream outStream) throws IOException {
 		super(emailAddress,outStream,database);
 		setMaxRecords(getLatestRecord()+"");
 	}
@@ -93,7 +94,7 @@ public class PubmedFetch extends NIHFetch {
 	}
 	
 	@Override
-	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) {
+	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) throws IOException {
 		EFetchPubmedServiceStub.EFetchRequest req = new EFetchPubmedServiceStub.EFetchRequest();
 		req.setQuery_key(QueryKey);
 		req.setWebEnv(WebEnv);
@@ -106,16 +107,16 @@ public class PubmedFetch extends NIHFetch {
 		try {
 			serializeFetchRequest(req);
 		}catch(RemoteException e) {
-			log.error("Could not run search",e);
+			throw new IOException("Could not run search",e);
 		}
 	}
 	
 	/**
 	 * Runs, sanitizes, and outputs the results of a EFetch request to the xmlWriter
 	 * @param req the request to run and output results
-	 * @throws RemoteException error running EFetch
+	 * @throws IOException Unable to write XML to record
 	 */
-	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws RemoteException {
+	private void serializeFetchRequest(EFetchPubmedServiceStub.EFetchRequest req) throws IOException {
 		//Create buffer for raw, pre-sanitized output
 		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
 		//Connect to pubmed
@@ -140,9 +141,9 @@ public class PubmedFetch extends NIHFetch {
 			//Sanitize string (which writes it to xmlWriter)
 			sanitizeXML(iString);
 		} catch(XMLStreamException e) {
-			log.error("Unable to write to output",e);
+			throw new IOException("Unable to write to output", e);
 		} catch(UnsupportedEncodingException e) {
-			log.error("Cannot get xml from buffer",e);
+			throw new IOException("Cannot get xml from buffer", e);
 		}
 	}
 	
@@ -150,27 +151,24 @@ public class PubmedFetch extends NIHFetch {
 	 * Sanitizes XML in preparation for writing to output stream
 	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
 	 * @param strInput The XML to Sanitize.
+	 * @throws IOException Unable to write XML to record
 	 */
-	private void sanitizeXML(String strInput) {
+	private void sanitizeXML(String strInput) throws IOException {
 		log.debug("Sanitizing Output");
 		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
 		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
 		log.debug("XML File Length - Post Sanitze: " + newS.length());
 		log.debug("Sanitization Complete");
-		try {
-			log.trace("Writing to output");
-			getOsWriter().write(newS);
-			//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
-			getOsWriter().write("\n");
-			getOsWriter().flush();
-			log.trace("Writing complete");
-		} catch(IOException e) {
-			log.error("Unable to write XML to record.",e);
-		}
+		log.trace("Writing to output");
+		getOsWriter().write(newS);
+		//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
+		getOsWriter().write("\n");
+		getOsWriter().flush();
+		log.trace("Writing complete");
 	}
 	
 	@Override
-	protected int getLatestRecord() {
+	protected int getLatestRecord() throws IOException {
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
 	}
 		

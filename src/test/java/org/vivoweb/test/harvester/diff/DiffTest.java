@@ -3,18 +3,16 @@
  */
 package org.vivoweb.test.harvester.diff;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Properties;
 import junit.framework.TestCase;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.diff.Diff;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 
 /**
  * @author drspeedo
@@ -29,207 +27,155 @@ public class DiffTest extends TestCase {
 	/**
 	 * previous harvester rdf statements to load for test
 	 */
-	private File previousRDF;
+	private String previousRDF;
 	/**
 	 * incoming harvester rdf statements to load for test
 	 */
-	private File incomingRDF;
+	private String incomingRDF;
 	/**
 	 * expected rdf statements to load for test
 	 */
-	private StringBuffer expectedAddRDF;
+	private String expectedAddRDF;
 	/**
-	 * vivo test configuration file
+	 * vivo test configuration
 	 */
-	private StringBuffer expectedSubRDF;
-	/**
-	 * vivo test configuration file
-	 */
-	private File vivoXML;
+	private String expectedSubRDF;
 
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(DiffTest.class);
-		// Create vivo rdf file
-		try {
-			this.previousRDF = File.createTempFile("scoretest_vivo", ".rdf");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.previousRDF));
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-					 "<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
-					 "xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
-					 "xmlns:event=\"http://purl.org/NET/c4dm/event.owl#\" " +
-					 "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
-					 "xmlns:owl2=\"http://www.w3.org/2006/12/owl2-xml#\" " +
-					 "xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
-					 "xmlns:ufVIVO=\"http://vivo.ufl.edu/ontology/vivo-ufl/\" " +
-					 "xmlns:swrlb=\"http://www.w3.org/2003/11/swrlb#\" " +
-					 "xmlns:vann=\"http://purl.org/vocab/vann/\" " +
-					 "xmlns:j.1=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
-					 "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
-					 "xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
-					 "xmlns:afn=\"http://jena.hpl.hp.com/ARQ/function#\" " +
-					 "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
-					 "xmlns:swvs=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
-					 "xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
-					 "xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
-					 "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
-					 "xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
-					 "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
-					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
-					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-					 "<core:middleName>J</core:middleName>" +
-					 "<foaf:firstName>Guy</foaf:firstName>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
-					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
-					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
-					 "<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
-					 "</rdf:Description>" +
-					 "</rdf:RDF>");
-			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+		// Create vivo rdf
+		this.previousRDF = ""+
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+				"<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
+					"xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
+					"xmlns:event=\"http://purl.org/NET/c4dm/event.owl#\" " +
+					"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
+					"xmlns:owl2=\"http://www.w3.org/2006/12/owl2-xml#\" " +
+					"xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
+					"xmlns:ufVIVO=\"http://vivo.ufl.edu/ontology/vivo-ufl/\" " +
+					"xmlns:swrlb=\"http://www.w3.org/2003/11/swrlb#\" " +
+					"xmlns:vann=\"http://purl.org/vocab/vann/\" " +
+					"xmlns:j.1=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
+					"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+					"xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
+					"xmlns:afn=\"http://jena.hpl.hp.com/ARQ/function#\" " +
+					"xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
+					"xmlns:swvs=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
+					"xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
+					"xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
+					"xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
+					"xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
+					"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
+					"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
+						"<core:workEmail>v@ufl.edu</core:workEmail>" +
+						"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+						"<core:middleName>J</core:middleName>" +
+						"<foaf:firstName>Guy</foaf:firstName>" +
+						"<foaf:lastName>Fawkes</foaf:lastName>" +
+						"<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
+						"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+						"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+						"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+						"<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
+					"</rdf:Description>" +
+				"</rdf:RDF>";
 		
-		// Create incoming rdf file
+		// Create incoming rdf
 		// differences 
 		//		changed email address
 		// 		removal of middlename
 		//		addition of prefix
-		try {
-			this.incomingRDF = File.createTempFile("scoretest_vivo", ".rdf");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.incomingRDF));
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-					 "<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
-					 "xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
-					 "xmlns:event=\"http://purl.org/NET/c4dm/event.owl#\" " +
-					 "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
-					 "xmlns:owl2=\"http://www.w3.org/2006/12/owl2-xml#\" " +
-					 "xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
-					 "xmlns:ufVIVO=\"http://vivo.ufl.edu/ontology/vivo-ufl/\" " +
-					 "xmlns:swrlb=\"http://www.w3.org/2003/11/swrlb#\" " +
-					 "xmlns:vann=\"http://purl.org/vocab/vann/\" " +
-					 "xmlns:j.1=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
-					 "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
-					 "xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
-					 "xmlns:afn=\"http://jena.hpl.hp.com/ARQ/function#\" " +
-					 "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
-					 "xmlns:swvs=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
-					 "xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
-					 "xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
-					 "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
-					 "xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
-					 "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
-					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
-					 "<core:workEmail>v1105@ufl.edu</core:workEmail>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-					 "<foaf:firstName>Guy</foaf:firstName>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "<foaf:prefix>Mr.</foaf:prefix>" +
-					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
-					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
-					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
-					 "<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
-					 "</rdf:Description>" +
-					 "</rdf:RDF>");
-			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+		this.incomingRDF = ""+
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+				"<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
+					"xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
+					"xmlns:event=\"http://purl.org/NET/c4dm/event.owl#\" " +
+					"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
+					"xmlns:owl2=\"http://www.w3.org/2006/12/owl2-xml#\" " +
+					"xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
+					"xmlns:ufVIVO=\"http://vivo.ufl.edu/ontology/vivo-ufl/\" " +
+					"xmlns:swrlb=\"http://www.w3.org/2003/11/swrlb#\" " +
+					"xmlns:vann=\"http://purl.org/vocab/vann/\" " +
+					"xmlns:j.1=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
+					"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+					"xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
+					"xmlns:afn=\"http://jena.hpl.hp.com/ARQ/function#\" " +
+					"xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
+					"xmlns:swvs=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
+					"xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
+					"xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
+					"xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
+					"xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
+					"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
+					"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
+						"<core:workEmail>v1105@ufl.edu</core:workEmail>" +
+						"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+						"<foaf:firstName>Guy</foaf:firstName>" +
+						"<foaf:lastName>Fawkes</foaf:lastName>" +
+						"<foaf:prefix>Mr.</foaf:prefix>" +
+						"<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
+						"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+						"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+						"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+						"<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
+					"</rdf:Description>" +
+				"</rdf:RDF>";
 		
-		this.expectedAddRDF = new StringBuffer();
-		this.expectedAddRDF.append("<ModelCom   {http://vivo.mydomain.edu/individual/n3574 @http://xmlns.com/foaf/0.1/prefix \"Mr.\"; http://vivo.mydomain.edu/individual/n3574 @http://vivoweb.org/ontology/core#workEmail \"v1105@ufl.edu\"} | >");
+		this.expectedAddRDF = ""+
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+				"<rdf:RDF></rdf:RDF>";
 		
-		this.expectedSubRDF = new StringBuffer();
-		this.expectedSubRDF.append("<ModelCom   {http://vivo.mydomain.edu/individual/n3574 @http://vivoweb.org/ontology/core#middleName \"J\"; http://vivo.mydomain.edu/individual/n3574 @http://vivoweb.org/ontology/core#workEmail \"v@ufl.edu\"} | >");
-				
-		// create VIVO.xml
-		try {
-			this.vivoXML = File.createTempFile("scoretest_vivo", ".xml");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoXML));
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-					 "<Model>" +
-					 "<Param name=\"dbClass\">org.h2.Driver</Param>" +
-					 "<Param name=\"dbType\">HSQLDB</Param>" +
-					 "<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +
-					 "<Param name=\"modelName\">testVivoModel</Param>" +
-					 "<Param name=\"dbUser\">sa</Param>" +
-					 "<Param name=\"dbPass\"></Param>" +
-					 "</Model>");
-			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+		this.expectedSubRDF = ""+
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+		"<rdf:RDF></rdf:RDF>";
 	}
 	
 	/**
-	 * 
+	 * @throws IOException error
 	 */
-	public void testEverything(){
-		log.info("BEGIN testEverything");
-		JenaConnect previousJC;
-		JenaConnect incomingJC;
+	public void testDiff() throws IOException{
+		log.info("BEGIN testDiff");
+
 		JenaConnect diffJC;
-		
 		try {
-			
-			Properties previousProp = new Properties();
-			previousProp.put("modelName", "hr20101101");
-			previousJC = JenaConnect.parseConfig(this.vivoXML, previousProp);
-			previousJC.loadRDF(VFS.getManager().toFileObject(this.previousRDF).getContent().getInputStream(), null, null);
-			
-			Properties incomingProp = new Properties();
-			incomingProp.put("modelName", "hr20101104");
-			incomingJC = JenaConnect.parseConfig(this.vivoXML, incomingProp);
-			incomingJC.loadRDF(VFS.getManager().toFileObject(this.incomingRDF).getContent().getInputStream(), null, null);
-		
-			Properties diffProp = new Properties();
-			diffProp.put("modelName", "diff");
-			diffJC = JenaConnect.parseConfig(this.vivoXML, diffProp);
-						
-			//System.out.println("prevModel");
-			//previousJC.exportRDF(System.out);
-			
-			//System.out.println("incomingModel");
-			//incomingJC.exportRDF(System.out);
-			
-						
-			//testing new items
-			new Diff(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101101","-m",this.vivoXML.getAbsolutePath(),
-					"-M","modelName=hr20101104","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"}).execute();
-			
-			if (!this.expectedAddRDF.toString().equals(diffJC.getJenaModel().toString())){
-				fail("Add entries do not match");
-			}
-			
-			diffJC.getJenaModel().remove(diffJC.getJenaModel());
-									
-			//testing old items
-			new Diff(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101104","-m",this.vivoXML.getAbsolutePath(),
-					"-M","modelName=hr20101101","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"}).execute();
-			
-			if (!this.expectedSubRDF.toString().equals(diffJC.getJenaModel().toString())){
-				fail("Subtract entries do not match");
-			}
-			//testing delete items
-			
-			
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
+			diffJC = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "HSQLDB", "org.h2.Driver", "layout2", "diff");
+		} catch(ClassNotFoundException e) {
+			throw new IOException(e.getMessage(), e);
 		}
-		log.info("END testEverything");
+		
+		JenaConnect previousJC = diffJC.neighborConnectClone("hr20101101");
+		previousJC.loadRdfFromString(this.previousRDF, null, null);
+
+		JenaConnect incomingJC = diffJC.neighborConnectClone("hr20101104");
+		incomingJC.loadRdfFromString(this.incomingRDF, null, null);
+					
+		//System.out.println("prevModel");
+		//previousJC.exportRDF(System.out);
+		
+		//System.out.println("incomingModel");
+		//incomingJC.exportRDF(System.out);
+		
+					
+		//testing new items
+		Diff.diff(incomingJC, previousJC, diffJC, null);
+		
+		assertEquals(this.expectedAddRDF, diffJC.getJenaModel().difference(new MemJenaConnect(new ByteArrayInputStream(this.expectedAddRDF.getBytes()), null, null).getJenaModel()).toString());
+		
+		diffJC.truncate();
+								
+		//testing old items
+		Diff.diff(previousJC, incomingJC, diffJC, null);
+
+		assertEquals(this.expectedSubRDF, diffJC.getJenaModel().difference(new MemJenaConnect(new ByteArrayInputStream(this.expectedSubRDF.getBytes()), null, null).getJenaModel()).toString());
+		//testing delete items
+		log.info("END testDiff");
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
-		this.incomingRDF.delete();
-		this.previousRDF.delete();
-		this.vivoXML.delete();
+		this.incomingRDF = null;
+		this.previousRDF = null;
 	}
 
 }

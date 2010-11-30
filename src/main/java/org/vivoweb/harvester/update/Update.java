@@ -9,7 +9,6 @@ package org.vivoweb.harvester.update;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +19,10 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.RDBJenaConnect;
-import org.xml.sax.SAXException;
-import com.ibm.icu.util.Calendar;
 
 /**
  *
  */
-@SuppressWarnings("unused")
 public class Update {
 
 	/**
@@ -34,11 +30,11 @@ public class Update {
 	 */
 	private static Logger log = LoggerFactory.getLogger(Update.class);
 	/**
-	 * Models to read records from
+	 * Model to read previous records from
 	 */
 	private JenaConnect previousJC;
 	/**
-	 * Models to read records from
+	 * Model to read incoming records from
 	 */
 	private JenaConnect incomingJC;
 	/**
@@ -48,15 +44,37 @@ public class Update {
 	/**
 	 * keep the subtractions
 	 */
-	private boolean keepSubtractions;
+	private boolean ignoreSubtractions;
 	/**
 	 * keep the additions
 	 */
-	private boolean keepAdditions;
+	private boolean ignoreAdditions;
 	/**
 	 * wipe the incoming model
 	 */
 	private boolean wipeIncomingModel;
+	
+	/**
+	 * Constructor
+	 * @param prev Model to read previous records from
+	 * @param in Model to read incoming records from
+	 * @param vivo Model to write records to
+	 * @param ignoreSub ignore the subtractions
+	 * @param ignoreAdd ignore the additions
+	 * @param wipeIn wipe the incoming model
+	 */
+	public Update(JenaConnect prev, JenaConnect in, JenaConnect vivo, boolean ignoreSub, boolean ignoreAdd, boolean wipeIn) {
+		// Require input args
+		if(prev == null || in == null) {
+			throw new IllegalArgumentException("Must provide input and previous models");
+		}
+		this.incomingJC = in;
+		this.previousJC = prev;
+		this.vivoJC = vivo;
+		this.ignoreAdditions = ignoreAdd;
+		this.ignoreSubtractions = ignoreSub;
+		this.wipeIncomingModel = wipeIn;
+	}
 	
 	/**
 	 * Constructor
@@ -77,35 +95,22 @@ public class Update {
 		if(!argList.has("p") || !argList.has("i")) {
 			throw new IllegalArgumentException("Must provide input via -i and -p");
 		}
-		try {
-			// setup incomingJC
-			if(argList.has("i")) {
-				this.incomingJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
-			} else {
-				this.incomingJC = null;
-			}
-			
-			// setup previousJC
-			if(argList.has("p")) {
-				this.previousJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("p")), argList.getProperties("P"));
-			} else {
-				this.previousJC = null;
-			}
-			
-			// setup vivoJC
-			if(argList.has("v")) {
-				this.vivoJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("v")), argList.getProperties("V"));
-			} else {
-				this.vivoJC = null;
-			}
-			
-			this.wipeIncomingModel = argList.has("w");
-			
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+		
+		// setup incomingJC
+		this.incomingJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getProperties("I"));
+		// setup previousJC
+		this.previousJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("p")), argList.getProperties("P"));
+		
+		// setup vivoJC
+		if(argList.has("v")) {
+			this.vivoJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("v")), argList.getProperties("V"));
+		} else {
+			this.vivoJC = null;
 		}
+		
+		this.ignoreAdditions = argList.has("a");
+		this.ignoreSubtractions = argList.has("s");
+		this.wipeIncomingModel = argList.has("w");
 	}
 	
 	
@@ -127,11 +132,8 @@ public class Update {
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
 		// switches
-		// keepSubtractions (don't subtract)
-		
-		// keepAdditions
-		
-		// delete the incoming model
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("addition-ignore").withParameter(false, "NOADD_FLAG").setDescription("If set, this will prevent additions from being applied"));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("subtraction-ignore").withParameter(false, "NOSUB_FLAG").setDescription("If set, this will prevent subtractions from being applied"));
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-incoming-model").withParameter(false, "WIPE_FLAG").setDescription("If set, this will clear the input model after transfer is complete"));
 				
 		return parser;
@@ -139,53 +141,58 @@ public class Update {
 	
 	/**
 	 * Execute the task
+	 * @throws IOException error executing
 	 */
-	public void execute() {
-		try {
-			JenaConnect subJC = new RDBJenaConnect("jdbc:h2:"+File.createTempFile("update_Subtractions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "subModel");
-			JenaConnect addJC = new RDBJenaConnect("jdbc:h2:"+File.createTempFile("update_Additions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "addModel");
-			
-			if (this.previousJC == null){
-				System.out.println("previous is null");
-			}
-			
-			ByteArrayOutputStream baos;
-			
-			//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
-			log.info("Finding Subtractions");
-			Diff.diff(this.previousJC, this.incomingJC,subJC,"logs/update_Subtractions.rdf.xml");
-			baos = new ByteArrayOutputStream();
-			subJC.exportRDF(baos);
-			baos.flush();
-			log.debug("Subtraction RDF:\n"+baos.toString());
-				
-			//run diff for additions incomingJC - previous jc
-			log.info("Finding Additions");
-			Diff.diff(this.incomingJC, this.previousJC, addJC, "logs/update_Additions.rdf.xml");
-			baos = new ByteArrayOutputStream();
-			addJC.exportRDF(baos);
-			baos.flush();
-			log.debug("Addition RDF:\n"+baos.toString());
+	public void execute() throws IOException {
+		JenaConnect subJC = new RDBJenaConnect("jdbc:h2:"+File.createTempFile("update_Subtractions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "subModel");
+		JenaConnect addJC = new RDBJenaConnect("jdbc:h2:"+File.createTempFile("update_Additions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "addModel");
 		
-			//if applyToVIVO
-			if (this.vivoJC != null){
+		if (this.previousJC == null){
+			System.out.println("previous is null");
+		}
+		
+		ByteArrayOutputStream baos;
+		
+		//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
+		log.info("Finding Subtractions");
+		Diff.diff(this.previousJC, this.incomingJC,subJC,"logs/update_Subtractions.rdf.xml");
+		baos = new ByteArrayOutputStream();
+		subJC.exportRdfToStream(baos);
+		baos.flush();
+		log.debug("Subtraction RDF:\n"+baos.toString());
+			
+		//run diff for additions incomingJC - previous jc
+		log.info("Finding Additions");
+		Diff.diff(this.incomingJC, this.previousJC, addJC, "logs/update_Additions.rdf.xml");
+		baos = new ByteArrayOutputStream();
+		addJC.exportRdfToStream(baos);
+		baos.flush();
+		log.debug("Addition RDF:\n"+baos.toString());
+	
+		//if applyToVIVO
+		if (this.vivoJC != null){
+			if(!this.ignoreSubtractions) {
 				log.info("Removing Subtractions from VIVO");
-				this.vivoJC.removeRDF(subJC);
+				this.vivoJC.removeRdfFromJC(subJC);
+			}
+			if(!this.ignoreAdditions) {
 				log.info("Inputing Additions to VIVO");
-				this.vivoJC.loadRDF(addJC);
+				this.vivoJC.loadRdfFromJC(addJC);
 			}
-			
+		}
+		
+		if(!this.ignoreSubtractions) {
 			log.info("Removing Subtractions from harvester Model");
-			this.previousJC.removeRDF(subJC);
+			this.previousJC.removeRdfFromJC(subJC);
+		}
+		if(!this.ignoreAdditions) {
 			log.info("Inputing Additions to harvester Model");
-			this.previousJC.loadRDF(addJC);
-			
-			if (this.wipeIncomingModel){
-				log.info("Wiping Input Model");
-				this.incomingJC.getJenaModel().removeAll();
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage(),e);
+			this.previousJC.loadRdfFromJC(addJC);
+		}
+		
+		if (this.wipeIncomingModel){
+			log.info("Wiping Input Model");
+			this.incomingJC.getJenaModel().removeAll();
 		}
 	}
 	
@@ -201,9 +208,6 @@ public class Update {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}

@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.vfs.VFS;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.Score;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
 
 /**
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
@@ -81,10 +79,10 @@ public class ScoreTest extends TestCase {
 		// Load up everything before starting
 		try {
 			input = JenaConnect.parseConfig(iArg, IArgProp);
-			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
+			input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
 			
 			vivo = JenaConnect.parseConfig(vArg, VArgProp);
-			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
+			vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
 			
 			output = JenaConnect.parseConfig(oArg, OArgProp);
 			
@@ -210,12 +208,6 @@ public class ScoreTest extends TestCase {
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
 		}
 		log.info("END testArguments");
 	}
@@ -237,12 +229,12 @@ public class ScoreTest extends TestCase {
 			Properties inputProp = new Properties();
 			inputProp.put("modelName", "input");
 			input = JenaConnect.parseConfig(this.vivoXML, inputProp);
-			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
+			input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
 			
 			Properties vivoProp = new Properties();
 			vivoProp.put("modelName", "vivo");
 			vivo = JenaConnect.parseConfig(this.vivoXML, vivoProp);
-			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
+			vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
 			
 			Properties outputProp = new Properties();
 			outputProp.put("modelName", "output");

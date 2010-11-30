@@ -8,7 +8,6 @@ package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
 import java.util.HashSet;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -16,11 +15,11 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
@@ -92,23 +91,15 @@ public class Qualify {
 	 * @throws IOException error creating task
 	 */
 	public Qualify(ArgList argList) throws IOException {
-		try {
-			if(!((argList.has("r") ^ argList.has("t") ^ argList.has("p")))) {
-				throw new IllegalArgumentException("Must provide one of --regex, --text, or --namespace, but not more than 1");
-			}
-			this.model = JenaConnect.parseConfig(argList.get("j"), argList.getProperties("J"));
-			this.dataPredicate = argList.get("d");
-			this.regex = argList.has("r");
-			this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
-			this.newVal = argList.get("v");
-			this.namespace = argList.get("p");
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(IOException e) {
-			throw new IOException(e.getMessage(), e);
+		if(!((argList.has("r") ^ argList.has("t") ^ argList.has("p")))) {
+			throw new IllegalArgumentException("Must provide one of --regex, --text, or --namespace, but not more than 1");
 		}
+		this.model = JenaConnect.parseConfig(argList.get("j"), argList.getProperties("J"));
+		this.dataPredicate = argList.get("d");
+		this.regex = argList.has("r");
+		this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
+		this.newVal = argList.get("v");
+		this.namespace = argList.get("p");
 	}
 	
 	/**
@@ -173,7 +164,9 @@ public class Qualify {
 		
 		while (propList.hasNext()) {
 			QuerySolution solution = propList.next();
-			propArray.add(solution.getResource("p").as(Property.class));
+			Resource pres = solution.getResource("p");
+			Property p = pres.as(Property.class);
+			propArray.add(p);
 		}
 		
 		for(Property p : propArray) {
@@ -188,7 +181,7 @@ public class Qualify {
 	 * Executes the task
 	 */
 	public void execute() {
-		if(!this.namespace.isEmpty()){
+		if(this.namespace != null && !this.namespace.isEmpty()){
 			log.info("Running remove namespace for " + this.namespace);
 			rmNamespace(this.namespace);
 		}

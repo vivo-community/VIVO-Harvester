@@ -97,34 +97,25 @@ public class OAIFetch {
 		this.strEndDate = argList.get("e");
 		String repositoryConfig = argList.get("o");
 		RecordHandler rhRecordHandler;
-		try {
-			rhRecordHandler = RecordHandler.parseConfig(repositoryConfig, argList.getProperties("O"));
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(IOException e) {
-			throw new IOException(e.getMessage(), e);
-		}
+		rhRecordHandler = RecordHandler.parseConfig(repositoryConfig, argList.getProperties("O"));
 		this.osOutStream = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler, this.getClass());
 	}
 	
 	/**
 	 * Executes the task
+	 * @throws IOException error getting recrords
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		try {
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
 		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		} catch(TransformerException e) {
-			log.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		} catch(NoSuchFieldException e) {
-			log.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	

@@ -47,8 +47,9 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * as sending too many queries too quickly.
 	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
 	 * @param outStream output stream to write to
+	 * @throws IOException error finding latest record
 	 */
-	public PubmedHTTPFetch(String emailAddress, OutputStream outStream) {
+	public PubmedHTTPFetch(String emailAddress, OutputStream outStream) throws IOException {
 		super(emailAddress, outStream, database);
 		setMaxRecords(getLatestRecord() + "");
 	}
@@ -86,7 +87,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 	}
 	
 	@Override
-	public String[] runESearch(String term, boolean logMessage) {
+	public String[] runESearch(String term, boolean logMessage) throws IOException {
 		String[] env = new String[4];
 		try {
 			StringBuilder urlSb = new StringBuilder();
@@ -116,19 +117,17 @@ public class PubmedHTTPFetch extends NIHFetch {
 				log.info("Query resulted in a total of " + env[2] + " records.");
 			}
 		} catch(MalformedURLException e) {
-			log.error(e.getMessage(),e);
-		} catch(IOException e) {
-			log.error(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
-			log.error(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 		return env;
 	}
 	
 	@Override
-	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) {
+	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) throws IOException {
 		StringBuilder urlSb = new StringBuilder();
 		urlSb.append("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?");
 		urlSb.append("&db=");
@@ -152,9 +151,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 		try {
 			sanitizeXML(getURLContents(urlSb.toString()));
 		} catch(MalformedURLException e) {
-			log.error("Query URL incorrectly formatted", e);
-		} catch(IOException e) {
-			log.error("Unable to read from URL", e);
+			throw new IOException("Query URL incorrectly formatted", e);
 		}
 	}
 	
@@ -179,8 +176,9 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * Sanitizes XML in preparation for writing to output stream Removes xml namespace attributes, XML wrapper tag, and
 	 * splits each record on a new line
 	 * @param strInput The XML to Sanitize.
+	 * @throws IOException Unable to write XML to record
 	 */
-	private void sanitizeXML(String strInput) {
+	private void sanitizeXML(String strInput) throws IOException {
 		//used to remove header from xml
 		String headerRegEx = "<\\?xml version=\"1.0\"\\?>.*?<!DOCTYPE.*?PubmedArticleSet.*?PUBLIC.*?\"-//NLM//DTD PubMedArticle, 1st January 2010//EN\".*?\"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_.*?.dtd\">.*?<PubmedArticleSet>";
 		//used to remove footer from xml
@@ -190,20 +188,16 @@ public class PubmedHTTPFetch extends NIHFetch {
 		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle").replaceAll(headerRegEx, "").replaceAll(footerRegEx, "");
 		log.debug("XML File Length - Post Sanitze: " + newS.length());
 		log.debug("Sanitization Complete");
-		try {
-			log.trace("Writing to output");
-			getOsWriter().write(newS);
-			//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
-			getOsWriter().write("\n");
-			getOsWriter().flush();
-			log.trace("Writing complete");
-		} catch(IOException e) {
-			log.error("Unable to write XML to record.", e);
-		}
+		log.trace("Writing to output");
+		getOsWriter().write(newS);
+		//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
+		getOsWriter().write("\n");
+		getOsWriter().flush();
+		log.trace("Writing complete");
 	}
 	
 	@Override
-	protected int getLatestRecord() {
+	protected int getLatestRecord() throws IOException {
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
 	}
 	

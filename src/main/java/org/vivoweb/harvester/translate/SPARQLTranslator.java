@@ -10,9 +10,9 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
@@ -71,10 +70,8 @@ public class SPARQLTranslator {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
-	 * @throws SAXException error with parser
-	 * @throws ParserConfigurationException error with parser config
 	 */
-	public SPARQLTranslator(String[] args) throws IOException, ParserConfigurationException, SAXException {
+	public SPARQLTranslator(String[] args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
 	
@@ -86,10 +83,8 @@ public class SPARQLTranslator {
 	 * <li>outRecordHandler the output record for the translated files</li>
 	 * </ul>
 	 * @throws IOException error reading files
-	 * @throws SAXException error with parser
-	 * @throws ParserConfigurationException error with parser config
 	 */
-	public SPARQLTranslator(ArgList argumentList) throws ParserConfigurationException, SAXException, IOException {
+	public SPARQLTranslator(ArgList argumentList) throws IOException {
 		
 		// setup input model
 		if(argumentList.has("i")) {
@@ -121,29 +116,31 @@ public class SPARQLTranslator {
 	
 	/***
 	 * checks again for the necessary file and makes sure that they exist
+	 * @throws IOException error accessing file stream
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		// checking for valid input parameters
 		log.info("Translation: Start");
 		
 		//build Sparl Query
 		StringBuilder strQuery = new StringBuilder();
+		FileInputStream fstream;
 		try {
-			FileInputStream fstream = new FileInputStream(this.sparqlFile);
-		    // Get the object of DataInputStream
-		    DataInputStream in = new DataInputStream(fstream);
-		        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		    String strLine;
-		    //Read File Line By Line
-		    while ((strLine = br.readLine()) != null)   {
-		      // Print the content on the console
-	    		strQuery.append(strLine);	
-		    }
-		    //Close the input stream
-		    in.close();
-	    }catch (Exception e){//Catch exception if any
-	      System.err.println("Error: " + e.getMessage());
+			fstream = new FileInputStream(this.sparqlFile);
+		} catch(FileNotFoundException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+	    // Get the object of DataInputStream
+	    DataInputStream in = new DataInputStream(fstream);
+	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    String strLine;
+	    //Read File Line By Line
+	    while ((strLine = br.readLine()) != null)   {
+	      // Print the content on the console
+    		strQuery.append(strLine);	
 	    }
+	    //Close the input stream
+	    in.close();
 		
 	    System.out.println(strQuery.toString());
 	    ResultSet rs = this.inputJC.executeSelectQuery(strQuery.toString());

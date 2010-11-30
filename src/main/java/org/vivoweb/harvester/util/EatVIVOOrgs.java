@@ -8,13 +8,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -72,10 +70,8 @@ public class EatVIVOOrgs {
 	 * @param args cmd line args
 	 * @throws IOException error
 	 * @throws MalformedURLException error
-	 * @throws SAXException error
-	 * @throws ParserConfigurationException error
 	 */
-	public static void main(String[] args) throws MalformedURLException, IOException, ParserConfigurationException, SAXException {
+	public static void main(String[] args) throws MalformedURLException, IOException {
 		InitLog.initLogger(EatVIVOOrgs.class);
 		inmodel = JenaConnect.parseConfig("config/jenaModels/myVIVO.xml");
 		outmodel = new MemJenaConnect();
@@ -91,7 +87,7 @@ public class EatVIVOOrgs {
 		for(Statement stmt : IterableAdaptor.adapt(inmodel.getJenaModel().listStatements(null, ufDeptID, (RDFNode)null))) {
 			eatOrg(stmt.getSubject().getURI());
 		}
-		outmodel.exportRDF(VFS.getManager().resolveFile(new File("."), "backups/ufOrgs.rdf.xml").getContent().getOutputStream(false));
+		outmodel.exportRdfToStream(VFS.getManager().resolveFile(new File("."), "backups/ufOrgs.rdf.xml").getContent().getOutputStream(false));
 	}
 	
 }

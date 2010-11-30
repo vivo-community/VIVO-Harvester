@@ -57,12 +57,12 @@ public class PubmedScoreTest extends TestCase {
 			Properties inputProp = new Properties();
 			inputProp.put("modelName", "input");
 			input = JenaConnect.parseConfig(this.vivoXML, inputProp);
-			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
+			input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
 			
 			Properties vivoProp = new Properties();
 			vivoProp.put("modelName", "vivo");
 			vivo = JenaConnect.parseConfig(this.vivoXML, vivoProp);
-			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
+			vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
 			
 			Properties outputProp = new Properties();
 			outputProp.put("modelName", "output");
@@ -95,10 +95,9 @@ public class PubmedScoreTest extends TestCase {
 	@Override
 	protected void setUp() {
 		InitLog.initLogger(PubmedScoreTest.class);
-		
-		// create objects under test
-		// Create input rdf file
 		try {
+			// create objects under test
+			// Create input rdf file
 			this.scoreInput = File.createTempFile("scoretest_input", ".rdf");
 			BufferedWriter out = new BufferedWriter(new FileWriter(this.scoreInput));
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + 
@@ -269,14 +268,10 @@ public class PubmedScoreTest extends TestCase {
 					 "</rdf:Description>" +
 					 "</rdf:RDF>");
 			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
 		
-		// Create vivo rdf file
-		try {
+			// Create vivo rdf file
 			this.vivoRDF = File.createTempFile("scoretest_vivo", ".rdf");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoRDF));
+			out = new BufferedWriter(new FileWriter(this.vivoRDF));
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 					 "<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
 					 "xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
@@ -335,16 +330,14 @@ public class PubmedScoreTest extends TestCase {
 					 "</rdf:Description>" +
 					 "</rdf:RDF>");
 			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
 		
-		// create VIVO.xml
-		try {
+			// create VIVO.xml
 			this.vivoXML = File.createTempFile("scoretest_vivo", ".xml");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoXML));
+			out = new BufferedWriter(new FileWriter(this.vivoXML));
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 					 "<Model>" +
+					 "<Param name=\"type\">sdb</Param>" +
+					 "<Param name=\"dbLayout\">layout2</Param>" +
 					 "<Param name=\"dbClass\">org.h2.Driver</Param>" +
 					 "<Param name=\"dbType\">HSQLDB</Param>" +
 					 "<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +
@@ -354,7 +347,7 @@ public class PubmedScoreTest extends TestCase {
 					 "</Model>");
 			out.close();
 		} catch(IOException e) {
-			log.error(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(),e);
 		}
 	}
 	

@@ -6,7 +6,6 @@ package org.vivoweb.harvester.score;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Stack;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -14,7 +13,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -165,10 +163,8 @@ public class PubmedScore {
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
 	 * @throws IllegalArgumentException arguments invalid
-	 * @throws SAXException error parsing configs
-	 * @throws ParserConfigurationException error parsing configs
 	 */
-	public PubmedScore(String... args) throws IOException, IllegalArgumentException, ParserConfigurationException, SAXException {
+	public PubmedScore(String... args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
 	
@@ -176,11 +172,8 @@ public class PubmedScore {
 	 * Constructor
 	 * @param opts argument list
 	 * @throws IOException error parsing options
-	 * @throws IllegalArgumentException arguments invalid
-	 * @throws SAXException error parsing configs
-	 * @throws ParserConfigurationException error parsing configs
 	 */
-	public PubmedScore(ArgList opts) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
+	public PubmedScore(ArgList opts) throws IOException {
 		// Get optional inputs / set defaults
 		// Check for config files, before parsing name options
 		String jenaVIVO = opts.get("v");
@@ -704,12 +697,6 @@ public class PubmedScore {
 			Score Scoring = new Score(args);
 			Scoring.execute();
 			Scoring.close();
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.out.println(getParser().getUsage());

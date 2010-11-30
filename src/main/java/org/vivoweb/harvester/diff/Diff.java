@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
@@ -99,40 +98,33 @@ public class Diff {
 			throw new IllegalArgumentException("Must provide one of -o or -d");
 		}
 		
-		try {
-			// setup input model
-			if(argList.has("s")) {
-				this.subtrahendJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("s")), argList.getProperties("S"));
-			} else {
-				this.subtrahendJC = null;
-			}
-			
-			// setup subtrahend Model (b)
-			if(argList.has("m")) {
-				this.minuendJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("m")), argList.getProperties("M"));
-			} else {
-				this.minuendJC = null;
-			}
-			
-			// setup output
-			if(argList.has("o")) {
-				this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
-			} else {
-				this.output = null;
-			}
-			
-			// output to file, if requested
-			if(argList.has("d")) {
-				this.dumpFile = argList.get("d");
-			} else {
-				this.dumpFile = null;
-			}
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+		// setup input model
+		if(argList.has("s")) {
+			this.subtrahendJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("s")), argList.getProperties("S"));
+		} else {
+			this.subtrahendJC = null;
 		}
 		
+		// setup subtrahend Model (b)
+		if(argList.has("m")) {
+			this.minuendJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("m")), argList.getProperties("M"));
+		} else {
+			this.minuendJC = null;
+		}
+		
+		// setup output
+		if(argList.has("o")) {
+			this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getProperties("O"));
+		} else {
+			this.output = null;
+		}
+		
+		// output to file, if requested
+		if(argList.has("d")) {
+			this.dumpFile = argList.get("d");
+		} else {
+			this.dumpFile = null;
+		}
 	}
 	
 	/**
@@ -162,8 +154,9 @@ public class Diff {
 	 * @param sJC subtrahend jenaconnect
 	 * @param oJC output jenaconnect
 	 * @param dF dump file path
+	 * @throws FileSystemException error accessing file
 	 */
-	public static void diff(JenaConnect mJC,JenaConnect sJC,JenaConnect oJC, String dF){
+	public static void diff(JenaConnect mJC,JenaConnect sJC,JenaConnect oJC, String dF) throws FileSystemException {
 		/*
 		 * c - b = a
 		 * minuend - subtrahend = difference
@@ -176,28 +169,25 @@ public class Diff {
 		
 		diffModel = minuendModel.difference(subtrahendModel);
 				
-		try {
-			if(dF != null) {
-				RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
-				fasterWriter.setProperty("showXmlDeclaration", "true");
-				fasterWriter.setProperty("allowBadURIs", "true");
-				fasterWriter.setProperty("relativeURIs", "");
-				OutputStreamWriter osw = new OutputStreamWriter(VFS.getManager().resolveFile(new File("."), dF).getContent().getOutputStream(false), Charset.availableCharsets().get("UTF-8"));
-				fasterWriter.write(diffModel, osw, "");
-				log.debug("RDF/XML Data was exported");
-			}
-			if (oJC != null){
-				oJC.getJenaModel().add(diffModel);
-			}
-		} catch(Exception e) {
-			log.error(e.getMessage());
+		if(dF != null) {
+			RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
+			fasterWriter.setProperty("showXmlDeclaration", "true");
+			fasterWriter.setProperty("allowBadURIs", "true");
+			fasterWriter.setProperty("relativeURIs", "");
+			OutputStreamWriter osw = new OutputStreamWriter(VFS.getManager().resolveFile(new File("."), dF).getContent().getOutputStream(false), Charset.availableCharsets().get("UTF-8"));
+			fasterWriter.write(diffModel, osw, "");
+			log.debug("RDF/XML Data was exported");
+		}
+		if (oJC != null){
+			oJC.getJenaModel().add(diffModel);
 		}
 	}
 	
 	/**
-	 * 
+	 * Execute the diff
+	 * @throws FileSystemException error accessing file
 	 */
-	public void execute() {
+	public void execute() throws FileSystemException {
 		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile);		
 	}
 	

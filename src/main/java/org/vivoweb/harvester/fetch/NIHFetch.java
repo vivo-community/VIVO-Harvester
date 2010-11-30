@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.rmi.RemoteException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -21,7 +20,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
-import org.xml.sax.SAXException;
 
 /**
  * Shared code for modules for fetching NIH data using the SOAP or HTML Interface
@@ -110,19 +108,13 @@ public abstract class NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	protected NIHFetch(ArgList argList, String database, XMLRecordOutputStream os) throws IOException {
-		try {
-			this.emailAddress = argList.get("m");
-			this.searchTerm = argList.get("t");
-			this.maxRecords = argList.get("n");
-			this.batchSize  = argList.get("b");
-			this.databaseName = database;
-			os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"),argList.getProperties("O")));
-			setOsWriter(os);
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(),e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(),e);
-		}
+		this.emailAddress = argList.get("m");
+		this.searchTerm = argList.get("t");
+		this.maxRecords = argList.get("n");
+		this.batchSize  = argList.get("b");
+		this.databaseName = database;
+		os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"),argList.getProperties("O")));
+		setOsWriter(os);
 	}
 	
 	/**
@@ -134,19 +126,20 @@ public abstract class NIHFetch {
 	 */
 	protected NIHFetch(ArgList argList, String database, String outputFile) throws IOException {
 		this.emailAddress = argList.get("m");
-			this.searchTerm = argList.get("t");
-			this.maxRecords = argList.get("n");
-			this.batchSize  = argList.get("b");
-			this.databaseName = database;
-			setOsWriter(new FileOutputStream(outputFile, true));
+		this.searchTerm = argList.get("t");
+		this.maxRecords = argList.get("n");
+		this.batchSize  = argList.get("b");
+		this.databaseName = database;
+		setOsWriter(new FileOutputStream(outputFile, true));
 	}
 	
 	/**
 	 * Performs an ESearch against NIH database and returns the query web environment/query key data
 	 * @param term search term to run against database
 	 * @return String[] = {WebEnv, QueryKey, number of records found, first record ID} from the search
+	 * @throws IOException error processing search
 	 */
-	public String[] runESearch(String term) {
+	public String[] runESearch(String term) throws IOException {
 		return runESearch(term, true);
 	}
 	
@@ -155,12 +148,12 @@ public abstract class NIHFetch {
 	 * @param term search term to run against database
 	 * @param logMessage do we write log messages
 	 * @return String[] = {WebEnv, QueryKey, number of records found, first record ID} from the search
+	 * @throws IOException error processing search
 	 */
-	public String[] runESearch(String term, boolean logMessage)
+	public String[] runESearch(String term, boolean logMessage) throws IOException
 	{
 		String[] env = new String[4];
-		try
-		{
+		try {
 			// create service connection
 			EUtilsServiceStub service = new EUtilsServiceStub();
 			// create a new search
@@ -181,18 +174,17 @@ public abstract class NIHFetch {
 			if(logMessage) {
 				log.info("Query resulted in a total of " + env[2] + " records.");
 			}
-		}
-		catch (RemoteException e)
-		{
-			log.error("NIH Fetch ESearch failed with error: ",e);
+		} catch (RemoteException e) {
+			throw new IOException("NIH Fetch ESearch failed with error: ",e);
 		}
 		return env;
 	}
 		
 	/**
 	 * Executes the task
+	 * @throws IOException error processing search
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		int recToFetch;
 		if(this.getMaxRecords().equalsIgnoreCase("all")) {
 			recToFetch = getLatestRecord();
@@ -227,8 +219,9 @@ public abstract class NIHFetch {
 	/**
 	 * Get latest NIH result
 	 * @return latest record
+	 * @throws IOException error processing search
 	 */
-	protected abstract int getLatestRecord();
+	protected abstract int getLatestRecord() throws IOException;
 	
 	/**
 	 * Performs an NIH Fetch using a previously defined esearch environment and querykey
@@ -236,15 +229,16 @@ public abstract class NIHFetch {
 	 * @param QueryKey query key from an ESearch
 	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the record ID
 	 * @param numRecords The number of records to fetch
+	 * @throws IOException error fetching records
 	 */
-	protected abstract void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords);
+	protected abstract void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) throws IOException;
 	
 	/**
 	 * Performs an NIH Fetch using a previously defined esearch environment and querykey
 	 * @param env {WebEnv, QueryKey, number of records found} - from ESearch
-	 * @throws IllegalArgumentException env is invalid
+	 * @throws IOException error fetching records
 	 */
-	public void fetchRecords(String[] env) throws IllegalArgumentException {
+	public void fetchRecords(String[] env) throws IOException {
 		if(env.length < 3) {
 			throw new IllegalArgumentException("Invalid env. Must contain {WebEnv, QueryKey, number of records found}");
 		}
@@ -256,9 +250,9 @@ public abstract class NIHFetch {
 	 * @param env {WebEnv, QueryKey, number of records found} - from ESearch
 	 * @param retStart record number (out of the total - eg: '1200' out of 15000 records), not the record ID 
 	 * @param numRecords The number of records to fetch
-	 * @throws IllegalArgumentException env is invalid
+	 * @throws IOException error fetching records
 	 */
-	public void fetchRecords(String[] env, String retStart, String numRecords) throws IllegalArgumentException {
+	public void fetchRecords(String[] env, String retStart, String numRecords) throws IOException {
 		if(env.length < 2) {
 			throw new IllegalArgumentException("Invalid env. Must contain {WebEnv, QueryKey}");
 		}

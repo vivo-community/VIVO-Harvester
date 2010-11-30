@@ -63,7 +63,7 @@ public abstract class JenaConnect {
 	 * @return the new jenaconnect
 	 * @throws IOException unable to secure db connection
 	 */
-	public abstract JenaConnect connect(String modelName) throws IOException;
+	public abstract JenaConnect neighborConnectClone(String modelName) throws IOException;
 	
 	/**
 	 * Config Stream Based Factory that overrides parameters
@@ -71,10 +71,8 @@ public abstract class JenaConnect {
 	 * @param overrideParams the parameters to override the file with
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
-	 * @throws SAXException xml parse error
-	 * @throws ParserConfigurationException xml parse error
 	 */
-	public static JenaConnect parseConfig(InputStream configStream, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+	public static JenaConnect parseConfig(InputStream configStream, Properties overrideParams) throws IOException {
 		Properties paramList = new JenaConnectConfigParser().parseConfig(configStream);
 		if(overrideParams != null) {
 			for(String key : overrideParams.stringPropertyNames()) {
@@ -94,10 +92,8 @@ public abstract class JenaConnect {
 	 * @param configFile the vfs config file descriptor
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
-	 * @throws SAXException xml parse error
-	 * @throws ParserConfigurationException xml parse error
 	 */
-	public static JenaConnect parseConfig(FileObject configFile) throws ParserConfigurationException, SAXException, IOException {
+	public static JenaConnect parseConfig(FileObject configFile) throws IOException {
 		return parseConfig(configFile, null);
 	}
 	
@@ -107,10 +103,8 @@ public abstract class JenaConnect {
 	 * @param overrideParams the parameters to override the file with
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
-	 * @throws SAXException xml parse error
-	 * @throws ParserConfigurationException xml parse error
 	 */
-	public static JenaConnect parseConfig(FileObject configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+	public static JenaConnect parseConfig(FileObject configFile, Properties overrideParams) throws IOException {
 		InputStream confStream = (configFile == null)?null:configFile.getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
@@ -120,10 +114,8 @@ public abstract class JenaConnect {
 	 * @param configFile the config file descriptor
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
-	 * @throws SAXException xml parse error
-	 * @throws ParserConfigurationException xml parse error
 	 */
-	public static JenaConnect parseConfig(File configFile) throws ParserConfigurationException, SAXException, IOException {
+	public static JenaConnect parseConfig(File configFile) throws IOException {
 		return parseConfig(configFile, null);
 	}
 	
@@ -133,10 +125,8 @@ public abstract class JenaConnect {
 	 * @param overrideParams the parameters to override the file with
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
-	 * @throws SAXException xml parse error
-	 * @throws ParserConfigurationException xml parse error
 	 */
-	public static JenaConnect parseConfig(File configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+	public static JenaConnect parseConfig(File configFile, Properties overrideParams) throws IOException {
 		InputStream confStream = (configFile == null)?null:VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
@@ -145,11 +135,9 @@ public abstract class JenaConnect {
 	 * Config File Based Factory
 	 * @param configFileName the config file path
 	 * @return JenaConnect instance
-	 * @throws ParserConfigurationException error connecting
-	 * @throws SAXException xml parse error
 	 * @throws IOException xml parse error
 	 */
-	public static JenaConnect parseConfig(String configFileName) throws ParserConfigurationException, SAXException, IOException {
+	public static JenaConnect parseConfig(String configFileName) throws IOException {
 		return parseConfig(configFileName, null);
 	}
 	
@@ -158,11 +146,9 @@ public abstract class JenaConnect {
 	 * @param configFileName the config file path
 	 * @param overrideParams the parameters to override the file with
 	 * @return JenaConnect instance
-	 * @throws ParserConfigurationException error connecting
-	 * @throws SAXException xml parse error
 	 * @throws IOException xml parse error
 	 */
-	public static JenaConnect parseConfig(String configFileName, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
+	public static JenaConnect parseConfig(String configFileName, Properties overrideParams) throws IOException {
 		InputStream confStream = (configFileName == null)?null:VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
@@ -179,7 +165,7 @@ public abstract class JenaConnect {
 			// log.debug(param+" => "+params.get(param));
 			// }
 			if(!params.containsKey("type")) {
-				params.put("type", "db");
+				throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','mem'}");
 			}
 			JenaConnect jc;
 			if(params.getProperty("type").equalsIgnoreCase("memory")) {
@@ -217,7 +203,7 @@ public abstract class JenaConnect {
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
-	public void loadRDF(InputStream in, String namespace, String language) {
+	public void loadRdfFromStream(InputStream in, String namespace, String language) {
 		getJenaModel().read(in, namespace, language);
 		log.debug("RDF Data was loaded");
 	}
@@ -230,15 +216,26 @@ public abstract class JenaConnect {
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 * @throws FileSystemException error accessing file
 	 */
-	public void loadRDF(String fileName, String namespace, String language) throws FileSystemException {
-		this.loadRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+	public void loadRdfFromFile(String fileName, String namespace, String language) throws FileSystemException {
+		this.loadRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+	}
+	
+	/**
+	 * Load in RDF
+	 * @param rdf rdf string
+	 * @param namespace the base uri to use for imported uris
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 */
+	public void loadRdfFromString(String rdf, String namespace, String language) {
+		this.loadRdfFromStream(new ByteArrayInputStream(rdf.getBytes()), namespace, language);
 	}
 	
 	/**
 	 * Load in RDF from a model
 	 * @param jc the model to load in
 	 */
-	public void loadRDF(JenaConnect jc) {
+	public void loadRdfFromJC(JenaConnect jc) {
 		getJenaModel().add(jc.getJenaModel());
 		log.debug("RDF Data was loaded");
 	}
@@ -247,7 +244,7 @@ public abstract class JenaConnect {
 	 * Export all RDF
 	 * @param out output stream to write rdf to
 	 */
-	public void exportRDF(OutputStream out) {
+	public void exportRdfToStream(OutputStream out) {
 		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
 		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
@@ -262,15 +259,15 @@ public abstract class JenaConnect {
 	 * @param fileName the file to read from
 	 * @throws FileSystemException error accessing file
 	 */
-	public void exportRDF(String fileName) throws FileSystemException {
-		this.exportRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
+	public void exportRdfToFile(String fileName) throws FileSystemException {
+		this.exportRdfToStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
 	}
 	
 	/**
 	 * Remove RDF from another JenaConnect
 	 * @param inputJC the Model to read from
 	 */
-	public void removeRDF(JenaConnect inputJC) {
+	public void removeRdfFromJC(JenaConnect inputJC) {
 		this.jenaModel.remove(inputJC.getJenaModel());
 	}
 	
@@ -281,8 +278,8 @@ public abstract class JenaConnect {
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
-	public void removeRDF(InputStream in, String namespace, String language) {
-		this.removeRDF(new MemJenaConnect(in, namespace, language));
+	public void removeRdfFromStream(InputStream in, String namespace, String language) {
+		this.removeRdfFromJC(new MemJenaConnect(in, namespace, language));
 		log.debug("RDF Data was removed");
 	}
 	
@@ -294,15 +291,15 @@ public abstract class JenaConnect {
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 * @throws FileSystemException error accessing file
 	 */
-	public void removeRDF(String fileName, String namespace, String language) throws FileSystemException {
-		this.removeRDF(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+	public void removeRdfFromFile(String fileName, String namespace, String language) throws FileSystemException {
+		this.removeRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
 	}
 	
 	/**
 	 * Add RDF from another JenaConnect
 	 * @param inputJC the Model to read from
 	 */
-	public void importRDF(JenaConnect inputJC) {
+	public void importRdfFromJC(JenaConnect inputJC) {
 		this.jenaModel.add(inputJC.getJenaModel());
 	}
 	
@@ -312,7 +309,7 @@ public abstract class JenaConnect {
 	 * @param namespace the base uri to use for imported uris
 	 * @return number of records removed
 	 */
-	public int removeRDF(RecordHandler rh, String namespace) {
+	public int removeRdfFromRH(RecordHandler rh, String namespace) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("removing record: " + r.getID());
@@ -337,7 +334,7 @@ public abstract class JenaConnect {
 	 * @param namespace the base uri to use for imported uris
 	 * @return number of records added
 	 */
-	public int importRDF(RecordHandler rh, String namespace) {
+	public int importRdfFromRH(RecordHandler rh, String namespace) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("loading record: " + r.getID());
@@ -360,21 +357,13 @@ public abstract class JenaConnect {
 	 * Closes the model and the jdbc connection
 	 */
 	public abstract void close();
-//	{
-//		this.jenaModel.close();
-//		try {
-//			this.conn.close();
-//		} catch(Exception e) {
-//			// ignore
-//		}
-//	}
 	
 	/**
 	 * Build a QueryExecution from a queryString
 	 * @param queryString the query to build execution for
 	 * @return the QueryExecution
 	 */
-	private QueryExecution buildQE(String queryString) {
+	private QueryExecution buildQueryExec(String queryString) {
 		return QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getJenaModel());
 	}
 	
@@ -384,7 +373,7 @@ public abstract class JenaConnect {
 	 * @return the executed query result set
 	 */
 	public ResultSet executeSelectQuery(String queryString) {
-		return buildQE(queryString).execSelect();
+		return buildQueryExec(queryString).execSelect();
 	}
 	
 	/**
@@ -393,7 +382,7 @@ public abstract class JenaConnect {
 	 * @return the executed query result model
 	 */
 	public Model executeConstructQuery(String queryString) {
-		return buildQE(queryString).execConstruct();
+		return buildQueryExec(queryString).execConstruct();
 	}
 	
 	/**
@@ -402,7 +391,7 @@ public abstract class JenaConnect {
 	 * @return the executed query result model
 	 */
 	public Model executeDescribeQuery(String queryString) {
-		return buildQE(queryString).execDescribe();
+		return buildQueryExec(queryString).execDescribe();
 	}
 	
 	/**
@@ -411,7 +400,7 @@ public abstract class JenaConnect {
 	 * @return the executed query result model
 	 */
 	public boolean executeAskQuery(String queryString) {
-		return buildQE(queryString).execAsk();
+		return buildQueryExec(queryString).execAsk();
 	}
 	
 	/**
@@ -529,8 +518,6 @@ public abstract class JenaConnect {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.err.println(getParser().getUsage());
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -567,18 +554,23 @@ public abstract class JenaConnect {
 		 * Build a JenaConnect using the input stream data
 		 * @param inputStream stream to read config from
 		 * @return the JenaConnect described by the stream
-		 * @throws ParserConfigurationException parser incorrectly configured
-		 * @throws SAXException xml error
 		 * @throws IOException error reading stream
 		 */
-		protected Properties parseConfig(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
+		protected Properties parseConfig(InputStream inputStream) throws IOException {
 			if(inputStream != null) {
-				SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
-				SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-				System.out.println("Parsing");
-				sp.parse(inputStream, this); // parse the file and also register this class for call backs
+				// get a factory
+				SAXParserFactory spf = SAXParserFactory.newInstance();
+				try {
+					// get a new instance of parser
+					SAXParser sp = spf.newSAXParser();
+					// parse the file and also register this class for call backs
+					sp.parse(inputStream, this);
+				} catch(SAXException e) {
+					throw new IOException(e.getMessage(), e);
+				} catch(ParserConfigurationException e) {
+					throw new IOException(e.getMessage(), e);
+				}
 			}
-			System.out.println("done");
 			return this.params;
 		}
 		
@@ -607,4 +599,9 @@ public abstract class JenaConnect {
 			}
 		}
 	}
+
+	/**
+	 * Remove all statements from model
+	 */
+	public abstract void truncate();
 }
