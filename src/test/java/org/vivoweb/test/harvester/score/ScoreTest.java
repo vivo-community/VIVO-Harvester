@@ -561,6 +561,8 @@ public class ScoreTest extends TestCase {
 			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoXML));
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 					 "<Model>" +
+					 "<Param name=\"type\">sdb</Param>" +
+					 "<Param name=\"dbLayout\">layout2</Param>" +
 					 "<Param name=\"dbClass\">org.h2.Driver</Param>" +
 					 "<Param name=\"dbType\">HSQLDB</Param>" +
 					 "<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +

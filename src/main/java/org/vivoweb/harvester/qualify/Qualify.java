@@ -15,11 +15,10 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
@@ -163,10 +162,7 @@ public class Qualify {
 		HashSet<Property> propArray = new HashSet<Property>();
 		
 		while (propList.hasNext()) {
-			QuerySolution solution = propList.next();
-			Resource pres = solution.getResource("p");
-			Property p = pres.as(Property.class);
-			propArray.add(p);
+			propArray.add(ResourceFactory.createProperty(propList.next().getResource("p").getURI()));
 		}
 		
 		for(Property p : propArray) {

@@ -12,7 +12,6 @@ import org.vivoweb.harvester.diff.Diff;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 
 /**
  * @author drspeedo
@@ -124,11 +123,24 @@ public class DiffTest extends TestCase {
 		
 		this.expectedAddRDF = ""+
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-				"<rdf:RDF></rdf:RDF>";
+				"<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+					"xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
+					"xmlns:foaf=\"http://xmlns.com/foaf/0.1/\">" +
+					"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
+						"<core:workEmail>v1105@ufl.edu</core:workEmail>" +
+						"<foaf:prefix>Mr.</foaf:prefix>" +
+					"</rdf:Description>" +
+				"</rdf:RDF>";
 		
 		this.expectedSubRDF = ""+
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-		"<rdf:RDF></rdf:RDF>";
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+				"<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+					"xmlns:core=\"http://vivoweb.org/ontology/core#\">" +
+					"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
+						"<core:workEmail>v@ufl.edu</core:workEmail>" +
+						"<core:middleName>J</core:middleName>" +
+					"</rdf:Description>" +
+				"</rdf:RDF>";
 	}
 	
 	/**
@@ -137,18 +149,15 @@ public class DiffTest extends TestCase {
 	public void testDiff() throws IOException{
 		log.info("BEGIN testDiff");
 
-		JenaConnect diffJC;
-		try {
-			diffJC = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "HSQLDB", "org.h2.Driver", "layout2", "diff");
-		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(), e);
-		}
+		JenaConnect diffJC = new MemJenaConnect();
 		
-		JenaConnect previousJC = diffJC.neighborConnectClone("hr20101101");
-		previousJC.loadRdfFromString(this.previousRDF, null, null);
+		JenaConnect previousJC = new MemJenaConnect(new ByteArrayInputStream(this.previousRDF.getBytes()), null, null);
 
-		JenaConnect incomingJC = diffJC.neighborConnectClone("hr20101104");
-		incomingJC.loadRdfFromString(this.incomingRDF, null, null);
+		JenaConnect incomingJC = new MemJenaConnect(new ByteArrayInputStream(this.incomingRDF.getBytes()), null, null);
+		
+		JenaConnect expectedAddDiff = new MemJenaConnect(new ByteArrayInputStream(this.expectedAddRDF.getBytes()), null, null);
+		
+		JenaConnect expectedSubDiff = new MemJenaConnect(new ByteArrayInputStream(this.expectedSubRDF.getBytes()), null, null);
 					
 		//System.out.println("prevModel");
 		//previousJC.exportRDF(System.out);
@@ -159,15 +168,14 @@ public class DiffTest extends TestCase {
 					
 		//testing new items
 		Diff.diff(incomingJC, previousJC, diffJC, null);
+		assertEquals("<ModelCom   {} | >", diffJC.getJenaModel().difference(expectedAddDiff.getJenaModel()).toString());
 		
-		assertEquals(this.expectedAddRDF, diffJC.getJenaModel().difference(new MemJenaConnect(new ByteArrayInputStream(this.expectedAddRDF.getBytes()), null, null).getJenaModel()).toString());
-		
-		diffJC.truncate();
+		diffJC = new MemJenaConnect();
+		System.out.println(diffJC.getJenaModel().toString());
 								
 		//testing old items
 		Diff.diff(previousJC, incomingJC, diffJC, null);
-
-		assertEquals(this.expectedSubRDF, diffJC.getJenaModel().difference(new MemJenaConnect(new ByteArrayInputStream(this.expectedSubRDF.getBytes()), null, null).getJenaModel()).toString());
+		assertEquals("<ModelCom   {} | >", diffJC.getJenaModel().difference(expectedSubDiff.getJenaModel()).toString());
 		//testing delete items
 		log.info("END testDiff");
 	}
