@@ -239,18 +239,16 @@
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword">
 		<xsl:choose>
 			<xsl:when test="string(DescriptorName)">
-				<core:freetextKeyword><xsl:value-of select="DescriptorName" /></core:freetextKeyword>  
+				<core:freetextKeyword><xsl:value-of select="string(DescriptorName)" /></core:freetextKeyword>  
 			</xsl:when>
 		</xsl:choose>	
-		<!-- <core:hasSubjectArea rdf:resource="http://vivoweb.org/harvest/pubmedMesh/pmid{ancestor::MedlineCitation/PMID}mesh{position()}" />  -->
-	</xsl:template>
-	
+	</xsl:template>	
 	
 	<!-- Chemical List -->
 	<xsl:template match="MedlineCitation/ChemicalList/Chemical">
 		<xsl:choose>
 			<xsl:when test="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)">
-				<core:freetextKeyword><xsl:value-of select="MedlineCitation/ChemicalList/Chemical/NameOfSubstance" /></core:freetextKeyword>
+				<core:freetextKeyword><xsl:value-of select="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)" /></core:freetextKeyword>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
@@ -259,7 +257,7 @@
 	<xsl:template match="MedlineCitation/KeywordList/Keyword">
 		<xsl:choose>
 			<xsl:when test="string(MedlineCitation/KeywordList/Keyword)">
-				<core:freetextKeyword><xsl:value-of select="MedlineCitation/KeywordList/Keyword" /></core:freetextKeyword>  
+				<core:freetextKeyword><xsl:value-of select="string(MedlineCitation/KeywordList/Keyword)" /></core:freetextKeyword>  
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
@@ -322,7 +320,31 @@
 					<xsl:when test="translate(string($pbType),$up,$lo)='collected works'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
+					</xsl:when>	<!-- <xsl:template match="MedlineCitation/DateCreated" mode="fullCreated">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCreated" >
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<core:Year>"<xsl:value-of select="Year"/>"</core:Year>
+			<core:Month>"<xsl:value-of select="Month"/>"</core:Month>
+			<core:Day>"<xsl:value-of select="Day"/>"</core:Day>
+		</rdf:Description>
+	</xsl:template>
+	<xsl:template match="MedlineCitation/DateCompleted"  mode="fullCompleted">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateCompleted" >
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<core:Year><xsl:value-of select="Year"/></core:Year>
+			<core:Month><xsl:value-of select="Month"/></core:Month>
+			<core:Day><xsl:value-of select="Day"/></core:Day>
+		</rdf:Description>
+	</xsl:template>
+	<xsl:template match="MedlineCitation/DateRevised"  mode="fullRevised">
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedDate/pmid{ancestor::MedlineCitation/PMID}dateRevised" >
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<core:Year><xsl:value-of select="Year"/></core:Year>
+			<core:Month><xsl:value-of select="Month"/></core:Month>
+			<core:Day><xsl:value-of select="Day"/></core:Day>
+		</rdf:Description>
+	</xsl:template>
+	-->
 					<xsl:when test="translate(string($pbType),$up,$lo)='comment'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
