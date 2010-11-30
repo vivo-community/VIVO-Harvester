@@ -80,6 +80,7 @@ public class QualifyTest extends TestCase {
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testRegexReplace");
 	}
@@ -105,6 +106,7 @@ public class QualifyTest extends TestCase {
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testStringReplace");
 	}
@@ -130,6 +132,7 @@ public class QualifyTest extends TestCase {
 			assertTrue(this.jena.getJenaModel().containsResource(res3));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testStringReplace");
 	}

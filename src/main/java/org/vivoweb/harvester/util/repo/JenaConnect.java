@@ -137,7 +137,7 @@ public abstract class JenaConnect {
 	 * @throws ParserConfigurationException xml parse error
 	 */
 	public static JenaConnect parseConfig(File configFile, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-		InputStream confStream = (configFile == null)?null:VFS.getManager().toFileObject(configFile).getContent().getInputStream();
+		InputStream confStream = (configFile == null)?null:VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -187,7 +187,7 @@ public abstract class JenaConnect {
 			} else if(params.getProperty("type").equalsIgnoreCase("rdb")) {
 				jc = new RDBJenaConnect(params.getProperty("dbUrl"), params.getProperty("dbUser"), params.getProperty("dbPass"), params.getProperty("dbType"), params.getProperty("dbClass"), params.getProperty("modelName"));
 			} else if(params.getProperty("type").equalsIgnoreCase("sdb")) {
-				jc = new SDBJenaConnect(params.getProperty("dbUrl"), params.getProperty("dbUser"), params.getProperty("dbPass"), params.getProperty("dbType"), params.getProperty("dbClass"), params.getProperty("modelName"));
+				jc = new SDBJenaConnect(params.getProperty("dbUrl"), params.getProperty("dbUser"), params.getProperty("dbPass"), params.getProperty("dbType"), params.getProperty("dbClass"), params.getProperty("dbLayout"), params.getProperty("modelName"));
 			} else {
 				throw new IllegalArgumentException("unknown type: " + params.get("type"));
 			}
@@ -575,8 +575,10 @@ public abstract class JenaConnect {
 			if(inputStream != null) {
 				SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 				SAXParser sp = spf.newSAXParser(); // get a new instance of parser
+				System.out.println("Parsing");
 				sp.parse(inputStream, this); // parse the file and also register this class for call backs
 			}
+			System.out.println("done");
 			return this.params;
 		}
 		

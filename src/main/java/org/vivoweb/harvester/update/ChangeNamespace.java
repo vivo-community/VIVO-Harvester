@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -36,7 +37,6 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.sparql.util.StringUtils;
 import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
@@ -213,7 +213,7 @@ public class ChangeNamespace {
 		if (!filters.isEmpty()) {
 			sbQuery.append("\tFILTER (");
 //			sbQuery.append(" && ");
-			sbQuery.append(StringUtils.join(" && ", filters));
+			sbQuery.append(StringUtils.join(filters, " && "));
 			sbQuery.append(")\n");
 		}
 		sbQuery.append("}");

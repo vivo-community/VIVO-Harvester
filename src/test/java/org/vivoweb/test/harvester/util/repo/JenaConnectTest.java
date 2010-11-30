@@ -37,6 +37,10 @@ public class JenaConnectTest extends TestCase {
 	/** */
 	private static final String nl = System.getProperty("line.separator");
 	/** */
+	private static final String type = "sdb";
+	/** */
+	private static final String layout = "layout2";
+	/** */
 	private static final String dbClass = "org.h2.Driver";
 	/** */
 	private static final String dbType = "HSQLDB";
@@ -92,12 +96,14 @@ public class JenaConnectTest extends TestCase {
 		log.info("BEGIN testParseConfigFile");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-			bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
+			bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + layout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
 			bw.close();
+			System.out.println("ready to parse");
 			this.jc = JenaConnect.parseConfig(this.configFile);
 			runWriteTest();
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testParseConfigFile");
 	}
@@ -138,6 +144,7 @@ public class JenaConnectTest extends TestCase {
 			runWriteTest();
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testJenaConnectConstSibling");
 	}
@@ -203,6 +210,7 @@ public class JenaConnectTest extends TestCase {
 			assertEquals(rdfOut, output);
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testExportRDF");
 	}
@@ -227,6 +235,7 @@ public class JenaConnectTest extends TestCase {
 			assertTrue(stmnt.hasNext());
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testImportRDF");
 	}

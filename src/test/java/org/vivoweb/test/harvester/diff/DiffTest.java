@@ -219,6 +219,7 @@ public class DiffTest extends TestCase {
 			
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testEverything");
 	}

@@ -10,10 +10,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-//import java.util.Arrays;
-//import java.util.List;
 import java.util.Properties;
-import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
@@ -21,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.PubmedScore;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
 
 /**
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
@@ -86,15 +82,6 @@ public class PubmedScoreTest extends TestCase {
 			input.close();
 			vivo.close();
 			output.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());

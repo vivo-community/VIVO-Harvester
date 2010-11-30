@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -28,7 +29,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.xml.sax.SAXException;
-import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
  * Fetches rdf data from a JDBC database
@@ -433,7 +433,7 @@ public class JDBCFetch {
 		
 		if(getWhereClauses(tableName).size() > 0) {
 			sb.append(" WHERE ");
-			sb.append(StringUtils.join(" AND ", getWhereClauses(tableName)));
+			sb.append(StringUtils.join(getWhereClauses(tableName), " AND "));
 		}
 		log.debug("SQL Query: " + sb.toString());
 		return sb.toString();

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import org.vivoweb.harvester.score.Score;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.xml.sax.SAXException;
-import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
@@ -92,7 +92,7 @@ public class ScoreTest extends TestCase {
 			
 			log.debug("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
 			args = new String[]{"-i", iArg, "-v", vArg, "-o", oArg, "-a", "1", "-e", "workEmail"};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 			} catch(Exception e) {
@@ -102,7 +102,7 @@ public class ScoreTest extends TestCase {
 			
 			log.debug("Test -v vArg -a 1");
 			args = new String[]{"-v", vArg, "-a", "1"};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 			} catch(Exception e) {
@@ -112,7 +112,7 @@ public class ScoreTest extends TestCase {
 			
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-a", "1", "-e", "workEmail"};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 			} catch(Exception e) {
@@ -123,7 +123,7 @@ public class ScoreTest extends TestCase {
 			log.debug("Testing bad configs");
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-Q"};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 				log.error("Invalid arguement passed -- score object invalid");
@@ -136,7 +136,7 @@ public class ScoreTest extends TestCase {
 			// keep input model
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 				Test.execute();
@@ -153,7 +153,7 @@ public class ScoreTest extends TestCase {
 			log.debug("Testing don't keep working model");
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-w"};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 				Test.execute();
@@ -171,7 +171,7 @@ public class ScoreTest extends TestCase {
 			// empty output model
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 				//get size
@@ -189,7 +189,7 @@ public class ScoreTest extends TestCase {
 			// don't empty output model
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.debug(StringUtils.join(" ", args));
+			log.debug(StringUtils.join(args, " "));
 			try {
 				Test = new Score(args);
 				//get size
@@ -306,15 +306,6 @@ public class ScoreTest extends TestCase {
 			input.close();
 			vivo.close();
 			output.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());

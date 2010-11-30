@@ -60,6 +60,7 @@ public class ArgListTest extends TestCase {
 			assertEquals(a.get("o"), "Testing");
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testGet");
 	}
@@ -79,6 +80,7 @@ public class ArgListTest extends TestCase {
 			assertFalse(l.contains("test"));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testGetAllString");
 	}
@@ -104,6 +106,7 @@ public class ArgListTest extends TestCase {
 			assertTrue(l.contains("test"));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testGetAllStringBoolean");
 	}
@@ -121,6 +124,7 @@ public class ArgListTest extends TestCase {
 			assertFalse(a.has("z"));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 		log.info("END testHas");
 	}
