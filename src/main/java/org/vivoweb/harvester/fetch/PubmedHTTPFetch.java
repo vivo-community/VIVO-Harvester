@@ -69,6 +69,15 @@ public class PubmedHTTPFetch extends NIHFetch {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 */
+	public PubmedHTTPFetch(String[] args) throws IOException {
+		this(new ArgList(getParser("PubmedHTTPFetch"), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
@@ -206,7 +215,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 		InitLog.initLogger(PubmedHTTPFetch.class);
 		log.info("PubmedHTTPFetch: Start");
 		try {
-			new PubmedHTTPFetch(new ArgList(getParser("PubmedHTTPFetch"), args)).execute();
+			new PubmedHTTPFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser("PubmedHTTPFetch").getUsage());

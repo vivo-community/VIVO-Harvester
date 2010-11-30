@@ -69,6 +69,17 @@ public class SPARQLTranslator {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 * @throws SAXException error with parser
+	 * @throws ParserConfigurationException error with parser config
+	 */
+	public SPARQLTranslator(String[] args) throws IOException, ParserConfigurationException, SAXException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argumentList <ul>
 	 * <li>translationFile the file that details the translation from the original xml to the target format</li>
 	 * <li>inRecordHandler the files/records that require translation</li>
@@ -179,7 +190,7 @@ public class SPARQLTranslator {
 		InitLog.initLogger(SPARQLTranslator.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new SPARQLTranslator(new ArgList(getParser(), args)).execute();
+			new SPARQLTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {

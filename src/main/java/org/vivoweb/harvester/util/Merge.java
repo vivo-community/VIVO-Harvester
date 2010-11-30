@@ -59,6 +59,15 @@ public class Merge {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 */
+	public Merge(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argList arguments
 	 */
 	public Merge(ArgList argList) {
@@ -135,7 +144,7 @@ public class Merge {
 		InitLog.initLogger(Merge.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new Merge(new ArgList(getParser(), args)).execute();
+			new Merge(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());

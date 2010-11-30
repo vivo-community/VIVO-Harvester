@@ -79,6 +79,17 @@ public class XSLTranslator {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 * @throws SAXException error with parser
+	 * @throws ParserConfigurationException error with parser config
+	 */
+	public XSLTranslator(String[] args) throws IOException, ParserConfigurationException, SAXException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argumentList <ul>
 	 * <li>translationFile the file that details the translation from the original xml to the target format</li>
 	 * <li>inRecordHandler the files/records that require translation</li>
@@ -221,7 +232,7 @@ public class XSLTranslator {
 		InitLog.initLogger(XSLTranslator.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new XSLTranslator(new ArgList(getParser(), args)).execute();
+			new XSLTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {

@@ -41,12 +41,12 @@
     </encoder>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>TRACE</level>
-      <onMatch>DENY</onMatch>
+      <onMatch>ACCEPT</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>DEBUG</level>
-      <onMatch>DENY</onMatch>
+      <onMatch>ACCEPT</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">

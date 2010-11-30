@@ -183,8 +183,8 @@ public class UpdateTest extends TestCase {
 			incomingJC.exportRDF(System.out);
 						
 			//testing new items
-			Update.main(new String[]{"-p",this.vivoXML.getAbsolutePath(),"-P","modelName=hr20101101","-i",this.vivoXML.getAbsolutePath(),
-					"-I","modelName=hr20101104"});
+			new Update(new String[]{"-p",this.vivoXML.getAbsolutePath(),"-P","modelName=hr20101101","-i",this.vivoXML.getAbsolutePath(),
+					"-I","modelName=hr20101104"}).execute();
 			
 			if (!this.expectedRDF.toString().equals(previousJC.getJenaModel().toString())){
 				fail("Add entries do not match");

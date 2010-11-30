@@ -79,6 +79,15 @@ public class OAIFetch {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error connecting to record handler
+	 */
+	public OAIFetch(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argList parsed argument list
 	 * @throws IOException error connecting to record handler
 	 */
@@ -141,7 +150,7 @@ public class OAIFetch {
 		InitLog.initLogger(OAIFetch.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new OAIFetch(new ArgList(getParser(), args)).execute();
+			new OAIFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {

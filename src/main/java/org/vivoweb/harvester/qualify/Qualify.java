@@ -79,6 +79,15 @@ public class Qualify {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 */
+	public Qualify(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
@@ -178,7 +187,7 @@ public class Qualify {
 	/**
 	 * Executes the task
 	 */
-	public void executeTask() {
+	public void execute() {
 		if(!this.namespace.isEmpty()){
 			log.info("Running remove namespace for " + this.namespace);
 			rmNamespace(this.namespace);
@@ -217,7 +226,7 @@ public class Qualify {
 		InitLog.initLogger(Qualify.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new Qualify(new ArgList(getParser(), args)).executeTask();
+			new Qualify(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.out.println(getParser().getUsage());

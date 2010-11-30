@@ -96,6 +96,15 @@ public class Transfer {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error parsing options
+	 */
+	public Transfer(String... args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
@@ -288,7 +297,7 @@ public class Transfer {
 		InitLog.initLogger(Transfer.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new Transfer(new ArgList(getParser(), args)).execute();
+			new Transfer(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());

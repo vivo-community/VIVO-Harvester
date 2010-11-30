@@ -58,6 +58,14 @@ public class Update {
 	 */
 	private boolean wipeIncomingModel;
 	
+	/**
+	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 */
+	public Update(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
 	
 	/**
 	 * Constructor
@@ -189,7 +197,7 @@ public class Update {
 		InitLog.initLogger(Update.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new Update(new ArgList(getParser(), args)).execute();
+			new Update(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());

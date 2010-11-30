@@ -1,5 +1,6 @@
 package org.vivoweb.harvester.util;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -47,6 +48,17 @@ public class DatabaseClone {
 		this.db1 = new DatabaseConnection(inputConn);
 		this.db2 = new DatabaseConnection(outputConn);
 		this.tables = tableNames;
+	}
+	
+	/**
+	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 * @throws ClassNotFoundException error loading driver
+	 * @throws SQLException error connecting to database
+	 */
+	public DatabaseClone(String[] args) throws IOException, ClassNotFoundException, SQLException {
+		this(new ArgList(getParser(), args));
 	}
 	
 	/**

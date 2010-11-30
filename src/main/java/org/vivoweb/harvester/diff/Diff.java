@@ -75,6 +75,14 @@ public class Diff {
 		this.dumpFile = dF;
 	}
 	
+	/**
+	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error reading config files
+	 */
+	public Diff(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
 	
 	/**
 	 * Constructor
@@ -201,7 +209,7 @@ public class Diff {
 		InitLog.initLogger(Diff.class);
 		log.info(getParser().getAppName() + ": Start");
 		try {
-			new Diff(new ArgList(getParser(), args)).execute();
+			new Diff(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());

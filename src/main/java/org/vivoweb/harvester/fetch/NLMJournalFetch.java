@@ -68,6 +68,15 @@ public class NLMJournalFetch extends NIHFetch {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 */
+	public NLMJournalFetch(String[] args) throws IOException {
+		this(new ArgList(getParser("NLMJournalFetch"), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
@@ -167,7 +176,7 @@ public class NLMJournalFetch extends NIHFetch {
 		InitLog.initLogger(NLMJournalFetch.class);
 		log.info("NLMJournalFetch: Start");
 		try {
-			new NLMJournalFetch(new ArgList(getParser("NLMJournalFetch"), args)).execute();
+			new NLMJournalFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(),e);
 			System.out.println(getParser("NLMJournalFetch").getUsage());

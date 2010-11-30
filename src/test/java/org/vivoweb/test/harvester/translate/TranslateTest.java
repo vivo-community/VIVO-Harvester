@@ -319,7 +319,7 @@ public class TranslateTest extends TestCase {
 			this.inRH.addRecord("1", inputData, this.getClass());
 			
 			// call the xlsTranslate
-			XSLTranslator.main(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()});
+			new XSLTranslator(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()}).execute();
 			
 			// verify that output record handler has some records
 			assertTrue(this.outRH.iterator().hasNext());

@@ -49,7 +49,6 @@ public class QualifyTest extends TestCase {
 		this.jena = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 		this.score = this.jena.getJenaModel().createProperty("http://vivoweb.org/harvester/score#Affiliation");
-
 	}
 	
 	@Override
@@ -74,7 +73,7 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T R R");
 			String expectedValue = "I Am Testing Regex Replace";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), ".*?IATRR.*?", expectedValue, true, null).executeTask();
+			new Qualify(this.jena, this.label.getURI(), ".*?IATRR.*?", expectedValue, true, null).execute();
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res2, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
@@ -100,7 +99,7 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 			String expectedValue = "I Am Testing Test Replace";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, false, null).executeTask();
+			new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, false, null).execute();
 			assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 			assertFalse(this.jena.getJenaModel().getProperty(res2, this.label).getString().equals(expectedValue));
 			assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
@@ -126,7 +125,7 @@ public class QualifyTest extends TestCase {
 			this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 			String namespace = "http://vivoweb.org/harvester/score";
 			// call qualify
-			new Qualify(this.jena, this.label.getURI(), null, null, false, namespace).executeTask();
+			new Qualify(this.jena, this.label.getURI(), null, null, false, namespace).execute();
 			assertTrue(this.jena.getJenaModel().containsResource(res1));
 			assertFalse(this.jena.getJenaModel().containsResource(res2));
 			assertTrue(this.jena.getJenaModel().containsResource(res3));

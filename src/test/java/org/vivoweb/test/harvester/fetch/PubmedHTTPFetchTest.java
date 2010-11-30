@@ -64,7 +64,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
 			
 			//test 1 record
-			PubmedHTTPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
 			assertTrue(this.rh.iterator().hasNext());
 			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			for(Record r : this.rh) {
@@ -74,19 +74,19 @@ public class PubmedHTTPFetchTest extends TestCase {
 			}
 			
 			//test 0 records, batch 1
-			PubmedHTTPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
 			assertTrue(this.rh.iterator().hasNext());
 			
 			//test 1 records, batch 0
-			PubmedHTTPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()});
+			new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
 			assertTrue(this.rh.iterator().hasNext());
 
 			//test 0 records, batch 0
-			PubmedHTTPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "0", "-o", this.configFile.getAbsolutePath()});
+			new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "0", "-o", this.configFile.getAbsolutePath()}).execute();
 			assertTrue(this.rh.iterator().hasNext());
 			
 			//test 1200 records, batch 500
-			PubmedHTTPFetch.main(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1200", "-b", "500", "-o", this.configFile.getAbsolutePath()});
+			new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1200", "-b", "500", "-o", this.configFile.getAbsolutePath()}).execute();
 			assertTrue(this.rh.iterator().hasNext());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);

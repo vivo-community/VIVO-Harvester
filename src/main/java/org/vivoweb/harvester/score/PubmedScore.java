@@ -162,15 +162,25 @@ public class PubmedScore {
 	
 	/**
 	 * Constructor
-	 * @param args argument list
+	 * @param args commandline arguments
 	 * @throws IOException error parsing options
 	 * @throws IllegalArgumentException arguments invalid
 	 * @throws SAXException error parsing configs
 	 * @throws ParserConfigurationException error parsing configs
 	 */
-	public PubmedScore(String... args) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
-		ArgList opts = new ArgList(getParser(), args);
-		
+	public PubmedScore(String... args) throws IOException, IllegalArgumentException, ParserConfigurationException, SAXException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
+	 * @param opts argument list
+	 * @throws IOException error parsing options
+	 * @throws IllegalArgumentException arguments invalid
+	 * @throws SAXException error parsing configs
+	 * @throws ParserConfigurationException error parsing configs
+	 */
+	public PubmedScore(ArgList opts) throws IllegalArgumentException, IOException, ParserConfigurationException, SAXException {
 		// Get optional inputs / set defaults
 		// Check for config files, before parsing name options
 		String jenaVIVO = opts.get("v");

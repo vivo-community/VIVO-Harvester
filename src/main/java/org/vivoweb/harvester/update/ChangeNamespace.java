@@ -68,6 +68,17 @@ public class ChangeNamespace {
 	 * The search model
 	 */
 	private JenaConnect vivo;
+	
+	/**
+	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 * @throws SAXException error parsing config
+	 * @throws ParserConfigurationException error parsing config 
+	 */
+	public ChangeNamespace(String[] args) throws IOException, ParserConfigurationException, SAXException {
+		this(new ArgList(getParser(), args));
+	}
 
 	/**
 	 * Constructor
@@ -425,7 +436,7 @@ public class ChangeNamespace {
 		InitLog.initLogger(ChangeNamespace.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new ChangeNamespace(new ArgList(getParser(), args)).execute();
+			new ChangeNamespace(args).execute();
 		} catch (IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());

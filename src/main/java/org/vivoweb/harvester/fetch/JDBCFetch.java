@@ -122,6 +122,15 @@ public class JDBCFetch {
 	
 	/**
 	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 */
+	public JDBCFetch(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
 	 * @param opts option set of parsed args
 	 * @throws IOException error creating task
 	 */
@@ -576,7 +585,7 @@ public class JDBCFetch {
 		InitLog.initLogger(JDBCFetch.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new JDBCFetch(new ArgList(getParser(), args)).execute();
+			new JDBCFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());

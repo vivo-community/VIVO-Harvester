@@ -281,7 +281,7 @@ public class ScoreTest extends TestCase {
 			//log.debug(baos.toString());
 			baos.close();
 			
-			Score.main(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-f", "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid", "-x", "http://vivoweb.org/ontology/core#worksFor", "-y", "http://vivoweb.org/ontology/core#departmentOf"});
+			new Score(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-f", "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid", "-x", "http://vivoweb.org/ontology/core#worksFor", "-y", "http://vivoweb.org/ontology/core#departmentOf"}).execute();
 			
 			// check output model
 			if(output.getJenaModel().isEmpty()) {
@@ -293,7 +293,7 @@ public class ScoreTest extends TestCase {
 			output.getJenaModel().removeAll();
 									
 			//testing pushing non matches
-			Score.main(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-e", "workEmail", "-l"});
+			new Score(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-e", "workEmail", "-l"}).execute();
 			
 			// check output model
 			if(output.getJenaModel().containsLiteral(null, null, "12345678")) {

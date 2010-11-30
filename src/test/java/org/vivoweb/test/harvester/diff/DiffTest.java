@@ -198,8 +198,8 @@ public class DiffTest extends TestCase {
 			
 						
 			//testing new items
-			Diff.main(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101101","-m",this.vivoXML.getAbsolutePath(),
-					"-M","modelName=hr20101104","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"});
+			new Diff(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101101","-m",this.vivoXML.getAbsolutePath(),
+					"-M","modelName=hr20101104","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"}).execute();
 			
 			if (!this.expectedAddRDF.toString().equals(diffJC.getJenaModel().toString())){
 				fail("Add entries do not match");
@@ -208,8 +208,8 @@ public class DiffTest extends TestCase {
 			diffJC.getJenaModel().remove(diffJC.getJenaModel());
 									
 			//testing old items
-			Diff.main(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101104","-m",this.vivoXML.getAbsolutePath(),
-					"-M","modelName=hr20101101","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"});
+			new Diff(new String[]{"-s",this.vivoXML.getAbsolutePath(),"-S","modelName=hr20101104","-m",this.vivoXML.getAbsolutePath(),
+					"-M","modelName=hr20101101","-o",this.vivoXML.getAbsolutePath(),"-O","modelName=diff"}).execute();
 			
 			if (!this.expectedSubRDF.toString().equals(diffJC.getJenaModel().toString())){
 				fail("Subtract entries do not match");

@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -72,6 +73,15 @@ public class GlozeTranslator {
 	 */
 	public GlozeTranslator() {
 		this.setURIBase("http://vivoweb.org/glozeTranslation/noURI/");
+	}
+	
+	/**
+	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error parsing options
+	 */
+	public GlozeTranslator(String... args) throws IOException {
+		this(new ArgList(getParser(), args));
 	}
 	
 	/**
@@ -213,7 +223,7 @@ public class GlozeTranslator {
 		InitLog.initLogger(GlozeTranslator.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new GlozeTranslator(new ArgList(getParser(), args)).execute();
+			new GlozeTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {

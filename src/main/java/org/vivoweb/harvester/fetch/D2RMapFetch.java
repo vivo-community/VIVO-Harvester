@@ -48,17 +48,12 @@ public class D2RMapFetch {
 	}
 	
 	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
+	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
 	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("D2RMapFetch");
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		// d2RMap specific
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("d2rMapConfigFile").withParameter(true, "D2RMAP_CONFIG_FILE").setDescription("D2RMap config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("d2rMapOutputFile").withParameter(true, "D2RMAP_OUTPUT_FILE").setDescription("D2RMap output file").setRequired(true));
-		return parser;
+	public D2RMapFetch(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
 	}
 	
 	/**
@@ -93,6 +88,20 @@ public class D2RMapFetch {
 	}
 	
 	/**
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
+	 */
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("D2RMapFetch");
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
+		// d2RMap specific
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("d2rMapConfigFile").withParameter(true, "D2RMAP_CONFIG_FILE").setDescription("D2RMap config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("d2rMapOutputFile").withParameter(true, "D2RMAP_OUTPUT_FILE").setDescription("D2RMap output file").setRequired(true));
+		return parser;
+	}
+	
+	/**
 	 * Main method
 	 * @param args commandline arguments
 	 */
@@ -100,7 +109,7 @@ public class D2RMapFetch {
 		InitLog.initLogger(D2RMapFetch.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new D2RMapFetch(new ArgList(getParser(), args)).execute();
+			new D2RMapFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
