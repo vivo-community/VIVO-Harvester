@@ -51,7 +51,7 @@
 	<!-- The Article -->
 	<xsl:template match="PubmedArticle">
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedPub/pmid{child::MedlineCitation/PMID}">
-				
+				<xsl:apply-templates select='MedlineCitation/Article/PublicationTypeList/PublicationType' />
 				<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 				<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 				<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
@@ -266,239 +266,239 @@
 	
 	<!-- Types -->
 	<xsl:template match="MedlineCitation/Article/PublicationTypeList/PublicationType">
-		<xsl:variable name="up" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
-		<xsl:variable name="lo" select="'abcdefghijklmnopqrstuvwxyz'"/>
-		<xsl:variable name="pbType" select="self" />
+		<xsl:variable name="up" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ '"/>
+		<xsl:variable name="lo" select="'abcdefghijklmnopqrstuvwxyz '"/>
+		<xsl:variable name="pbType" select="string(self::PublicationType)" />
 		<xsl:choose>
-					<xsl:when test="translate($pbType,$up,$lo)='Addresses'">
+					<xsl:when test="translate(string($pbType),$up,$lo)='addresses'">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Atlases']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='atlases'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Bibliography']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='bibliography'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Biobibliography']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='biobibliography'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Biography']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='biography'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Book Reviews']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='book reviews'">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Case Reports']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='case beports'">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CaseStudy" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Charts']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='charts'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Classical Article']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='classical article'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Conference']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='clinical conference'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase I']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase i'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase II']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase ii'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase III']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase iii'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Clinical Trial, Phase IV']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase iv'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Collected Correspondene']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='collected correspondence'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Collected Works']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='collected works'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Comment']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='comment'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Comparative Study']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='comparative study'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Congresses']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='congresses'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Consensus Development Conference']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='consensus development conference'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Consensus Development Conference, NIH']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='consensus development conference, nih'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Controlled Clinical Trial']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='controlled clinical trial'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Cookbooks']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='cookbooks'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Corrected and Republished Article']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='corrected and republished article'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Database']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='database'">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Database" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Diaries']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='diaries'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Dictionary']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='dictionary'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Directory']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='directory'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Documentaries and Factual Films']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='documentaries and factual films'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Film" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Drawings']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='drawings'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Duplicate Publication']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='duplicate publication'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Editorial']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='editorial'">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EditorialArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Encyclopedias']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='encyclopedias'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Essays']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='essays'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>			
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Evaluation Studies']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='evaluation studies'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Academic Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Festschrift']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='festschrift'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Fictional Work']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='fictional work'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Formularies']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='formularies'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
 					<!-- Government Publications -->
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='GuideBooks']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='guideBooks'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Guideline']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='guideline'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Handbooks']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='handbooks'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Historical Article']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='historical article'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Incunabula']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='incunabula'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Indexes']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='indexes'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Instruction']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='instruction'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
 					</xsl:when>
 					<!-- Interactive Tutorial -->
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Interview']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='interview'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Introductory Journal Article']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='introductory journal article'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Journal Article']">
+					<xsl:when test="translate($pbType,$up,$lo)='journal article'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
 					<!-- Lectures -->
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Legal Cases']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='legal cases'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/LegalCaseDocument" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Legislation']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='legislation'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Legislation" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Maps']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='maps'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Map" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Meeting Abstracts']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='meeting abstracts'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ConferenceProceedings" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Meta-Analysis']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='meta-analysis'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Multicenter Study']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='multicenter study'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='News']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='news'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Newspaper Article']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='newspaper article'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Patents']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='patents'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Patient Education Handout']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='patient education handout'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Periodical Index']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='periodical index'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Periodicals']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='periodicals'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Periodicals" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Pharmacopoeias']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='pharmacopoeias'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Pictorial Works']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='pictorial works'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Portraits']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='portraits'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Practice Guideline']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='practice guideline'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Randomized Controlled Trial']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='randomized controlled trial'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Review']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='review'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Statistics']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='statistics'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Study Characteristics']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='study characteristics'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Technical Report']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='technical report'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Report" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Textbooks']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='textbooks'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Twin Study']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='twin study'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
-					<xsl:when test="MedlineCitation/Article/PublicationTypeList[PublicationType='Validation Studies']">
+					<xsl:when test="translate(string($pbType),$up,$lo)='validation studies'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					</xsl:when>
 					<!--  Webcasts -->
