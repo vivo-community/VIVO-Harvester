@@ -10,6 +10,8 @@ package org.vivoweb.harvester.score;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
@@ -22,14 +24,23 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import com.hp.hpl.jena.graph.GraphMaker;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.sparql.util.graph.GraphFactory;
+import com.hp.hpl.jena.util.ResourceUtils;
 
 /***
  * VIVO Score
@@ -67,32 +78,7 @@ public class Score {
 	/**
 	 * Arguments for exact match algorithm
 	 */
-	private final List<String> exactMatch;
-	/**
-	 * Arguments for pairwise algorithm
-	 */
-	private final List<String> pairwise;
-	// TODO cah: remove when regex used
-	//	/**
-	//	 * Arguments for regex algorithm
-	//	 */
-	//	private final List<String> regex;
-	/**
-	 * Arguments for authorname algorithm
-	 */
-	private final String authorName;
-	/**
-	 * Arguments for foreign Key
-	 */
-	private final List<String> foreignKey;
-	/**
-	 * the predicate that connects the object in score to the object in vivo
-	 */
-	private final String objToVIVO;
-	/**
-	 * the predicate that connects the object in vivo to the object in score
-	 */
-	private final String objToScore;
+	private final List<String> matchList;
 	
 	/**
 	 * Execute score object algorithms
@@ -106,52 +92,10 @@ public class Score {
 			this.scoreOutput.getJenaModel().removeAll();
 		}
 		
-		// Call authorname matching
-		if (this.authorName != null) {
-			this.authorNameMatch(Integer.parseInt(this.authorName));
+		HashMap<String,String> resultMap;
+		if (this.matchList != null && !this.matchList.isEmpty()) {
+			resultMap = match(matchList);
 		}
-		
-		// call for ForeignKey linking
-		if (this.foreignKey != null && !this.foreignKey.isEmpty()) {
-			if (this.objToScore == null) {
-				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from VIVO to the scoring model");
-			}
-			if (this.objToVIVO == null) {
-				throw new IllegalArgumentException("Invalid Parameters, you must supply the object property from the scoring model to VIVO");
-			}
-			for (String attributePair : this.foreignKey) {
-				String[] fKey = attributePair.split("=");
-				if (fKey.length != 2) {
-					throw new IllegalArgumentException("Invalid Parameters, You must supply the 2 data property one for the scoring and vivo models @ '" + attributePair + "'");
-				}
-				this.foreignKeyMatch(fKey[0], fKey[1], this.objToVIVO, this.objToScore);
-			}
-		}
-		
-		// Call each exactMatch
-		if (this.exactMatch != null && !this.exactMatch.isEmpty()) {
-			for (String attribute : this.exactMatch) {
-				// this.exactMatch(attribute);
-				// TODO Nicolas: fix exact match to take in two attributes <>,<> check with chaines
-				// for proper format (? comma seperated list ?)
-				this.exactMatch("http://vivoweb.org/ontology/score#" + attribute, "http://vivoweb.org/ontology/core#" + attribute);
-			}
-		}
-		
-		// Call each pairwise
-		if (this.pairwise != null && !this.pairwise.isEmpty()) {
-			for (String attribute : this.pairwise) {
-				this.pairwise(attribute);
-			}
-		}
-		
-		// Call each regex
-		// TODO Chris: uncomment when regex implemented
-		// if (this.regex != null && !this.regex.isEmpty()) {
-		// for (String attribute : this.regex) {
-		// this.regex(attribute);
-		// }
-		// }
 		
 		// Empty input model
 		if (this.wipeInputModel) {
@@ -178,31 +122,19 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
-		// scoring algorithms
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATES"));
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("ufMatch").setDescription("perform an exact match scoring against the UF VIVO extension").withParameters(true, "RDF_PREDICATE"));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pairWise").setDescription("perform a pairwise scoring").withParameters(true, "RDF_PREDICATE"));
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authorName").setDescription("perform a author name scoring").withParameter(true, "MIN_CHARS"));
-		// TODO Chris: uncomment when regex implemented
-		// parser.addArgument(new
-		// ArgDef().setShortOption('r').setLongOpt("regex").setDescription("perform a regular expression scoring").withParameters(true,
-		// "REGEX"));
-		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("foreignKeyMatch").setDescription("preform a exact match where the id is a foreign link").withParameters(true, "RDF_PREDICATES"));
-		
-		// Object Property
-		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("objPropToVIVO").setDescription("set the Object Property to the VIVO Model").withParameter(true, "OBJ_PROPERTIES"));
-		parser.addArgument(new ArgDef().setShortOption('y').setLongOpt("objPropToScore").setDescription("set the Object Property to the Score Model").withParameter(true, "OBJ_PROPERTIES"));
+		// Matching Algorithms 
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").setDescription("perform a match based on the paramaters given.  Properties may be passed as single properties applicable to both models or vivoProperty=scoreProperty").withParameters(true, "RDF_PREDICATES"));
+	
+		// Linking Methods
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").setDescription("link the two matched entities together using the pair of object properties vivoObj=scoreObj").withParameters(true, "RDF_PREDICATES"));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").withParameters(true, "RDF_PREDICATES"));
 		
 		// options
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("link-rename-inplace").setDescription("If set, this will not use the output model it will manipulate the records in place"));
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription("If set, this will clear the input model after scoring is complete"));
 		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("wipe-output-model").setDescription("If set, this will clear the output model before scoring begins"));
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("push-all").setDescription("If set, this will push all matches and non matches to output model"));
-		
-		// exactMatch foreignLink
-		// exactMatch subNodeLink
-		// score -e core:workEmail=score:workEmail -n Authorship .....
-		// score -e core:UFID=score:UFID -f hasworkRole=workRoleIn
-		
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("push-all").setDescription("If set, this will push all matches and non matches to output model"));
+				
 		return parser;
 	}
 	
@@ -222,20 +154,12 @@ public class Score {
 	 * @param objToScoreArg the predicate that connects the object in vivo to the object in score
 	 */
 	@SuppressWarnings("unused")
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, List<String> exactMatchArg, List<String> pairwiseArg, List<String> regexArg, String authorNameArg, List<String> foreignKeyArg, String objToVIVOArg, String objToScoreArg) {
+	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, List<String> matchArg, boolean renameArg, String linkingArgs) {
 		this.wipeInputModel = clearInputModelArg;
 		this.wipeOutputModel = clearOutputModelArg;
-		this.exactMatch = exactMatchArg;
-		this.pairwise = pairwiseArg;
-		//TODO cah: uncomment when regex implemented
-		//		this.regex = regexArg;
-		this.authorName = authorNameArg;
-		this.foreignKey = foreignKeyArg;
-		this.objToVIVO = objToVIVOArg;
-		this.objToScore = objToScoreArg;
+		this.matchList = matchArg;
 		this.pushAll = false;
 		
-		// Connect to vivo
 		this.vivo = jenaVivo;
 		
 		// Create working model
@@ -298,14 +222,7 @@ public class Score {
 		this.wipeInputModel = opts.has("w");
 		this.wipeOutputModel = opts.has("q");
 		this.pushAll = opts.has("l");
-		this.exactMatch = opts.getAll("e");
-		this.pairwise = opts.getAll("p");
-		//TODO cah: uncomment when regex implemented
-		//		this.regex = opts.getAll("r");
-		this.authorName = opts.get("a");
-		this.foreignKey = opts.getAll("f");
-		this.objToVIVO = opts.get("x");
-		this.objToScore = opts.get("y");
+		this.matchList = opts.getAll("m");
 	}
 	
 //	/**
@@ -535,245 +452,8 @@ public class Score {
 		return returnModel;
 	}
 	
-	/**
-	 * Executes a pair scoring method, utilizing the matchAttribute. This attribute is expected to return 2 to n results
-	 * from the given query. This "pair" will then be utilized as a matching scheme to construct a sub dataset. This
-	 * dataset can be scored and stored as a match
-	 * @param attribute an attribute to perform the matching query
-	 */
-	public void pairwise(String attribute) {
-		// iterate thru scoringInput pairs against matched pairs
-		// TODO Nicholas: finish implementation
-		// if pairs match, store publication to matched author in Model
-		
-		// Create pairs list from input
-		log.info("Executing pairWise for " + attribute);
-		log.warn("Pairwise is not complete");
-		
-		// Log extra info message if none found
-		// Create pairs list from vivo
-		// Log extra info message if none found
-		// look for exact match in vivo
-		// create pairs of *attribute* from matched
-	}
+
 	
-	// TODO Chris: uncomment when regex implemented
-	//	/**
-	//	 * Executes a regex scoring method
-	//	 * @param regexString string containing regular expression
-	//	 */
-	//	private void regex(String regexString) {
-	//		// TODO Chris: finish implementation
-	//		log.info("Executing " + regexString + " regular expression");
-	//		log.warn("Regex is not complete");
-	//	}
-	
-	/**
-	 * Executes an author name matching algorithm for author disambiguation
-	 * @param minChars minimum number of chars to require for first name portion of match
-	 */
-	public void authorNameMatch(int minChars) {
-		
-		//TODO: Nicholas This function needs some logical cleanup.. :-)
-		
-		String queryString;
-		RDFNode lastNameNode;
-		RDFNode foreNameNode;
-		RDFNode middleNameNode;
-		Resource paperNode;
-		Resource authorNode = null;
-		RDFNode matchNode = null;
-		RDFNode loopNode;
-		String vivoForeNameInitials;
-		String pubmedFornameInitials;
-		String lastName;
-		String middleName;
-		ResultSet vivoResult;
-		QuerySolution scoreSolution;
-		QuerySolution scorePaperSolution;
-		QuerySolution vivoSolution;
-		ResultSet scoreInputResult;
-		ResultSet scorePaperResult;
-		String scoreMatch;
-		ArrayList<QuerySolution> matchNodes = new ArrayList<QuerySolution>();
-		int loop;
-		int minimum = minChars;
-		
-		String matchQuery =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-							"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-							"PREFIX score: <http://vivoweb.org/ontology/score#> " +
-							"SELECT REDUCED ?x ?lastName ?foreName ?middleName " +
-							"WHERE {" +
-								"?x foaf:lastName ?lastName . " +
-								"?x score:foreName ?foreName . " +
-								"OPTIONAL { ?x core:middleName ?middleName}" +
-							"}";
-		
-		log.info("Executing authorNameMatch");
-		log.debug(matchQuery);
-		scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
-		
-		// Log extra info message if none found
-		if (!scoreInputResult.hasNext()) {
-			log.trace("No author names found in input");
-		} else {
-			log.trace("Looping thru matching authors from input");
-		}
-		
-		// look for exact match in vivo
-		while (scoreInputResult.hasNext()) {
-			scoreSolution = scoreInputResult.next();
-			lastNameNode = scoreSolution.get("lastName");
-			foreNameNode = scoreSolution.get("foreName");
-			middleNameNode = scoreSolution.get("middleName");
-			authorNode = scoreSolution.getResource("x");
-			
-			//Find paper
-			//TODO: Have Stephen show Nicholas what a fool he is for writing this
-			matchQuery = 	"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-							"SELECT ?x ?paper " + 
-							"WHERE {" +
-								"?x core:linkedAuthor <" + authorNode + "> . " +
-								"?x core:linkedInformationResource ?paper" +
-							"}";
-			
-			log.debug(matchQuery);
-			scorePaperResult = this.scoreInput.executeSelectQuery(matchQuery);
-			
-			if (scorePaperResult.hasNext()) {
-				scorePaperSolution = scorePaperResult.next();
-				paperNode = scorePaperSolution.getResource("paper");
-			} else {
-				//go to next one, can't find paper
-				log.error("Can't find paper for " + authorNode);
-				continue;
-			}
-			
-			matchNodes.clear();
-			matchNode = null;
-			
-			//reset minChars if first name is less than than the passed in minimum
-			if (foreNameNode.toString().length() < minChars) {
-				minimum = foreNameNode.toString().length();
-				log.trace("Reset minimum characters to match to " + minimum);
-			}
-			
-			//support middlename parse out of forename or from pubmed
-			if (middleNameNode != null) {
-				log.trace("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " " + middleNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
-				pubmedFornameInitials = foreNameNode.toString().substring(0,1) + middleNameNode.toString().substring(0,1);
-				log.trace("Using " + pubmedFornameInitials + " as pubmed author first and middle initial");			
-			} else {
-				log.trace("Checking for " + lastNameNode.toString() + ", " + foreNameNode.toString() + " from " + paperNode.toString() + " in VIVO");
-			
-				//parse out middle initial / name from foreName
-				String splitName[] = foreNameNode.toString().split(" ");
-				
-				if (splitName.length == 2) {
-					lastName = splitName[0];
-					middleName = splitName[1];
-					pubmedFornameInitials = lastName.substring(0,1) + middleName.substring(0,1);
-					log.trace("Using " + pubmedFornameInitials + " as pubmed author first and middle initial");
-				} else {
-					lastName = null;
-					middleName = null;
-					pubmedFornameInitials = "";
-				}
-			}
-			
-			// ensure first name and last name are not blank
-			if (lastNameNode.toString() == null || foreNameNode.toString() == null) {
-				log.trace("Incomplete name, skipping");
-			} else {
-				scoreMatch = lastNameNode.toString();
-				
-				// Select all matching authors from vivo store
-				queryString =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + 
-								"PREFIX core: <http://vivoweb.org/ontology/core#> " + 
-								"SELECT REDUCED ?x ?firstName ?middleName " + 
-								"WHERE { " +
-									"?x foaf:lastName" + " \"" + scoreMatch + "\" . " +
-									"?x foaf:firstName ?firstName . " +
-									"OPTIONAL { ?x core:middleName ?middleName}" +
-								"}";
-				
-				log.debug(queryString);
-				
-				vivoResult = this.vivo.executeSelectQuery(queryString);
-				
-				// Loop thru results and only keep if the last name, and first initial match
-				while (vivoResult.hasNext()) {
-					vivoSolution = vivoResult.next();
-					log.trace(vivoSolution.toString());
-					loopNode = vivoSolution.get("firstName");
-					middleNameNode = vivoSolution.get("middleName");
-					
-					if (loopNode.toString().length() >= 1 && foreNameNode.toString().length() >= 1) {
-						if (foreNameNode.toString().substring(0, 1).equals(loopNode.toString().substring(0, 1))) {								
-							loop = 0;
-							while (loopNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) {
-								loop++;
-							}
-							loop--;
-							
-							if (middleNameNode != null) {
-								log.trace("Checking " + loopNode + " " + middleNameNode.toString() + " " + vivoSolution.get("x"));
-							}
-							else {
-								log.trace("Checking " + loopNode + " " + vivoSolution.get("x"));
-							}
-							
-							//Grab the initials, and check that as best match
-							if (middleNameNode != null) {
-								middleName = middleNameNode.asLiteral().getValue().toString();
-								vivoForeNameInitials = loopNode.toString().substring(0,1) + middleName.substring(0,1);
-								log.trace(loopNode.toString() + " has first and middle initial of " + vivoForeNameInitials);
-								
-								//If initials match, set as match, unless we've matched to a name below of at least 2 chars
-								//TODO Nicholas: Fix the preference for the last "best" match
-								if (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) && loopNode.toString().length() == 1) {
-									log.trace("Setting " + loopNode.toString()  + " " + middleName + " as best match, matched initials " + vivoForeNameInitials);
-									matchNode = loopNode;
-									authorNode = vivoSolution.getResource("x");
-								}
-							} else {
-								middleName = "";
-								vivoForeNameInitials = "";
-							}
-							
-							if (loop < minimum) {
-								log.trace(loopNode.toString() + " only matched " + loop + " of " + foreNameNode.toString().length() + ". Minimum needed to match is " + minChars);
-							} else {
-								// if loopNode matches more of foreNameNode, it's the new best match
-								//loopNode must also not cotradict Pubmed
-								// TODO Nicholas: Fix the preference for the first "best" match
-								if ((matchNode == null || !matchNode.toString().regionMatches(true, 0, foreNameNode.toString(), 0, loop)) && (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials) || pubmedFornameInitials.isEmpty() || vivoForeNameInitials.isEmpty())) {
-									log.trace("Setting " + loopNode.toString() + " " + middleName + " as best match, matched " + loop + " of " + foreNameNode.toString().length());
-									matchNode = loopNode;
-									authorNode = vivoSolution.getResource("x");
-								} else {
-									//check for better match
-									if (vivoForeNameInitials.equalsIgnoreCase(pubmedFornameInitials)) {
-										log.trace("Setting " + loopNode.toString() + " " + middleName + " as new best match, matched " + loop + " of " + foreNameNode.toString().length() + " and initials " + pubmedFornameInitials);
-										matchNode = loopNode;
-										authorNode = vivoSolution.getResource("x");
-									} else {
-										log.trace(loopNode.toString() + " matched " + loop + " of " + foreNameNode.toString().length());
-									}
-								}
-							}
-						} else {
-							// do nothing
-						}
-					}
-				}
-				if (matchNode != null && authorNode != null) {
-					log.trace("Keeping " + matchNode.toString());
-					commitResultNode(this.scoreOutput, authorNode, matchNode, paperNode);
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Match on two predicates and insert foreign key links for each match
@@ -881,6 +561,88 @@ public class Score {
 			
 			commitResultSet(this.scoreOutput, this.vivo.executeSelectQuery(queryString), matchValue, paperNode);
 		}
+	}
+	
+	/**
+	 * @return HashMap of the found matches
+	 */
+	private HashMap<String,String> match(List<String> propertyList){
+		if (propertyList.size() < 1) {
+			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
+		}
+		
+		Resource res;
+		log.trace("Begin Match Query Build");
+		
+		//Find all namespace matches
+		StringBuilder sQuery =	new StringBuilder(
+			"SELECT ?sVIVO ?sScore \n" +
+			"WHERE {\n"
+		);
+
+		int counter = 0;
+		StringBuilder vivoWhere = new StringBuilder(" Graph ?vivoGraph {\n ");
+		StringBuilder scoreWhere = new StringBuilder(" Graph ?scoreGraph {\n ");
+		
+		for (String properties : propertyList) {
+			String[] propSplit = properties.split("=");
+			if (propSplit.length > 2){
+				log.error("The Data Properites passed can not contain multiple equals");
+			} else if (properties.split("=").length == 2){
+				vivoWhere.append("\t?sVIVO <").append(propSplit[0]).append("> ").append("?o" + counter).append(" . \n");
+				scoreWhere.append("\t?sScore <").append(propSplit[1]).append("> ").append("?o" + counter).append(" . \n");
+			} else {
+				vivoWhere.append("\t?sVIVO <").append(properties).append("> ").append("?o" + counter).append(" . \n");
+				scoreWhere.append("\t?sScore <").append(properties).append("> ").append("?o" + counter).append(" . \n");
+			}			
+		}
+		
+		vivoWhere.append("} . \n");
+		scoreWhere.append("} . \n");
+		
+		//filters where the two items that match are the same node
+		sQuery.append("\tFILTER (str(?sNew) != str(?sOld)) . \n");
+				
+		log.debug("Match Query:\n"+sQuery.toString());
+		log.trace("End Match Query Build");
+		
+		log.trace("Begin Union Model");
+		
+		Graph vivoGraph = .createGraph("vivoGraph");
+		
+		
+		
+		//Model unionModel = model.getJenaModel().union(vivo.getJenaModel());
+		log.trace("End Union Model");
+		
+		log.trace("Begin Run Query to ResultSet");
+		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
+		//QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
+		log.trace("End Run Query to ResultSet");
+		
+		log.trace("Begin Rename Matches");
+		
+		HashMap<String,String> uriArray = new HashMap<String,String>();
+		/*for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
+			uriArray.put(solution.getResource("sOld").getURI(), solution.getResource("sNew").getURI());
+		}*/
+
+		log.info("match found " + uriArray.keySet().size() + " links between vivo and the input model");
+		
+		return uriArray;
+	}
+
+	
+	/**
+	 * @param matchSet
+	 */
+	private void rename(HashMap<String,String> matchSet){
+		/*Resource res;
+		
+		for(String oldUri : matchSet.keySet()) {
+			res = model.getJenaModel().getResource(oldUri);		
+			ResourceUtils.renameResource(res, uriArray.get(oldUri));
+		}*/
 	}
 	
 	/**
