@@ -149,8 +149,9 @@ public class Transfer {
 	
 	/**
 	 * Copy data from input to output
+	 * @throws IOException error writing
 	 */
-	private void execute() {
+	private void execute() throws IOException {
 		boolean newInput = false;
 		if(this.dumpFile != null && this.input == null) {
 			newInput = true;
@@ -202,12 +203,8 @@ public class Transfer {
 		}
 		
 		if(this.dumpFile != null) {
-			try {
-				log.trace("dumping input to dumpfile");
-				this.input.exportRdfToFile(this.dumpFile);
-			} catch(FileSystemException e) {
-				log.error(e.getMessage(), e);
-			}
+			log.trace("dumping input to dumpfile");
+			this.input.exportRdfToFile(this.dumpFile);
 		}
 		
 		if(!inputIsOutput) {

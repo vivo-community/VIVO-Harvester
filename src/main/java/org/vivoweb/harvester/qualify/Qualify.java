@@ -150,7 +150,7 @@ public class Qualify {
 	 * @param ns the namespace to remove all statements from
 	 */
 	private void rmNamespace(String ns) {
-		String predicateQuery =	"SELECT ?s " +
+		String predicateQuery =	"SELECT ?s ?p ?o " +
 				"WHERE " +
 				"{ " +
 				"?s ?p ?o .  " +
@@ -182,12 +182,14 @@ public class Qualify {
 			rmNamespace(this.namespace);
 		}
 		
-		if(this.regex) {
-			log.info("Running Regex replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
-			regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
-		} else {
-			log.info("Running text replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
-			strReplace(this.dataPredicate, this.matchTerm, this.newVal);
+		if(this.matchTerm != null && this.dataPredicate != null && this.newVal != null && !this.matchTerm.isEmpty() && !this.dataPredicate.isEmpty() && !this.newVal.isEmpty()) {
+			if(this.regex) {
+				log.info("Running Regex replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
+				regexReplace(this.dataPredicate, this.matchTerm, this.newVal);
+			} else {
+				log.info("Running text replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
+				strReplace(this.dataPredicate, this.matchTerm, this.newVal);
+			}
 		}
 	}
 	

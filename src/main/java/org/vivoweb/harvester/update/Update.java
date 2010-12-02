@@ -6,7 +6,6 @@
  ******************************************************************************/
 package org.vivoweb.harvester.update;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.vfs.VFS;
@@ -151,23 +150,15 @@ public class Update {
 			System.out.println("previous is null");
 		}
 		
-		ByteArrayOutputStream baos;
-		
 		//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
 		log.info("Finding Subtractions");
 		Diff.diff(this.previousJC, this.incomingJC,subJC,"logs/update_Subtractions.rdf.xml");
-		baos = new ByteArrayOutputStream();
-		subJC.exportRdfToStream(baos);
-		baos.flush();
-		log.debug("Subtraction RDF:\n"+baos.toString());
+		log.debug("Subtraction RDF:\n"+subJC.exportRdfToString());
 			
 		//run diff for additions incomingJC - previous jc
 		log.info("Finding Additions");
 		Diff.diff(this.incomingJC, this.previousJC, addJC, "logs/update_Additions.rdf.xml");
-		baos = new ByteArrayOutputStream();
-		addJC.exportRdfToStream(baos);
-		baos.flush();
-		log.debug("Addition RDF:\n"+baos.toString());
+		log.debug("Addition RDF:\n"+addJC.exportRdfToString());
 	
 		//if applyToVIVO
 		if (this.vivoJC != null){
@@ -182,17 +173,17 @@ public class Update {
 		}
 		
 		if(!this.ignoreSubtractions) {
-			log.info("Removing Subtractions from harvester Model");
+			log.info("Removing Subtractions from previous harvest Model");
 			this.previousJC.removeRdfFromJC(subJC);
 		}
 		if(!this.ignoreAdditions) {
-			log.info("Inputing Additions to harvester Model");
+			log.info("Inputing Additions to previous harvest Model");
 			this.previousJC.loadRdfFromJC(addJC);
 		}
 		
 		if (this.wipeIncomingModel){
-			log.info("Wiping Input Model");
-			this.incomingJC.getJenaModel().removeAll();
+			log.info("Wiping incoming Model");
+			this.incomingJC.truncate();
 		}
 	}
 	

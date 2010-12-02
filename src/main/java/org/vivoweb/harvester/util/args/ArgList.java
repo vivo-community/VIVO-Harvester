@@ -120,6 +120,9 @@ public class ArgList {
 				retVal = this.argParser.getOptMap().get(arg).getDefaultValue();
 			}
 		}
+		if(retVal != null) {
+			retVal = retVal.trim();
+		}
 		return retVal;
 	}
 	

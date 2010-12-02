@@ -7,6 +7,7 @@
 package org.vivoweb.harvester.util.repo;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -243,23 +244,37 @@ public abstract class JenaConnect {
 	/**
 	 * Export all RDF
 	 * @param out output stream to write rdf to
+	 * @throws IOException error writing to stream
 	 */
-	public void exportRdfToStream(OutputStream out) {
+	public void exportRdfToStream(OutputStream out) throws IOException {
 		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
 		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
 		fasterWriter.setProperty("relativeURIs", "");
 		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
 		fasterWriter.write(this.jenaModel, osw, "");
+		osw.flush();
+		out.flush();
 		log.debug("RDF/XML Data was exported");
 	}
 	
 	/**
-	 * Export the RDF to a file
-	 * @param fileName the file to read from
-	 * @throws FileSystemException error accessing file
+	 * Export all RDF
+	 * @return the rdf
+	 * @throws IOException error writing to string
 	 */
-	public void exportRdfToFile(String fileName) throws FileSystemException {
+	public String exportRdfToString() throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		exportRdfToStream(baos);
+		return baos.toString();
+	}
+	
+	/**
+	 * Export the RDF to a file
+	 * @param fileName the file to write to
+	 * @throws IOException error writing to file
+	 */
+	public void exportRdfToFile(String fileName) throws IOException {
 		this.exportRdfToStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
 	}
 	
@@ -268,7 +283,7 @@ public abstract class JenaConnect {
 	 * @param inputJC the Model to read from
 	 */
 	public void removeRdfFromJC(JenaConnect inputJC) {
-		this.jenaModel.remove(inputJC.getJenaModel());
+		this.jenaModel.remove(inputJC.getJenaModel());//FIXME Anyone?: this doesn't seem to actually work!
 	}
 	
 	/**

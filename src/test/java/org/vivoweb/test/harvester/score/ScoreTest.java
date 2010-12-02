@@ -46,8 +46,9 @@ public class ScoreTest extends TestCase {
 	
 	/**
 	 * Test Argument parsing for scoring
+	 * @throws IOException error
 	 */
-	public void testArguments() {
+	public void testArguments() throws IOException {
 		log.info("BEGIN testArguments");
 		String[] args;
 		Score Test;
@@ -101,22 +102,12 @@ public class ScoreTest extends TestCase {
 			log.debug("Test -v vArg -a 1");
 			args = new String[]{"-v", vArg, "-a", "1"};
 			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
+			Test = new Score(args);
 			
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-a", "1", "-e", "workEmail"};
 			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
+			Test = new Score(args);
 			
 			log.debug("Testing bad configs");
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
@@ -127,7 +118,8 @@ public class ScoreTest extends TestCase {
 				log.error("Invalid arguement passed -- score object invalid");
 				fail("Invalid arguement passed -- score object invalid");
 			} catch(Exception e) {
-				// we want exception
+				// this is expected
+				log.debug("Caught Expected Exception: "+e.getMessage());
 			}
 			
 			log.debug("Testing keep working model");
@@ -135,16 +127,11 @@ public class ScoreTest extends TestCase {
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
 			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-				Test.execute();
-				if(Test.getScoreInput().getJenaModel().isEmpty()) {
-					log.error("Model emptied despite -w arg missing");
-					fail("Model emptied despite -w arg missing");
-				}
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
+			Test = new Score(args);
+			Test.execute();
+			if(Test.getScoreInput().getJenaModel().isEmpty()) {
+				log.error("Model emptied despite -w arg missing");
+				fail("Model emptied despite -w arg missing");
 			}
 			
 			// don't keep input model
@@ -152,54 +139,39 @@ public class ScoreTest extends TestCase {
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-w"};
 			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-				Test.execute();
-				if(!Test.getScoreInput().getJenaModel().isEmpty()) {
-					log.error("Model not empty -w arg violated");
-					fail("Model not empty -w arg violated");
-				}
-				Test.close();
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
+			Test = new Score(args);
+			Test.execute();
+			if(!Test.getScoreInput().getJenaModel().isEmpty()) {
+				log.error("Model not empty -w arg violated");
+				fail("Model not empty -w arg violated");
 			}
+			Test.close();
 			
 			log.debug("Testing empty output model");
 			// empty output model
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
 			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-				//get size
-				long modelSize = Test.getScoreOutput().getJenaModel().size();
-				Test.execute();
-				if (modelSize > Test.getScoreOutput().getJenaModel().size()) {
-					log.error("Output model not emptied before run");
-					fail("Output model not emptied before run");
-				}
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
+			Test = new Score(args);
+			//get size
+			long modelSize = Test.getScoreOutput().getJenaModel().size();
+			Test.execute();
+			if (modelSize > Test.getScoreOutput().getJenaModel().size()) {
+				log.error("Output model not emptied before run");
+				fail("Output model not emptied before run");
 			}
 			
 			// don't empty output model
 			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
 			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
 			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-				//get size
-				long modelSize = Test.getScoreOutput().getJenaModel().size();
-				Test.execute();
-				if (modelSize < Test.getScoreOutput().getJenaModel().size()) {
-					log.error("Output model emptied before run");
-					fail("Output model emptied before run");
-				}
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
+			Test = new Score(args);
+			//get size
+			modelSize = Test.getScoreOutput().getJenaModel().size();
+			Test.execute();
+			if (modelSize < Test.getScoreOutput().getJenaModel().size()) {
+				log.error("Output model emptied before run");
+				fail("Output model emptied before run");
 			}
 									
 			input.close();
@@ -207,7 +179,7 @@ public class ScoreTest extends TestCase {
 			output.close();
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);
-			fail(e.getMessage());
+			throw e;
 		}
 		log.info("END testArguments");
 	}

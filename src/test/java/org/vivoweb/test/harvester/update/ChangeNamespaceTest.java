@@ -3,6 +3,7 @@ package org.vivoweb.test.harvester.update;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -167,8 +168,9 @@ public class ChangeNamespaceTest extends TestCase {
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.update.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String, java.util.List) changeNS(JenaConnect model, String oldNamespace, String newNamespace, List&lt;Property&gt; properties)}.
+	 * @throws IOException error
 	 */
-	public void testChangeNS() {
+	public void testChangeNS() throws IOException {
 		log.info("BEGIN testChangeNS");
 		ByteArrayOutputStream baos;
 		baos = new ByteArrayOutputStream();
