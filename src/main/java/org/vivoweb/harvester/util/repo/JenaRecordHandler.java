@@ -277,10 +277,14 @@ public class JenaRecordHandler extends RecordHandler {
 			String password = getParam(params, "password", true);
 			String dbType = getParam(params, "dbType", true);
 			String modelName = getParam(params, "modelName", false);
-			if(modelName != null) {
-				this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
-			} else {
-				this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass);
+			try {
+				if(modelName != null) {
+					this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
+				} else {
+					this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass);
+				}
+			} catch(ClassNotFoundException e) {
+				throw new IllegalArgumentException(e.getMessage(), e);
 			}
 		}
 		initVars(dataFieldType);

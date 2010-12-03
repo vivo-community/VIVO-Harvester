@@ -10,14 +10,18 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +62,9 @@ public class JDBCFetch {
 	 */
 	private Map<String, List<String>> dataFields = null;
 	/**
-	 * list of tablenames
+	 * set of tablenames
 	 */
-	private List<String> tableNames = null;
+	private Set<String> tableNames = null;
 	/**
 	 * list of conditions
 	 */
@@ -84,7 +88,7 @@ public class JDBCFetch {
 	/**
 	 * The user defined SQL Query string
 	 */
-	private HashMap<String,List<String>> queryStrings;
+	private Map<String,String> queryStrings;
 	
 	/**
 	 * Constructor
@@ -94,9 +98,40 @@ public class JDBCFetch {
 	 * @throws SQLException error talking with database
 	 */
 	public JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace) throws SQLException {
-		this.cursor = dbConn.createStatement();
-		this.rh = output;
-		this.uriNS = uriNameSpace;
+		this(dbConn, output, uriNameSpace, null, null, null, null, null, null, null, null, null);
+	}
+	
+	/**
+	 * Perform post-construction data prep and validation
+	 */
+	private void prep() {
+		if(this.tableNames == null) {
+			this.tableNames = new HashSet<String>();
+		}
+		
+		if(this.fromClauses != null) {
+			this.tableNames.addAll(this.fromClauses.keySet());
+		}
+		
+		if(this.dataFields != null) {
+			this.tableNames.addAll(this.dataFields.keySet());
+		}
+		
+		if(this.idFields != null) {
+			this.tableNames.addAll(this.idFields.keySet());
+		}
+		
+		if(this.whereClauses != null) {
+			this.tableNames.addAll(this.whereClauses.keySet());
+		}
+		
+		if(this.relations != null) {
+			this.tableNames.addAll(this.relations.keySet());
+		}
+		
+		if(this.queryStrings != null) {
+			this.tableNames.addAll(this.queryStrings.keySet());
+		}
 	}
 	
 	/**
@@ -150,112 +185,68 @@ public class JDBCFetch {
 		this.queryPre = opts.get("delimiterPrefix");
 		this.querySuf = opts.get("delimiterSuffix");
 		
-		if(opts.has("t")) {
-			this.tableNames = opts.getAll("t");
-		}
+		this.tableNames = new HashSet<String>();
+		this.tableNames.addAll(opts.getAll("t"));
 		
 		if(opts.has("T")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify fromClauses without tableName");
-			}
 			this.fromClauses = new HashMap<String, String>();
 			Properties froms = opts.getProperties("T");
 			for(String tableName : froms.stringPropertyNames()) {
-				this.fromClauses.put(tableName.trim(), froms.getProperty(tableName).trim());
+				this.fromClauses.put(tableName, froms.getProperty(tableName));
 			}
 		}
 		
 		if(opts.has("F")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify fields without tableName");
-			}
 			this.dataFields = new HashMap<String, List<String>>();
 			Properties fields = opts.getProperties("F");
 			for(String tableName : fields.stringPropertyNames()) {
-				if(!this.dataFields.containsKey(tableName.trim())) {
-					this.dataFields.put(tableName, new LinkedList<String>());
-				}
-				for(String fieldLine : fields.get(tableName.trim()).toString().split(",")) {
-					this.dataFields.get(tableName).add(fieldLine.trim());
-					// log.debug("field: '"+fieldLine.trim()+"'");
-				}
+				this.dataFields.put(tableName, Arrays.asList(fields.getProperty(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
 		if(opts.has("I")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify id without tableName");
-			}
 			this.idFields = new HashMap<String, List<String>>();
 			Properties ids = opts.getProperties("I");
-			for(Object table : ids.keySet()) {
-				String tableName = table.toString().trim();
-				this.idFields.put(tableName, Arrays.asList(ids.get(tableName).toString().trim().split(",")));
+			for(String tableName : ids.stringPropertyNames()) {
+				this.idFields.put(tableName, Arrays.asList(ids.getProperty(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
 		if(opts.has("W")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify whereClauses without tableName");
-			}
 			this.whereClauses = new HashMap<String, List<String>>();
 			Properties wheres = opts.getProperties("W");
-			for(Object table : wheres.keySet()) {
-				String tableName = table.toString().trim();
-				if(!this.whereClauses.containsKey(tableName)) {
-					this.whereClauses.put(tableName, new LinkedList<String>());
-				}
-				for(String whereLine : wheres.get(table).toString().split(",")) {
-					this.whereClauses.get(tableName).add(whereLine.trim());
-				}
+			for(String tableName : wheres.stringPropertyNames()) {
+				this.whereClauses.put(tableName, Arrays.asList(wheres.getProperty(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
 		if(opts.has("R")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify relations without tableName");
-			}
 			this.relations = new HashMap<String, Map<String, String>>();
 			Properties rels = opts.getProperties("R");
-			for(Object table : rels.keySet()) {
-				String tableName = table.toString().trim();
+			for(String tableName : rels.stringPropertyNames()) {
 				if(!this.relations.containsKey(tableName)) {
 					this.relations.put(tableName, new HashMap<String, String>());
 				}
-				for(String relLine : rels.get(table).toString().split(",")) {
-					String[] relPair = relLine.split("~", 2);
+				for(String relLine : rels.getProperty(tableName).split("\\s?,\\s?")) {
+					String[] relPair = relLine.split("\\s?~\\s?", 2);
 					if(relPair.length != 2) {
 						throw new IllegalArgumentException("Bad Relation Line: " + relLine);
 					}
-					this.relations.get(tableName).put(relPair[0].trim(), relPair[1].trim());
+					this.relations.get(tableName).put(relPair[0], relPair[1]);
 				}
 			}
 		}
 		
 		if(opts.has("Q")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify query without tableName");
-			}
-			this.queryStrings = new HashMap<String, List<String> >();
+			this.queryStrings = new HashMap<String, String>();
 			Properties querys = opts.getProperties("Q");
-			
-			for(Object table : querys.keySet()) {
-				String tableName = table.toString().trim();
-				if(!this.queryStrings.containsKey(tableName)) {
-					this.queryStrings.put(tableName, new LinkedList<String>());
-				}
-				for(String queryLine : querys.get(table).toString().split(",")) {
-					this.queryStrings.get(tableName).add(queryLine.trim());
-				}
+			for(String tableName : querys.stringPropertyNames()) {
+				this.queryStrings.put(tableName, querys.getProperty(tableName));
 			}
 		}
 		
 		Connection dbConn;
 		try {
-			// System.out.println("dbDriver: '"+jdbcDriverClass+"'");
-			// System.out.println("ConnLine: '"+connLine+"'");
-			// System.out.println("UserName: '"+username+"'");
-			// System.out.println("PassWord: '"+password+"'");
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
 			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
@@ -263,51 +254,27 @@ public class JDBCFetch {
 			throw new IOException(e.getMessage(), e);
 		}
 		this.uriNS = connLine + "/";
+		prep();
 	}
 	
 	/**
-	 * Constructor for access as a library and testing
-	 * @param dbConn		The database Connection
-	 * 
-	 * @param rh			Record Handler to write records to
-	 * 
-	 * @param queryPre		Query prefix often "["
-	 * 
-	 * @param querySuf		Query suffix often "]"
-	 * 
-	 * @param tableNames	List of the tables
-	 * 
-	 * @param fromClauses	Mapping of extra tables for the from section
-	 * 
-	 * @param dataFields	Mapping of tablename to list of datafields
-	 * 
-	 * @param idFields		Mapping of tablename to idField name
-	 * 
-	 * @param whereClauses	List of conditions
-	 * 
-	 * @param relations		Mapping of tablename to mapping of fieldname to tablename
-	 * 
-	 * @param queryStrings	Mapping of tablename to mapping of fieldname to tablename
+	 * Constructor
+	 * @param dbConn The database Connection
+	 * @param rh Record Handler to write records to
+	 * @param uriNS the uri namespace to use
+	 * @param queryPre Query prefix often "["
+	 * @param querySuf Query suffix often "]"
+	 * @param tableNames set of the table names
+	 * @param fromClauses Mapping of extra tables for the from section
+	 * @param dataFields Mapping of tablename to list of datafields
+	 * @param idFields Mapping of tablename to idField name
+	 * @param whereClauses List of conditions
+	 * @param relations Mapping of tablename to mapping of fieldname to tablename
+	 * @param queryStrings Mapping of tablename to query
+	 * @throws SQLException error accessing database
 	 */
-	public JDBCFetch(Connection dbConn,
-			RecordHandler rh,
-			String queryPre,
-			String querySuf,
-			List<String> tableNames,
-			HashMap<String, String> fromClauses,
-			HashMap<String, List<String>> dataFields,
-			HashMap<String, List<String>> idFields,
-			HashMap<String, List<String>> whereClauses,
-			HashMap<String, Map<String, String>> relations,
-			HashMap<String, List<String> > queryStrings) throws IOException{
-		
-
-		try {
-			this.cursor = dbConn.createStatement();
-		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-		
+	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws SQLException {
+		this.cursor = dbConn.createStatement();
 		this.rh = rh;
 		this.tableNames = tableNames;
 		this.fromClauses = fromClauses;
@@ -315,9 +282,11 @@ public class JDBCFetch {
 		this.idFields = idFields;
 		this.whereClauses = whereClauses;
 		this.relations = relations;
+		this.uriNS = uriNS;
 		this.queryPre = queryPre;
 		this.querySuf = querySuf;
 		this.queryStrings = queryStrings;
+		prep();
 	}
 	
 	/**
@@ -326,7 +295,7 @@ public class JDBCFetch {
 	 */
 	private String getFieldPrefix() {
 		if(this.queryPre == null) {
-			this.queryPre = "";
+			this.queryPre = getParser().getOptMap().get("delimiterPrefix").getDefaultValue();
 		}
 		return this.queryPre;
 	}
@@ -345,7 +314,7 @@ public class JDBCFetch {
 	 */
 	private String getFieldSuffix() {
 		if(this.querySuf == null) {
-			this.querySuf = "";
+			this.querySuf = getParser().getOptMap().get("delimiterSuffix").getDefaultValue();
 		}
 		return this.querySuf;
 	}
@@ -365,16 +334,18 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private List<String> getDataFields(String tableName) throws SQLException {
-		if(this.dataFields == null) {
+		if(this.dataFields == null || (this.queryStrings != null && this.queryStrings.containsKey(tableName))) {
 			this.dataFields = new HashMap<String, List<String>>();
 		}
 		if(!this.dataFields.containsKey(tableName)) {
 			this.dataFields.put(tableName, new LinkedList<String>());
-			ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
-			while(columnData.next()) {
-				String colName = columnData.getString("COLUMN_NAME");
-				if((getIDFields(tableName).size() > 1 || !getIDFields(tableName).contains(colName)) && !getRelationFields(tableName).containsKey(colName)) {
-					this.dataFields.get(tableName).add(colName);
+			if(this.queryStrings == null || !this.queryStrings.containsKey(tableName)) {
+				ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
+				while(columnData.next()) {
+					String colName = columnData.getString("COLUMN_NAME");
+					if((getIDFields(tableName).size() > 1 || !getIDFields(tableName).contains(colName)) && !getRelationFields(tableName).containsKey(colName)) {
+						this.dataFields.get(tableName).add(colName);
+					}
 				}
 			}
 		}
@@ -388,22 +359,16 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private Map<String, String> getRelationFields(String tableName) throws SQLException {
-		if(this.relations == null) {
+		if(this.relations == null || (this.queryStrings != null && this.queryStrings.containsKey(tableName))) {
 			this.relations = new HashMap<String, Map<String, String>>();
 		}
 		if(!this.relations.containsKey(tableName)) {
 			this.relations.put(tableName, new HashMap<String, String>());
-			ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
-			while(foreignKeys.next()) {
-				// StringBuilder sb = new StringBuilder();
-				// for(int x = 1; x <= foreignKeys.getMetaData().getColumnCount(); x++) {
-				// sb.append(foreignKeys.getMetaData().getColumnName(x));
-				// sb.append(" - ");
-				// sb.append(foreignKeys.getString(x));
-				// sb.append(" || ");
-				// }
-				// log.debug(sb.toString());
-				this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
+			if(this.queryStrings == null || !this.queryStrings.containsKey(tableName)) {
+				ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
+				while(foreignKeys.next()) {
+					this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
+				}
 			}
 		}
 		return this.relations.get(tableName);
@@ -449,12 +414,11 @@ public class JDBCFetch {
 	
 	/**
 	 * Gets the tablenames in database
-	 * @return list of tablenames
+	 * @return set of tablenames
 	 * @throws SQLException error connecting to DB
 	 */
-	private List<String> getTableNames() throws SQLException {
-		if(this.tableNames == null) {
-			this.tableNames = new LinkedList<String>();
+	private Set<String> getTableNames() throws SQLException {
+		if(this.tableNames.isEmpty()) {
 			String[] tableTypes = {"TABLE"};
 			ResultSet tableData = this.cursor.getConnection().getMetaData().getTables(this.cursor.getConnection().getCatalog(), null, "%", tableTypes);
 			while(tableData.next()) {
@@ -472,17 +436,9 @@ public class JDBCFetch {
 	 */
 	private String buildSelect(String tableName) throws SQLException {
 		if(this.queryStrings != null && this.queryStrings.containsKey(tableName) ){
-			List<String> query = this.queryStrings.get(tableName);
-			StringBuilder sb = new StringBuilder();
-			for(String data : query){
-				sb.append(data);
-			}
-
-			sb.append("FROM ");
-			sb.append(tableName);
-			sb.append(";");
-			log.debug("User defined SQL Query:\n" + sb.toString());
-			return sb.toString();
+			String query = this.queryStrings.get(tableName);
+			log.debug("User defined SQL Query:\n" + query);
+			return query;
 		}
 		boolean multiTable = this.fromClauses != null && this.fromClauses.containsKey(tableName);
 		StringBuilder sb = new StringBuilder();
@@ -529,7 +485,7 @@ public class JDBCFetch {
 			sb.append(" WHERE ");
 			sb.append(StringUtils.join(getWhereClauses(tableName), " AND "));
 		}
-		log.debug("SQL Query: " + sb.toString());
+		log.debug("Generated SQL Query:\n" + sb.toString());
 		return sb.toString();
 	}
 	
@@ -572,7 +528,11 @@ public class JDBCFetch {
 			for(String tableName : getTableNames()) {
 				StringBuilder sb = new StringBuilder();
 				// For each Record
-				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next();) {
+				ResultSet rs = this.cursor.executeQuery(buildSelect(tableName));
+//				ResultSetMetaData rsmd = rs.getMetaData();
+//				int ColumnCount = rsmd.getColumnCount();
+//				Map<String,String> columnData = new HashMap<String,String>();
+				while(rs.next()) {
 					StringBuilder recID = new StringBuilder();
 					recID.append("id");
 					for(String idField : getIDFields(tableName)) {
@@ -611,7 +571,13 @@ public class JDBCFetch {
 					sb.append("\"/>\n");
 					
 					// DataFields
-					for(String dataField : getDataFields(tableName)) {
+					List<String> dataFieldList;
+					if(this.queryStrings != null && this.queryStrings.containsKey(tableName)) {
+						dataFieldList = getResultSetFields(rs);
+					} else {
+						dataFieldList = getDataFields(tableName);
+					}
+					for(String dataField : dataFieldList) {
 						// Field BEGIN
 						String field = tableNS + ":" + dataField.replaceAll(" ", "_");
 						sb.append("    <");
@@ -663,6 +629,134 @@ public class JDBCFetch {
 		}
 	}
 	
+	/**
+	 * Executes the task
+	 * @throws IOException error processing record handler or jdbc connection
+	 * @deprecated old code
+	 */
+	@Deprecated
+	public void executeOld() throws IOException {
+
+
+		// For each Table
+		try {
+			for(String tableName : getTableNames()) {
+				StringBuilder sb = new StringBuilder();
+				// For each Record
+				ResultSet rs = this.cursor.executeQuery(buildSelect(tableName));
+				while(rs.next()) {
+					StringBuilder recID = new StringBuilder();
+					recID.append("id");
+					for(String idField : getIDFields(tableName)) {
+						recID.append("_-_");
+						String id = rs.getString(idField);
+						if(id != null) {
+							id = id.trim();
+						}
+						id = SpecialEntities.xmlEncode(id);
+						recID.append(id);
+					}
+					// log.trace("Creating RDF for "+tableName+": "+recID);
+					// Build RDF BEGIN
+					// Header info
+					String tableNS = "db-" + tableName;
+					sb = new StringBuilder();
+					sb.append("<?xml version=\"1.0\"?>\n");
+					sb.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n");
+					sb.append("         xmlns:");
+					sb.append(tableNS);
+					sb.append("=\"");
+					sb.append(buildTableFieldNS(tableName));
+					sb.append("\"\n");
+					sb.append("         xml:base=\"");
+					sb.append(buildTableRecordNS(tableName));
+					sb.append("\">\n");
+					
+					// Record info BEGIN
+					sb.append("  <rdf:Description rdf:ID=\"");
+					sb.append(recID);
+					sb.append("\">\n");
+					
+					// insert type value
+					sb.append("    <rdf:type rdf:resource=\"");
+					sb.append(buildTableType(tableName));
+					sb.append("\"/>\n");
+					
+					// DataFields
+					List<String> dataFieldList;
+					if(this.queryStrings != null && this.queryStrings.containsKey(tableName)) {
+						dataFieldList = getResultSetFields(rs);
+					} else {
+						dataFieldList = getDataFields(tableName);
+					}
+					for(String dataField : dataFieldList) {
+						// Field BEGIN
+						String field = tableNS + ":" + dataField.replaceAll(" ", "_");
+						sb.append("    <");
+						sb.append(field);
+						sb.append(">");
+						
+						// insert field value
+						if(rs.getString(dataField) != null) {
+							sb.append(SpecialEntities.xmlEncode(rs.getString(dataField).trim()));
+						}
+						
+						// Field END
+						sb.append("</");
+						sb.append(field);
+						sb.append(">\n");
+					}
+					
+					// Relation Fields
+					for(String relationField : getRelationFields(tableName).keySet()) {
+						// Field BEGIN
+						sb.append("    <");
+						sb.append(tableNS);
+						sb.append(":");
+						sb.append(relationField.replaceAll(" ", "_"));
+						sb.append(" rdf:resource=\"");
+						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
+						
+						// insert field value
+						sb.append("#id-" + rs.getString(relationField).trim());
+						
+						// Field END
+						sb.append("\"/>\n");
+					}
+					
+					// Record info END
+					sb.append("  </rdf:Description>\n");
+					
+					// Footer info
+					sb.append("</rdf:RDF>");
+					// Build RDF END
+					
+					// Write RDF to RecordHandler
+					log.trace("Adding record for " + tableName + ": " + recID);
+					this.rh.addRecord(tableName + "_" + recID, sb.toString(), this.getClass());
+				}
+			}
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * Get the fields from a result set
+	 * @param rs the resultset
+	 * @return the list of fields
+	 * @throws SQLException error reading resultset
+	 */
+	private List<String> getResultSetFields(ResultSet rs) throws SQLException {
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int count = rsmd.getColumnCount();
+		List<String> fields = new ArrayList<String>(count);
+		for(int x = 1; x <= count; x++) {
+			fields.add(rsmd.getColumnName(x));
+		}
+		return fields;
+	}
+
 	/**
 	 * Main method
 	 * @param args commandline arguments

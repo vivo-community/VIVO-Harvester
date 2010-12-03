@@ -92,12 +92,13 @@ public class SDBJenaConnect extends JenaConnect {
 	@Override
 	public void close() {
 		this.getJenaModel().close();
+		this.store.getConnection().close();
 		this.store.close();
 	}
 
 	@Override
 	public void truncate() {
-		this.getJenaModel().removeAll();
+		this.store.getTableFormatter().truncate();
 	}
 	
 }

@@ -78,116 +78,156 @@ public class ScoreTest extends TestCase {
 		JenaConnect vivo;
 		
 		// Load up everything before starting
+		input = JenaConnect.parseConfig(iArg, IArgProp);
+		input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
+		
+		vivo = JenaConnect.parseConfig(vArg, VArgProp);
+		vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
+		
+		output = JenaConnect.parseConfig(oArg, OArgProp);
+		
+		log.debug("Testing good configs");
+		
+		log.debug("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
+		args = new String[]{"-i", iArg, "-v", vArg, "-o", oArg, "-a", "1", "-e", "workEmail"};
+		log.debug(StringUtils.join(args, " "));
 		try {
-			input = JenaConnect.parseConfig(iArg, IArgProp);
-			input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
-			
-			vivo = JenaConnect.parseConfig(vArg, VArgProp);
-			vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
-			
-			output = JenaConnect.parseConfig(oArg, OArgProp);
-			
-			log.debug("Testing good configs");
-			
-			log.debug("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
-			args = new String[]{"-i", iArg, "-v", vArg, "-o", oArg, "-a", "1", "-e", "workEmail"};
-			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-			
-			log.debug("Test -v vArg -a 1");
-			args = new String[]{"-v", vArg, "-a", "1"};
-			log.debug(StringUtils.join(args, " "));
 			Test = new Score(args);
-			
-			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-a", "1", "-e", "workEmail"};
-			log.debug(StringUtils.join(args, " "));
-			Test = new Score(args);
-			
-			log.debug("Testing bad configs");
-			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-Q"};
-			log.debug(StringUtils.join(args, " "));
-			try {
-				Test = new Score(args);
-				log.error("Invalid arguement passed -- score object invalid");
-				fail("Invalid arguement passed -- score object invalid");
-			} catch(Exception e) {
-				// this is expected
-				log.debug("Caught Expected Exception: "+e.getMessage());
-			}
-			
-			log.debug("Testing keep working model");
-			// keep input model
-			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.debug(StringUtils.join(args, " "));
-			Test = new Score(args);
-			Test.execute();
-			if(Test.getScoreInput().getJenaModel().isEmpty()) {
-				log.error("Model emptied despite -w arg missing");
-				fail("Model emptied despite -w arg missing");
-			}
-			
-			// don't keep input model
-			log.debug("Testing don't keep working model");
-			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-w"};
-			log.debug(StringUtils.join(args, " "));
-			Test = new Score(args);
-			Test.execute();
-			if(!Test.getScoreInput().getJenaModel().isEmpty()) {
-				log.error("Model not empty -w arg violated");
-				fail("Model not empty -w arg violated");
-			}
-			Test.close();
-			
-			log.debug("Testing empty output model");
-			// empty output model
-			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
-			log.debug(StringUtils.join(args, " "));
-			Test = new Score(args);
-			//get size
-			long modelSize = Test.getScoreOutput().getJenaModel().size();
-			Test.execute();
-			if (modelSize > Test.getScoreOutput().getJenaModel().size()) {
-				log.error("Output model not emptied before run");
-				fail("Output model not emptied before run");
-			}
-			
-			// don't empty output model
-			log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.debug(StringUtils.join(args, " "));
-			Test = new Score(args);
-			//get size
-			modelSize = Test.getScoreOutput().getJenaModel().size();
-			Test.execute();
-			if (modelSize < Test.getScoreOutput().getJenaModel().size()) {
-				log.error("Output model emptied before run");
-				fail("Output model emptied before run");
-			}
-									
-			input.close();
-			vivo.close();
-			output.close();
-		} catch(IOException e) {
+		} catch(Exception e) {
 			log.error(e.getMessage(), e);
-			throw e;
+			fail(e.getMessage());
 		}
+		
+		log.debug("Test -v vArg -a 1");
+		args = new String[]{"-v", vArg, "-a", "1"};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-a", "1", "-e", "workEmail"};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		
+		log.debug("Testing bad configs");
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-Q"};
+		log.debug(StringUtils.join(args, " "));
+		try {
+			Test = new Score(args);
+			log.error("Invalid arguement passed -- score object invalid");
+			fail("Invalid arguement passed -- score object invalid");
+		} catch(Exception e) {
+			// this is expected
+			log.debug("Caught Expected Exception: "+e.getMessage());
+		}
+		
+		log.debug("Testing keep working model");
+		// keep input model
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		Test.execute();
+		if(Test.getScoreInput().getJenaModel().isEmpty()) {
+			log.error("Model emptied despite -w arg missing");
+			fail("Model emptied despite -w arg missing");
+		}
+		
+		// don't keep input model
+		log.debug("Testing don't keep working model");
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-w"};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		Test.execute();
+		if(!Test.getScoreInput().getJenaModel().isEmpty()) {
+			log.error("Model not empty -w arg violated");
+			fail("Model not empty -w arg violated");
+		}
+		Test.close();
+		
+		log.debug("Testing empty output model");
+		// empty output model
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		//get size
+		long modelSize = Test.getScoreOutput().getJenaModel().size();
+		Test.execute();
+		if (modelSize > Test.getScoreOutput().getJenaModel().size()) {
+			log.error("Output model not emptied before run");
+			fail("Output model not emptied before run");
+		}
+		
+		// don't empty output model
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		//get size
+		modelSize = Test.getScoreOutput().getJenaModel().size();
+		Test.execute();
+		if (modelSize < Test.getScoreOutput().getJenaModel().size()) {
+			log.error("Output model emptied before run");
+			fail("Output model emptied before run");
+		}
+								
+		input.close();
+		vivo.close();
+		output.close();
+		
+		// don't keep input model
+		log.debug("Testing don't keep working model");
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-w"};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		Test.execute();
+		if(!Test.getScoreInput().getJenaModel().isEmpty()) {
+			log.error("Model not empty -w arg violated");
+			fail("Model not empty -w arg violated");
+		}
+		Test.close();
+		
+		log.debug("Testing empty output model");
+		// empty output model
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		//get size
+		modelSize = Test.getScoreOutput().getJenaModel().size();
+		Test.execute();
+		if (modelSize > Test.getScoreOutput().getJenaModel().size()) {
+			log.error("Output model not emptied before run");
+			fail("Output model not emptied before run");
+		}
+		
+		// don't empty output model
+		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
+		args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
+		log.debug(StringUtils.join(args, " "));
+		Test = new Score(args);
+		//get size
+		modelSize = Test.getScoreOutput().getJenaModel().size();
+		Test.execute();
+		if (modelSize < Test.getScoreOutput().getJenaModel().size()) {
+			log.error("Output model emptied before run");
+			fail("Output model emptied before run");
+		}
+								
+		input.close();
+		vivo.close();
+		output.close();
 		log.info("END testArguments");
 	}
 	
 	/**
 	 * Test Scoring Algorithms
+	 * @throws IOException error
 	 */
-	public void testAlgorithims() {
+	public void testAlgorithims() throws IOException {
 		log.info("BEGIN testAlgorithims");
 		Score Test;
 		List<String> workEmail = Arrays.asList("workEmail");
@@ -197,83 +237,78 @@ public class ScoreTest extends TestCase {
 		JenaConnect vivo;
 		
 		// load input models
-		try {
-			Properties inputProp = new Properties();
-			inputProp.put("modelName", "input");
-			input = JenaConnect.parseConfig(this.vivoXML, inputProp);
-			input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
-			
-			Properties vivoProp = new Properties();
-			vivoProp.put("modelName", "vivo");
-			vivo = JenaConnect.parseConfig(this.vivoXML, vivoProp);
-			vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
-			
-			Properties outputProp = new Properties();
-			outputProp.put("modelName", "output");
-			output = JenaConnect.parseConfig(this.vivoXML, outputProp);
-			
-			// run author score
-			Test = new Score(input, vivo, output, false, false, blank, blank, blank, "3", null, null, null);
-			Test.execute();
-			
-			// check output model
-			if(Test.getScoreOutput().getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with author name scoring");
-				fail("Didn't match anything with author name scoring");
-			}
-			
-			// empty output model
-			Test.getScoreOutput().getJenaModel().removeAll();
-			
-			// run exactmatch score
-			Test = new Score(input, vivo, output, false, false, workEmail, blank, blank, null, null, null, null);
-			Test.execute();
-			
-			// check output model
-			if(output.getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with exact match scoring");
-				fail("Didn't match anything with exact match scoring");
-			}
-			
-			// empty output model
-			Test.getScoreOutput().getJenaModel().removeAll();
-			
-			// testing foreign Key Score Method
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			input.getJenaModel().write(baos, "RDF/XML");
-			baos.flush();
-			//log.debug(baos.toString());
-			baos.close();
-			
-			new Score(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-f", "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid", "-x", "http://vivoweb.org/ontology/core#worksFor", "-y", "http://vivoweb.org/ontology/core#departmentOf"}).execute();
-			
-			// check output model
-			if(output.getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with foreign key scoring");
-				fail("Didn't match anything with foreign key scoring");
-			}
-			
-			// empty output model
-			output.getJenaModel().removeAll();
-									
-			//testing pushing non matches
-			new Score(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-e", "workEmail", "-l"}).execute();
-			
-			// check output model
-			if(output.getJenaModel().containsLiteral(null, null, "12345678")) {
-				log.error("Didn't push non matches");
-				fail("Didn't push non matches");
-			}
-			
-			
-			Test.close();
-			input.close();
-			vivo.close();
-			output.close();
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
+		Properties inputProp = new Properties();
+		inputProp.put("modelName", "input");
+		input = JenaConnect.parseConfig(this.vivoXML, inputProp);
+		input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
+		
+		Properties vivoProp = new Properties();
+		vivoProp.put("modelName", "vivo");
+		vivo = JenaConnect.parseConfig(this.vivoXML, vivoProp);
+		vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
+		
+		Properties outputProp = new Properties();
+		outputProp.put("modelName", "output");
+		output = JenaConnect.parseConfig(this.vivoXML, outputProp);
+		
+		// run author score
+		Test = new Score(input, vivo, output, false, false, blank, blank, blank, "3", null, null, null);
+		Test.execute();
+		
+		// check output model
+		if(Test.getScoreOutput().getJenaModel().isEmpty()) {
+			log.error("Didn't match anything with author name scoring");
+			fail("Didn't match anything with author name scoring");
 		}
+		
+		// empty output model
+		Test.getScoreOutput().getJenaModel().removeAll();
+		
+		// run exactmatch score
+		Test = new Score(input, vivo, output, false, false, workEmail, blank, blank, null, null, null, null);
+		Test.execute();
+		
+		// check output model
+		if(output.getJenaModel().isEmpty()) {
+			log.error("Didn't match anything with exact match scoring");
+			fail("Didn't match anything with exact match scoring");
+		}
+		
+		// empty output model
+		Test.getScoreOutput().getJenaModel().removeAll();
+		
+		// testing foreign Key Score Method
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		input.getJenaModel().write(baos, "RDF/XML");
+		baos.flush();
+		//log.debug(baos.toString());
+		baos.close();
+		
+		new Score(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-f", "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid", "-x", "http://vivoweb.org/ontology/core#worksFor", "-y", "http://vivoweb.org/ontology/core#departmentOf"}).execute();
+		
+		// check output model
+		if(output.getJenaModel().isEmpty()) {
+			log.error("Didn't match anything with foreign key scoring");
+			fail("Didn't match anything with foreign key scoring");
+		}
+		
+		// empty output model
+		output.getJenaModel().removeAll();
+								
+		//testing pushing non matches
+		new Score(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-e", "workEmail", "-l"}).execute();
+		
+		// check output model
+		if(output.getJenaModel().containsLiteral(null, null, "12345678")) {
+			log.error("Didn't push non matches");
+			fail("Didn't push non matches");
+		}
+		
+		
+		Test.close();
+		input.close();
+		vivo.close();
+		output.close();
 		log.info("END testAlgorithims");
 	}
 	

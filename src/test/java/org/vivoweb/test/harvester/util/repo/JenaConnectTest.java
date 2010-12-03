@@ -112,8 +112,9 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)}.
+	 * @throws ClassNotFoundException error loading class
 	 */
-	public void testJenaConnectDBConstNoModelName() {
+	public void testJenaConnectDBConstNoModelName() throws ClassNotFoundException {
 		log.info("BEGIN testJenaConnectDBConstNoModelName");
 		this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
 		runWriteTest();
@@ -124,8 +125,9 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName)}.
+	 * @throws ClassNotFoundException error loading class
 	 */
-	public void testJenaConnectDBConstWithModelName() {
+	public void testJenaConnectDBConstWithModelName() throws ClassNotFoundException {
 		log.info("BEGIN testJenaConnectDBConstWithModelName");
 		this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName);
 		runWriteTest();
@@ -136,8 +138,9 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#neighborConnectClone(java.lang.String)
 	 * connect(String modelName)}.
+	 * @throws ClassNotFoundException error loading class
 	 */
-	public void testJenaConnectConstSibling() {
+	public void testJenaConnectConstSibling() throws ClassNotFoundException {
 		log.info("BEGIN testJenaConnectConstSibling");
 		try {
 			this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName).neighborConnectClone(modelName2);

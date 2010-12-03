@@ -91,7 +91,7 @@ public class ArgList {
 				}
 			}
 		} catch(ParseException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 	}
 	

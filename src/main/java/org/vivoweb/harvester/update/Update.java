@@ -141,8 +141,9 @@ public class Update {
 	/**
 	 * Execute the task
 	 * @throws IOException error executing
+	 * @throws ClassNotFoundException error loading class
 	 */
-	public void execute() throws IOException {
+	public void execute() throws IOException, ClassNotFoundException {
 		JenaConnect subJC = new RDBJenaConnect("jdbc:h2:"+File.createTempFile("update_Subtractions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "subModel");
 		JenaConnect addJC = new RDBJenaConnect("jdbc:h2:"+File.createTempFile("update_Additions", ".xml").getAbsolutePath()+";MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "addModel");
 		

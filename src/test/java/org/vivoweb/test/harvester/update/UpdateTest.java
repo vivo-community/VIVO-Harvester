@@ -32,7 +32,7 @@ public class UpdateTest extends TestCase {
 	/**
 	 * expected rdf statements to load for test
 	 */
-	private String expectedPrevModelString;
+	private String expectedDiffModelString;
 	
 	
 	@Override
@@ -62,10 +62,10 @@ public class UpdateTest extends TestCase {
 						"xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
 						"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
 					"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
-						"<core:workEmail>v@ufl.edu</core:workEmail>" +
+						"<core:workEmail xml:lang=\"en-US\">v@ufl.edu</core:workEmail>" +
 						"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-						"<core:middleName>J</core:middleName>" +
-						"<foaf:firstName>Guy</foaf:firstName>" +
+						"<core:middleName rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\" xml:lang=\"en-US\">J</core:middleName>" +
+						"<foaf:firstName>Guys</foaf:firstName>" +
 						"<foaf:lastName>Fawkes</foaf:lastName>" +
 						"<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
 						"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
@@ -78,6 +78,7 @@ public class UpdateTest extends TestCase {
 		// Create incoming rdf
 		// differences 
 		//		changed email address
+		//		changed firstname
 		// 		removal of middlename
 		//		addition of prefix
 		this.incomingRDF = ""+
@@ -116,16 +117,18 @@ public class UpdateTest extends TestCase {
 					"</rdf:Description>" +
 				"</rdf:RDF>";
 		
-		this.expectedPrevModelString = "<ModelCom   {http://vivo.mydomain.edu/individual/n3574 @foaf:prefix \"Mr.\"; http://vivo.mydomain.edu/individual/n3574 @rdf:type core:FacultyMember; http://vivo.mydomain.edu/individual/n3574 @core:workEmail \"v1105@ufl.edu\"; http://vivo.mydomain.edu/individual/n3574 @foaf:firstName \"Guy\"; http://vivo.mydomain.edu/individual/n3574 @foaf:lastName \"Fawkes\"; http://vivo.mydomain.edu/individual/n3574 @rdfs:label \"Fawkes, Guy\"@en-US; http://vivo.mydomain.edu/individual/n3574 @rdf:type j.1:Flag1ValueThing; http://vivo.mydomain.edu/individual/n3574 @j.1:moniker \"Faculty Member\"^^http://www.w3.org/2001/XMLSchema#string; http://vivo.mydomain.edu/individual/n3574 @j.1:modTime \"2010-08-09T15:46:21\"^^http://www.w3.org/2001/XMLSchema#dateTime; http://vivo.mydomain.edu/individual/n3574 @ufVIVO:ufid \"78212990\"} | >";
+		this.expectedDiffModelString = "<ModelCom   {} | >";
 	}
 	
 	/**
 	 * @throws IOException error
 	 * @throws ClassNotFoundException error
+	 * @throws InterruptedException error
 	 */
-	public void testUpdate() throws IOException, ClassNotFoundException{
+	public void testUpdate() throws IOException, ClassNotFoundException, InterruptedException{
 		log.info("BEGIN testUpdate");
-		JenaConnect previousJC = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "HSQLDB", "org.h2.Driver", "layout2", "hr20101101");
+//		JenaConnect previousJC = new RDBJenaConnect("jdbc:h2:mem:test", "sa", "", "HSQLDB", "org.h2.Driver", "hr20101101");
+		JenaConnect previousJC = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "hr20101101");
 		previousJC.loadRdfFromString(this.previousRDF, null, null);
 		
 		JenaConnect incomingJC = previousJC.neighborConnectClone("hr20101104");
@@ -137,11 +140,13 @@ public class UpdateTest extends TestCase {
 		//testing new items
 		new Update(previousJC, incomingJC, null, false, false, false).execute();
 		
+		Thread.sleep(10000);
+		
 		log.debug("prevModel - post update\n"+previousJC.exportRdfToString());
 		log.debug("incomingModel - post update\n"+incomingJC.exportRdfToString());
 		
-		Model expectedPrevious = previousJC.getJenaModel().difference(new MemJenaConnect(new ByteArrayInputStream(this.incomingRDF.getBytes()), null, null).getJenaModel());
-		assertEquals(this.expectedPrevModelString, expectedPrevious.toString());
+		Model expectedDiff = previousJC.getJenaModel().difference(new MemJenaConnect(new ByteArrayInputStream(this.incomingRDF.getBytes()), null, null).getJenaModel());
+		assertEquals(this.expectedDiffModelString, expectedDiff.toString());//FIXME any1: Failing because subtractions aren't being removed for some reason!
 		log.info("END testUpdate");
 	}
 
@@ -149,7 +154,7 @@ public class UpdateTest extends TestCase {
 	protected void tearDown() throws Exception {
 		this.incomingRDF = null;
 		this.previousRDF = null;
-		this.expectedPrevModelString = null;
+		this.expectedDiffModelString = null;
 	}
 
 }

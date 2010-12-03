@@ -31,6 +31,7 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import com.hp.hpl.jena.graph.GraphEvents;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -43,6 +44,8 @@ import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
+import com.hp.hpl.jena.update.UpdateAction;
+import com.hp.hpl.jena.update.UpdateFactory;
 
 /**
  * Connection Helper for Jena Models
@@ -284,6 +287,46 @@ public abstract class JenaConnect {
 	 */
 	public void removeRdfFromJC(JenaConnect inputJC) {
 		this.jenaModel.remove(inputJC.getJenaModel());//FIXME Anyone?: this doesn't seem to actually work!
+//		log.debug("Removing data from another model");
+//		this.jenaModel.begin();
+//		for(Statement s : IterableAdaptor.adapt(inputJC.getJenaModel().listStatements())) {
+//			if(this.jenaModel.contains(s)) {
+//				log.debug("Removing "+s);
+//			}
+////			if(s.getObject().isResource()) {
+////				this.jenaModel.remove(ResourceFactory.createResource(s.getSubject().getURI()), ResourceFactory.createProperty(s.getPredicate().getURI()), ResourceFactory.createResource(s.getResource().getURI()));
+////			} else {
+////				this.jenaModel.remove(ResourceFactory.createResource(s.getSubject().getURI()), ResourceFactory.createProperty(s.getPredicate().getURI()), ResourceFactory.createTypedLiteral(s.getLiteral().getValue()));
+////			}
+//			this.jenaModel.notifyEvent(GraphEvents.remove(s.getSubject().asNode(), s.getPredicate().asNode(), s.getObject().asNode()));
+//			this.jenaModel.remove(s);
+//		}
+//		this.jenaModel.commit();
+//		StringBuffer sb = new StringBuffer();
+//		sb.append("DELETE DATA {\n");
+//		for(Statement s : IterableAdaptor.adapt(inputJC.getJenaModel().listStatements())) {
+//			sb.append("\t<").append(s.getSubject().getURI()).append(">").append(" ");
+//			sb.append("<").append(s.getPredicate().getURI()).append(">").append(" ");
+//			if(s.getObject().isResource()) {
+//				sb.append("<").append(s.getResource().getURI()).append(">").append(" .\n");
+//			} else {
+//				sb.append("\"").append(s.getLiteral().getValue().toString()).append("\"");
+//				String literal = s.getLiteral().toString();
+//				if(literal.contains("@")) {
+//					//handle lang
+//					sb.append("@").append(s.getLanguage());
+//				}
+//				if(literal.contains("^^")) {
+//					//handle datatype - lang is discarded if datatype found
+//					sb.append("^^<").append(s.getLiteral().getDatatypeURI()).append(">");
+//				}
+//				sb.append(" .\n");
+//			}
+//		}
+//		sb.append("}");
+//		log.debug("SPARQL DELETE:\n"+sb.toString());
+////		throw new IllegalArgumentException();
+//		executeUpdateQuery(sb.toString());
 	}
 	
 	/**
@@ -416,6 +459,21 @@ public abstract class JenaConnect {
 	 */
 	public boolean executeAskQuery(String queryString) {
 		return buildQueryExec(queryString).execAsk();
+	}
+	
+	/**
+	 * Executes a sparql describe query against the JENA model and returns the description result model
+	 * @param queryString the query to execute against the model
+	 */
+	public void executeUpdateQuery(String queryString) {
+		this.jenaModel.begin();
+		this.jenaModel.notifyEvent(GraphEvents.startRead);
+		try {
+			UpdateAction.execute(UpdateFactory.create(queryString), this.jenaModel);
+		} finally {
+			this.jenaModel.notifyEvent(GraphEvents.finishRead);
+			this.jenaModel.commit();
+		}
 	}
 	
 	/**

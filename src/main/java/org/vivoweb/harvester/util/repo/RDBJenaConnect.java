@@ -30,8 +30,9 @@ public class RDBJenaConnect extends JenaConnect {
 	 * @param dbPass password to use
 	 * @param dbType database type ex:"MySQL"
 	 * @param dbClass jdbc driver class
+	 * @throws ClassNotFoundException error loading class
 	 */
-	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
+	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) throws ClassNotFoundException {
 		this(dbUrl, dbUser, dbPass, dbType, dbClass, null);
 	}
 	
@@ -43,8 +44,9 @@ public class RDBJenaConnect extends JenaConnect {
 	 * @param dbType database type ex:"MySQL"
 	 * @param dbClass jdbc driver class
 	 * @param modelName the model to connect to
+	 * @throws ClassNotFoundException error loading class
 	 */
-	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName) {
+	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName) throws ClassNotFoundException {
 		this(initDB(dbUrl, dbUser, dbPass, dbType, dbClass), modelName);
 	}
 	
@@ -94,13 +96,10 @@ public class RDBJenaConnect extends JenaConnect {
 	 * @param dbType database type
 	 * @param dbClass jdbc connection class
 	 * @return the database connection
+	 * @throws ClassNotFoundException error loading driver
 	 */
-	private static IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
-		try {
-			Class.forName(dbClass);
-		} catch(ClassNotFoundException e) {
-			throw new IllegalArgumentException(e);
-		}
+	private static IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) throws ClassNotFoundException {
+		Class.forName(dbClass);
 		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
 	}
 
