@@ -11,6 +11,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Savepoint;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
@@ -85,6 +89,49 @@ public class JDBCFetchTest extends TestCase {
 			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			for(Record r : this.rh) {
 				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
+				Element elem = doc.getDocumentElement();
+				traverseNodes(elem.getChildNodes());
+			}
+			//String args[] = {"-d","org.h2.Driver","-c","jdbc:h2:mem:TestJDBCFetchDB","-u","sa","-t","faculty","-Q","SELECT badge_num, fname FROM faculty","-o",""}; 
+//			new JDBCFetch(args).execute();
+			//Resetting for the next test
+			log.trace("renewing rh.");
+			this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJDBCFetchRH", "sa", "", "recordTable", "dataField");
+			List<String> tnList = new ArrayList<String>();//tableNames,
+			HashMap<String, String> fcMap = new HashMap<String, String>();//fromClauses,
+			HashMap<String, List<String>> dfMap = new HashMap<String, List<String>>();//dataFields,
+			HashMap<String, List<String>> idfMap = new HashMap<String, List<String>>();//idFields,
+			HashMap<String, List<String>> wcMap = new HashMap<String, List<String>>();//whereClauses,
+			HashMap<String, Map<String, String>> relMap = new HashMap<String, Map<String, String>>();//relations,
+			HashMap<String, List<String> > qsMap = new HashMap<String, List<String> >();//queryStrings
+			
+			tnList.add("faculty");
+			tnList.add("paylevel");
+			tnList.add("department");
+			ArrayList<String> qsF = new ArrayList<String>();
+			qsF.add("SELECT badge_num fac_id ");
+			ArrayList<String> qsP = new ArrayList<String>();
+			qsP.add("SELECT name id ");
+			ArrayList<String> qsD = new ArrayList<String>();
+			qsD.add("SELECT name dep_id ");
+			qsMap.put("faculty", qsF);
+			qsMap.put("paylevel", qsP);
+			qsMap.put("department", qsD);
+			ArrayList<String> idfF = new ArrayList<String>();
+			idfF.add("fac_id");
+			ArrayList<String> idfP = new ArrayList<String>();
+			idfP.add("id");
+			ArrayList<String> idfD = new ArrayList<String>();
+			idfD.add("dep_id");
+			idfMap.put("faculty", idfF);
+			idfMap.put("paylevel", idfP);
+			idfMap.put("department", idfD);
+			
+			new JDBCFetch(this.conn,this.rh,"[","]",tnList,fcMap,dfMap,idfMap,wcMap,relMap,qsMap).execute();
+			assertTrue(this.rh.iterator().hasNext());
+			DocumentBuilder docC = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			for(Record r : this.rh) {
+				Document doc = docC.parse(new ByteArrayInputStream(r.getData().getBytes()));
 				Element elem = doc.getDocumentElement();
 				traverseNodes(elem.getChildNodes());
 			}

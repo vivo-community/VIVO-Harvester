@@ -36,7 +36,7 @@ tar -czpf backups/h2dsr-rdf.tar.gz XMLVault/h2dsr/rdf
 
 # Execute Transfer to import from record handler into local temp model
 rm -rf XMLVault/h2dsr/All
-$Transfer -o config/jenaModels/h2.xml -O modelName=dsrTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -h config/recordHandlers/DSR-RDF-h2RH.xml -n http://vivotest.ctrip.ufl.edu/vivo/individual/
+$Transfer -o config/jenaModels/h2.xml -O modelName=dsrTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -h config/recordHandlers/DSR-RDF-h2RH.xml -n http://vivo.ufl.edu/individual/
 tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 #tar -xzpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 

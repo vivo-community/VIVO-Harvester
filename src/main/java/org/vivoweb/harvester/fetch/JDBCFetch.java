@@ -81,6 +81,10 @@ public class JDBCFetch {
 	 * Suffix each field in query with this
 	 */
 	private String querySuf;
+	/**
+	 * The user defined SQL Query string
+	 */
+	private HashMap<String,List<String>> queryStrings;
 	
 	/**
 	 * Constructor
@@ -107,6 +111,7 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("query").withParameterProperties("TABLE_NAME", "SQL_QUERY").setDescription("use SQL_QUERY to select from TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterProperties("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
@@ -227,6 +232,24 @@ public class JDBCFetch {
 			}
 		}
 		
+		if(opts.has("Q")) {
+			if(!opts.has("t")) {
+				throw new IllegalArgumentException("Cannot specify query without tableName");
+			}
+			this.queryStrings = new HashMap<String, List<String> >();
+			Properties querys = opts.getProperties("Q");
+			
+			for(Object table : querys.keySet()) {
+				String tableName = table.toString().trim();
+				if(!this.queryStrings.containsKey(tableName)) {
+					this.queryStrings.put(tableName, new LinkedList<String>());
+				}
+				for(String queryLine : querys.get(table).toString().split(",")) {
+					this.queryStrings.get(tableName).add(queryLine.trim());
+				}
+			}
+		}
+		
 		Connection dbConn;
 		try {
 			// System.out.println("dbDriver: '"+jdbcDriverClass+"'");
@@ -240,6 +263,61 @@ public class JDBCFetch {
 			throw new IOException(e.getMessage(), e);
 		}
 		this.uriNS = connLine + "/";
+	}
+	
+	/**
+	 * Constructor for access as a library and testing
+	 * @param dbConn		The database Connection
+	 * 
+	 * @param rh			Record Handler to write records to
+	 * 
+	 * @param queryPre		Query prefix often "["
+	 * 
+	 * @param querySuf		Query suffix often "]"
+	 * 
+	 * @param tableNames	List of the tables
+	 * 
+	 * @param fromClauses	Mapping of extra tables for the from section
+	 * 
+	 * @param dataFields	Mapping of tablename to list of datafields
+	 * 
+	 * @param idFields		Mapping of tablename to idField name
+	 * 
+	 * @param whereClauses	List of conditions
+	 * 
+	 * @param relations		Mapping of tablename to mapping of fieldname to tablename
+	 * 
+	 * @param queryStrings	Mapping of tablename to mapping of fieldname to tablename
+	 */
+	public JDBCFetch(Connection dbConn,
+			RecordHandler rh,
+			String queryPre,
+			String querySuf,
+			List<String> tableNames,
+			HashMap<String, String> fromClauses,
+			HashMap<String, List<String>> dataFields,
+			HashMap<String, List<String>> idFields,
+			HashMap<String, List<String>> whereClauses,
+			HashMap<String, Map<String, String>> relations,
+			HashMap<String, List<String> > queryStrings) throws IOException{
+		
+
+		try {
+			this.cursor = dbConn.createStatement();
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		
+		this.rh = rh;
+		this.tableNames = tableNames;
+		this.fromClauses = fromClauses;
+		this.dataFields = dataFields;
+		this.idFields = idFields;
+		this.whereClauses = whereClauses;
+		this.relations = relations;
+		this.queryPre = queryPre;
+		this.querySuf = querySuf;
+		this.queryStrings = queryStrings;
 	}
 	
 	/**
@@ -393,6 +471,19 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to db
 	 */
 	private String buildSelect(String tableName) throws SQLException {
+		if(this.queryStrings != null && this.queryStrings.containsKey(tableName) ){
+			List<String> query = this.queryStrings.get(tableName);
+			StringBuilder sb = new StringBuilder();
+			for(String data : query){
+				sb.append(data);
+			}
+
+			sb.append("FROM ");
+			sb.append(tableName);
+			sb.append(";");
+			log.debug("User defined SQL Query:\n" + sb.toString());
+			return sb.toString();
+		}
 		boolean multiTable = this.fromClauses != null && this.fromClauses.containsKey(tableName);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
@@ -474,6 +565,8 @@ public class JDBCFetch {
 	 * @throws IOException error processing record handler or jdbc connection
 	 */
 	public void execute() throws IOException {
+
+
 		// For each Table
 		try {
 			for(String tableName : getTableNames()) {
