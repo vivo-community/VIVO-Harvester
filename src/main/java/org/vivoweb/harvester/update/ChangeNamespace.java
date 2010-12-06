@@ -309,14 +309,23 @@ public class ChangeNamespace {
 		HashSet<String> changeArray = new HashSet<String>();
 		log.trace("Begin Rename Changes");
 		for(QuerySolution solution : IterableAdaptor.adapt(changeList)) {
-			changeArray.add(solution.getResource("sNew").getURI());
+			String renameURI = solution.getResource("sNew").getURI();
+			log.trace("Get URI: " + renameURI);
+			changeArray.add(renameURI);
 		}
 		
+		log.trace("UnusedURI loop");
 		HashSet<String> uriCheck = new HashSet<String>();
 		for(String sNew : changeArray) {
-			Resource res = model.getJenaModel().getResource(sNew);	
+			log.trace("getResource Start");
+			Resource res = model.getJenaModel().getResource(sNew);
+			log.trace("getResource End");
+			log.trace("res: " + res);
 			String uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
+			log.trace("unusedURI: " + uri);
+			log.trace("Renaming Start");
 			ResourceUtils.renameResource(res, uri);
+			log.trace("Renaming End");
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
 		log.trace("End Rename Changes");
