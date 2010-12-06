@@ -230,7 +230,7 @@ public class ScoreTest extends TestCase {
 	public void testAlgorithims() throws IOException {
 		log.info("BEGIN testAlgorithims");
 		Score Test;
-		List<String> workEmail = Arrays.asList("workEmail");
+		List<String> workEmail = Arrays.asList("http://vivoweb.org/ontology/core#workEmail","http://vivoweb.org/ontology/score#workEmail");
 		List<String> blank = Arrays.asList();
 		JenaConnect input;
 		JenaConnect output;
@@ -251,21 +251,9 @@ public class ScoreTest extends TestCase {
 		outputProp.put("modelName", "output");
 		output = JenaConnect.parseConfig(this.vivoXML, outputProp);
 		
-		// run author score
-		Test = new Score(input, vivo, output, false, false, blank, blank, blank, "3", null, null, null);
-		Test.execute();
+		// run match score
 		
-		// check output model
-		if(Test.getScoreOutput().getJenaModel().isEmpty()) {
-			log.error("Didn't match anything with author name scoring");
-			fail("Didn't match anything with author name scoring");
-		}
-		
-		// empty output model
-		Test.getScoreOutput().getJenaModel().removeAll();
-		
-		// run exactmatch score
-		Test = new Score(input, vivo, output, false, false, workEmail, blank, blank, null, null, null, null);
+		Test = new Score(input, vivo, output, false, false, workEmail, true, "");
 		Test.execute();
 		
 		// check output model
@@ -305,7 +293,7 @@ public class ScoreTest extends TestCase {
 		}
 		
 		
-		Test.close();
+		//Test.close();
 		input.close();
 		vivo.close();
 		output.close();
