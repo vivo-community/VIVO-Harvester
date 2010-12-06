@@ -142,7 +142,9 @@ public class ChangeNamespace {
 				uri = null;
 				continue;
 			}
+			log.trace("uri: "+uri);
 			for (JenaConnect model : models) {
+				log.trace("model: "+model);
 				if (model.containsURI(uri)) {
 					uri = null;
 					break;
@@ -321,7 +323,9 @@ public class ChangeNamespace {
 			Resource res = model.getJenaModel().getResource(sNew);
 			log.trace("getResource End");
 			log.trace("res: " + res);
+			log.trace("getUnusedURI Start");
 			String uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
+			log.trace("getUnusedURI End");
 			log.trace("unusedURI: " + uri);
 			log.trace("Renaming Start");
 			ResourceUtils.renameResource(res, uri);
