@@ -16,17 +16,17 @@ import com.hp.hpl.jena.sdb.util.StoreUtils;
 public class FailingToDeleteFromSDB {
 	
 	/** */
-	private static String dbClass = "org.hsqldb.jdbc.JDBCDriver";
+	private static String dbClass = "org.h2.Driver";
 	/** */
-	private static String dbUrl = "jdbc:hsqldb:mem:test";
+	private static String dbUrl = "jdbc:h2:mem:test";
 	/** */
-	private static String dbUser = "SA";
+	private static String dbUser = "sa";
 	/** */
 	private static String dbPass = "";
 	/** */
 	private static String dbLayout = "layout2";
 	/** */
-	private static String dbType = "HSQLDB";
+	private static String dbType = "H2";
 	/** */
 	private static String modelName = "testing123";
 	/** */
