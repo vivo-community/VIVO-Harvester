@@ -15,10 +15,10 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.JenaRecordHandler;
 import org.vivoweb.harvester.util.repo.MapRecordHandler;
-import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.RecordMetaData;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import org.vivoweb.harvester.util.repo.TextFileRecordHandler;
 
 /**
@@ -113,7 +113,7 @@ public class RecordHandlerTest extends TestCase {
 	public void testJenaAddRecord() {
 		log.info("BEGIN testJenaAddRecord");
 		try {
-			this.rh = new JenaRecordHandler(new RDBJenaConnect("jdbc:h2:mem:TestRH-Jena;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver"), "http://localhost/jenarecordhandlerdemo#data");
+			this.rh = new JenaRecordHandler(new SDBJenaConnect("jdbc:h2:mem:TestRH-Jena", "sa", "", "H2", "org.h2.Driver", "layout2"), "http://localhost/jenarecordhandlerdemo#data");
 			runBattery();
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);

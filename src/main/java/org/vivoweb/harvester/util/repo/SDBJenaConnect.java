@@ -13,6 +13,7 @@ import com.hp.hpl.jena.sdb.Store;
 import com.hp.hpl.jena.sdb.StoreDesc;
 import com.hp.hpl.jena.sdb.sql.SDBConnectionFactory;
 import com.hp.hpl.jena.sdb.util.StoreUtils;
+import com.hp.hpl.jena.sparql.core.Quad;
 
 /**
  * Connection Helper for SDB Jena Models
@@ -76,11 +77,12 @@ public class SDBJenaConnect extends JenaConnect {
 	private void init(Store oldStore, String modelName) throws IOException {
 		this.store = oldStore;
 		initStore();
-		this.setJenaModel(SDBFactory.connectNamedModel(this.store, modelName));
 		if(modelName != null) {
 			this.setModelName(modelName);
+			this.setJenaModel(SDBFactory.connectNamedModel(this.store, modelName));
 		} else {
-			this.setModelName("DEFAULT");
+			this.setModelName(Quad.defaultGraphIRI.getURI());
+			this.setJenaModel(SDBFactory.connectDefaultModel(this.store));
 		}
 	}
 

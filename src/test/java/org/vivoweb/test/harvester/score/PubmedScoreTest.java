@@ -43,8 +43,8 @@ public class PubmedScoreTest extends TestCase {
 	/**
 	 * Test Scoring Algorithms
 	 */
-	public void testAlgorithims() {
-		log.info("BEGIN testAlgorithims");
+	public void testPubmedScoreAlgorithims() {
+		log.info("BEGIN testPubmedScoreAlgorithims");
 		PubmedScore Test;
 //		List<String> workEmail = Arrays.asList("workEmail");
 //		List<String> blank = Arrays.asList();
@@ -86,7 +86,7 @@ public class PubmedScoreTest extends TestCase {
 			log.error(e.getMessage(), e);
 			fail(e.getMessage());
 		}
-		log.info("END testAlgorithims");
+		log.info("END testPubmedScoreAlgorithims");
 	}
 	
 	/**
@@ -339,7 +339,7 @@ public class PubmedScoreTest extends TestCase {
 					 "<Param name=\"type\">sdb</Param>" +
 					 "<Param name=\"dbLayout\">layout2</Param>" +
 					 "<Param name=\"dbClass\">org.h2.Driver</Param>" +
-					 "<Param name=\"dbType\">HSQLDB</Param>" +
+					 "<Param name=\"dbType\">H2</Param>" +
 					 "<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +
 					 "<Param name=\"modelName\">testVivoModel</Param>" +
 					 "<Param name=\"dbUser\">sa</Param>" +

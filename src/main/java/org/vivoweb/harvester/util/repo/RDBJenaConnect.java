@@ -9,6 +9,7 @@ package org.vivoweb.harvester.util.repo;
 import java.io.IOException;
 import java.sql.SQLException;
 import com.hp.hpl.jena.db.DBConnection;
+import com.hp.hpl.jena.db.GraphRDB;
 import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
@@ -56,11 +57,12 @@ public class RDBJenaConnect extends JenaConnect {
 	 * @param modelName the model name to use
 	 */
 	private RDBJenaConnect(IDBConnection conn, String modelName) {
-		this.setJenaModel(initModel(conn).openModel(modelName, false));
 		if(modelName != null) {
 			this.setModelName(modelName);
+			this.setJenaModel(initModel(conn).openModel(modelName, false));
 		} else {
-			this.setModelName("DEFAULT");
+			this.setModelName(GraphRDB.DEFAULT);
+			this.setJenaModel(initModel(conn).createDefaultModel());
 		}
 	}
 	

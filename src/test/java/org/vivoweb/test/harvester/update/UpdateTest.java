@@ -127,7 +127,7 @@ public class UpdateTest extends TestCase {
 	 */
 	public void testUpdate() throws IOException, ClassNotFoundException, InterruptedException{
 		log.info("BEGIN testUpdate");
-//		JenaConnect previousJC = new RDBJenaConnect("jdbc:h2:mem:test", "sa", "", "HSQLDB", "org.h2.Driver", "hr20101101");
+//		JenaConnect previousJC = new RDBJenaConnect("jdbc:h2:mem:test;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "hr20101101");
 		JenaConnect previousJC = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "hr20101101");
 		previousJC.loadRdfFromString(this.previousRDF, null, null);
 		

@@ -19,9 +19,8 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -39,13 +38,13 @@ public class JenaConnectTest extends TestCase {
 	/** */
 	private static final String type = "sdb";
 	/** */
-	private static final String layout = "layout2";
+	private static final String dbLayout = "layout2";
 	/** */
 	private static final String dbClass = "org.h2.Driver";
 	/** */
-	private static final String dbType = "HSQLDB";
+	private static final String dbType = "H2";
 	/** */
-	private static final String dbUrl = "jdbc:h2:mem:TestJCmodel;MODE=HSQLDB";
+	private static final String dbUrl = "jdbc:h2:mem:TestJCmodel";
 	/** */
 	private static final String modelName = "http://vitro.mannlib.cornell.edu/default/vitro-kb-2";
 	/** */
@@ -96,9 +95,8 @@ public class JenaConnectTest extends TestCase {
 		log.info("BEGIN testParseConfigFile");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-			bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + layout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
+			bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + dbLayout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
 			bw.close();
-			System.out.println("ready to parse");
 			this.jc = JenaConnect.parseConfig(this.configFile);
 			runWriteTest();
 		} catch(Exception e) {
@@ -113,10 +111,11 @@ public class JenaConnectTest extends TestCase {
 	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)}.
 	 * @throws ClassNotFoundException error loading class
+	 * @throws IOException error
 	 */
-	public void testJenaConnectDBConstNoModelName() throws ClassNotFoundException {
+	public void testJenaConnectDBConstNoModelName() throws ClassNotFoundException, IOException {
 		log.info("BEGIN testJenaConnectDBConstNoModelName");
-		this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
+		this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout);
 		runWriteTest();
 		log.info("END testJenaConnectDBConstNoModelName");
 	}
@@ -126,10 +125,11 @@ public class JenaConnectTest extends TestCase {
 	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName)}.
 	 * @throws ClassNotFoundException error loading class
+	 * @throws IOException error
 	 */
-	public void testJenaConnectDBConstWithModelName() throws ClassNotFoundException {
+	public void testJenaConnectDBConstWithModelName() throws ClassNotFoundException, IOException {
 		log.info("BEGIN testJenaConnectDBConstWithModelName");
-		this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName);
+		this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout, modelName);
 		runWriteTest();
 		log.info("END testJenaConnectDBConstWithModelName");
 	}
@@ -143,7 +143,7 @@ public class JenaConnectTest extends TestCase {
 	public void testJenaConnectConstSibling() throws ClassNotFoundException {
 		log.info("BEGIN testJenaConnectConstSibling");
 		try {
-			this.jc = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, modelName).neighborConnectClone(modelName2);
+			this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout, modelName).neighborConnectClone(modelName2);
 			runWriteTest();
 		} catch(IOException e) {
 			log.error(e.getMessage(), e);

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Qualify;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.RDBJenaConnect;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
@@ -28,9 +28,11 @@ public class QualifyTest extends TestCase {
 	/** */
 	private static final String dbClass = "org.h2.Driver";
 	/** */
-	private static final String dbType = "HSQLDB";
+	private static final String dbLayout = "layout2";
 	/** */
-	private static final String dbUrl = "jdbc:h2:mem:TestSPARQLQualifyModel;MODE=HSQLDB";
+	private static final String dbType = "H2";
+	/** */
+	private static final String dbUrl = "jdbc:h2:mem:TestSPARQLQualifyModel";
 	/** */
 	private static final String dbUser = "sa";
 	/** */
@@ -45,7 +47,7 @@ public class QualifyTest extends TestCase {
 	@Override
 	public void setUp() throws Exception {
 		InitLog.initLogger(QualifyTest.class);
-		this.jena = new RDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass);
+		this.jena = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout);
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 		this.score = this.jena.getJenaModel().createProperty("http://vivoweb.org/harvester/score#Affiliation");
 	}

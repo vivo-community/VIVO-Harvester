@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
 
 /**
@@ -45,6 +46,10 @@ public class PubmedFetch extends NIHFetch {
 	 * The name of the PubMed database
 	 */
 	private static String database = "pubmed";
+	/**
+	 * a base xmlrecordoutputstream
+	 */
+	private static XMLRecordOutputStream baseXMLROS = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", null, PubmedFetch.class);
 	
 	/**
 	 * Constructor:
@@ -76,6 +81,21 @@ public class PubmedFetch extends NIHFetch {
 	}
 	
 	/**
+	 * Constructor:
+	 * Primary method for running a PubMed Fetch. The email address of the person responsible
+	 * for this install of the program is required by NIH guidelines so the person can be
+	 * contacted if there is a problem, such as sending too many queries too quickly.
+	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
+	 * @param searchTerm query to run on pubmed data
+	 * @param maxRecords maximum number of records to fetch
+	 * @param batchSize number of records to fetch per batch
+	 * @param rh record handler to write to
+	 */
+	public PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh) {
+		super(emailAddress, searchTerm, maxRecords, batchSize, baseXMLROS.clone().setRecordHandler(rh), database);
+	}
+	
+	/**
 	 * Constructor
 	 * @param args commandline argument
 	 * @throws IOException error creating task
@@ -90,7 +110,7 @@ public class PubmedFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public PubmedFetch(ArgList argList) throws IOException {
-		super(argList, database, new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", null, PubmedFetch.class));
+		super(argList, database, baseXMLROS.clone());
 	}
 	
 	@Override

@@ -8,6 +8,8 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Random;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
@@ -19,10 +21,15 @@ import com.hp.hpl.jena.rdf.model.ModelMaker;
 public class MemJenaConnect extends JenaConnect {
 	
 	/**
+	 * Set of already used memory model names
+	 */
+	private static HashSet<String> usedModelNames = new HashSet<String>();
+	
+	/**
 	 * Constructor (Memory Default Model)
 	 */
 	public MemJenaConnect() {
-		this(null);
+		this(generateUnusedModelName());
 	}
 	
 	/**
@@ -36,8 +43,9 @@ public class MemJenaConnect extends JenaConnect {
 			m = mm.openModel(modelName, false);
 			this.setModelName(modelName);
 		} else {
-			m = mm.createDefaultModel();
-			this.setModelName("DEFAULT");
+			String name = generateUnusedModelName();
+			m = mm.openModel(name, false);
+			this.setModelName(name);
 		}
 		this.setJenaModel(m);
 	}
@@ -52,6 +60,23 @@ public class MemJenaConnect extends JenaConnect {
 	public MemJenaConnect(InputStream in, String namespace, String language) {
 		this();
 		this.loadRdfFromStream(in, namespace, language);
+	}
+	
+	/**
+	 * Get an unused memory model name
+	 * @return the name
+	 */
+	private static String generateUnusedModelName() {
+		Random random = new Random();
+		String name = null;
+		while(name == null) {
+			name = "DEFAULT"+random.nextInt(Integer.MAX_VALUE);
+			if(usedModelNames.contains(name)) {
+				name = null;
+			}
+		}
+		usedModelNames.add(name);
+		return name;
 	}
 	
 	@Override

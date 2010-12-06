@@ -6,10 +6,7 @@
  ******************************************************************************/
 package org.vivoweb.test.harvester.fetch;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.PubmedFetch;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.repo.JenaRecordHandler;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.w3c.dom.Document;
@@ -36,19 +35,20 @@ public class PubmedFetchTest extends TestCase {
 	 * SLF4J Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(PubmedFetchTest.class);
-	/** */
-	private File configFile;
+//	/** */
+//	private File configFile;
 	/** */
 	private RecordHandler rh;
 	
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(PubmedFetchTest.class);
-		this.configFile = File.createTempFile("rhConfig", "xml");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.JDBCRecordHandler\">\n	<Param name=\"jdbcDriverClass\">org.h2.Driver</Param>\n	<Param name=\"connLine\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"username\">sa</Param>\n	<Param name=\"password\"></Param>\n	<Param name=\"tableName\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
-		bw.close();
-		this.rh = null;
+//		this.configFile = File.createTempFile("rhConfig", "xml");
+//		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
+//		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.JDBCRecordHandler\">\n	<Param name=\"jdbcDriverClass\">org.h2.Driver</Param>\n	<Param name=\"connLine\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"username\">sa</Param>\n	<Param name=\"password\"></Param>\n	<Param name=\"tableName\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
+//		bw.close();
+//		this.rh = null;
+		this.rh = new JenaRecordHandler(new MemJenaConnect(), "http://vivoweb.org/harvester/test/datatype");
 	}
 	
 	@Override
@@ -59,17 +59,15 @@ public class PubmedFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedFetch#main(java.lang.String[]) main(String... args)}.
+	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler) PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
 	 */
-	public final void testPubmedFetchMain() throws IOException, ParserConfigurationException, SAXException {
-		log.info("BEGIN testPubmedFetchMain");
-		this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
-			
+	public final void testPubmedFetchOneRecord() throws IOException, ParserConfigurationException, SAXException {
+		log.info("BEGIN testPubmedFetchOneRecord");
 		//test 1 record
-		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
+		new PubmedFetch("test@test.com", "1:8000[dp]", "1", "1", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
 		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		for(Record r : this.rh) {
@@ -77,23 +75,19 @@ public class PubmedFetchTest extends TestCase {
 			Element elem = doc.getDocumentElement();
 			traverseNodes(elem.getChildNodes());
 		}
-		
-		//test 0 records, batch 1
-		//new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
-		//assertTrue(this.rh.iterator().hasNext());
-		
-		//test 1 records, batch 0
-		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
-		assertTrue(this.rh.iterator().hasNext());
-
-		//test 0 records, batch 0
-		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "0", "-b", "0", "-o", this.configFile.getAbsolutePath()}).execute();
-		assertTrue(this.rh.iterator().hasNext());
-		
+		log.info("END testPubmedFetchOneRecord");
+	}
+	
+	/**
+	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler) PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
+	 * @throws IOException error
+	 */
+	public final void testPubmedFetchManyRecords() throws IOException {
+		log.info("BEGIN testPubmedFetchManyRecords");
 		//test 1200 records, batch 500
-		new PubmedFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "1200", "-b", "500", "-o", this.configFile.getAbsolutePath()}).execute();
+		new PubmedFetch("test@test.com", "1:8000[dp]", "1200", "500", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
-		log.info("END testPubmedFetchMain");
+		log.info("END testPubmedFetchManyRecords");
 	}
 	
 	/**

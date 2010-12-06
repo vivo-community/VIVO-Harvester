@@ -48,8 +48,8 @@ public class ScoreTest extends TestCase {
 	 * Test Argument parsing for scoring
 	 * @throws IOException error
 	 */
-	public void testArguments() throws IOException {
-		log.info("BEGIN testArguments");
+	public void testScoreArguments() throws IOException {
+		log.info("BEGIN testScoreArguments");
 		String[] args;
 		Score Test;
 		
@@ -220,15 +220,15 @@ public class ScoreTest extends TestCase {
 		input.close();
 		vivo.close();
 		output.close();
-		log.info("END testArguments");
+		log.info("END testScoreArguments");
 	}
 	
 	/**
 	 * Test Scoring Algorithms
 	 * @throws IOException error
 	 */
-	public void testAlgorithims() throws IOException {
-		log.info("BEGIN testAlgorithims");
+	public void testScoreAlgorithims() throws IOException {
+		log.info("BEGIN testScoreAlgorithims");
 		Score Test;
 		List<String> workEmail = Arrays.asList("http://vivoweb.org/ontology/core#workEmail","http://vivoweb.org/ontology/score#workEmail");
 		List<String> blank = Arrays.asList();
@@ -297,7 +297,7 @@ public class ScoreTest extends TestCase {
 		input.close();
 		vivo.close();
 		output.close();
-		log.info("END testAlgorithims");
+		log.info("END testScoreAlgorithims");
 	}
 	
 	/**
@@ -559,7 +559,7 @@ public class ScoreTest extends TestCase {
 					 "<Param name=\"type\">sdb</Param>" +
 					 "<Param name=\"dbLayout\">layout2</Param>" +
 					 "<Param name=\"dbClass\">org.h2.Driver</Param>" +
-					 "<Param name=\"dbType\">HSQLDB</Param>" +
+					 "<Param name=\"dbType\">H2</Param>" +
 					 "<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +
 					 "<Param name=\"modelName\">testVivoModel</Param>" +
 					 "<Param name=\"dbUser\">sa</Param>" +

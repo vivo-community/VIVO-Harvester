@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * An Output Stream that breaks XML blobs into individual Records and writes to a RecordHandler
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class XMLRecordOutputStream extends OutputStream {
+public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	/**
 	 * SLF4J Logger
 	 */
@@ -74,6 +74,13 @@ public class XMLRecordOutputStream extends OutputStream {
 	}
 	
 	@Override
+	public XMLRecordOutputStream clone() {
+		XMLRecordOutputStream template = new XMLRecordOutputStream("", this.header, this.footer, this.idRegex.pattern(), this.rh, this.opClass);
+		template.closeTag = this.closeTag;
+		return template;
+	}
+	
+	@Override
 	public void write(int arg0) throws IOException {
 		this.buf.write(arg0);
 		byte[] a = this.buf.toByteArray();
@@ -113,8 +120,10 @@ public class XMLRecordOutputStream extends OutputStream {
 	/**
 	 * Set the record handler
 	 * @param rh new record handler
+	 * @return self reference
 	 */
-	public void setRecordHandler(RecordHandler rh) {
+	public XMLRecordOutputStream setRecordHandler(RecordHandler rh) {
 		this.rh = rh;
+		return this;
 	}
 }
