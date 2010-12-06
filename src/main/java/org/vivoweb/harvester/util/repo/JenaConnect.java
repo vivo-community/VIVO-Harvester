@@ -60,14 +60,18 @@ public abstract class JenaConnect {
 	 * Model we are connecting to
 	 */
 	private Model jenaModel;
+	/**
+	 * The modelname
+	 */
+	private String modelName;
 	
 	/**
 	 * Factory (connects to the same jena triple store as another jena connect, but uses a different named model)
-	 * @param modelName the model name to use
+	 * @param newModelName the model name to use
 	 * @return the new jenaconnect
 	 * @throws IOException unable to secure db connection
 	 */
-	public abstract JenaConnect neighborConnectClone(String modelName) throws IOException;
+	public abstract JenaConnect neighborConnectClone(String newModelName) throws IOException;
 	
 	/**
 	 * Config Stream Based Factory that overrides parameters
@@ -677,4 +681,20 @@ public abstract class JenaConnect {
 	 * Remove all statements from model
 	 */
 	public abstract void truncate();
+
+	/**
+	 * Set the modelName
+	 * @param modelName the model name
+	 */
+	protected void setModelName(String modelName) {
+		this.modelName = modelName;
+	}
+
+	/**
+	 * Get the modelName
+	 * @return the modelName
+	 */
+	public String getModelName() {
+		return this.modelName;
+	}
 }

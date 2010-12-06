@@ -53,9 +53,8 @@ public class SDBJenaConnect extends JenaConnect {
 	 */
 	public SDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout, String modelName) throws ClassNotFoundException, IOException {
 		Class.forName(dbClass);
-		this.store = SDBFactory.connectStore(SDBConnectionFactory.create(dbUrl, dbUser, dbPass), new StoreDesc(dbLayout, dbType));
-		initStore();
-		this.setJenaModel(SDBFactory.connectNamedModel(this.store, modelName));
+		Store oldStore = SDBFactory.connectStore(SDBConnectionFactory.create(dbUrl, dbUser, dbPass), new StoreDesc(dbLayout, dbType)); 
+		init(oldStore, modelName);
 	}
 	
 	/**
@@ -65,9 +64,24 @@ public class SDBJenaConnect extends JenaConnect {
 	 * @throws IOException error connecting to store
 	 */
 	private SDBJenaConnect(Store oldStore, String modelName) throws IOException {
+		init(oldStore, modelName);
+	}
+	
+	/**
+	 * Initialize the sdb jena connect
+	 * @param oldStore the store to use
+	 * @param modelName the model name to use
+	 * @throws IOException error connecting to store
+	 */
+	private void init(Store oldStore, String modelName) throws IOException {
 		this.store = oldStore;
 		initStore();
 		this.setJenaModel(SDBFactory.connectNamedModel(this.store, modelName));
+		if(modelName != null) {
+			this.setModelName(modelName);
+		} else {
+			this.setModelName("DEFAULT");
+		}
 	}
 
 	@Override

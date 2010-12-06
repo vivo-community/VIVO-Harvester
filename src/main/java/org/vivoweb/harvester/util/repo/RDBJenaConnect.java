@@ -57,6 +57,11 @@ public class RDBJenaConnect extends JenaConnect {
 	 */
 	private RDBJenaConnect(IDBConnection conn, String modelName) {
 		this.setJenaModel(initModel(conn).openModel(modelName, false));
+		if(modelName != null) {
+			this.setModelName(modelName);
+		} else {
+			this.setModelName("DEFAULT");
+		}
 	}
 	
 	@Override

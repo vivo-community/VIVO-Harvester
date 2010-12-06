@@ -34,8 +34,10 @@ public class MemJenaConnect extends JenaConnect {
 		Model m;
 		if(modelName != null) {
 			m = mm.openModel(modelName, false);
+			this.setModelName(modelName);
 		} else {
 			m = mm.createDefaultModel();
+			this.setModelName("DEFAULT");
 		}
 		this.setJenaModel(m);
 	}
