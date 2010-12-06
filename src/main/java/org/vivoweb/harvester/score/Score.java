@@ -443,35 +443,57 @@ public class Score {
 
 		int counter = 0;
 		//FIXME:  Will break change to jc.getModelName when it exists.
-		StringBuilder vivoWhere = new StringBuilder(" Graph " + this.vivo.getModelName() + " {\n ");
-		StringBuilder scoreWhere = new StringBuilder(" Graph " + this.scoreInput.getModelName() + " {\n ");
+		StringBuilder vivoWhere = new StringBuilder(" Graph <" + this.vivo.getModelName() + "> {\n ");
+		StringBuilder scoreWhere = new StringBuilder(" Graph <" + this.scoreInput.getModelName() + "> {\n ");
+		StringBuilder overallWhere = new StringBuilder("");
 		
 		for (String properties : propertyList) {
 			String[] propSplit = properties.split("=");
 			if (propSplit.length > 2){
 				log.error("The Data Properites passed can not contain multiple equals");
 			} else if (properties.split("=").length == 2){
-				vivoWhere.append("\t?sVIVO <").append(propSplit[0]).append("> ").append("?o" + counter).append(" . \n");
-				scoreWhere.append("\t?sScore <").append(propSplit[1]).append("> ").append("?o" + counter).append(" . \n");
+				vivoWhere.append("\t?sVIVO <").append(propSplit[0]).append("> ").append("?ov" + counter).append(" . \n");
+				scoreWhere.append("\t?sScore <").append(propSplit[1]).append("> ").append("?os" + counter).append(" . \n");
+				if (overallWhere.length() == 0){
+					overallWhere.append("\tFILTER ((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
+				} else {
+					overallWhere.append("((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
+				}		
 			} else {
-				vivoWhere.append("\t?sVIVO <").append(properties).append("> ").append("?o" + counter).append(" . \n");
-				scoreWhere.append("\t?sScore <").append(properties).append("> ").append("?o" + counter).append(" . \n");
-			}			
+				vivoWhere.append("\t?sVIVO <").append(properties).append("> ").append("?ov" + counter).append(" . \n");
+				scoreWhere.append("\t?sScore <").append(properties).append("> ").append("?os" + counter).append(" . \n");
+				if (overallWhere.length() == 0){
+					overallWhere.append("\tFILTER ((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
+				} else {
+					overallWhere.append("((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
+				}	
+			}
+			counter++;
 		}
 		
 		vivoWhere.append("} . \n");
 		scoreWhere.append("} . \n");
 		
+		sQuery.append(vivoWhere.toString());
+		sQuery.append(scoreWhere.toString());
+		
 		//filters where the two items that match are the same node
-		sQuery.append("\tFILTER (str(?sNew) != str(?sOld)) . \n");
+		if (overallWhere.length() > 0){
+			overallWhere.append(" (str(?sNew) != str(?sOld))) \n}\n");	
+		} else {
+			sQuery.append("\tFILTER (str(?sNew) != str(?sOld))) \n}\n");	
+		}
+
+		sQuery.append(overallWhere.toString());
+		
 				
 		log.debug("Match Query:\n"+sQuery.toString());
 		
 		Model unionModel = this.scoreInput.getJenaModel().union(this.vivo.getJenaModel());
+		DataSet ds = this.scoreInput.getJenaModel().
 		
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
-		
 		HashMap<String,String> uriArray = new HashMap<String,String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
 			uriArray.put(solution.getResource("sScore").getURI(), solution.getResource("sVIVO").getURI());
@@ -630,8 +652,8 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").setDescription("perform a match based on the paramaters given.  Properties may be passed as single properties applicable to both models or vivoProperty=scoreProperty").withParameters(true, "RDF_PREDICATES"));
 	
 		// Linking Methods
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").setDescription("link the two matched entities together using the pair of object properties vivoObj=scoreObj").withParameters(true, "RDF_PREDICATES"));
-		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").withParameters(true, "RDF_PREDICATES"));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").setDescription("link the two matched entities together using the pair of object properties vivoObj=scoreObj").withParameters(false, "RDF_PREDICATES",1));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").setRequired(false));
 		
 		// options
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("link-rename-inplace").setDescription("If set, this will not use the output model it will manipulate the records in place"));
