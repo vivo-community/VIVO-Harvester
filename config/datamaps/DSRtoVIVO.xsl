@@ -94,11 +94,11 @@
 					<ufVivo:deptID><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></ufVivo:deptID>
 				</rdf:Description>
 			</core:administeredBy>
-			<core:totalawardamount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalawardamount>
-			<core:sponsorawardID><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorawardID>
+			<core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
+			<core:sponsorAwardID><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardID>
 			
 			<xsl:choose>
-				<xsl:when test="$this/db-dbo.vwProjectTeam:FlowThruSponsorID = '-'">
+				<xsl:when test="string($this/db-dbo.vwProjectTeam:FlowThruSponsor) = ''">
 					<core:grantAwardedBy>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:SponsorID}For{$grantid}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
@@ -158,7 +158,7 @@
 			<core:roleIn>
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-					<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+					<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 				</rdf:Description>
 			</core:roleIn>
 			<xsl:choose>
@@ -167,7 +167,7 @@
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
-							<core:hasPrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+							<core:hasPrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:principalInvestigatorRoleOf>
 				</xsl:when>
@@ -176,7 +176,7 @@
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
-							<core:hasCo-PrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+							<core:hasCo-PrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:co-PrincipalInvestigatorRoleOf>
 				</xsl:otherwise>

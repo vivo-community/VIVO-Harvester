@@ -105,7 +105,7 @@ public class JDBCFetchTest extends TestCase {
 		queryStrings.put("people", "SELECT faculty.badge_num, faculty.fac_id, faculty.fname, faculty.lname, faculty.mname, faculty.jobtitle, paylevel.name, department.name, department.description FROM faculty, paylevel, department WHERE faculty.dept_id = department.dep_id AND faculty.paygrade_id = paylevel.id");
 		HashMap<String, List<String>> idFields = new HashMap<String, List<String>>();
 		idFields.put("people", Arrays.asList("faculty.fac_id"));
-		runConstTest(new JDBCFetch(this.conn,this.rh,"jdbc:h2:mem:TestJDBCFetchDB/",null,null,null,null,null,idFields ,null,null,queryStrings));
+		runConstTest(new JDBCFetch(this.conn, this.rh, "jdbc:h2:mem:TestJDBCFetchDB/", null, null, null, null, null, idFields, null, null, queryStrings));
 		log.info("END testJDBCFetchConstRunQuery");
 	}
 	
@@ -121,7 +121,7 @@ public class JDBCFetchTest extends TestCase {
 		assertTrue(this.rh.iterator().hasNext());
 		DocumentBuilder docC = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		for(Record r : this.rh) {
-			log.debug("Record '"+r.getID()+"':\n"+r.getData());
+			log.debug("Record '" + r.getID() + "':\n" + r.getData());
 			Document doc = docC.parse(new ByteArrayInputStream(r.getData().getBytes()));
 			Element elem = doc.getDocumentElement();
 			traverseNodes(elem.getChildNodes());
