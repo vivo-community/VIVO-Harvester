@@ -577,14 +577,14 @@ public abstract class JenaConnect {
 	 */
 	public boolean containsURI(String uri) {
 		//return this.jenaModel.containsResource(ResourceFactory.createResource(uri));
-		String query =	"SELECT ?s ?p ?o " +
+		String query =	"ASK" +
 						"WHERE " +
 						"{ " +
 							"?s ?p ?o . " +
-							"FILTER (str(?s) = \"" + uri + "\" ) " + 
+							"FILTER (sameTerm(?s,uri) " + 
 						"}";
 		log.debug(query);
-		return executeSelectQuery(query).hasNext();
+		return executeAskQuery(query);
 	}
 	
 	/**
