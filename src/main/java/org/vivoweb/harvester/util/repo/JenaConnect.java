@@ -581,7 +581,7 @@ public abstract class JenaConnect {
 						"WHERE " +
 						"{ " +
 							"?s ?p ?o . " +
-							"FILTER (sameTerm(?s,uri) " + 
+							"FILTER (str(?s) = \"" + uri + "\") " + 
 						"}";
 		log.debug(query);
 		return executeAskQuery(query);
