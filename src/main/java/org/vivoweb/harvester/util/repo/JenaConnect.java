@@ -37,13 +37,11 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 import com.hp.hpl.jena.update.UpdateAction;
@@ -579,23 +577,14 @@ public abstract class JenaConnect {
 	 */
 	public boolean containsURI(String uri) {
 		//return this.jenaModel.containsResource(ResourceFactory.createResource(uri));
-	
 		String query =	"SELECT ?s ?p ?o " +
 						"WHERE " +
 						"{ " +
-						"?s ?p ?o .  " +
-						"FILTER regex(str(?s), \"" + uri + "\" ) " + 
+							"?s ?p ?o . " +
+							"FILTER (str(?s) = \"" + uri + "\" ) " + 
 						"}";
 		log.debug(query);
-		
-		ResultSet result = this.executeSelectQuery(query);
-		
-		if (result.hasNext()) {
-			return true;
-		}
-		return false;
-	
-	
+		return executeSelectQuery(query).hasNext();
 	}
 	
 	/**
