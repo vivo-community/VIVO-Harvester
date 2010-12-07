@@ -52,17 +52,27 @@ public class Update {
 	 * wipe the incoming model
 	 */
 	private boolean wipeIncomingModel;
+	/**
+	 * Dump addition rdf to this file
+	 */
+	private String dumpAddFile;
+	/**
+	 * Dump subtraction rdf to this file
+	 */
+	private String dumpSubFile;
 	
 	/**
 	 * Constructor
 	 * @param prev Model to read previous records from
 	 * @param in Model to read incoming records from
 	 * @param vivo Model to write records to
+	 * @param addDumpFile Dump addition rdf to this file
+	 * @param subDumpFile Dump subtraction rdf to this file
 	 * @param ignoreSub ignore the subtractions
 	 * @param ignoreAdd ignore the additions
 	 * @param wipeIn wipe the incoming model
 	 */
-	public Update(JenaConnect prev, JenaConnect in, JenaConnect vivo, boolean ignoreSub, boolean ignoreAdd, boolean wipeIn) {
+	public Update(JenaConnect prev, JenaConnect in, JenaConnect vivo, String addDumpFile, String subDumpFile, boolean ignoreSub, boolean ignoreAdd, boolean wipeIn) {
 		// Require input args
 		if(prev == null || in == null) {
 			throw new IllegalArgumentException("Must provide input and previous models");
@@ -70,6 +80,8 @@ public class Update {
 		this.incomingJC = in;
 		this.previousJC = prev;
 		this.vivoJC = vivo;
+		this.dumpAddFile = addDumpFile;
+		this.dumpSubFile = subDumpFile;
 		this.ignoreAdditions = ignoreAdd;
 		this.ignoreSubtractions = ignoreSub;
 		this.wipeIncomingModel = wipeIn;
@@ -107,6 +119,9 @@ public class Update {
 			this.vivoJC = null;
 		}
 		
+		this.dumpAddFile = argList.get("A");
+		this.dumpSubFile = argList.get("S");
+		
 		this.ignoreAdditions = argList.has("a");
 		this.ignoreSubtractions = argList.has("s");
 		this.wipeIncomingModel = argList.has("w");
@@ -129,6 +144,9 @@ public class Update {
 		
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoModel").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
+		
+		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("addition-dump").withParameter(true, "DUMP_FILE").setDescription("dump file for output of addition rdf").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("subtraction-dump").withParameter(true, "DUMP_FILE").setDescription("dump file for output of subtraction rdf").setRequired(false));
 		
 		// switches
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("addition-ignore").withParameter(false, "NOADD_FLAG").setDescription("If set, this will prevent additions from being applied"));
@@ -153,12 +171,12 @@ public class Update {
 		
 		//run diff for subtractions previousJC - incomingJC  (IF BOOL NOT SET)
 		log.info("Finding Subtractions");
-		Diff.diff(this.previousJC, this.incomingJC,subJC,"logs/update_Subtractions.rdf.xml");
+		Diff.diff(this.previousJC, this.incomingJC,subJC, this.dumpSubFile);
 		log.debug("Subtraction RDF:\n"+subJC.exportRdfToString());
 			
 		//run diff for additions incomingJC - previous jc
 		log.info("Finding Additions");
-		Diff.diff(this.incomingJC, this.previousJC, addJC, "logs/update_Additions.rdf.xml");
+		Diff.diff(this.incomingJC, this.previousJC, addJC, this.dumpAddFile);
 		log.debug("Addition RDF:\n"+addJC.exportRdfToString());
 	
 		//if applyToVIVO

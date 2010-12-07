@@ -138,7 +138,7 @@ public class UpdateTest extends TestCase {
 		log.debug("incomingModel - pre update\n"+incomingJC.exportRdfToString());
 		
 		//testing new items
-		new Update(previousJC, incomingJC, null, false, false, false).execute();
+		new Update(previousJC, incomingJC, null, null, null, false, false, false).execute();
 		
 		Thread.sleep(10000);
 		

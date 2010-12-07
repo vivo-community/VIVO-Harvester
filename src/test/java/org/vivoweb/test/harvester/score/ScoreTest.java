@@ -74,7 +74,7 @@ public class ScoreTest extends TestCase {
 		VArgProp.put("modelName", "testVivoModel");
 		
 		JenaConnect input;
-		JenaConnect output;
+		@SuppressWarnings("unused")JenaConnect output;
 		JenaConnect vivo;
 		
 		// Load up everything before starting
@@ -237,7 +237,7 @@ public class ScoreTest extends TestCase {
 		log.info("BEGIN testScoreAlgorithims");
 		Score Test;
 		List<String> workEmail = Arrays.asList("http://vivoweb.org/ontology/core#workEmail=http://vivoweb.org/ontology/score#workEmail");
-		List<String> blank = Arrays.asList();
+		@SuppressWarnings("unused")List<String> blank = Arrays.asList();
 		JenaConnect input;
 		JenaConnect output;
 		JenaConnect vivo;
