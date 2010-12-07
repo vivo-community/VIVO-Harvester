@@ -259,14 +259,14 @@ public class ScoreTest extends TestCase {
 		output = JenaConnect.parseConfig(this.vivoXML, outputProp);
 		
 		// run match score
-		
+		log.debug("VIVO Dump\n" + vivo.exportRdfToString());
 		Test = new Score(input, vivo, output, false, false, workEmail, true, null);
 		Test.execute();
 		
 		// check output model
 		if(output.getJenaModel().isEmpty()) {
-			log.error("Didn't match anything with exact match scoring");
-			fail("Didn't match anything with exact match scoring");
+			log.error("Didn't match anything with match scoring");
+			fail("Didn't match anything with match scoring");
 		}
 		
 		// empty output model
@@ -426,64 +426,64 @@ public class ScoreTest extends TestCase {
 					 "<score:QualifierIsMajorTerm>Y N</score:QualifierIsMajorTerm>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh5\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Nuclear Medicine</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Nuclear Medicine</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier/>" +
-					 "<score:QualifierIsMajorTerm/>" +
+						 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+						 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+						 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+						 "<rdfs:label>Nuclear Medicine</rdfs:label>" +
+						 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+						 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+						 "<score:Descriptor>Nuclear Medicine</score:Descriptor>" +
+						 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+						 "<score:Qualifier/>" +
+						 "<score:QualifierIsMajorTerm/>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh6\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Radioimmunotherapy</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Radioimmunotherapy</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier>adverse effects methods</score:Qualifier>" +
-					 "<score:QualifierIsMajorTerm>N Y</score:QualifierIsMajorTerm>" +
+						 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+						 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+						 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+						 "<rdfs:label>Radioimmunotherapy</rdfs:label>" +
+						 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+						 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+						 "<score:Descriptor>Radioimmunotherapy</score:Descriptor>" +
+						 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+						 "<score:Qualifier>adverse effects methods</score:Qualifier>" +
+						 "<score:QualifierIsMajorTerm>N Y</score:QualifierIsMajorTerm>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh7\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Treatment Outcome</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Treatment Outcome</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier/>" +
-					 "<score:QualifierIsMajorTerm/>" +
+						 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+						 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+						 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+						 "<rdfs:label>Treatment Outcome</rdfs:label>" +
+						 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+						 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+						 "<score:Descriptor>Treatment Outcome</score:Descriptor>" +
+						 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+						 "<score:Qualifier/>" +
+						 "<score:QualifierIsMajorTerm/>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/journal/j1558-4623\">" +
-					 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Journal\"/>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<core:Title>Seminars in nuclear medicine</core:Title>" +
-					 "<rdfs:label>Seminars in nuclear medicine</rdfs:label>" +
-					 "<bibo:ISSN>1558-4623</bibo:ISSN>" +
-					 "<core:publicationVenueFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+						 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Journal\"/>" +
+						 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+						 "<core:Title>Seminars in nuclear medicine</core:Title>" +
+						 "<rdfs:label>Seminars in nuclear medicine</rdfs:label>" +
+						 "<bibo:ISSN>1558-4623</bibo:ISSN>" +
+						 "<core:publicationVenueFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCreated\">" +
-					 "<core:Year>\"2010\"</core:Year>" +
-					 "<core:Month>\"02\"</core:Month>" +
-					 "<core:Day>\"01\"</core:Day>" +
+						 "<core:Year>\"2010\"</core:Year>" +
+						 "<core:Month>\"02\"</core:Month>" +
+						 "<core:Day>\"01\"</core:Day>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCompleted\">" +
-					 "<core:Year>2010</core:Year>" +
-					 "<core:Month>07</core:Month>" +
-					 "<core:Day>08</core:Day>" +
+					 	"<core:Year>2010</core:Year>" +
+					 	"<core:Month>07</core:Month>" +
+					 	"<core:Day>08</core:Day>" +
 					 "</rdf:Description>" +
 					 "<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/d78212990\">" +
-					 "<rdfs:label>harvested mans</rdfs:label>" +
-					 "<score:ufid>78212990</score:ufid>" +
-					 "<foaf:firstName>Guy</foaf:firstName>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
+						 "<rdfs:label>harvested mans</rdfs:label>" +
+						 "<score:ufid>78212990</score:ufid>" +
+						 "<foaf:firstName>Guy</foaf:firstName>" +
+						 "<foaf:lastName>Fawkes</foaf:lastName>" +
 					 "</rdf:Description>" +
 					 "</rdf:RDF>");
 			out.close();

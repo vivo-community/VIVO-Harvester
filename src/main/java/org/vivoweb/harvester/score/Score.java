@@ -438,16 +438,18 @@ public class Score {
 		}
 			
 		//Find all namespace matches
-		StringBuilder sQuery =	new StringBuilder(
-			"SELECT ?sVIVO ?sScore \n" +
-			"WHERE {\n"
-		);
+		StringBuilder sQuery =	new StringBuilder("" +
+				"PREFIX scoreClone: <http://vivoweb.org/harvester/model/scoring#>" +
+				"SELECT ?sVIVO ?sScore\n" +
+				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
+				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
+				"WHERE\n{\n");
 
 		int counter = 0;
 		//FIXME:  Will break change to jc.getModelName when it exists.
-		StringBuilder vivoWhere = new StringBuilder(" Graph <" + this.vivo.getModelName() + "> {\n ");
-		StringBuilder scoreWhere = new StringBuilder(" Graph <" + this.scoreInput.getModelName() + "> {\n ");
-		StringBuilder overallWhere = new StringBuilder("");
+		StringBuilder vivoWhere = new StringBuilder("  GRAPH scoreClone:vivoClone\n  {\n");
+		StringBuilder scoreWhere = new StringBuilder("  GRAPH scoreClone:inputClone\n  {\n");
+		StringBuilder filter = new StringBuilder("\tFILTER (");
 		
 		for (String properties : propertyList) {
 			String[] propSplit = properties.split("=");
@@ -456,38 +458,40 @@ public class Score {
 			} else if (properties.split("=").length == 2){
 				vivoWhere.append("\t?sVIVO <").append(propSplit[0]).append("> ").append("?ov" + counter).append(" . \n");
 				scoreWhere.append("\t?sScore <").append(propSplit[1]).append("> ").append("?os" + counter).append(" . \n");
-				if (overallWhere.length() == 0){
-					overallWhere.append("\tFILTER ((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
-				} else {
-					overallWhere.append("((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
-				}		
+				filter.append("((sameTerm(?os" + counter + ", ?ov" + counter + "))) && ");
 			} else {
 				vivoWhere.append("\t?sVIVO <").append(properties).append("> ").append("?ov" + counter).append(" . \n");
 				scoreWhere.append("\t?sScore <").append(properties).append("> ").append("?os" + counter).append(" . \n");
-				if (overallWhere.length() == 0){
-					overallWhere.append("\tFILTER ((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
-				} else {
-					overallWhere.append("((str(?os" + counter + ") = str(?ov" + counter + ")) && ");
-				}	
+				filter.append("((sameTerm(?os" + counter + ", ?ov" + counter + ")) && ");
 			}
 			counter++;
 		}
 		
 		vivoWhere.append("} . \n");
 		scoreWhere.append("} . \n");
+		filter.append("(str(?sVIVO) != str(?sScore))) .\n");
 		
 		sQuery.append(vivoWhere.toString());
 		sQuery.append(scoreWhere.toString());
-		
-		//filters where the two items that match are the same node
-		if (overallWhere.length() > 0){
-			overallWhere.append(" (str(?sNew) != str(?sOld))) \n}\n");	
-		} else {
-			sQuery.append("\tFILTER (str(?sNew) != str(?sOld))) \n}\n");	
-		}
-
-		sQuery.append(overallWhere.toString());
-		
+		sQuery.append(filter.toString());
+		sQuery.append("}");
+//		sQuery = new StringBuilder("" +
+//				"PREFIX scoreClone: <http://vivoweb.org/harvester/model/scoring#>" +
+//				"SELECT ?sVIVO ?sScore\n" +
+//				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
+//				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
+//				"WHERE\n" +
+//				"{\n" +
+//				"  GRAPH scoreClone:vivoClone\n" +
+//				"  {\n" +
+//				"    ?sVIVO <http://vivoweb.org/ontology/core#workEmail> ?ov0 .\n" +
+//				"  } .\n" +
+//				"  GRAPH scoreClone:inputClone\n" +
+//				"  {\n" +
+//				"    ?sScore <http://vivoweb.org/ontology/score#workEmail> ?os0 .\n" +
+//				"  } .\n" +
+//				"  FILTER (sameTerm(?os0, ?ov0) && (str(?sVIVO) != str(?sScore))) .\n" +
+//				"} \n");
 				
 		log.debug("Match Query:\n"+sQuery.toString());
 		
@@ -497,11 +501,14 @@ public class Score {
 //		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
 		
 		SDBJenaConnect unionModel = new MemJenaConnect();
-		JenaConnect vivoClone = this.scoreInput.neighborConnectClone("ScoringVivoClone");
+		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
 		vivoClone.importRdfFromJC(this.vivo);
-		JenaConnect inputClone = this.scoreInput.neighborConnectClone("ScoringInputClone");
+		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
 		inputClone.importRdfFromJC(this.scoreInput);
 		Dataset ds = unionModel.getDataSet();
+		for(String sName : IterableAdaptor.adapt(ds.listNames())){
+			log.debug("Model in DataSet: " + sName);
+		}
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds); // FIXME Stephen/Chris: Query needs to now point to "ScoringVivoClone" and "ScoringInputClone"
 		HashMap<String,String> uriArray = new HashMap<String,String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
