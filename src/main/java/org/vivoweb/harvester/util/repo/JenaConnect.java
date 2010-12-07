@@ -576,11 +576,9 @@ public abstract class JenaConnect {
 	 * @return true if found, false otherwise
 	 */
 	public boolean containsURI(String uri) {
-		//return this.jenaModel.containsResource(ResourceFactory.createResource(uri));
 		String query =	"ASK " +
 						"{ " +
-							"?s ?p ?o . " +
-							"FILTER (str(?s), \"" + uri + "\" )) " +
+							"<" + uri + "> ?p ?o " +
 						"}";
 		log.debug(query); 
 		return executeAskQuery(query);

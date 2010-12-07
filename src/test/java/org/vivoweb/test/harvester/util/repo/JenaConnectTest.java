@@ -90,19 +90,15 @@ public class JenaConnectTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#parseConfig(org.apache.commons.vfs.FileObject)
 	 * JenaConnect.parseConfig(FileObject configFile)}.
+	 * @throws IOException error
 	 */
-	public void testParseConfigFile() {
+	public void testParseConfigFile() throws IOException {
 		log.info("BEGIN testParseConfigFile");
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-			bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + dbLayout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
-			bw.close();
-			this.jc = JenaConnect.parseConfig(this.configFile);
-			runWriteTest();
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
+		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + dbLayout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
+		bw.close();
+		this.jc = JenaConnect.parseConfig(this.configFile);
+		runWriteTest();
 		log.info("END testParseConfigFile");
 	}
 	
@@ -136,16 +132,12 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#neighborConnectClone(java.lang.String)
 	 * connect(String modelName)}.
+	 * @throws IOException error
 	 */
-	public void testJenaConnectConstSibling() {
+	public void testJenaConnectConstSibling() throws IOException {
 		log.info("BEGIN testJenaConnectConstSibling");
-		try {
-			this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout, modelName).neighborConnectClone(modelName2);
-			runWriteTest();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout, modelName).neighborConnectClone(modelName2);
+		runWriteTest();
 		log.info("END testJenaConnectConstSibling");
 	}
 	
@@ -202,20 +194,16 @@ public class JenaConnectTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#exportRdfToStream(java.io.OutputStream)
 	 * exportRDF(OutputStream out)}.
+	 * @throws IOException error
 	 */
-	public final void testExportRDF() {
+	public final void testExportRDF() throws IOException {
 		log.info("BEGIN testExportRDF");
-		try {
-			this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			this.jc.exportRdfToStream(baos);
-			baos.flush();
-			String output = baos.toString();
-			assertEquals(rdfOut, output);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		this.jc.exportRdfToStream(baos);
+		baos.flush();
+		String output = baos.toString();
+		assertEquals(rdfOut, output);
 		log.info("END testExportRDF");
 	}
 	
@@ -223,25 +211,32 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#importRdfFromRH(org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
 	 * importRDF(RecordHandler rh, String namespace)}.
+	 * @throws IOException error
 	 */
-	public final void testImportRDF() {
+	public final void testImportRDF() throws IOException {
 		log.info("BEGIN testImportRDF");
-		try {
-			RecordHandler rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJC-TFRH", "sa", "", "recordTable", "dataField");
-			rh.addRecord("department_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-department=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/department/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-department:name>CTRIP</db-department:name>\n    <db-department:description>UF Clinical &amp; Translational Research Informatics Program</db-department:description>\n  </rdf:Description>\n</rdf:RDF>", getClass());
-			rh.addRecord("faculty_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-faculty=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/faculty/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/faculty\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-faculty:badge_num>12345678</db-faculty:badge_num>\n    <db-faculty:fname>Bob</db-faculty:fname>\n    <db-faculty:mname>Alfred</db-faculty:mname>\n    <db-faculty:lname>Johnson</db-faculty:lname>\n    <db-faculty:jobtitle>Software Engineer</db-faculty:jobtitle>\n    <db-faculty:salary>156000</db-faculty:salary>\n    <db-faculty:paygrade_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel#id-1\"/>\n    <db-faculty:dept_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department#id-1\"/>\n  </rdf:Description>\n</rdf:RDF>", getClass());
-			rh.addRecord("faculty_id-2", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-faculty=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/faculty/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/faculty\">\n  <rdf:Description rdf:ID=\"id-2\">\n    <db-faculty:badge_num>98765432</db-faculty:badge_num>\n    <db-faculty:fname>Fredrick</db-faculty:fname>\n    <db-faculty:mname>Markus</db-faculty:mname>\n    <db-faculty:lname>Brown</db-faculty:lname>\n    <db-faculty:jobtitle>Junior Software Engineer</db-faculty:jobtitle>\n    <db-faculty:salary>22500</db-faculty:salary>\n    <db-faculty:paygrade_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel#id-2\"/>\n    <db-faculty:dept_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department#id-1\"/>\n  </rdf:Description>\n</rdf:RDF>", getClass());
-			rh.addRecord("paylevel_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-paylevel:name>IT Expert</db-paylevel:name>\n    <db-paylevel:low>100000</db-paylevel:low>\n    <db-paylevel:high>300000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
-			rh.addRecord("paylevel_id-2", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-2\">\n    <db-paylevel:name>IT Noob</db-paylevel:name>\n    <db-paylevel:low>20000</db-paylevel:low>\n    <db-paylevel:high>25000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
-			this.jc = new MemJenaConnect();
-			this.jc.importRdfFromRH(rh, null);
-			StmtIterator stmnt = this.jc.getJenaModel().listStatements();
-			assertTrue(stmnt.hasNext());
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		RecordHandler rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJC-TFRH", "sa", "", "recordTable", "dataField");
+		rh.addRecord("department_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-department=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/department/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-department:name>CTRIP</db-department:name>\n    <db-department:description>UF Clinical &amp; Translational Research Informatics Program</db-department:description>\n  </rdf:Description>\n</rdf:RDF>", getClass());
+		rh.addRecord("faculty_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-faculty=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/faculty/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/faculty\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-faculty:badge_num>12345678</db-faculty:badge_num>\n    <db-faculty:fname>Bob</db-faculty:fname>\n    <db-faculty:mname>Alfred</db-faculty:mname>\n    <db-faculty:lname>Johnson</db-faculty:lname>\n    <db-faculty:jobtitle>Software Engineer</db-faculty:jobtitle>\n    <db-faculty:salary>156000</db-faculty:salary>\n    <db-faculty:paygrade_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel#id-1\"/>\n    <db-faculty:dept_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department#id-1\"/>\n  </rdf:Description>\n</rdf:RDF>", getClass());
+		rh.addRecord("faculty_id-2", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-faculty=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/faculty/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/faculty\">\n  <rdf:Description rdf:ID=\"id-2\">\n    <db-faculty:badge_num>98765432</db-faculty:badge_num>\n    <db-faculty:fname>Fredrick</db-faculty:fname>\n    <db-faculty:mname>Markus</db-faculty:mname>\n    <db-faculty:lname>Brown</db-faculty:lname>\n    <db-faculty:jobtitle>Junior Software Engineer</db-faculty:jobtitle>\n    <db-faculty:salary>22500</db-faculty:salary>\n    <db-faculty:paygrade_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel#id-2\"/>\n    <db-faculty:dept_id rdf:resource=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/department#id-1\"/>\n  </rdf:Description>\n</rdf:RDF>", getClass());
+		rh.addRecord("paylevel_id-1", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-1\">\n    <db-paylevel:name>IT Expert</db-paylevel:name>\n    <db-paylevel:low>100000</db-paylevel:low>\n    <db-paylevel:high>300000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
+		rh.addRecord("paylevel_id-2", "<?xml version=\"1.0\"?>\n<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n         xmlns:db-paylevel=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/fields/paylevel/\"\n         xml:base=\"jdbc:mysql://127.0.0.1:3306/jdbctestharvest/paylevel\">\n  <rdf:Description rdf:ID=\"id-2\">\n    <db-paylevel:name>IT Noob</db-paylevel:name>\n    <db-paylevel:low>20000</db-paylevel:low>\n    <db-paylevel:high>25000</db-paylevel:high>\n  </rdf:Description>\n</rdf:RDF>", getClass());
+		this.jc = new MemJenaConnect();
+		this.jc.importRdfFromRH(rh, null);
+		StmtIterator stmnt = this.jc.getJenaModel().listStatements();
+		assertTrue(stmnt.hasNext());
 		log.info("END testImportRDF");
+	}
+	
+	/**
+	 * @throws IOException error
+	 */
+	public final void testContainsURI() throws IOException {
+		log.info("BEGIN testContainsURI");
+		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
+		assertTrue(this.jc.containsURI("http://www.w3schools.com"));
+		assertFalse(this.jc.containsURI("http://www.yourmom.com"));
+		log.info("END testContainsURI");
 	}
 	
 }
