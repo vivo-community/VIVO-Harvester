@@ -207,7 +207,7 @@ public class JDBCRecordHandler extends RecordHandler {
 			}
 		}
 		if(!a) {
-			log.warn("Database Does Not Contain Table: " + this.table + ". Attempting to create.");
+			log.debug("Database Does Not Contain Table: " + this.table + ". Attempting to create.");
 			createTable();
 		}
 	}
@@ -259,7 +259,7 @@ public class JDBCRecordHandler extends RecordHandler {
 			}
 		}
 		if(!a) {
-			log.warn("Database Does Not Contain Table: `" + this.table + "_rmd`. Attempting to create.");
+			log.debug("Database Does Not Contain Table: `" + this.table + "_rmd`. Attempting to create.");
 			createMetaTable();
 		}
 	}
@@ -379,28 +379,13 @@ public class JDBCRecordHandler extends RecordHandler {
 	
 	@Override
 	public void setParams(Map<String, String> params) throws IllegalArgumentException, IOException {
-		String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);
-		String connLine = getParam(params, "connLine", false);
-		String connType = getParam(params, "connType", false);
-		String host = getParam(params, "host", false);
-		String port = getParam(params, "port", false);
-		String dbName = getParam(params, "dbName", false);
-		String username = getParam(params, "username", true);
-		String password = getParam(params, "password", true);
-		String tableName = getParam(params, "tableName", true);
+		String dbClass = getParam(params, "dbClass", true);
+		String dbUrl = getParam(params, "dbUrl", true);
+		String dbUser = getParam(params, "dbUser", true);
+		String dbPass = getParam(params, "dbPass", true);
+		String dbTable = getParam(params, "dbTable", true);
 		String dataFieldName = getParam(params, "dataFieldName", true);
-		boolean has4part = !(connType == null || host == null || port == null || dbName == null);
-		if(connLine == null) {
-			if(!has4part) {
-				throw new IllegalArgumentException("Must have either connLine OR connType, host, port, and dbName");
-			}
-			initAll(jdbcDriverClass, buildConnLine(connType, host, port, dbName), username, password, tableName, dataFieldName);
-		} else {
-			if(has4part) {
-				throw new IllegalArgumentException("Must have either connLine OR connType, host, port, and dbName, not both");
-			}
-			initAll(jdbcDriverClass, connLine, username, password, tableName, dataFieldName);
-		}
+		initAll(dbClass, dbUrl, dbUser, dbPass, dbTable, dataFieldName);
 	}
 	
 	@Override

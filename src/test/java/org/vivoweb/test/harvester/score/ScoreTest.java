@@ -92,12 +92,7 @@ public class ScoreTest extends TestCase {
 		log.debug("Test -i iArg -v vArg -o oArg -m 'vivoworkEmail=scoreworkemail' -r");
 		args = new String[]{"-i", iArg, "-v", vArg, "-o", oArg, "-m", "http://vivoweb.org/ontology/core#workEmail=http://vivoweb.org/ontology/score#workEmail", "-r"};
 		log.debug(StringUtils.join(args, " "));
-		try {
-			Test = new Score(args);
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		Test = new Score(args);
 		
 		//inplace match with rename
 		log.debug("Test -i iArg -v vArg -m 'vivoworkEmail=scoreworkemail' -r -a");

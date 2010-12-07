@@ -78,9 +78,8 @@ public class Record {
 	 * Has this record been written since last processed by operator?
 	 * @param operator the class to check for
 	 * @return true if written since last processed by operator or if never been processed by operator
-	 * @throws IOException error retrieving meta data
 	 */
-	public boolean needsProcessed(Class<?> operator) throws IOException {
+	public boolean needsProcessed(Class<?> operator) {
 		return this.rh.needsProcessed(getID(), operator);
 	}
 }

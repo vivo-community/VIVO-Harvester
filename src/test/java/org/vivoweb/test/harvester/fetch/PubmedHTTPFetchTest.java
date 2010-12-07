@@ -43,7 +43,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 		InitLog.initLogger(PubmedHTTPFetchTest.class);
 		this.configFile = File.createTempFile("rhConfig", "xml");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.JDBCRecordHandler\">\n	<Param name=\"jdbcDriverClass\">org.h2.Driver</Param>\n	<Param name=\"connLine\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"username\">sa</Param>\n	<Param name=\"password\"></Param>\n	<Param name=\"tableName\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
+		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.JDBCRecordHandler\">\n	<Param name=\"dbClass\">org.h2.Driver</Param>\n	<Param name=\"dbUrl\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"dbUser\">sa</Param>\n	<Param name=\"dbPass\"></Param>\n	<Param name=\"dbTable\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
 		bw.close();
 		this.rh = null;
 	}

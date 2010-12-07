@@ -17,7 +17,10 @@ import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -254,6 +257,10 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 */
 	private static class RecordHandlerParser extends DefaultHandler {
 		/**
+		 * SLF4J Logger
+		 */
+		private static Logger logger = LoggerFactory.getLogger(RecordHandler.class);
+		/**
 		 * The RecordHandler we are building
 		 */
 		private RecordHandler rh;
@@ -280,7 +287,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		protected RecordHandlerParser() {
 			this.params = new HashMap<String, String>();
 			this.tempVal = "";
-			this.type = "Unset!";
+			this.type = null;
 		}
 		
 		/**
@@ -291,17 +298,22 @@ public abstract class RecordHandler implements Iterable<Record> {
 		 * @throws IOException xml parsing error
 		 */
 		protected RecordHandler parseConfig(String filename, Properties overrideParams) throws IOException {
-			// get a factory
-			SAXParserFactory spf = SAXParserFactory.newInstance();
-			try {
-				// get a new instance of parser
-				SAXParser sp = spf.newSAXParser();
-				// parse the file and also register this class for call backs
-				sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this);
-			} catch(SAXException e) {
-				throw new IOException(e.getMessage(), e);
-			} catch(ParserConfigurationException e) {
-				throw new IOException(e.getMessage(), e);
+			if(filename != null) {
+				try {
+					// get a factory
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					// get a new instance of parser
+					SAXParser sp = spf.newSAXParser();
+					FileObject file = VFS.getManager().resolveFile(new File("."), filename);
+					if(file.exists()) {
+						// parse the file and also register this class for call backs
+						sp.parse(file.getContent().getInputStream(), this);
+					}
+				} catch(SAXException e) {
+					throw new IOException(e.getMessage(), e);
+				} catch(ParserConfigurationException e) {
+					throw new IOException(e.getMessage(), e);
+				}
 			}
 			if(overrideParams != null) {
 				for(String key : overrideParams.stringPropertyNames()) {
@@ -309,6 +321,21 @@ public abstract class RecordHandler implements Iterable<Record> {
 				}
 			}
 			try {
+				if(this.type == null) {
+					if(this.params.containsKey("rhType")) {
+						this.type = this.params.remove("rhType");
+					} else if(this.params.containsKey("fileDir")) {
+						this.type = TextFileRecordHandler.class.getName();
+					} else if(this.params.containsKey("dataFieldType")) {
+						this.type = JenaRecordHandler.class.getName();
+					} else if(this.params.containsKey("dataFieldName")) {
+						this.type = JDBCRecordHandler.class.getName();
+					} else {
+						this.type = MapRecordHandler.class.getName();
+						logger.warn("No type specified and no discernable parameters set for TextFile, Jena, or JDBC RecordHandlers... using MapRecordHandler");
+					}
+				}
+				logger.debug("Using type: '"+this.type+"'");
 				Class<?> className = Class.forName(this.type);
 				Object tempRH = className.newInstance();
 				if(!(tempRH instanceof RecordHandler)) {
@@ -366,19 +393,24 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param id the record to check fo
 	 * @param operator the class to check for
 	 * @return true if written since last processed by operator or if never been processed by operator
-	 * @throws IOException error getting meta data
 	 */
-	public boolean needsProcessed(String id, Class<?> operator) throws IOException {
-		RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
-		Calendar write = rmdWrite.getDate();
-		RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
-		// log.debug("rmdWrite: "+rmdWrite);
-		// log.debug("rmdProcess: "+rmdProcess);
-		if(rmdProcess == null) {
+	public boolean needsProcessed(String id, Class<?> operator) {
+		try {
+			RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
+			Calendar write = rmdWrite.getDate();
+			RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
+			// log.debug("rmdWrite: "+rmdWrite);
+			// log.debug("rmdProcess: "+rmdProcess);
+			if(rmdProcess == null) {
+				return true;
+			}
+			Calendar processed = rmdProcess.getDate();
+			return (processed.compareTo(write) < 0);
+		} catch(IOException e) {
+			// error getting metadata file... assume it does not exist
+//			log.debug("Record "+id+" has no metadata... need to update.");
 			return true;
 		}
-		Calendar processed = rmdProcess.getDate();
-		return (processed.compareTo(write) < 0);
 	}
 	
 	/**
@@ -408,8 +440,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 			return true;
 		} catch(IOException e) {
 			// error getting metadata file... assume it does not exist
-			// TODO Chris: RC2 - perhaps we can test for that assumption?
-			// log.debug("Record "+rec.getID()+" has no metadata... need to update.");
+//			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
 			return true;
 		}
 	}

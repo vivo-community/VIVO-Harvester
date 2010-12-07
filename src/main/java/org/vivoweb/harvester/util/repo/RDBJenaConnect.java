@@ -7,12 +7,14 @@
 package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import org.vivoweb.harvester.util.IterableAdaptor;
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.GraphRDB;
 import com.hp.hpl.jena.db.IDBConnection;
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
+import com.hp.hpl.jena.sparql.core.DataSourceImpl;
 
 /**
  * Connection Helper for RDB Jena Models
@@ -78,11 +80,7 @@ public class RDBJenaConnect extends JenaConnect {
 
 	@Override
 	public JenaConnect neighborConnectClone(String modelName) throws IOException {
-		try {
-			return new RDBJenaConnect(new DBConnection(this.conn.getConnection(), this.conn.getDatabaseType()), modelName);
-		} catch(SQLException e) {
-			throw new IOException(e);
-		}
+		return new RDBJenaConnect(this.conn, modelName);
 	}
 	
 	/**
@@ -113,6 +111,15 @@ public class RDBJenaConnect extends JenaConnect {
 	@Override
 	public void truncate() {
 		this.getJenaModel().removeAll();
+	}
+
+	@Override
+	public Dataset getDataSet() throws IOException {
+		DataSourceImpl ds = new DataSourceImpl();
+		for(String name : IterableAdaptor.adapt(this.conn.getAllModelNames())) {
+			ds.addNamedModel(name, neighborConnectClone(name).getJenaModel());
+		}
+		return ds;
 	}
 	
 }

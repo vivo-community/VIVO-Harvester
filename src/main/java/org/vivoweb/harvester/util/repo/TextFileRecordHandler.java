@@ -95,7 +95,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		FileSystemManager fsMan = VFS.getManager();
 		this.fileDirObj = fsMan.resolveFile(new File("."), fileDir);
 		if(!this.fileDirObj.exists()) {
-			log.info("Directory '" + fileDir + "' Does Not Exist, attempting to create");
+			log.debug("Directory '" + fileDir + "' Does Not Exist, attempting to create");
 			this.fileDirObj.createFolder();
 		}
 		this.metaDirObj = fsMan.resolveFile(this.fileDirObj, ".metadata");

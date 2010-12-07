@@ -22,13 +22,14 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -429,8 +430,9 @@ public class Score {
 	/**
 	 * @param propertyList list of the properties to be searched for in vivo and score ... valid formats are "core:vivoProp=core:scoreProp" and "core:propForBoth"
 	 * @return HashMap of the found matches
+	 * @throws IOException error connecting to dataset
 	 */
-	private HashMap<String,String> match(List<String> propertyList){
+	private HashMap<String,String> match(List<String> propertyList) throws IOException{
 		if (propertyList.size() < 1) {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
@@ -489,11 +491,18 @@ public class Score {
 				
 		log.debug("Match Query:\n"+sQuery.toString());
 		
-		Model unionModel = this.scoreInput.getJenaModel().union(this.vivo.getJenaModel());
-		DataSet ds = this.scoreInput.getJenaModel().
-		
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
-		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
+		
+//		Model unionModel = this.scoreInput.getJenaModel().union(this.vivo.getJenaModel());
+//		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
+		
+		SDBJenaConnect unionModel = new MemJenaConnect();
+		JenaConnect vivoClone = this.scoreInput.neighborConnectClone("ScoringVivoClone");
+		vivoClone.importRdfFromJC(this.vivo);
+		JenaConnect inputClone = this.scoreInput.neighborConnectClone("ScoringInputClone");
+		inputClone.importRdfFromJC(this.scoreInput);
+		Dataset ds = unionModel.getDataSet();
+		QueryExecution queryExec = QueryExecutionFactory.create(query, ds); // FIXME Stephen/Chris: Query needs to now point to "ScoringVivoClone" and "ScoringInputClone"
 		HashMap<String,String> uriArray = new HashMap<String,String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
 			uriArray.put(solution.getResource("sScore").getURI(), solution.getResource("sVIVO").getURI());
@@ -509,8 +518,9 @@ public class Score {
 	 * Rename the resource set as the key to the value matched.  Performs check for inplace && pushall.
 	 * 
 	 * @param matchSet a result set of scoreResources, vivoResources
+	 * @throws IOException error connecting
 	 */
-	private void rename(HashMap<String,String> matchSet){
+	private void rename(HashMap<String,String> matchSet) throws IOException{
 		Resource res;
 		
 		for(String oldUri : matchSet.keySet()) {
@@ -529,8 +539,9 @@ public class Score {
 	 * 
 	 * @param matchSet a result set of scoreResources, vivoResources
 	 * @param objPropList the object properties to be used to link the two items set in string form -> vivo-object-property-to-score-object = score-object-property-to-vivo-object
+	 * @throws IOException error connecting
 	 */
-	private void link(HashMap<String,String> matchSet, String objPropList){
+	private void link(HashMap<String,String> matchSet, String objPropList) throws IOException {
 		Resource scoreRes;
 		Resource vivoRes;
 		Property scoreToVivoObjProp = ResourceFactory.createProperty("scoreToVivoObjProp");
@@ -569,8 +580,9 @@ public class Score {
 	 * @param linkRes the resource to link it to
 	 * @return the model containing the sanitized info so far
 	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
+	 * @throws IOException error connecting
 	 */
-	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) {
+	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
 		JenaConnect returnModel = new MemJenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
 		
@@ -666,8 +678,9 @@ public class Score {
 	
 	/**
 	 * Execute score object algorithms
+	 * @throws IOException error connecting
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		log.info("Running specified algorithims");
 		
 		// Empty input model

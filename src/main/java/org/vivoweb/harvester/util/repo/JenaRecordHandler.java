@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -262,30 +263,17 @@ public class JenaRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public void setParams(Map<String, String> params) throws IllegalArgumentException, IOException {
-		String jenaConfig = getParam(params, "jenaConfig", false);
+	public void setParams(Map<String, String> params) throws IOException {
 		String dataFieldType = getParam(params, "dataFieldType", true);
+		String jenaConfig = getParam(params, "jenaConfig", false);
 		if(jenaConfig != null) {
 			this.model = JenaConnect.parseConfig(jenaConfig);
 		} else {
-			String jdbcDriverClass = getParam(params, "jdbcDriverClass", true);// FIXME cah: Make this use JenaConnect overrides instead of this mess
-			String connType = getParam(params, "connType", true);
-			String host = getParam(params, "host", true);
-			String port = getParam(params, "port", true);
-			String dbName = getParam(params, "dbName", true);
-			String username = getParam(params, "username", true);
-			String password = getParam(params, "password", true);
-			String dbType = getParam(params, "dbType", true);
-			String modelName = getParam(params, "modelName", false);
-			try {
-				if(modelName != null) {
-					this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass, modelName);
-				} else {
-					this.model = new RDBJenaConnect("jdbc:" + connType + "://" + host + ":" + port + "/" + dbName, username, password, dbType, jdbcDriverClass);
-				}
-			} catch(ClassNotFoundException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
+			Properties overrideParams = new Properties();
+			for(String param : params.keySet()) {
+				overrideParams.setProperty(param, params.get(param));
 			}
+			this.model = JenaConnect.parseConfig((String)null, overrideParams);
 		}
 		initVars(dataFieldType);
 	}

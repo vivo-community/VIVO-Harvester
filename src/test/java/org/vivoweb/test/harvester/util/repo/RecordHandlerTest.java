@@ -6,9 +6,13 @@
  ******************************************************************************/
 package org.vivoweb.test.harvester.util.repo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Properties;
 import junit.framework.TestCase;
+import org.apache.commons.vfs.AllFileSelector;
+import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -57,19 +61,78 @@ public class RecordHandlerTest extends TestCase {
 	
 	/**
 	 * Test method for
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * @throws IOException error
+	 */
+	public void testParseNoConfigTFRH() throws IOException {
+		log.info("BEGIN testParseNoConfigTFRH");
+		Properties overrideParams = new Properties();
+		overrideParams.setProperty("fileDir", "tmp://testingNoConfRH-Text");
+		this.rh = RecordHandler.parseConfig(null, overrideParams);
+		log.info("END testParseNoConfigTFRH");
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * @throws IOException error
+	 */
+	public void testParseNoConfigJDBCRH() throws IOException {
+		log.info("BEGIN testParseNoConfigJDBCRH");
+		Properties overrideParams = new Properties();
+		overrideParams.setProperty("dbClass", "org.h2.Driver");
+		overrideParams.setProperty("dbUrl", "jdbc:h2:mem:TestNoConfRH-JDBC");
+		overrideParams.setProperty("dbUser", "sa");
+		overrideParams.setProperty("dbPass", "");
+		overrideParams.setProperty("dbTable", "testdb");
+		overrideParams.setProperty("dataFieldName", "data");
+		this.rh = RecordHandler.parseConfig(null, overrideParams);
+		log.info("END testParseNoConfigJDBCRH");
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * @throws IOException error
+	 */
+	public void testParseNoConfigJenaRH() throws IOException {
+		log.info("BEGIN testParseNoConfigJenaRH");
+		Properties overrideParams = new Properties();
+		overrideParams.setProperty("dbClass", "org.h2.Driver");
+		overrideParams.setProperty("dbUrl", "jdbc:h2:mem:TestNoConfRH-Jena");
+		overrideParams.setProperty("dbUser", "sa");
+		overrideParams.setProperty("dbPass", "");
+		overrideParams.setProperty("dbType", "H2");
+		overrideParams.setProperty("type", "sdb");
+		overrideParams.setProperty("dbLayout", "layout2");
+		overrideParams.setProperty("modelName", "namedModel");
+		overrideParams.setProperty("dataFieldType", "http://localhost/jenarecordhandlerdemo#data");
+		this.rh = RecordHandler.parseConfig(null, overrideParams);
+		log.info("END testParseNoConfigJenaRH");
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * @throws IOException error
+	 */
+	public void testParseNoConfigMapRH() throws IOException {
+		log.info("BEGIN testParseNoConfigMapRH");
+		this.rh = RecordHandler.parseConfig(null, new Properties());
+		log.info("END testParseNoConfigMapRH");
+	}
+	
+	/**
+	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.JDBCRecordHandler#JDBCRecordHandler(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * JDBCRecordHandler(String jdbcDriverClass, String connLine, String username, String password, String tableName,
 	 * String dataFieldName)}.
+	 * @throws IOException error
 	 */
-	public void testJDBCAddRecord() {
+	public void testJDBCAddRecord() throws IOException {
 		log.info("BEGIN testJDBCAddRecord");
-		try {
-			this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestRH-JDBC", "sa", "", "testdb", "data");
-			runBattery();
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestRH-JDBC", "sa", "", "testdb", "data");
+		runBattery();
 		log.info("END testJDBCAddRecord");
 	}
 	
@@ -77,31 +140,44 @@ public class RecordHandlerTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.TextFileRecordHandler#TextFileRecordHandler(java.lang.String)
 	 * TextFileRecordHandler(String fileDir)}.
+	 * @throws IOException error
 	 */
-	public void testTextFileAddRecord() {
+	public void testTextFileAddRecord() throws IOException {
 		log.info("BEGIN testTextFileAddRecord");
-		try {
-			this.rh = new TextFileRecordHandler("tmp://testTFRH");
-			runBattery();
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		this.rh = new TextFileRecordHandler("tmp://testTFRH");
+		runBattery();
 		log.info("END testTextFileAddRecord");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.MapRecordHandler#MapRecordHandler() MapRecordHandler()}.
+	 * Test method for
+	 * {@link org.vivoweb.harvester.util.repo.TextFileRecordHandler#iterator()
+	 * iterator()}.
+	 * @throws IOException error
 	 */
-	public void testMapAddRecord() {
-		log.info("BEGIN testMapAddRecord");
-		try {
-			this.rh = new MapRecordHandler();
-			runBattery();
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
+	public void testNoMetaTextFileIterate() throws IOException {
+		log.info("BEGIN testNoMetaTextFileIterate");
+		String tfrhDir = "tmp://testNoMetaTFRH";
+		this.rh = new TextFileRecordHandler(tfrhDir);
+		this.rh.addRecord("test123", "testing data for record 'test123'", RecordHandlerTest.class);
+		this.rh.addRecord("test456", "data test on record 'test456'", RecordHandlerTest.class);
+		this.rh.addRecord("funABC", "data in record 'funABC'", RecordHandlerTest.class);
+		this.rh.addRecord("wooDEF", "blah data of record 'wooDEF'", RecordHandlerTest.class);
+		VFS.getManager().resolveFile(new File("."), tfrhDir+"/.metadata").delete(new AllFileSelector());
+		for(Record r : this.rh) {
+			log.debug("Record '"+r.getID()+"': "+r.getData());
 		}
+		log.info("END testNoMetaTextFileIterate");
+	}
+	
+	/**
+	 * Test method for {@link org.vivoweb.harvester.util.repo.MapRecordHandler#MapRecordHandler() MapRecordHandler()}.
+	 * @throws IOException error
+	 */
+	public void testMapAddRecord() throws IOException {
+		log.info("BEGIN testMapAddRecord");
+		this.rh = new MapRecordHandler();
+		runBattery();
 		log.info("END testMapAddRecord");
 	}
 	
@@ -109,16 +185,12 @@ public class RecordHandlerTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.JenaRecordHandler#JenaRecordHandler(org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)
 	 * JenaRecordHandler(JenaConnect jena, String dataFieldType)}.
+	 * @throws IOException error
 	 */
-	public void testJenaAddRecord() {
+	public void testJenaAddRecord() throws IOException {
 		log.info("BEGIN testJenaAddRecord");
-		try {
-			this.rh = new JenaRecordHandler(new SDBJenaConnect("jdbc:h2:mem:TestRH-Jena", "sa", "", "H2", "org.h2.Driver", "layout2"), "http://localhost/jenarecordhandlerdemo#data");
-			runBattery();
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		this.rh = new JenaRecordHandler(new SDBJenaConnect("jdbc:h2:mem:TestRH-Jena", "sa", "", "H2", "org.h2.Driver", "layout2"), "http://localhost/jenarecordhandlerdemo#data");
+		runBattery();
 		log.info("END testJenaAddRecord");
 	}
 	

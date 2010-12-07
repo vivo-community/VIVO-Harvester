@@ -10,15 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Random;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ModelMaker;
+import com.hp.hpl.jena.sdb.Store;
 
 /**
  * Connection Helper for Memory Based Jena Models
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class MemJenaConnect extends JenaConnect {
+public class MemJenaConnect extends SDBJenaConnect {
 	
 	/**
 	 * Set of already used memory model names
@@ -27,27 +25,27 @@ public class MemJenaConnect extends JenaConnect {
 	
 	/**
 	 * Constructor (Memory Default Model)
+	 * @throws IOException error connecting
 	 */
-	public MemJenaConnect() {
-		this(generateUnusedModelName());
+	public MemJenaConnect() throws IOException {
+		this(null);
 	}
 	
 	/**
 	 * Constructor (Memory Named Model)
 	 * @param modelName the model name to use
+	 * @throws IOException error connecting
 	 */
-	public MemJenaConnect(String modelName) {
-		ModelMaker mm = ModelFactory.createMemModelMaker();
-		Model m;
-		if(modelName != null) {
-			m = mm.openModel(modelName, false);
-			this.setModelName(modelName);
-		} else {
-			String name = generateUnusedModelName();
-			m = mm.openModel(name, false);
-			this.setModelName(name);
+	public MemJenaConnect(String modelName) throws IOException {
+		super("jdbc:h2:mem:"+((modelName != null)?modelName:generateUnusedModelName()), "sa", "", "H2", "org.h2.Driver", "layout2", modelName);
+	}
+	
+	public static Store connectStore(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout) {
+		try {
+			return SDBJenaConnect.connectStore(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout);
+		} catch(IOException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
 		}
-		this.setJenaModel(m);
 	}
 	
 	/**
@@ -56,9 +54,10 @@ public class MemJenaConnect extends JenaConnect {
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @throws IOException error connecting
 	 */
-	public MemJenaConnect(InputStream in, String namespace, String language) {
-		this();
+	public MemJenaConnect(InputStream in, String namespace, String language) throws IOException {
+		this(null);
 		this.loadRdfFromStream(in, namespace, language);
 	}
 	
@@ -77,21 +76,6 @@ public class MemJenaConnect extends JenaConnect {
 		}
 		usedModelNames.add(name);
 		return name;
-	}
-	
-	@Override
-	public void close() {
-		this.getJenaModel().close();
-	}
-
-	@Override
-	public JenaConnect neighborConnectClone(String modelName) throws IOException {
-		return new MemJenaConnect(modelName);
-	}
-
-	@Override
-	public void truncate() {
-		this.getJenaModel().removeAll();
 	}
 	
 }

@@ -8,6 +8,7 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.sdb.SDBFactory;
 import com.hp.hpl.jena.sdb.Store;
 import com.hp.hpl.jena.sdb.StoreDesc;
@@ -33,10 +34,9 @@ public class SDBJenaConnect extends JenaConnect {
 	 * @param dbType database type ex:"MySQL"
 	 * @param dbClass jdbc driver class
 	 * @param dbLayout sdb layout type
-	 * @throws ClassNotFoundException no such class
 	 * @throws IOException error connecting to store
 	 */
-	public SDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout) throws ClassNotFoundException, IOException {
+	public SDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout) throws IOException {
 		this(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout, null);
 	}
 	
@@ -49,13 +49,10 @@ public class SDBJenaConnect extends JenaConnect {
 	 * @param dbClass jdbc driver class
 	 * @param dbLayout sdb layout type
 	 * @param modelName the model to connect to
-	 * @throws ClassNotFoundException no such class
 	 * @throws IOException error connecting to store
 	 */
-	public SDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout, String modelName) throws ClassNotFoundException, IOException {
-		Class.forName(dbClass);
-		Store oldStore = SDBFactory.connectStore(SDBConnectionFactory.create(dbUrl, dbUser, dbPass), new StoreDesc(dbLayout, dbType)); 
-		init(oldStore, modelName);
+	public SDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout, String modelName) throws IOException {
+		this(connectStore(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout), modelName);
 	}
 	
 	/**
@@ -64,8 +61,28 @@ public class SDBJenaConnect extends JenaConnect {
 	 * @param modelName the model name to use
 	 * @throws IOException error connecting to store
 	 */
-	private SDBJenaConnect(Store oldStore, String modelName) throws IOException {
+	protected SDBJenaConnect(Store oldStore, String modelName) throws IOException {
 		init(oldStore, modelName);
+	}
+	
+	/**
+	 * Connect to an SDB store
+	 * @param dbUrl jdbc connection url
+	 * @param dbUser username to use
+	 * @param dbPass password to use
+	 * @param dbType database type ex:"MySQL"
+	 * @param dbClass jdbc driver class
+	 * @param dbLayout sdb layout type
+	 * @return the store
+	 * @throws IOException error connecting to store
+	 */
+	public static Store connectStore(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout) throws IOException {
+		try {
+			Class.forName(dbClass);
+		} catch(ClassNotFoundException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		return SDBFactory.connectStore(SDBConnectionFactory.create(dbUrl, dbUser, dbPass), new StoreDesc(dbLayout, dbType));
 	}
 	
 	/**
@@ -74,7 +91,7 @@ public class SDBJenaConnect extends JenaConnect {
 	 * @param modelName the model name to use
 	 * @throws IOException error connecting to store
 	 */
-	private void init(Store oldStore, String modelName) throws IOException {
+	protected void init(Store oldStore, String modelName) throws IOException {
 		this.store = oldStore;
 		initStore();
 		if(modelName != null) {
@@ -84,6 +101,11 @@ public class SDBJenaConnect extends JenaConnect {
 			this.setModelName(Quad.defaultGraphIRI.getURI());
 			this.setJenaModel(SDBFactory.connectDefaultModel(this.store));
 		}
+	}
+	
+	@Override
+	public Dataset getDataSet() {
+		return SDBFactory.connectDataset(this.store);
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import com.hp.hpl.jena.graph.GraphEvents;
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -205,6 +206,14 @@ public abstract class JenaConnect {
 	}
 	
 	/**
+	 * Get the dataset for this connection
+	 * Can be very expensive when using RDB connections (SDB and Mem are fine)
+	 * @return the database connection's dataset
+	 * @throws IOException error connecting
+	 */
+	public abstract Dataset getDataSet() throws IOException;
+	
+	/**
 	 * Load in RDF
 	 * @param in input stream to read rdf from
 	 * @param namespace the base uri to use for imported uris
@@ -290,7 +299,7 @@ public abstract class JenaConnect {
 	 * @param inputJC the Model to read from
 	 */
 	public void removeRdfFromJC(JenaConnect inputJC) {
-		this.jenaModel.remove(inputJC.getJenaModel());//FIXME Anyone?: this doesn't seem to actually work!
+		this.jenaModel.remove(inputJC.getJenaModel());
 //		log.debug("Removing data from another model");
 //		this.jenaModel.begin();
 //		for(Statement s : IterableAdaptor.adapt(inputJC.getJenaModel().listStatements())) {
@@ -339,8 +348,9 @@ public abstract class JenaConnect {
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * @throws IOException error connecting
 	 */
-	public void removeRdfFromStream(InputStream in, String namespace, String language) {
+	public void removeRdfFromStream(InputStream in, String namespace, String language) throws IOException {
 		this.removeRdfFromJC(new MemJenaConnect(in, namespace, language));
 		log.debug("RDF Data was removed");
 	}
@@ -351,9 +361,9 @@ public abstract class JenaConnect {
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
-	 * @throws FileSystemException error accessing file
+	 * @throws IOException error connecting
 	 */
-	public void removeRdfFromFile(String fileName, String namespace, String language) throws FileSystemException {
+	public void removeRdfFromFile(String fileName, String namespace, String language) throws IOException {
 		this.removeRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
 	}
 	
@@ -370,8 +380,9 @@ public abstract class JenaConnect {
 	 * @param rh the RecordHandler to pull records from
 	 * @param namespace the base uri to use for imported uris
 	 * @return number of records removed
+	 * @throws IOException error connecting
 	 */
-	public int removeRdfFromRH(RecordHandler rh, String namespace) {
+	public int removeRdfFromRH(RecordHandler rh, String namespace) throws IOException {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("removing record: " + r.getID());

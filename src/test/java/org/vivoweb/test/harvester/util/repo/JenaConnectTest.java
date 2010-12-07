@@ -110,10 +110,9 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)}.
-	 * @throws ClassNotFoundException error loading class
 	 * @throws IOException error
 	 */
-	public void testJenaConnectDBConstNoModelName() throws ClassNotFoundException, IOException {
+	public void testJenaConnectDBConstNoModelName() throws IOException {
 		log.info("BEGIN testJenaConnectDBConstNoModelName");
 		this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout);
 		runWriteTest();
@@ -124,10 +123,9 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName)}.
-	 * @throws ClassNotFoundException error loading class
 	 * @throws IOException error
 	 */
-	public void testJenaConnectDBConstWithModelName() throws ClassNotFoundException, IOException {
+	public void testJenaConnectDBConstWithModelName() throws IOException {
 		log.info("BEGIN testJenaConnectDBConstWithModelName");
 		this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout, modelName);
 		runWriteTest();
@@ -138,9 +136,8 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#neighborConnectClone(java.lang.String)
 	 * connect(String modelName)}.
-	 * @throws ClassNotFoundException error loading class
 	 */
-	public void testJenaConnectConstSibling() throws ClassNotFoundException {
+	public void testJenaConnectConstSibling() {
 		log.info("BEGIN testJenaConnectConstSibling");
 		try {
 			this.jc = new SDBJenaConnect(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout, modelName).neighborConnectClone(modelName2);
@@ -156,8 +153,9 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.io.InputStream, java.lang.String, java.lang.String)
 	 * JenaConnect(InputStream in, String namespace)}.
+	 * @throws IOException error
 	 */
-	public void testJenaConnectConstInputStream() {
+	public void testJenaConnectConstInputStream() throws IOException {
 		log.info("BEGIN testJenaConnectConstInputStream");
 		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		runWriteTest();
@@ -166,8 +164,9 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect() MemJenaConnect()}.
+	 * @throws IOException error
 	 */
-	public void testJenaConnectMemConstNoModelName() {
+	public void testJenaConnectMemConstNoModelName() throws IOException {
 		log.info("BEGIN testJenaConnectMemConstNoModelName");
 		this.jc = new MemJenaConnect();
 		runWriteTest();
@@ -177,8 +176,9 @@ public class JenaConnectTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.lang.String) MemJenaConnect(String
 	 * modelName)}.
+	 * @throws IOException error
 	 */
-	public void testJenaConnectMemConstWithModelName() {
+	public void testJenaConnectMemConstWithModelName() throws IOException {
 		log.info("BEGIN testJenaConnectMemConstWithModelName");
 		this.jc = new MemJenaConnect(modelName2);
 		runWriteTest();
@@ -188,8 +188,9 @@ public class JenaConnectTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRdfFromStream(java.io.InputStream, java.lang.String, java.lang.String)
 	 * loadRDF(InputStream in, String namespace)}.
+	 * @throws IOException error
 	 */
-	public void testLoadRDF() {
+	public void testLoadRDF() throws IOException {
 		log.info("BEGIN testLoadRDF");
 		this.jc = new MemJenaConnect();
 		this.jc.loadRdfFromStream(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
