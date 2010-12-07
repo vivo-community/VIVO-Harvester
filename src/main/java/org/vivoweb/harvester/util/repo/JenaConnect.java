@@ -580,7 +580,7 @@ public abstract class JenaConnect {
 		String query =	"ASK " +
 						"{ " +
 							"?s ?p ?o . " +
-							"FILTER (sameTerm(?s, \"" + uri + "\" )) " + 
+							"FILTER (str(?s), \"" + uri + "\" )) " +
 						"}";
 		log.debug(query); 
 		return executeAskQuery(query);

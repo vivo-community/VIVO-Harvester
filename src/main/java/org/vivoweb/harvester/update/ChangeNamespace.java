@@ -277,7 +277,6 @@ public class ChangeNamespace {
 	 */
 	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace) {
 		//Grab all namespaces needing changed
-		log.trace("Begin Change Query Build");
 		String subjectQuery =	""+
 			"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
 			"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" +
@@ -302,37 +301,24 @@ public class ChangeNamespace {
 			"\tFILTER regex(str(?sNew), \"" + oldNamespace + "\" ) \n" + 
 			"}";
 		log.debug("Change Query:\n"+subjectQuery);
-		log.trace("End Change Query Build");
 		
-		log.trace("Begin Execute Query");
 		ResultSet changeList = model.executeSelectQuery(subjectQuery);
-		log.trace("End Execute Query");
 
 		HashSet<String> changeArray = new HashSet<String>();
-		log.trace("Begin Rename Changes");
 		for(QuerySolution solution : IterableAdaptor.adapt(changeList)) {
 			String renameURI = solution.getResource("sNew").getURI();
-			log.trace("Get URI: " + renameURI);
 			changeArray.add(renameURI);
 		}
 		
-		log.trace("UnusedURI loop");
 		HashSet<String> uriCheck = new HashSet<String>();
 		for(String sNew : changeArray) {
-			log.trace("getResource Start");
 			Resource res = model.getJenaModel().getResource(sNew);
-			log.trace("getResource End");
 			log.trace("res: " + res);
-			log.trace("getUnusedURI Start");
 			String uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
-			log.trace("getUnusedURI End");
 			log.trace("unusedURI: " + uri);
-			log.trace("Renaming Start");
 			ResourceUtils.renameResource(res, uri);
-			log.trace("Renaming End");
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
-		log.trace("End Rename Changes");
 	}
 
 	/**
@@ -382,18 +368,11 @@ public class ChangeNamespace {
 		sQuery.append("\tFILTER regex(str(?sOld), \"").append(newNamespace + "\" ) \n}");
 		
 		log.debug("Match Query:\n"+sQuery.toString());
-		log.trace("End Match Query Build");
 		
-		log.trace("Begin Union Model");
 		Model unionModel = model.getJenaModel().union(vivo.getJenaModel());
-		log.trace("End Union Model");
 		
-		log.trace("Begin Run Query to ResultSet");
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
-		log.trace("End Run Query to ResultSet");
-		
-		log.trace("Begin Rename Matches");
 		
 		HashMap<String,String> uriArray = new HashMap<String,String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
@@ -406,7 +385,6 @@ public class ChangeNamespace {
 		}		
 		
 		log.info("Matched namespace for " + uriArray.keySet().size() + " rdf nodes");
-		log.trace("End Rename Matches");
 	}
 	
 	/**
