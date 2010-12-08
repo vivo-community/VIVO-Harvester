@@ -88,21 +88,21 @@ public class SPARQLTranslator {
 		
 		// setup input model
 		if(argumentList.has("i")) {
-			this.inputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("i")), argumentList.getProperties("I"));
+			this.inputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("i")), argumentList.getValueMap("I"));
 		} else {
 			this.inputJC = null;
 		}
 		
 		// setup output
 		if(argumentList.has("o")) {
-			this.outputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("o")), argumentList.getProperties("O"));
+			this.outputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("o")), argumentList.getValueMap("O"));
 		} else {
 			this.outputJC = null;
 		}
 		
 		// load data from recordhandler
 		if(argumentList.has("h")) {
-			this.outputRC = RecordHandler.parseConfig(argumentList.get("h"), argumentList.getProperties("H"));
+			this.outputRC = RecordHandler.parseConfig(argumentList.get("h"), argumentList.getValueMap("H"));
 		} else {
 			this.outputRC = null;
 		}
@@ -168,12 +168,12 @@ public class SPARQLTranslator {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SPARQLTranslator");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("sparqlConstruct").withParameter(true, "SPARQL_CONSTRUCT_FILE").setDescription("the sparql construct to run").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("outputToRH").withParameter(true, "RECORD_HANDLER").setDescription("output the sparql statment to a record handler").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("outputToRHOverride").withParameterProperties("RH_PARAM", "RECORD_HANDLER").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("outputToRHOverride").withParameterValueMap("RH_PARAM", "RECORD_HANDLER").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
 	

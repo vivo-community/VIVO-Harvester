@@ -44,9 +44,9 @@ public class ArgDef {
 	 */
 	private String parameterDescription;
 	/**
-	 * Is this argument a parameter map
+	 * Is this argument a value map
 	 */
-	private boolean parameterPropertiesType;
+	private boolean parameterValueMapType;
 	
 	/**
 	 * Default Constructor
@@ -60,7 +60,7 @@ public class ArgDef {
 		this.numParameters = 0;
 		this.parameterRequired = false;
 		this.parameterDescription = null;
-		this.parameterPropertiesType = false;
+		this.parameterValueMapType = false;
 	}
 	
 	/**
@@ -104,11 +104,11 @@ public class ArgDef {
 	}
 	
 	/**
-	 * Is this argument a parameter map
-	 * @return true if parameter map
+	 * Is this argument a value map
+	 * @return true if value map
 	 */
-	public boolean isParameterProperties() {
-		return this.parameterPropertiesType;
+	public boolean isParameterValueMap() {
+		return this.parameterValueMapType;
 	}
 	
 	/**
@@ -250,13 +250,13 @@ public class ArgDef {
 	}
 	
 	/**
-	 * Sets thsi argument to have a parameter map
+	 * Sets this argument to have a value map
 	 * @param propertyName name of property
 	 * @param valueName name of value
 	 * @return this ArgDef
 	 */
-	public ArgDef withParameterProperties(String propertyName, String valueName) {
-		this.parameterPropertiesType = true;
+	public ArgDef withParameterValueMap(String propertyName, String valueName) {
+		this.parameterValueMapType = true;
 		return withParameters(false, propertyName + "=" + valueName, -1);
 	}
 }

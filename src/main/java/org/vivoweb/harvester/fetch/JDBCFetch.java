@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -146,13 +145,13 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("query").withParameterProperties("TABLE_NAME", "SQL_QUERY").setDescription("use SQL_QUERY to select from TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterProperties("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tableFromClause").withParameterProperties("TABLE_NAME", "TABLE_LIST").setDescription("add tables to use in from clasuse for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("query").withParameterValueMap("TABLE_NAME", "SQL_QUERY").setDescription("use SQL_QUERY to select from TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterValueMap("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterValueMap("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterValueMap("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterValueMap("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tableFromClause").withParameterValueMap("TABLE_NAME", "TABLE_LIST").setDescription("add tables to use in from clasuse for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
 		return parser;
@@ -189,45 +188,41 @@ public class JDBCFetch {
 		this.tableNames.addAll(opts.getAll("t"));
 		
 		if(opts.has("T")) {
-			this.fromClauses = new HashMap<String, String>();
-			Properties froms = opts.getProperties("T");
-			for(String tableName : froms.stringPropertyNames()) {
-				this.fromClauses.put(tableName, froms.getProperty(tableName));
-			}
+			this.fromClauses = opts.getValueMap("T");
 		}
 		
 		if(opts.has("F")) {
 			this.dataFields = new HashMap<String, List<String>>();
-			Properties fields = opts.getProperties("F");
-			for(String tableName : fields.stringPropertyNames()) {
-				this.dataFields.put(tableName, Arrays.asList(fields.getProperty(tableName).split("\\s?,\\s?")));
+			Map<String,String> fields = opts.getValueMap("F");
+			for(String tableName : fields.keySet()) {
+				this.dataFields.put(tableName, Arrays.asList(fields.get(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
 		if(opts.has("I")) {
 			this.idFields = new HashMap<String, List<String>>();
-			Properties ids = opts.getProperties("I");
-			for(String tableName : ids.stringPropertyNames()) {
-				this.idFields.put(tableName, Arrays.asList(ids.getProperty(tableName).split("\\s?,\\s?")));
+			Map<String,String> ids = opts.getValueMap("I");
+			for(String tableName : ids.keySet()) {
+				this.idFields.put(tableName, Arrays.asList(ids.get(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
 		if(opts.has("W")) {
 			this.whereClauses = new HashMap<String, List<String>>();
-			Properties wheres = opts.getProperties("W");
-			for(String tableName : wheres.stringPropertyNames()) {
-				this.whereClauses.put(tableName, Arrays.asList(wheres.getProperty(tableName).split("\\s?,\\s?")));
+			Map<String,String> wheres = opts.getValueMap("W");
+			for(String tableName : wheres.keySet()) {
+				this.whereClauses.put(tableName, Arrays.asList(wheres.get(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
 		if(opts.has("R")) {
 			this.relations = new HashMap<String, Map<String, String>>();
-			Properties rels = opts.getProperties("R");
-			for(String tableName : rels.stringPropertyNames()) {
+			Map<String,String> rels = opts.getValueMap("R");
+			for(String tableName : rels.keySet()) {
 				if(!this.relations.containsKey(tableName)) {
 					this.relations.put(tableName, new HashMap<String, String>());
 				}
-				for(String relLine : rels.getProperty(tableName).split("\\s?,\\s?")) {
+				for(String relLine : rels.get(tableName).split("\\s?,\\s?")) {
 					String[] relPair = relLine.split("\\s?~\\s?", 2);
 					if(relPair.length != 2) {
 						throw new IllegalArgumentException("Bad Relation Line: " + relLine);
@@ -238,18 +233,14 @@ public class JDBCFetch {
 		}
 		
 		if(opts.has("Q")) {
-			this.queryStrings = new HashMap<String, String>();
-			Properties querys = opts.getProperties("Q");
-			for(String tableName : querys.stringPropertyNames()) {
-				this.queryStrings.put(tableName, querys.getProperty(tableName));
-			}
+			this.queryStrings = opts.getValueMap("Q");
 		}
 		
 		Connection dbConn;
 		try {
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
-			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
+			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}

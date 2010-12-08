@@ -70,8 +70,8 @@ public class Merge {
 	 * @throws IOException error connecting to record handler
 	 */
 	public Merge(ArgList argList) throws IOException {
-		this.input = RecordHandler.parseConfig(argList.get("i"), argList.getProperties("I"));
-		this.output = RecordHandler.parseConfig(argList.get("o"), argList.getProperties("O"));
+		this.input = RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I"));
+		this.output = RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"));
 		this.regex = Pattern.compile(argList.get("b"));
 	}
 	
@@ -114,10 +114,10 @@ public class Merge {
 		ArgParser parser = new ArgParser("Transfer");
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));		
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		// Params
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("baseRegex").withParameter(true, "REGEX").setDescription("match records using REGEX and use the first Group to find sub-records").setRequired(true));
 		return parser;

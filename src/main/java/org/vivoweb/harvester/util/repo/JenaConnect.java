@@ -15,7 +15,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.Properties;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -80,16 +80,16 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
 	 */
-	public static JenaConnect parseConfig(InputStream configStream, Properties overrideParams) throws IOException {
-		Properties paramList = new JenaConnectConfigParser().parseConfig(configStream);
+	public static JenaConnect parseConfig(InputStream configStream, Map<String,String> overrideParams) throws IOException {
+		Map<String,String> paramList = new JenaConnectConfigParser().parseConfig(configStream);
 		if(overrideParams != null) {
-			for(String key : overrideParams.stringPropertyNames()) {
-				paramList.setProperty(key, overrideParams.getProperty(key));
+			for(String key : overrideParams.keySet()) {
+				paramList.put(key, overrideParams.get(key));
 			}
 		}
-		for(String param : paramList.stringPropertyNames()) {
+		for(String param : paramList.keySet()) {
 			if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
-				JenaConnect.log.debug("'" + param + "' - '" + paramList.getProperty(param) + "'");
+				JenaConnect.log.debug("'" + param + "' - '" + paramList.get(param) + "'");
 			}
 		}
 		return build(paramList);
@@ -112,7 +112,7 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
 	 */
-	public static JenaConnect parseConfig(FileObject configFile, Properties overrideParams) throws IOException {
+	public static JenaConnect parseConfig(FileObject configFile, Map<String,String> overrideParams) throws IOException {
 		InputStream confStream = (configFile == null)?null:configFile.getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
@@ -134,7 +134,7 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
 	 */
-	public static JenaConnect parseConfig(File configFile, Properties overrideParams) throws IOException {
+	public static JenaConnect parseConfig(File configFile, Map<String,String> overrideParams) throws IOException {
 		InputStream confStream = (configFile == null)?null:VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
@@ -156,18 +156,18 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException xml parse error
 	 */
-	public static JenaConnect parseConfig(String configFileName, Properties overrideParams) throws IOException {
+	public static JenaConnect parseConfig(String configFileName, Map<String,String> overrideParams) throws IOException {
 		InputStream confStream = (configFileName == null)?null:VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
 	/**
 	 * Build a JenaConnect based on the given parameter set
-	 * @param params the parameter set
+	 * @param params the value map
 	 * @return the JenaConnect
 	 * @throws IOException error connecting to jena model
 	 */
-	private static JenaConnect build(Properties params) throws IOException {
+	private static JenaConnect build(Map<String,String> params) throws IOException {
 		try {
 			// for(String param : params.keySet()) {
 			// log.debug(param+" => "+params.get(param));
@@ -176,12 +176,12 @@ public abstract class JenaConnect {
 				throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','mem'}");
 			}
 			JenaConnect jc;
-			if(params.getProperty("type").equalsIgnoreCase("memory")) {
-				jc = new MemJenaConnect(params.getProperty("modelName"));
-			} else if(params.getProperty("type").equalsIgnoreCase("rdb")) {
-				jc = new RDBJenaConnect(params.getProperty("dbUrl"), params.getProperty("dbUser"), params.getProperty("dbPass"), params.getProperty("dbType"), params.getProperty("dbClass"), params.getProperty("modelName"));
-			} else if(params.getProperty("type").equalsIgnoreCase("sdb")) {
-				jc = new SDBJenaConnect(params.getProperty("dbUrl"), params.getProperty("dbUser"), params.getProperty("dbPass"), params.getProperty("dbType"), params.getProperty("dbClass"), params.getProperty("dbLayout"), params.getProperty("modelName"));
+			if(params.get("type").equalsIgnoreCase("memory")) {
+				jc = new MemJenaConnect(params.get("modelName"));
+			} else if(params.get("type").equalsIgnoreCase("rdb")) {
+				jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
+			} else if(params.get("type").equalsIgnoreCase("sdb")) {
+				jc = new SDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("dbLayout"), params.get("modelName"));
 			} else {
 				throw new IllegalArgumentException("unknown type: " + params.get("type"));
 			}
@@ -210,7 +210,7 @@ public abstract class JenaConnect {
 	 * @return the database connection's dataset
 	 * @throws IOException error connecting
 	 */
-	public abstract Dataset getDataSet() throws IOException;
+	public abstract Dataset getConnectionDataSet() throws IOException;
 	
 	/**
 	 * Load in RDF
@@ -580,7 +580,7 @@ public abstract class JenaConnect {
 						"{ " +
 							"<" + uri + "> ?p ?o " +
 						"}";
-		log.debug(query); 
+//		log.debug(query); 
 		return executeAskQuery(query);
 	}
 	
@@ -591,7 +591,7 @@ public abstract class JenaConnect {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("JenaConnect");
 		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jena").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("query").withParameter(true, "SPARQL_QUERY").setDescription("sparql query to execute").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("queryResultFormat").withParameter(true, "RESULT_FORMAT").setDescription("the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for construct/describe queries)").setRequired(false));
 		return parser;
@@ -605,7 +605,7 @@ public abstract class JenaConnect {
 		InitLog.initLogger(JenaConnect.class);
 		try {
 			ArgList argList = new ArgList(getParser(), args);
-			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getProperties("J"));
+			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
 			jc.executeQuery(argList.get("q"), argList.get("Q"));
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
@@ -623,7 +623,7 @@ public abstract class JenaConnect {
 		/**
 		 * Param list from the config file
 		 */
-		private final Properties params;
+		private Map<String,String> params;
 		/**
 		 * temporary storage for cdata
 		 */
@@ -637,7 +637,7 @@ public abstract class JenaConnect {
 		 * Default Constructor
 		 */
 		protected JenaConnectConfigParser() {
-			this.params = new Properties();
+			this.params = new HashMap<String, String>();
 			this.tempVal = "";
 			this.tempParamName = "";
 		}
@@ -648,7 +648,7 @@ public abstract class JenaConnect {
 		 * @return the JenaConnect described by the stream
 		 * @throws IOException error reading stream
 		 */
-		protected Properties parseConfig(InputStream inputStream) throws IOException {
+		protected Map<String,String> parseConfig(InputStream inputStream) throws IOException {
 			if(inputStream != null) {
 				// get a factory
 				SAXParserFactory spf = SAXParserFactory.newInstance();

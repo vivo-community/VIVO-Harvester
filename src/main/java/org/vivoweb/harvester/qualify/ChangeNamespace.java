@@ -4,7 +4,7 @@
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation
  ******************************************************************************/
-package org.vivoweb.harvester.update;
+package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class ChangeNamespace {
 	/**
 	 * the propeties to match on
 	 */
-	private List<Property> properties;
+	private Set<Property> properties;
 	/**
 	 * The search model
 	 */
@@ -82,12 +82,12 @@ public class ChangeNamespace {
 	 * @throws IOException error reading config
 	 */
 	public ChangeNamespace(ArgList argList) throws IOException {
-		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getProperties("I"));
-		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getProperties("V"));
+		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
+		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V"));
 		this.oldNamespace = argList.get("o");
 		this.newNamespace = argList.get("n");
 		List<String> predicates = argList.getAll("p");
-		this.properties = new ArrayList<Property>(predicates.size());
+		this.properties = new HashSet<Property>(predicates.size());
 		for (String pred : predicates) {
 			this.properties.add(ResourceFactory.createProperty(pred));
 		}
@@ -98,13 +98,12 @@ public class ChangeNamespace {
 	 * @param current the current resource
 	 * @param namespace the namespace to match in
 	 * @param properties the propeties to match on
-	 * @param uriCheck set of new uris generated during this changenamespace run
 	 * @param errorOnNewURI Log ERROR messages when a new URI is generated
 	 * @param vivo the model to match in
 	 * @param model model to check for duplicates
 	 * @return the uri of the first matched resource or an unused uri if none found
 	 */
-	public static String getURI(Resource current, String namespace, List<Property> properties, Set<String> uriCheck, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model) {
+	public static String getURI(Resource current, String namespace, Set<Property> properties, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model) {
 		String uri = null;
 		
 		if (properties != null && !properties.isEmpty()) {
@@ -112,7 +111,7 @@ public class ChangeNamespace {
 		}
 		
 		if (uri == null) {
-			uri = getUnusedURI(namespace, uriCheck, vivo, model);
+			uri = getUnusedURI(namespace, vivo, model);
 			if (errorOnNewURI) {
 				log.error("Generated New Unused URI <"+uri+"> for rdf node <"+current.getURI()+">");
 			}
@@ -124,12 +123,11 @@ public class ChangeNamespace {
 	/**
 	 * Gets an unused URI in the the given namespace for the given models
 	 * @param namespace the namespace
-	 * @param uriCheck set of new uris generated during this changenamespace run
 	 * @param models models to check in
 	 * @return the uri
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static String getUnusedURI(String namespace, Set<String> uriCheck, JenaConnect... models) throws IllegalArgumentException {
+	public static String getUnusedURI(String namespace, JenaConnect... models) throws IllegalArgumentException {
 		if (namespace == null || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
@@ -137,21 +135,16 @@ public class ChangeNamespace {
 		Random random = new Random();
 		while (uri == null) {
 			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
-			log.trace("uriCheck: "+uriCheck.contains(uri));
-			if (uriCheck.contains(uri)) {
-				uri = null;
-				continue;
-			}
-			log.trace("uri: "+uri);
+			log.trace("evaluating uri <"+uri+">");
 			for (JenaConnect model : models) {
-				log.trace("model: "+model);
-				if (model.containsURI(uri)) {
+				boolean modelContains = model.containsURI(uri);
+				log.trace("model <"+model.getModelName()+"> contains this uri?: "+modelContains);
+				if (modelContains) {
 					uri = null;
 					break;
 				}
 			}
 		}
-		uriCheck.add(uri);
 		log.debug("Using new URI: <"+uri+">");
 		return uri;
 	}
@@ -164,7 +157,7 @@ public class ChangeNamespace {
 	 * @param vivo the model to match in
 	 * @return the uri of the first matched resource or null if none found
 	 */
-	public static String getMatchingURI(Resource current, String namespace, List<Property> properties, JenaConnect vivo) {
+	public static String getMatchingURI(Resource current, String namespace, Set<Property> properties, JenaConnect vivo) {
 		List<String> uris = getMatchingURIs(current, namespace, properties, vivo);
 		String uri = uris.isEmpty()?null:uris.get(0);
 		if (uri != null) {
@@ -183,7 +176,7 @@ public class ChangeNamespace {
 	 * @param vivo the model to match in
 	 * @return the uris of the matched resources (empty set if none found)
 	 */
-	public static List<String> getMatchingURIs(Resource current, String namespace, List<Property> properties, JenaConnect vivo) {
+	public static List<String> getMatchingURIs(Resource current, String namespace, Set<Property> properties, JenaConnect vivo) {
 		StringBuilder sbQuery = new StringBuilder();
 		ArrayList<String> filters = new ArrayList<String>();
 		int valueCount = 0;
@@ -253,7 +246,7 @@ public class ChangeNamespace {
 	 * @param properties the properties to match on
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties) throws IllegalArgumentException {
+	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, Set<Property> properties) throws IllegalArgumentException {
 		if (oldNamespace == null || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
@@ -276,7 +269,7 @@ public class ChangeNamespace {
 	 * @param newNamespace the new namespace
 	 */
 	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace) {
-		//Grab all namespaces needing changed
+		//Grab all resources matching namespaces needing changed
 		String subjectQuery =	""+
 			"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
 			"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" +
@@ -295,10 +288,10 @@ public class ChangeNamespace {
 			"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> \n" +
 			"PREFIX core: <http://vivoweb.org/ontology/core#> \n" +
 			"\n" +
-			"SELECT ?sNew \n" +
+			"SELECT ?sub \n" +
 			"WHERE {\n" +
-			"\t?sNew ?p ?o . \n" +
-			"\tFILTER regex(str(?sNew), \"" + oldNamespace + "\" ) \n" + 
+			"\t" + "?sub ?p ?o . \n" +
+			"\t" + "FILTER regex(str(?sub), \"" + oldNamespace + "\" ) \n" + 
 			"}";
 		log.debug("Change Query:\n"+subjectQuery);
 		
@@ -306,15 +299,14 @@ public class ChangeNamespace {
 
 		HashSet<String> changeArray = new HashSet<String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(changeList)) {
-			String renameURI = solution.getResource("sNew").getURI();
+			String renameURI = solution.getResource("sub").getURI();
 			changeArray.add(renameURI);
 		}
 		
-		HashSet<String> uriCheck = new HashSet<String>();
-		for(String sNew : changeArray) {
-			Resource res = model.getJenaModel().getResource(sNew);
+		for(String sub : changeArray) {
+			Resource res = model.getJenaModel().getResource(sub);
 			log.trace("res: " + res);
-			String uri = getUnusedURI(newNamespace, uriCheck, vivo, model);
+			String uri = getUnusedURI(newNamespace, vivo, model);
 			log.trace("unusedURI: " + uri);
 			ResourceUtils.renameResource(res, uri);
 		}
@@ -329,7 +321,7 @@ public class ChangeNamespace {
 	 * @param newNamespace the new namespace
 	 * @param properties the properties to match on
 	 */
-	private static void batchMatchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, List<Property> properties) {
+	private static void batchMatchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, Set<Property> properties) {
 		if (properties.size() < 1) {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
@@ -364,8 +356,8 @@ public class ChangeNamespace {
 				sQuery.append("\t?sOld <").append(p.getURI()).append("> ").append("?o" + counter).append(" . \n");
 		}
 		
-		sQuery.append("\tFILTER regex(str(?sNew), \"").append(oldNamespace + "\" ) . \n");
-		sQuery.append("\tFILTER regex(str(?sOld), \"").append(newNamespace + "\" ) \n}");
+		sQuery.append("\tFILTER regex(str(?sNew), \"").append("^").append(oldNamespace).append("\" ) . \n");
+		sQuery.append("\tFILTER regex(str(?sOld), \"").append("^").append(newNamespace).append("\" ) \n}");
 		
 		log.debug("Match Query:\n"+sQuery.toString());
 		
@@ -402,9 +394,9 @@ public class ChangeNamespace {
 		ArgParser parser = new ArgParser("ChangeNamespace");
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoModel").withParameter(true, "CONFIG_FILE").setDescription("config file for vivo jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
 		
 		// Params
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("oldNamespace").withParameter(true, "OLD_NAMESPACE").setDescription("The old namespace").setRequired(true));

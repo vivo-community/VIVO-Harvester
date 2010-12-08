@@ -133,7 +133,7 @@ public class ArgParser {
 					if(arg.isParameterRequired()) {
 						ob = ob.hasArgs();
 					} else {
-						if(arg.isParameterProperties()) {
+						if(arg.isParameterValueMap()) {
 							ob = ob.hasOptionalArgs(2).withValueSeparator();
 						} else {
 							ob = ob.hasOptionalArgs();

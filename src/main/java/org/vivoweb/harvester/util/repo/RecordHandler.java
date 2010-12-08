@@ -12,7 +12,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -225,7 +224,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return RecordHandler described by config file
 	 * @throws IOException xml config parse error
 	 */
-	public static RecordHandler parseConfig(String filename, Properties overrideParams) throws IOException {
+	public static RecordHandler parseConfig(String filename, Map<String,String> overrideParams) throws IOException {
 		return new RecordHandlerParser().parseConfig(filename, overrideParams);
 	}
 	
@@ -297,7 +296,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		 * @return the RecordHandler described by the config file
 		 * @throws IOException xml parsing error
 		 */
-		protected RecordHandler parseConfig(String filename, Properties overrideParams) throws IOException {
+		protected RecordHandler parseConfig(String filename, Map<String,String> overrideParams) throws IOException {
 			if(filename != null) {
 				try {
 					// get a factory
@@ -316,8 +315,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 				}
 			}
 			if(overrideParams != null) {
-				for(String key : overrideParams.stringPropertyNames()) {
-					this.params.put(key, overrideParams.getProperty(key));
+				for(String key : overrideParams.keySet()) {
+					this.params.put(key, overrideParams.get(key));
 				}
 			}
 			try {

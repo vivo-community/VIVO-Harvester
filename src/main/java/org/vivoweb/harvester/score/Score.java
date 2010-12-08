@@ -10,8 +10,7 @@ package org.vivoweb.harvester.score;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +36,11 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.ResourceUtils;
 
-/***
+/**
  * VIVO Score
  * @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
+ * @author Stephen Williams svwilliams@ctrip.ufl.edu
+ * @author Christopher Haines hainesc@ctrip.ufl.edu
  */
 public class Score {
 	/**
@@ -65,59 +66,58 @@ public class Score {
 	/**
 	 * Option to remove output model before filling
 	 */
-	private boolean wipeOutputModel;
+	private final boolean wipeOutputModel;
 	/**
 	 * Option to push Matches and Non-Matches to output model
 	 */
 	private final boolean pushAll;
 	/**
-	 * Arguments for exact match algorithm
+	 * Predicates for match algorithm
 	 */
-	private final List<String> matchList;
+	private final Map<String, String> matchList;
 	/**
-	 * 
+	 * Link the resources found by match algorithm
 	 */
 	private final String linkProp;
 	/**
-	 * 
+	 * Rename resources found by match algorithm
 	 */
 	private final boolean renameRes;
 	/**
 	 * Argument for inplace scoring (ie not changing models) 
 	 */
 	private final boolean inPlace;
-	
-
-	
-
+	/**
+	 * Namespace for match algorithm
+	 */
+	private final String matchNamespace;
 	
 	/**
 	 * Constructor
-	 * @param jenaVivo model containing vivo statements
-	 * @param jenaScoreInput model containing statements to be scored
-	 * @param jenaScoreOutput output model
+	 * @param vivo model containing vivo statements
+	 * @param scoreInput model containing statements to be scored
+	 * @param scoreOutput output model
 	 * @param clearInputModelArg If set, this will clear the input model after scoring is complete
 	 * @param clearOutputModelArg If set, this will clear the output model before scoring begins
-	 * @param matchArg new matching algorithm
-	 * @param renameArg should I just rename the args?
-	 * @param linkingArgs bidirectional link
+	 * @param matchArg predicate pairs to match on
+	 * @param renameRes should I just rename the args?
+	 * @param linkProp bidirectional link
+	 * @param matchNamespace namespace to match in (null matches any)
+	 * @param inPlace inplace scoring
+	 * @param pushAll push Matches and Non-Matches to output model
 	 */
-	public Score(JenaConnect jenaScoreInput, JenaConnect jenaVivo, JenaConnect jenaScoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, List<String> matchArg, boolean renameArg, String linkingArgs) {
+	public Score(JenaConnect scoreInput, JenaConnect vivo, JenaConnect scoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, Map<String, String> matchArg, boolean renameRes, String linkProp, String matchNamespace, boolean inPlace, boolean pushAll) {
 		this.wipeInputModel = clearInputModelArg;
 		this.wipeOutputModel = clearOutputModelArg;
 		this.matchList = matchArg;
-		this.pushAll = false;
-		this.inPlace = false;
-		this.renameRes = renameArg;
-		this.linkProp = linkingArgs;
-		
-		this.vivo = jenaVivo;
-		
-		// Create working model
-		this.scoreInput = jenaScoreInput;
-		
-		// Create output model
-		this.scoreOutput = jenaScoreOutput;		
+		this.pushAll = pushAll;
+		this.inPlace = inPlace;
+		this.renameRes = renameRes;
+		this.linkProp = linkProp;
+		this.matchNamespace = matchNamespace;
+		this.vivo = vivo;
+		this.scoreInput = scoreInput;
+		this.scoreOutput = scoreOutput;		
 	}
 	
 	/**
@@ -139,63 +139,58 @@ public class Score {
 		// Check for config files, before parsing name options
 		String jenaVIVO = opts.get("v");
 		
-		Properties inputOverrides = opts.getProperties("I");
+		Map<String,String> inputOverrides = opts.getValueMap("I");
 		String jenaInput;
 		if (opts.has("i")) {
 			jenaInput = opts.get("i");
 		} else {
 			jenaInput = jenaVIVO;
 			if (!inputOverrides.containsKey("modelName")) {
-				inputOverrides.setProperty("modelName", "Scoring");
+				inputOverrides.put("modelName", "Scoring");
 			}
 		}
 		
-		Properties outputOverrides = opts.getProperties("O");
+		Map<String,String> outputOverrides = opts.getValueMap("O");
 		String jenaOutput;
 		if (opts.has("o")) {
 			jenaOutput = opts.get("o");
 		} else {
 			jenaOutput = jenaVIVO;
 			if (!outputOverrides.containsKey("modelName")) {
-				outputOverrides.setProperty("modelName", "Staging");
+				outputOverrides.put("modelName", "Staging");
 			}
 		}
 		
 		// Connect to vivo
-		this.vivo = JenaConnect.parseConfig(jenaVIVO, opts.getProperties("V"));
+		this.vivo = JenaConnect.parseConfig(jenaVIVO, opts.getValueMap("V"));
 		
 		// Create working model
 		this.scoreInput = JenaConnect.parseConfig(jenaInput, inputOverrides);
 		
 		// Create output model
-		
 		if(opts.has("a")){
 			this.scoreOutput = this.scoreInput;
 		} else {
 			this.scoreOutput = JenaConnect.parseConfig(jenaOutput, outputOverrides);
 		}
 		
-		
 		this.wipeInputModel = opts.has("w");
 		this.wipeOutputModel = opts.has("q");
 		this.pushAll = opts.has("l");
-		this.matchList = opts.getAll("m");
+		this.matchList = opts.getValueMap("m");
 		this.inPlace = opts.has("a");
 		this.renameRes = opts.has("r");
 		this.linkProp = opts.get("l");
+		this.matchNamespace = opts.get("n");
 	}
 	
-
-	
-
-	
-	/**
+	/* *
 	 * Traverses paperNode and adds to toReplace model
 	 * @param mainNode primary node
 	 * @param paperNode node of paper
 	 * @param toReplace model to replace
-	 */
-	/*private static void replaceResource(Resource mainNode, Resource paperNode, JenaConnect toReplace) {
+	 * /
+	private static void replaceResource(Resource mainNode, Resource paperNode, JenaConnect toReplace) {
 		Resource authorship;
 		String authorQuery;
 		Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
@@ -314,19 +309,14 @@ public class Score {
 		toReplace.getJenaModel().commit();
 	}*/
 	
-
-	
-
-	
-	
-	/**
+	/* *
 	 * Match on two predicates and insert foreign key links for each match
 	 * @param scoreAttribute the predicate of the object in scoring to match on
 	 * @param vivoAttribute the predicate of the object in vivo to match on
 	 * @param scoreToVIVONode the predicate that connects the object in score to the object in vivo
 	 * @param vivoToScoreNode the predicate that connects the object in vivo to the object in score
-	 */
-	/*public void foreignKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
+	 * /
+	public void foreignKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
 		// Foreign Key Match
 		log.info("Executing foreignKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
 		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
@@ -377,16 +367,16 @@ public class Score {
 		}
 	}*/
 	
-	/**
+	/* *
 	 * Executes an exact matching algorithm for author disambiguation
 	 * @param scoreAttribute attribute to perform the exact match in scoring
-	 * @param vivoAttribute attribute to perform the exact match in vivo TODO: Add in foreign key match with removal of
+	 * @param vivoAttribute attribute to perform the exact match in vivo
 	 * similarly linked item eg. -f <http://site/workEmail>,<http://vivo/workEmail> -toVivo <objectProperty>
 	 * -toScoreItem <objectProperty> Thinking out loud - we'll need to modify the end results of exact match now that we
 	 * are not creating authorships and authors for pubmed entries we'll need to just link the author whose name parts
 	 * match someone in vivo Working on that now
-	 */
-	/*public void exactMatch(String scoreAttribute, String vivoAttribute) {
+	 * /
+	public void exactMatch(String scoreAttribute, String vivoAttribute) {
 		String queryString;
 		String matchValue;
 		Resource paperNode;
@@ -428,94 +418,67 @@ public class Score {
 	}*/
 	
 	/**
-	 * @param propertyList list of the properties to be searched for in vivo and score ... valid formats are "core:vivoProp=core:scoreProp" and "core:propForBoth"
-	 * @return HashMap of the found matches
+	 * find all nodes in the given namepsace matching on the given predicates
+	 * @param matchMap properties set of predicates to be searched for in vivo and score. Formats is "vivoProp => inputProp"
+	 * @param namespace the namespace to match in
+	 * @return mapping of the found matches
 	 * @throws IOException error connecting to dataset
 	 */
-	private HashMap<String,String> match(List<String> propertyList) throws IOException{
-		if (propertyList.size() < 1) {
+	private Map<String,String> match(Map<String, String> matchMap, String namespace) throws IOException{
+		if (matchMap.size() < 1) {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
 			
-		//Find all namespace matches
+		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery =	new StringBuilder("" +
 				"PREFIX scoreClone: <http://vivoweb.org/harvester/model/scoring#>" +
-				"SELECT ?sVIVO ?sScore\n" +
+				"SELECT ?sVivo ?sScore\n" +
 				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
 				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
-				"WHERE\n{\n");
+				"WHERE {\n");
 
 		int counter = 0;
-		//FIXME:  Will break change to jc.getModelName when it exists.
-		StringBuilder vivoWhere = new StringBuilder("  GRAPH scoreClone:vivoClone\n  {\n");
-		StringBuilder scoreWhere = new StringBuilder("  GRAPH scoreClone:inputClone\n  {\n");
-		StringBuilder filter = new StringBuilder("\tFILTER (");
+		StringBuilder vivoWhere = new StringBuilder("  GRAPH scoreClone:vivoClone {\n");
+		StringBuilder scoreWhere = new StringBuilder("  GRAPH scoreClone:inputClone {\n");
+		StringBuilder filter = new StringBuilder("  FILTER( ");
 		
-		for (String properties : propertyList) {
-			String[] propSplit = properties.split("=");
-			if (propSplit.length > 2){
-				log.error("The Data Properites passed can not contain multiple equals");
-			} else if (properties.split("=").length == 2){
-				vivoWhere.append("\t?sVIVO <").append(propSplit[0]).append("> ").append("?ov" + counter).append(" . \n");
-				scoreWhere.append("\t?sScore <").append(propSplit[1]).append("> ").append("?os" + counter).append(" . \n");
-				filter.append("((sameTerm(?os" + counter + ", ?ov" + counter + "))) && ");
-			} else {
-				vivoWhere.append("\t?sVIVO <").append(properties).append("> ").append("?ov" + counter).append(" . \n");
-				scoreWhere.append("\t?sScore <").append(properties).append("> ").append("?os" + counter).append(" . \n");
-				filter.append("((sameTerm(?os" + counter + ", ?ov" + counter + ")) && ");
-			}
+		for (String property : matchMap.keySet()) {
+			vivoWhere.append("    ?sVivo <").append(property).append("> ").append("?ov" + counter).append(" . \n");
+			scoreWhere.append("    ?sScore <").append(matchMap.get(property)).append("> ").append("?os" + counter).append(" . \n");
+			filter.append("sameTerm(?os" + counter + ", ?ov" + counter + ") && ");
 			counter++;
 		}
 		
-		vivoWhere.append("} . \n");
-		scoreWhere.append("} . \n");
-		filter.append("(str(?sVIVO) != str(?sScore))) .\n");
+		vivoWhere.append("  } . \n");
+		scoreWhere.append("  } . \n");
+		filter.append("(str(?sVivo) != str(?sScore))");
+		if(namespace != null) {
+			filter.append(" && regex(str(?sScore), \"^"+namespace+"\")");
+		}
+		filter.append(" ) .\n");
 		
 		sQuery.append(vivoWhere.toString());
 		sQuery.append(scoreWhere.toString());
 		sQuery.append(filter.toString());
 		sQuery.append("}");
-//		sQuery = new StringBuilder("" +
-//				"PREFIX scoreClone: <http://vivoweb.org/harvester/model/scoring#>" +
-//				"SELECT ?sVIVO ?sScore\n" +
-//				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
-//				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
-//				"WHERE\n" +
-//				"{\n" +
-//				"  GRAPH scoreClone:vivoClone\n" +
-//				"  {\n" +
-//				"    ?sVIVO <http://vivoweb.org/ontology/core#workEmail> ?ov0 .\n" +
-//				"  } .\n" +
-//				"  GRAPH scoreClone:inputClone\n" +
-//				"  {\n" +
-//				"    ?sScore <http://vivoweb.org/ontology/score#workEmail> ?os0 .\n" +
-//				"  } .\n" +
-//				"  FILTER (sameTerm(?os0, ?ov0) && (str(?sVIVO) != str(?sScore))) .\n" +
-//				"} \n");
-				
+		
 		log.debug("Match Query:\n"+sQuery.toString());
-		
-		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
-		
-//		Model unionModel = this.scoreInput.getJenaModel().union(this.vivo.getJenaModel());
-//		QueryExecution queryExec = QueryExecutionFactory.create(query, unionModel);
 		
 		SDBJenaConnect unionModel = new MemJenaConnect();
 		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
 		vivoClone.importRdfFromJC(this.vivo);
 		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
 		inputClone.importRdfFromJC(this.scoreInput);
-		Dataset ds = unionModel.getDataSet();
-		for(String sName : IterableAdaptor.adapt(ds.listNames())){
-			log.debug("Model in DataSet: " + sName);
-		}
-		QueryExecution queryExec = QueryExecutionFactory.create(query, ds); // FIXME Stephen/Chris: Query needs to now point to "ScoringVivoClone" and "ScoringInputClone"
+		Dataset ds = unionModel.getConnectionDataSet();
+		
+		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
+		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		HashMap<String,String> uriArray = new HashMap<String,String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
-			uriArray.put(solution.getResource("sScore").getURI(), solution.getResource("sVIVO").getURI());
+			uriArray.put(solution.getResource("sScore").getURI(), solution.getResource("sVivo").getURI());
 		}
 
-		log.info("match found " + uriArray.keySet().size() + " links between vivo and the input model");
+		log.info("Match found " + uriArray.keySet().size() + " links between Vivo and the Input model");
 		
 		return uriArray;
 	}
@@ -527,7 +490,7 @@ public class Score {
 	 * @param matchSet a result set of scoreResources, vivoResources
 	 * @throws IOException error connecting
 	 */
-	private void rename(HashMap<String,String> matchSet) throws IOException{
+	private void rename(Map<String,String> matchSet) throws IOException{
 		Resource res;
 		
 		for(String oldUri : matchSet.keySet()) {
@@ -548,7 +511,7 @@ public class Score {
 	 * @param objPropList the object properties to be used to link the two items set in string form -> vivo-object-property-to-score-object = score-object-property-to-vivo-object
 	 * @throws IOException error connecting
 	 */
-	private void link(HashMap<String,String> matchSet, String objPropList) throws IOException {
+	private void link(Map<String,String> matchSet, String objPropList) throws IOException {
 		Resource scoreRes;
 		Resource vivoRes;
 		Property scoreToVivoObjProp = ResourceFactory.createProperty("scoreToVivoObjProp");
@@ -616,30 +579,6 @@ public class Score {
 	}
 	
 	/**
-	 * Accessor for vivo model
-	 * @return the vivo
-	 */
-	public JenaConnect getVivo() {
-		return this.vivo;
-	}
-	
-	/**
-	 * Accessor for input model
-	 * @return the scoreInput
-	 */
-	public JenaConnect getScoreInput() {
-		return this.scoreInput;
-	}
-	
-	/**
-	 * Accessor for output model
-	 * @return the scoreOutput
-	 */
-	public JenaConnect getScoreOutput() {
-		return this.scoreOutput;
-	}
-	
-	/**
 	 * Close the resources used by score
 	 */
 	public void close() {
@@ -663,15 +602,18 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
 		
 		// Model name overrides
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
 		// Matching Algorithms 
-		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").setDescription("perform a match based on the paramaters given.  Properties may be passed as single properties applicable to both models or vivoProperty=scoreProperty").withParameters(true, "RDF_PREDICATES"));
-	
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").withParameterValueMap("VIVO_PREDICATE", "SCORE_PREDICATE").setDescription("find matching rdf nodes where the value of SCORE_PREDICATE in the scoring model is the same as VIVO_PREDICATE in the vivo model").setRequired(false));
+		
+		// Matching Params
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceMatch").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match algorithm to only match rdf nodes whose URI begin with SCORE_NAMESPACE").setRequired(false));
+		
 		// Linking Methods
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").setDescription("link the two matched entities together using the pair of object properties vivoObj=scoreObj").withParameters(false, "RDF_PREDICATES",1));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").setDescription("link the two matched entities together using the pair of object properties vivoObj=scoreObj").withParameter(false, "RDF_PREDICATE"));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").setRequired(false));
 		
 		// options
@@ -691,29 +633,29 @@ public class Score {
 		log.info("Running specified algorithims");
 		
 		// Empty input model
-		if (this.wipeOutputModel) {
+		if(this.wipeOutputModel) {
 			log.info("Emptying output model");	
-			this.scoreOutput.getJenaModel().removeAll();
+			this.scoreOutput.truncate();
 		}
 		
-		if (this.pushAll){
+		if(this.pushAll) {
 			this.scoreOutput.getJenaModel().add(this.scoreInput.getJenaModel());
 		}
 		
-		if (this.matchList != null && !this.matchList.isEmpty()) {
-			HashMap<String,String> resultMap = match(this.matchList);
-				
-			if(this.renameRes){
+		if(this.matchList != null && !this.matchList.isEmpty()) {
+			Map<String,String> resultMap = match(this.matchList, this.matchNamespace);
+			
+			if(this.renameRes) {
 				rename(resultMap);
-			} else if(this.linkProp != null && !this.linkProp.isEmpty()){
+			} else if(this.linkProp != null && !this.linkProp.isEmpty()) {
 				link(resultMap,this.linkProp);
 			}			
 		}
 		
 		// Empty input model
-		if (this.wipeInputModel) {
+		if(this.wipeInputModel) {
 			log.info("Emptying input model");	
-			this.scoreInput.getJenaModel().removeAll();
+			this.scoreInput.truncate();
 		}
 	}	
 

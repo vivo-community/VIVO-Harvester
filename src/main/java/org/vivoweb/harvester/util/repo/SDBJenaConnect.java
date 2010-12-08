@@ -104,7 +104,7 @@ public class SDBJenaConnect extends JenaConnect {
 	}
 	
 	@Override
-	public Dataset getDataSet() {
+	public Dataset getConnectionDataSet() {
 		return SDBFactory.connectDataset(this.store);
 	}
 

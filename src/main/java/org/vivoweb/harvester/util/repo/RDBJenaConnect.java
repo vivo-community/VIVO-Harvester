@@ -114,7 +114,7 @@ public class RDBJenaConnect extends JenaConnect {
 	}
 
 	@Override
-	public Dataset getDataSet() throws IOException {
+	public Dataset getConnectionDataSet() throws IOException {
 		DataSourceImpl ds = new DataSourceImpl();
 		for(String name : IterableAdaptor.adapt(this.conn.getAllModelNames())) {
 			ds.addNamedModel(name, neighborConnectClone(name).getJenaModel());

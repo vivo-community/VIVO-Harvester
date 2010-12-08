@@ -4,7 +4,7 @@
 package org.vivoweb.harvester.score;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,9 +102,9 @@ public class PubmedScore {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
 		
 		// Model name overrides
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
 		// scoring algorithms
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("exactMatch").setDescription("perform an exact match scoring").withParameters(true, "RDF_PREDICATES"));
@@ -178,30 +178,30 @@ public class PubmedScore {
 		// Check for config files, before parsing name options
 		String jenaVIVO = opts.get("v");
 		
-		Properties inputOverrides = opts.getProperties("I");
+		Map<String,String> inputOverrides = opts.getValueMap("I");
 		String jenaInput;
 		if(opts.has("i")) {
 			jenaInput = opts.get("i");
 		} else {
 			jenaInput = jenaVIVO;
 			if(!inputOverrides.containsKey("modelName")) {
-				inputOverrides.setProperty("modelName", "Scoring");
+				inputOverrides.put("modelName", "Scoring");
 			}
 		}
 		
-		Properties outputOverrides = opts.getProperties("O");
+		Map<String,String> outputOverrides = opts.getValueMap("O");
 		String jenaOutput;
 		if(opts.has("o")) {
 			jenaOutput = opts.get("o");
 		} else {
 			jenaOutput = jenaVIVO;
 			if(!outputOverrides.containsKey("modelName")) {
-				outputOverrides.setProperty("modelName", "Staging");
+				outputOverrides.put("modelName", "Staging");
 			}
 		}
 		
 		// Connect to vivo
-		this.vivo = JenaConnect.parseConfig(jenaVIVO, opts.getProperties("V"));
+		this.vivo = JenaConnect.parseConfig(jenaVIVO, opts.getValueMap("V"));
 		
 		// Connect to input
 		this.scoreInput = JenaConnect.parseConfig(jenaInput, inputOverrides);

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -269,11 +268,7 @@ public class JenaRecordHandler extends RecordHandler {
 		if(jenaConfig != null) {
 			this.model = JenaConnect.parseConfig(jenaConfig);
 		} else {
-			Properties overrideParams = new Properties();
-			for(String param : params.keySet()) {
-				overrideParams.setProperty(param, params.get(param));
-			}
-			this.model = JenaConnect.parseConfig((String)null, overrideParams);
+			this.model = JenaConnect.parseConfig((String)null, params);
 		}
 		initVars(dataFieldType);
 	}

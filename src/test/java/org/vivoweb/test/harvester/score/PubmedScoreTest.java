@@ -10,7 +10,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
@@ -54,19 +55,19 @@ public class PubmedScoreTest extends TestCase {
 		
 		// load input models
 		try {
-			Properties inputProp = new Properties();
-			inputProp.put("modelName", "input");
-			input = JenaConnect.parseConfig(this.vivoXML, inputProp);
+			Map<String,String> inputMap = new HashMap<String, String>();
+			inputMap.put("modelName", "input");
+			input = JenaConnect.parseConfig(this.vivoXML, inputMap);
 			input.loadRdfFromStream(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
 			
-			Properties vivoProp = new Properties();
-			vivoProp.put("modelName", "vivo");
-			vivo = JenaConnect.parseConfig(this.vivoXML, vivoProp);
+			Map<String,String> vivoMap = new HashMap<String, String>();
+			vivoMap.put("modelName", "vivo");
+			vivo = JenaConnect.parseConfig(this.vivoXML, vivoMap);
 			vivo.loadRdfFromStream(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
 			
-			Properties outputProp = new Properties();
-			outputProp.put("modelName", "output");
-			output = JenaConnect.parseConfig(this.vivoXML, outputProp);
+			Map<String,String> outputMap = new HashMap<String, String>();
+			outputMap.put("modelName", "output");
+			output = JenaConnect.parseConfig(this.vivoXML, outputMap);
 			
 			// run author score
 			Test = new PubmedScore(input, vivo, output, false, false, false);

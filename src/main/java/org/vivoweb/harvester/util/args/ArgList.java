@@ -107,8 +107,8 @@ public class ArgList {
 		if(this.argParser.getOptMap().get(arg).hasParameters()) {
 			throw new IllegalArgumentException(arg + " potentially has more than one value, use getAll()");
 		}
-		if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
-			throw new IllegalArgumentException(arg + " is a properties parameter, use getProperties()");
+		if(this.argParser.getOptMap().get(arg).isParameterValueMap()) {
+			throw new IllegalArgumentException(arg + " is a value map parameter, use getValueMap()");
 		}
 		String retVal;
 		if(this.oCmdSet.hasOption(arg)) {
@@ -127,26 +127,32 @@ public class ArgList {
 	}
 	
 	/**
-	 * Gets the properties for the argument
+	 * Gets the value map for the argument
 	 * @param arg argument to get
-	 * @return the values
+	 * @return the value map
 	 */
-	public Properties getProperties(String arg) {
+	public Map<String,String> getValueMap(String arg) {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
 		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
-		if(!argdef.isParameterProperties()) {
+		if(!argdef.isParameterValueMap()) {
 			if(argdef.hasParameters()) {
-				throw new IllegalArgumentException(arg + " is not a properties parameter, use getAll()");
+				throw new IllegalArgumentException(arg + " is not a value map parameter, use getAll()");
 			}
-			throw new IllegalArgumentException(arg + " is not a properties parameter, use get()");
+			throw new IllegalArgumentException(arg + " is not a value map parameter, use get()");
 		}
-		Properties p = new Properties();
+		Map<String,String> p = new HashMap<String, String>();
 		if(this.oConfSet != null) {
-			p.putAll(this.oConfSet.getOptionProperties(arg));
+			Properties props = this.oConfSet.getOptionProperties(arg);
+			for(String prop : props.stringPropertyNames()) {
+				p.put(prop, props.getProperty(prop));
+			}
 		}
-		p.putAll(this.oCmdSet.getOptionProperties(arg));
+		Properties props = this.oCmdSet.getOptionProperties(arg);
+		for(String prop : props.stringPropertyNames()) {
+			p.put(prop, props.getProperty(prop));
+		}
 		return p;
 	}
 	
@@ -171,8 +177,8 @@ public class ArgList {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
 		if(!argdef.hasParameters()) {
-			if(argdef.isParameterProperties()) {
-				throw new IllegalArgumentException(arg + " is a properties parameter, use getProperties()");
+			if(argdef.isParameterValueMap()) {
+				throw new IllegalArgumentException(arg + " is a value map parameter, use getValueMap()");
 			}
 			throw new IllegalArgumentException(arg + " has only one parameter, use get()");
 		}

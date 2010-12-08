@@ -63,7 +63,7 @@ public class D2RMapFetch {
 	public D2RMapFetch(ArgList opts) throws IOException {
 		this.d2rConfigPath = opts.get("u");
 		this.d2rOutputFile = opts.get("s");
-		this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
+		this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class D2RMapFetch {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("D2RMapFetch");
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		// d2RMap specific
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("d2rMapConfigFile").withParameter(true, "D2RMAP_CONFIG_FILE").setDescription("D2RMap config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("d2rMapOutputFile").withParameter(true, "D2RMAP_OUTPUT_FILE").setDescription("D2RMap output file").setRequired(true));

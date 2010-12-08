@@ -9,7 +9,8 @@ package org.vivoweb.test.harvester.util.repo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.VFS;
@@ -61,64 +62,64 @@ public class RecordHandlerTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigTFRH() throws IOException {
 		log.info("BEGIN testParseNoConfigTFRH");
-		Properties overrideParams = new Properties();
-		overrideParams.setProperty("fileDir", "tmp://testingNoConfRH-Text");
+		Map<String,String> overrideParams = new HashMap<String, String>();
+		overrideParams.put("fileDir", "tmp://testingNoConfRH-Text");
 		this.rh = RecordHandler.parseConfig(null, overrideParams);
 		log.info("END testParseNoConfigTFRH");
 	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigJDBCRH() throws IOException {
 		log.info("BEGIN testParseNoConfigJDBCRH");
-		Properties overrideParams = new Properties();
-		overrideParams.setProperty("dbClass", "org.h2.Driver");
-		overrideParams.setProperty("dbUrl", "jdbc:h2:mem:TestNoConfRH-JDBC");
-		overrideParams.setProperty("dbUser", "sa");
-		overrideParams.setProperty("dbPass", "");
-		overrideParams.setProperty("dbTable", "testdb");
-		overrideParams.setProperty("dataFieldName", "data");
+		Map<String,String> overrideParams = new HashMap<String, String>();
+		overrideParams.put("dbClass", "org.h2.Driver");
+		overrideParams.put("dbUrl", "jdbc:h2:mem:TestNoConfRH-JDBC");
+		overrideParams.put("dbUser", "sa");
+		overrideParams.put("dbPass", "");
+		overrideParams.put("dbTable", "testdb");
+		overrideParams.put("dataFieldName", "data");
 		this.rh = RecordHandler.parseConfig(null, overrideParams);
 		log.info("END testParseNoConfigJDBCRH");
 	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigJenaRH() throws IOException {
 		log.info("BEGIN testParseNoConfigJenaRH");
-		Properties overrideParams = new Properties();
-		overrideParams.setProperty("dbClass", "org.h2.Driver");
-		overrideParams.setProperty("dbUrl", "jdbc:h2:mem:TestNoConfRH-Jena");
-		overrideParams.setProperty("dbUser", "sa");
-		overrideParams.setProperty("dbPass", "");
-		overrideParams.setProperty("dbType", "H2");
-		overrideParams.setProperty("type", "sdb");
-		overrideParams.setProperty("dbLayout", "layout2");
-		overrideParams.setProperty("modelName", "namedModel");
-		overrideParams.setProperty("dataFieldType", "http://localhost/jenarecordhandlerdemo#data");
+		Map<String,String> overrideParams = new HashMap<String, String>();
+		overrideParams.put("dbClass", "org.h2.Driver");
+		overrideParams.put("dbUrl", "jdbc:h2:mem:TestNoConfRH-Jena");
+		overrideParams.put("dbUser", "sa");
+		overrideParams.put("dbPass", "");
+		overrideParams.put("dbType", "H2");
+		overrideParams.put("type", "sdb");
+		overrideParams.put("dbLayout", "layout2");
+		overrideParams.put("modelName", "namedModel");
+		overrideParams.put("dataFieldType", "http://localhost/jenarecordhandlerdemo#data");
 		this.rh = RecordHandler.parseConfig(null, overrideParams);
 		log.info("END testParseNoConfigJenaRH");
 	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Properties) parseConfig(String filename, Properties overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigMapRH() throws IOException {
 		log.info("BEGIN testParseNoConfigMapRH");
-		this.rh = RecordHandler.parseConfig(null, new Properties());
+		this.rh = RecordHandler.parseConfig(null, new HashMap<String, String>());
 		log.info("END testParseNoConfigMapRH");
 	}
 	
