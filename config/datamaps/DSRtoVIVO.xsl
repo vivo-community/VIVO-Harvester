@@ -86,6 +86,9 @@
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
 			<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship"/>
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Agreement"/>
+			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
 			<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Title"/></rdfs:label>
 			<core:administeredBy>
@@ -145,43 +148,50 @@
 	<xsl:template name="t_vwProjectTeam">
 		<xsl:param name='grantid' />
 		<xsl:param name='this' />
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}for{$this/db-dbo.vwProjectTeam:InvestigatorID}">
-			<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-			<xsl:choose>
-				<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Co-PrincipleInvestigatorRole"/>
-				</xsl:otherwise>
-			</xsl:choose>
-			<core:roleIn>
-				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
+		<xsl:choose>
+			<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
+				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-					<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
-				</rdf:Description>
-			</core:roleIn>
-			<xsl:choose>
-				<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#InvestigatorRole"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ResearcherRole"/>
+					<core:roleIn>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+						</rdf:Description>
+					</core:roleIn>
 					<core:principalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
-							<core:hasPrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+							<core:hasPrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:principalInvestigatorRoleOf>
-				</xsl:when>
-				<xsl:otherwise>
+				</rdf:Description>
+			</xsl:when>
+			<xsl:otherwise>
+				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
+					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CoPrincipleInvestigatorRole"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#InvestigatorRole"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ResearcherRole"/>
+					<core:roleIn>
+						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+						</rdf:Description>
+					</core:roleIn>
 					<core:co-PrincipalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
-							<core:hasCo-PrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/role/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
+							<core:hasCo-PrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:co-PrincipalInvestigatorRoleOf>
-				</xsl:otherwise>
-			</xsl:choose>
-		</rdf:Description>
+				</rdf:Description>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 </xsl:stylesheet>

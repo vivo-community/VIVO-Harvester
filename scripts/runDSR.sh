@@ -84,6 +84,28 @@ ln -s dsr.cnpeople.$date.tar.gz backups/dsr.cnpeople.latest.tar.gz
 # uncomment to restore previous changenamespace model
 #tar -xzpf backups/dsr.cnpeople.latest.tar.gz XMLVault/h2dsr/All
 
+# Execute ChangeNamespace to get PI roles into current namespace
+$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/piRole/ -p http://www.w3.org/1999/02/22-rdf-syntax-ns#type -p http://vivoweb.org/ontology/core#roleIn -p http://vivoweb.org/ontology/core#principalInvestigatorRoleOf
+# backup H2 change namesace Models
+date=`date +%Y-%m-%d_%T`
+tar -czpf backups/dsr.cnpirole.$date.tar.gz XMLVault/h2dsr/All
+rm -rf backups/dsr.cnpirole.latest.tar.gz
+ln -s dsr.cnpirole.$date.tar.gz backups/dsr.cnpirole.latest.tar.gz
+
+# uncomment to restore previous changenamespace model
+#tar -xzpf backups/dsr.cnpirole.latest.tar.gz XMLVault/h2dsr/All
+
+# Execute ChangeNamespace to get co-PI roles into current namespace
+$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/coPiRole/ -p http://www.w3.org/1999/02/22-rdf-syntax-ns#type -p http://vivoweb.org/ontology/core#roleIn -p http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf
+# backup H2 change namesace Models
+date=`date +%Y-%m-%d_%T`
+tar -czpf backups/dsr.cncopirole.$date.tar.gz XMLVault/h2dsr/All
+rm -rf backups/dsr.cncopirole.latest.tar.gz
+ln -s dsr.cncopirole.$date.tar.gz backups/dsr.cncopirole.latest.tar.gz
+
+# uncomment to restore previous changenamespace model
+#tar -xzpf backups/dsr.cncopirole.latest.tar.gz XMLVault/h2dsr/All
+
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
 mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.dsr.pretransfer.$date.sql
