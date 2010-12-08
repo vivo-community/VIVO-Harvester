@@ -5,14 +5,14 @@
 	<Param name="username">USERNAME</Param>
 	<Param name="password">PASSWORD</Param>
 	<Param name="output">config/recordHandlers/DSR-XML-h2RH.xml</Param>
-	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='',dbo.vwContracts.ContractNumber LIKE "%187%"</Param>
+	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='',dbo.vwContracts.ContractNumber LIKE '%187%'</Param>
 	<Param name="tableName">dbo.vwContracts</Param>
 	<Param name="id">dbo.vwContracts=ContractNumber</Param>
 	<Param name="fields">dbo.vwContracts=Confidential,ContractPI,Title,ContractDeptID,TotalAwarded,ContractUFID,BEGIN_DT,END_DT,SponsorID,Sponsor,FlowThruSponsorID,FlowThruSponsor</Param>
 <!--	<Param name="tableName">dbo.vwProjects</Param>-->
 <!--	<Param name="id">dbo.vwProjects=RecID</Param>-->
 <!--	<Param name="fields">dbo.vwProjects=ID_Source,PS_ContractNumber,PrimaryProject,PS_ProjectNumber,ProjectUPN,Title,DeptID,Investigator,InvestigatorID,Sponsor,SponsorID,FlowThruSponsor,FlowThruSponsorID,TotalAwarded,GM_PRIMARY_FLAG</Param>-->
-	<Param name="whereClause">dbo.vwProjectTeam=dbo.vwProjectTeam.ContractNumber LIKE "%187%"</Param>
+	<Param name="whereClause">dbo.vwProjectTeam=dbo.vwProjectTeam.ContractNumber LIKE '%187%'</Param>
 	<Param name="tableName">dbo.vwProjectTeam</Param>
 	<Param name="id">dbo.vwProjectTeam=PS_ProjectNumber</Param>
 	<Param name="fields">dbo.vwProjectTeam=ContractUFID,ContractNumber,ProjectUPN,PrimaryProject,InvestigatorID,Investigator,isPI</Param>
