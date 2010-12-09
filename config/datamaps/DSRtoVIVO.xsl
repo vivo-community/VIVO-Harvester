@@ -65,7 +65,7 @@
 							</xsl:when>
 							<xsl:when test="$table = 'dbo.vwProjectTeam'">
 								<xsl:call-template name="t_vwProjectTeam">
-									<xsl:with-param name="grantid" select="regex-group(1)" />
+<!--									<xsl:with-param name="grantid" select="regex-group(1)" />-->
 									<xsl:with-param name="this" select="$this" />
 								</xsl:call-template>
 							</xsl:when>
@@ -146,8 +146,8 @@
 	</xsl:template>
 		
 	<xsl:template name="t_vwProjectTeam">
-		<xsl:param name='grantid' />
 		<xsl:param name='this' />
+		<xsl:variable name='grantid' select='$this/db-dbo.vwProjectTeam:ContractNumber'/>
 		<xsl:choose>
 			<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
