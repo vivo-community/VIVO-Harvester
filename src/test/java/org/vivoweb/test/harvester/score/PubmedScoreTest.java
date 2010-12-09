@@ -75,8 +75,8 @@ public class PubmedScoreTest extends TestCase {
 			
 			// check output model
 			if(Test.getScoreOutput().getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with author name scoring");
-				fail("Didn't match anything with author name scoring");
+				log.error("Didn't match anything with pubmed scoring");
+				fail("Didn't match anything with pubmed scoring");
 			}			
 			
 			Test.close();

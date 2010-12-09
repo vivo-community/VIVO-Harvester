@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -28,6 +29,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -91,6 +93,10 @@ public class Score {
 	 * Namespace for match algorithm
 	 */
 	private final String matchNamespace;
+	/**
+	 * Pubmed Match threshold
+	 */
+	private final String pubmedThreshold;
 	
 	/**
 	 * Constructor
@@ -100,16 +106,18 @@ public class Score {
 	 * @param clearInputModelArg If set, this will clear the input model after scoring is complete
 	 * @param clearOutputModelArg If set, this will clear the output model before scoring begins
 	 * @param matchArg predicate pairs to match on
+	 * @param thresholdArg pubmed threshold
 	 * @param renameRes should I just rename the args?
 	 * @param linkProp bidirectional link
 	 * @param matchNamespace namespace to match in (null matches any)
 	 * @param inPlace inplace scoring
 	 * @param pushAll push Matches and Non-Matches to output model
 	 */
-	public Score(JenaConnect scoreInput, JenaConnect vivo, JenaConnect scoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, Map<String, String> matchArg, boolean renameRes, String linkProp, String matchNamespace, boolean inPlace, boolean pushAll) {
+	public Score(JenaConnect scoreInput, JenaConnect vivo, JenaConnect scoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, Map<String, String> matchArg, String thresholdArg, boolean renameRes, String linkProp, String matchNamespace, boolean inPlace, boolean pushAll) {
 		this.wipeInputModel = clearInputModelArg;
 		this.wipeOutputModel = clearOutputModelArg;
 		this.matchList = matchArg;
+		this.pubmedThreshold = thresholdArg;
 		this.pushAll = pushAll;
 		this.inPlace = inPlace;
 		this.renameRes = renameRes;
@@ -182,240 +190,322 @@ public class Score {
 		this.renameRes = opts.has("r");
 		this.linkProp = opts.get("l");
 		this.matchNamespace = opts.get("n");
+		this.pubmedThreshold = opts.get("b");
 	}
 	
-	/* *
-	 * Traverses paperNode and adds to toReplace model
-	 * @param mainNode primary node
-	 * @param paperNode node of paper
-	 * @param toReplace model to replace
-	 * /
-	private static void replaceResource(Resource mainNode, Resource paperNode, JenaConnect toReplace) {
-		Resource authorship;
-		String authorQuery;
-		Property linkedAuthorOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedAuthor");
-		Property authorshipForPerson = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorInAuthorship");
-		
-		Property authorshipForPaper = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#informationResourceInAuthorship");
-		Property paperOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#linkedInformationResource");
-		Property rankOf = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#authorRank");
-		
-		Resource flag1 = ResourceFactory.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing");
-		Resource authorshipClass = ResourceFactory.createResource("http://vivoweb.org/ontology/core#Authorship");
-		
-		Property rdfType = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-		Property rdfLabel = ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
-		int authorRank = 1;
-		
-		log.trace("Link paper <" + paperNode + "> to person <" + mainNode + "> in VIVO");
-		authorship = ResourceFactory.createResource(paperNode.toString() + "/vivoAuthorship/l1");
-		
-		// string that finds the last name of the person in VIVO
-		Statement authorLName = mainNode.getProperty(ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName"));
-		
-		if (authorLName == null) {
-			Statement authorworkEmail = mainNode.getProperty(ResourceFactory.createProperty("http://vivoweb.org/ontology/core#workEmail"));
-			log.debug("Author Last name property is null, trying to find via email");
-			if (authorworkEmail == null) {
-				log.warn("Cannot find author -- linking failed");
-				return;
-			}
-			authorQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> "+
-							"SELECT ?badNode " +
-							"WHERE {" +
-								"?badNode core:workEmail ?value . " +
-								"?badNode core:authorInAuthorship ?authorship . " +
-								"?authorship core:linkedInformationResource <" + paperNode.toString() + "> ." +
-								"FILTER (str(?value) = \"" + authorworkEmail.getObject().asLiteral().getValue() + "\")" +
-							" }";
-		} else {
-			authorQuery =	"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-							"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-							"SELECT ?badNode " +
-							"WHERE {" +
-								"?badNode foaf:lastName ?value . " +
-								"?badNode core:authorInAuthorship ?authorship . " +
-								"?authorship core:linkedInformationResource <" + paperNode.toString() + ">" +
-								"FILTER (str(?value) = \"" + authorLName.getObject().asLiteral().getValue() + "\")" +
-							"}";
-		}
-		
-		log.debug(authorQuery);
-		
-		ResultSet killList = toReplace.executeSelectQuery(authorQuery);
-		
-		while (killList.hasNext()) {
-			QuerySolution killSolution = killList.next();
-			
-			// Grab person URI
-			Resource removeAuthor = killSolution.getResource("badNode");
-			
-			// query the paper for the first author node (assumption that affiliation matches first author)
-			log.debug("Delete Resource " + removeAuthor.toString());
-			
-			// return a statement iterator with all the statements for the Author that matches, then remove those
-			// statements
-			// model.remove is broken so we are using statement.remove
-			StmtIterator deleteStmts = toReplace.getJenaModel().listStatements(null, null, removeAuthor);
-			while (deleteStmts.hasNext()) {
-				Statement dStmt = deleteStmts.next();
-				log.debug("Delete Statement " + dStmt.toString());
-				
-				if (!dStmt.getSubject().equals(removeAuthor)) {
-					Statement authorRankStmt = dStmt.getSubject().getProperty(rankOf);
-					authorRank = authorRankStmt.getObject().asLiteral().getInt();
-					
-					StmtIterator authorshipStmts = dStmt.getSubject().listProperties();
-					while (authorshipStmts.hasNext()) {
-						log.debug("Delete Statement " + authorshipStmts.next().toString());
-					}
-					dStmt.getSubject().removeProperties();
-					
-					StmtIterator deleteAuthorshipStmts = toReplace.getJenaModel().listStatements(null, null, dStmt.getSubject());
-					while (deleteAuthorshipStmts.hasNext()) {
-						Statement dASStmt = deleteAuthorshipStmts.next();
-						log.debug("Delete Statement " + dASStmt.toString());
-						dASStmt.remove();
-					}
-					
-				}
-				
-			}
-			
-			StmtIterator authorStmts = removeAuthor.listProperties();
-			while (authorStmts.hasNext()) {
-				log.debug("Delete Statement " + authorStmts.next().toString());
-			}
-			removeAuthor.removeProperties();
-		}
-		
-		toReplace.getJenaModel().add(authorship, linkedAuthorOf, mainNode);
-		log.trace("Link Statement [" + authorship.toString() + ", " + linkedAuthorOf.toString() + ", " + mainNode.toString() + "]");
-		toReplace.getJenaModel().add(mainNode, authorshipForPerson, authorship);
-		log.trace("Link Statement [" + mainNode.toString() + ", " + authorshipForPerson.toString() + ", " + authorship.toString() + "]");
-		toReplace.getJenaModel().add(authorship, paperOf, paperNode);
-		log.trace("Link Statement [" + authorship.toString() + ", " + paperOf.toString() + ", " + paperNode.toString() + "]");
-		toReplace.getJenaModel().add(paperNode, authorshipForPaper, authorship);
-		log.trace("Link Statement [" + paperNode.toString() + ", " + authorshipForPaper.toString() + ", " + authorship.toString() + "]");
-		toReplace.getJenaModel().add(authorship, rdfType, flag1);
-		log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + flag1.toString() + "]");
-		toReplace.getJenaModel().add(authorship, rdfType, authorshipClass);
-		log.trace("Link Statement [" + authorship.toString() + ", " + rdfType.toString() + ", " + authorshipClass.toString() + "]");
-		toReplace.getJenaModel().add(authorship, rdfLabel, "Authorship for Paper");
-		log.trace("Link Statement [" + authorship.toString() + ", " + rdfLabel.toString() + ", " + "Authorship for Paper]");
-		toReplace.getJenaModel().addLiteral(authorship, rankOf, authorRank);
-		log.trace("Link Statement [" + authorship.toString() + ", " + rankOf.toString() + ", " + String.valueOf(authorRank) + "]");
-		
-		toReplace.getJenaModel().commit();
-	}*/
-	
-	/* *
-	 * Match on two predicates and insert foreign key links for each match
-	 * @param scoreAttribute the predicate of the object in scoring to match on
-	 * @param vivoAttribute the predicate of the object in vivo to match on
-	 * @param scoreToVIVONode the predicate that connects the object in score to the object in vivo
-	 * @param vivoToScoreNode the predicate that connects the object in vivo to the object in score
-	 * /
-	public void foreignKeyMatch(String scoreAttribute, String vivoAttribute, String scoreToVIVONode, String vivoToScoreNode) {
-		// Foreign Key Match
-		log.info("Executing foreignKeyMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
-		Property scoreAttr = this.scoreInput.getJenaModel().getProperty(scoreAttribute);
-		StmtIterator stmtitr = this.scoreInput.getJenaModel().listStatements(null, scoreAttr, (RDFNode)null);
-		if (!stmtitr.hasNext()) {
-			log.trace("No matches found for <" + scoreAttribute + "> in input");
-			return;
-		}
-		log.trace("Matches found for <" + scoreAttribute + "> in input");
-		// look for exact match in vivo
-		for (Statement stmt : IterableAdaptor.adapt(stmtitr)) {
-			Resource sub = stmt.getSubject();
-			String obj = stmt.getLiteral().getValue().toString();
-			log.trace("Checking for \"" + obj + "\" from <" + sub + "> in VIVO");
-			String query = ""+
-				"SELECT ?sub"+"\n"+
-				"WHERE {"+"\n\t"+
-					"?sub <" + vivoAttribute + "> ?obj ."+"\n\t"+
-					"FILTER (str(?obj) = \"" + obj + "\")"+"\n"+
-				"}";
-			log.debug(query);
-			ResultSet matches = this.vivo.executeSelectQuery(query);
-			if (!matches.hasNext()) {
-				log.trace("No matches in VIVO found");
-				if (this.pushAll) {
-					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new Stack<Resource>()).getJenaModel());
-				}
-			} else {
-				log.trace("Matches in VIVO found");
-				// loop thru resources
-				while (matches.hasNext()) {
-					// Grab person URI
-					Resource vivoNode = matches.next().getResource("sub");
-					log.trace("Found <" + sub + "> for VIVO entity <" + vivoNode + ">");
-					log.trace("Adding entity <" + sub + "> to output");
-					
-					this.scoreOutput.getJenaModel().add(recursiveSanitizeBuild(sub, new Stack<Resource>()).getJenaModel());
-					
-					log.trace("Linking entity <" + sub + "> to VIVO entity <" + vivoNode + ">");
-					
-					this.scoreOutput.getJenaModel().add(sub, ResourceFactory.createProperty(scoreToVIVONode), vivoNode);
-					this.scoreOutput.getJenaModel().add(vivoNode, ResourceFactory.createProperty(vivoToScoreNode), sub);
-					
-					// take results and store in matched model
-					this.scoreOutput.getJenaModel().commit();
-				}
-			}
-		}
-	}*/
-	
-	/* *
-	 * Executes an exact matching algorithm for author disambiguation
-	 * @param scoreAttribute attribute to perform the exact match in scoring
-	 * @param vivoAttribute attribute to perform the exact match in vivo
-	 * similarly linked item eg. -f <http://site/workEmail>,<http://vivo/workEmail> -toVivo <objectProperty>
-	 * -toScoreItem <objectProperty> Thinking out loud - we'll need to modify the end results of exact match now that we
-	 * are not creating authorships and authors for pubmed entries we'll need to just link the author whose name parts
-	 * match someone in vivo Working on that now
-	 * /
-	public void exactMatch(String scoreAttribute, String vivoAttribute) {
+	/**
+	 * Executes a weighted matching algorithm for author disambiguation for pubmed publications
+	 * Ported from INSITU code from Chris Westling cmw48@cornell.edu
+	 * 	Algorithm for Pubmed Name Matching
+	 *				fullEmailScore + foreNameScore + partEmailScore + domainPartEmailScore + initMatchScore
+	 *	PM =    -----------------------------------------------------------------------------------------
+	 *												2
+	 */
+	public void pubmedMatch() {
 		String queryString;
-		String matchValue;
-		Resource paperNode;
-		
+		ResultSet vivoResult;
+		QuerySolution scoreSolution;
+		QuerySolution vivoSolution;
 		ResultSet scoreInputResult;
+		String foreName;
+		String middleName;
+		String lastName;
+		String workEmail;
+		HashMap<String,Double> matchArray = new HashMap<String,Double>();
+		String matchForeName;
+		String matchMiddleName;
+		String matchLastName;
+		String matchWorkEmail;
+		double weightScore = 0;
+		int loop = 0;
+		double minThreshold = 0.5;
 		
-		String matchQuery = "SELECT ?x ?scoreAttribute " + "WHERE { ?x <" + scoreAttribute + "> ?scoreAttribute}";
-		
-		// Exact Match
-		log.info("Executing exactMatch for <" + scoreAttribute + "> against <" + vivoAttribute + ">");
+		String matchQuery =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+							"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+							"PREFIX score: <http://vivoweb.org/ontology/score#> " +
+							"SELECT REDUCED ?x ?lastName ?foreName ?middleName ?workEmail " +
+							"WHERE {" +
+								"?x foaf:lastName ?lastName . " +
+								"?x score:foreName ?foreName . " +
+								"OPTIONAL { ?x core:middleName ?middleName } . " +
+								"OPTIONAL { ?x score:workEmail ?workEmail } " +
+							"}";
+
+		log.info("Executing Pubmed Scoring");	
+
 		log.debug(matchQuery);
 		scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
 		
-		// Log extra info message if none found
+		// Log info message if none found
 		if (!scoreInputResult.hasNext()) {
-			log.trace("No matches found for <" + scoreAttribute + "> in input");
+			log.info("No authors found in harvested pubmed publications");
 		} else {
-			log.trace("Looping thru matching <" + scoreAttribute + "> from input");
+			log.info("Looping thru authors from harvested pubmed publications");
 		}
 		
 		// look for exact match in vivo
-		for (QuerySolution scoreSolution : IterableAdaptor.adapt(scoreInputResult)) {
-			matchValue = scoreSolution.getLiteral("scoreAttribute").getValue().toString();
-			paperNode = scoreSolution.getResource("x");
+		while (scoreInputResult.hasNext()) {
+			//Grab results
+			scoreSolution = scoreInputResult.next();
+			log.trace(scoreSolution.toString());
+			//author = scoreSolution.getResource("x");
+			//paper = scoreSolution.getResource("publication");
+			foreName = scoreSolution.get("foreName").toString();
+			lastName = scoreSolution.get("lastName").toString();
+			if (scoreSolution.get("workEmail") != null) {
+				workEmail = scoreSolution.get("workEmail").toString();
+			} else {
+				workEmail = null;
+			}
 			
-			log.trace("Checking for \"" + matchValue + "\" from <" + paperNode + "> in VIVO");
+			//general string cleanup
+			//remove , from names
+			foreName = foreName.replace(",", " ");			
+			lastName = lastName.replace(",", "");
 			
-			// Select all matching attributes from vivo store
-			queryString =	"SELECT ?x " + 
-							"WHERE { " + 
-								"?x <" + vivoAttribute + "> ?value " + 
-								"FILTER (str(?value) = \"" + matchValue + "\")" +
+			//support middlename parse out of forename from pubmed
+			if (scoreSolution.get("middleName") == null) {	
+				log.trace("Checking for middle name from " + lastName + ", " + foreName);
+			
+				//parse out middle initial / name from foreName
+				String splitName[] = foreName.split(" ");
+				
+				if (splitName.length == 2) {
+					foreName = splitName[0];
+					middleName = splitName[1];
+					foreName = foreName.trim();
+					middleName = middleName.trim();
+				} else {
+					middleName = null;
+				}
+				log.trace("Using " + lastName + ", " + foreName + ", " + middleName + " as name");
+			} else {
+				middleName = scoreSolution.get("middleName").toString();
+				middleName = middleName.replace(",", "");
+				log.trace("Using pubmed middle name " + lastName + ", " + foreName + ", " + middleName);
+			}
+			
+			
+			// ensure first name and last name are not blank
+			if (lastName.toString() == null || foreName.toString() == null) {
+				log.trace("Incomplete name, skipping");
+				continue;
+			}
+				
+			// Select all matching authors from vivo store
+			queryString =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + 
+							"PREFIX core: <http://vivoweb.org/ontology/core#> " + 
+							"SELECT DISTINCT ?x ?lastName ?foreName ?middleName ?workEmail " +
+							"WHERE { " +
+								"{?x foaf:lastName" + " \"" + lastName + "\"} UNION " +
+								"{?x foaf:firstName" + " \"" + foreName + "\"} UNION " +
+								"{?x core:middleName" + " \"" + middleName + "\"} UNION " +
+								"{?x core:workEmail" + " \"" + workEmail + "\"} . " +
+								"OPTIONAL { ?x foaf:lastName ?lastName } . " +
+								"OPTIONAL { ?x foaf:firstName ?foreName } . " +
+								"OPTIONAL { ?x core:middleName ?middleName } . " +
+								"OPTIONAL { ?x core:workEmail ?workEmail } " +
 							"}";
 			
 			log.debug(queryString);
 			
-			commitResultSet(this.scoreOutput, this.vivo.executeSelectQuery(queryString), matchValue, paperNode);
+			vivoResult = this.vivo.executeSelectQuery(queryString);
+			
+			// Run comparisions
+			while (vivoResult.hasNext()) {
+				weightScore = 0;
+				vivoSolution = vivoResult.next();
+				log.trace(vivoSolution.toString());
+								
+				//Grab comparision strings
+				if (vivoSolution.get("foreName") != null) {
+					matchForeName = vivoSolution.get("foreName").toString();
+				} else {
+					matchForeName = null;
+				}
+				if (vivoSolution.get("lastName") != null) {
+					matchLastName = vivoSolution.get("lastName").toString();
+				} else {
+					matchLastName = null;
+				}
+				if (vivoSolution.get("middleName") != null) {
+					matchMiddleName = vivoSolution.get("middleName").toString();
+				} else {
+					matchMiddleName = null;
+				}
+				if (vivoSolution.get("workEmail") != null) {
+					matchWorkEmail = vivoSolution.get("workEmail").toString();
+				} else {
+					matchWorkEmail = null;
+				}
+				
+				//email match weight
+				if (matchWorkEmail != null && workEmail != null) {
+					if (workEmail == matchWorkEmail) {
+						weightScore += 1;
+					}  else {
+						//split email and match email parts
+						if (workEmail.split("@")[0] == matchWorkEmail.split("@")[0] ) {
+							weightScore += .05;
+						}
+						if (workEmail.split("@")[1] == matchWorkEmail.split("@")[1] ) {
+							weightScore += .15;
+						}
+					}
+				}
+				
+				//foreName match weight
+				if (matchForeName != null) {
+					//add score weight for each letter matched
+					loop = 0;
+					while (matchForeName.regionMatches(true, 0, foreName, 0, loop)) {
+						loop++;
+						weightScore += .1;
+					}
+				}
+				
+				//MiddleName match weight
+				if (matchMiddleName != null) {
+					//add score weight for each letter matched
+					loop = 0;
+					while (matchMiddleName.regionMatches(true, 0, middleName, 0, loop)) {
+						loop++;
+						weightScore += .05;
+					}
+				}
+				
+				//LastName match weight
+				if (matchLastName != null) {
+					//add score weight for each letter matched
+					loop = 0;
+					while (matchLastName.regionMatches(true, 0, lastName, 0, loop)) {
+						loop++;
+						weightScore += .075;
+					}
+				}
+				
+				//Store in hash
+				matchArray.put(vivoSolution.get("x").toString(),new Double(weightScore));
+				
+			}
+			
+			//Print all weights and select highest as match, above minimum threshold
+			Entry<String, Double> highKey = matchArray.entrySet().iterator().next();
+			for (Entry<String, Double> i: matchArray.entrySet()) {
+		        log.trace(i.getKey() + " : " + i.getValue());
+		        if (i.getValue().doubleValue() > highKey.getValue().doubleValue()) {
+		        	highKey = i;
+		        	log.trace("Selecting as best match " + highKey.getKey());
+		        }
+			}
+			
+			//Match author to highKey
+			if (highKey.getValue().doubleValue() > minThreshold) {
+				log.trace("Matched to " + highKey.getKey());
+			}
+			
 		}
-	}*/
+//		This is cmw48's logic, don't blame this on CTRIP:		
+//		# Scoring Logic											  
+//		if lastnamematch then {
+//		    if fullemailmatch then {
+//			    fullemailscore = 1.0; 
+//			} else {	
+//			    if forenamematch then {
+//				    forenamescore += .50
+//				}
+//			    if partemailmatch then {
+//				    partemailscore += .05
+//				}		
+//			    if domainpartemailmatch then {
+//				    domainpartemailscore += .15
+//				}    
+//				if bothinitmatch then {
+//				    initmatchscore += .25
+//				} else {
+//				    if firstinitmatch then {
+//					    initmatchscore += .20
+//					}
+//				}
+//		}		
+//
+//		# Max scores based on logic above
+//
+//		       1 + .50 + .05 + .15 + .25
+//		 Pm =  ------------------------
+//		                  2			
+//					
+//		# Narrative logic
+//
+//		if 100% last name match then
+//		    #look for email match
+//			test for zerolength affiliation string
+//			if email address exists in affiliation string
+//			    immediately write as <affiliationEmail>
+//				if targetEmail is nonzerolength
+//				    if targetEmail == affiliationEmail
+//					    score = 1    #full email match means 100% certainty
+//					else:  # look for partial email match 
+//					    if first three chars of both strings match  "cmw"
+//						    score = 
+//						else if domain part of email matches "cornell.edu"
+//		                    score = 
+//		            else no email match
+//			#check for a full initial match
+//		    #assume that each pub has (numauthors) authors, based on the premise that LastName is always present
+//		    #cycle through authors starting with author[0] to find match	
+//			    #since initials or forename tags may not appear in some PubMed records, test and set values				
+//				#look for first name match
+//		        #how long is our TargetAuthor firstname?			
+//				#look only at section of PM first name that's as long as our target search string  (target = Chris, PMFirst = Christopher, then foreName = leftstr(PMFirst, len(target)))
+//				    If foreName == firstName
+//					    score += .5
+//				# we know first initial matches, is there a middle initial?
+//		        # find out if initials string is > 1
+//				# if more than one character in initials, there must be a middle initial
+//		        # middle initial *should be* rightmost character
+//				# do we have a middle initial in our SearchAuthorName
+//		            if both initials match
+//						score = .25
+//					#else there is no middle initial
+//					if only first initial matches
+//					    score = .20
+//		        # check to see if Forename match initials?
+//		        if TempAuthorName.forename.strip() == SearchAuthorName.firstinit + " " + SearchAuthorName.midinit:
+//		            both initials match, score += .25
+//		        # else 		
+//				    forename is probably a two letter first name like "He" or "Li" - set flag to analyze 
+//
+//		# Expanded if-then logic with Flag class							  
+//
+//		If lastname is 100% match: 
+//		    If Flags.fullemailmatch = True
+//		             Counts.score += 1.0   
+//			if Flags.fullemailmatch <> True:
+//		        if forenamematch == True:
+//		            Counts.score += .50
+//		        else:
+//		            pass
+//		        if Flags.partemailmatch == True:
+//		            Counts.score += .05
+//		        else:
+//		            pass
+//		        if Flags.domainpartemailmatch == True:
+//		            Counts.score += .15
+//		        else:
+//		            pass
+//		        if Flags.bothinitmatch == True:
+//		            Counts.score += .25
+//		        else:
+//		            if Flags.firstinitmatch == True:
+//		                Counts.score += .20
+//		            else:
+//		                pass
+//		    else:
+//		        pass
+//		    #reset flag data
+
+	}
 	
 	/**
 	 * find all nodes in the given namepsace matching on the given predicates
@@ -588,6 +678,32 @@ public class Score {
 		this.vivo.close();
 	}
 	
+	
+	/**
+	 * Accessor for vivo model
+	 * @return the vivo
+	 */
+	public JenaConnect getVivo() {
+		return this.vivo;
+	}
+	
+	/**
+	 * Accessor for input model
+	 * @return the scoreInput
+	 */
+	public JenaConnect getScoreInput() {
+		return this.scoreInput;
+	}
+	
+	/**
+	 * Accessor for output model
+	 * @return the scoreOutput
+	 */
+	public JenaConnect getScoreOutput() {
+		return this.scoreOutput;
+	}
+	
+	
 	/**
 	 * Get the OptionParser
 	 * @return the OptionParser
@@ -608,6 +724,7 @@ public class Score {
 		
 		// Matching Algorithms 
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").withParameterValueMap("VIVO_PREDICATE", "SCORE_PREDICATE").setDescription("find matching rdf nodes where the value of SCORE_PREDICATE in the scoring model is the same as VIVO_PREDICATE in the vivo model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("pubmedMatch").withParameter(true, "THRESHOLD").setDescription("pubmed specific matching, pass minimum weight score for match").setRequired(false));
 		
 		// Matching Params
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceMatch").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match algorithm to only match rdf nodes whose URI begin with SCORE_NAMESPACE").setRequired(false));
@@ -650,6 +767,10 @@ public class Score {
 			} else if(this.linkProp != null && !this.linkProp.isEmpty()) {
 				link(resultMap,this.linkProp);
 			}			
+		}
+		
+		if(this.pubmedThreshold != null) {
+			pubmedMatch();
 		}
 		
 		// Empty input model

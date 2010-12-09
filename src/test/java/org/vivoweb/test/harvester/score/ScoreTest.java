@@ -57,7 +57,7 @@ public class ScoreTest extends TestCase {
 		
 		Map<String,String> workEmail = new HashMap<String, String>();
 		workEmail.put("http://vivoweb.org/ontology/core#workEmail", "http://vivoweb.org/ontology/score#workEmail");
-		new Score(input, vivo, output, false, false, workEmail, true, null, null, false, false).execute();
+		new Score(input, vivo, output, false, false, workEmail, null, true, null, null, false, false).execute();
 		
 //		log.debug("Input Dump Post-Score\n" + input.exportRdfToString());
 //		log.debug("VIVO Dump Post-Score\n" + vivo.exportRdfToString());
@@ -67,6 +67,22 @@ public class ScoreTest extends TestCase {
 		if(output.getJenaModel().isEmpty()) {
 			log.error("Didn't match anything with match scoring");
 			fail("Didn't match anything with match scoring");
+		}
+		
+		// empty output model
+		output.truncate();
+		
+		//test pubmed
+		new Score(input, vivo, output, false, false, null, "0.5", true, null, null, false, false).execute();
+		
+//		log.debug("Input Dump Post-Score\n" + input.exportRdfToString());
+//		log.debug("VIVO Dump Post-Score\n" + vivo.exportRdfToString());
+//		log.debug("Output Dump Post-Score\n" + output.exportRdfToString());
+		
+		// check output model
+		if(output.getJenaModel().isEmpty()) {
+			log.error("Didn't match anything with pubmed scoring");
+			fail("Didn't match anything with pubmed scoring");
 		}
 		
 		// empty output model
