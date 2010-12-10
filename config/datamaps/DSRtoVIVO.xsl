@@ -59,7 +59,7 @@
 	<!--						</xsl:when>-->
 							<xsl:when test="$table = 'dbo.vwContracts'">
 								<xsl:call-template name="t_vwContracts">
-									<xsl:with-param name="grantid" select="regex-group(1)" />
+									<xsl:with-param name="grantid" select="normalize-space( regex-group(1) )" />
 									<xsl:with-param name="this" select="$this" />
 								</xsl:call-template>
 							</xsl:when>
@@ -98,7 +98,7 @@
 				</rdf:Description>
 			</core:administeredBy>
 			<core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
-			<core:sponsorAwardID><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardID>
+			<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 			
 			<xsl:choose>
 				<xsl:when test="string($this/db-dbo.vwProjectTeam:FlowThruSponsor) = ''">
@@ -147,7 +147,7 @@
 		
 	<xsl:template name="t_vwProjectTeam">
 		<xsl:param name='this' />
-		<xsl:variable name='grantid' select='$this/db-dbo.vwProjectTeam:ContractNumber'/>
+		<xsl:variable name='grantid' select='normalize-space($this/db-dbo.vwProjectTeam:ContractNumber)'/>
 		<xsl:choose>
 			<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
@@ -164,7 +164,7 @@
 					<core:principalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<ufVivo:ufid><xsl:value-of select="normalize-space($this/db-dbo.vwProjectTeam:InvestigatorID)"/></ufVivo:ufid>
 							<core:hasPrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:principalInvestigatorRoleOf>
@@ -185,7 +185,7 @@
 					<core:co-PrincipalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<ufVivo:ufid><xsl:value-of select="normalize-space($this/db-dbo.vwProjectTeam:InvestigatorID)"/></ufVivo:ufid>
 							<core:hasCo-PrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:co-PrincipalInvestigatorRoleOf>
