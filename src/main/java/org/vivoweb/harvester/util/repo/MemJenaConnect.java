@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Random;
-import com.hp.hpl.jena.sdb.Store;
 
 /**
  * Connection Helper for Memory Based Jena Models
@@ -38,14 +37,6 @@ public class MemJenaConnect extends SDBJenaConnect {
 	 */
 	public MemJenaConnect(String modelName) throws IOException {
 		super("jdbc:h2:mem:"+((modelName != null)?modelName:generateUnusedModelName()), "sa", "", "H2", "org.h2.Driver", "layout2", modelName);
-	}
-	
-	public static Store connectStore(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String dbLayout) {
-		try {
-			return SDBJenaConnect.connectStore(dbUrl, dbUser, dbPass, dbType, dbClass, dbLayout);
-		} catch(IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
-		}
 	}
 	
 	/**

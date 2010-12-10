@@ -8,7 +8,6 @@ package org.vivoweb.harvester.util.args;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -146,12 +145,12 @@ public class ArgList {
 		if(this.oConfSet != null) {
 			Properties props = this.oConfSet.getOptionProperties(arg);
 			for(String prop : props.stringPropertyNames()) {
-				p.put(prop, props.getProperty(prop));
+				p.put(prop.trim(), props.getProperty(prop).trim());
 			}
 		}
 		Properties props = this.oCmdSet.getOptionProperties(arg);
 		for(String prop : props.stringPropertyNames()) {
-			p.put(prop, props.getProperty(prop));
+			p.put(prop.trim(), props.getProperty(prop).trim());
 		}
 		return p;
 	}
@@ -184,13 +183,17 @@ public class ArgList {
 		}
 		List<String> retVal = new LinkedList<String>();
 		if(this.oCmdSet.hasOption(arg)) {
-			retVal.addAll(Arrays.asList(this.oCmdSet.getOptionValues(arg)));
+			for(String value : this.oCmdSet.getOptionValues(arg)) {
+				retVal.add(value.trim());
+			}
 		}
 		if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
-			retVal.addAll(Arrays.asList(this.oConfSet.getOptionValues(arg)));
+			for(String value : this.oConfSet.getOptionValues(arg)) {
+				retVal.add(value.trim());
+			}
 		}
 		if((includeDefaultValue || retVal.isEmpty()) && argdef.hasDefaultValue()) {
-			retVal.add(argdef.getDefaultValue());
+			retVal.add(argdef.getDefaultValue().trim());
 		}
 		return retVal;
 	}

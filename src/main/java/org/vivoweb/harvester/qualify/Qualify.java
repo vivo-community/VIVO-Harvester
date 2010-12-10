@@ -18,6 +18,7 @@ import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -35,27 +36,35 @@ public class Qualify {
 	/**
 	 * Jena Model we are working in
 	 */
-	private JenaConnect model;
+	private final JenaConnect model;
 	/**
 	 * The data predicate
 	 */
-	private String dataPredicate;
+	private final String dataPredicate;
 	/**
 	 * The string to match
 	 */
-	private String matchTerm;
+	private final String matchTerm;
 	/**
 	 * The value to replace it with
 	 */
-	private String newVal;
+	private final String newVal;
 	/**
 	 * Is this to use Regex to match the string
 	 */
-	private boolean regex;
+	private final boolean regex;
 	/**
 	 * the namespace you want removed
 	 */
-	private String namespace;
+	private final String namespace;
+	/**
+	 * remove all statements where the predicate is from the given namespace
+	 */
+	private final boolean cleanPredicates;
+	/**
+	 * remove all statements where the subject or object is from the given namespace
+	 */
+	private final boolean cleanResources;
 	
 	/**
 	 * Constructor
@@ -64,15 +73,30 @@ public class Qualify {
 	 * @param matchString the string to match
 	 * @param newValue the value to replace it with
 	 * @param isRegex is this to use Regex to match the string
-	 * @param rmNameSpace remove statements with predicates in this namespace
+	 * @param removeNameSpace remove statements with predicates in this namespace
+	 * @param cleanPredicates remove all statements where the predicate is from the given namespace
+	 * @param cleanResources remove all statements where the subject or object is from the given namespace
 	 */
-	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, boolean isRegex, String rmNameSpace) {
+	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, boolean isRegex, String removeNameSpace, boolean cleanPredicates, boolean cleanResources) {
 		this.model = jenaModel;
 		this.dataPredicate = dataType;
 		this.matchTerm = matchString;
 		this.newVal = newValue;
 		this.regex = isRegex;
-		this.namespace = rmNameSpace;
+		this.namespace = removeNameSpace;
+		this.cleanPredicates = cleanPredicates;
+		this.cleanResources = cleanResources;
+		if(this.namespace == null || this.namespace.isEmpty()) {
+			if(this.cleanPredicates && this.cleanResources) {
+				throw new IllegalArgumentException("Cannot specify cleanPredicates and cleanResources when removeNamepsace is empty");
+			}
+			if(this.cleanPredicates) {
+				throw new IllegalArgumentException("Cannot specify cleanPredicates when removeNamepsace is empty");
+			}
+			if(this.cleanResources) {
+				throw new IllegalArgumentException("Cannot specify cleanResources when removeNamepsace is empty");
+			}
+		}
 	}
 	
 	/**
@@ -98,7 +122,20 @@ public class Qualify {
 		this.regex = argList.has("r");
 		this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
 		this.newVal = argList.get("v");
-		this.namespace = argList.get("p");
+		this.namespace = argList.get("n");
+		this.cleanPredicates = argList.has("p");
+		this.cleanResources = argList.has("c");
+		if(this.namespace == null || this.namespace.isEmpty()) {
+			if(this.cleanPredicates && this.cleanResources) {
+				throw new IllegalArgumentException("Cannot specify predicate-clean and clean-resources when remove-namepsace is empty");
+			}
+			if(this.cleanPredicates) {
+				throw new IllegalArgumentException("Cannot specify predicate-clean when remove-namepsace is empty");
+			}
+			if(this.cleanResources) {
+				throw new IllegalArgumentException("Cannot specify clean-resources when remove-namepsace is empty");
+			}
+		}
 	}
 	
 	/**
@@ -146,10 +183,58 @@ public class Qualify {
 	}
 	
 	/**
-	 * Remove all predicates in a given namespace
-	 * @param ns the namespace to remove all statements from
+	 * Remove all subjects and objects in a given namespace
+	 * @param ns the namespace to remove all resources from
 	 */
-	private void rmNamespace(String ns) {
+	private void cleanResources(String ns) {
+		String subjectQuery =	"SELECT ?s ?p ?o " +
+				"WHERE " +
+				"{ " +
+				"?s ?p ?o .  " +
+				"FILTER regex(str(?s), \"" + ns + "\" ) " + 
+				"}";
+		log.debug(subjectQuery);
+		
+		ResultSet subjList = this.model.executeSelectQuery(subjectQuery);
+		HashSet<Resource> subjArray = new HashSet<Resource>();
+		
+		while (subjList.hasNext()) {
+			subjArray.add(ResourceFactory.createResource(subjList.next().getResource("s").getURI()));
+		}
+		
+		for(Resource s : subjArray) {
+			this.model.getJenaModel().removeAll(s, null, null);
+		}
+		
+		log.info("Removed " + subjArray.size() + " unique subjects");
+		
+		String objectQuery =	"SELECT ?s ?p ?o " +
+				"WHERE " +
+				"{ " +
+				"?s ?p ?o .  " +
+				"FILTER regex(str(?o), \"" + ns + "\" ) " + 
+				"}";
+		log.debug(objectQuery);
+		
+		ResultSet objList = this.model.executeSelectQuery(objectQuery);
+		HashSet<Resource> objArray = new HashSet<Resource>();
+		
+		while (objList.hasNext()) {
+			objArray.add(ResourceFactory.createResource(objList.next().getResource("o").getURI()));
+		}
+		
+		for(Resource o : objArray) {
+			this.model.getJenaModel().removeAll(null, null, o);
+		}
+		
+		log.info("Removed " + objArray.size() + " unique objects");
+	}
+	
+	/**
+	 * Remove all predicates in a given namespace
+	 * @param ns the namespace to remove all predicates from
+	 */
+	private void cleanPredicates(String ns) {
 		String predicateQuery =	"SELECT ?s ?p ?o " +
 				"WHERE " +
 				"{ " +
@@ -169,7 +254,6 @@ public class Qualify {
 			this.model.getJenaModel().removeAll(null, p, null);
 		}
 		
-		this.model.getJenaModel().commit();
 		log.info("Removed " + propArray.size() + " unique properties");
 	}
 	
@@ -178,8 +262,14 @@ public class Qualify {
 	 */
 	public void execute() {
 		if(this.namespace != null && !this.namespace.isEmpty()){
-			log.info("Running remove namespace for " + this.namespace);
-			rmNamespace(this.namespace);
+			if(this.cleanPredicates) {
+				log.info("Running clean predicates for " + this.namespace);
+				cleanPredicates(this.namespace);
+			}
+			if(this.cleanResources) {
+				log.info("Running clean resources for " + this.namespace);
+				cleanResources(this.namespace);
+			}
 		}
 		
 		if(this.matchTerm != null && this.dataPredicate != null && this.newVal != null && !this.matchTerm.isEmpty() && !this.dataPredicate.isEmpty() && !this.newVal.isEmpty()) {
@@ -205,7 +295,9 @@ public class Qualify {
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").setDescription("replace matching record data with this value").withParameter(true, "REPLACE_VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("rmNamespace").setDescription("remove all statements where the predicate is of the given namespace").withParameter(true, "RDF_NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("remove-namespace").setDescription("remove all statements where the predicate is of the given namespace").withParameter(true, "RDF_NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("predicate-clean").setDescription("remove all statements where the predicate is from the given -n/--remove-namespace").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clean-resources").setDescription("remove all statements where the subject or object is from the given -n/--remove-namespace").setRequired(false));
 		return parser;
 	}
 	

@@ -7,6 +7,7 @@
 package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
+import java.sql.Connection;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.GraphRDB;
@@ -33,9 +34,9 @@ public class RDBJenaConnect extends JenaConnect {
 	 * @param dbPass password to use
 	 * @param dbType database type ex:"MySQL"
 	 * @param dbClass jdbc driver class
-	 * @throws ClassNotFoundException error loading class
+	 * @throws IOException error connecting
 	 */
-	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) throws ClassNotFoundException {
+	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) throws IOException {
 		this(dbUrl, dbUser, dbPass, dbType, dbClass, null);
 	}
 	
@@ -47,24 +48,37 @@ public class RDBJenaConnect extends JenaConnect {
 	 * @param dbType database type ex:"MySQL"
 	 * @param dbClass jdbc driver class
 	 * @param modelName the model to connect to
-	 * @throws ClassNotFoundException error loading class
+	 * @throws IOException error connecting
 	 */
-	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName) throws ClassNotFoundException {
-		this(initDB(dbUrl, dbUser, dbPass, dbType, dbClass), modelName);
+	public RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName) throws IOException {
+		super(dbUrl, dbUser, dbPass, dbType, dbClass);
+		this.conn = initDB(buildConnection(), getDbType());
+		init(modelName);
 	}
 	
 	/**
+	 * Clone Constructor
+	 * @param original the original to clone
+	 * @param modelName the modelname to connect to
+	 * @throws IOException error creating connection
+	 */
+	private RDBJenaConnect(RDBJenaConnect original, String modelName) throws IOException {
+		super(original);
+		this.conn = initDB(buildConnection(), getDbType());
+		init(modelName);
+	}
+
+	/**
 	 * Constructor (connects to existing connection, using a specified named model)
-	 * @param conn the connection to use
 	 * @param modelName the model name to use
 	 */
-	private RDBJenaConnect(IDBConnection conn, String modelName) {
+	private void init(String modelName) {
 		if(modelName != null) {
 			this.setModelName(modelName);
-			this.setJenaModel(initModel(conn).openModel(modelName, false));
+			this.setJenaModel(initModel(this.conn).openModel(modelName, false));
 		} else {
 			this.setModelName(GraphRDB.DEFAULT);
-			this.setJenaModel(initModel(conn).createDefaultModel());
+			this.setJenaModel(initModel(this.conn).createDefaultModel());
 		}
 	}
 	
@@ -80,7 +94,7 @@ public class RDBJenaConnect extends JenaConnect {
 
 	@Override
 	public JenaConnect neighborConnectClone(String modelName) throws IOException {
-		return new RDBJenaConnect(this.conn, modelName);
+		return new RDBJenaConnect(this, modelName);
 	}
 	
 	/**
@@ -95,17 +109,12 @@ public class RDBJenaConnect extends JenaConnect {
 	
 	/**
 	 * Setup database connection
-	 * @param dbUrl url of server
-	 * @param dbUser username to connect with
-	 * @param dbPass password to connect with
+	 * @param conn JDBC connection
 	 * @param dbType database type
-	 * @param dbClass jdbc connection class
 	 * @return the database connection
-	 * @throws ClassNotFoundException error loading driver
 	 */
-	private static IDBConnection initDB(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) throws ClassNotFoundException {
-		Class.forName(dbClass);
-		return new DBConnection(dbUrl, dbUser, dbPass, dbType);
+	private static IDBConnection initDB(Connection conn, String dbType) {
+		return new DBConnection(conn, dbType);
 	}
 
 	@Override

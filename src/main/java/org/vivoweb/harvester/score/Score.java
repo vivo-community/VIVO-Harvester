@@ -10,9 +10,11 @@ package org.vivoweb.harvester.score;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Stack;
 import java.util.Map.Entry;
+import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -34,8 +36,6 @@ import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
@@ -58,22 +58,6 @@ public class Score {
 	 */
 	private final JenaConnect scoreInput;
 	/**
-	 * Model where output is stored
-	 */
-	private final JenaConnect scoreOutput;
-	/**
-	 * Option to remove input model after scoring
-	 */
-	private final boolean wipeInputModel;
-	/**
-	 * Option to remove output model before filling
-	 */
-	private final boolean wipeOutputModel;
-	/**
-	 * Option to push Matches and Non-Matches to output model
-	 */
-	private final boolean pushAll;
-	/**
 	 * Predicates for match algorithm
 	 */
 	private final Map<String, String> matchList;
@@ -86,10 +70,6 @@ public class Score {
 	 */
 	private final boolean renameRes;
 	/**
-	 * Argument for inplace scoring (ie not changing models) 
-	 */
-	private final boolean inPlace;
-	/**
 	 * Namespace for match algorithm
 	 */
 	private final String matchNamespace;
@@ -97,35 +77,39 @@ public class Score {
 	 * Pubmed Match threshold
 	 */
 	private final String pubmedThreshold;
+	/**
+	 * Clear all literal values out of matched sets
+	 */
+	private final boolean clearLiterals;
 	
 	/**
 	 * Constructor
-	 * @param vivo model containing vivo statements
 	 * @param scoreInput model containing statements to be scored
-	 * @param scoreOutput output model
-	 * @param clearInputModelArg If set, this will clear the input model after scoring is complete
-	 * @param clearOutputModelArg If set, this will clear the output model before scoring begins
+	 * @param vivo model containing vivo statements
+	 * @param matchNamespace namespace to match in (null matches any)
 	 * @param matchArg predicate pairs to match on
 	 * @param thresholdArg pubmed threshold
 	 * @param renameRes should I just rename the args?
 	 * @param linkProp bidirectional link
-	 * @param matchNamespace namespace to match in (null matches any)
-	 * @param inPlace inplace scoring
-	 * @param pushAll push Matches and Non-Matches to output model
+	 * @param clearLiterals clear all the literal values out of matches
 	 */
-	public Score(JenaConnect scoreInput, JenaConnect vivo, JenaConnect scoreOutput, boolean clearInputModelArg, boolean clearOutputModelArg, Map<String, String> matchArg, String thresholdArg, boolean renameRes, String linkProp, String matchNamespace, boolean inPlace, boolean pushAll) {
-		this.wipeInputModel = clearInputModelArg;
-		this.wipeOutputModel = clearOutputModelArg;
+	public Score(JenaConnect scoreInput, JenaConnect vivo, String matchNamespace, Map<String, String> matchArg, boolean renameRes, String thresholdArg, String linkProp, boolean clearLiterals) {
+		if(vivo == null) {
+			throw new IllegalArgumentException("Vivo cannot be null");
+		}
+		this.vivo = vivo;
+		
+		if(scoreInput == null) {
+			throw new IllegalArgumentException("Score Input cannot be null");
+		}
+		this.scoreInput = scoreInput;
+		
 		this.matchList = matchArg;
 		this.pubmedThreshold = thresholdArg;
-		this.pushAll = pushAll;
-		this.inPlace = inPlace;
 		this.renameRes = renameRes;
 		this.linkProp = linkProp;
 		this.matchNamespace = matchNamespace;
-		this.vivo = vivo;
-		this.scoreInput = scoreInput;
-		this.scoreOutput = scoreOutput;		
+		this.clearLiterals = clearLiterals;
 	}
 	
 	/**
@@ -139,58 +123,23 @@ public class Score {
 	
 	/**
 	 * Constructor
+			Scoring.close();
 	 * @param opts parsed argument list
 	 * @throws IOException error parsing options
 	 */
 	public Score(ArgList opts) throws IOException {
-		// Get optional inputs / set defaults
-		// Check for config files, before parsing name options
-		String jenaVIVO = opts.get("v");
-		
-		Map<String,String> inputOverrides = opts.getValueMap("I");
-		String jenaInput;
-		if (opts.has("i")) {
-			jenaInput = opts.get("i");
-		} else {
-			jenaInput = jenaVIVO;
-			if (!inputOverrides.containsKey("modelName")) {
-				inputOverrides.put("modelName", "Scoring");
-			}
-		}
-		
-		Map<String,String> outputOverrides = opts.getValueMap("O");
-		String jenaOutput;
-		if (opts.has("o")) {
-			jenaOutput = opts.get("o");
-		} else {
-			jenaOutput = jenaVIVO;
-			if (!outputOverrides.containsKey("modelName")) {
-				outputOverrides.put("modelName", "Staging");
-			}
-		}
-		
 		// Connect to vivo
-		this.vivo = JenaConnect.parseConfig(jenaVIVO, opts.getValueMap("V"));
+		this.vivo = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
 		
 		// Create working model
-		this.scoreInput = JenaConnect.parseConfig(jenaInput, inputOverrides);
+		this.scoreInput = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		
-		// Create output model
-		if(opts.has("a")){
-			this.scoreOutput = this.scoreInput;
-		} else {
-			this.scoreOutput = JenaConnect.parseConfig(jenaOutput, outputOverrides);
-		}
-		
-		this.wipeInputModel = opts.has("w");
-		this.wipeOutputModel = opts.has("q");
-		this.pushAll = opts.has("l");
 		this.matchList = opts.getValueMap("m");
-		this.inPlace = opts.has("a");
 		this.renameRes = opts.has("r");
 		this.linkProp = opts.get("l");
 		this.matchNamespace = opts.get("n");
 		this.pubmedThreshold = opts.get("b");
+		this.clearLiterals = opts.has("c");
 	}
 	
 	/**
@@ -508,7 +457,7 @@ public class Score {
 	}
 	
 	/**
-	 * find all nodes in the given namepsace matching on the given predicates
+	 * Find all nodes in the given namepsace matching on the given predicates
 	 * @param matchMap properties set of predicates to be searched for in vivo and score. Formats is "vivoProp => inputProp"
 	 * @param namespace the namespace to match in
 	 * @return mapping of the found matches
@@ -518,18 +467,19 @@ public class Score {
 		if (matchMap.size() < 1) {
 			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
 		}
-			
+		
 		//Build query to find all nodes matching on the given predicates
-		StringBuilder sQuery =	new StringBuilder("" +
-				"PREFIX scoreClone: <http://vivoweb.org/harvester/model/scoring#>" +
+		StringBuilder sQuery =	new StringBuilder(
+				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
 				"SELECT ?sVivo ?sScore\n" +
 				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
 				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
-				"WHERE {\n");
-
+				"WHERE {\n"
+		);
+		
 		int counter = 0;
-		StringBuilder vivoWhere = new StringBuilder("  GRAPH scoreClone:vivoClone {\n");
-		StringBuilder scoreWhere = new StringBuilder("  GRAPH scoreClone:inputClone {\n");
+		StringBuilder vivoWhere = new StringBuilder("  GRAPH scoring:vivoClone {\n");
+		StringBuilder scoreWhere = new StringBuilder("  GRAPH scoring:inputClone {\n");
 		StringBuilder filter = new StringBuilder("  FILTER( ");
 		
 		for (String property : matchMap.keySet()) {
@@ -565,7 +515,10 @@ public class Score {
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		HashMap<String,String> uriArray = new HashMap<String,String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
-			uriArray.put(solution.getResource("sScore").getURI(), solution.getResource("sVivo").getURI());
+			String sScoreURI = solution.getResource("sScore").getURI();
+			String sVivoURI = solution.getResource("sVivo").getURI();
+			uriArray.put(sScoreURI, sVivoURI);
+			log.debug("Match found: <"+sScoreURI+"> in Score matched with <"+sVivoURI+"> in Vivo");
 		}
 
 		log.info("Match found " + uriArray.keySet().size() + " links between Vivo and the Input model");
@@ -575,134 +528,95 @@ public class Score {
 
 	
 	/**
-	 * Rename the resource set as the key to the value matched.  Performs check for inplace && pushall.
-	 * 
+	 * Rename the resource set as the key to the value matched
 	 * @param matchSet a result set of scoreResources, vivoResources
-	 * @throws IOException error connecting
 	 */
-	private void rename(Map<String,String> matchSet) throws IOException{
-		Resource res;
-		
+	private void rename(Map<String,String> matchSet){
 		for(String oldUri : matchSet.keySet()) {
 			//check for inplace - if we're doing this inplace or we're pushing all, scoreoutput has been set/copied from scoreinput
-			if (!this.inPlace && !this.pushAll){
-				this.scoreOutput.getJenaModel().add(recursiveBuild(this.scoreInput.getJenaModel().getResource(oldUri),new Stack<Resource>()).getJenaModel());
-			}
-			
 			//get resource in output model and perform rename
-			res = this.scoreOutput.getJenaModel().getResource(oldUri);	
+			Resource res = this.scoreInput.getJenaModel().getResource(oldUri);
 			ResourceUtils.renameResource(res, matchSet.get(oldUri));
 		}
 	}
 	
 	/**
-	 * 
-	 * @param matchSet a result set of scoreResources, vivoResources
+	 * Link matched scoreResources to vivoResources using given linking predicates
+	 * @param matchSet a mapping of matched scoreResources to vivoResources
 	 * @param objPropList the object properties to be used to link the two items set in string form -> vivo-object-property-to-score-object = score-object-property-to-vivo-object
-	 * @throws IOException error connecting
 	 */
-	private void link(Map<String,String> matchSet, String objPropList) throws IOException {
-		Resource scoreRes;
-		Resource vivoRes;
-		Property scoreToVivoObjProp = ResourceFactory.createProperty("scoreToVivoObjProp");
-		Property vivoToScoreObjProp = ResourceFactory.createProperty("vivoToScoreObjProp");
-		
+	private void link(Map<String,String> matchSet, String objPropList) {
 		//split the objPropList into its vivo and score components (vivo->score=score->vivo)
 		String[] objPropArray = objPropList.split("=");
 		if(objPropArray.length != 2){
-			log.error("Two object properties vivo-object-property-to-score-object and score-object-property-to-vivo-object " +
+			throw new IllegalArgumentException("Two object properties vivo-object-property-to-score-object and score-object-property-to-vivo-object " +
 					"sepearated by an equal sign must be set to link resources");
-		} else {
-			vivoToScoreObjProp = ResourceFactory.createProperty(objPropArray[0]);
-			scoreToVivoObjProp = ResourceFactory.createProperty(objPropArray[1]);
 		}
-		
+		Property vivoToScoreObjProp = ResourceFactory.createProperty(objPropArray[0]);
+		Property scoreToVivoObjProp = ResourceFactory.createProperty(objPropArray[1]);
 		
 		for(String oldUri : matchSet.keySet()) {
 			//check for inplace - if we're doing this inplace or we're pushing all, scoreoutput has been set/copied from scoreinput
-			if (!this.inPlace && !this.pushAll){
-				this.scoreOutput.getJenaModel().add(recursiveBuild(this.scoreInput.getJenaModel().getResource(oldUri),new Stack<Resource>()).getJenaModel());
-			}
-			
-			scoreRes = this.scoreOutput.getJenaModel().getResource(oldUri);	
-			vivoRes = this.vivo.getJenaModel().getResource(matchSet.get(oldUri));
-			this.scoreOutput.getJenaModel().add(vivoRes, vivoToScoreObjProp, scoreRes);
-			this.scoreOutput.getJenaModel().add(scoreRes, scoreToVivoObjProp, vivoRes);			
+			Resource scoreRes = this.scoreInput.getJenaModel().getResource(oldUri);	
+			Resource vivoRes = this.vivo.getJenaModel().getResource(matchSet.get(oldUri));
+			this.scoreInput.getJenaModel().add(vivoRes, vivoToScoreObjProp, scoreRes);
+			this.scoreInput.getJenaModel().add(scoreRes, scoreToVivoObjProp, vivoRes);			
 		}
-		
-		
 	}
-
 	
 	/**
-	 * Traverses paperNode and adds to toReplace model
-	 * @param mainRes the main resource
-	 * @param linkRes the resource to link it to
-	 * @return the model containing the sanitized info so far
-	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
-	 * @throws IOException error connecting
+	 * Clear out literal values of matched scoreResources
+	 * @param resultMap a mapping of matched scoreResources to vivoResources
 	 */
-	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
-		JenaConnect returnModel = new MemJenaConnect();
-		StmtIterator mainStmts = mainRes.listProperties();
-		
-		while (mainStmts.hasNext()) {
-			Statement stmt = mainStmts.nextStatement();
-			
-				// log.debug(stmt.toString());
-				returnModel.getJenaModel().add(stmt);
-				
-				//todo change the equals t o
-				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
-					linkRes.push(mainRes);
-					returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
-					linkRes.pop();
-				}
-				if (!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
-					linkRes.push(mainRes);
-					returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
-					linkRes.pop();
-				}
+	private void clearLiterals(Map<String, String> resultMap) {
+		Set<String> uriFilters = new HashSet<String>();
+		for(String uri : resultMap.keySet()) {
+			uriFilters.add("(str(?s) = \"" + uri + "\")");
 		}
-		
-		return returnModel;
+		String query = "" +
+		"DELETE {\n" +
+		"  ?s ?p ?o\n" +
+		"} WHERE {\n" +
+		"  ?s ?p ?o ." +
+		"  FILTER ( isLiteral(?o) || ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
+		"}";
+		log.debug("Clear Literal Query:\n" + query);
+//		this.scoreOutput.executeUpdateQuery(query);
 	}
 	
-	/**
-	 * Close the resources used by score
-	 */
-	public void close() {
-		// Close and done
-		this.scoreInput.close();
-		this.scoreOutput.close();
-		this.vivo.close();
-	}
-	
-	
-	/**
-	 * Accessor for vivo model
-	 * @return the vivo
-	 */
-	public JenaConnect getVivo() {
-		return this.vivo;
-	}
-	
-	/**
-	 * Accessor for input model
-	 * @return the scoreInput
-	 */
-	public JenaConnect getScoreInput() {
-		return this.scoreInput;
-	}
-	
-	/**
-	 * Accessor for output model
-	 * @return the scoreOutput
-	 */
-	public JenaConnect getScoreOutput() {
-		return this.scoreOutput;
-	}
-	
+//	/**
+//	 * Traverses paperNode and adds to toReplace model
+//	 * @param mainRes the main resource
+//	 * @param linkRes the resource to link it to
+//	 * @return the model containing the sanitized info so far
+//	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
+//	 * @throws IOException error connecting
+//	 */
+//	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
+//		JenaConnect returnModel = new MemJenaConnect();
+//		StmtIterator mainStmts = mainRes.listProperties();
+//		
+//		while (mainStmts.hasNext()) {
+//			Statement stmt = mainStmts.nextStatement();
+//			
+//				// log.debug(stmt.toString());
+//				returnModel.getJenaModel().add(stmt);
+//				
+//				//todo change the equals t o
+//				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
+//					linkRes.push(mainRes);
+//					returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
+//					linkRes.pop();
+//				}
+//				if (!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
+//					linkRes.push(mainRes);
+//					returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
+//					linkRes.pop();
+//				}
+//		}
+//		
+//		return returnModel;
+//	}
 	
 	/**
 	 * Get the OptionParser
@@ -734,11 +648,7 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").setRequired(false));
 		
 		// options
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("link-rename-inplace").setDescription("If set, this will not use the output model it will manipulate the records in place"));
-		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-input-model").setDescription("If set, this will clear the input model after scoring is complete"));
-		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("wipe-output-model").setDescription("If set, this will clear the output model before scoring begins"));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("push-all").setDescription("If set, this will push all matches and non matches to output model"));
-				
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-literals").setDescription("clear all literals out of the nodes matched").setRequired(false));
 		return parser;
 	}	
 	
@@ -749,16 +659,6 @@ public class Score {
 	public void execute() throws IOException {
 		log.info("Running specified algorithims");
 		
-		// Empty input model
-		if(this.wipeOutputModel) {
-			log.info("Emptying output model");	
-			this.scoreOutput.truncate();
-		}
-		
-		if(this.pushAll) {
-			this.scoreOutput.getJenaModel().add(this.scoreInput.getJenaModel());
-		}
-		
 		if(this.matchList != null && !this.matchList.isEmpty()) {
 			Map<String,String> resultMap = match(this.matchList, this.matchNamespace);
 			
@@ -766,19 +666,17 @@ public class Score {
 				rename(resultMap);
 			} else if(this.linkProp != null && !this.linkProp.isEmpty()) {
 				link(resultMap,this.linkProp);
-			}			
+			}
+			
+			if(this.clearLiterals) {
+				clearLiterals(resultMap);
+			}
 		}
 		
 		if(this.pubmedThreshold != null) {
 			pubmedMatch();
 		}
-		
-		// Empty input model
-		if(this.wipeInputModel) {
-			log.info("Emptying input model");	
-			this.scoreInput.truncate();
-		}
-	}	
+	}
 
 	/**
 	 * Main method
@@ -788,9 +686,7 @@ public class Score {
 		InitLog.initLogger(Score.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			Score Scoring = new Score(args);
-			Scoring.execute();
-			Scoring.close();
+			new Score(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.out.println(getParser().getUsage());

@@ -50,89 +50,86 @@
 	
 	<!-- The Article -->
 	<xsl:template match="PubmedArticle">
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedPub/pmid{child::MedlineCitation/PMID}">
-				<xsl:apply-templates select='MedlineCitation/Article/PublicationTypeList/PublicationType' />
-				<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-				<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
-				<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
-				<rdfs:label><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></rdfs:label>
-				<core:Title><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></core:Title>
-				<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
-				<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
-				<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
-				<xsl:apply-templates select="MedlineCitation/ChemicalList/Chemical" />
-				<xsl:apply-templates select="MedlineCitation/KeywordList/Keyword" />
-				<xsl:apply-templates  select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword" />
-				<xsl:choose>
-					<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
-						<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
-					</xsl:when>
-				</xsl:choose>
-				<xsl:variable name="MonthNumber">
-					<xsl:choose>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jan">01</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Feb">02</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Mar">03</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Apr">04</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=May">05</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jun">06</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jul">07</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Aug">08</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Sep">09</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Oct">10</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Nov">11</xsl:when>
-						<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Dec">12</xsl:when>
-					</xsl:choose>
-				</xsl:variable>
-				<xsl:choose>
-					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-						<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:year>
-					</xsl:when>
-					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-						<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth>
-					</xsl:when>
-					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-						<core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:date>
-					</xsl:when>
-				</xsl:choose>
-				<xsl:apply-templates select="MedlineCitation/Article/Affiliation" />
-				<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
-				<!-- <xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" /> -->
-				<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="journalRef"/>
-				<!-- <xsl:apply-templates select="MedlineCitation/DateCreated" mode="createdRef" />
-				<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="completedRef" />
-				<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="revisedRef" /> -->		
-			</rdf:Description>
-			<xsl:apply-templates select="MedlineCitation/Article/AuthorList" mode="fullAuthor" />
-			<xsl:apply-templates select="MedlineCitation/MeshHeadingList" mode="fullTerm" />	
-			<xsl:apply-templates select="MedlineCitation/Article" mode="fullJournal" />
-			<!-- <xsl:apply-templates select="MedlineCitation/DateCreated" mode="fullCreated" />
-			<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="fullCompleted" />
-			<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="fullRevised" /> -->
-	</xsl:template>
-	
-	
-	<!-- Email Extraction Regular Expression -->
-	<xsl:template match="MedlineCitation/Article/Affiliation">
-		<xsl:variable name="elValue" select="."/>
-		<!--
-		Possible better email match regex.
-		Needs tested. Not sure if &quot will work for "
-		- -Dale
-		-->
-		<xsl:analyze-string select="$elValue" regex="\s*([a-zA-Z\d\.]*@[a-zA-Z\d\.]*)">
-		<!-- <xsl:analyze-string select="$elValue" regex="(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|&quot;(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*&quot;)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])">	-->
-		<!--
-		Here's the old expression
-		\s*([a-zA-Z\d\.]*@[a-z\.]*)
-		It was in quotes. Like the one above. 
-		-->			
-			<xsl:matching-substring>
-				<score:workEmail>
+		<xsl:variable name="elValue" select="MedlineCitation/Article/Affiliation"/>
+		<xsl:variable name="emailAddress">
+			<!--
+			Possible better email match regex.
+			Needs tested. Not sure if &quot will work for "
+			- -Dale
+			-->
+			<xsl:analyze-string select="$elValue" regex="\s*([a-zA-Z\d\.]*@[a-zA-Z\d\.]*)">
+			<!-- <xsl:analyze-string select="$elValue" regex="(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|&quot;(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*&quot;)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])">	-->
+			<!--
+			Here's the old expression
+			\s*([a-zA-Z\d\.]*@[a-z\.]*)
+			It was in quotes. Like the one above. 
+			-->
+				<xsl:matching-substring>
 					<xsl:value-of select="regex-group(1)" />
-				</score:workEmail>
-			</xsl:matching-substring>			
-		</xsl:analyze-string>
+				</xsl:matching-substring>			
+			</xsl:analyze-string>
+		</xsl:variable>
+		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedPub/pmid{child::MedlineCitation/PMID}">
+			<xsl:apply-templates select='MedlineCitation/Article/PublicationTypeList/PublicationType' />
+			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
+			<rdfs:label><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></rdfs:label>
+			<core:Title><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></core:Title>
+			<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
+			<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
+			<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
+			<xsl:apply-templates select="MedlineCitation/ChemicalList/Chemical" />
+			<xsl:apply-templates select="MedlineCitation/KeywordList/Keyword" />
+			<xsl:apply-templates  select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword" />
+			<xsl:choose>
+				<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
+					<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:variable name="MonthNumber">
+				<xsl:choose>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jan">01</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Feb">02</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Mar">03</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Apr">04</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=May">05</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jun">06</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jul">07</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Aug">08</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Sep">09</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Oct">10</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Nov">11</xsl:when>
+					<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Dec">12</xsl:when>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
+					<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:year>
+				</xsl:when>
+				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
+					<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth>
+				</xsl:when>
+				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
+					<core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:date>
+				</xsl:when>
+			</xsl:choose>
+			<!-- <score:workEmail><xsl:value-of select="$emailAddress" /></score:workEmail> -->
+			<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
+			<!-- <xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termRef" /> -->
+			<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="journalRef"/>
+			<!-- <xsl:apply-templates select="MedlineCitation/DateCreated" mode="createdRef" />
+			<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="completedRef" />
+			<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="revisedRef" /> -->		
+		</rdf:Description>
+		<xsl:apply-templates select="MedlineCitation/Article/AuthorList" mode="fullAuthor">
+			<xsl:with-param name="email" select="$emailAddress" />
+		</xsl:apply-templates>
+		<xsl:apply-templates select="MedlineCitation/MeshHeadingList" mode="fullTerm" />	
+		<xsl:apply-templates select="MedlineCitation/Article" mode="fullJournal" />
+		<!-- <xsl:apply-templates select="MedlineCitation/DateCreated" mode="fullCreated" />
+		<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="fullCompleted" />
+		<xsl:apply-templates select="MedlineCitation/DateRevised"  mode="fullRevised" /> -->
 	</xsl:template>
 	
 	<!-- Links to From the Paper to the Terms and Authors -->
@@ -157,11 +154,15 @@
 	
 	<!-- Author List Navigation --> 
 	<xsl:template match="MedlineCitation/Article/AuthorList" mode="fullAuthor">
-		<xsl:apply-templates select="Author" mode="fullAuthor" />
+		<xsl:param name='email' />
+		<xsl:apply-templates select="Author" mode="fullAuthor">
+			<xsl:with-param name="email" select="$email" />
+		</xsl:apply-templates>
 	</xsl:template>
 	
 	<!-- The Authors -->
 	<xsl:template match="Author" mode="fullAuthor">
+		<xsl:param name='email' />
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
@@ -185,6 +186,7 @@
 		</rdf:Description>
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthor/pmid{ancestor::MedlineCitation/PMID}author{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<score:workEmail><xsl:value-of select="$email" /></score:workEmail>
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />

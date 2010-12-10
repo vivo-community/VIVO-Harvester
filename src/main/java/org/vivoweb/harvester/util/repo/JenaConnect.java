@@ -14,6 +14,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -64,6 +67,78 @@ public abstract class JenaConnect {
 	 * The modelname
 	 */
 	private String modelName;
+	/**
+	 * JDBC Connection Line
+	 */
+	private final String dbUrl;
+	/**
+	 * JDBC username
+	 */
+	private final String dbUser;
+	/**
+	 * JDBC password
+	 */
+	private final String dbPass;
+	/**
+	 * Database Type (for Jena)
+	 */
+	private final String dbType;
+	/**
+	 * JDBC driver class
+	 */
+	private final String dbClass;
+	
+	/**
+	 * Base Constructor
+	 * @param dbUrl the JDBC Connection Line
+	 * @param dbUser the JDBC username
+	 * @param dbPass the JDBC password
+	 * @param dbType the Database Type (for Jena)
+	 * @param dbClass the JDBC driver class
+	 */
+	protected JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
+		this.dbUrl = dbUrl;
+		this.dbUser = dbUser;
+		this.dbPass = dbPass;
+		this.dbType = dbType;
+		this.dbClass = dbClass;
+	}
+	
+	/**
+	 * Clone Constructor
+	 * @param original the original to clone
+	 */
+	protected JenaConnect(JenaConnect original) {
+		this.dbUrl = original.dbUrl;
+		this.dbUser = original.dbUser;
+		this.dbPass = original.dbPass;
+		this.dbType = original.dbType;
+		this.dbClass = original.dbClass;
+	}
+	
+	/**
+	 * Get the dbType for Jena
+	 * @return the dbType
+	 */
+	protected String getDbType() {
+		return this.dbType;
+	}
+	
+	/**
+	 * Build a new jdbc connection using connect info
+	 * @return a new jdbc connection
+	 * @throws IOException error making jdbc connection
+	 */
+	protected Connection buildConnection() throws IOException {
+		try {
+			Class.forName(this.dbClass);
+			return DriverManager.getConnection(this.dbUrl, this.dbUser, this.dbPass);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(),e);
+		} catch(ClassNotFoundException e) {
+			throw new IOException(e.getMessage(),e);
+		}
+	}
 	
 	/**
 	 * Factory (connects to the same jena triple store as another jena connect, but uses a different named model)
@@ -168,27 +243,23 @@ public abstract class JenaConnect {
 	 * @throws IOException error connecting to jena model
 	 */
 	private static JenaConnect build(Map<String,String> params) throws IOException {
-		try {
-			// for(String param : params.keySet()) {
-			// log.debug(param+" => "+params.get(param));
-			// }
-			if(!params.containsKey("type")) {
-				throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','mem'}");
-			}
-			JenaConnect jc;
-			if(params.get("type").equalsIgnoreCase("memory")) {
-				jc = new MemJenaConnect(params.get("modelName"));
-			} else if(params.get("type").equalsIgnoreCase("rdb")) {
-				jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
-			} else if(params.get("type").equalsIgnoreCase("sdb")) {
-				jc = new SDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("dbLayout"), params.get("modelName"));
-			} else {
-				throw new IllegalArgumentException("unknown type: " + params.get("type"));
-			}
-			return jc;
-		} catch(ClassNotFoundException e) {
-			throw new IOException(e);
+		// for(String param : params.keySet()) {
+		// log.debug(param+" => "+params.get(param));
+		// }
+		if(!params.containsKey("type")) {
+			throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','mem'}");
 		}
+		JenaConnect jc;
+		if(params.get("type").equalsIgnoreCase("memory")) {
+			jc = new MemJenaConnect(params.get("modelName"));
+		} else if(params.get("type").equalsIgnoreCase("rdb")) {
+			jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
+		} else if(params.get("type").equalsIgnoreCase("sdb")) {
+			jc = new SDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("dbLayout"), params.get("modelName"));
+		} else {
+			throw new IllegalArgumentException("unknown type: " + params.get("type"));
+		}
+		return jc;
 	}
 	
 	/**
@@ -299,46 +370,6 @@ public abstract class JenaConnect {
 	 */
 	public void removeRdfFromJC(JenaConnect inputJC) {
 		this.jenaModel.remove(inputJC.getJenaModel());
-//		log.debug("Removing data from another model");
-//		this.jenaModel.begin();
-//		for(Statement s : IterableAdaptor.adapt(inputJC.getJenaModel().listStatements())) {
-//			if(this.jenaModel.contains(s)) {
-//				log.debug("Removing "+s);
-//			}
-////			if(s.getObject().isResource()) {
-////				this.jenaModel.remove(ResourceFactory.createResource(s.getSubject().getURI()), ResourceFactory.createProperty(s.getPredicate().getURI()), ResourceFactory.createResource(s.getResource().getURI()));
-////			} else {
-////				this.jenaModel.remove(ResourceFactory.createResource(s.getSubject().getURI()), ResourceFactory.createProperty(s.getPredicate().getURI()), ResourceFactory.createTypedLiteral(s.getLiteral().getValue()));
-////			}
-//			this.jenaModel.notifyEvent(GraphEvents.remove(s.getSubject().asNode(), s.getPredicate().asNode(), s.getObject().asNode()));
-//			this.jenaModel.remove(s);
-//		}
-//		this.jenaModel.commit();
-//		StringBuffer sb = new StringBuffer();
-//		sb.append("DELETE DATA {\n");
-//		for(Statement s : IterableAdaptor.adapt(inputJC.getJenaModel().listStatements())) {
-//			sb.append("\t<").append(s.getSubject().getURI()).append(">").append(" ");
-//			sb.append("<").append(s.getPredicate().getURI()).append(">").append(" ");
-//			if(s.getObject().isResource()) {
-//				sb.append("<").append(s.getResource().getURI()).append(">").append(" .\n");
-//			} else {
-//				sb.append("\"").append(s.getLiteral().getValue().toString()).append("\"");
-//				String literal = s.getLiteral().toString();
-//				if(literal.contains("@")) {
-//					//handle lang
-//					sb.append("@").append(s.getLanguage());
-//				}
-//				if(literal.contains("^^")) {
-//					//handle datatype - lang is discarded if datatype found
-//					sb.append("^^<").append(s.getLiteral().getDatatypeURI()).append(">");
-//				}
-//				sb.append(" .\n");
-//			}
-//		}
-//		sb.append("}");
-//		log.debug("SPARQL DELETE:\n"+sb.toString());
-////		throw new IllegalArgumentException();
-//		executeUpdateQuery(sb.toString());
 	}
 	
 	/**
@@ -476,7 +507,7 @@ public abstract class JenaConnect {
 	}
 	
 	/**
-	 * Executes a sparql describe query against the JENA model and returns the description result model
+	 * Executes a sparql update query against the JENA model
 	 * @param queryString the query to execute against the model
 	 */
 	public void executeUpdateQuery(String queryString) {
