@@ -152,7 +152,7 @@
 			<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipleInvestigatorRole"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipalInvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#InvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ResearcherRole"/>
 					<core:roleIn>
@@ -173,7 +173,7 @@
 			<xsl:otherwise>
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CoPrincipleInvestigatorRole"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CoPrincipalInvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#InvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ResearcherRole"/>
 					<core:roleIn>
