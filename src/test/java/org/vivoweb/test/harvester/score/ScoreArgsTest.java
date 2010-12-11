@@ -36,7 +36,6 @@ public class ScoreArgsTest extends TestCase {
 	/** */
 	private String overrideOArg;
 	/** */
-	/** */
 	private String overrideIArg;
 	/** */
 	private HashMap<String, String> overrideIArgMap;
@@ -70,18 +69,6 @@ public class ScoreArgsTest extends TestCase {
 	}
 	
 	/**
-	 * Test match algorithm with rename and inplace flag
-	 * @throws IOException error
-	 */
-	public void testInplaceMatchWithRename() throws IOException {
-		log.info("BEGIN testInplaceMatchWithRename");
-		log.debug("Test -i iArg -v vArg -m 'vivoworkEmail=scoreworkemail' -r -a");
-		String[] args = new String[]{"-i", this.iArg, "-v", this.vArg, "-m", "http://vivoweb.org/ontology/core#workEmail=http://vivoweb.org/ontology/score#workEmail", "-r", "-a"};
-		new Score(args);
-		log.info("END testInplaceMatchWithRename");
-	}
-	
-	/**
 	 * Test match algorithm with linking
 	 * @throws IOException error
 	 */
@@ -109,78 +96,6 @@ public class ScoreArgsTest extends TestCase {
 			log.debug("Caught Expected Exception: "+e.getMessage());
 		}
 		log.info("END testIllegalQParam");
-	}
-	
-	/**
-	 * Test to make sure model not wiped when -w flag is omitted
-	 * @throws IOException error
-	 */
-	public void testKeepWorkingModel() throws IOException {
-		log.info("BEGIN testKeepWorkingModel");
-		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
-		String[] args = new String[]{"-i", this.iArg, "-I", this.overrideIArg, "-v", this.vArg, "-V", this.overrideVArg, "-o", this.oArg, "-O", this.overrideOArg};
-		new Score(args).execute();
-		if(this.input.getJenaModel().isEmpty()) {
-			log.error("Model emptied despite -w arg missing");
-			fail("Model emptied despite -w arg missing");
-		}
-		log.info("END testKeepWorkingModel");
-	}
-	
-	/**
-	 * Test to ensure -w flag causes working model to be empty
-	 * @throws IOException error
-	 */
-	public void testWipeWorkingModel() throws IOException {
-		log.info("BEGIN testWipeWorkingModel");
-		log.debug("Testing don't keep working model");
-		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
-		String[] args = new String[]{"-i", this.iArg, "-I", this.overrideIArg, "-v", this.vArg, "-V", this.overrideVArg, "-o", this.oArg, "-O", this.overrideOArg, "-w"};
-		new Score(args).execute();
-		if(!this.input.getJenaModel().isEmpty()) {
-			log.error("Model not empty -w arg violated");
-			fail("Model not empty -w arg violated");
-		}
-		log.info("END testWipeWorkingModel");
-	}
-	
-	/**
-	 * Test to ensure that the output model gets wiped before running when -q flag set
-	 * @throws IOException error
-	 */
-	public void testEmptyOutputModel() throws IOException {
-		log.info("BEGIN testEmptyOutputModel");
-		log.debug("Testing empty output model");
-		// empty output model
-		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
-		String[] args = new String[]{"-i", this.iArg, "-I", this.overrideIArg, "-v", this.vArg, "-V", this.overrideVArg, "-o", this.oArg, "-O", this.overrideOArg,"-q"};
-		//get size
-		long modelSize = this.output.getJenaModel().size();
-		new Score(args).execute();
-		if (modelSize > this.output.getJenaModel().size()) {
-			log.error("Output model not emptied before run");
-			fail("Output model not emptied before run");
-		}
-		log.info("END testEmptyOutputModel");
-	}
-	
-	/**
-	 * Test to ensure that output model is not empties when -q flag omitted
-	 * @throws IOException error
-	 */
-	public void testNoEmptyOutputModel() throws IOException {
-		log.info("BEGIN testNoEmptyOutputModel");
-		// don't empty output model
-		log.debug("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
-		String[] args = new String[]{"-i", this.iArg, "-I", this.overrideIArg, "-v", this.vArg, "-V", this.overrideVArg, "-o", this.oArg, "-O", this.overrideOArg};
-		//get size
-		long modelSize = this.output.getJenaModel().size();
-		new Score(args).execute();
-		if (modelSize < this.output.getJenaModel().size()) {
-			log.error("Output model emptied before run");
-			fail("Output model emptied before run");
-		}
-		log.info("END testNoEmptyOutputModel");
 	}
 	
 	@Override
