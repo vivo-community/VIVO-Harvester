@@ -56,6 +56,8 @@ public class ScoreTest extends TestCase {
 				"<bibo:number>2</bibo:number>" +
 				"<core:Year>2010</core:Year>" +
 				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship1\"/>" +
+				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship2\"/>" +
+				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship3\"/>" +
 				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh1\"/>" +
 				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh2\"/>" +
 				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh3\"/>" +
@@ -108,6 +110,27 @@ public class ScoreTest extends TestCase {
 				"<score:suffix/>" +
 				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
 				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship2\"/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship3\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
+				"<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author3\"/>" +
+				"<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">3</core:authorRank>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author3\">" +
+				"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+				"<rdfs:label>Boogle, Oggle</rdfs:label>" +
+				"<foaf:lastName>Boogle</foaf:lastName>" +
+				"<score:workEmail>v@mydomain.edu</score:workEmail>" +
+				"<score:foreName>Oggle</score:foreName>" +
+				"<core:middleName>D</core:middleName>" +
+				"<score:initials>ODB</score:initials>" +
+				"<score:suffix/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship3\"/>" +
 			"</rdf:Description>" +
 			"<rdf:Description rdf:nodeID=\"pmid23656776mesh1\">" +
 				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
@@ -298,27 +321,25 @@ public class ScoreTest extends TestCase {
 	 * Test metch Algorithm
 	 * @throws IOException error
 	 */
-	public void testEmailMatch() throws IOException {
-		log.info("BEGIN testMatch");
+	public void testEmailLastNameMatch() throws IOException {
+		log.info("BEGIN testEmailLastNameMatch");
 		// prep arguments
 		Map<String,String> matchParams = new HashMap<String, String>();
 		matchParams.put("http://vivoweb.org/ontology/core#workEmail", "http://vivoweb.org/ontology/score#workEmail");
 		matchParams.put("http://xmlns.com/foaf/0.1/lastName", "http://xmlns.com/foaf/0.1/lastName");
 		
-		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
-		log.debug("VIVO Dump Pre-Score\n" + this.vivo.exportRdfToString());
+//		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
 		// run match score
 		new Score(this.input, this.vivo, null, matchParams, true, null, null, false).execute();
 
-		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
-		log.debug("VIVO Dump Post-Score\n" + this.vivo.exportRdfToString());
+//		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
 		
 		// check output model
 		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
-		log.info("END testMatch");
+		log.info("END testEmailLastNameMatch");
 	}
 	
 	/**
@@ -328,17 +349,17 @@ public class ScoreTest extends TestCase {
 	public void testPubmedScore() throws IOException {
 		log.info("BEGIN testPubmedScore");
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
-//		log.debug("VIVO Dump Pre-Score\n" + this.vivo.exportRdfToString());
 		
 		//run pubmed
-		new Score(this.input, this.vivo, null, null, false, "0.5", "", false).execute();
+		new Score(this.input, this.vivo, null, null, true, "0.5", null, true).execute();
 		
 //		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
-//		log.debug("VIVO Dump Post-Score\n" + this.vivo.exportRdfToString());
 		
 		// check output model
-		assertTrue(this.input.executeAskQuery("ASK { <node1> <matchpredicate1> <node2> . <node2> <matchpredicate2> <node1> }"));
-		assertFalse(this.input.containsURI(""));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid23656776/author3> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship3> }"));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid23656776/authorship3> <http://vivoweb.org/ontology/core#linkedAuthor> <http://vivoweb.org/pubmed/article/pmid23656776/author3> }"));
+		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid23656776/author2"));
+		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid23656776/author1"));
 		log.info("END testPubmedScore");
 	}
 	
@@ -363,7 +384,6 @@ public class ScoreTest extends TestCase {
 	protected void tearDown() {
 		if(this.input != null) {
 			try {
-				log.debug("trunc in");
 				this.input.truncate();
 			} catch(Exception e) {
 				//Ignore
@@ -378,7 +398,6 @@ public class ScoreTest extends TestCase {
 		}
 		if(this.vivo != null) {
 			try {
-				log.debug("trunc vivo");
 				this.vivo.truncate();
 			} catch(Exception e) {
 				//Ignore
@@ -393,7 +412,6 @@ public class ScoreTest extends TestCase {
 		}
 		if(this.output != null) {
 			try {
-				log.debug("trunc out");
 				this.output.truncate();
 			} catch(Exception e) {
 				//Ignore

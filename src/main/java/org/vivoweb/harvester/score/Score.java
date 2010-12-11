@@ -149,18 +149,9 @@ public class Score {
 	 *				fullEmailScore + foreNameScore + partEmailScore + domainPartEmailScore + initMatchScore
 	 *	PM =    -----------------------------------------------------------------------------------------
 	 *												2
+	 * @return mapping of the found matches
 	 */
-	public void pubmedMatch() {
-		String queryString;
-		ResultSet vivoResult;
-		QuerySolution scoreSolution;
-		QuerySolution vivoSolution;
-		ResultSet scoreInputResult;
-		String foreName;
-		String middleName;
-		String lastName;
-		String workEmail;
-		HashMap<String,Double> matchArray = new HashMap<String,Double>();
+	public Map<String,String> pubmedMatch() {
 		String matchForeName;
 		String matchMiddleName;
 		String matchLastName;
@@ -183,7 +174,7 @@ public class Score {
 		log.info("Executing Pubmed Scoring");	
 
 		log.debug(matchQuery);
-		scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
+		ResultSet scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
 		
 		// Log info message if none found
 		if (!scoreInputResult.hasNext()) {
@@ -192,15 +183,20 @@ public class Score {
 			log.info("Looping thru authors from harvested pubmed publications");
 		}
 		
+		//Create map of uris
+		HashMap<String,String> uriArray = new HashMap<String,String>();
+		
 		// look for exact match in vivo
 		while (scoreInputResult.hasNext()) {
+			HashMap<String,Double> matchArray = new HashMap<String,Double>();
 			//Grab results
-			scoreSolution = scoreInputResult.next();
+			QuerySolution scoreSolution = scoreInputResult.next();
 			log.trace(scoreSolution.toString());
 			//author = scoreSolution.getResource("x");
 			//paper = scoreSolution.getResource("publication");
-			foreName = scoreSolution.get("foreName").toString();
-			lastName = scoreSolution.get("lastName").toString();
+			String foreName = scoreSolution.get("foreName").toString();
+			String lastName = scoreSolution.get("lastName").toString();
+			String workEmail;
 			if (scoreSolution.get("workEmail") != null) {
 				workEmail = scoreSolution.get("workEmail").toString();
 			} else {
@@ -212,6 +208,7 @@ public class Score {
 			foreName = foreName.replace(",", " ");			
 			lastName = lastName.replace(",", "");
 			
+			String middleName;
 			//support middlename parse out of forename from pubmed
 			if (scoreSolution.get("middleName") == null) {	
 				log.trace("Checking for middle name from " + lastName + ", " + foreName);
@@ -242,28 +239,29 @@ public class Score {
 			}
 				
 			// Select all matching authors from vivo store
-			queryString =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + 
-							"PREFIX core: <http://vivoweb.org/ontology/core#> " + 
-							"SELECT DISTINCT ?x ?lastName ?foreName ?middleName ?workEmail " +
-							"WHERE { " +
-								"{?x foaf:lastName" + " \"" + lastName + "\"} UNION " +
-								"{?x foaf:firstName" + " \"" + foreName + "\"} UNION " +
-								"{?x core:middleName" + " \"" + middleName + "\"} UNION " +
-								"{?x core:workEmail" + " \"" + workEmail + "\"} . " +
-								"OPTIONAL { ?x foaf:lastName ?lastName } . " +
-								"OPTIONAL { ?x foaf:firstName ?foreName } . " +
-								"OPTIONAL { ?x core:middleName ?middleName } . " +
-								"OPTIONAL { ?x core:workEmail ?workEmail } " +
-							"}";
+			String queryString = "" +
+				"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + 
+				"PREFIX core: <http://vivoweb.org/ontology/core#> " + 
+				"SELECT DISTINCT ?x ?lastName ?foreName ?middleName ?workEmail " +
+				"WHERE { " +
+					"{?x foaf:lastName" + " \"" + lastName + "\"} UNION " +
+					"{?x foaf:firstName" + " \"" + foreName + "\"} UNION " +
+					"{?x core:middleName" + " \"" + middleName + "\"} UNION " +
+					"{?x core:workEmail" + " \"" + workEmail + "\"} . " +
+					"OPTIONAL { ?x foaf:lastName ?lastName } . " +
+					"OPTIONAL { ?x foaf:firstName ?foreName } . " +
+					"OPTIONAL { ?x core:middleName ?middleName } . " +
+					"OPTIONAL { ?x core:workEmail ?workEmail } " +
+				"}";
 			
 			log.debug(queryString);
 			
-			vivoResult = this.vivo.executeSelectQuery(queryString);
+			ResultSet vivoResult = this.vivo.executeSelectQuery(queryString);
 			
 			// Run comparisions
 			while (vivoResult.hasNext()) {
 				weightScore = 0;
-				vivoSolution = vivoResult.next();
+				QuerySolution vivoSolution = vivoResult.next();
 				log.trace(vivoSolution.toString());
 								
 				//Grab comparision strings
@@ -337,23 +335,32 @@ public class Score {
 				matchArray.put(vivoSolution.get("x").toString(),new Double(weightScore));
 				
 			}
-			
-			//Print all weights and select highest as match, above minimum threshold
-			Entry<String, Double> highKey = matchArray.entrySet().iterator().next();
-			for (Entry<String, Double> i: matchArray.entrySet()) {
-		        log.trace(i.getKey() + " : " + i.getValue());
-		        if (i.getValue().doubleValue() > highKey.getValue().doubleValue()) {
-		        	highKey = i;
-		        	log.trace("Selecting as best match " + highKey.getKey());
-		        }
-			}
-			
-			//Match author to highKey
-			if (highKey.getValue().doubleValue() > minThreshold) {
-				log.trace("Matched to " + highKey.getKey());
+
+			String uri = scoreSolution.getResource("x").getURI();
+			if(!matchArray.isEmpty()) {
+				//Print all weights and select highest as match, above minimum threshold
+				Entry<String, Double> highKey = matchArray.entrySet().iterator().next();
+				for (Entry<String, Double> i: matchArray.entrySet()) {
+			        log.trace(i.getKey() + " : " + i.getValue());
+			        if (i.getValue().doubleValue() > highKey.getValue().doubleValue()) {
+			        	highKey = i;
+			        	log.trace("Selecting as best match " + highKey.getKey());
+			        }
+				}
+				
+				//Match author to highKey
+				if (highKey.getValue().doubleValue() > minThreshold) {
+					uriArray.put(uri, highKey.getKey());
+					log.trace("Match found: <" + uri + "> in Score matched with <" + highKey.getKey() + "> in Vivo");
+				} else {
+					log.trace("No Match found for <" + uri + ">");
+				}
+			} else {
+				log.trace("No Match found for <" + uri + ">");
 			}
 			
 		}
+		return uriArray;
 //		This is cmw48's logic, don't blame this on CTRIP:		
 //		# Scoring Logic											  
 //		if lastnamematch then {
@@ -525,7 +532,6 @@ public class Score {
 		
 		return uriArray;
 	}
-
 	
 	/**
 	 * Rename the resource set as the key to the value matched
@@ -570,53 +576,53 @@ public class Score {
 	 */
 	private void clearLiterals(Map<String, String> resultMap) {
 		Set<String> uriFilters = new HashSet<String>();
-		for(String uri : resultMap.keySet()) {
+		for(String uri : resultMap.values()) {
 			uriFilters.add("(str(?s) = \"" + uri + "\")");
 		}
 		String query = "" +
 		"DELETE {\n" +
 		"  ?s ?p ?o\n" +
 		"} WHERE {\n" +
-		"  ?s ?p ?o ." +
-		"  FILTER ( isLiteral(?o) || ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
+		"  ?s ?p ?o .\n" +
+		"  FILTER ( isLiteral(?o) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
 		"}";
 		log.debug("Clear Literal Query:\n" + query);
-//		this.scoreOutput.executeUpdateQuery(query);
+		this.scoreInput.executeUpdateQuery(query);
 	}
 	
-//	/**
-//	 * Traverses paperNode and adds to toReplace model
-//	 * @param mainRes the main resource
-//	 * @param linkRes the resource to link it to
-//	 * @return the model containing the sanitized info so far
-//	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
-//	 * @throws IOException error connecting
-//	 */
-//	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
-//		JenaConnect returnModel = new MemJenaConnect();
-//		StmtIterator mainStmts = mainRes.listProperties();
-//		
-//		while (mainStmts.hasNext()) {
-//			Statement stmt = mainStmts.nextStatement();
-//			
-//				// log.debug(stmt.toString());
-//				returnModel.getJenaModel().add(stmt);
-//				
-//				//todo change the equals t o
-//				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
-//					linkRes.push(mainRes);
-//					returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
-//					linkRes.pop();
-//				}
-//				if (!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
-//					linkRes.push(mainRes);
-//					returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
-//					linkRes.pop();
-//				}
-//		}
-//		
-//		return returnModel;
-//	}
+	/* *
+	 * Traverses paperNode and adds to toReplace model
+	 * @param mainRes the main resource
+	 * @param linkRes the resource to link it to
+	 * @return the model containing the sanitized info so far
+	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
+	 * @throws IOException error connecting
+	 * /
+	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
+		JenaConnect returnModel = new MemJenaConnect();
+		StmtIterator mainStmts = mainRes.listProperties();
+		
+		while (mainStmts.hasNext()) {
+			Statement stmt = mainStmts.nextStatement();
+			
+				// log.debug(stmt.toString());
+				returnModel.getJenaModel().add(stmt);
+				
+				//todo change the equals t o
+				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
+					linkRes.push(mainRes);
+					returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
+					linkRes.pop();
+				}
+				if (!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
+					linkRes.push(mainRes);
+					returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
+					linkRes.pop();
+				}
+		}
+		
+		return returnModel;
+	}*/
 	
 	/**
 	 * Get the OptionParser
@@ -674,7 +680,17 @@ public class Score {
 		}
 		
 		if(this.pubmedThreshold != null) {
-			pubmedMatch();
+			Map<String,String> pubmedResultMap = pubmedMatch();
+			
+			if(this.renameRes) {
+				rename(pubmedResultMap);
+			} else if(this.linkProp != null && !this.linkProp.isEmpty()) {
+				link(pubmedResultMap,this.linkProp);
+			}
+			
+			if(this.clearLiterals) {
+				clearLiterals(pubmedResultMap);
+			}
 		}
 	}
 
