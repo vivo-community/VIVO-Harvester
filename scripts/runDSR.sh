@@ -40,6 +40,13 @@ $Transfer -o config/jenaModels/h2.xml -O modelName=dsrTempTransfer -O dbUrl="jdb
 tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 #tar -xzpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 
+# Execute score to match with existing VIVO
+# Matching on UF ID
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -r
+
+# Matching on Dept ID
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -r
+
 # Execute ChangeNamespace to get grants into current namespace
 $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/grant/ -p http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber
 # backup H2 change namesace Models
