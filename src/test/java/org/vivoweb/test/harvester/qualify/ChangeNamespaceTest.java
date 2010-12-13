@@ -1,12 +1,13 @@
 /** */
 package org.vivoweb.test.harvester.qualify;
 
+//import java.util.HashSet;
+//import java.util.List;
+//import java.util.Set;
+//import com.hp.hpl.jena.rdf.model.Property;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
@@ -34,8 +34,8 @@ public class ChangeNamespaceTest extends TestCase {
 	private String namespace;
 	/** */
 	private String newNamespace;
-	/** */
-	private Set<Property> properties;
+//	/** */
+//	private Set<Property> properties;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -105,8 +105,8 @@ public class ChangeNamespaceTest extends TestCase {
 		this.model.getJenaModel().add(testBad,ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"),"Not Renamed");
 		this.model.getJenaModel().add(testBad,ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"),"1234567892");
 		this.model.getJenaModel().add(testBad,ResourceFactory.createProperty("http://vivoweb.org/ontology/core#", "workEmail"),"bad@blah.com");
-		this.properties = new HashSet<Property>();
-		this.properties.add(ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/uniqueId"));
+//		this.properties = new HashSet<Property>();
+//		this.properties.add(ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/uniqueId"));
 		log.info("testing Start");
 	}
 	
@@ -119,32 +119,32 @@ public class ChangeNamespaceTest extends TestCase {
 		this.vivo = null;
 		this.namespace = null;
 		this.newNamespace = null;
-		this.properties = null;
+//		this.properties = null;
 		System.gc();
 	}
 	
-	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#getMatchingURIs(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.Set, org.vivoweb.harvester.util.repo.JenaConnect) getMatchingURIs(Resource current, String namespace, Set&lt;Propetry&gt; properties, JenaConnect vivo)}.
-	 */
-	public void testGetMatchingURIs() {
-		log.info("BEGIN testGetMatchingURIs");
-		List<String> uris = ChangeNamespace.getMatchingURIs(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
-		assertTrue(uris.contains("http://vivo.test.edu/individual/n321456"));
-		assertTrue(uris.contains("http://vivo.test.edu/individual/n654321"));
-		assertFalse(uris.contains("http://vivobad.test.edu/wrong/n987456"));
-		assertTrue(uris.size() == 2);
-		log.info("END testGetMatchingURIs");
-	}
+//	/**
+//	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#getMatchingURIs(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.Set, org.vivoweb.harvester.util.repo.JenaConnect) getMatchingURIs(Resource current, String namespace, Set&lt;Propetry&gt; properties, JenaConnect vivo)}.
+//	 */
+//	public void testGetMatchingURIs() {
+//		log.info("BEGIN testGetMatchingURIs");
+//		List<String> uris = ChangeNamespace.getMatchingURIs(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
+//		assertTrue(uris.contains("http://vivo.test.edu/individual/n321456"));
+//		assertTrue(uris.contains("http://vivo.test.edu/individual/n654321"));
+//		assertFalse(uris.contains("http://vivobad.test.edu/wrong/n987456"));
+//		assertTrue(uris.size() == 2);
+//		log.info("END testGetMatchingURIs");
+//	}
 	
-	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#getMatchingURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.Set, org.vivoweb.harvester.util.repo.JenaConnect)  getMatchingURI(Resource current, String namespace, Set&lt;Propetry&gt; properties, JenaConnect vivo)}.
-	 */
-	public void testGetMatchingURI() {
-		log.info("BEGIN testGetMatchingURI");
-		String uri = ChangeNamespace.getMatchingURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
-		assertTrue(uri.equals("http://vivo.test.edu/individual/n654321") || uri.equals("http://vivo.test.edu/individual/n321456"));
-		log.info("END testGetMatchingURI");
-	}
+//	/**
+//	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#getMatchingURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.Set, org.vivoweb.harvester.util.repo.JenaConnect)  getMatchingURI(Resource current, String namespace, Set&lt;Propetry&gt; properties, JenaConnect vivo)}.
+//	 */
+//	public void testGetMatchingURI() {
+//		log.info("BEGIN testGetMatchingURI");
+//		String uri = ChangeNamespace.getMatchingURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, this.vivo);
+//		assertTrue(uri.equals("http://vivo.test.edu/individual/n654321") || uri.equals("http://vivo.test.edu/individual/n321456"));
+//		log.info("END testGetMatchingURI");
+//	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#getUnusedURI(java.lang.String, org.vivoweb.harvester.util.repo.JenaConnect...) getUnusedURI(String namespace, JenaConnect... models)}.
@@ -156,29 +156,31 @@ public class ChangeNamespaceTest extends TestCase {
 		log.info("END testGetUnusedURI");
 	}
 	
-	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#getURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.Set, boolean, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect) getURI(Resource current, String namespace, Set&lt;Propetry&gt; properties, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model)}.
-	 */
-	public void testGetURI() {
-		log.info("BEGIN testGetURI");
-		String matchuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, false, this.vivo, this.model);
-		assertTrue(matchuri.equals("http://vivo.test.edu/individual/n654321") || matchuri.equals("http://vivo.test.edu/individual/n321456"));
-		String newuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test321"), this.newNamespace, this.properties, false, this.vivo, this.model);
-		assertFalse(this.vivo.containsURI(newuri));
-		log.info("END testGetURI");
-	}
+//	/**
+//	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#getURI(com.hp.hpl.jena.rdf.model.Resource, java.lang.String, java.util.Set, boolean, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect) getURI(Resource current, String namespace, Set&lt;Propetry&gt; properties, boolean errorOnNewURI, JenaConnect vivo, JenaConnect model)}.
+//	 */
+//	public void testGetURI() {
+//		log.info("BEGIN testGetURI");
+//		String matchuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test123"), this.newNamespace, this.properties, false, this.vivo, this.model);
+//		assertTrue(matchuri.equals("http://vivo.test.edu/individual/n654321") || matchuri.equals("http://vivo.test.edu/individual/n321456"));
+//		String newuri = ChangeNamespace.getURI(this.model.getJenaModel().getResource(this.namespace+"test321"), this.newNamespace, this.properties, false, this.vivo, this.model);
+//		assertFalse(this.vivo.containsURI(newuri));
+//		log.info("END testGetURI");
+//	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String, java.util.Set) changeNS(JenaConnect model, String oldNamespace, String newNamespace, Set&lt;Property&gt; properties)}.
+	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String) changeNS(JenaConnect model, String oldNamespace, String newNamespace)}.
 	 * @throws IOException error
 	 */
+//	, java.util.Set
+//	, Set&lt;Property&gt; properties
 	public void testChangeNS() throws IOException {
 		log.info("BEGIN testChangeNS");
 		ByteArrayOutputStream baos;
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
 		log.debug(baos.toString());
-		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace, this.properties);
+		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace/*, this.properties*/);
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
 		log.debug(baos.toString());
