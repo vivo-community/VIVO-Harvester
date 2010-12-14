@@ -42,19 +42,19 @@ tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 
 # Execute score to match with existing VIVO
 # Matching on UF ID person
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -n http://vivoweb.org/harvest/dsr/person/ -r
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -n http://vivoweb.org/harvest/dsr/person/ -r -c
 
 # Matching on Dept ID
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -n http://vivoweb.org/harvest/dsr/org/ -r
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -n http://vivoweb.org/harvest/dsr/org/ -r -c
 
 # Matching sponsors by labels
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://www.w3.org/2000/01/rdf-schema#label=http://www.w3.org/2000/01/rdf-schema#label -n http://vivoweb.org/harvest/dsr/sponsor/ -r
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://www.w3.org/2000/01/rdf-schema#label=http://www.w3.org/2000/01/rdf-schema#label -n http://vivoweb.org/harvest/dsr/sponsor/ -r -c
 
 # Matching of PIs
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -n http://vivoweb.org/harvest/dsr/piRole/ -m http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -m http://vivoweb.org/ontology/core#roleIn=http://vivoweb.org/ontology/core#roleIn -m http://vivoweb.org/ontology/core#principalInvestigatorRoleOf=http://vivoweb.org/ontology/core#principalInvestigatorRoleOf -r
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -n http://vivoweb.org/harvest/dsr/piRole/ -m http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -m http://vivoweb.org/ontology/core#roleIn=http://vivoweb.org/ontology/core#roleIn -m http://vivoweb.org/ontology/core#principalInvestigatorRoleOf=http://vivoweb.org/ontology/core#principalInvestigatorRoleOf -r -c
 
 # Matching of coPIs
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -n http://vivoweb.org/harvest/dsr/coPiRole/ -m http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -m http://vivoweb.org/ontology/core#roleIn=http://vivoweb.org/ontology/core#roleIn -m http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf=http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf -r
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -n http://vivoweb.org/harvest/dsr/coPiRole/ -m http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -m http://vivoweb.org/ontology/core#roleIn=http://vivoweb.org/ontology/core#roleIn -m http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf=http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf -r -c
 
 # Execute ChangeNamespace to get grants into current namespace
 $ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/grant/

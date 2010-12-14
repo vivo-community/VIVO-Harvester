@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
+ * Copyright (c) 2010 Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
  * This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
  ******************************************************************************/
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,8 +153,7 @@ public class Qualify {
 			log.trace("Replacing record");
 			log.debug("oldValue: " + oldValue);
 			log.debug("newValue: " + newValue);
-			this.model.getJenaModel().add(stmt.getSubject(), stmt.getPredicate(), newValue);
-			stmt.remove();
+			stmt.changeObject(newValue);
 		}
 	}
 	
@@ -166,7 +166,7 @@ public class Qualify {
 	private void regexReplace(String dataType, String regexMatch, String newValue) {
 		Property pred = this.model.getJenaModel().createProperty(dataType);
 		ResIterator resItr = this.model.getJenaModel().listResourcesWithProperty(pred);
-		
+
 		while(resItr.hasNext()) {
 			Statement stmt = resItr.next().getRequiredProperty(pred);
 			String obj = stmt.getString();
@@ -174,8 +174,7 @@ public class Qualify {
 				log.trace("Replacing record");
 				log.debug("oldValue: " + obj);
 				log.debug("newValue: " + newValue);
-				this.model.getJenaModel().add(stmt.getSubject(), stmt.getPredicate(), newValue);
-				stmt.remove();
+				stmt.changeObject(obj.replaceAll(regexMatch, newValue) );
 			} else {
 				log.debug("no match: " + obj);
 			}
