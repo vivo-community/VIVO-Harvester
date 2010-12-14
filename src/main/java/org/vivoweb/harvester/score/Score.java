@@ -572,6 +572,7 @@ public class Score {
 	
 	/**
 	 * Clear out literal values of matched scoreResources
+	 * TODO: TEST
 	 * @param resultMap a mapping of matched scoreResources to vivoResources
 	 */
 	private void clearLiterals(Map<String, String> resultMap) {
@@ -584,7 +585,7 @@ public class Score {
 		"  ?s ?p ?o\n" +
 		"} WHERE {\n" +
 		"  ?s ?p ?o .\n" +
-		"  FILTER ( isLiteral(?o) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
+		"  FILTER ( (isLiteral(?o) || (str(?p)=='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || str(?s) = ")+")) .\n" +
 		"}";
 		log.debug("Clear Literal Query:\n" + query);
 		this.scoreInput.executeUpdateQuery(query);
