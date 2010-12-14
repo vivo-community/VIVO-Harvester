@@ -50,6 +50,7 @@
 				
 				<xsl:analyze-string select="$rdfid" regex="^id_-_(.*?)(_-_.+)*?$">
 					<xsl:matching-substring>
+<!--					This is where the types of data are translated differently-->
 						<xsl:choose>
 	<!--						<xsl:when test="$table = 'dbo.vwVIVO'">-->
 	<!--							<xsl:call-template name="t_vwVIVO">-->
@@ -82,6 +83,7 @@
 	<xsl:template name="t_vwContracts">
 		<xsl:param name='grantid' />
 		<xsl:param name='this' />
+<!--	Creating a Grant-->
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
 			<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
@@ -91,11 +93,13 @@
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
 			<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Title"/></rdfs:label>
 			<core:administeredBy>
+<!--			Creating a department to match with or a stub if no match-->
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/org/org{$this/db-dbo.vwContracts:ContractDeptID}">
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 					<ufVivo:deptID><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></ufVivo:deptID>
 					<core:administers rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}" />
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+					<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 				</rdf:Description>
 			</core:administeredBy>
 			<core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
@@ -109,6 +113,7 @@
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+							<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 						</rdf:Description>
 					</core:grantAwardedBy>
 				</xsl:when>
@@ -119,6 +124,7 @@
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:subcontractsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+							<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 						</rdf:Description>
 					</core:grantSubcontractedThrough>
 					<core:grantAwardedBy>
@@ -127,6 +133,7 @@
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+							<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 						</rdf:Description>
 					</core:grantAwardedBy>
 				</xsl:otherwise>
@@ -154,6 +161,7 @@
 		<xsl:variable name='grantid' select='$this/db-dbo.vwProjectTeam:ContractNumber'/>
 		<xsl:choose>
 			<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
+<!--			Creating the PI-->
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipalInvestigatorRole"/>
@@ -168,15 +176,17 @@
 					<core:principalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-							<!-- JRP PUT A NAME HERE -->
+							<rdfs:label><xsl:value-of select="$this/db-dbo.vwProjectTeam:Investigator"/></rdfs:label>
 							<!-- Add Exclude Entity -->
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 							<core:hasPrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:principalInvestigatorRoleOf>
 				</rdf:Description>
 			</xsl:when>
 			<xsl:otherwise>
+<!--			Creating the Co-PI-->
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CoPrincipalInvestigatorRole"/>
@@ -191,9 +201,10 @@
 					<core:co-PrincipalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
-							<!-- JRP PUT A NAME HERE -->
+							<rdfs:label><xsl:value-of select="$this/db-dbo.vwProjectTeam:Investigator"/></rdfs:label>
 							<!-- Add Exclude Entity Class -->
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 							<core:hasCo-PrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:co-PrincipalInvestigatorRoleOf>
