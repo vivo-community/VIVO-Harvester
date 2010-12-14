@@ -168,6 +168,8 @@
 					<core:principalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<!-- JRP PUT A NAME HERE -->
+							<!-- Add Exclude Entity -->
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
 							<core:hasPrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
@@ -189,6 +191,8 @@
 					<core:co-PrincipalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<!-- JRP PUT A NAME HERE -->
+							<!-- Add Exclude Entity Class -->
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
 							<core:hasCo-PrincipalInvestigatorRole rdf:resource="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
