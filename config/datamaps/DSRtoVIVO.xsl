@@ -95,18 +95,20 @@
 					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 					<ufVivo:deptID><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></ufVivo:deptID>
 					<core:administers rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}" />
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 				</rdf:Description>
 			</core:administeredBy>
 			<core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
 			<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 			
 			<xsl:choose>
-				<xsl:when test="string($this/db-dbo.vwProjectTeam:FlowThruSponsor) = ''">
+				<xsl:when test="string($this/db-dbo.vwContracts:FlowThruSponsor) = ''">
 					<core:grantAwardedBy>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:SponsorID}For{$grantid}">
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 						</rdf:Description>
 					</core:grantAwardedBy>
 				</xsl:when>
@@ -116,6 +118,7 @@
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:subcontractsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 						</rdf:Description>
 					</core:grantSubcontractedThrough>
 					<core:grantAwardedBy>
@@ -123,6 +126,7 @@
 							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 						</rdf:Description>
 					</core:grantAwardedBy>
 				</xsl:otherwise>
