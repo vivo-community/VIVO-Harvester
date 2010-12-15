@@ -195,6 +195,13 @@
 					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
 					<score:initials><xsl:value-of select="Initials" /></score:initials>
 					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
+					<!-- Parse out possible middle name -->
+					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+						<xsl:matching-substring>
+							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
+							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+						</xsl:matching-substring>
+					</xsl:analyze-string>			
 				</xsl:when>
 				<xsl:when test="string(LastName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
@@ -202,7 +209,14 @@
 					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
 					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
 					<score:initials><xsl:value-of select="Initials" /></score:initials>
-					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>			
+					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>	
+					<!-- Parse out possible middle name -->
+					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+					    <xsl:matching-substring>
+							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
+							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+						</xsl:matching-substring>
+					</xsl:analyze-string>			
 				</xsl:when>
 				<xsl:when test="string(CollectiveName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
