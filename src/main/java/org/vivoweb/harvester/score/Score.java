@@ -9,11 +9,14 @@
 package org.vivoweb.harvester.score;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,7 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.util.ResourceUtils;
@@ -152,27 +156,24 @@ public class Score {
 	 * @return mapping of the found matches
 	 */
 	public Map<String,String> pubmedMatch() {
-		String matchForeName;
-		String matchMiddleName;
-		String matchLastName;
-		String matchWorkEmail;
 		double weightScore = 0;
 		int loop = 0;
 		double minThreshold = 0.5;
 		
-		String matchQuery =	"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-							"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-							"PREFIX score: <http://vivoweb.org/ontology/score#> " +
-							"SELECT REDUCED ?x ?lastName ?foreName ?middleName ?workEmail " +
-							"WHERE {" +
-								"?x foaf:lastName ?lastName . " +
-								"?x score:foreName ?foreName . " +
-								"OPTIONAL { ?x core:middleName ?middleName } . " +
-								"OPTIONAL { ?x score:workEmail ?workEmail } " +
-							"}";
-
+		String matchQuery =	"" +
+			"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+			"PREFIX core: <http://vivoweb.org/ontology/core#> " +
+			"PREFIX score: <http://vivoweb.org/ontology/score#> " +
+			"SELECT REDUCED ?x ?lastName ?foreName ?middleName ?workEmail " +
+			"WHERE {" +
+				"?x foaf:lastName ?lastName . " +
+				"?x score:foreName ?foreName . " +
+				"OPTIONAL { ?x core:middleName ?middleName } . " +
+				"OPTIONAL { ?x score:workEmail ?workEmail } " +
+			"}";
+		
 		log.info("Executing Pubmed Scoring");	
-
+		
 		log.debug(matchQuery);
 		ResultSet scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
 		
@@ -208,11 +209,11 @@ public class Score {
 			foreName = foreName.replace(",", " ");			
 			lastName = lastName.replace(",", "");
 			
-			String middleName;
+			String middleName = null;
 			//support middlename parse out of forename from pubmed
 			if (scoreSolution.get("middleName") == null) {	
 				log.trace("Checking for middle name from " + lastName + ", " + foreName);
-			
+				
 				//parse out middle initial / name from foreName
 				String splitName[] = foreName.split(" ");
 				
@@ -221,8 +222,6 @@ public class Score {
 					middleName = splitName[1];
 					foreName = foreName.trim();
 					middleName = middleName.trim();
-				} else {
-					middleName = null;
 				}
 				log.trace("Using " + lastName + ", " + foreName + ", " + middleName + " as name");
 			} else {
@@ -231,13 +230,12 @@ public class Score {
 				log.trace("Using pubmed middle name " + lastName + ", " + foreName + ", " + middleName);
 			}
 			
-			
 			// ensure first name and last name are not blank
 			if (lastName.toString() == null || foreName.toString() == null) {
 				log.trace("Incomplete name, skipping");
 				continue;
 			}
-				
+			
 			// Select all matching authors from vivo store
 			String queryString = "" +
 				"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + 
@@ -260,42 +258,38 @@ public class Score {
 			
 			// Run comparisions
 			while (vivoResult.hasNext()) {
+				String matchForeName = null;
+				String matchMiddleName = null;
+				String matchLastName = null;
+				String matchWorkEmail = null;
 				weightScore = 0;
 				QuerySolution vivoSolution = vivoResult.next();
 				log.trace(vivoSolution.toString());
-								
+						
 				//Grab comparision strings
 				if (vivoSolution.get("foreName") != null) {
 					matchForeName = vivoSolution.get("foreName").toString();
-				} else {
-					matchForeName = null;
 				}
 				if (vivoSolution.get("lastName") != null) {
 					matchLastName = vivoSolution.get("lastName").toString();
-				} else {
-					matchLastName = null;
 				}
 				if (vivoSolution.get("middleName") != null) {
 					matchMiddleName = vivoSolution.get("middleName").toString();
-				} else {
-					matchMiddleName = null;
 				}
 				if (vivoSolution.get("workEmail") != null) {
 					matchWorkEmail = vivoSolution.get("workEmail").toString();
-				} else {
-					matchWorkEmail = null;
 				}
 				
 				//email match weight
 				if (matchWorkEmail != null && workEmail != null) {
-					if (workEmail == matchWorkEmail) {
+					if (workEmail.equalsIgnoreCase(matchWorkEmail)) {
 						weightScore += 1;
 					}  else {
 						//split email and match email parts
-						if (workEmail.split("@")[0] == matchWorkEmail.split("@")[0] ) {
+						if (workEmail.split("@")[0].equalsIgnoreCase(matchWorkEmail.split("@")[0]) ) {
 							weightScore += .05;
 						}
-						if (workEmail.split("@")[1] == matchWorkEmail.split("@")[1] ) {
+						if (workEmail.split("@")[1].equalsIgnoreCase(matchWorkEmail.split("@")[1]) ) {
 							weightScore += .15;
 						}
 					}
@@ -333,9 +327,8 @@ public class Score {
 				
 				//Store in hash
 				matchArray.put(vivoSolution.get("x").toString(),new Double(weightScore));
-				
 			}
-
+			
 			String uri = scoreSolution.getResource("x").getURI();
 			if(!matchArray.isEmpty()) {
 				//Print all weights and select highest as match, above minimum threshold
@@ -358,108 +351,8 @@ public class Score {
 			} else {
 				log.trace("No Match found for <" + uri + ">");
 			}
-			
 		}
 		return uriArray;
-//		This is cmw48's logic, don't blame this on CTRIP:		
-//		# Scoring Logic											  
-//		if lastnamematch then {
-//		    if fullemailmatch then {
-//			    fullemailscore = 1.0; 
-//			} else {	
-//			    if forenamematch then {
-//				    forenamescore += .50
-//				}
-//			    if partemailmatch then {
-//				    partemailscore += .05
-//				}		
-//			    if domainpartemailmatch then {
-//				    domainpartemailscore += .15
-//				}    
-//				if bothinitmatch then {
-//				    initmatchscore += .25
-//				} else {
-//				    if firstinitmatch then {
-//					    initmatchscore += .20
-//					}
-//				}
-//		}		
-//
-//		# Max scores based on logic above
-//
-//		       1 + .50 + .05 + .15 + .25
-//		 Pm =  ------------------------
-//		                  2			
-//					
-//		# Narrative logic
-//
-//		if 100% last name match then
-//		    #look for email match
-//			test for zerolength affiliation string
-//			if email address exists in affiliation string
-//			    immediately write as <affiliationEmail>
-//				if targetEmail is nonzerolength
-//				    if targetEmail == affiliationEmail
-//					    score = 1    #full email match means 100% certainty
-//					else:  # look for partial email match 
-//					    if first three chars of both strings match  "cmw"
-//						    score = 
-//						else if domain part of email matches "cornell.edu"
-//		                    score = 
-//		            else no email match
-//			#check for a full initial match
-//		    #assume that each pub has (numauthors) authors, based on the premise that LastName is always present
-//		    #cycle through authors starting with author[0] to find match	
-//			    #since initials or forename tags may not appear in some PubMed records, test and set values				
-//				#look for first name match
-//		        #how long is our TargetAuthor firstname?			
-//				#look only at section of PM first name that's as long as our target search string  (target = Chris, PMFirst = Christopher, then foreName = leftstr(PMFirst, len(target)))
-//				    If foreName == firstName
-//					    score += .5
-//				# we know first initial matches, is there a middle initial?
-//		        # find out if initials string is > 1
-//				# if more than one character in initials, there must be a middle initial
-//		        # middle initial *should be* rightmost character
-//				# do we have a middle initial in our SearchAuthorName
-//		            if both initials match
-//						score = .25
-//					#else there is no middle initial
-//					if only first initial matches
-//					    score = .20
-//		        # check to see if Forename match initials?
-//		        if TempAuthorName.forename.strip() == SearchAuthorName.firstinit + " " + SearchAuthorName.midinit:
-//		            both initials match, score += .25
-//		        # else 		
-//				    forename is probably a two letter first name like "He" or "Li" - set flag to analyze 
-//
-//		# Expanded if-then logic with Flag class							  
-//
-//		If lastname is 100% match: 
-//		    If Flags.fullemailmatch = True
-//		             Counts.score += 1.0   
-//			if Flags.fullemailmatch <> True:
-//		        if forenamematch == True:
-//		            Counts.score += .50
-//		        else:
-//		            pass
-//		        if Flags.partemailmatch == True:
-//		            Counts.score += .05
-//		        else:
-//		            pass
-//		        if Flags.domainpartemailmatch == True:
-//		            Counts.score += .15
-//		        else:
-//		            pass
-//		        if Flags.bothinitmatch == True:
-//		            Counts.score += .25
-//		        else:
-//		            if Flags.firstinitmatch == True:
-//		                Counts.score += .20
-//		            else:
-//		                pass
-//		    else:
-//		        pass
-//		    #reset flag data
 
 	}
 	
@@ -478,35 +371,77 @@ public class Score {
 		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery =	new StringBuilder(
 				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
-				"SELECT ?sVivo ?sScore\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
-				"WHERE {\n"
+				"SELECT DISTINCT ?sVivo ?sInput"
 		);
 		
 		int counter = 0;
-		StringBuilder vivoWhere = new StringBuilder("  GRAPH scoring:vivoClone {\n");
-		StringBuilder scoreWhere = new StringBuilder("  GRAPH scoring:inputClone {\n");
-		StringBuilder filter = new StringBuilder("  FILTER( ");
+		StringBuilder vivoOptionals = new StringBuilder();
+		StringBuilder inputOptionals = new StringBuilder();
+		List<String> filters = new ArrayList<String>();
+		List<String> vivoUnions = new ArrayList<String>();
+		List<String> inputUnions = new ArrayList<String>();
 		
 		for (String property : matchMap.keySet()) {
-			vivoWhere.append("    ?sVivo <").append(property).append("> ").append("?ov" + counter).append(" . \n");
-			scoreWhere.append("    ?sScore <").append(matchMap.get(property)).append("> ").append("?os" + counter).append(" . \n");
-			filter.append("sameTerm(?os" + counter + ", ?ov" + counter + ") && ");
+			sQuery.append(" ?os" + counter);
+//			sQuery.append(" ?ov" + counter);
+			sQuery.append(" ?op" + counter);
+//			sQuery.append(" ?oi" + counter);
+			vivoUnions.add("{ ?sVivo <" + property + "> ?ov" + counter + " }");
+			vivoOptionals.append("    OPTIONAL { ?sVivo <").append(property).append("> ").append("?op" + counter).append(" } . \n");
+			inputUnions.add("{ ?sInput <" + matchMap.get(property) + "> ?oi" + counter + " }");
+			inputOptionals.append("    "+"OPTIONAL { "+"?sInput <").append(matchMap.get(property)).append("> ").append("?os" + counter).append(" }"+" . \n");
+			filters.add("sameTerm(?os" + counter + ", ?ov" + counter + ")");
 			counter++;
 		}
 		
-		vivoWhere.append("  } . \n");
-		scoreWhere.append("  } . \n");
-		filter.append("(str(?sVivo) != str(?sScore))");
-		if(namespace != null) {
-			filter.append(" && regex(str(?sScore), \"^"+namespace+"\")");
-		}
-		filter.append(" ) .\n");
+		/*
 		
-		sQuery.append(vivoWhere.toString());
-		sQuery.append(scoreWhere.toString());
-		sQuery.append(filter.toString());
+		SELECT DISTINCT ?sVivo ?sInput ?op1 ?op2 ?op3
+		FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>
+		FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>
+		WHERE {
+		  GRAPH scoring:vivoClone {
+			{ ?sVivo <http://vivoweb.org/vivoprop1> ?ov1 } UNION 
+			{ ?sVivo <http://vivoweb.org/vivoprop2> ?ov2 } UNION 
+			{ ?sVivo <http://vivoweb.org/vivoprop3> ?ov3 } . 
+			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop1> ?op1 } . 
+			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop2> ?op2 } . 
+			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop3> ?op3 } . 
+		  } . 
+		  GRAPH scoring:inputClone {
+			{ ?sInput <http://vivoweb.org/scoreprop1> ?oi1 } UNION 
+			{ ?sInput <http://vivoweb.org/scoreprop2> ?oi2 } UNION 
+			{ ?sInput <http://vivoweb.org/scoreprop3> ?oi3 } . 
+			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop1> ?os1 } . 
+			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop2> ?os2 } . 
+			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop3> ?os3 } . 
+		  } . 
+		  FILTER(sameTerm(?oi1, ?ov1) && sameTerm(?oi2, ?ov2) && sameTerm(?oi3, ?ov3) && (str(?sVivo) != str(?sInput)) && regex(str(?sInput), "http://www.youruni.edu/") ) .
+		}
+		
+		*/
+		
+		sQuery.append("\n" +
+				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
+				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
+				"WHERE {\n");
+		sQuery.append("  GRAPH scoring:vivoClone {\n    ");
+		sQuery.append(StringUtils.join(vivoUnions, " UNION \n    "));
+		sQuery.append(" . \n");
+		sQuery.append(vivoOptionals.toString());
+		sQuery.append("  } . \n");
+		sQuery.append("  GRAPH scoring:inputClone {\n"+"    ");
+		sQuery.append(StringUtils.join(inputUnions, " UNION \n    "));
+		sQuery.append(" . \n");
+		sQuery.append(inputOptionals.toString());
+		sQuery.append("  } . \n");
+		sQuery.append("  FILTER( (");
+		sQuery.append(StringUtils.join(filters, " || "));
+		sQuery.append(") && (str(?sVivo) != str(?sInput))");
+		if(namespace != null) {
+			sQuery.append(" && regex(str(?sInput), \"^"+namespace+"\")");
+		}
+		sQuery.append(" ) .\n");
 		sQuery.append("}");
 		
 		log.debug("Match Query:\n"+sQuery.toString());
@@ -520,18 +455,161 @@ public class Score {
 		
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
-		HashMap<String,String> uriArray = new HashMap<String,String>();
+		HashMap<String,String> uriMatchMap = new HashMap<String,String>();
+		HashMap<String,Map<String,Double>> evalMap = new HashMap<String, Map<String, Double>>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
-			String sScoreURI = solution.getResource("sScore").getURI();
+			String sScoreURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
-			uriArray.put(sScoreURI, sVivoURI);
-			log.debug("Match found: <"+sScoreURI+"> in Score matched with <"+sVivoURI+"> in Vivo");
+			if(!evalMap.containsKey(sScoreURI)) {
+				evalMap.put(sScoreURI, new HashMap<String, Double>());
+			}
+			log.debug("Evaluating <"+sScoreURI+"> from input as match for <"+sVivoURI+"> from vivo");
+			double[] weights = new double[counter];
+			for(int x = 0; x < counter; x++) {
+				RDFNode os = solution.get("os"+x);
+				RDFNode op = solution.get("op"+x);
+				log.debug("os"+x+": "+os);
+				log.debug("op"+x+": "+op);
+				weights[x] = 0/1;
+				if(os != null && op != null) {
+					// if a resource and same uris
+					if(os.isResource() && op.isResource() && os.asResource().getURI().equals(op.asResource().getURI())) {
+						weights[x] = 1/1;
+					} else if(os.isLiteral() && op.isLiteral()) {
+						String osStrValue = os.asLiteral().getValue().toString();
+						String opStrValue = op.asLiteral().getValue().toString();
+//						//Naive Region Match 
+//						// compare string sequences
+//						for(int loop = 0; loop < osStrValue.length() && opStrValue.regionMatches(true, 0, osStrValue, 0, loop); loop++) {
+//							weights[x] = (loop+1)/osStrValue.length();
+//						}
+						// Metaphone (Improved Soundex)
+						DoubleMetaphone dm = new DoubleMetaphone();
+						String osDM = dm.doubleMetaphone(osStrValue);
+						String opDM = dm.doubleMetaphone(opStrValue);
+						// Levenshtein:
+						//    ((osDM.len + opDM.len)-(Levenshtein Distance))/(osDM.len + opDM.len)
+						weights[x] = ((osDM.length() + opDM.length()) - StringUtils.getLevenshteinDistance(osDM, opDM))/(osDM.length() + opDM.length());
+					}
+				}
+			}
+			double matchWeight = 0/1;
+			for(double weight : weights) {
+				matchWeight += weight;
+			}
+			matchWeight /= counter;
+			if(evalMap.get(sScoreURI).containsKey(sVivoURI)) {
+				log.warn("Match for <"+sScoreURI+"> to <"+sVivoURI+"> Already In Model: "+evalMap.get(sScoreURI).get(sVivoURI));
+			}
+			log.debug("Match for <"+sScoreURI+"> to <"+sVivoURI+">: "+matchWeight);
+			evalMap.get(sScoreURI).put(sVivoURI, Double.valueOf(matchWeight));
+//			uriArray.put(sScoreURI, sVivoURI);
+//			log.debug("Match found: <"+sScoreURI+"> in Score matched with <"+sVivoURI+"> in Vivo");
 		}
 
-		log.info("Match found " + uriArray.keySet().size() + " links between Vivo and the Input model");
+		log.info("Match found " + uriMatchMap.keySet().size() + " links between Vivo and the Input model");
 		
-		return uriArray;
+		return uriMatchMap;
 	}
+	/*
+	This is cmw48's logic, don't blame this on CTRIP:		
+	# Scoring Logic											  
+	if lastnamematch then {
+	    if fullemailmatch then {
+		    fullemailscore = 1.0; 
+		} else {	
+		    if forenamematch then {
+			    forenamescore += .50
+			}
+		    if partemailmatch then {
+			    partemailscore += .05
+			}		
+		    if domainpartemailmatch then {
+			    domainpartemailscore += .15
+			}    
+			if bothinitmatch then {
+			    initmatchscore += .25
+			} else if firstinitmatch then {
+			    initmatchscore += .20
+			}
+	}		
+
+	# Max scores based on logic above
+
+	       1 + .50 + .05 + .15 + .25
+	 Pm =  ------------------------
+	                  2			
+				
+	# Narrative logic
+
+	if 100% last name match then
+	    #look for email match
+		test for zerolength affiliation string
+		if email address exists in affiliation string
+		    immediately write as <affiliationEmail>
+			if targetEmail is nonzerolength
+			    if targetEmail == affiliationEmail
+				    score = 1    #full email match means 100% certainty
+				else:  # look for partial email match 
+				    if first three chars of both strings match  "cmw"
+					    score = 
+					else if domain part of email matches "cornell.edu"
+	                    score = 
+	            else no email match
+		#check for a full initial match
+	    #assume that each pub has (numauthors) authors, based on the premise that LastName is always present
+	    #cycle through authors starting with author[0] to find match	
+		    #since initials or forename tags may not appear in some PubMed records, test and set values				
+			#look for first name match
+	        #how long is our TargetAuthor firstname?			
+			#look only at section of PM first name that's as long as our target search string  (target = Chris, PMFirst = Christopher, then foreName = leftstr(PMFirst, len(target)))
+			    If foreName == firstName
+				    score += .5
+			# we know first initial matches, is there a middle initial?
+	        # find out if initials string is > 1
+			# if more than one character in initials, there must be a middle initial
+	        # middle initial *should be* rightmost character
+			# do we have a middle initial in our SearchAuthorName
+	            if both initials match
+					score = .25
+				#else there is no middle initial
+				if only first initial matches
+				    score = .20
+	        # check to see if Forename match initials?
+	        if TempAuthorName.forename.strip() == SearchAuthorName.firstinit + " " + SearchAuthorName.midinit:
+	            both initials match, score += .25
+	        # else 		
+			    forename is probably a two letter first name like "He" or "Li" - set flag to analyze 
+
+	# Expanded if-then logic with Flag class							  
+
+	If lastname is 100% match: 
+	    If Flags.fullemailmatch = True
+	             Counts.score += 1.0   
+		if Flags.fullemailmatch <> True:
+	        if forenamematch == True:
+	            Counts.score += .50
+	        else:
+	            pass
+	        if Flags.partemailmatch == True:
+	            Counts.score += .05
+	        else:
+	            pass
+	        if Flags.domainpartemailmatch == True:
+	            Counts.score += .15
+	        else:
+	            pass
+	        if Flags.bothinitmatch == True:
+	            Counts.score += .25
+	        else:
+	            if Flags.firstinitmatch == True:
+	                Counts.score += .20
+	            else:
+	                pass
+	    else:
+	        pass
+	    #reset flag data
+*/
 	
 	/**
 	 * Rename the resource set as the key to the value matched
@@ -576,19 +654,28 @@ public class Score {
 	 * @param resultMap a mapping of matched scoreResources to vivoResources
 	 */
 	private void clearLiterals(Map<String, String> resultMap) {
-		Set<String> uriFilters = new HashSet<String>();
-		for(String uri : resultMap.values()) {
-			uriFilters.add("(str(?s) = \"" + uri + "\")");
+		if(!resultMap.values().isEmpty()) {
+			Set<String> uriFilters = new HashSet<String>();
+			for(String uri : resultMap.values()) {
+				uriFilters.add("(str(?s) = \"" + uri + "\")");
+			}
+			String query = "" +
+			"DELETE {\n" +
+			"  ?s ?p ?o\n" +
+			"} WHERE {\n" +
+			"  ?s ?p ?o .\n" +
+			"  FILTER ( isLiteral(?o || (str(?p)=='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
+			"}";
+			try {
+				String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
+				log.debug("Construct Query:\n"+conQuery);
+				log.debug("Constructed Literal Set:\n"+this.scoreInput.executeConstructQuery(conQuery).exportRdfToString());
+			} catch(IOException e) {
+				log.error(e.getMessage(), e);
+			}
+			log.debug("Clear Literal Query:\n" + query);
+			this.scoreInput.executeUpdateQuery(query);
 		}
-		String query = "" +
-		"DELETE {\n" +
-		"  ?s ?p ?o\n" +
-		"} WHERE {\n" +
-		"  ?s ?p ?o .\n" +
-		"  FILTER ( (isLiteral(?o) || (str(?p)=='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || str(?s) = ")+")) .\n" +
-		"}";
-		log.debug("Clear Literal Query:\n" + query);
-		this.scoreInput.executeUpdateQuery(query);
 	}
 	
 	/* *

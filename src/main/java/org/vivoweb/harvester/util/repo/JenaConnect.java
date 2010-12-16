@@ -483,18 +483,24 @@ public abstract class JenaConnect {
 	 * Executes a sparql construct query against the JENA model and returns the constructed result model
 	 * @param queryString the query to execute against the model
 	 * @return the executed query result model
+	 * @throws IOException error connecting
 	 */
-	public Model executeConstructQuery(String queryString) {
-		return buildQueryExec(queryString).execConstruct();
+	public JenaConnect executeConstructQuery(String queryString) throws IOException {
+		JenaConnect jc = new MemJenaConnect();
+		jc.getJenaModel().add(buildQueryExec(queryString).execConstruct());
+		return jc;
 	}
 	
 	/**
 	 * Executes a sparql describe query against the JENA model and returns the description result model
 	 * @param queryString the query to execute against the model
 	 * @return the executed query result model
+	 * @throws IOException error connecting
 	 */
-	public Model executeDescribeQuery(String queryString) {
-		return buildQueryExec(queryString).execDescribe();
+	public JenaConnect executeDescribeQuery(String queryString) throws IOException {
+		JenaConnect jc = new MemJenaConnect();
+		jc.getJenaModel().add(buildQueryExec(queryString).execDescribe());
+		return jc;
 	}
 	
 	/**

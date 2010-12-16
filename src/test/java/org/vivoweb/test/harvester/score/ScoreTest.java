@@ -286,7 +286,7 @@ public class ScoreTest extends TestCase {
 				"<localVIVO:uniqueid>7821299012</localVIVO:uniqueid>" +
 			"</rdf:Description>" +
 			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3576\">" +
-				"<core:workEmail>djf@mydomain.edu</core:workEmail>" +
+				"<core:workEmail>dgm@mydomain.edu</core:workEmail>" +
 				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
 				"<rdfs:label xml:lang=\"en-US\">Mans, Dude</rdfs:label>" +
 				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
@@ -340,6 +340,32 @@ public class ScoreTest extends TestCase {
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
 		log.info("END testEmailLastNameMatch");
+	}
+	
+	/**
+	 * Test metch Algorithm
+	 * @throws IOException error
+	 */
+	public void testEmailLastNameMatchClearLiterals() throws IOException {
+		log.info("BEGIN testEmailLastNameMatchClearLiterals");
+		// prep arguments
+		Map<String,String> matchParams = new HashMap<String, String>();
+		matchParams.put("http://vivoweb.org/ontology/core#workEmail", "http://vivoweb.org/ontology/score#workEmail");
+		matchParams.put("http://xmlns.com/foaf/0.1/lastName", "http://xmlns.com/foaf/0.1/lastName");
+		matchParams.put("http://vivoweb.org/ontology/core#middleName", "http://vivoweb.org/ontology/core#middleName");
+		
+//		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
+		
+		// run match score
+		new Score(this.input, this.vivo, null, matchParams, true, null, null, true).execute();
+
+//		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
+		
+		// check output model
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
+		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
+		log.info("END testEmailLastNameMatchClearLiterals");
 	}
 	
 	/**
