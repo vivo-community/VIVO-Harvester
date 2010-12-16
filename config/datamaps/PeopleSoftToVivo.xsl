@@ -152,7 +152,7 @@
 			<xsl:if test="$this/db-t_UF_DIR_EMP_STU_2:UF_TYPE_CD = 10">
 				<core:workPhone><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_AREA_CD"/><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_PHONE_NO"/></core:workPhone>
 			</xsl:if>
-			<xsl:if test="$this/db-t_UF_DIR_EMP_STU_2:UF_TYPE_CD = 242">
+			<xsl:if test="$this/db-t_UF_DIR_EMP_STU_2:UF_TYPE_CD = 11">
 				<core:workFax><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_AREA_CD"/><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_PHONE_NO"/></core:workFax>
 			</xsl:if>
 		</rdf:Description>
