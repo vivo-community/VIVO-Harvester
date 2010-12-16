@@ -9,13 +9,10 @@
 package org.vivoweb.harvester.score;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.commons.lang.StringUtils;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.slf4j.Logger;
@@ -273,16 +270,16 @@ public class Score {
 		List<String> inputUnions = new ArrayList<String>();
 		
 		for (String runName : this.inputPredicates.keySet()) {
-			String inputProperty = this.inputPredicates.get(runName);
 			String vivoProperty = this.vivoPredicates.get(runName);
+			String inputProperty = this.inputPredicates.get(runName);
 			sQuery.append(" ?os_" + runName);
 //			sQuery.append(" ?ov_" + runName);
 			sQuery.append(" ?op_" + runName);
 //			sQuery.append(" ?oi_" + runName);
-			vivoUnions.add("{ ?sVivo <" + inputProperty + "> ?ov_" + runName + " }");
-			vivoOptionals.append("    OPTIONAL { ?sVivo <").append(inputProperty).append("> ").append("?op_" + runName).append(" } . \n");
-			inputUnions.add("{ ?sInput <" + vivoProperty + "> ?oi_" + runName + " }");
-			inputOptionals.append("    "+"OPTIONAL { "+"?sInput <").append(vivoProperty).append("> ").append("?os_" + runName).append(" }"+" . \n");
+			vivoUnions.add("{ ?sVivo <" + vivoProperty + "> ?ov_" + runName + " }");
+			vivoOptionals.append("    OPTIONAL { ?sVivo <").append(vivoProperty).append("> ").append("?op_" + runName).append(" } . \n");
+			inputUnions.add("{ ?sInput <" + inputProperty + "> ?oi_" + runName + " }");
+			inputOptionals.append("    "+"OPTIONAL { "+"?sInput <").append(inputProperty).append("> ").append("?os_" + runName).append(" }"+" . \n");
 			filters.add("sameTerm(?os_" + runName + ", ?ov_" + runName + ")");
 //			counter++;
 		}
@@ -367,8 +364,6 @@ public class Score {
 				
 				RDFNode os = solution.get("os_"+runName);
 				RDFNode op = solution.get("op_"+runName);
-				log.debug("os_"+runName+": "+os);
-				log.debug("op_"+runName+": "+op);
 				double score = 0/1;
 				if(os != null && op != null) {
 					// if a resource and same uris
@@ -388,6 +383,9 @@ public class Score {
 						score = alg.calculate(osStrValue, opStrValue);
 					}
 				}
+				log.trace("os_"+runName+": '"+os+"'");
+				log.trace("op_"+runName+": "+op+"'");
+				log.trace("score: "+score);
 				double weight = this.weights.get(runName).doubleValue();
 				rdf.append("" +
 					"    <scoreValue:hasScoreValue>\n" +
@@ -406,7 +404,7 @@ public class Score {
 				"  </rdf:Description>\n" +
 				"</rdf:RDF>\n"
 			);
-			log.debug("Scores for input node <"+sInputURI+"> to vivo node <"+sVivoURI+">:\n"+rdf.toString());
+//			log.debug("Scores for input node <"+sInputURI+"> to vivo node <"+sVivoURI+">:\n"+rdf.toString());
 			this.scoreData.loadRdfFromString(rdf.toString(), null, null);
 		}
 	}
