@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Stack;
 import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -40,31 +41,29 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
- * VIVO Score
+ * VIVO Match
  * @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
  * @author Stephen Williams svwilliams@ctrip.ufl.edu
  * @author Christopher Haines hainesc@ctrip.ufl.edu
  */
-public class Score {
+public class Match {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(Score.class);
+	private static Logger log = LoggerFactory.getLogger(Match.class);
 	/**
 	 * Model for VIVO instance
 	 */
-	private final JenaConnect vivo;
+	private final JenaConnect score;
 	/**
 	 * Model where input is stored
 	 */
 	private final JenaConnect scoreInput;
-	/**
-	 * Predicates for match algorithm
-	 */
-	private final Map<String, String> matchList;
 	/**
 	 * Link the resources found by match algorithm
 	 */
@@ -74,13 +73,9 @@ public class Score {
 	 */
 	private final boolean renameRes;
 	/**
-	 * Namespace for match algorithm
-	 */
-	private final String matchNamespace;
-	/**
 	 * Pubmed Match threshold
 	 */
-	private final String pubmedThreshold;
+	private final String matchThreshold;
 	/**
 	 * Clear all literal values out of matched sets
 	 */
@@ -97,22 +92,20 @@ public class Score {
 	 * @param linkProp bidirectional link
 	 * @param clearLiterals clear all the literal values out of matches
 	 */
-	public Score(JenaConnect scoreInput, JenaConnect vivo, String matchNamespace, Map<String, String> matchArg, boolean renameRes, String thresholdArg, String linkProp, boolean clearLiterals) {
-		if(vivo == null) {
-			throw new IllegalArgumentException("Vivo cannot be null");
+	public Match(JenaConnect scoreInput, JenaConnect scoreModel, boolean renameRes, String thresholdArg, String linkProp, boolean clearLiterals) {
+		if(scoreModel == null) {
+			throw new IllegalArgumentException("Score Model cannot be null");
 		}
-		this.vivo = vivo;
+		this.score = scoreModel;
 		
 		if(scoreInput == null) {
-			throw new IllegalArgumentException("Score Input cannot be null");
+			throw new IllegalArgumentException("Match Input cannot be null");
 		}
 		this.scoreInput = scoreInput;
 		
-		this.matchList = matchArg;
-		this.pubmedThreshold = thresholdArg;
+		this.matchThreshold = thresholdArg;
 		this.renameRes = renameRes;
 		this.linkProp = linkProp;
-		this.matchNamespace = matchNamespace;
 		this.clearLiterals = clearLiterals;
 	}
 	
@@ -121,7 +114,7 @@ public class Score {
 	 * @param args argument list
 	 * @throws IOException error parsing options
 	 */
-	public Score(String... args) throws IOException {
+	public Match(String... args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
 	
@@ -131,18 +124,16 @@ public class Score {
 	 * @param opts parsed argument list
 	 * @throws IOException error parsing options
 	 */
-	public Score(ArgList opts) throws IOException {
+	public Match(ArgList opts) throws IOException {
 		// Connect to vivo
-		this.vivo = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
+		this.score = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
 		
 		// Create working model
 		this.scoreInput = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		
-		this.matchList = opts.getValueMap("m");
 		this.renameRes = opts.has("r");
 		this.linkProp = opts.get("l");
-		this.matchNamespace = opts.get("n");
-		this.pubmedThreshold = opts.get("b");
+		this.matchThreshold = opts.get("m");
 		this.clearLiterals = opts.has("c");
 	}
 	
@@ -155,7 +146,7 @@ public class Score {
 	 *												2
 	 * @return mapping of the found matches
 	 */
-	public Map<String,String> pubmedMatch() {
+	/*public Map<String,String> pubmedMatch() {
 		double weightScore = 0;
 		int loop = 0;
 		double minThreshold = 0.5;
@@ -354,7 +345,7 @@ public class Score {
 		}
 		return uriArray;
 
-	}
+	}*/
 	
 	/**
 	 * Find all nodes in the given namepsace matching on the given predicates
@@ -363,11 +354,7 @@ public class Score {
 	 * @return mapping of the found matches
 	 * @throws IOException error connecting to dataset
 	 */
-	private Map<String,String> match(Map<String, String> matchMap, String namespace) throws IOException{
-		if (matchMap.size() < 1) {
-			throw new IllegalArgumentException("No properties! SELECT cannot be created!");
-		}
-		
+	private Map<String,String> match(String threshold) throws IOException{
 		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery =	new StringBuilder(
 				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
@@ -381,7 +368,7 @@ public class Score {
 		List<String> vivoUnions = new ArrayList<String>();
 		List<String> inputUnions = new ArrayList<String>();
 		
-		for (String property : matchMap.keySet()) {
+		/*for (String property : matchMap.keySet()) {
 			sQuery.append(" ?os" + counter);
 //			sQuery.append(" ?ov" + counter);
 			sQuery.append(" ?op" + counter);
@@ -392,7 +379,7 @@ public class Score {
 			inputOptionals.append("    "+"OPTIONAL { "+"?sInput <").append(matchMap.get(property)).append("> ").append("?os" + counter).append(" }"+" . \n");
 			filters.add("sameTerm(?os" + counter + ", ?ov" + counter + ")");
 			counter++;
-		}
+		}*/
 		
 		/*
 		
@@ -438,9 +425,7 @@ public class Score {
 		sQuery.append("  FILTER( (");
 		sQuery.append(StringUtils.join(filters, " || "));
 		sQuery.append(") && (str(?sVivo) != str(?sInput))");
-		if(namespace != null) {
-			sQuery.append(" && regex(str(?sInput), \"^"+namespace+"\")");
-		}
+
 		sQuery.append(" ) .\n");
 		sQuery.append("}");
 		
@@ -448,7 +433,7 @@ public class Score {
 		
 		SDBJenaConnect unionModel = new MemJenaConnect();
 		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
-		vivoClone.importRdfFromJC(this.vivo);
+		vivoClone.importRdfFromJC(this.score);
 		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
 		inputClone.importRdfFromJC(this.scoreInput);
 		Dataset ds = unionModel.getConnectionDataSet();
@@ -460,6 +445,10 @@ public class Score {
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
 			String sScoreURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
+
+			uriMatchMap.put(sScoreURI, sVivoURI);
+			log.debug("Match found: <"+sScoreURI+"> in Match matched with <"+sVivoURI+"> in Vivo");
+
 			if(!evalMap.containsKey(sScoreURI)) {
 				evalMap.put(sScoreURI, new HashMap<String, Double>());
 			}
@@ -642,7 +631,7 @@ public class Score {
 		for(String oldUri : matchSet.keySet()) {
 			//check for inplace - if we're doing this inplace or we're pushing all, scoreoutput has been set/copied from scoreinput
 			Resource scoreRes = this.scoreInput.getJenaModel().getResource(oldUri);	
-			Resource vivoRes = this.vivo.getJenaModel().getResource(matchSet.get(oldUri));
+			Resource vivoRes = this.score.getJenaModel().getResource(matchSet.get(oldUri));
 			this.scoreInput.getJenaModel().add(vivoRes, vivoToScoreObjProp, scoreRes);
 			this.scoreInput.getJenaModel().add(scoreRes, scoreToVivoObjProp, vivoRes);			
 		}
@@ -666,26 +655,22 @@ public class Score {
 			"  ?s ?p ?o .\n" +
 			"  FILTER ( isLiteral(?o || (str(?p)=='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
 			"}";
-			try {
-				String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
-				log.debug("Construct Query:\n"+conQuery);
-				log.debug("Constructed Literal Set:\n"+this.scoreInput.executeConstructQuery(conQuery).exportRdfToString());
-			} catch(IOException e) {
-				log.error(e.getMessage(), e);
-			}
+			String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
+			log.debug("Construct Query:\n"+conQuery);
+			log.debug("Constructed Literal Set:\n"+this.scoreInput.executeConstructQuery(conQuery).toString());
 			log.debug("Clear Literal Query:\n" + query);
 			this.scoreInput.executeUpdateQuery(query);
 		}
 	}
 	
-	/* *
-	 * Traverses paperNode and adds to toReplace model
+	
+	 /* Traverses paperNode and adds to toReplace model
 	 * @param mainRes the main resource
 	 * @param linkRes the resource to link it to
 	 * @return the model containing the sanitized info so far
 	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
 	 * @throws IOException error connecting
-	 * /
+	 */
 	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
 		JenaConnect returnModel = new MemJenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
@@ -710,32 +695,28 @@ public class Score {
 		}
 		
 		return returnModel;
-	}*/
+	}
 	
 	/**
 	 * Get the OptionParser
 	 * @return the OptionParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("Score");
+		ArgParser parser = new ArgParser("Match");
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivo-config").setDescription("vivoConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("scoreConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
 		
 		// Model name overrides
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
 		// Matching Algorithms 
-		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").withParameterValueMap("VIVO_PREDICATE", "SCORE_PREDICATE").setDescription("find matching rdf nodes where the value of SCORE_PREDICATE in the scoring model is the same as VIVO_PREDICATE in the vivo model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("pubmedMatch").withParameter(true, "THRESHOLD").setDescription("pubmed specific matching, pass minimum weight score for match").setRequired(false));
-		
-		// Matching Params
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceMatch").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match algorithm to only match rdf nodes whose URI begin with SCORE_NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").withParameter(true, "THRESHOLD").setDescription("given the set threshhold return from the score set the items to link").setRequired(false));
 		
 		// Linking Methods
 		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").setDescription("link the two matched entities together using the pair of object properties vivoObj=scoreObj").withParameter(false, "RDF_PREDICATE"));
@@ -753,22 +734,8 @@ public class Score {
 	public void execute() throws IOException {
 		log.info("Running specified algorithims");
 		
-		if(this.matchList != null && !this.matchList.isEmpty()) {
-			Map<String,String> resultMap = match(this.matchList, this.matchNamespace);
-			
-			if(this.renameRes) {
-				rename(resultMap);
-			} else if(this.linkProp != null && !this.linkProp.isEmpty()) {
-				link(resultMap,this.linkProp);
-			}
-			
-			if(this.clearLiterals) {
-				clearLiterals(resultMap);
-			}
-		}
-		
-		if(this.pubmedThreshold != null) {
-			Map<String,String> pubmedResultMap = pubmedMatch();
+		if(this.matchThreshold != null) {
+			Map<String,String> pubmedResultMap = match(this.matchThreshold);
 			
 			if(this.renameRes) {
 				rename(pubmedResultMap);
@@ -787,10 +754,10 @@ public class Score {
 	 * @param args command line arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(Score.class);
+		InitLog.initLogger(Match.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new Score(args).execute();
+			new Match(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
