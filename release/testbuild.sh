@@ -22,12 +22,12 @@ rm harvester-$RELEASENAME.deb
 rm -rf usr
 
 #pull release version from sf
-wget http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.tar.gz/download
-#wget http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.deb/download
+wget -O harvester-$RELEASENAME.tar.gz http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.tar.gz/download
+wget -O harvester-$RELEASENAME.deb http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.deb/download
 
 #unpack tarball, install deb
 tar -xzf harvester-$RELEASENAME.tar.gz
-#dpkg -i harvester-$RELEASENAME.deb
+dpkg -i harvester-$RELEASENAME.deb
 
 #check for failure
 if [ "$?" -eq "1" ]; then
@@ -55,8 +55,6 @@ if [ "$?" -eq "1" ]; then
 	echo "Exiting - tarball pubmed example failure:" $?
 	exit
 fi
-
-exit
 
 #test deb
 mv /usr/share/vivo/harvester/config/jenaModels/VIVO.xml /usr/share/vivo/harvester/config/jenaModels/VIVO.xml.bck
