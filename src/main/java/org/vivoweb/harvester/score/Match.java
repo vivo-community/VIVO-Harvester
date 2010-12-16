@@ -3,7 +3,7 @@
  * This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation Christopher
- * Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring algorithm Christopher Barnes - regex
+ * Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm Christopher Barnes - regex
  * scoring algorithim
  ******************************************************************************/
 package org.vivoweb.harvester.score;
@@ -65,11 +65,11 @@ public class Match {
 	 */
 	private final JenaConnect scoreInput;
 	/**
-	 * Link the resources found by match algorithm
+	 * Link the resources found by match Algorithm
 	 */
 	private final String linkProp;
 	/**
-	 * Rename resources found by match algorithm
+	 * Rename resources found by match Algorithm
 	 */
 	private final boolean renameRes;
 	/**
@@ -83,7 +83,7 @@ public class Match {
 	
 	/**
 	 * Constructor
-	 * @param scoreInput model containing statements to be scored
+	 * @param inputRDF model containing statements to be scored
 	 * @param vivo model containing vivo statements
 	 * @param matchNamespace namespace to match in (null matches any)
 	 * @param matchArg predicate pairs to match on
@@ -138,7 +138,7 @@ public class Match {
 	}
 	
 	/**
-	 * Executes a weighted matching algorithm for author disambiguation for pubmed publications
+	 * Executes a weighted matching Algorithm for author disambiguation for pubmed publications
 	 * Ported from INSITU code from Chris Westling cmw48@cornell.edu
 	 * 	Algorithm for Pubmed Name Matching
 	 *				fullEmailScore + foreNameScore + partEmailScore + domainPartEmailScore + initMatchScore
@@ -433,9 +433,9 @@ public class Match {
 		
 		SDBJenaConnect unionModel = new MemJenaConnect();
 		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
-		vivoClone.importRdfFromJC(this.score);
+		vivoClone.loadRdfFromJC(this.score);
 		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
-		inputClone.importRdfFromJC(this.scoreInput);
+		inputClone.loadRdfFromJC(this.scoreInput);
 		Dataset ds = unionModel.getConnectionDataSet();
 		
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
@@ -641,8 +641,9 @@ public class Match {
 	 * Clear out literal values of matched scoreResources
 	 * TODO: TEST
 	 * @param resultMap a mapping of matched scoreResources to vivoResources
+	 * @throws IOException error building construct
 	 */
-	private void clearLiterals(Map<String, String> resultMap) {
+	private void clearLiterals(Map<String, String> resultMap) throws IOException {
 		if(!resultMap.values().isEmpty()) {
 			Set<String> uriFilters = new HashSet<String>();
 			for(String uri : resultMap.values()) {

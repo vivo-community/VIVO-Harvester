@@ -398,14 +398,6 @@ public abstract class JenaConnect {
 	}
 	
 	/**
-	 * Add RDF from another JenaConnect
-	 * @param inputJC the Model to read from
-	 */
-	public void importRdfFromJC(JenaConnect inputJC) {
-		this.jenaModel.add(inputJC.getJenaModel());
-	}
-	
-	/**
 	 * Removes all records in a RecordHandler from the model
 	 * @param rh the RecordHandler to pull records from
 	 * @param namespace the base uri to use for imported uris
@@ -437,7 +429,7 @@ public abstract class JenaConnect {
 	 * @param namespace the base uri to use for imported uris
 	 * @return number of records added
 	 */
-	public int importRdfFromRH(RecordHandler rh, String namespace) {
+	public int loadRdfFromRH(RecordHandler rh, String namespace) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("loading record: " + r.getID());

@@ -54,10 +54,10 @@ public class ScoreArgsTest extends TestCase {
 	/** */
 	private JenaConnect vivo;
 	/** */
-	private JenaConnect output;
+	private JenaConnect score;
 	
 	/**
-	 * Test match algorithm with rename flag
+	 * Test match Algorithm with rename flag
 	 * @throws IOException error
 	 */
 	public void testMatchWithRename() throws IOException {
@@ -69,7 +69,7 @@ public class ScoreArgsTest extends TestCase {
 	}
 	
 	/**
-	 * Test match algorithm with linking
+	 * Test match Algorithm with linking
 	 * @throws IOException error
 	 */
 	public void testMatchWithLink() throws IOException {
@@ -147,13 +147,13 @@ public class ScoreArgsTest extends TestCase {
 			// load input models
 			this.input = JenaConnect.parseConfig(this.iArg, this.overrideIArgMap);
 			// Load up input data before starting
-			this.input.loadRdfFromString(ScoreTest.scoreInput, null, null);
+			this.input.loadRdfFromString(ScoreTest.inputRDF, null, null);
 			
 			this.vivo = JenaConnect.parseConfig(this.vArg, this.overrideVArgProp);
 			// Load up vivo data before starting
 			this.vivo.loadRdfFromString(ScoreTest.vivoRDF, null, null);
 			
-			this.output = JenaConnect.parseConfig(this.oArg, this.overrideOArgProp);
+			this.score = JenaConnect.parseConfig(this.oArg, this.overrideOArgProp);
 		} catch(IOException e) {
 			throw new IllegalArgumentException(e.getMessage(),e);
 		}
@@ -189,19 +189,19 @@ public class ScoreArgsTest extends TestCase {
 			}
 			this.vivo = null;
 		}
-		if(this.output != null) {
+		if(this.score != null) {
 			try {
-				this.output.truncate();
+				this.score.truncate();
 			} catch(Exception e) {
 				//Ignore
 			} finally {
 				try {
-					this.output.close();
+					this.score.close();
 				} catch(Exception e) {
 					//Ignore
 				}
 			}
-			this.output = null;
+			this.score = null;
 		}
 		if(this.vivoXML != null) {
 			try {

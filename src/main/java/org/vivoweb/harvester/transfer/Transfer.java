@@ -197,7 +197,7 @@ public class Transfer {
 				log.info("Removed " + processCount + " records");
 			} else {
 				log.info("Loading Records from RecordHandler");
-				int processCount = this.input.importRdfFromRH(this.inRH, this.namespace);
+				int processCount = this.input.loadRdfFromRH(this.inRH, this.namespace);
 				log.info("Loaded " + processCount + " records");
 			}
 		}
