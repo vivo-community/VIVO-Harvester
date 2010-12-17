@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -34,9 +32,11 @@ import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.ResourceUtils;
+//import com.hp.hpl.jena.rdf.model.Statement;
+//import com.hp.hpl.jena.rdf.model.StmtIterator;
+//import org.vivoweb.harvester.util.repo.MemJenaConnect;
+//import java.util.Stack;
 
 /**
  * VIVO Match
@@ -52,11 +52,11 @@ public class Match {
 	/**
 	 * Model for VIVO instance
 	 */
-	private final JenaConnect score;
+	private final JenaConnect scoreJena;
 	/**
 	 * Model where input is stored
 	 */
-	private final JenaConnect scoreInput;
+	private final JenaConnect inputJena;
 	/**
 	 * Link the resources found by match Algorithm
 	 */
@@ -76,23 +76,23 @@ public class Match {
 	
 	/**
 	 * Constructor
-	 * @param inputRDF model containing statements to be scored
-	 * @param scoreModel the model that contains the score values
+	 * @param inputJena model containing statements to be scored
+	 * @param scoreJena the model that contains the score values
 	 * @param thresholdArg pubmed threshold
 	 * @param renameRes should I just rename the args?
 	 * @param linkProp bidirectional link
 	 * @param clearLiterals clear all the literal values out of matches
 	 */
-	public Match(JenaConnect scoreInput, JenaConnect scoreModel, boolean renameRes, String thresholdArg, String linkProp, boolean clearLiterals) {
-		if(scoreModel == null) {
+	public Match(JenaConnect inputJena, JenaConnect scoreJena, boolean renameRes, String thresholdArg, String linkProp, boolean clearLiterals) {
+		if(scoreJena == null) {
 			throw new IllegalArgumentException("Score Model cannot be null");
 		}
-		this.score = scoreModel;
+		this.scoreJena = scoreJena;
 		
-		if(scoreInput == null) {
+		if(inputJena == null) {
 			throw new IllegalArgumentException("Match Input cannot be null");
 		}
-		this.scoreInput = scoreInput;
+		this.inputJena = inputJena;
 		
 		this.matchThreshold = thresholdArg;
 		this.renameRes = renameRes;
@@ -111,232 +111,21 @@ public class Match {
 	
 	/**
 	 * Constructor
-			Scoring.close();
 	 * @param opts parsed argument list
 	 * @throws IOException error parsing options
 	 */
 	public Match(ArgList opts) throws IOException {
-		// Connect to vivo
-		this.score = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
+		// Connect to score data model
+		this.scoreJena = JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S"));
 		
-		// Create working model
-		this.scoreInput = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
+		// Connect to input model
+		this.inputJena = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		
 		this.renameRes = opts.has("r");
 		this.linkProp = opts.get("l");
 		this.matchThreshold = opts.get("m");
 		this.clearLiterals = opts.has("c");
 	}
-	
-	/**
-	 * Executes a weighted matching Algorithm for author disambiguation for pubmed publications
-	 * Ported from INSITU code from Chris Westling cmw48@cornell.edu
-	 * 	Algorithm for Pubmed Name Matching
-	 *				fullEmailScore + foreNameScore + partEmailScore + domainPartEmailScore + initMatchScore
-	 *	PM =    -----------------------------------------------------------------------------------------
-	 *												2
-	 * @return mapping of the found matches
-	 */
-	/*public Map<String,String> pubmedMatch() {
-		double weightScore = 0;
-		int loop = 0;
-		double minThreshold = 0.5;
-		
-		String matchQuery =	"" +
-			"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
-			"PREFIX core: <http://vivoweb.org/ontology/core#> " +
-			"PREFIX score: <http://vivoweb.org/ontology/score#> " +
-			"SELECT REDUCED ?x ?lastName ?foreName ?middleName ?workEmail " +
-			"WHERE {" +
-				"?x foaf:lastName ?lastName . " +
-				"?x score:foreName ?foreName . " +
-				"OPTIONAL { ?x core:middleName ?middleName } . " +
-				"OPTIONAL { ?x score:workEmail ?workEmail } " +
-			"}";
-		
-		log.info("Executing Pubmed Scoring");	
-		
-		log.debug(matchQuery);
-		ResultSet scoreInputResult = this.scoreInput.executeSelectQuery(matchQuery);
-		
-		// Log info message if none found
-		if (!scoreInputResult.hasNext()) {
-			log.info("No authors found in harvested pubmed publications");
-		} else {
-			log.info("Looping thru authors from harvested pubmed publications");
-		}
-		
-		//Create map of uris
-		HashMap<String,String> uriArray = new HashMap<String,String>();
-		
-		// look for exact match in vivo
-		while (scoreInputResult.hasNext()) {
-			HashMap<String,Double> matchArray = new HashMap<String,Double>();
-			//Grab results
-			QuerySolution scoreSolution = scoreInputResult.next();
-			log.trace(scoreSolution.toString());
-			//author = scoreSolution.getResource("x");
-			//paper = scoreSolution.getResource("publication");
-			String foreName = scoreSolution.get("foreName").toString();
-			String lastName = scoreSolution.get("lastName").toString();
-			String workEmail;
-			if (scoreSolution.get("workEmail") != null) {
-				workEmail = scoreSolution.get("workEmail").toString();
-			} else {
-				workEmail = null;
-			}
-			
-			//general string cleanup
-			//remove , from names
-			foreName = foreName.replace(",", " ");			
-			lastName = lastName.replace(",", "");
-			
-			String middleName = null;
-			//support middlename parse out of forename from pubmed
-			if (scoreSolution.get("middleName") == null) {	
-				log.trace("Checking for middle name from " + lastName + ", " + foreName);
-				
-				//parse out middle initial / name from foreName
-				String splitName[] = foreName.split(" ");
-				
-				if (splitName.length == 2) {
-					foreName = splitName[0];
-					middleName = splitName[1];
-					foreName = foreName.trim();
-					middleName = middleName.trim();
-				}
-				log.trace("Using " + lastName + ", " + foreName + ", " + middleName + " as name");
-			} else {
-				middleName = scoreSolution.get("middleName").toString();
-				middleName = middleName.replace(",", "");
-				log.trace("Using pubmed middle name " + lastName + ", " + foreName + ", " + middleName);
-			}
-			
-			// ensure first name and last name are not blank
-			if (lastName.toString() == null || foreName.toString() == null) {
-				log.trace("Incomplete name, skipping");
-				continue;
-			}
-			
-			// Select all matching authors from vivo store
-			String queryString = "" +
-				"PREFIX foaf: <http://xmlns.com/foaf/0.1/> " + 
-				"PREFIX core: <http://vivoweb.org/ontology/core#> " + 
-				"SELECT DISTINCT ?x ?lastName ?foreName ?middleName ?workEmail " +
-				"WHERE { " +
-					"{?x foaf:lastName" + " \"" + lastName + "\"} UNION " +
-					"{?x foaf:firstName" + " \"" + foreName + "\"} UNION " +
-					"{?x core:middleName" + " \"" + middleName + "\"} UNION " +
-					"{?x core:workEmail" + " \"" + workEmail + "\"} . " +
-					"OPTIONAL { ?x foaf:lastName ?lastName } . " +
-					"OPTIONAL { ?x foaf:firstName ?foreName } . " +
-					"OPTIONAL { ?x core:middleName ?middleName } . " +
-					"OPTIONAL { ?x core:workEmail ?workEmail } " +
-				"}";
-			
-			log.debug(queryString);
-			
-			ResultSet vivoResult = this.vivo.executeSelectQuery(queryString);
-			
-			// Run comparisions
-			while (vivoResult.hasNext()) {
-				String matchForeName = null;
-				String matchMiddleName = null;
-				String matchLastName = null;
-				String matchWorkEmail = null;
-				weightScore = 0;
-				QuerySolution vivoSolution = vivoResult.next();
-				log.trace(vivoSolution.toString());
-						
-				//Grab comparision strings
-				if (vivoSolution.get("foreName") != null) {
-					matchForeName = vivoSolution.get("foreName").toString();
-				}
-				if (vivoSolution.get("lastName") != null) {
-					matchLastName = vivoSolution.get("lastName").toString();
-				}
-				if (vivoSolution.get("middleName") != null) {
-					matchMiddleName = vivoSolution.get("middleName").toString();
-				}
-				if (vivoSolution.get("workEmail") != null) {
-					matchWorkEmail = vivoSolution.get("workEmail").toString();
-				}
-				
-				//email match weight
-				if (matchWorkEmail != null && workEmail != null) {
-					if (workEmail.equalsIgnoreCase(matchWorkEmail)) {
-						weightScore += 1;
-					}  else {
-						//split email and match email parts
-						if (workEmail.split("@")[0].equalsIgnoreCase(matchWorkEmail.split("@")[0]) ) {
-							weightScore += .05;
-						}
-						if (workEmail.split("@")[1].equalsIgnoreCase(matchWorkEmail.split("@")[1]) ) {
-							weightScore += .15;
-						}
-					}
-				}
-				
-				//foreName match weight
-				if (matchForeName != null) {
-					//add score weight for each letter matched
-					loop = 0;
-					while (matchForeName.regionMatches(true, 0, foreName, 0, loop)) {
-						loop++;
-						weightScore += .1;
-					}
-				}
-				
-				//MiddleName match weight
-				if (matchMiddleName != null) {
-					//add score weight for each letter matched
-					loop = 0;
-					while (matchMiddleName.regionMatches(true, 0, middleName, 0, loop)) {
-						loop++;
-						weightScore += .05;
-					}
-				}
-				
-				//LastName match weight
-				if (matchLastName != null) {
-					//add score weight for each letter matched
-					loop = 0;
-					while (matchLastName.regionMatches(true, 0, lastName, 0, loop)) {
-						loop++;
-						weightScore += .075;
-					}
-				}
-				
-				//Store in hash
-				matchArray.put(vivoSolution.get("x").toString(),new Double(weightScore));
-			}
-			
-			String uri = scoreSolution.getResource("x").getURI();
-			if(!matchArray.isEmpty()) {
-				//Print all weights and select highest as match, above minimum threshold
-				Entry<String, Double> highKey = matchArray.entrySet().iterator().next();
-				for (Entry<String, Double> i: matchArray.entrySet()) {
-			        log.trace(i.getKey() + " : " + i.getValue());
-			        if (i.getValue().doubleValue() > highKey.getValue().doubleValue()) {
-			        	highKey = i;
-			        	log.trace("Selecting as best match " + highKey.getKey());
-			        }
-				}
-				
-				//Match author to highKey
-				if (highKey.getValue().doubleValue() > minThreshold) {
-					uriArray.put(uri, highKey.getKey());
-					log.trace("Match found: <" + uri + "> in Score matched with <" + highKey.getKey() + "> in Vivo");
-				} else {
-					log.trace("No Match found for <" + uri + ">");
-				}
-			} else {
-				log.trace("No Match found for <" + uri + ">");
-			}
-		}
-		return uriArray;
-
-	}*/
 	
 	/**
 	 * Find all nodes in the given namepsace matching on the given predicates
@@ -357,7 +146,7 @@ public class Match {
 				"}"
 		);
 						
-		Dataset ds = this.score.getConnectionDataSet();
+		Dataset ds = this.scoreJena.getConnectionDataSet();
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		HashMap<String,String> uriMatchMap = new HashMap<String,String>();
@@ -373,105 +162,6 @@ public class Match {
 		
 		return uriMatchMap;
 	}
-	/*
-	This is cmw48's logic, don't blame this on CTRIP:		
-	# Scoring Logic											  
-	if lastnamematch then {
-	    if fullemailmatch then {
-		    fullemailscore = 1.0; 
-		} else {	
-		    if forenamematch then {
-			    forenamescore += .50
-			}
-		    if partemailmatch then {
-			    partemailscore += .05
-			}		
-		    if domainpartemailmatch then {
-			    domainpartemailscore += .15
-			}    
-			if bothinitmatch then {
-			    initmatchscore += .25
-			} else if firstinitmatch then {
-			    initmatchscore += .20
-			}
-	}		
-
-	# Max scores based on logic above
-
-	       1 + .50 + .05 + .15 + .25
-	 Pm =  ------------------------
-	                  2			
-				
-	# Narrative logic
-
-	if 100% last name match then
-	    #look for email match
-		test for zerolength affiliation string
-		if email address exists in affiliation string
-		    immediately write as <affiliationEmail>
-			if targetEmail is nonzerolength
-			    if targetEmail == affiliationEmail
-				    score = 1    #full email match means 100% certainty
-				else:  # look for partial email match 
-				    if first three chars of both strings match  "cmw"
-					    score = 
-					else if domain part of email matches "cornell.edu"
-	                    score = 
-	            else no email match
-		#check for a full initial match
-	    #assume that each pub has (numauthors) authors, based on the premise that LastName is always present
-	    #cycle through authors starting with author[0] to find match	
-		    #since initials or forename tags may not appear in some PubMed records, test and set values				
-			#look for first name match
-	        #how long is our TargetAuthor firstname?			
-			#look only at section of PM first name that's as long as our target search string  (target = Chris, PMFirst = Christopher, then foreName = leftstr(PMFirst, len(target)))
-			    If foreName == firstName
-				    score += .5
-			# we know first initial matches, is there a middle initial?
-	        # find out if initials string is > 1
-			# if more than one character in initials, there must be a middle initial
-	        # middle initial *should be* rightmost character
-			# do we have a middle initial in our SearchAuthorName
-	            if both initials match
-					score = .25
-				#else there is no middle initial
-				if only first initial matches
-				    score = .20
-	        # check to see if Forename match initials?
-	        if TempAuthorName.forename.strip() == SearchAuthorName.firstinit + " " + SearchAuthorName.midinit:
-	            both initials match, score += .25
-	        # else 		
-			    forename is probably a two letter first name like "He" or "Li" - set flag to analyze 
-
-	# Expanded if-then logic with Flag class							  
-
-	If lastname is 100% match: 
-	    If Flags.fullemailmatch = True
-	             Counts.score += 1.0   
-		if Flags.fullemailmatch <> True:
-	        if forenamematch == True:
-	            Counts.score += .50
-	        else:
-	            pass
-	        if Flags.partemailmatch == True:
-	            Counts.score += .05
-	        else:
-	            pass
-	        if Flags.domainpartemailmatch == True:
-	            Counts.score += .15
-	        else:
-	            pass
-	        if Flags.bothinitmatch == True:
-	            Counts.score += .25
-	        else:
-	            if Flags.firstinitmatch == True:
-	                Counts.score += .20
-	            else:
-	                pass
-	    else:
-	        pass
-	    #reset flag data
-*/
 	
 	/**
 	 * Rename the resource set as the key to the value matched
@@ -479,9 +169,8 @@ public class Match {
 	 */
 	private void rename(Map<String,String> matchSet){
 		for(String oldUri : matchSet.keySet()) {
-			//check for inplace - if we're doing this inplace or we're pushing all, scoreoutput has been set/copied from scoreinput
-			//get resource in output model and perform rename
-			Resource res = this.scoreInput.getJenaModel().getResource(oldUri);
+			//get resource in input model and perform rename
+			Resource res = this.inputJena.getJenaModel().getResource(oldUri);
 			ResourceUtils.renameResource(res, matchSet.get(oldUri));
 		}
 	}
@@ -489,24 +178,24 @@ public class Match {
 	/**
 	 * Link matched scoreResources to vivoResources using given linking predicates
 	 * @param matchSet a mapping of matched scoreResources to vivoResources
-	 * @param objPropList the object properties to be used to link the two items set in string form -> vivo-object-property-to-score-object = score-object-property-to-vivo-object
+	 * @param objPropList the object properties to be used to link the two items set in string form -> vivo-object-property-to-scoreJena-object = scoreJena-object-property-to-vivo-object
 	 */
 	private void link(Map<String,String> matchSet, String objPropList) {
-		//split the objPropList into its vivo and score components (vivo->score=score->vivo)
+		//split the objPropList into its vivo and scoreJena components (vivo->scoreJena=scoreJena->vivo)
 		String[] objPropArray = objPropList.split("=");
 		if(objPropArray.length != 2){
-			throw new IllegalArgumentException("Two object properties vivo-object-property-to-score-object and score-object-property-to-vivo-object " +
+			throw new IllegalArgumentException("Two object properties vivo-object-property-to-scoreJena-object and scoreJena-object-property-to-vivo-object " +
 					"sepearated by an equal sign must be set to link resources");
 		}
 		Property vivoToScoreObjProp = ResourceFactory.createProperty(objPropArray[0]);
 		Property scoreToVivoObjProp = ResourceFactory.createProperty(objPropArray[1]);
 		
 		for(String oldUri : matchSet.keySet()) {
-			//check for inplace - if we're doing this inplace or we're pushing all, scoreoutput has been set/copied from scoreinput
-			Resource scoreRes = this.scoreInput.getJenaModel().getResource(oldUri);	
-			Resource vivoRes = this.score.getJenaModel().getResource(matchSet.get(oldUri));
-			this.scoreInput.getJenaModel().add(vivoRes, vivoToScoreObjProp, scoreRes);
-			this.scoreInput.getJenaModel().add(scoreRes, scoreToVivoObjProp, vivoRes);			
+			// get resources and add linking triples
+			Resource scoreRes = this.inputJena.getJenaModel().getResource(oldUri);	
+			Resource vivoRes = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
+			this.inputJena.getJenaModel().add(vivoRes, vivoToScoreObjProp, scoreRes);
+			this.inputJena.getJenaModel().add(scoreRes, scoreToVivoObjProp, vivoRes);			
 		}
 	}
 	
@@ -531,20 +220,18 @@ public class Match {
 			"}";
 			String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
 			log.debug("Construct Query:\n"+conQuery);
-			log.debug("Constructed Literal Set:\n"+this.scoreInput.executeConstructQuery(conQuery).toString());
+			log.debug("Constructed Literal Set:\n"+this.inputJena.executeConstructQuery(conQuery).toString());
 			log.debug("Clear Literal Query:\n" + query);
-			this.scoreInput.executeUpdateQuery(query);
+			this.inputJena.executeUpdateQuery(query);
 		}
 	}
 	
-	
-	 /* Traverses paperNode and adds to toReplace model
+	/* * Traverses paperNode and adds to toReplace model
 	 * @param mainRes the main resource
 	 * @param linkRes the resource to link it to
 	 * @return the model containing the sanitized info so far
-	 * TODO change linkRes to be a string builder of the URI of the resource, that way you can do a String.Contains() for the URI of a resource
 	 * @throws IOException error connecting
-	 */
+	 * /
 	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
 		JenaConnect returnModel = new MemJenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
@@ -569,7 +256,7 @@ public class Match {
 		}
 		
 		return returnModel;
-	}
+	}*/
 	
 	/**
 	 * Get the OptionParser
@@ -602,7 +289,7 @@ public class Match {
 	}	
 	
 	/**
-	 * Execute score object algorithms
+	 * Execute scoreJena object algorithms
 	 * @throws IOException error connecting
 	 */
 	public void execute() throws IOException {
