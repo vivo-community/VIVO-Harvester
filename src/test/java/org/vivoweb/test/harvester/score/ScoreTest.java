@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.Score;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
+import org.vivoweb.harvester.score.algorithm.NormalizedSoundExDifference;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
@@ -60,6 +61,7 @@ public class ScoreTest extends TestCase {
 				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship1\"/>" +
 				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship2\"/>" +
 				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship3\"/>" +
+				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship4\"/>" +
 				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh1\"/>" +
 				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh2\"/>" +
 				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh3\"/>" +
@@ -133,6 +135,27 @@ public class ScoreTest extends TestCase {
 				"<score:suffix/>" +
 				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
 				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship3\"/>" +
+			"</rdf:Description>" +
+				"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship4\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
+				"<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author4\"/>" +
+				"<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">3</core:authorRank>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author4\">" +
+				"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+				"<rdfs:label>Fox, Ralfe</rdfs:label>" +
+				"<foaf:lastName>Fox</foaf:lastName>" +
+				"<score:workEmail>v@mydomain.edu</score:workEmail>" +
+				"<score:foreName>Ralfe</score:foreName>" +
+				"<core:middleName>B</core:middleName>" +
+				"<score:initials>RBF</score:initials>" +
+				"<score:suffix/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship4\"/>" +
 			"</rdf:Description>" +
 			"<rdf:Description rdf:nodeID=\"pmid23656776mesh1\">" +
 				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
@@ -276,40 +299,40 @@ public class ScoreTest extends TestCase {
 				"xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
 				"xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
 				"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
-			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
-				"<core:workEmail>v@mydomain.edu</core:workEmail>" +
+			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3573\">" +
 				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-				"<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
 				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+				"<localVIVO:uniqueid>5845425276</localVIVO:uniqueid>" +
 				"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
 				"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+				"<rdfs:label xml:lang=\"en-US\">Fawkes, Girl</rdfs:label>" +
+				"<foaf:firstName>Girl</foaf:firstName>" +
+				"<core:middleName>J</core:middleName>" +
+				"<foaf:lastName>Fawkes</foaf:lastName>" +
+				"<core:workEmail>vgirl@mydomain.edu</core:workEmail>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+				"<localVIVO:uniqueid>7821299012</localVIVO:uniqueid>" +
+				"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+				"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+				"<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
 				"<foaf:firstName>Guy</foaf:firstName>" +
 				"<foaf:lastName>Fawkes</foaf:lastName>" +
-				"<localVIVO:uniqueid>7821299012</localVIVO:uniqueid>" +
+				"<core:workEmail>v@mydomain.edu</core:workEmail>" +
 			"</rdf:Description>" +
 			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3576\">" +
-				"<core:workEmail>dgm@mydomain.edu</core:workEmail>" +
 				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-				"<rdfs:label xml:lang=\"en-US\">Mans, Dude</rdfs:label>" +
 				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+				"<localVIVO:uniqueid>1721204153</localVIVO:uniqueid>" +
 				"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
 				"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+				"<rdfs:label xml:lang=\"en-US\">Mans, Dude</rdfs:label>" +
 				"<foaf:firstName>Dude</foaf:firstName>" +
 				"<core:middleName>G</core:middleName>" +
 				"<foaf:lastName>Mans</foaf:lastName>" +
-				"<localVIVO:uniqueid>1721204153</localVIVO:uniqueid>" +
-			"</rdf:Description>" +
-			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3573\">" +
-				"<core:workEmail>vgirl@mydomain.edu</core:workEmail>" +
-				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-				"<core:middleName>J</core:middleName>" +
-				"<rdfs:label xml:lang=\"en-US\">Fawkes, Girl</rdfs:label>" +
-				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
-				"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
-				"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
-				"<foaf:firstName>Girl</foaf:firstName>" +
-				"<foaf:lastName>Fawkes</foaf:lastName>" +
-				"<localVIVO:uniqueid>5845425276</localVIVO:uniqueid>" +
+				"<core:workEmail>dgm@mydomain.edu</core:workEmail>" +
 			"</rdf:Description>" +
 		"</rdf:RDF>";
 	/** */
@@ -328,24 +351,28 @@ public class ScoreTest extends TestCase {
 		// prep arguments
 		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
 		algorithms.put("wEmail", EqualityTest.class);
-		algorithms.put("lName", EqualityTest.class);
+		algorithms.put("lName", NormalizedSoundExDifference.class);
+		algorithms.put("fName", NormalizedSoundExDifference.class);
 		
 		HashMap<String, String> inputPredicates = new HashMap<String, String>();
 		inputPredicates.put("wEmail", "http://vivoweb.org/ontology/score#workEmail");
 		inputPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
+		inputPredicates.put("fName", "http://vivoweb.org/ontology/score#foreName");
 		
 		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
 		vivoPredicates.put("wEmail", "http://vivoweb.org/ontology/core#workEmail");
 		vivoPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
+		vivoPredicates.put("fName", "http://xmlns.com/foaf/0.1/firstName");
 		
 		HashMap<String, Double> weights = new HashMap<String, Double>();
-		weights.put("wEmail", Double.valueOf(1f/2f));
-		weights.put("lName", Double.valueOf(1f/2f));
+		weights.put("wEmail", Double.valueOf(1/2f));
+		weights.put("lName", Double.valueOf(4/6f));
+		weights.put("fName", Double.valueOf(2/6f));
 		
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
 		// run score
-		new Score(this.input, this.vivo, this.score, algorithms, inputPredicates, vivoPredicates, null, weights).execute();
+		new Score(this.input, this.vivo, this.score, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
 
 //		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
 		

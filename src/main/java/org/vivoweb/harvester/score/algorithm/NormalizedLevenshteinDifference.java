@@ -18,7 +18,7 @@ public class NormalizedLevenshteinDifference implements Algorithm {
 	
 	@Override
 	public double calculate(String itemX, String itemY) {
-		int maxSize = Math.max(itemX.length(), itemY.length());
+		double maxSize = Math.max(itemX.length(), itemY.length())/1f;
 		return ((maxSize - StringUtils.getLevenshteinDistance(itemX, itemY))/maxSize);
 	}
 	

@@ -8,23 +8,20 @@
  ******************************************************************************/
 package org.vivoweb.harvester.score.algorithm;
 
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.language.Soundex;
+import org.apache.commons.codec.language.DoubleMetaphone;
 
 /**
- * Normalized SoundEx Difference Algorithm
+ * Normalized DoubleMetaphone Difference Algorithm
  * @author Christopher Haines hainesc@ctrip.ufl.edu
  */
-public class NormalizedSoundExDifference implements Algorithm {
+public class NormalizedDoubleMetaphoneDifference implements Algorithm {
 	
 	@Override
 	public double calculate(String itemX, String itemY) {
-		try {
-			int diff = Soundex.US_ENGLISH.difference(itemX, itemY);
-			return (diff/4f);
-		} catch(EncoderException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
-		}
+		DoubleMetaphone dm = new DoubleMetaphone();
+		String dmX = dm.encode(itemX);
+		String dmY = dm.encode(itemY);
+		return new NormalizedLevenshteinDifference().calculate(dmX, dmY);
 	}
 	
 }
