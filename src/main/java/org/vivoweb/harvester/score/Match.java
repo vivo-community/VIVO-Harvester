@@ -9,15 +9,11 @@
 package org.vivoweb.harvester.score;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
-import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,17 +24,14 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -84,9 +77,7 @@ public class Match {
 	/**
 	 * Constructor
 	 * @param inputRDF model containing statements to be scored
-	 * @param vivo model containing vivo statements
-	 * @param matchNamespace namespace to match in (null matches any)
-	 * @param matchArg predicate pairs to match on
+	 * @param scoreModel the model that contains the score values
 	 * @param thresholdArg pubmed threshold
 	 * @param renameRes should I just rename the args?
 	 * @param linkProp bidirectional link
@@ -349,151 +340,33 @@ public class Match {
 	
 	/**
 	 * Find all nodes in the given namepsace matching on the given predicates
-	 * @param matchMap properties set of predicates to be searched for in vivo and score. Formats is "vivoProp => inputProp"
-	 * @param namespace the namespace to match in
+	 * @param threshold the value to look for in the sparql query
 	 * @return mapping of the found matches
 	 * @throws IOException error connecting to dataset
 	 */
 	private Map<String,String> match(String threshold) throws IOException{
 		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery =	new StringBuilder(
-				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
-				"SELECT DISTINCT ?sVivo ?sInput"
+				"PREFIX scoring: <http://vivoweb.org/harvester/scorevalue/>\n" +
+				"SELECT DISTINCT ?sVivo ?sInput" +
+				"Where {" +
+				"  ?s scoring:InputRes ?sInput ." +
+				"  ?s scoring:VivoRes ?sVivo ." +
+				"  ?s scoring:WeightedScore ?weightValue ." +
+				"  FILTER(?weightValue >= " + threshold + " )" +
+				"}"
 		);
-		
-		int counter = 0;
-		StringBuilder vivoOptionals = new StringBuilder();
-		StringBuilder inputOptionals = new StringBuilder();
-		List<String> filters = new ArrayList<String>();
-		List<String> vivoUnions = new ArrayList<String>();
-		List<String> inputUnions = new ArrayList<String>();
-		
-		/*for (String property : matchMap.keySet()) {
-			sQuery.append(" ?os" + counter);
-//			sQuery.append(" ?ov" + counter);
-			sQuery.append(" ?op" + counter);
-//			sQuery.append(" ?oi" + counter);
-			vivoUnions.add("{ ?sVivo <" + property + "> ?ov" + counter + " }");
-			vivoOptionals.append("    OPTIONAL { ?sVivo <").append(property).append("> ").append("?op" + counter).append(" } . \n");
-			inputUnions.add("{ ?sInput <" + matchMap.get(property) + "> ?oi" + counter + " }");
-			inputOptionals.append("    "+"OPTIONAL { "+"?sInput <").append(matchMap.get(property)).append("> ").append("?os" + counter).append(" }"+" . \n");
-			filters.add("sameTerm(?os" + counter + ", ?ov" + counter + ")");
-			counter++;
-		}*/
-		
-		/*
-		
-		SELECT DISTINCT ?sVivo ?sInput ?op1 ?op2 ?op3
-		FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>
-		FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>
-		WHERE {
-		  GRAPH scoring:vivoClone {
-			{ ?sVivo <http://vivoweb.org/vivoprop1> ?ov1 } UNION 
-			{ ?sVivo <http://vivoweb.org/vivoprop2> ?ov2 } UNION 
-			{ ?sVivo <http://vivoweb.org/vivoprop3> ?ov3 } . 
-			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop1> ?op1 } . 
-			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop2> ?op2 } . 
-			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop3> ?op3 } . 
-		  } . 
-		  GRAPH scoring:inputClone {
-			{ ?sInput <http://vivoweb.org/scoreprop1> ?oi1 } UNION 
-			{ ?sInput <http://vivoweb.org/scoreprop2> ?oi2 } UNION 
-			{ ?sInput <http://vivoweb.org/scoreprop3> ?oi3 } . 
-			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop1> ?os1 } . 
-			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop2> ?os2 } . 
-			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop3> ?os3 } . 
-		  } . 
-		  FILTER(sameTerm(?oi1, ?ov1) && sameTerm(?oi2, ?ov2) && sameTerm(?oi3, ?ov3) && (str(?sVivo) != str(?sInput)) && regex(str(?sInput), "http://www.youruni.edu/") ) .
-		}
-		
-		*/
-		
-		sQuery.append("\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
-				"WHERE {\n");
-		sQuery.append("  GRAPH scoring:vivoClone {\n    ");
-		sQuery.append(StringUtils.join(vivoUnions, " UNION \n    "));
-		sQuery.append(" . \n");
-		sQuery.append(vivoOptionals.toString());
-		sQuery.append("  } . \n");
-		sQuery.append("  GRAPH scoring:inputClone {\n"+"    ");
-		sQuery.append(StringUtils.join(inputUnions, " UNION \n    "));
-		sQuery.append(" . \n");
-		sQuery.append(inputOptionals.toString());
-		sQuery.append("  } . \n");
-		sQuery.append("  FILTER( (");
-		sQuery.append(StringUtils.join(filters, " || "));
-		sQuery.append(") && (str(?sVivo) != str(?sInput))");
-
-		sQuery.append(" ) .\n");
-		sQuery.append("}");
-		
-		log.debug("Match Query:\n"+sQuery.toString());
-		
-		SDBJenaConnect unionModel = new MemJenaConnect();
-		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
-		vivoClone.loadRdfFromJC(this.score);
-		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
-		inputClone.loadRdfFromJC(this.scoreInput);
-		Dataset ds = unionModel.getConnectionDataSet();
-		
+						
+		Dataset ds = this.score.getConnectionDataSet();
 		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		HashMap<String,String> uriMatchMap = new HashMap<String,String>();
-		HashMap<String,Map<String,Double>> evalMap = new HashMap<String, Map<String, Double>>();
 		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
 			String sScoreURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
 
 			uriMatchMap.put(sScoreURI, sVivoURI);
 			log.debug("Match found: <"+sScoreURI+"> in Match matched with <"+sVivoURI+"> in Vivo");
-
-			if(!evalMap.containsKey(sScoreURI)) {
-				evalMap.put(sScoreURI, new HashMap<String, Double>());
-			}
-			log.debug("Evaluating <"+sScoreURI+"> from input as match for <"+sVivoURI+"> from vivo");
-			double[] weights = new double[counter];
-			for(int x = 0; x < counter; x++) {
-				RDFNode os = solution.get("os"+x);
-				RDFNode op = solution.get("op"+x);
-				log.debug("os"+x+": "+os);
-				log.debug("op"+x+": "+op);
-				weights[x] = 0/1;
-				if(os != null && op != null) {
-					// if a resource and same uris
-					if(os.isResource() && op.isResource() && os.asResource().getURI().equals(op.asResource().getURI())) {
-						weights[x] = 1/1;
-					} else if(os.isLiteral() && op.isLiteral()) {
-						String osStrValue = os.asLiteral().getValue().toString();
-						String opStrValue = op.asLiteral().getValue().toString();
-//						//Naive Region Match 
-//						// compare string sequences
-//						for(int loop = 0; loop < osStrValue.length() && opStrValue.regionMatches(true, 0, osStrValue, 0, loop); loop++) {
-//							weights[x] = (loop+1)/osStrValue.length();
-//						}
-						// Metaphone (Improved Soundex)
-						DoubleMetaphone dm = new DoubleMetaphone();
-						String osDM = dm.doubleMetaphone(osStrValue);
-						String opDM = dm.doubleMetaphone(opStrValue);
-						// Levenshtein:
-						//    ((osDM.len + opDM.len)-(Levenshtein Distance))/(osDM.len + opDM.len)
-						weights[x] = ((osDM.length() + opDM.length()) - StringUtils.getLevenshteinDistance(osDM, opDM))/(osDM.length() + opDM.length());
-					}
-				}
-			}
-			double matchWeight = 0/1;
-			for(double weight : weights) {
-				matchWeight += weight;
-			}
-			matchWeight /= counter;
-			if(evalMap.get(sScoreURI).containsKey(sVivoURI)) {
-				log.warn("Match for <"+sScoreURI+"> to <"+sVivoURI+"> Already In Model: "+evalMap.get(sScoreURI).get(sVivoURI));
-			}
-			log.debug("Match for <"+sScoreURI+"> to <"+sVivoURI+">: "+matchWeight);
-			evalMap.get(sScoreURI).put(sVivoURI, Double.valueOf(matchWeight));
-//			uriArray.put(sScoreURI, sVivoURI);
-//			log.debug("Match found: <"+sScoreURI+"> in Score matched with <"+sVivoURI+"> in Vivo");
 		}
 
 		log.info("Match found " + uriMatchMap.keySet().size() + " links between Vivo and the Input model");
