@@ -1,10 +1,14 @@
 #!/bin/bash
 
 #Mysql username, password, and server address for backups in scripts
-SERVER=
-DBNAME=
-USERNAME=
-PASSWORD=
+#parse VIVO.xml for these values
+#need to reconcile having 2 places for this
+
+
+SERVER=`grep dbUrl config/jenaModels/VIVO.xml | sed 's|^.*://\([^:]*\):.*$|\1|g'`
+DBNAME=`grep modelName config/jenaModels/VIVO.xml | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+USERNAME=`grep dbUser config/jenaModels/VIVO.xml | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+PASSWORD=`grep dbPass config/jenaModels/VIVO.xml | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 VERSION=0.7.1
 MIN_MEM=1024m
 MAX_MEM=2048M
@@ -12,11 +16,6 @@ DATE=`date +%Y-%m-%d_%T`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 echo "Full Logging in $HARVESTER_TASK.log"
 
-# Check to make sure everything was set by user
-if [ "$SERVER" = "" -o "$DBNAME" = "" -o "$USERNAME" = "" -o "$PASSWORD" = "" ]; then
-	echo 'Please set variables in env file in the scripts folder before running'
-	exit
-fi
 
 # Check for backups dir
 if [ ! -d backups ]; then
