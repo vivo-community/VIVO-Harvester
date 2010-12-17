@@ -48,29 +48,29 @@ public class Score {
 	/**
 	 * model containing statements to be scored
 	 */
-	private JenaConnect input;
+	private JenaConnect inputJena;
 	/**
-	 * model containing vivo statements
+	 * model containing vivoJena statements
 	 */
-	private JenaConnect vivo;
+	private JenaConnect vivoJena;
 	/**
 	 * model containing scoring data statements
 	 */
-	private JenaConnect scoreData;
+	private JenaConnect scoreJena;
 	/**
 	 * the class of the Algorithm to execute
 	 */
 	private Map<String,Class<? extends Algorithm>> algorithms;
 	/**
-	 * the predicates to look for in input model
+	 * the predicates to look for in inputJena model
 	 */
 	private Map<String,String> inputPredicates;
 	/**
-	 * the predicates to look for in vivo model
+	 * the predicates to look for in vivoJena model
 	 */
 	private Map<String,String> vivoPredicates;
 	/**
-	 * limit match Algorithm to only match rdf nodes in input whose URI begin with this namespace
+	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
 	private String namespace;
 	/**
@@ -80,17 +80,17 @@ public class Score {
 
 	/**
 	 * Constructor
-	 * @param input model containing statements to be scored
-	 * @param vivo model containing vivo statements
-	 * @param scoreData model containing scoring data statements
+	 * @param inputJena model containing statements to be scored
+	 * @param vivoJena model containing vivoJena statements
+	 * @param scoreJena model containing scoring data statements
 	 * @param algorithms the classes of the algorithms to execute
-	 * @param inputPredicates the predicates to look for in input model
-	 * @param vivoPredicates the predicates to look for in vivo model
-	 * @param namespace limit match Algorithm to only match rdf nodes in input whose URI begin with this namespace
+	 * @param inputPredicates the predicates to look for in inputJena model
+	 * @param vivoPredicates the predicates to look for in vivoJena model
+	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param weights the weightings (0.0 , 1.0) for this score
 	 */
-	public Score(JenaConnect input, JenaConnect vivo, JenaConnect scoreData, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Double> weights) {
-		init(input, vivo, scoreData, algorithms, inputPredicates, vivoPredicates, namespace, weights);
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Double> weights) {
+		init(inputJena, vivoJena, scoreJena, algorithms, inputPredicates, vivoPredicates, namespace, weights);
 	}
 	
 	/**
@@ -134,29 +134,29 @@ public class Score {
 	/**
 	 * Initialize variables
 	 * @param i model containing statements to be scored
-	 * @param v model containing vivo statements
+	 * @param v model containing vivoJena statements
 	 * @param s model containing scoring data statements
 	 * @param a the class of the Algorithm to execute
-	 * @param iPred the predicate to look for in input model
-	 * @param vPred the predicate to look for in vivo model
-	 * @param ns limit match Algorithm to only match rdf nodes in input whose URI begin with this namespace
+	 * @param iPred the predicate to look for in inputJena model
+	 * @param vPred the predicate to look for in vivoJena model
+	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param w the weighting (0.0 , 1.0) for this score
 	 */
 	private void init(JenaConnect i, JenaConnect v, JenaConnect s, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Double> w) {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
-		this.input = i;
+		this.inputJena = i;
 		
 		if(v == null) {
 			throw new IllegalArgumentException("Vivo model cannot be null");
 		}
-		this.vivo = v;
+		this.vivoJena = v;
 		
 		if(s == null) {
 			throw new IllegalArgumentException("Score Data model cannot be null");
 		}
-		this.scoreData = s;
+		this.scoreJena = s;
 		
 		if(a == null) {
 			throw new IllegalArgumentException("Algorithm cannot be null");
@@ -191,8 +191,8 @@ public class Score {
 		this.weights = w;
 		
 		Map<String,Map<String,? extends Object>> maps = new HashMap<String, Map<String,? extends Object>>();
-		maps.put("vivo predicates", this.vivoPredicates);
-		maps.put("input predicates", this.inputPredicates);
+		maps.put("vivoJena predicates", this.vivoPredicates);
+		maps.put("inputJena predicates", this.inputPredicates);
 		maps.put("algorithms", this.algorithms);
 		maps.put("weights", this.weights);
 		verifyRunNames(maps);
@@ -223,19 +223,19 @@ public class Score {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Score");
 		// Models
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("input JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivo-config").setDescription("vivo JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").setDescription("inputJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoJena-config").setDescription("vivoJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivoJena jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("score data JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
 		
 		// Parameters
 		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("algorithms").withParameterValueMap("RUN_NAME", "CLASS_NAME").setDescription("for RUN_NAME, use this CLASS_NAME (must implement Algorithm) to evaluate matches").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("weights").withParameterValueMap("RUN_NAME", "WEIGHT").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("input-predicates").withParameterValueMap("RUN_NAME", "PREDICATE").setDescription("for RUN_NAME, match ").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivo-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in input whose URI begin with SCORE_NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("inputJena-predicates").withParameterValueMap("RUN_NAME", "PREDICATE").setDescription("for RUN_NAME, match ").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivoJena-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
 		return parser;
 	}	
 	
@@ -245,24 +245,63 @@ public class Score {
 	 */
 	public void execute() throws IOException {
 		log.info("Running specified Algorithims");
-//		Class<? extends Algorithm> m;
-//		m.getMethod("execute", String.class, String.class).invoke(null, "", "");
+		String sQuery = buildSelectQuery();
+		log.debug("Match Query:\n"+sQuery);
 		
-		match();
+		// Bring all models into a single Dataset
+		JenaConnect unionModel = new MemJenaConnect(); //TODO anyone: determine if this should be an h2 in temp file rather than h2 in memory
+		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
+		vivoClone.loadRdfFromJC(this.vivoJena);
+		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
+		inputClone.loadRdfFromJC(this.inputJena);
+		Dataset ds = unionModel.getConnectionDataSet();
+		
+		// Execute query
+		Query query = QueryFactory.create(sQuery, Syntax.syntaxARQ);
+		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
+		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
+			String sInputURI = solution.getResource("sInput").getURI();
+			String sVivoURI = solution.getResource("sVivo").getURI();
+			// Build Score Record
+			StringBuilder rdf = new StringBuilder();
+			rdf.append("" +
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+				"<rdf:RDF \n" +
+				"    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n" +
+				"    xmlns:scoreValue=\"http://vivoweb.org/harvestery/scoreValue\">\n" +
+				"  <rdf:Description>\n" +
+				"    <scoreValue:VivoRes rdf:resource=\""+sVivoURI+"\"/>\n" +
+				"    <scoreValue:InputRes rdf:resource=\""+sInputURI+"\"/>\n"
+			);
+			log.debug("Evaluating <"+sInputURI+"> from inputJena as match for <"+sVivoURI+"> from vivoJena");
+			for(String runName : this.vivoPredicates.keySet()) {
+				RDFNode os = solution.get("os_"+runName);
+				RDFNode op = solution.get("op_"+runName);
+				log.trace("os_"+runName+": '"+os+"'");
+				log.trace("op_"+runName+": "+op+"'");
+				rdf.append(buildScoreRdfFragment(op, os, runName));
+			}
+			rdf.append("" +
+				"  </rdf:Description>\n" +
+				"</rdf:RDF>\n"
+			);
+//			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+rdf.toString());
+			// Push Score Data into score model
+			this.scoreJena.loadRdfFromString(rdf.toString(), null, null);
+		}
 	}
 	
 	/**
-	 * Find all nodes in the given namepsace matching on the given predicates
-	 * @throws IOException error connecting to dataset
+	 * Build the select query
+	 * @return the query
 	 */
-	private void match() throws IOException {
+	private String buildSelectQuery() {
 		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery =	new StringBuilder(
 				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
 				"SELECT DISTINCT ?sVivo ?sInput"
 		);
 		
-//		int counter = 0;
 		StringBuilder vivoOptionals = new StringBuilder();
 		StringBuilder inputOptionals = new StringBuilder();
 		List<String> filters = new ArrayList<String>();
@@ -281,35 +320,7 @@ public class Score {
 			inputUnions.add("{ ?sInput <" + inputProperty + "> ?oi_" + runName + " }");
 			inputOptionals.append("    "+"OPTIONAL { "+"?sInput <").append(inputProperty).append("> ").append("?os_" + runName).append(" }"+" . \n");
 			filters.add("sameTerm(?os_" + runName + ", ?ov_" + runName + ")");
-//			counter++;
 		}
-		
-		/*
-		
-		SELECT DISTINCT ?sVivo ?sInput ?op1 ?op2 ?op3
-		FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>
-		FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>
-		WHERE {
-		  GRAPH scoring:vivoClone {
-			{ ?sVivo <http://vivoweb.org/vivoprop1> ?ov1 } UNION 
-			{ ?sVivo <http://vivoweb.org/vivoprop2> ?ov2 } UNION 
-			{ ?sVivo <http://vivoweb.org/vivoprop3> ?ov3 } . 
-			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop1> ?op1 } . 
-			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop2> ?op2 } . 
-			OPTIONAL { ?sVivo <http://vivoweb.org/vivoprop3> ?op3 } . 
-		  } . 
-		  GRAPH scoring:inputClone {
-			{ ?sInput <http://vivoweb.org/scoreprop1> ?oi1 } UNION 
-			{ ?sInput <http://vivoweb.org/scoreprop2> ?oi2 } UNION 
-			{ ?sInput <http://vivoweb.org/scoreprop3> ?oi3 } . 
-			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop1> ?os1 } . 
-			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop2> ?os2 } . 
-			OPTIONAL { ?sInput <http://vivoweb.org/scoreprop3> ?os3 } . 
-		  } . 
-		  FILTER(sameTerm(?oi1, ?ov1) && sameTerm(?oi2, ?ov2) && sameTerm(?oi3, ?ov3) && (str(?sVivo) != str(?sInput)) && regex(str(?sInput), "http://www.youruni.edu/") ) .
-		}
-		
-		*/
 		
 		sQuery.append("\n" +
 				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
@@ -333,80 +344,47 @@ public class Score {
 		}
 		sQuery.append(" ) .\n");
 		sQuery.append("}");
-		
-		log.debug("Match Query:\n"+sQuery.toString());
-		
-		JenaConnect unionModel = new MemJenaConnect();
-		//TODO anyone: determine if this should be an h2 in temp file rather than h2 in memory
-		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
-		vivoClone.loadRdfFromJC(this.vivo);
-		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
-		inputClone.loadRdfFromJC(this.input);
-		Dataset ds = unionModel.getConnectionDataSet();
-		
-		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
-		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
-		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
-			String sInputURI = solution.getResource("sInput").getURI();
-			String sVivoURI = solution.getResource("sVivo").getURI();
-			StringBuilder rdf = new StringBuilder();
-			rdf.append("" +
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-				"<rdf:RDF \n" +
-				"    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n" +
-				"    xmlns:scoreValue=\"http://vivoweb.org/harvestery/scoreValue\">\n" +
-				"  <rdf:Description>\n" +
-				"    <scoreValue:VivoRes rdf:resource=\""+sVivoURI+"\"/>\n" +
-				"    <scoreValue:InputRes rdf:resource=\""+sInputURI+"\"/>\n"
-			);
-			log.debug("Evaluating <"+sInputURI+"> from input as match for <"+sVivoURI+"> from vivo");
-			for(String runName : this.vivoPredicates.keySet()) {
-				
-				RDFNode os = solution.get("os_"+runName);
-				RDFNode op = solution.get("op_"+runName);
-				double score = 0/1;
-				if(os != null && op != null) {
-					// if a resource and same uris
-					if(os.isResource() && op.isResource() && os.asResource().getURI().equals(op.asResource().getURI())) {
-						score = 1/1;
-					} else if(os.isLiteral() && op.isLiteral()) {
-						String osStrValue = os.asLiteral().getValue().toString();
-						String opStrValue = op.asLiteral().getValue().toString();
-						Algorithm alg;
-						try {
-							alg = this.algorithms.get(runName).newInstance();
-						} catch(IllegalAccessException e) {
-							throw new IllegalArgumentException(e.getMessage(), e);
-						} catch(InstantiationException e) {
-							throw new IllegalArgumentException(e.getMessage(), e);
-						}
-						score = alg.calculate(osStrValue, opStrValue);
-					}
+		return sQuery.toString();
+	}
+	
+	/**
+	 * Build the rdf/xml fragment for two rdf nodes
+	 * @param op vivoJena node
+	 * @param os inputJena node
+	 * @param runName the run identifier
+	 * @return the rdf/xml fragment
+	 */
+	private String buildScoreRdfFragment(RDFNode op, RDFNode os, String runName) {
+		double score = 0/1;
+		if(os != null && op != null) {
+			// if a resource and same uris
+			if(os.isResource() && op.isResource() && os.asResource().getURI().equals(op.asResource().getURI())) {
+				score = 1/1;
+			} else if(os.isLiteral() && op.isLiteral()) {
+				String osStrValue = os.asLiteral().getValue().toString();
+				String opStrValue = op.asLiteral().getValue().toString();
+				try {
+					score = this.algorithms.get(runName).newInstance().calculate(osStrValue, opStrValue);
+				} catch(IllegalAccessException e) {
+					throw new IllegalArgumentException(e.getMessage(), e);
+				} catch(InstantiationException e) {
+					throw new IllegalArgumentException(e.getMessage(), e);
 				}
-				log.trace("os_"+runName+": '"+os+"'");
-				log.trace("op_"+runName+": "+op+"'");
-				log.trace("score: "+score);
-				double weight = this.weights.get(runName).doubleValue();
-				rdf.append("" +
-					"    <scoreValue:hasScoreValue>\n" +
-					"      <rdf:Description>\n" +
-					"        <scoreValue:VivoProp rdf:resource=\""+this.vivoPredicates.get(runName)+"\"/>\n" +
-					"        <scoreValue:InputProp rdf:resource=\""+this.inputPredicates.get(runName)+"\"/>\n" +
-					"        <scoreValue:Algorithm>" + this.algorithms.get(runName).getName() + "</scoreValue:Algorithm>\n" +
-					"        <scoreValue:Score>" + score + "</scoreValue:Score>\n" +
-					"        <scoreValue:Weight>" + weight + "</scoreValue:Weight>\n" +
-					"        <scoreValue:WeightedScore>" + (weight*score) + "</scoreValue:WeightedScore>\n" +
-					"      </rdf:Description>\n" +
-					"    </scoreValue:hasScoreValue>\n"
-				);
 			}
-			rdf.append("" +
-				"  </rdf:Description>\n" +
-				"</rdf:RDF>\n"
-			);
-//			log.debug("Scores for input node <"+sInputURI+"> to vivo node <"+sVivoURI+">:\n"+rdf.toString());
-			this.scoreData.loadRdfFromString(rdf.toString(), null, null);
 		}
+		log.trace("score: "+score);
+		String fragment = "" +
+			"    <scoreValue:hasScoreValue>\n" +
+			"      <rdf:Description>\n" +
+			"        <scoreValue:VivoProp rdf:resource=\""+this.vivoPredicates.get(runName)+"\"/>\n" +
+			"        <scoreValue:InputProp rdf:resource=\""+this.inputPredicates.get(runName)+"\"/>\n" +
+			"        <scoreValue:Algorithm>" + this.algorithms.get(runName).getName() + "</scoreValue:Algorithm>\n" +
+			"        <scoreValue:Score>" + score + "</scoreValue:Score>\n" +
+			"        <scoreValue:Weight>" + this.weights.get(runName) + "</scoreValue:Weight>\n" +
+			"        <scoreValue:WeightedScore>" + (this.weights.get(runName).doubleValue()*score) + "</scoreValue:WeightedScore>\n" +
+			"      </rdf:Description>\n" +
+			"    </scoreValue:hasScoreValue>\n";
+		return fragment;
 	}
 
 	/**
