@@ -268,7 +268,7 @@ public class Score {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 				"<rdf:RDF \n" +
 				"    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n" +
-				"    xmlns:scoreValue=\"http://vivoweb.org/harvestery/scoreValue\">\n" +
+				"    xmlns:scoreValue=\"http://vivoweb.org/harvester/scoreValue/\">\n" +
 				"  <rdf:Description>\n" +
 				"    <scoreValue:VivoRes rdf:resource=\""+sVivoURI+"\"/>\n" +
 				"    <scoreValue:InputRes rdf:resource=\""+sInputURI+"\"/>\n"

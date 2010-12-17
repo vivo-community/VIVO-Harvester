@@ -367,15 +367,15 @@ public class ScoreTest extends TestCase {
 		
 		HashMap<String, Double> weights = new HashMap<String, Double>();
 		weights.put("wEmail", Double.valueOf(1/2f));
-		weights.put("lName", Double.valueOf(4/6f));
-		weights.put("fName", Double.valueOf(2/6f));
+		weights.put("lName", Double.valueOf(1/3f));
+		weights.put("fName", Double.valueOf(1/6f));
 		
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
 		// run score
 		new Score(this.input, this.vivo, this.score, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
-
-//		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
+		
+		log.debug("Score Dump Post-Score\n" + this.score.exportRdfToString());
 		
 		// check score model
 //		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
