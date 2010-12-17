@@ -85,7 +85,8 @@
 		<xsl:param name='this' />
 <!--	Creating a Grant-->
 		<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
-			<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+			<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+			<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Agreement"/>
@@ -95,7 +96,8 @@
 			<core:administeredBy>
 <!--			Creating a department to match with or a stub if no match-->
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/org/org{$this/db-dbo.vwContracts:ContractDeptID}">
-					<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+					<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 					<ufVivo:deptID><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></ufVivo:deptID>
 					<core:administers rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}" />
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
@@ -109,7 +111,8 @@
 				<xsl:when test="string($this/db-dbo.vwContracts:FlowThruSponsor) = ''">
 					<core:grantAwardedBy>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:SponsorID}For{$grantid}">
-							<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
@@ -120,7 +123,8 @@
 				<xsl:otherwise>
 					<core:grantSubcontractedThrough>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:SponsorID}For{$grantid}">
-							<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:subcontractsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
@@ -129,7 +133,8 @@
 					</core:grantSubcontractedThrough>
 					<core:grantAwardedBy>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/sponsor/sponsor{$this/db-dbo.vwContracts:FlowThruSponsorID}For{$grantid}">
-							<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
@@ -163,19 +168,22 @@
 			<xsl:when test="$this/db-dbo.vwProjectTeam:isPI = 'Y'">
 <!--			Creating the PI-->
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
-					<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+					<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipalInvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#InvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ResearcherRole"/>
 					<core:roleIn>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
-							<ufVivo:harvestedBy>DSR-Harvester<xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:roleIn>
 					<core:principalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
-							<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwProjectTeam:Investigator"/></rdfs:label>
 							<!-- Add Exclude Entity -->
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
@@ -188,19 +196,22 @@
 			<xsl:otherwise>
 <!--			Creating the Co-PI-->
 				<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}">
-					<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+					<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+					<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CoPrincipalInvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#InvestigatorRole"/>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ResearcherRole"/>
 					<core:roleIn>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/grant/grant{$grantid}">
-							<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<core:relatedRole rdf:resource="http://vivoweb.org/harvest/dsr/coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
 					</core:roleIn>
 					<core:co-PrincipalInvestigatorRoleOf>
 						<rdf:Description rdf:about="http://vivoweb.org/harvest/dsr/person/person{$this/db-dbo.vwProjectTeam:InvestigatorID}">
-							<ufVivo:harvestedBy>DSR-Harvester <xsl:value-of select="current-date()" /></ufVivo:harvestedBy>
+							<ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwProjectTeam:Investigator"/></rdfs:label>
 							<!-- Add Exclude Entity Class -->
 							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
