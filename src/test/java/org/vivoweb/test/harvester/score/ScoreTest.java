@@ -8,15 +8,14 @@ package org.vivoweb.test.harvester.score;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.score.Match;
 import org.vivoweb.harvester.score.Score;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference;
-import org.vivoweb.harvester.score.algorithm.NormalizedSoundExDifference;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
@@ -365,17 +364,17 @@ public class ScoreTest extends TestCase {
 		vivoPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
 		vivoPredicates.put("fName", "http://xmlns.com/foaf/0.1/firstName");
 		
-		HashMap<String, Double> weights = new HashMap<String, Double>();
-		weights.put("wEmail", Double.valueOf(1/2f));
-		weights.put("lName", Double.valueOf(1/3f));
-		weights.put("fName", Double.valueOf(1/6f));
+		HashMap<String, Float> weights = new HashMap<String, Float>();
+		weights.put("wEmail", Float.valueOf(1/2f));
+		weights.put("lName", Float.valueOf(1/3f));
+		weights.put("fName", Float.valueOf(1/6f));
 		
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
 		// run score
 		new Score(this.input, this.vivo, this.score, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
-		
-		log.debug("Score Dump Post-Score\n" + this.score.exportRdfToString());
+//		log.debug("Score Dump Post-Score\n" + this.score.exportRdfToString());
+		new Match(this.input, this.score, true, 0.75f, null, false).execute();
 		
 		// check score model
 //		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));

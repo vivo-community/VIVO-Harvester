@@ -15,11 +15,11 @@ package org.vivoweb.harvester.score.algorithm;
 public class EqualityTest implements Algorithm {
 	
 	@Override
-	public double calculate(String itemX, String itemY) {
+	public float calculate(String itemX, String itemY) {
 		if(itemX.equals(itemY)) {
-			return 1;
+			return 1f;
 		}
-		return 0;
+		return 0f;
 	}
 	
 }

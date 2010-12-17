@@ -18,7 +18,7 @@ import org.apache.commons.codec.language.Soundex;
 public class NormalizedSoundExDifference implements Algorithm {
 	
 	@Override
-	public double calculate(String itemX, String itemY) {
+	public float calculate(String itemX, String itemY) {
 		try {
 			int diff = Soundex.US_ENGLISH.difference(itemX, itemY);
 			return (diff/4f);

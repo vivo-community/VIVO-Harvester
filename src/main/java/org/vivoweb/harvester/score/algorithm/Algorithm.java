@@ -19,7 +19,7 @@ public interface Algorithm {
 	 * Perform a calculation to determine what percent match the given Strings are
 	 * @param itemX compare this with the other String
 	 * @param itemY compare this with the other String
-	 * @return a double (0.0, 1.0) representing what percent match the given Strings are
+	 * @return a float (0.0, 1.0) representing what percent match the given Strings are
 	 */
-	public abstract double calculate(String itemX, String itemY);
+	public abstract float calculate(String itemX, String itemY);
 }

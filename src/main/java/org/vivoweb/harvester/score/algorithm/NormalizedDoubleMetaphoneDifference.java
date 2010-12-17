@@ -17,7 +17,7 @@ import org.apache.commons.codec.language.DoubleMetaphone;
 public class NormalizedDoubleMetaphoneDifference implements Algorithm {
 	
 	@Override
-	public double calculate(String itemX, String itemY) {
+	public float calculate(String itemX, String itemY) {
 		DoubleMetaphone dm = new DoubleMetaphone();
 		String dmX = dm.encode(itemX);
 		String dmY = dm.encode(itemY);

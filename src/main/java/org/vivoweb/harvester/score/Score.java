@@ -76,7 +76,7 @@ public class Score {
 	/**
 	 * the weighting (0.0 , 1.0) for this score
 	 */
-	private Map<String,Double> weights;
+	private Map<String,Float> weights;
 
 	/**
 	 * Constructor
@@ -89,7 +89,7 @@ public class Score {
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param weights the weightings (0.0 , 1.0) for this score
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Double> weights) {
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Float> weights) {
 		init(inputJena, vivoJena, scoreJena, algorithms, inputPredicates, vivoPredicates, namespace, weights);
 	}
 	
@@ -123,10 +123,10 @@ public class Score {
 				throw new IllegalArgumentException(e.getMessage(), e);
 			}
 		}
-		Map<String,Double> w = new HashMap<String, Double>();
+		Map<String,Float> w = new HashMap<String, Float>();
 		Map<String,String> weigh = opts.getValueMap("W");
 		for(String runName : weigh.keySet()) {
-			w.put(runName, Double.valueOf(weigh.get(runName)));
+			w.put(runName, Float.valueOf(weigh.get(runName)));
 		}
 		init(i, v, s, a, opts.getValueMap("P"), opts.getValueMap("F"), opts.get("n"), w);
 	}
@@ -142,7 +142,7 @@ public class Score {
 	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param w the weighting (0.0 , 1.0) for this score
 	 */
-	private void init(JenaConnect i, JenaConnect v, JenaConnect s, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Double> w) {
+	private void init(JenaConnect i, JenaConnect v, JenaConnect s, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Float> w) {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -179,12 +179,12 @@ public class Score {
 		
 		this.namespace = ns;
 		
-		for(Double weight : w.values()) {
-			double d = weight.doubleValue();
-			if(d > 1.0) {
+		for(Float weight : w.values()) {
+			float d = weight.floatValue();
+			if(d > 1f) {
 				throw new IllegalArgumentException("Weights cannot be greater than 1.0");
 			}
-			if(d < 0.0) {
+			if(d < 0f) {
 				throw new IllegalArgumentException("Weights cannot be less than 0.0");
 			}
 		}
@@ -285,7 +285,7 @@ public class Score {
 				"  </rdf:Description>\n" +
 				"</rdf:RDF>\n"
 			);
-//			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+rdf.toString());
+			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+rdf.toString());
 			// Push Score Data into score model
 			this.scoreJena.loadRdfFromString(rdf.toString(), null, null);
 		}
@@ -355,7 +355,7 @@ public class Score {
 	 * @return the rdf/xml fragment
 	 */
 	private String buildScoreRdfFragment(RDFNode op, RDFNode os, String runName) {
-		double score = 0/1;
+		float score = 0f;
 		if(os != null && op != null) {
 			// if a resource and same uris
 			if(os.isResource() && op.isResource() && os.asResource().getURI().equals(op.asResource().getURI())) {
@@ -379,9 +379,9 @@ public class Score {
 			"        <scoreValue:VivoProp rdf:resource=\""+this.vivoPredicates.get(runName)+"\"/>\n" +
 			"        <scoreValue:InputProp rdf:resource=\""+this.inputPredicates.get(runName)+"\"/>\n" +
 			"        <scoreValue:Algorithm>" + this.algorithms.get(runName).getName() + "</scoreValue:Algorithm>\n" +
-			"        <scoreValue:Score>" + score + "</scoreValue:Score>\n" +
-			"        <scoreValue:Weight>" + this.weights.get(runName) + "</scoreValue:Weight>\n" +
-			"        <scoreValue:WeightedScore>" + (this.weights.get(runName).doubleValue()*score) + "</scoreValue:WeightedScore>\n" +
+			"        <scoreValue:Score rdf:datatype=\"http://www.w3.org/2001/XMLSchema#float\">" + score + "</scoreValue:Score>\n" +
+			"        <scoreValue:Weight rdf:datatype=\"http://www.w3.org/2001/XMLSchema#float\">" + this.weights.get(runName) + "</scoreValue:Weight>\n" +
+			"        <scoreValue:WeightedScore rdf:datatype=\"http://www.w3.org/2001/XMLSchema#float\">" + (this.weights.get(runName).doubleValue()*score) + "</scoreValue:WeightedScore>\n" +
 			"      </rdf:Description>\n" +
 			"    </scoreValue:hasScoreValue>\n";
 		return fragment;

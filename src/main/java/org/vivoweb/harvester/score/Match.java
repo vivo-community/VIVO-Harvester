@@ -22,13 +22,7 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -68,7 +62,7 @@ public class Match {
 	/**
 	 * Pubmed Match threshold
 	 */
-	private final String matchThreshold;
+	private final Float matchThreshold;
 	/**
 	 * Clear all literal values out of matched sets
 	 */
@@ -78,12 +72,12 @@ public class Match {
 	 * Constructor
 	 * @param inputJena model containing statements to be scored
 	 * @param scoreJena the model that contains the score values
-	 * @param thresholdArg pubmed threshold
+	 * @param threshold match things with a total score greater than or equal to this threshold
 	 * @param renameRes should I just rename the args?
 	 * @param linkProps bidirectional link
 	 * @param clearLiterals clear all the literal values out of matches
 	 */
-	public Match(JenaConnect inputJena, JenaConnect scoreJena, boolean renameRes, String thresholdArg, Map<String, String> linkProps, boolean clearLiterals) {
+	public Match(JenaConnect inputJena, JenaConnect scoreJena, boolean renameRes, float threshold, Map<String, String> linkProps, boolean clearLiterals) {
 		if(scoreJena == null) {
 			throw new IllegalArgumentException("Score Model cannot be null");
 		}
@@ -94,7 +88,7 @@ public class Match {
 		}
 		this.inputJena = inputJena;
 		
-		this.matchThreshold = thresholdArg;
+		this.matchThreshold = Float.valueOf(threshold);
 		this.renameRes = renameRes;
 		this.linkProps = linkProps;
 		this.clearLiterals = clearLiterals;
@@ -123,7 +117,7 @@ public class Match {
 		
 		this.renameRes = opts.has("r");
 		this.linkProps = opts.getValueMap("l");
-		this.matchThreshold = opts.get("m");
+		this.matchThreshold = Float.valueOf(opts.get("m"));
 		this.clearLiterals = opts.has("c");
 	}
 	
@@ -133,31 +127,32 @@ public class Match {
 	 * @return mapping of the found matches
 	 * @throws IOException error connecting to dataset
 	 */
-	private Map<String,String> match(String threshold) throws IOException{
+	private Map<String,String> match(Float threshold) throws IOException{
 		//Build query to find all nodes matching on the given predicates
-		StringBuilder sQuery =	new StringBuilder(
-				"PREFIX scoring: <http://vivoweb.org/harvester/scorevalue/>\n" +
-				"SELECT DISTINCT ?sVivo ?sInput" +
-				"Where {" +
-				"  ?s scoring:InputRes ?sInput ." +
-				"  ?s scoring:VivoRes ?sVivo ." +
-				"  ?s scoring:WeightedScore ?weightValue ." +
-				"  FILTER(?weightValue >= " + threshold + " )" +
-				"}"
-		);
-						
-		Dataset ds = this.scoreJena.getConnectionDataSet();
-		Query query = QueryFactory.create(sQuery.toString(), Syntax.syntaxARQ);
-		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
-		HashMap<String,String> uriMatchMap = new HashMap<String,String>();
-		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
-			String sScoreURI = solution.getResource("sInput").getURI();
+		String sQuery =	"" +
+				"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
+				"SELECT DISTINCT ?sVivo ?sInput (sum(?weightValue) AS ?sum) \n" +
+				"WHERE { \n" +
+				"  ?s scoreValue:InputRes ?sInput . \n" +
+				"  ?s scoreValue:VivoRes ?sVivo . \n" +
+				"  ?s scoreValue:hasScoreValue ?value . \n" +
+				"  ?value scoreValue:WeightedScore ?weightValue . \n" +
+				"}" +
+				"GROUP BY ?sVivo ?sInput \n" +
+				"HAVING (?sum >= "+threshold+")" +
+				"";
+		Map<String,String> uriMatchMap = new HashMap<String,String>();
+		for(QuerySolution solution : IterableAdaptor.adapt(this.scoreJena.executeSelectQuery(sQuery))) {
+			String sInputURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
-
-			uriMatchMap.put(sScoreURI, sVivoURI);
-			log.debug("Match found: <"+sScoreURI+"> in Match matched with <"+sVivoURI+"> in Vivo");
+			Float weight = Float.valueOf(solution.getLiteral("sum").getFloat());
+			System.out.println("input: "+sInputURI);
+			System.out.println("vivo: "+sVivoURI);
+			System.out.println("weight: "+weight);
+			uriMatchMap.put(sInputURI, sVivoURI);
+			log.debug("Match found: <"+sInputURI+"> in Input matched with <"+sVivoURI+"> in Vivo");
 		}
-
+		
 		log.info("Match found " + uriMatchMap.keySet().size() + " links between Vivo and the Input model");
 		
 		return uriMatchMap;
