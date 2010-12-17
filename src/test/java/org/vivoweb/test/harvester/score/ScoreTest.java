@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.Score;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
-import org.vivoweb.harvester.score.algorithm.ExactMatch;
+import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
@@ -320,15 +320,15 @@ public class ScoreTest extends TestCase {
 	private JenaConnect score;
 	
 	/**
-	 * Test metch Algorithm
+	 * Test EqualityTest Algorithm
 	 * @throws IOException error
 	 */
-	public void testEmailLastNameMatch() throws IOException {
-		log.info("BEGIN testEmailLastNameMatch");
+	public void testEmailLastNameEqualityTest() throws IOException {
+		log.info("BEGIN testEmailLastNameEqualityTest");
 		// prep arguments
 		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
-		algorithms.put("wEmail", ExactMatch.class);
-		algorithms.put("lName", ExactMatch.class);
+		algorithms.put("wEmail", EqualityTest.class);
+		algorithms.put("lName", EqualityTest.class);
 		
 		HashMap<String, String> inputPredicates = new HashMap<String, String>();
 		inputPredicates.put("wEmail", "http://vivoweb.org/ontology/score#workEmail");
@@ -344,9 +344,8 @@ public class ScoreTest extends TestCase {
 		
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
-		// run match score
+		// run score
 		new Score(this.input, this.vivo, this.score, algorithms, inputPredicates, vivoPredicates, null, weights).execute();
-//		new Score(this.input, this.vivo, null, matchParams, true, null, null, false).execute();
 
 //		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
 		
@@ -354,54 +353,7 @@ public class ScoreTest extends TestCase {
 //		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 //		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 //		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
-		log.info("END testEmailLastNameMatch");
-	}
-	
-	/**
-	 * Test metch Algorithm
-	 * @throws IOException error
-	 */
-	public void testEmailLastNameMatchClearLiterals() throws IOException {
-		log.info("BEGIN testEmailLastNameMatchClearLiterals");
-		// prep arguments
-		Map<String,String> matchParams = new HashMap<String, String>();
-		matchParams.put("http://vivoweb.org/ontology/core#workEmail", "http://vivoweb.org/ontology/score#workEmail");
-		matchParams.put("http://xmlns.com/foaf/0.1/lastName", "http://xmlns.com/foaf/0.1/lastName");
-		matchParams.put("http://vivoweb.org/ontology/core#middleName", "http://vivoweb.org/ontology/core#middleName");
-		
-//		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
-		
-		// run match score
-//		new Score(this.input, this.vivo, null, matchParams, true, null, null, true).execute();
-
-//		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
-		
-		// check score model
-//		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
-//		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
-//		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
-		log.info("END testEmailLastNameMatchClearLiterals");
-	}
-	
-	/**
-	 * Test Pubmed Scoring Algorithm
-	 * @throws IOException error
-	 */
-	public void testPubmedScore() throws IOException {
-		log.info("BEGIN testPubmedScore");
-//		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
-		
-		//run pubmed
-//		new Score(this.input, this.vivo, null, null, true, "0.5", null, true).execute();
-		
-//		log.debug("Input Dump Post-Score\n" + this.input.exportRdfToString());
-		
-		// check score model
-//		assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid23656776/author3> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship3> }"));
-//		assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid23656776/authorship3> <http://vivoweb.org/ontology/core#linkedAuthor> <http://vivoweb.org/pubmed/article/pmid23656776/author3> }"));
-//		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid23656776/author2"));
-//		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid23656776/author1"));
-		log.info("END testPubmedScore");
+		log.info("END testEmailLastNameEqualityTest");
 	}
 	
 	@Override
