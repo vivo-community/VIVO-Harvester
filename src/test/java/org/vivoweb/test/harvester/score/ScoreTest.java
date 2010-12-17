@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.Score;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
+import org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference;
 import org.vivoweb.harvester.score.algorithm.NormalizedSoundExDifference;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
@@ -351,8 +352,8 @@ public class ScoreTest extends TestCase {
 		// prep arguments
 		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
 		algorithms.put("wEmail", EqualityTest.class);
-		algorithms.put("lName", NormalizedSoundExDifference.class);
-		algorithms.put("fName", NormalizedSoundExDifference.class);
+		algorithms.put("lName", NormalizedDoubleMetaphoneDifference.class);
+		algorithms.put("fName", NormalizedDoubleMetaphoneDifference.class);
 		
 		HashMap<String, String> inputPredicates = new HashMap<String, String>();
 		inputPredicates.put("wEmail", "http://vivoweb.org/ontology/score#workEmail");
