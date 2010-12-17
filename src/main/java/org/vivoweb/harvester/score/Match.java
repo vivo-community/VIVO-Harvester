@@ -60,7 +60,7 @@ public class Match {
 	/**
 	 * Link the resources found by match Algorithm
 	 */
-	private final String linkProp;
+	private final Map<String, String> linkProps;
 	/**
 	 * Rename resources found by match Algorithm
 	 */
@@ -80,10 +80,10 @@ public class Match {
 	 * @param scoreJena the model that contains the score values
 	 * @param thresholdArg pubmed threshold
 	 * @param renameRes should I just rename the args?
-	 * @param linkProp bidirectional link
+	 * @param linkProps bidirectional link
 	 * @param clearLiterals clear all the literal values out of matches
 	 */
-	public Match(JenaConnect inputJena, JenaConnect scoreJena, boolean renameRes, String thresholdArg, String linkProp, boolean clearLiterals) {
+	public Match(JenaConnect inputJena, JenaConnect scoreJena, boolean renameRes, String thresholdArg, Map<String, String> linkProps, boolean clearLiterals) {
 		if(scoreJena == null) {
 			throw new IllegalArgumentException("Score Model cannot be null");
 		}
@@ -96,7 +96,7 @@ public class Match {
 		
 		this.matchThreshold = thresholdArg;
 		this.renameRes = renameRes;
-		this.linkProp = linkProp;
+		this.linkProps = linkProps;
 		this.clearLiterals = clearLiterals;
 	}
 	
@@ -122,7 +122,7 @@ public class Match {
 		this.inputJena = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		
 		this.renameRes = opts.has("r");
-		this.linkProp = opts.get("l");
+		this.linkProps = opts.getValueMap("l");
 		this.matchThreshold = opts.get("m");
 		this.clearLiterals = opts.has("c");
 	}
@@ -178,34 +178,29 @@ public class Match {
 	/**
 	 * Link matched scoreResources to vivoResources using given linking predicates
 	 * @param matchSet a mapping of matched scoreResources to vivoResources
-	 * @param objPropList the object properties to be used to link the two items set in string form -> vivo-object-property-to-scoreJena-object = scoreJena-object-property-to-vivo-object
+	 * @param vivoToInput vivo to input property
+	 * @param inputToVivo input to vivo property
 	 */
-	private void link(Map<String,String> matchSet, String objPropList) {
-		//split the objPropList into its vivo and scoreJena components (vivo->scoreJena=scoreJena->vivo)
-		String[] objPropArray = objPropList.split("=");
-		if(objPropArray.length != 2){
-			throw new IllegalArgumentException("Two object properties vivo-object-property-to-scoreJena-object and scoreJena-object-property-to-vivo-object " +
-					"sepearated by an equal sign must be set to link resources");
-		}
-		Property vivoToScoreObjProp = ResourceFactory.createProperty(objPropArray[0]);
-		Property scoreToVivoObjProp = ResourceFactory.createProperty(objPropArray[1]);
+	private void link(Map<String,String> matchSet, String vivoToInput, String inputToVivo) {
+		Property vivoToInputProperty = ResourceFactory.createProperty(vivoToInput);
+		Property inputToVivoProperty = ResourceFactory.createProperty(inputToVivo);
 		
 		for(String oldUri : matchSet.keySet()) {
 			// get resources and add linking triples
 			Resource scoreRes = this.inputJena.getJenaModel().getResource(oldUri);	
 			Resource vivoRes = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
-			this.inputJena.getJenaModel().add(vivoRes, vivoToScoreObjProp, scoreRes);
-			this.inputJena.getJenaModel().add(scoreRes, scoreToVivoObjProp, vivoRes);			
+			this.inputJena.getJenaModel().add(vivoRes, vivoToInputProperty, scoreRes);
+			this.inputJena.getJenaModel().add(scoreRes, inputToVivoProperty, vivoRes);			
 		}
 	}
 	
 	/**
-	 * Clear out literal values of matched scoreResources
-	 * TODO: TEST
+	 * Clear out rdf:type and literal values of matched scoreResources
+	 * TODO stephen: TEST
 	 * @param resultMap a mapping of matched scoreResources to vivoResources
 	 * @throws IOException error building construct
 	 */
-	private void clearLiterals(Map<String, String> resultMap) throws IOException {
+	private void clearTypesAndLiterals(Map<String, String> resultMap) throws IOException {
 		if(!resultMap.values().isEmpty()) {
 			Set<String> uriFilters = new HashSet<String>();
 			for(String uri : resultMap.values()) {
@@ -277,14 +272,14 @@ public class Match {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
 		// Matching Algorithms 
-		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("match").withParameter(true, "THRESHOLD").setDescription("given the set threshhold return from the score set the items to link").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("threshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(false));
 		
 		// Linking Methods
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").setDescription("link the two matched entities together using the pair of object properties vivoObj=scoreObj").withParameter(false, "RDF_PREDICATE"));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").withParameterValueMap("VIVO_TO_INPUT_PREDICATE", "INPUT_TO_VIVO_PREDICATE").setDescription("link the two matched entities together using INPUT_TO_VIVO_PREDICATE and INPUT_TO_VIVO_PREDICATE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").setRequired(false));
 		
 		// options
-		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-literals").setDescription("clear all literals out of the nodes matched").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-type-and-literals").setDescription("clear all rdf:type and literal values out of the nodes matched").setRequired(false));
 		return parser;
 	}	
 	
@@ -300,12 +295,16 @@ public class Match {
 			
 			if(this.renameRes) {
 				rename(pubmedResultMap);
-			} else if(this.linkProp != null && !this.linkProp.isEmpty()) {
-				link(pubmedResultMap,this.linkProp);
+			}
+			
+			if(this.linkProps != null) {
+				for(String vivoToInput : this.linkProps.keySet()) {
+					link(pubmedResultMap, vivoToInput, this.linkProps.get(vivoToInput));
+				}
 			}
 			
 			if(this.clearLiterals) {
-				clearLiterals(pubmedResultMap);
+				clearTypesAndLiterals(pubmedResultMap);
 			}
 		}
 	}
