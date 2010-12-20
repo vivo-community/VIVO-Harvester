@@ -117,7 +117,7 @@ public class Match {
 		
 		this.renameRes = opts.has("r");
 		this.linkProps = opts.getValueMap("l");
-		this.matchThreshold = Float.valueOf(opts.get("m"));
+		this.matchThreshold = Float.valueOf(opts.get("t"));
 		this.clearLiterals = opts.has("c");
 	}
 	
