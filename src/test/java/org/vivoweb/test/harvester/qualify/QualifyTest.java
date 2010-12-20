@@ -65,10 +65,10 @@ public class QualifyTest extends TestCase {
 		this.jena.getJenaModel().add(res3, this.label, "testing "+searchValue+"fun far"+searchValue+"bo yea");
 		this.jena.getJenaModel().add(res4, this.label, "I A T R R");
 		String replaceValue = "I Am Testing Regex Replace";
-		System.out.println(this.jena.exportRdfToString());
+		log.debug("Pre-Qualify:\n"+this.jena.exportRdfToString());
 		// call qualify
 		new Qualify(this.jena, this.label.getURI(), searchValue, replaceValue, true, null, false, false).execute();
-		System.out.println(this.jena.exportRdfToString());
+		log.debug("Post-Qualify:\n"+this.jena.exportRdfToString());
 		assertEquals(replaceValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 		assertEquals("woo"+replaceValue+"blah", this.jena.getJenaModel().getProperty(res2, this.label).getString());
 		assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(replaceValue));
