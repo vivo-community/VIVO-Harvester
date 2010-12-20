@@ -33,6 +33,7 @@ PubmedFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dp
 PubmedHTTPFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=PubmedHTTPFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.PubmedHTTPFetch"
 Qualify="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Qualify -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.Qualify"
 Score="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Score -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.score.Score"
+Match="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Match -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.score.Match"
 Transfer="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Transfer -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.transfer.Transfer"
 GlozeTranslator="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=GlozeTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.GlozeTranslator"
 RDFTranslator="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=RDFTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.RDFTranslator"
