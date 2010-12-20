@@ -23,7 +23,7 @@ SCORE="-s config/jenaModels/h2.xml -S dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/stor
 MATCHEDINPUT="-i config/jenaModels/h2.xml -i modelName=Pubmed -i dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB"
 
 #variables for scoring
-WORKEMAIL="-A wEmail=org.vivoweb.harvester.score.algorithm.EqualityTest -F wEmail=http://vivoweb.org/ontology/score#workEmail -W wEmail=1 -P wEmail=http://vivoweb.org/ontology/core#workEmail"
+WORKEMAIL="-A wEmail=org.vivoweb.harvester.score.algorithm.EqualityTest -F wEmail=http://vivoweb.org/ontology/core#workEmail -W wEmail=1 -P wEmail=http://vivoweb.org/ontology/score#workEmail"
 
 if [ -f scripts/env ]; then
   . scripts/env
