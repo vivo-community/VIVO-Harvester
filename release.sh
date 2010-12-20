@@ -31,12 +31,15 @@ echo -n "Has changelog been updated?: "
 read CHANGELOG
 
 if [ "$CHANGELOG" != "y" ]; then
-	echo -n "Please update CHANGELOG and re-run"
+	echo "Please update CHANGELOG and re-run"
 	exit
 fi 
 
 echo -n "Commit script version file changes?: "
 read COMMIT
+
+echo -n "Upload files to sourceforge?: "
+read UPLOAD
 
 #get code
 if [ "$CODELOC" = "dev" ]; then
@@ -88,7 +91,7 @@ else
 fi
 
 #check for failure
-if [ "$?" -eq "1" ]; then
+if [ "$?" = "1" ]; then
 	echo "Exiting - Maven failure:" $?
 	exit
 fi
@@ -104,8 +107,10 @@ ar -x harvester-$RELEASENAME.deb
 mv data.tar.gz harvester-$RELEASENAME.tar.gz
 
 #Upload tarball and deb package to sourceforge
-scp harvester-$RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
-scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+if [ "UPLOAD" = "y" ]; then
+	scp harvester-$RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+	scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
+fi
 
 
 if [ "$BUILDSTABLE" = "y" ]; then

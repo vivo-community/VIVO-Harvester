@@ -70,8 +70,9 @@ ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
 rm -rf XMLVault/h2Pubmed/scored
 
 # Execute Score to disambiguate data in "scoring" JENA model and place scored rdf into "staging" JENA model
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -e workEmail
-#$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -a 3
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -a 
+$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB" -I modelName=PubmedTempTransfer -o config/jenaModels/h2.xml -O dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -O modelName=PubmedStaging -a 
+ 
 
 # back H2 score models
 date=`date +%Y-%m-%d_%T`

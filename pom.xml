@@ -2,6 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
+  <groupId>org.vivoweb</groupId>
+  <artifactId>harvester</artifactId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
+  
+
   <repositories>
   	<repository>
   		<releases>
@@ -13,11 +19,6 @@
   		<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
   	</repository>
   </repositories>
-
-  <groupId>org.vivoweb</groupId>
-  <artifactId>harvester</artifactId>
-  <version>0.7.1</version>
-  <packaging>jar</packaging>
 
   <name>VIVOHarvester</name>
   <url>http://vivo.sourceforge.net</url>

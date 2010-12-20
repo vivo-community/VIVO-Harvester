@@ -16,21 +16,26 @@
 echo -n "Enter release version: "
 read RELEASENAME
 
-#delete old version
-rm harvester-$RELEASENAME.tar.gz
-rm harvester-$RELEASENAME.deb
-rm -rf usr
+echo -n "Grab local?: "
+read LOCAL
 
-#pull release version from sf
-wget -O harvester-$RELEASENAME.tar.gz http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.tar.gz/download
-wget -O harvester-$RELEASENAME.deb http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.deb/download
+if [ "$LOCAL" != "y" ]; then
+	#delete old version
+	rm harvester-$RELEASENAME.tar.gz
+	rm harvester-$RELEASENAME.deb
+	rm -rf usr
+
+	#pull release version from sf
+	wget -O harvester-$RELEASENAME.tar.gz http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.tar.gz/download
+	wget -O harvester-$RELEASENAME.deb http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.deb/download
+fi
 
 #unpack tarball, install deb
-tar -xzf harvester-$RELEASENAME.tar.gz
-dpkg -i harvester-$RELEASENAME.deb
+tar -xzf ../bin/harvester-$RELEASENAME.tar.gz
+dpkg -i ../bin/harvester-$RELEASENAME.deb
 
 #check for failure
-if [ "$?" -eq "1" ]; then
+if [ "$?" = "1" ]; then
 	echo "Exiting - dpkg install failure:" $?
 	exit
 fi
@@ -51,7 +56,7 @@ cd usr/share/vivo/harvester
 bash scripts/runPubmed.sh
 
 #check for failure
-if [ "$?" -eq "1" ]; then
+if [ "$?" = "1" ]; then
 	echo "Exiting - tarball pubmed example failure:" $?
 	exit
 fi
@@ -69,7 +74,7 @@ cd /usr/share/vivo/harvester
 bash scripts/runPubmed.sh
 
 #check for failure
-if [ "$?" -eq "1" ]; then
+if [ "$?" = "1" ]; then
 	echo "Exiting - dpkg pubmed example failure:" $?
 	exit
 fi
