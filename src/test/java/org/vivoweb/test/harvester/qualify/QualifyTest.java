@@ -51,21 +51,27 @@ public class QualifyTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
 	 * regex replace.
+	 * @throws IOException error
 	 */
-	public void testRegexReplace() {
+	public void testRegexReplace() throws IOException {
 		log.info("BEGIN testRegexReplace");
 		Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
 		Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
 		Resource res3 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#3");
-		this.jena.getJenaModel().add(res1, this.label, "IATRR");
-		this.jena.getJenaModel().add(res2, this.label, "wooIATRRblah");
-		this.jena.getJenaModel().add(res3, this.label, "I A T R R");
-		String expectedValue = "I Am Testing Regex Replace";
+		Resource res4 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#4");
+		String searchValue = "IATRR";
+		this.jena.getJenaModel().add(res1, this.label, this.jena.getJenaModel().createLiteral(searchValue,"en"));
+		this.jena.getJenaModel().add(res2, this.label, this.jena.getJenaModel().createTypedLiteral("woo"+searchValue+"blah"));
+		this.jena.getJenaModel().add(res3, this.label, "testing "+searchValue+"fun far"+searchValue+"bo yea");
+		this.jena.getJenaModel().add(res4, this.label, "I A T R R");
+		String replaceValue = "I Am Testing Regex Replace";
+		System.out.println(this.jena.exportRdfToString());
 		// call qualify
-		new Qualify(this.jena, this.label.getURI(), ".*?IATRR.*?", expectedValue, true, null, false, false).execute();
-		assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
-		assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res2, this.label).getString());
-		assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
+		new Qualify(this.jena, this.label.getURI(), searchValue, replaceValue, true, null, false, false).execute();
+		System.out.println(this.jena.exportRdfToString());
+		assertEquals(replaceValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
+		assertEquals("woo"+replaceValue+"blah", this.jena.getJenaModel().getProperty(res2, this.label).getString());
+		assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(replaceValue));
 		log.info("END testRegexReplace");
 	}
 	

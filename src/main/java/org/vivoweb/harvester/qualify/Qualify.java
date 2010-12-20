@@ -11,13 +11,16 @@ import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -157,26 +160,39 @@ public class Qualify {
 	}
 	
 	/**
-	 * Replace records matching dataType & the regexMatch with newValue
-	 * @param dataType data type to match
+	 * Replace records matching predicate & the regexMatch with newValue
+	 * @param predicate data type to match
 	 * @param regexMatch regular expression to match
 	 * @param newValue new value
 	 */
-	private void regexReplace(String dataType, String regexMatch, String newValue) {
-		Property pred = this.model.getJenaModel().createProperty(dataType);
-		ResIterator resItr = this.model.getJenaModel().listResourcesWithProperty(pred);
-
-		while(resItr.hasNext()) {
-			Statement stmt = resItr.next().getRequiredProperty(pred);
-			String obj = stmt.getString();
-			if(obj.matches(regexMatch)) {
-				log.trace("Replacing record");
-				log.debug("oldValue: " + obj);
-				log.debug("newValue: " + newValue);
-				stmt.changeObject(obj.replaceAll(regexMatch, newValue) );
+	private void regexReplace(String predicate, String regexMatch, String newValue) {
+		Property pred = this.model.getJenaModel().createProperty(predicate);
+//		ResIterator resItr = this.model.getJenaModel().listResourcesWithProperty(pred);
+		String query = "" +
+			"SELECT ?s ?o \n" +
+			"WHERE {\n" +
+			"  ?s <" + predicate + "> ?o .\n" +
+			"  FILTER (regex(str(?o), \"" + regexMatch + "\")) .\n" +
+			"}";
+		for(QuerySolution s : IterableAdaptor.adapt(this.model.executeSelectQuery(query))) {
+			Literal obj = s.getLiteral("o");
+			RDFDatatype datatype = obj.getDatatype();
+			String lang = obj.getLanguage();
+			String objStr = obj.getValue().toString();
+			log.trace("Replacing record");
+			log.debug("oldValue: " + obj.toString());
+			String newStr = objStr.replaceAll(regexMatch, newValue);
+			Literal newObj;
+			if(datatype != null) {
+				newObj = this.model.getJenaModel().createTypedLiteral(newStr, datatype);
+			} else if(!lang.equals("")) {
+				newObj = this.model.getJenaModel().createLiteral(newStr, lang);
 			} else {
-				log.debug("no match: " + obj);
+				newObj = this.model.getJenaModel().createLiteral(newStr);
 			}
+			log.debug("newValue: " + newObj.toString());
+			this.model.getJenaModel().remove(s.getResource("s"), pred, obj);
+			this.model.getJenaModel().add(s.getResource("s"), pred, newObj);
 		}
 	}
 	

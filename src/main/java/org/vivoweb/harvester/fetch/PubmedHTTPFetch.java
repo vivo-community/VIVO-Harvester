@@ -83,7 +83,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public PubmedHTTPFetch(ArgList argList) throws IOException {
-		super(argList, database, new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<PMID>(.*?)</PMID>.*?", null, PubmedHTTPFetch.class));
+		super(argList, database, new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<[pP][mM][iI][dD].*?>(.*?)</[pP][mM][iI][dD]>.*?", null, PubmedHTTPFetch.class));
 	}
 	
 	@Override
@@ -180,13 +180,17 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 */
 	private void sanitizeXML(String strInput) throws IOException {
 		//used to remove header from xml
-		String headerRegEx = "<\\?xml version=\"1.0\"\\?>.*?<!DOCTYPE.*?PubmedArticleSet.*?PUBLIC.*?\"-//NLM//DTD PubMedArticle, 1st January 2010//EN\".*?\"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_.*?.dtd\">.*?<PubmedArticleSet>";
+		String headerRegEx = "<\\?xml.*?PubmedArticleSet>";
 		//used to remove footer from xml
 		String footerRegEx = "</PubmedArticleSet>";
 		log.debug("Sanitizing Output");
 		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
+//		System.out.println("===============================\n          PRE-SANITIZE         \n===============================\n");
+//		System.out.println(strInput);
 		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle").replaceAll(headerRegEx, "").replaceAll(footerRegEx, "");
 		log.debug("XML File Length - Post Sanitze: " + newS.length());
+//		System.out.println("===============================\n          POST-SANITIZE        \n===============================\n");
+//		System.out.println(newS);
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
 		getOsWriter().write(newS);
