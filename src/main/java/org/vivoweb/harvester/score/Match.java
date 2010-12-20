@@ -125,9 +125,8 @@ public class Match {
 	 * Find all nodes in the given namepsace matching on the given predicates
 	 * @param threshold the value to look for in the sparql query
 	 * @return mapping of the found matches
-	 * @throws IOException error connecting to dataset
 	 */
-	private Map<String,String> match(Float threshold) throws IOException{
+	private Map<String,String> match(Float threshold){
 		//Build query to find all nodes matching on the given predicates
 		String sQuery =	"" +
 				"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
