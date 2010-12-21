@@ -42,7 +42,6 @@ date=`date +%Y-%m-%d_%T`
 tar -czpf backups/.$date.tar.gz XMLVault/h2Pubmed/XML
 rm -rf backups/pubmed.xml.latest.tar.gz
 ln -s pubmed.xml.$date.tar.gz backups/pubmed.xml.latest.tar.gz
-
 # uncomment to restore previous fetch
 #tar -xzpf backups/pubmed.xml.latest.tar.gz XMLVault/h2Pubmed/XML
 
@@ -57,7 +56,6 @@ date=`date +%Y-%m-%d_%T`
 tar -czpf backups/pubmed.rdf.$date.tar.gz XMLVault/h2Pubmed/RDF
 rm -rf backups/pubmed.rdf.latest.tar.gz
 ln -s pubmed.rdf.$date.tar.gz backups/pubmed.rdf.latest.tar.gz
-
 # uncomment to restore previous translate
 #tar -xzpf backups/pubmed.rdf.latest.tar.gz XMLVault/h2Pubmed/RDF
 
@@ -72,7 +70,6 @@ date=`date +%Y-%m-%d_%T`
 tar -czpf backups/pubmed.all.$date.tar.gz XMLVault/h2Pubmed/all
 rm -rf backups/pubmed.all.latest.tar.gz
 ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
-
 # uncomment to restore previous H2 translate models
 #tar -xzpf backups/pubmed.all.latest.tar.gz XMLVault/h2Pubmed/all
 
@@ -90,7 +87,6 @@ date=`date +%Y-%m-%d_%T`
 tar -czpf backups/pubmed.scored.$date.tar.gz XMLVault/h2Pubmed/scored
 rm -rf backups/pubmed.scored.latest.tar.gz
 ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
-
 # uncomment to restore previous H2 score models
 #tar -xzpf backups/pubmed.scored.latest.tar.gz XMLVault/h2Pubmed/scored
 
@@ -100,7 +96,10 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 #$Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 # Execute ChangeNamespace to get into current namespace
-$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/ -o http://vivoweb.org/harvest/
+$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedPub/
+$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthorship/
+$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthor/
+$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
