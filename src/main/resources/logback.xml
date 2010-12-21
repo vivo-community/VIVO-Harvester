@@ -56,12 +56,12 @@
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>WARN</level>
-      <onMatch>DENY</onMatch>
+      <onMatch>ACCEPT</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>ERROR</level>
-      <onMatch>DENY</onMatch>
+      <onMatch>ACCEPT</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
   </appender>
