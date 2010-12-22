@@ -21,5 +21,5 @@ public interface Algorithm {
 	 * @param itemY compare this with the other String
 	 * @return a float (0.0, 1.0) representing what percent match the given Strings are
 	 */
-	public abstract float calculate(String itemX, String itemY);
+	public abstract float calculate(CharSequence itemX, CharSequence itemY);
 }

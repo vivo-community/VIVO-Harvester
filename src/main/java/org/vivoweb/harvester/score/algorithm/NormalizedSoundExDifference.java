@@ -18,9 +18,9 @@ import org.apache.commons.codec.language.Soundex;
 public class NormalizedSoundExDifference implements Algorithm {
 	
 	@Override
-	public float calculate(String itemX, String itemY) {
+	public float calculate(CharSequence itemX, CharSequence itemY) {
 		try {
-			int diff = Soundex.US_ENGLISH.difference(itemX, itemY);
+			int diff = Soundex.US_ENGLISH.difference(itemX.toString(), itemY.toString());
 			return (diff/4f);
 		} catch(EncoderException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);

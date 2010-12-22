@@ -17,9 +17,9 @@ import org.apache.commons.lang.StringUtils;
 public class NormalizedLevenshteinDifference implements Algorithm {
 	
 	@Override
-	public float calculate(String itemX, String itemY) {
+	public float calculate(CharSequence itemX, CharSequence itemY) {
 		float maxSize = Math.max(itemX.length(), itemY.length())/1f;
-		return ((maxSize - StringUtils.getLevenshteinDistance(itemX, itemY))/maxSize);
+		return ((maxSize - StringUtils.getLevenshteinDistance(itemX.toString(), itemY.toString()))/maxSize);
 	}
 	
 }

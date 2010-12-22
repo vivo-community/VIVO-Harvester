@@ -15,7 +15,7 @@ package org.vivoweb.harvester.score.algorithm;
 public class EqualityTest implements Algorithm {
 	
 	@Override
-	public float calculate(String itemX, String itemY) {
+	public float calculate(CharSequence itemX, CharSequence itemY) {
 		if(itemX.equals(itemY)) {
 			return 1f;
 		}

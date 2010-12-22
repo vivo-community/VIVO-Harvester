@@ -17,10 +17,10 @@ import org.apache.commons.codec.language.DoubleMetaphone;
 public class NormalizedDoubleMetaphoneDifference implements Algorithm {
 	
 	@Override
-	public float calculate(String itemX, String itemY) {
+	public float calculate(CharSequence itemX, CharSequence itemY) {
 		DoubleMetaphone dm = new DoubleMetaphone();
-		String dmX = dm.encode(itemX);
-		String dmY = dm.encode(itemY);
+		String dmX = dm.encode(itemX.toString());
+		String dmY = dm.encode(itemY.toString());
 		return new NormalizedLevenshteinDifference().calculate(dmX, dmY);
 	}
 	
