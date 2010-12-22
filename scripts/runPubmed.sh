@@ -20,10 +20,13 @@ INPUT="-i config/jenaModels/h2.xml -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;
 OUTPUT="-o config/jenaModels/h2.xml -O modelName=Pubmed -O dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB"
 VIVO="-v config/jenaModels/VIVO.xml"
 SCORE="-s config/jenaModels/h2.xml -S dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB -S modelName=PubmedScore"
-MATCHEDINPUT="-i config/jenaModels/h2.xml -i modelName=Pubmed -i dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB"
+MATCHEDINPUT="-i config/jenaModels/h2.xml -i modelName=PubmedScore -i dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB"
 
 #variables for scoring
-WORKEMAIL="-A wEmail=org.vivoweb.harvester.score.algorithm.EqualityTest -F wEmail=http://vivoweb.org/ontology/core#workEmail -W wEmail=1 -P wEmail=http://vivoweb.org/ontology/score#workEmail"
+WORKEMAIL="-A wEmail=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F wEmail=http://vivoweb.org/ontology/core#workEmail -W wEmail=.4 -P wEmail=http://vivoweb.org/ontology/score#workEmail"
+FNAME="-A fName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F fName=http://xmlns.com/foaf/0.1/firstName -W fName=.2 -P fName=http://vivoweb.org/ontology/score#foreName"
+LNAME="-A lName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F lName=http://xmlns.com/foaf/0.1/lastName -W lName=.3 -P lName=http://xmlns.com/foaf/0.1/lastName"
+MNAME="-A mName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F mName=http://vivoweb.org/ontology/core#middleName -W mName=.1 -P mName=http://vivoweb.org/ontology/score#middleName"
 
 if [ -f scripts/env ]; then
   . scripts/env
@@ -77,10 +80,13 @@ ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
 rm -rf XMLVault/h2Pubmed/score
 
 # Execute Score to disambiguate data in "scoring" JENA model
-$Score $VIVO $INPUT $SCORE $WORKEMAIL   
+$Score $VIVO $INPUT $SCORE $WORKEMAIL
+$Score $VIVO $INPUT $SCORE $FNAME
+$Score $VIVO $INPUT $SCORE $LNAME
+$Score $VIVO $INPUT $SCORE $MNAME
 
 # Execute match to match and link data into "vivo" JENA model
-$Match $INPUT $SCORE -t .8
+$Match $INPUT $SCORE -t .5
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
@@ -108,7 +114,18 @@ rm -rf backups/$DBNAME.pubmed.pretransfer.latest.sql
 ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.latest.sql
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
-$Update -p config/jenaModels/VIVO.xml -P modelName="http://vivoweb.org/ingest/pubmed" -i config/jenaModels/h2.xml -I dbUrl="jdbc:h2:XMLVault/h2Pubmed/scored/store;MODE=HSQLDB" -I modelName=PubmedStaging -v config/jenaModels/VIVO.xml
+# Find Subtractions
+$Diff -m config/jenaModels/VIVO.xml -M modelName="http://vivoweb.org/ingest/ufl/pubmed" -s config/jenaModels/h2.xml -S dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB" -S modelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
+# Find Additions
+$Diff -m config/jenaModels/h2.xml -M dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB" -M modelName=pubmedScore -s config/jenaModels/VIVO.xml -S modelName="http://vivoweb.org/ingest/ufl/pubmed" -d XMLVault/update_Additions.rdf.xml
+# Apply Subtractions to Previous model
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/pubmed" -r XMLVault/update_Subtractions.rdf.xml -m
+# Apply Additions to Previous model
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/pubmed" -r XMLVault/update_Additions.rdf.xml
+# Apply Subtractions to VIVO
+$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Subtractions.rdf.xml -m
+# Apply Additions to VIVO
+$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Additions.rdf.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
