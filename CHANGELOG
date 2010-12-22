@@ -1,3 +1,35 @@
+1.0
+	Updated scripts
+		env file no longer requires configuration
+		more variables are used for readability
+	Config files no longer required to run any tool
+	Command line arguments have changed for several tools
+	
+	Pubmed
+		Fix for mesh term striping errors
+		Regex function for pulling out firstname and middlename/initial
+	Score
+		Added new algorithim framework
+			Availible algorithims to score against:
+				Levenshtein
+				Soundex
+				DoubleMetaphone
+				EqualityTest
+		Removed exact match, foriegnkey match, and name match
+		Removed output model for scoring
+		Combined previous functions along with cmw python code to create weighted search
+		Create methods for renaming nodes and linking nodes, based on a match meeting a threshold
+	Node Renaming
+		Moved to Qualify Package
+		Removed matching algorithms (use score ahead of node renaming)
+		Refactored to use sparql queries for determing nodes that need renamed
+	Qualify
+		In-line string replace
+		Moved Sanitize portion of scoring into qualify for removing ontologies/namespaces
+	Update
+		Wrapper class removed in favor of direct diff and transfer tool calls
+		
+
 0.7.1
 	XSL
 		Pubmed
