@@ -37,44 +37,112 @@ public class NormalizedTypoDifference implements Algorithm {
 	}
 	
 	/**
+	 * Reduction for things only 1 key away
+	 */
+	public static final float reduce1Weight = .5f;
+	/**
+	 * Reduction for things only 1 key away and shifted (for numbers)
+	 */
+	public static final float reduce1WeightShift = .3f;
+	/**
+	 * Reduction for things only 2 keys away
+	 */
+	public static final float reduce2Weight = .25f;
+	/**
+	 * Reduction for things only 2 keys away and shifted (for numbers)
+	 */
+	public static final float reduce2WeightShift = .1f;
+	/**
 	 * US Enlgish Standard Keyboard Proximity Map
 	 */
 	public static final Map<Character,Map<Character,Float>> USEngKeyboard;
 	static {
 		 Map<Character, Map<Character, Float>> tmp = new HashMap<Character, Map<Character,Float>>();
 		 tmp.put(Character.valueOf('q'), new HashMap<Character, Float>());
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('w'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('a'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('s'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('1'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('2'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('!'), Float.valueOf(.3f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('@'), Float.valueOf(.3f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('3'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('e'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('d'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('x'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('z'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('`'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('~'), Float.valueOf(.1f));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('#'), Float.valueOf(.1f));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('w'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('a'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('s'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('1'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('2'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('!'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('@'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('3'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('e'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('d'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('z'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('`'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('~'), Float.valueOf(reduce2WeightShift));
+		 tmp.get(Character.valueOf('q')).put(Character.valueOf('#'), Float.valueOf(reduce2WeightShift));
 		 tmp.put(Character.valueOf('w'), new HashMap<Character, Float>());
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('q'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('a'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('s'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('d'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('e'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('2'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('3'), Float.valueOf(.5f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('@'), Float.valueOf(.3f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('#'), Float.valueOf(.3f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('r'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('f'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('c'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('x'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('z'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('4'), Float.valueOf(.25f));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('z'), Float.valueOf(.1f));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('q'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('a'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('s'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('d'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('e'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('2'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('3'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('@'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('#'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('r'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('f'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('c'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('z'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('4'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('1'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('!'), Float.valueOf(reduce2WeightShift));
+		 tmp.get(Character.valueOf('w')).put(Character.valueOf('$'), Float.valueOf(reduce2WeightShift));
+		 tmp.put(Character.valueOf('e'), new HashMap<Character, Float>());
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('w'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('s'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('d'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('f'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('r'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('2'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('3'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('4'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('@'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('#'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('$'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('5'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('t'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('g'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('v'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('c'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('z'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('a'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('q'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('1'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('!'), Float.valueOf(reduce2WeightShift));
+		 tmp.get(Character.valueOf('e')).put(Character.valueOf('%'), Float.valueOf(reduce2WeightShift));
+		 tmp.put(Character.valueOf('r'), new HashMap<Character, Float>());
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('e'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('d'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('f'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('g'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('t'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('5'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('4'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('3'), Float.valueOf(reduce1Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('%'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('$'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('#'), Float.valueOf(reduce1WeightShift));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('w'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('s'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('c'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('v'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('b'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('h'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('y'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('6'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('2'), Float.valueOf(reduce2Weight));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('^'), Float.valueOf(reduce2WeightShift));
+		 tmp.get(Character.valueOf('r')).put(Character.valueOf('@'), Float.valueOf(reduce2WeightShift));
+		 tmp.put(Character.valueOf('t'), new HashMap<Character, Float>());
+		 tmp.get(Character.valueOf('t')).put(Character.valueOf('y'), Float.valueOf(reduce1Weight));
 		 USEngKeyboard = tmp;
 	}
 	
@@ -136,8 +204,8 @@ public class NormalizedTypoDifference implements Algorithm {
 				editTypeIndex = MathHelper.minIntIndex(editCosts);
 				if(editTypeIndex == 2) {
 					try {
-						System.out.println(small.charAt(i)+" => "+big.charAt(j));
-						decost += keyWeights.get(Character.valueOf(small.charAt(i))).get(Character.valueOf(big.charAt(j))).floatValue();
+						System.out.println(Character.toLowerCase(small.charAt(i))+" => "+Character.toLowerCase(big.charAt(j)));
+						decost += keyWeights.get(Character.valueOf(Character.toLowerCase(small.charAt(i)))).get(Character.valueOf(Character.toLowerCase(big.charAt(j)))).floatValue();
 					} catch(NullPointerException e) {
 						// mapping must for small[i] to big[j] must not exist - ignore
 					}
@@ -152,6 +220,6 @@ public class NormalizedTypoDifference implements Algorithm {
 			prev = dist;
 			dist = tmp; // reuse existing memory
 		}
-		return prev[sLen];
+		return prev[sLen]-decost;
 	}
 }
