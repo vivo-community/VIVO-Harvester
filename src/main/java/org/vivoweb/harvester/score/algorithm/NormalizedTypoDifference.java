@@ -207,6 +207,8 @@ public class NormalizedTypoDifference implements Algorithm {
 		
 		reduce1Map.put(';', "op['/.l");
 		reduce1ShiftMap.put(';',"OP{\"?>L");
+		reduce1Map.put(':',"OP{\"?>L");
+		reduce1ShiftMap.put(':', "op['/.l");
 		
 		Map<Character, Map<Character, Float>> tmp = new HashMap<Character, Map<Character,Float>>();
 		for(Character c : reduce1Map.keySet()) {
