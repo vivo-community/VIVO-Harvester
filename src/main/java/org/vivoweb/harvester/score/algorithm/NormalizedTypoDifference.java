@@ -13,28 +13,7 @@ public class NormalizedTypoDifference implements Algorithm {
 	
 	@Override
 	public float calculate(CharSequence itemX, CharSequence itemY) {
-		int score = 0;
-		char[] x = itemX.toString().toCharArray();
-		char[] y = itemY.toString().toCharArray();
-		int lenDiff = x.length - y.length;
-		if(lenDiff == 0) {
-			//same length
-			
-		} else if(lenDiff > 0) {
-			//x is longer
-			
-		} else if(lenDiff < 0) {
-			//y is longer
-			
-		}
-		for(int a = 0; a < x.length; a++) {
-			for(int b = 0; b < y.length; b++) {
-				if(x[a] == y[b]) {
-					score++;
-				}
-			}
-		}
-		return 0f;
+		return getTypoDamerauLevenshtein(itemX, itemY, USEngKeyboard);
 	}
 	
 	/**
