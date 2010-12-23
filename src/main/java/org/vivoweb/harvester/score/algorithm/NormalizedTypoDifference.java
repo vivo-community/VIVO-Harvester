@@ -319,8 +319,8 @@ public class NormalizedTypoDifference implements Algorithm {
 				editTypeIndex = MathHelper.minIntIndex(editCosts);
 				if(editTypeIndex == 2) {
 					try {
-						System.out.println(Character.toLowerCase(small.charAt(i))+" => "+Character.toLowerCase(big.charAt(j)));
-						decost += keyWeights.get(Character.valueOf(Character.toLowerCase(small.charAt(i)))).get(Character.valueOf(Character.toLowerCase(big.charAt(j)))).floatValue();
+						System.out.println(small.charAt(i)+" => "+big.charAt(j));
+						decost += keyWeights.get(Character.valueOf(small.charAt(i))).get(Character.valueOf(big.charAt(j))).floatValue();
 					} catch(NullPointerException e) {
 						// mapping must for small[i] to big[j] must not exist - ignore
 					}
