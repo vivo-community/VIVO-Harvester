@@ -46,73 +46,216 @@ public class NormalizedTypoDifference implements Algorithm {
 	 */
 	public static final float reduce1WeightShift = .3f;
 	/**
-	 * Reduction for things only 2 keys away
-	 */
-	public static final float reduce2Weight = .25f;
-	/**
-	 * Reduction for things only 2 keys away and shifted (for numbers)
-	 */
-	public static final float reduce2WeightShift = .1f;
-	/**
 	 * US Enlgish Standard Keyboard Proximity Map
 	 */
 	public static final Map<Character,Map<Character,Float>> USEngKeyboard;
 	static {
 		Map<Character,String> reduce1Map = new HashMap<Character, String>();
 		Map<Character,String> reduce1ShiftMap = new HashMap<Character, String>();
-		Map<Character,String> reduce2Map = new HashMap<Character, String>();
-		Map<Character,String> reduce2ShiftMap = new HashMap<Character, String>();
+		
+		reduce1Map.put('`', "1q");
+		reduce1ShiftMap.put('`', "!Q");
+		reduce1Map.put('~', "!Q");
+		reduce1ShiftMap.put('~', "1q");
+		
+		reduce1Map.put('1', "2wq`");
+		reduce1ShiftMap.put('1', "@WQ~");
+		reduce1Map.put('!', "@WQ~");
+		reduce1ShiftMap.put('!', "2wq`");
+		
+		reduce1Map.put('2', "3ewq1");
+		reduce1ShiftMap.put('2', "#EWQ!");
+		reduce1Map.put('@', "#EWQ!");
+		reduce1ShiftMap.put('@', "3ewq1");
+		
+		reduce1Map.put('3', "4rew2");
+		reduce1ShiftMap.put('3', "$REW@");
+		reduce1Map.put('#', "$REW@");
+		reduce1ShiftMap.put('#', "4rew2");
+		
+		reduce1Map.put('4', "5tre3");
+		reduce1ShiftMap.put('4', "%TRE#");
+		reduce1Map.put('$', "%TRE#");
+		reduce1ShiftMap.put('$', "5tre3");
+		
+		reduce1Map.put('5', "6ytr4");
+		reduce1ShiftMap.put('5', "^YTR$");
+		reduce1Map.put('%', "^YTR$");
+		reduce1ShiftMap.put('%', "6ytr4");
+		
+		reduce1Map.put('6', "7uyt5");
+		reduce1ShiftMap.put('6', "&UYT%");
+		reduce1Map.put('^', "&UYT%");
+		reduce1ShiftMap.put('^', "7uyt5");
+		
+		reduce1Map.put('7', "8iuy6");
+		reduce1ShiftMap.put('7', "*IUY^");
+		reduce1Map.put('&', "*IUY^");
+		reduce1ShiftMap.put('&', "8iuy6");
+		
+		reduce1Map.put('8', "9oiu7");
+		reduce1ShiftMap.put('8', "(OIU&");
+		reduce1Map.put('*', "(OIU&");
+		reduce1ShiftMap.put('*', "9oiu7");
+		
+		reduce1Map.put('9', "0poi8");
+		reduce1ShiftMap.put('9', ")POI*");
+		reduce1Map.put('(', ")POI*");
+		reduce1ShiftMap.put('(', "0poi8");
+		
+		reduce1Map.put('0', "-[po9");
+		reduce1ShiftMap.put('0', "_{PO(");
+		reduce1Map.put(')', "_{PO(");
+		reduce1ShiftMap.put(')', "-[po9");
+		
+		reduce1Map.put('-', "=][p0");
+		reduce1ShiftMap.put('-', "+}{P)");
+		reduce1Map.put('_', "+}{P)");
+		reduce1ShiftMap.put('_', "=][p0");
+		
+		reduce1Map.put('=', "][-");
+		reduce1ShiftMap.put('=', "}{_");
+		reduce1Map.put('+', "}{_");
+		reduce1ShiftMap.put('+', "][-");
+		
 		reduce1Map.put('q', "wsa12");
-		reduce1ShiftMap.put('q', "!@");
+		reduce1ShiftMap.put('q', "WSA!@");
+		
+		reduce1Map.put('w', "qasde321");
+		reduce1ShiftMap.put('w', "QASDE#@!");
+		
+		reduce1Map.put('e', "rfdsw234");
+		reduce1ShiftMap.put('e', "RFDSW@#$");
+		
+		reduce1Map.put('r', "tgfde345");
+		reduce1ShiftMap.put('r', "TGFDE#$%");
+		
+		reduce1Map.put('t', "yhgfr456");
+		reduce1ShiftMap.put('t', "YHGFR$%^");
+		
+		reduce1Map.put('y', "ujhgt567");
+		reduce1ShiftMap.put('y', "UJHGT%^&");
+		
+		reduce1Map.put('u', "ikjhy678");
+		reduce1ShiftMap.put('u', "IKJHY^&*");
+		
+		reduce1Map.put('i', "olkju789");
+		reduce1ShiftMap.put('i', "OLKJU&*(");
+		
+		reduce1Map.put('o', "p;lki890");
+		reduce1ShiftMap.put('o', "P:LKI*()");
+		
+		reduce1Map.put('p', "[';lo90-");
+		reduce1ShiftMap.put('p', "{\":LO()_");
+		
+		reduce1Map.put('[', "]';p0-=");
+		reduce1ShiftMap.put('[', "}\":P)_+");
+		reduce1Map.put('{', "}\":P)_+");
+		reduce1ShiftMap.put('{', "]';p0-=");
+		
+		reduce1Map.put(']', "\'[-=");
+		reduce1ShiftMap.put(']', "|\"{_+");
+		reduce1Map.put('}', "|\"{+");
+		reduce1ShiftMap.put('}', "\'[=");
+		
+		reduce1Map.put('\'', "]=");
+		reduce1ShiftMap.put('\'', "}+");
+		reduce1Map.put('|', "}+");
+		reduce1ShiftMap.put('|', "]=");
 		
 		reduce1Map.put('/', ".;'");
-		reduce1ShiftMap.put('/',"?>:\"");		
+		reduce1ShiftMap.put('/',"?>:\"");
+		reduce1Map.put('?', ">:\"");
+		reduce1ShiftMap.put('?', ".;'");
+		
 		reduce1Map.put('.', ",l;/");
-		reduce1ShiftMap.put('.',"<L:?");		
+		reduce1ShiftMap.put('.',"<L:?");
+		reduce1Map.put('>', "<L:?");
+		reduce1ShiftMap.put('>', ",l;/");
+		
 		reduce1Map.put(',', "mkl.");
-		reduce1ShiftMap.put(',',"MKL>");		
+		reduce1ShiftMap.put(',',"MKL>");
+		reduce1Map.put('<', "MKL>");
+		reduce1ShiftMap.put('<', "mkl.");
+		
 		reduce1Map.put('m', "njk,");
-		reduce1ShiftMap.put('m',"NJK<");		
+		reduce1ShiftMap.put('m',"NJK<");
+		
 		reduce1Map.put('n', "bhjm");
-		reduce1ShiftMap.put('n',"BHJM");		
+		reduce1ShiftMap.put('n',"BHJM");
+		
 		reduce1Map.put('b', "vghn");
-		reduce1ShiftMap.put('b',"VGHN");		
+		reduce1ShiftMap.put('b',"VGHN");
+		
 		reduce1Map.put('v', "cfgb");
-		reduce1ShiftMap.put('v',"CFGB");		
+		reduce1ShiftMap.put('v',"CFGB");
+		
 		reduce1Map.put('c', "xdfv");
-		reduce1ShiftMap.put('c',"XDFV");		
+		reduce1ShiftMap.put('c',"XDFV");
+		
 		reduce1Map.put('x', "zsdc");
-		reduce1ShiftMap.put('x',"ZSDC");		
+		reduce1ShiftMap.put('x',"ZSDC");
+		
 		reduce1Map.put('z', "asx");
-		reduce1ShiftMap.put('z',"ASX");		
+		reduce1ShiftMap.put('z',"ASX");
+		
 		reduce1Map.put('a', "qwsxz");
-		reduce1ShiftMap.put('a',"QWSXZ");		
+		reduce1ShiftMap.put('a',"QWSXZ");
+		
 		reduce1Map.put('s', "qwedcxza");
-		reduce1ShiftMap.put('s',"QWEDCXZA");		
+		reduce1ShiftMap.put('s',"QWEDCXZA");
+		
 		reduce1Map.put('d', "werfvcxs");
-		reduce1ShiftMap.put('d',"WERFVCXS");		
+		reduce1ShiftMap.put('d',"WERFVCXS");
+		
 		reduce1Map.put('f', "ertgbvcd");
-		reduce1ShiftMap.put('f',"ERTGBVCD");		
+		reduce1ShiftMap.put('f',"ERTGBVCD");
+		
 		reduce1Map.put('g', "rtyhnbvf");
-		reduce1ShiftMap.put('g',"RTYHNBVF");		
+		reduce1ShiftMap.put('g',"RTYHNBVF");
+		
 		reduce1Map.put('h', "tyujmnbg");
-		reduce1ShiftMap.put('h',"TYUJMNBG");		
+		reduce1ShiftMap.put('h',"TYUJMNBG");
+		
 		reduce1Map.put('j', "yuik,mnh");
-		reduce1ShiftMap.put('j',"YUIK<MNH");		
+		reduce1ShiftMap.put('j',"YUIK<MNH");
+		
 		reduce1Map.put('k', "uiol.,mj");
-		reduce1ShiftMap.put('k',"UIOL><MJ");		
+		reduce1ShiftMap.put('k',"UIOL><MJ");
+		
 		reduce1Map.put('l', "iop;/.,k");
-		reduce1ShiftMap.put('l',"IOP:?><K");		
+		reduce1ShiftMap.put('l',"IOP:?><K");
+		
 		reduce1Map.put(';', "op['/.l");
-		reduce1ShiftMap.put(';',"OP{\"?>L");		
-		reduce1Map.put('\'', "p[];/");
-		reduce1ShiftMap.put('\'',"P{}:?");
+		reduce1ShiftMap.put(';',"OP{\"?>L");
 		
 		Map<Character, Map<Character, Float>> tmp = new HashMap<Character, Map<Character,Float>>();
 		for(Character c : reduce1Map.keySet()) {
-			tmp.put(c, new HashMap<Character, Float>());
+			// handle uppercase variants
+			char d = Character.toUpperCase(c);
+			if(!tmp.containsKey(c)) {
+				tmp.put(c, new HashMap<Character, Float>());
+			}
+			if(!tmp.containsKey(d)) {
+				tmp.put(d, new HashMap<Character, Float>());
+			}
 			for(char x : reduce1Map.get(c).toCharArray()) {
+				tmp.get(d).put(x, reduce1WeightShift);
 				tmp.get(c).put(x, reduce1Weight);
+			}
+		}
+		for(Character c : reduce1ShiftMap.keySet()) {
+			// handle uppercase variants
+			char d = Character.toUpperCase(c);
+			if(!tmp.containsKey(c)) {
+				tmp.put(c, new HashMap<Character, Float>());
+			}
+			if(!tmp.containsKey(d)) {
+				tmp.put(d, new HashMap<Character, Float>());
+			}
+			for(char x : reduce1Map.get(c).toCharArray()) {
+				tmp.get(c).put(x, reduce1WeightShift);
+				tmp.get(d).put(x, reduce1Weight);
 			}
 		}
 		USEngKeyboard = tmp;
