@@ -8,6 +8,7 @@ import org.vivoweb.harvester.util.MathHelper;
  * Calculates the difference of two strings and accounts for typos
  * @author Christopher Haines hainesc@ctrip.ufl.edu
  */
+@SuppressWarnings("boxing")
 public class NormalizedTypoDifference implements Algorithm {
 	
 	@Override
@@ -57,93 +58,22 @@ public class NormalizedTypoDifference implements Algorithm {
 	 */
 	public static final Map<Character,Map<Character,Float>> USEngKeyboard;
 	static {
-		 Map<Character, Map<Character, Float>> tmp = new HashMap<Character, Map<Character,Float>>();
-		 tmp.put(Character.valueOf('q'), new HashMap<Character, Float>());
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('w'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('a'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('s'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('1'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('2'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('!'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('@'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('3'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('e'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('d'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('z'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('`'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('~'), Float.valueOf(reduce2WeightShift));
-		 tmp.get(Character.valueOf('q')).put(Character.valueOf('#'), Float.valueOf(reduce2WeightShift));
-		 tmp.put(Character.valueOf('w'), new HashMap<Character, Float>());
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('q'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('a'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('s'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('d'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('e'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('2'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('3'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('@'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('#'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('r'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('f'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('c'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('z'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('4'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('1'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('!'), Float.valueOf(reduce2WeightShift));
-		 tmp.get(Character.valueOf('w')).put(Character.valueOf('$'), Float.valueOf(reduce2WeightShift));
-		 tmp.put(Character.valueOf('e'), new HashMap<Character, Float>());
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('w'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('s'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('d'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('f'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('r'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('2'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('3'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('4'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('@'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('#'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('$'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('5'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('t'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('g'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('v'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('c'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('z'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('a'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('q'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('1'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('!'), Float.valueOf(reduce2WeightShift));
-		 tmp.get(Character.valueOf('e')).put(Character.valueOf('%'), Float.valueOf(reduce2WeightShift));
-		 tmp.put(Character.valueOf('r'), new HashMap<Character, Float>());
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('e'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('d'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('f'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('g'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('t'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('5'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('4'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('3'), Float.valueOf(reduce1Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('%'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('$'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('#'), Float.valueOf(reduce1WeightShift));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('w'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('s'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('x'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('c'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('v'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('b'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('h'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('y'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('6'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('2'), Float.valueOf(reduce2Weight));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('^'), Float.valueOf(reduce2WeightShift));
-		 tmp.get(Character.valueOf('r')).put(Character.valueOf('@'), Float.valueOf(reduce2WeightShift));
-		 tmp.put(Character.valueOf('t'), new HashMap<Character, Float>());
-		 tmp.get(Character.valueOf('t')).put(Character.valueOf('y'), Float.valueOf(reduce1Weight));
-		 USEngKeyboard = tmp;
+		Map<Character,String> reduce1Map = new HashMap<Character, String>();
+		Map<Character,String> reduce1ShiftMap = new HashMap<Character, String>();
+		Map<Character,String> reduce2Map = new HashMap<Character, String>();
+		Map<Character,String> reduce2ShiftMap = new HashMap<Character, String>();
+		reduce1Map.put('q', "wsa12");
+		reduce1ShiftMap.put('q', "!@");
+		reduce2Map.put('q', "edxz3`");
+		reduce2ShiftMap.put('q', "#~");
+		Map<Character, Map<Character, Float>> tmp = new HashMap<Character, Map<Character,Float>>();
+		for(Character c : reduce1Map.keySet()) {
+			tmp.put(c, new HashMap<Character, Float>());
+			for(char x : reduce1Map.get(c).toCharArray()) {
+				tmp.get(c).put(x, reduce1Weight);
+			}
+		}
+		USEngKeyboard = tmp;
 	}
 	
 	/**
