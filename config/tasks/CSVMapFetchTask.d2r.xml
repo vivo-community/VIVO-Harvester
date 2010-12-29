@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<d2r:Map xmlns:d2r="http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RMap/0.1#" d2r:versionInfo="$Id: iswcMap.d2r,xml, v 0.1 2003/01/15 19:44:09 Chris Exp $">
+	<d2r:ProcessorMessage d2r:outputFormat="RDF/XML"/>
+	<d2r:DBConnection />
+	<d2r:Namespace d2r:prefix="owl" d2r:namespace="http://www.w3.org/2002/07/owl#"/>
+	<d2r:Namespace d2r:prefix="rdf" d2r:namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+	<d2r:Namespace d2r:prefix="xsd" d2r:namespace="http://www.w3.org/2001/XMLSchema#"/>
+	<d2r:Namespace d2r:prefix="rdfs" d2r:namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+	<d2r:Namespace d2r:prefix="core" d2r:namespace="http://vivoweb.org/ontology/core#"/>
+	<d2r:Namespace d2r:prefix="foaf" d2r:namespace="http://xmlns.com/foaf/0.1/"/>
+
+	<!-- Person -->
+	<!-- Note: d2r:groupBy and d2r:column Strings needs to be ALL CAPITALS -->
+	<!-- Names of the csv columns must match the d2r:column values -->
+	<d2r:ClassMap d2r:type="foaf:Person" 
+		d2r:file="files/person.csv" 
+		d2r:groupBy="ID"  
+		d2r:uriPattern="http://vivo.med.cornell.edu/individual/@@ID@@">
+		<d2r:DatatypePropertyBridge d2r:property="rdfs:label" d2r:column="NAME"/>
+	</d2r:ClassMap>
+
+</d2r:Map>

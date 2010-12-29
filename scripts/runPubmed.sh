@@ -10,8 +10,9 @@
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
 # Set working directory
-cd `dirname $(readlink -f $0)`
-cd ..
+## cd `dirname $(readlink -f $0)`
+## cd ..
+cd /usr/share/harvester-1.0-beta-source
 
 HARVESTER_TASK=pubmed
 
@@ -90,7 +91,8 @@ $Match $INPUT $SCORE -t .5
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.scored.$date.tar.gz XMLVault/h2Pubmed/scored
+## tar -czpf backups/pubmed.scored.$date.tar.gz XMLVault/h2Pubmed/scored
+tar -czpf backups/pubmed.scored.$date.tar.gz XMLVault/h2Pubmed/score
 rm -rf backups/pubmed.scored.latest.tar.gz
 ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 # uncomment to restore previous H2 score models
@@ -108,10 +110,10 @@ $ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http:
 $ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%T`
-mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.pretransfer.$date.sql
-rm -rf backups/$DBNAME.pubmed.pretransfer.latest.sql
-ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.latest.sql
+## date=`date +%Y-%m-%d_%T`
+## mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.pretransfer.$date.sql
+## rm -rf backups/$DBNAME.pubmed.pretransfer.latest.sql
+## ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.latest.sql
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
 # Find Subtractions
@@ -128,11 +130,11 @@ $Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Subtractions.rdf.xml 
 $Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Additions.rdf.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%T`
-mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.posttransfer.$date.sql
-rm -rf backups/$DBNAME.pubmed.posttransfer.latest.sql
-ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.latest.sql
+## date=`date +%Y-%m-%d_%T`
+## mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.posttransfer.$date.sql
+## rm -rf backups/$DBNAME.pubmed.posttransfer.latest.sql
+## ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.latest.sql
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-/etc/init.d/tomcat restart
+## /etc/init.d/tomcat restart

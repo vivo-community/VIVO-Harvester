@@ -25,6 +25,7 @@ fi
 # define shorthand aliases
 Diff="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Diff -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.diff.Diff"
 D2RMapFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=D2RMapFetch -Dprocess-task=D2RMapFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch"
+CSVMapFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=CSVMapFetch -Dprocess-task=CSVMapFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.CSVMapFetch"
 JDBCFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=JDBCFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.JDBCFetch"
 NIHFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=NIHFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.NIHFetch"
 NLMJournalFetch="java -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=NLMJournalFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.NLMJournalFetch"
