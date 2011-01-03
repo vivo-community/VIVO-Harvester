@@ -20,7 +20,7 @@ INPUT="-i config/jenaModels/h2.xml -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;
 OUTPUT="-o config/jenaModels/h2.xml -O modelName=Pubmed -O dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB"
 VIVO="-v config/jenaModels/VIVO.xml"
 SCORE="-s config/jenaModels/h2.xml -S dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB -S modelName=PubmedScore"
-MATCHEDINPUT="-i config/jenaModels/h2.xml -i modelName=PubmedScore -i dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB"
+MATCHEDINPUT="-i config/jenaModels/h2.xml -I modelName=PubmedScore -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB"
 
 #variables for scoring
 WORKEMAIL="-A wEmail=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F wEmail=http://vivoweb.org/ontology/core#workEmail -W wEmail=.4 -P wEmail=http://vivoweb.org/ontology/score#workEmail"
