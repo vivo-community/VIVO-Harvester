@@ -11,10 +11,12 @@
 	Score
 		Added new algorithim framework
 			Availible algorithims to score against:
-				Levenshtein
-				Soundex
-				DoubleMetaphone
-				EqualityTest
+				Levenshtein Difference
+				Damerau-Levenshtein Difference
+				Typo Difference (Damerau-Levenshtein w/ Typo evaluation weighting)
+				SoundExDifference
+				DoubleMetaphone Difference
+				EqualityTest (simple 100% match)
 		Removed exact match, foriegnkey match, and name match
 		Removed output model for scoring
 		Combined previous functions along with cmw python code to create weighted search
