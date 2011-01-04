@@ -32,7 +32,7 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 
 /**
- * Fetches rdf data from a JDBC database
+ * Fetches rdf data from a JDBC database placing the data in the supplied record handler.
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class JDBCFetch {
@@ -61,7 +61,7 @@ public class JDBCFetch {
 	 */
 	private Map<String, List<String>> dataFields = null;
 	/**
-	 * set of tablenames
+	 * set of table names
 	 */
 	private Set<String> tableNames = null;
 	/**
@@ -102,6 +102,7 @@ public class JDBCFetch {
 	
 	/**
 	 * Perform post-construction data prep and validation
+	 * Prevents null pointer exceptions
 	 */
 	private void prep() {
 		if(this.tableNames == null) {
@@ -158,7 +159,7 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Constructor
+	 * Command line Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
@@ -167,7 +168,7 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Constructor
+	 * Arglist Constructor
 	 * @param opts option set of parsed args
 	 * @throws IOException error creating task
 	 */
@@ -178,6 +179,8 @@ public class JDBCFetch {
 		} catch(ClassNotFoundException e) {
 			throw new IOException(e.getMessage(), e);
 		}
+		
+		// Setting the database connection parameters
 		String connLine = opts.get("c");
 		String username = opts.get("u");
 		String password = opts.get("p");
@@ -191,6 +194,7 @@ public class JDBCFetch {
 			this.fromClauses = opts.getValueMap("T");
 		}
 		
+		// Set the data fields map according to the command line -F values
 		if(opts.has("F")) {
 			this.dataFields = new HashMap<String, List<String>>();
 			Map<String,String> fields = opts.getValueMap("F");
@@ -199,6 +203,7 @@ public class JDBCFetch {
 			}
 		}
 		
+		// Set the ID fields map according to the command line -I values		
 		if(opts.has("I")) {
 			this.idFields = new HashMap<String, List<String>>();
 			Map<String,String> ids = opts.getValueMap("I");
@@ -207,6 +212,7 @@ public class JDBCFetch {
 			}
 		}
 		
+		// Sets a map of the SQL Where clauses to be applied
 		if(opts.has("W")) {
 			this.whereClauses = new HashMap<String, List<String>>();
 			Map<String,String> wheres = opts.getValueMap("W");
@@ -214,6 +220,7 @@ public class JDBCFetch {
 				this.whereClauses.put(tableName, Arrays.asList(wheres.get(tableName).split("\\s?,\\s?")));
 			}
 		}
+		
 		
 		if(opts.has("R")) {
 			this.relations = new HashMap<String, Map<String, String>>();
@@ -232,10 +239,12 @@ public class JDBCFetch {
 			}
 		}
 		
+		// Set SQl style query string from -Q value
 		if(opts.has("Q")) {
 			this.queryStrings = opts.getValueMap("Q");
 		}
 		
+		// Establishing the database connection with provided parameters.
 		Connection dbConn;
 		try {
 			dbConn = DriverManager.getConnection(connLine, username, password);
@@ -249,7 +258,7 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Constructor
+	 * Library style Constructor
 	 * @param dbConn The database Connection
 	 * @param rh Record Handler to write records to
 	 * @param uriNS the uri namespace to use
