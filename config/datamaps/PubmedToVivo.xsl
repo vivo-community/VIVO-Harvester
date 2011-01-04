@@ -125,7 +125,7 @@
 		<xsl:apply-templates select="MedlineCitation/Article/AuthorList" mode="fullAuthor">
 			<xsl:with-param name="email" select="$emailAddress" />
 		</xsl:apply-templates>
-		<xsl:apply-templates select="MedlineCitation/MeshHeadingList" mode="fullTerm" />	
+		<!-- <xsl:apply-templates select="MedlineCitation/MeshHeadingList" mode="fullTerm" /> -->
 		<xsl:apply-templates select="MedlineCitation/Article" mode="fullJournal" />
 		<!-- <xsl:apply-templates select="MedlineCitation/DateCreated" mode="fullCreated" />
 		<xsl:apply-templates select="MedlineCitation/DateCompleted"  mode="fullCompleted" />
