@@ -72,6 +72,7 @@ public class ChangeNamespace {
 		
 		this.model.printConnectionParameters();
 		this.vivo.printConnectionParameters();
+		//TODO Nicholas REMOVE DEBUG STATEMENTS
 		log.info("vivo size: " + this.vivo.size());
 		log.info("input size: " + this.model.size());
 	}
@@ -87,7 +88,7 @@ public class ChangeNamespace {
 		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V"));
 		this.oldNamespace = argList.get("o");
 		this.newNamespace = argList.get("n");
-		
+		//TODO Nicholas REMOVE DEBUG STATEMENTS		
 		log.info("vivo size: " + this.vivo.size());
 		log.info("input size: " + this.model.size());
 	}
