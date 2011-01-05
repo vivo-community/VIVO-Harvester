@@ -30,6 +30,8 @@ public class ChangeNamespaceTest extends TestCase {
 	private String namespace;
 	/** */
 	private String newNamespace;
+	/** */
+	private String[] args = new String[9];
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -38,6 +40,16 @@ public class ChangeNamespaceTest extends TestCase {
 		this.newNamespace = "http://vivo.test.edu/individual/";
 		this.model = new SDBJenaConnect("jdbc:h2:mem:testChNSh2change", "sa", "", "H2", "org.h2.Driver", "layout2", "testChNSchange");
 		this.vivo = new RDBJenaConnect("jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSvivo");
+		//Preload arguments
+		this.args[0] = "-v config/jenaModels/h2.xml";
+		this.args[1] = "-V modelName=testChNSvivo";
+		this.args[2] = "-V dbUrl=jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB";
+		this.args[3] = "-V dbType=HSQLDB";
+		this.args[4] = "-i config/jenaModels/h2.xml";
+		this.args[5] = "-I modelName=testChNSchange";
+		this.args[6] = "-I dbUrl=jdbc:h2:mem:testChNSh2change";
+		this.args[7] = "-n " + this.namespace;
+		this.args[8] = "-o " + this.newNamespace;
 		String vivoData = ""+
 		"<rdf:RDF"+
 		"\n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""+
@@ -134,8 +146,7 @@ public class ChangeNamespaceTest extends TestCase {
 		this.model.exportRdfToStream(baos);
 		log.debug("VIVO");
 		log.debug(baos.toString());
-		ChangeNamespace change = new ChangeNamespace(this.model,this.vivo,this.namespace,this.newNamespace);
-		change.execute();
+		new ChangeNamespace(this.args).execute();
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
 		log.debug("Changed VIVO");
@@ -155,6 +166,38 @@ public class ChangeNamespaceTest extends TestCase {
 			assertTrue(ns.equals(this.newNamespace) || ns.equals("http://norename.blah.com/blah/"));
 		}
 		log.info("END testArgChangeNS");
+	}
+	
+	/**
+	 * @throws IOException ioexception
+	 */
+	public void testObjChangeNS() throws IOException {
+		log.info("BEGIN testObjChangeNS");
+		ByteArrayOutputStream baos;
+		baos = new ByteArrayOutputStream();
+		this.model.exportRdfToStream(baos);
+		log.debug("VIVO");
+		log.debug(baos.toString());
+		new ChangeNamespace(this.model,this.vivo,this.namespace,this.newNamespace).execute();
+		baos = new ByteArrayOutputStream();
+		this.model.exportRdfToStream(baos);
+		log.debug("Changed VIVO");
+		log.debug(baos.toString());
+		assertFalse(this.model.containsURI(this.namespace));
+		String query = ""+
+		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"+"\n"+
+		"PREFIX localVivo: <http://vivo.test.edu/ontology/vivo-test/>"+"\n"+
+		"SELECT ?uri"+"\n"+
+		"WHERE {"+"\n\t"+
+			"?uri localVivo:uniqueId ?id ."+"\n\t"+
+		"}";
+		ResultSet rs = this.model.executeSelectQuery(query);
+		assertTrue(rs.hasNext());
+		while(rs.hasNext()) {
+			String ns = rs.next().getResource("uri").getNameSpace();
+			assertTrue(ns.equals(this.newNamespace) || ns.equals("http://norename.blah.com/blah/"));
+		}
+		log.info("END testObjChangeNS");
 	}
 	
 	

@@ -741,4 +741,15 @@ public abstract class JenaConnect {
 	public String getModelName() {
 		return this.modelName;
 	}
+	
+	/**
+	 * Output the connection information
+	 */
+	public void printConnectionParameters() {
+		JenaConnect.log.info("'modelName' - '" + this.modelName + "'");
+		JenaConnect.log.info("'dbURL' - '" + this.dbUrl + "'");
+		JenaConnect.log.info("'dbType' - '" + this.dbType + "'");
+		JenaConnect.log.info("'dbClass' - '" + this.dbClass + "'");
+	}
+	
 }

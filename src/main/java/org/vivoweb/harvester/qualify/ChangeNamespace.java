@@ -70,6 +70,8 @@ public class ChangeNamespace {
 		this.oldNamespace = oldName;
 		this.newNamespace = newName;
 		
+		this.model.printConnectionParameters();
+		this.vivo.printConnectionParameters();
 		log.info("vivo size: " + this.vivo.size());
 		log.info("input size: " + this.model.size());
 	}
@@ -135,6 +137,7 @@ public class ChangeNamespace {
 			throw new IllegalArgumentException("new namespace cannot be empty");
 		}
 		if (oldNamespace.trim().equals(newNamespace.trim())) {
+			log.trace("namespaces are equal, nothing to change");
 			return;
 		}
 		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim());
