@@ -55,7 +55,7 @@ public class JDBCFetch {
 	/**
 	 * Mapping of tablename to mapping of fieldname to tablename
 	 */
-	private Map<String, Map<String, String>> relations = null;
+	private Map<String, Map<String, String>> fkRelations = null;
 	/**
 	 * Mapping of tablename to list of datafields
 	 */
@@ -125,8 +125,8 @@ public class JDBCFetch {
 			this.tableNames.addAll(this.whereClauses.keySet());
 		}
 		
-		if(this.relations != null) {
-			this.tableNames.addAll(this.relations.keySet());
+		if(this.fkRelations != null) {
+			this.tableNames.addAll(this.fkRelations.keySet());
 		}
 		
 		if(this.queryStrings != null) {
@@ -221,20 +221,20 @@ public class JDBCFetch {
 			}
 		}
 		
-		
+		// settign manual foriegn key relations
 		if(opts.has("R")) {
-			this.relations = new HashMap<String, Map<String, String>>();
+			this.fkRelations = new HashMap<String, Map<String, String>>();
 			Map<String,String> rels = opts.getValueMap("R");
 			for(String tableName : rels.keySet()) {
-				if(!this.relations.containsKey(tableName)) {
-					this.relations.put(tableName, new HashMap<String, String>());
+				if(!this.fkRelations.containsKey(tableName)) {
+					this.fkRelations.put(tableName, new HashMap<String, String>());
 				}
 				for(String relLine : rels.get(tableName).split("\\s?,\\s?")) {
 					String[] relPair = relLine.split("\\s?~\\s?", 2);
 					if(relPair.length != 2) {
 						throw new IllegalArgumentException("Bad Relation Line: " + relLine);
 					}
-					this.relations.get(tableName).put(relPair[0], relPair[1]);
+					this.fkRelations.get(tableName).put(relPair[0], relPair[1]);
 				}
 			}
 		}
@@ -281,7 +281,7 @@ public class JDBCFetch {
 		this.dataFields = dataFields;
 		this.idFields = idFields;
 		this.whereClauses = whereClauses;
-		this.relations = relations;
+		this.fkRelations = relations;
 		this.uriNS = uriNS;
 		this.queryPre = queryPre;
 		this.querySuf = querySuf;
@@ -343,7 +343,7 @@ public class JDBCFetch {
 				ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
 				while(columnData.next()) {
 					String colName = columnData.getString("COLUMN_NAME");
-					if((getIDFields(tableName).size() > 1 || !getIDFields(tableName).contains(colName)) && !getRelationFields(tableName).containsKey(colName)) {
+					if((getIDFields(tableName).size() > 1 || !getIDFields(tableName).contains(colName)) && !getFkRelationFields(tableName).containsKey(colName)) {
 						this.dataFields.get(tableName).add(colName);
 					}
 				}
@@ -358,20 +358,20 @@ public class JDBCFetch {
 	 * @return the relation field mapping
 	 * @throws SQLException error connecting to DB
 	 */
-	private Map<String, String> getRelationFields(String tableName) throws SQLException {
-		if(this.relations == null || (this.queryStrings != null && this.queryStrings.containsKey(tableName))) {
-			this.relations = new HashMap<String, Map<String, String>>();
+	private Map<String, String> getFkRelationFields(String tableName) throws SQLException {
+		if(this.fkRelations == null || (this.queryStrings != null && this.queryStrings.containsKey(tableName))) {
+			this.fkRelations = new HashMap<String, Map<String, String>>();
 		}
-		if(!this.relations.containsKey(tableName)) {
-			this.relations.put(tableName, new HashMap<String, String>());
+		if(!this.fkRelations.containsKey(tableName)) {
+			this.fkRelations.put(tableName, new HashMap<String, String>());
 			if(this.queryStrings == null || !this.queryStrings.containsKey(tableName)) {
 				ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 				while(foreignKeys.next()) {
-					this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
+					this.fkRelations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
 				}
 			}
 		}
-		return this.relations.get(tableName);
+		return this.fkRelations.get(tableName);
 	}
 	
 	/**
@@ -453,7 +453,7 @@ public class JDBCFetch {
 			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
-		for(String relField : getRelationFields(tableName).keySet()) {
+		for(String relField : getFkRelationFields(tableName).keySet()) {
 			sb.append(getFieldPrefix());
 			if(multiTable && relField.split("\\.").length <= 1) {
 				sb.append(tableName);
@@ -596,14 +596,14 @@ public class JDBCFetch {
 					}
 					
 					// Relation Fields
-					for(String relationField : getRelationFields(tableName).keySet()) {
+					for(String relationField : getFkRelationFields(tableName).keySet()) {
 						// Field BEGIN
 						sb.append("    <");
 						sb.append(tableNS);
 						sb.append(":");
 						sb.append(relationField.replaceAll(" ", "_"));
 						sb.append(" rdf:resource=\"");
-						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
+						sb.append(this.buildTableRecordNS(getFkRelationFields(tableName).get(relationField)));
 						
 						// insert field value
 						sb.append("#id-" + rs.getString(relationField).trim());
@@ -708,14 +708,14 @@ public class JDBCFetch {
 					}
 					
 					// Relation Fields
-					for(String relationField : getRelationFields(tableName).keySet()) {
+					for(String relationField : getFkRelationFields(tableName).keySet()) {
 						// Field BEGIN
 						sb.append("    <");
 						sb.append(tableNS);
 						sb.append(":");
 						sb.append(relationField.replaceAll(" ", "_"));
 						sb.append(" rdf:resource=\"");
-						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
+						sb.append(this.buildTableRecordNS(getFkRelationFields(tableName).get(relationField)));
 						
 						// insert field value
 						sb.append("#id-" + rs.getString(relationField).trim());

@@ -22,6 +22,13 @@ else
   exit 1
 fi
 
+# Setting variables for cleaner script lines.
+$TEMPINPUT="-i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store"
+$SCOREDATA="-s config/jenaModels/h2.xml -S modelName=dsrScoreData -S dbUrl="jdbc:h2:XMLVault/h2dsr/All/store"
+$CNFLAGS="$TEMPINPUT -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/"
+$EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+
+
 # Execute Fetch
 rm -rf XMLVault/h2dsr/xml
 $JDBCFetch -X config/tasks/DSR-JDBCFetch.xml
@@ -41,23 +48,29 @@ tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 #tar -xzpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 
 # Execute score to match with existing VIVO
-# Matching on UF ID person
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -n http://vivoweb.org/harvest/dsr/person/ -r -c
+# The -n flag value is determined by the XLST file
+# The -A -W -F & -P flags need to be internally consistent per call
+# Scoring on UF ID person
+$Score -v config/jenaModels/VIVO.xml $TEMPINPUT $SCOREDATA -A ufid=$EQTEST -W ufid="1.0" -F ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -P ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -n http://vivoweb.org/harvest/dsr/person/
 
-# Matching on Dept ID
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://vivo.ufl.edu/ontology/vivo-ufl/deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -n http://vivoweb.org/harvest/dsr/org/ -r -c
+# Scoring on Dept ID
+$Score -v config/jenaModels/VIVO.xml $TEMPINPUT $SCOREDATA -A deptID=$EQTEST -W deptID="1.0" -F deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -P deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -n http://vivoweb.org/harvest/dsr/org/
 
-# Matching sponsors by labels
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -m http://www.w3.org/2000/01/rdf-schema#label=http://www.w3.org/2000/01/rdf-schema#label -n http://vivoweb.org/harvest/dsr/sponsor/ -r -c
+# Scoring sponsors by labels
+$Score -v config/jenaModels/VIVO.xml $TEMPINPUT $SCOREDATA -A label=$EQTEST -W label="1.0" -F label=http://www.w3.org/2000/01/rdf-schema#label -P label=http://www.w3.org/2000/01/rdf-schema#label -n http://vivoweb.org/harvest/dsr/sponsor/
 
-# Matching of PIs
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -n http://vivoweb.org/harvest/dsr/piRole/ -m http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -m http://vivoweb.org/ontology/core#roleIn=http://vivoweb.org/ontology/core#roleIn -m http://vivoweb.org/ontology/core#principalInvestigatorRoleOf=http://vivoweb.org/ontology/core#principalInvestigatorRoleOf -r -c
+# Scoring of PIs
+$Score -v config/jenaModels/VIVO.xml $TEMPINPUT $SCOREDATA -A type=$EQTEST -W type="1.0" -F type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -P type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -n http://vivoweb.org/harvest/dsr/piRole/
 
-# Matching of coPIs
-$Score -v config/jenaModels/VIVO.xml -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -n http://vivoweb.org/harvest/dsr/coPiRole/ -m http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -m http://vivoweb.org/ontology/core#roleIn=http://vivoweb.org/ontology/core#roleIn -m http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf=http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf -r -c
+# Scoring of coPIs
+$Score -v config/jenaModels/VIVO.xml $TEMPINPUT $SCOREDATA -A type=$EQTEST -W type="1.0" -F type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -P type=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -n http://vivoweb.org/harvest/dsr/coPiRole/
+
+# Find matches using scores and rename nodes to matching uri
+$Match -v config/jenaModels/VIVO.xml $TEMPINPUT $SCOREDATA -t"1.0" -r
 
 # Execute ChangeNamespace to get grants into current namespace
-$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/grant/
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/grant/
 # backup H2 change namesace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cngrant.$date.tar.gz XMLVault/h2dsr/All
@@ -68,7 +81,8 @@ ln -s dsr.cngrant.$date.tar.gz backups/dsr.cngrant.latest.tar.gz
 #tar -xzpf backups/dsr.cngrant.latest.tar.gz XMLVault/h2dsr/All
 
 # Execute ChangeNamespace to get orgs into current namespace
-$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/org/
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/org/
 # backup H2 change namesace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnorg.$date.tar.gz XMLVault/h2dsr/All
@@ -79,7 +93,8 @@ ln -s dsr.cnorg.$date.tar.gz backups/dsr.cnorg.latest.tar.gz
 #tar -xzpf backups/dsr.cnorg.latest.tar.gz XMLVault/h2dsr/All
 
 # Execute ChangeNamespace to get sponsors into current namespace
-$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/sponsor/
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/sponsor/
 # backup H2 change namesace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnsponsor.$date.tar.gz XMLVault/h2dsr/All
@@ -90,7 +105,8 @@ ln -s dsr.cnsponsor.$date.tar.gz backups/dsr.cnsponsor.latest.tar.gz
 #tar -xzpf backups/dsr.cnsponsor.latest.tar.gz XMLVault/h2dsr/All
 
 # Execute ChangeNamespace to get people into current namespace
-$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/person/
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/person/
 # backup H2 change namesace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnpeople.$date.tar.gz XMLVault/h2dsr/All
@@ -101,7 +117,8 @@ ln -s dsr.cnpeople.$date.tar.gz backups/dsr.cnpeople.latest.tar.gz
 #tar -xzpf backups/dsr.cnpeople.latest.tar.gz XMLVault/h2dsr/All
 
 # Execute ChangeNamespace to get PI roles into current namespace
-$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/piRole/
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/piRole/
 # backup H2 change namesace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnpirole.$date.tar.gz XMLVault/h2dsr/All
@@ -112,7 +129,8 @@ ln -s dsr.cnpirole.$date.tar.gz backups/dsr.cnpirole.latest.tar.gz
 #tar -xzpf backups/dsr.cnpirole.latest.tar.gz XMLVault/h2dsr/All
 
 # Execute ChangeNamespace to get co-PI roles into current namespace
-$ChangeNamespace -i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store;MODE=HSQLDB" -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/dsr/coPiRole/
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/coPiRole/
 # backup H2 change namesace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cncopirole.$date.tar.gz XMLVault/h2dsr/All

@@ -10,6 +10,8 @@ package org.vivoweb.harvester.score.algorithm;
 
 /**
  * Interface for Score algorithms
+ * 
+ * Using this standardized interface allows any custom algorithms to be added easily
  * @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
  * @author Stephen Williams svwilliams@ctrip.ufl.edu
  * @author Christopher Haines hainesc@ctrip.ufl.edu
