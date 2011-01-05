@@ -66,10 +66,10 @@ ln -s ps.all.$date.tar.gz backups/ps.all.latest.tar.gz
 # uncomment to restore previous H2 transfer Model
 #tar -xzpf backups/ps.all.latest.tar.gz XMLVault/h2ps/all
 
-$SCOREINPUT="-i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl=jdbc:h2:XMLVault/h2ps/all/store"
-$SCOREDATA="-s config/jenaModels/h2.xml -S modelName=peopleSoftScoreData -S dbUrl=jdbc:h2:XMLVault/h2ps/score/store"
-$SCOREMODELS="$SCOREINPUT -v config/jenaModels/VIVO.xml $SCOREDATA"
-$EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+SCOREINPUT="-i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl=jdbc:h2:XMLVault/h2ps/all/store"
+SCOREDATA="-s config/jenaModels/h2.xml -S modelName=peopleSoftScoreData -S dbUrl=jdbc:h2:XMLVault/h2ps/score/store"
+SCOREMODELS="$SCOREINPUT -v config/jenaModels/VIVO.xml $SCOREDATA"
+EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 # Execute Score for People
 $Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/person/ -Aufid=$EQTEST -Wufid="1.0" -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid
 # Execute Score for Departments

@@ -278,7 +278,7 @@ public class Score {
 				RDFNode os = solution.get("os_"+runName);
 				RDFNode op = solution.get("op_"+runName);
 				log.trace("os_"+runName+": '"+os+"'");
-				log.trace("op_"+runName+": "+op+"'");
+				log.trace("op_"+runName+": '"+op+"'");
 				rdf.append(buildScoreRdfFragment(op, os, runName));
 			}
 			rdf.append("" +

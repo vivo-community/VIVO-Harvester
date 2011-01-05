@@ -23,10 +23,10 @@ else
 fi
 
 # Setting variables for cleaner script lines.
-$TEMPINPUT="-i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2dsr/All/store"
-$SCOREDATA="-s config/jenaModels/h2.xml -S modelName=dsrScoreData -S dbUrl="jdbc:h2:XMLVault/h2dsr/All/store"
-$CNFLAGS="$TEMPINPUT -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/"
-$EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+TEMPINPUT="-i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl=jdbc:h2:XMLVault/h2dsr/All/store"
+SCOREDATA="-s config/jenaModels/h2.xml -S modelName=dsrScoreData -S dbUrl=jdbc:h2:XMLVault/h2dsr/All/store"
+CNFLAGS="$TEMPINPUT -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/"
+EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 
 
 # Execute Fetch
