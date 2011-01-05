@@ -98,7 +98,7 @@ fi
 
 cd bin
 #rename deb to use -
-mv harvester_$RELEASENAME.deb harvester-$RELEASENAME.deb
+mv harvester_*.deb harvester-$RELEASENAME.deb
 
 #unpack debian package
 ar -x harvester-$RELEASENAME.deb

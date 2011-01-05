@@ -13,13 +13,13 @@
 #WARNING: this code is fragile and not robust.
 #No attempts to sanitize or rationalize input have been made
 
-echo -n "Enter release version: "
-read RELEASENAME
-
 echo -n "Grab local?: "
 read LOCAL
 
 if [ "$LOCAL" != "y" ]; then
+	echo -n "Enter release version: "
+	read RELEASENAME
+
 	#delete old version
 	rm harvester-$RELEASENAME.tar.gz
 	rm harvester-$RELEASENAME.deb
@@ -28,17 +28,28 @@ if [ "$LOCAL" != "y" ]; then
 	#pull release version from sf
 	wget -O harvester-$RELEASENAME.tar.gz http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.tar.gz/download
 	wget -O harvester-$RELEASENAME.deb http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.deb/download
+else
+	#build it and extract tarball
+	cd ..
+	mvn clean dependency:copy-dependencies package -DskipTests=true
+	cd release
 fi
+
 
 #unpack tarball, install deb
-tar -xzf ../bin/harvester-$RELEASENAME.tar.gz
-dpkg -i ../bin/harvester-$RELEASENAME.deb
+#unpack debian package
+ar -x ../bin/harvester*.deb
+
+#rename tarball
+tar -xzf data.tar.gz
+#tar -xzf ../bin/harvester-$RELEASENAME.tar.gz
+#dpkg -i ../bin/harvester-$RELEASENAME.deb
 
 #check for failure
-if [ "$?" = "1" ]; then
-	echo "Exiting - dpkg install failure:" $?
-	exit
-fi
+#if [ "$?" = "1" ]; then
+#	echo "Exiting - dpkg install failure:" $?
+#	exit
+#fi
 
 #create h2 vivo db, and load it with stuff
 #use h2 vivo db with stuff
