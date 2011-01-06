@@ -20,7 +20,6 @@ INPUT="-i config/jenaModels/h2.xml -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;
 OUTPUT="-o config/jenaModels/h2.xml -O modelName=Pubmed -O dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB"
 VIVO="-v config/jenaModels/VIVO.xml"
 SCORE="-s config/jenaModels/h2.xml -S dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB -S modelName=PubmedScore"
-MATCHEDINPUT="-i config/jenaModels/h2.xml -I modelName=PubmedScore -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB"
 
 #variables for scoring
 WORKEMAIL="-A wEmail=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F wEmail=http://vivoweb.org/ontology/core#workEmail -W wEmail=.4 -P wEmail=http://vivoweb.org/ontology/score#workEmail"
@@ -81,9 +80,9 @@ rm -rf XMLVault/h2Pubmed/score
 
 # Execute Score to disambiguate data in "scoring" JENA model
 $Score $VIVO $INPUT $SCORE $WORKEMAIL
-#$Score $VIVO $INPUT $SCORE $FNAME
-#$Score $VIVO $INPUT $SCORE $LNAME
-#$Score $VIVO $INPUT $SCORE $MNAME
+$Score $VIVO $INPUT $SCORE $FNAME
+$Score $VIVO $INPUT $SCORE $LNAME
+$Score $VIVO $INPUT $SCORE $MNAME
 
 # Execute match to match and link data into "vivo" JENA model
 $Match $INPUT $SCORE -t .5
@@ -102,7 +101,7 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 #$Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 # Execute ChangeNamespace to get into current namespace
-$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedPub/
-$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthorship/
-$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthor/
-$ChangeNamespace $VIVO $MATCHEDINPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/
+$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedPub/
+$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthorship/
+$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthor/
+$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/
