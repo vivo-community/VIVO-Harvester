@@ -105,3 +105,33 @@ $ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivow
 $ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthorship/
 $ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthor/
 $ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/
+
+# Backup pretransfer vivo database, symlink latest to latest.sql
+date=`date +%Y-%m-%d_%T`
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.pretransfer.$date.sql
+rm -rf backups/$DBNAME.pubmed.pretransfer.latest.sql
+ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.latest.sql
+
+#Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
+# Find Subtractions
+$Diff -m config/jenaModels/VIVO.xml -M modelName="http://vivoweb.org/ingest/ufl/pubmed" -s config/jenaModels/h2.xml -S dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB" -S modelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
+# Find Additions
+$Diff -m config/jenaModels/h2.xml -M dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB" -M modelName=pubmedScore -s config/jenaModels/VIVO.xml -S modelName="http://vivoweb.org/ingest/ufl/pubmed" -d XMLVault/update_Additions.rdf.xml
+# Apply Subtractions to Previous model
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/pubmed" -r XMLVault/update_Subtractions.rdf.xml -m
+# Apply Additions to Previous model
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/pubmed" -r XMLVault/update_Additions.rdf.xml
+# Apply Subtractions to VIVO
+$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Subtractions.rdf.xml -m
+# Apply Additions to VIVO
+$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Additions.rdf.xml
+
+# Backup posttransfer vivo database, symlink latest to latest.sql
+date=`date +%Y-%m-%d_%T`
+mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.posttransfer.$date.sql
+rm -rf backups/$DBNAME.pubmed.posttransfer.latest.sql
+ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.latest.sql
+
+#Restart Tomcat
+#Tomcat must be restarted in order for the harvested data to appear in VIVO
+/etc/init.d/tomcat restart
