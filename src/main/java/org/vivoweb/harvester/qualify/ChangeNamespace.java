@@ -63,8 +63,9 @@ public class ChangeNamespace {
 	 * @param output output model
 	 * @param oldName old namespace
 	 * @param newName new namespace
+	 * @throws IOException error out rdf
 	 */
-	public ChangeNamespace(JenaConnect input,JenaConnect output, String oldName, String newName) {
+	public ChangeNamespace(JenaConnect input,JenaConnect output, String oldName, String newName) throws IOException {
 		this.model = input;
 		this.vivo = output;
 		this.oldNamespace = oldName;
@@ -75,6 +76,7 @@ public class ChangeNamespace {
 		//TODO Nicholas REMOVE DEBUG STATEMENTS
 		log.info("vivo size: " + this.vivo.size());
 		log.info("input size: " + this.model.size());
+		log.info("INPUT:\n" + this.model.exportRdfToString());
 	}
 	
 
@@ -91,6 +93,7 @@ public class ChangeNamespace {
 		//TODO Nicholas REMOVE DEBUG STATEMENTS		
 		log.info("vivo size: " + this.vivo.size());
 		log.info("input size: " + this.model.size());
+		log.info("INPUT:\n" + this.model.exportRdfToString());
 	}
 	
 	/**
