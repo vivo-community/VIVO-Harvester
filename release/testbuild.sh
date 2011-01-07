@@ -16,40 +16,59 @@
 echo -n "Grab local?: "
 read LOCAL
 
-if [ "$LOCAL" != "y" ]; then
+if [ "$LOCAL" = "y" ]; then
+	#build it and extract tarball
+	cd ..
+	mvn clean dependency:copy-dependencies package -DskipTests=true
+	#check for failure
+	if [ "$?" = "1" ]; then
+		echo "Exiting - mvn install failure:" $?
+		exit
+	fi
+
+	cd bin
+	ar -x harvester*.deb
+
+	#rename tarball
+	tar -xzf data.tar.gz -C ../release
+	#tar -xzf ../bin/harvester-$RELEASENAME.tar.gz
+	#dpkg -i ../bin/harvester-$RELEASENAME.deb
+
+	#check for failure
+	#if [ "$?" = "1" ]; then
+	#	echo "Exiting - dpkg install failure:" $?
+	#	exit
+	#fi
+
+	cd ../release
+else
 	echo -n "Enter release version: "
 	read RELEASENAME
 
 	#delete old version
-	rm harvester-$RELEASENAME.tar.gz
-	rm harvester-$RELEASENAME.deb
+	rm harvester*.tar.gz
+	rm harvester*.deb
 	rm -rf usr
 
 	#pull release version from sf
 	wget -O harvester-$RELEASENAME.tar.gz http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.tar.gz/download
 	wget -O harvester-$RELEASENAME.deb http://sourceforge.net/projects/vivo/files/VIVO%20Harvester/harvester-$RELEASENAME.deb/download
-else
-	#build it and extract tarball
-	cd ..
-	mvn clean dependency:copy-dependencies package -DskipTests=true
-	cd release
+
+	#unpack tarball, install deb
+	#unpack debian package
+	#ar -x harvester*.deb
+
+	#rename tarball
+	tar -xzf harvester-$RELEASENAME.tar.gz
+	#tar -xzf ../bin/harvester-$RELEASENAME.tar.gz
+	#dpkg -i ../bin/harvester-$RELEASENAME.deb
+
+	#check for failure
+	#if [ "$?" = "1" ]; then
+	#	echo "Exiting - dpkg install failure:" $?
+	#	exit
+	#fi
 fi
-
-
-#unpack tarball, install deb
-#unpack debian package
-ar -x ../bin/harvester*.deb
-
-#rename tarball
-tar -xzf data.tar.gz
-#tar -xzf ../bin/harvester-$RELEASENAME.tar.gz
-#dpkg -i ../bin/harvester-$RELEASENAME.deb
-
-#check for failure
-#if [ "$?" = "1" ]; then
-#	echo "Exiting - dpkg install failure:" $?
-#	exit
-#fi
 
 #create h2 vivo db, and load it with stuff
 #use h2 vivo db with stuff
@@ -73,19 +92,19 @@ if [ "$?" = "1" ]; then
 fi
 
 #test deb
-mv /usr/share/vivo/harvester/config/jenaModels/VIVO.xml /usr/share/vivo/harvester/config/jenaModels/VIVO.xml.bck
-cp VIVO.xml /usr/share/vivo/harvester/config/jenaModels/VIVO.xml
-cp vivotest.h2.db /usr/share/vivo/harvester
+#mv /usr/share/vivo/harvester/config/jenaModels/VIVO.xml /usr/share/vivo/harvester/config/jenaModels/VIVO.xml.bck
+#cp VIVO.xml /usr/share/vivo/harvester/config/jenaModels/VIVO.xml
+#cp vivotest.h2.db /usr/share/vivo/harvester
 
 #modify configs?
 #config/tasks/PubmedFetch.xml
 
 #run example scripts as shipped
-cd /usr/share/vivo/harvester
-bash scripts/runPubmed.sh
+#cd /usr/share/vivo/harvester
+#bash scripts/runPubmed.sh
 
 #check for failure
-if [ "$?" = "1" ]; then
-	echo "Exiting - dpkg pubmed example failure:" $?
-	exit
-fi
+#if [ "$?" = "1" ]; then
+#	echo "Exiting - dpkg pubmed example failure:" $?
+#	exit
+#fi
