@@ -167,6 +167,7 @@ public abstract class JenaConnect {
 				JenaConnect.log.debug("'" + param + "' - '" + paramList.get(param) + "'");
 			}
 		}
+		
 		return build(paramList);
 	}
 	
@@ -259,6 +260,12 @@ public abstract class JenaConnect {
 		} else {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
+		
+		//null model check
+		if (jc.getJenaModel().isEmpty()) {
+			JenaConnect.log.warn("Jena Model is empty");
+		}
+		
 		return jc;
 	}
 	

@@ -16,8 +16,8 @@ cd ..
 HARVESTER_TASK=pubmed
 
 #variables for model arguments
-INPUT="-i config/jenaModels/h2.xml -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB -I modelName=Pubmed"
-OUTPUT="-o config/jenaModels/h2.xml -O modelName=Pubmed -O dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store;MODE=HSQLDB"
+INPUT="-i config/jenaModels/h2.xml -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -I modelName=Pubmed"
+OUTPUT="-o config/jenaModels/h2.xml -O modelName=Pubmed -O dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
 VIVO="-v config/jenaModels/VIVO.xml"
 SCORE="-s config/jenaModels/h2.xml -S dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB -S modelName=PubmedScore"
 
@@ -101,10 +101,10 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 #$Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 # Execute ChangeNamespace to get into current namespace
-$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedPub/
-$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthorship/
-$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedAuthor/
-$ChangeNamespace $VIVO $INPUT -n http://vivo.ufl.edu/individual/ -o http://vivoweb.org/harvest/pubmedJournal/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthorship/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthor/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedJournal/
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
@@ -114,13 +114,13 @@ ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.la
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
 # Find Subtractions
-$Diff -m config/jenaModels/VIVO.xml -M modelName="http://vivoweb.org/ingest/ufl/pubmed" -s config/jenaModels/h2.xml -S dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB" -S modelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
+$Diff -m config/jenaModels/VIVO.xml -M modelName="http://vivoweb.org/ingest/pubmed" -s config/jenaModels/h2.xml -S dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store" -S modelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
 # Find Additions
-$Diff -m config/jenaModels/h2.xml -M dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store;MODE=HSQLDB" -M modelName=pubmedScore -s config/jenaModels/VIVO.xml -S modelName="http://vivoweb.org/ingest/ufl/pubmed" -d XMLVault/update_Additions.rdf.xml
+$Diff -m config/jenaModels/h2.xml -M dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store" -M modelName=pubmedScore -s config/jenaModels/VIVO.xml -S modelName="http://vivoweb.org/ingest/pubmed" -d XMLVault/update_Additions.rdf.xml
 # Apply Subtractions to Previous model
-$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/pubmed" -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/pubmed" -r XMLVault/update_Subtractions.rdf.xml -m
 # Apply Additions to Previous model
-$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/pubmed" -r XMLVault/update_Additions.rdf.xml
+$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/pubmed" -r XMLVault/update_Additions.rdf.xml
 # Apply Subtractions to VIVO
 $Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Subtractions.rdf.xml -m
 # Apply Additions to VIVO

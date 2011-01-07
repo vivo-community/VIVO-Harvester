@@ -7,4 +7,5 @@
 	<Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
 	<Param name="dbUser">USERNAME</Param>
 	<Param name="dbPass">PASSWORD</Param>
+	<Param name="namespace">NAMESPACE</Param>
 </Model>

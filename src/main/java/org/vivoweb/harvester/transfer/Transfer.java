@@ -153,6 +153,12 @@ public class Transfer {
 	 */
 	private void execute() throws IOException {
 		boolean newInput = false;
+		
+		//null model check
+		if (this.input.getJenaModel().isEmpty()) {
+			log.warn("Empty input model");
+		}
+		
 		if(this.dumpFile != null && this.input == null) {
 			newInput = true;
 		}
