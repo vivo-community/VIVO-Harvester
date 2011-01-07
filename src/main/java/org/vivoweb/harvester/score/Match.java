@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,13 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.ResourceUtils;
 //import com.hp.hpl.jena.rdf.model.Statement;
 //import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -52,6 +56,10 @@ public class Match {
 	 */
 	private final JenaConnect inputJena;
 	/**
+	 * Model where output goes
+	 */
+	private final JenaConnect outputJena;
+	/**
 	 * Link the resources found by match Algorithm
 	 */
 	private final Map<String, String> linkProps;
@@ -67,6 +75,7 @@ public class Match {
 	 * Clear all literal values out of matched sets
 	 */
 	private final boolean clearLiterals;
+
 	
 	/**
 	 * Constructor
@@ -77,7 +86,7 @@ public class Match {
 	 * @param linkProps bidirectional link
 	 * @param clearLiterals clear all the literal values out of matches
 	 */
-	public Match(JenaConnect inputJena, JenaConnect scoreJena, boolean renameRes, float threshold, Map<String, String> linkProps, boolean clearLiterals) {
+	public Match(JenaConnect inputJena, JenaConnect scoreJena, JenaConnect outputJena, boolean renameRes, float threshold, Map<String, String> linkProps, boolean clearLiterals) {
 		if(scoreJena == null) {
 			throw new IllegalArgumentException("Score Model cannot be null");
 		}
@@ -87,6 +96,8 @@ public class Match {
 			throw new IllegalArgumentException("Match Input cannot be null");
 		}
 		this.inputJena = inputJena;
+		
+		this.outputJena = outputJena;
 		
 		this.matchThreshold = Float.valueOf(threshold);
 		this.renameRes = renameRes;
@@ -114,6 +125,14 @@ public class Match {
 		
 		// Connect to input model
 		this.inputJena = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
+		
+		// Connect to output model
+		if (opts.has("o")){
+			this.outputJena = JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O"));
+		} else {
+			this.outputJena = null;
+		}
+			
 		
 		this.renameRes = opts.has("r");
 		this.linkProps = opts.getValueMap("l");
@@ -215,12 +234,36 @@ public class Match {
 		}
 	}
 	
-	/* * Traverses paperNode and adds to toReplace model
+	/**
+	 * @param matchSet the set of matches to run against
+	 * @return the completed model of matches
+	 * @throws IOException no idea why it throws this 
+	 */
+	private JenaConnect outputMatches(Map<String,String> matchSet) throws IOException{
+		Stack<Resource> linkRes = new Stack<Resource>();
+		JenaConnect returnModel = new MemJenaConnect();
+		for(String oldUri : matchSet.keySet()) {
+			Resource res = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
+			if (!linkRes.contains(res)){
+				returnModel = recursiveBuild(res, linkRes);
+				linkRes.push(res);
+			}			
+		}
+		return returnModel;
+	}
+	
+	/**
+	 * @param mainRes item to push into returnModel
+	 * @param linkRes list of items to not move to
+	 * @return model thats being returned with matches
+	 * @throws IOException I have no idea why mem throws this
+	 */
+	/* Traverses paperNode and adds to toReplace model
 	 * @param mainRes the main resource
 	 * @param linkRes the resource to link it to
 	 * @return the model containing the sanitized info so far
 	 * @throws IOException error connecting
-	 * /
+	 */
 	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
 		JenaConnect returnModel = new MemJenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
@@ -245,7 +288,7 @@ public class Match {
 		}
 		
 		return returnModel;
-	}*/
+	}
 	
 	/**
 	 * Get the OptionParser
@@ -299,6 +342,10 @@ public class Match {
 			
 			if(this.clearLiterals) {
 				clearTypesAndLiterals(pubmedResultMap);
+			}
+			
+			if(this.outputJena != null) {
+				this.outputJena.getJenaModel().add(outputMatches(pubmedResultMap).getJenaModel());
 			}
 		}
 	}

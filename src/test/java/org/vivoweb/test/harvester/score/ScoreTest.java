@@ -374,7 +374,7 @@ public class ScoreTest extends TestCase {
 		// run score
 		new Score(this.input, this.vivo, this.score, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
 //		log.debug("Score Dump Post-Score\n" + this.score.exportRdfToString());
-		new Match(this.input, this.score, true, 0.75f, null, false).execute();
+		new Match(this.input, this.score, null, true, 0.75f, null, false).execute();
 		
 		// check score model
 //		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
