@@ -9,7 +9,7 @@ SERVER=`grep dbUrl $VIVO| sed 's|^.*://\([^:^\/]*\)[:\/].*$|\1|g'`
 DBNAME=`grep modelName $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 USERNAME=`grep dbUser $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 PASSWORD=`grep dbPass $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
-NAMESPACE=`grep namespace $VIVOl | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+NAMESPACE=`grep namespace $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 VERSION=1.0beta3
 MIN_MEM=1024m
 MAX_MEM=2048M
@@ -18,7 +18,7 @@ HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 echo "Full Logging in $HARVESTER_TASK.log"
 
 # Check for backups dir
-if [ $NAMESPACE == ""]; then
+if [ ! $NAMESPACE ]; then
   echo "Please specify namespace in $VIVO file before running"
   exit
 fi
