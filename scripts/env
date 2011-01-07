@@ -4,12 +4,12 @@
 #parse VIVO.xml for these values
 #need to reconcile having 2 places for this
 
-VIVO='config/jenaModels/VIVO.xml'
-SERVER=`grep dbUrl $VIVO| sed 's|^.*://\([^:^\/]*\)[:\/].*$|\1|g'`
-DBNAME=`grep modelName $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
-USERNAME=`grep dbUser $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
-PASSWORD=`grep dbPass $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
-NAMESPACE=`grep namespace $VIVO | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+VIVOCONFIG='config/jenaModels/VIVO.xml'
+SERVER=`grep dbUrl $VIVOCONFIG| sed 's|^.*://\([^:^\/]*\)[:\/].*$|\1|g'`
+DBNAME=`grep modelName $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+USERNAME=`grep dbUser $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+PASSWORD=`grep dbPass $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+NAMESPACE=`grep namespace $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 VERSION=1.0beta3
 MIN_MEM=1024m
 MAX_MEM=2048M
