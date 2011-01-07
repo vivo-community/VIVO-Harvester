@@ -80,7 +80,7 @@ $Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/position/ -AposOrg=
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREMODELS -t"1.0" -r
 
-$CNFLAGS="$SCOREINPUT -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/"
+CNFLAGS="$SCOREINPUT -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/"
 # Execute ChangeNamespace to get unmatched People into current namespace
 $ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/peoplesoft/person/
 # Execute ChangeNamespace to get unmatched Departments into current namespace
