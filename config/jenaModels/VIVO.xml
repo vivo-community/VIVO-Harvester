@@ -3,7 +3,6 @@
 	<Param name="type">rdb</Param>
 	<Param name="dbClass">com.mysql.jdbc.Driver</Param>
 	<Param name="dbType">MySQL</Param>
-	<Param name="type">rdb</Param>
 	<Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vitrodb</Param>
 	<Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
 	<Param name="dbUser">USERNAME</Param>
