@@ -22,20 +22,21 @@ else
 fi
 
 # Execute Fetch/Translate using D2RMap
-java -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -u config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf
+$D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -u config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf
 
 # Execute Transfer to transfer rdf into "d2rStaging" JENA model
-$Transfer -h config/recordHandlers/JDBCXMLRecordHandler.xml -o config/jenaModels/VIVO.xml -O modelName=d2rStaging
+$Transfer -h config/recordHandlers/JDBCXMLRecordHandler.xml -o $VIVOCONFIG -OmodelName=d2rStaging
 
 # Execute Transfer to load "d2rStaging" JENA model into VIVO
-$Transfer -i config/jenaModels/VIVO.xml -I modelName=d2rStaging -o config/jenaModels/VIVO.xml
+$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -o $VIVOCONFIG
 
 # Execute Transfer to dump "d2rStaging" JENA model rdf into file
 # Shown as example
-#$Transfer -i config/jenaModels/VIVO.xml -I modelName=d2rStaging -d dump.rdf
+#$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -d dump.rdf
 
 #Update the example on the board
-#$Update -p config/jenaModels/VIVO.xml -P modelName="PreviousModelName" -i config/jenaModels/VIVO.xml -I modelName="d2rStaging" -v config/jenaModels/VIVO.xml
+###@TODO NEEDS TO BE CHANGED TO DIFF/TRANSFER!!
+#$Update -p $VIVOCONFIG -PmodelName=PreviousModelName -i $VIVOCONFIG -ImodelName=d2rStaging -v $VIVOCONFIG
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO

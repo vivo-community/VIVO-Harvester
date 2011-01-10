@@ -19,7 +19,7 @@ echo "Full Logging in $HARVESTER_TASK.log"
 
 # Check for backups dir
 if [ ! $NAMESPACE ]; then
-  echo "Please specify namespace in $VIVO file before running"
+  echo "Please specify namespace in $VIVOCONFIG file before running"
   exit
 fi
 

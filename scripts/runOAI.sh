@@ -55,7 +55,7 @@ ln -s oai.rdf.$date.tar.gz backups/oai.rdf.latest.tar.gz
 rm -rf XMLVault/h2oai/all
 
 # Execute Transfer to transfer rdf into "scoring" JENA model
-$Transfer -h config/recordHandlers/OAIRDFRecordHandler.xml -o config/jenaModels/h2.xml -O modelName=oaiTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2oai/all/store;MODE=HSQLDB"
+$Transfer -h config/recordHandlers/OAIRDFRecordHandler.xml -o config/jenaModels/h2.xml -OmodelName=oaiTempTransfer -OdbUrl=jdbc:h2:XMLVault/h2oai/all/store
 
 # backup H2 translate Models
 date=`date +%Y-%m-%d_%T`
@@ -67,7 +67,7 @@ ln -s oai.all.$date.tar.gz backups/oai.all.latest.tar.gz
 #tar -xzpf backups/oai.all.latest.tar.gz XMLVault/h2oai/all
 
 # Execute Transfer to load "staging" JENA model into VIVO
-$Transfer -i config/jenaModels/h2.xml -I modelName=oaiTempTransfer -I dbUrl="jdbc:h2:XMLVault/h2oai/all/store;MODE=HSQLDB" -o config/jenaModels/VIVO.xml -O modelName=oaiDemo
+$Transfer -i config/jenaModels/h2.xml -ImodelName=oaiTempTransfer -IdbUrl=jdbc:h2:XMLVault/h2oai/all/store -o $VIVOCONFIG -OmodelName=oaiDemo
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO

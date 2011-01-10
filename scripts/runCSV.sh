@@ -28,14 +28,14 @@ fi
 $CSVMapFetch -o config/recordHandlers/CSVXMLRecordHandler.xml -u config/tasks/CSVMapFetchTask.d2r.xml -a $1 -s person.rdf
 
 # Execute Transfer to transfer rdf into "d2rStaging" JENA model
-$Transfer -h config/recordHandlers/CSVXMLRecordHandler.xml -o config/jenaModels/VIVO.xml -O modelName=d2rStaging
+$Transfer -h config/recordHandlers/CSVXMLRecordHandler.xml -o $VIVOCONFIG -OmodelName=d2rStaging
 
 # Execute Transfer to load "d2rStaging" JENA model into VIVO
-$Transfer -i config/jenaModels/VIVO.xml -I modelName=d2rStaging -o config/jenaModels/VIVO.xml
+$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -o $VIVOCONFIG
 
 # Execute Transfer to dump "d2rStaging" JENA model rdf into file
 # Shown as example
-#$Transfer -i config/jenaModels/VIVO.xml -I modelName=d2rStaging -d dump.rdf
+#$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -d dump.rdf
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO

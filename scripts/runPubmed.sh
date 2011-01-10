@@ -15,23 +15,24 @@ cd ..
 
 HARVESTER_TASK=pubmed
 
-#variables for model arguments
-INPUT="-i config/jenaModels/h2.xml -I dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -I modelName=Pubmed"
-OUTPUT="-o config/jenaModels/h2.xml -O modelName=Pubmed -O dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
-VIVO="-v config/jenaModels/VIVO.xml"
-SCORE="-s config/jenaModels/h2.xml -S dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -S modelName=PubmedScore"
-
-#variables for scoring
-WORKEMAIL="-A wEmail=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F wEmail=http://vivoweb.org/ontology/core#workEmail -W wEmail=.4 -P wEmail=http://vivoweb.org/ontology/score#workEmail"
-FNAME="-A fName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F fName=http://xmlns.com/foaf/0.1/firstName -W fName=.2 -P fName=http://vivoweb.org/ontology/score#foreName"
-LNAME="-A lName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F lName=http://xmlns.com/foaf/0.1/lastName -W lName=.3 -P lName=http://xmlns.com/foaf/0.1/lastName"
-MNAME="-A mName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference -F mName=http://vivoweb.org/ontology/core#middleName -W mName=.1 -P mName=http://vivoweb.org/ontology/score#middleName"
-
 if [ -f scripts/env ]; then
   . scripts/env
 else
   exit 1
 fi
+
+#variables for model arguments
+INPUT="-i config/jenaModels/h2.xml -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
+OUTPUT="-o config/jenaModels/h2.xml -OmodelName=Pubmed -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
+VIVO="-v $VIVOCONFIG"
+SCORE="-s config/jenaModels/h2.xml -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=PubmedScore"
+
+#variables for scoring
+LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
+WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.4 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
+FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
+LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
+MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/score#middleName"
 
 #clear old fetches
 rm -rf XMLVault/h2Pubmed/XML
@@ -79,13 +80,10 @@ ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
 rm -rf XMLVault/h2Pubmed/score
 
 # Execute Score to disambiguate data in "scoring" JENA model
-$Score $VIVO $INPUT $SCORE $WORKEMAIL
-$Score $VIVO $INPUT $SCORE $FNAME
-$Score $VIVO $INPUT $SCORE $LNAME
-$Score $VIVO $INPUT $SCORE $MNAME
+$Score $VIVO $INPUT $SCORE $WORKEMAIL $FNAME $LNAME $MNAME
 
 # Execute match to match and link data into "vivo" JENA model
-$Match $INPUT $SCORE -t .5
+$Match $INPUT $SCORE -t 0.5
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
@@ -97,8 +95,7 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 
 # Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
 # Off by default, examples show below
-#$Qualify -j config/jenaModels/VIVO.xml -t "Prof" -v "Professor" -d http://vivoweb.org/ontology/core#Title
-#$Qualify -j config/jenaModels/VIVO.xml -r .*JAMA.* -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
+#$Qualify -j $VIVOCONFIG -r JAMA -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
@@ -114,17 +111,17 @@ ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.la
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
 # Find Subtractions
-$Diff -m config/jenaModels/VIVO.xml -M modelName="http://vivoweb.org/ingest/pubmed" -s config/jenaModels/h2.xml -S dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store" -S modelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
+$Diff -m $VIVOCONFIG -MmodelName=http://vivoweb.org/ingest/pubmed -s config/jenaModels/h2.xml -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
 # Find Additions
-$Diff -m config/jenaModels/h2.xml -M dbUrl="jdbc:h2:XMLVault/h2Pubmed/score/store" -M modelName=pubmedScore -s config/jenaModels/VIVO.xml -S modelName="http://vivoweb.org/ingest/pubmed" -d XMLVault/update_Additions.rdf.xml
+$Diff -m config/jenaModels/h2.xml -MdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -MmodelName=pubmedScore -s $VIVOCONFIG -SmodelName=http://vivoweb.org/ingest/pubmed -d XMLVault/update_Additions.rdf.xml
 # Apply Subtractions to Previous model
-$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/pubmed" -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o $VIVOCONFIG -OmodelName=http://vivoweb.org/ingest/pubmed -r XMLVault/update_Subtractions.rdf.xml -m
 # Apply Additions to Previous model
-$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/pubmed" -r XMLVault/update_Additions.rdf.xml
+$Transfer -o $VIVOCONFIG -OmodelName=http://vivoweb.org/ingest/pubmed -r XMLVault/update_Additions.rdf.xml
 # Apply Subtractions to VIVO
-$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o $VIVOCONFIG -r XMLVault/update_Subtractions.rdf.xml -m
 # Apply Additions to VIVO
-$Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Additions.rdf.xml
+$Transfer -o $VIVOCONFIG -r XMLVault/update_Additions.rdf.xml
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
