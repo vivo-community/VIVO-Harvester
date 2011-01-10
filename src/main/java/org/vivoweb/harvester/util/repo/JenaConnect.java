@@ -261,7 +261,7 @@ public abstract class JenaConnect {
 		}
 		
 		if (jc.isEmpty()) {
-			JenaConnect.log.warn("Jena model is empty");
+			JenaConnect.log.warn(jc.getModelName() + " Jena model is empty");
 		}
 		
 		return jc;
