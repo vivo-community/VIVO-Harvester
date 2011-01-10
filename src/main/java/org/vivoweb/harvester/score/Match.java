@@ -241,13 +241,13 @@ public class Match {
 	 * @throws IOException no idea why it throws this 
 	 */
 	private JenaConnect outputMatches(Map<String,String> matchSet) throws IOException{
-		Stack<Resource> linkRes = new Stack<Resource>();
+		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
 		for(String oldUri : matchSet.keySet()) {
 			Resource res = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
 			if (!linkRes.contains(res)){
 				returnModel = recursiveBuild(res, linkRes);
-				linkRes.push(res);
+				linkRes.push(res.getURI());
 			}			
 		}
 		return returnModel;
@@ -265,7 +265,7 @@ public class Match {
 	 * @return the model containing the sanitized info so far
 	 * @throws IOException error connecting
 	 */
-	private static JenaConnect recursiveBuild(Resource mainRes, Stack<Resource> linkRes) throws IOException {
+	private static JenaConnect recursiveBuild(Resource mainRes, Stack<String> linkRes) throws IOException {
 		JenaConnect returnModel = new MemJenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
 		
@@ -276,13 +276,13 @@ public class Match {
 				returnModel.getJenaModel().add(stmt);
 				
 				//todo change the equals t o
-				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource()) && !stmt.getObject().asResource().equals(mainRes)) {
-					linkRes.push(mainRes);
+				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
+					linkRes.push(mainRes.getURI());
 					returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
 					linkRes.pop();
 				}
-				if (!linkRes.contains(stmt.getSubject()) && !stmt.getSubject().equals(mainRes)) {
-					linkRes.push(mainRes);
+				if (!linkRes.contains(stmt.getSubject().getURI()) && !stmt.getSubject().equals(mainRes)) {
+					linkRes.push(mainRes.getURI());
 					returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
 					linkRes.pop();
 				}
@@ -302,7 +302,7 @@ public class Match {
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("scoreConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		
 		// Outputs
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE").setRequired(false));
 		
 		// Model name overrides
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
