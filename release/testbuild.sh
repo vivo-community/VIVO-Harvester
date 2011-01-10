@@ -13,6 +13,8 @@
 #WARNING: this code is fragile and not robust.
 #No attempts to sanitize or rationalize input have been made
 
+rm -rf usr
+
 echo -n "Grab local?: "
 read LOCAL
 

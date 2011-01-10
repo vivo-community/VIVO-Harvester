@@ -45,7 +45,6 @@ import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateFactory;
@@ -58,7 +57,7 @@ public abstract class JenaConnect {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(JenaConnect.class);
+	protected static Logger log = LoggerFactory.getLogger(JenaConnect.class);
 	/**
 	 * Model we are connecting to
 	 */
@@ -261,9 +260,8 @@ public abstract class JenaConnect {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
 		
-		//null model check
-		if (jc.getJenaModel().isEmpty()) {
-			JenaConnect.log.warn("Jena Model is empty");
+		if (jc.isEmpty()) {
+			JenaConnect.log.warn("Jena model is empty");
 		}
 		
 		return jc;
@@ -275,11 +273,9 @@ public abstract class JenaConnect {
 	 */
 	public int size() {
 		//Display count
-		int jenaCount = 0;
-		for(StmtIterator jenaStmtItr = getJenaModel().listStatements(); jenaStmtItr.hasNext(); jenaStmtItr.next()) {
-			jenaCount++;
-		}
-		return jenaCount;
+		String query = "SELECT (count(?s) as ?size) WHERE { ?s ?p ?o }";
+		ResultSet result = executeSelectQuery(query);		
+		return result.next().get("size").asLiteral().getInt();
 	}
 	
 	/**
