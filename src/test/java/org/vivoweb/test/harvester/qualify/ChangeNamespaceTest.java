@@ -178,7 +178,7 @@ public class ChangeNamespaceTest extends TestCase {
 		this.model.exportRdfToStream(baos);
 		log.debug("VIVO");
 		log.debug(baos.toString());
-		new ChangeNamespace(this.model,this.vivo,this.namespace,this.newNamespace).execute();
+		new ChangeNamespace(this.model,this.vivo,this.namespace,this.newNamespace, false).execute();
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
 		log.debug("Changed VIVO");
@@ -202,7 +202,7 @@ public class ChangeNamespaceTest extends TestCase {
 	
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String) changeNS(JenaConnect model, String oldNamespace, String newNamespace)}.
+	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String, boolean) changeNS(JenaConnect model, String oldNamespace, String newNamespace, boolean errorLog)}.
 	 * @throws IOException error
 	 */
 	public void testChangeNS() throws IOException {
@@ -212,7 +212,7 @@ public class ChangeNamespaceTest extends TestCase {
 		this.model.exportRdfToStream(baos);
 		log.debug("VIVO");
 		log.debug(baos.toString());
-		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace);
+		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace, false);
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
 		log.debug("Changed VIVO");

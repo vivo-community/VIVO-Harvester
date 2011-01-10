@@ -55,7 +55,7 @@ ln -s ps.rdf.$date.tar.gz backups/ps.rdf.latest.tar.gz
 rm -rf XMLVault/h2ps/all
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o config/jenaModels/h2.xml -O modelName=peopleSoftTempTransfer -O dbUrl="jdbc:h2:XMLVault/h2ps/all/store" -h config/recordHandlers/PeopleSoft-RDF.xml -n http://vivo.ufl.edu/individual/
+$Transfer -o config/jenaModels/h2.xml -O modelName=peopleSoftTempTransfer -O dbUrl=jdbc:h2:XMLVault/h2ps/all/store -h config/recordHandlers/PeopleSoft-RDF.xml -n http://vivo.ufl.edu/individual/
 
 # backup H2 transfer Model
 date=`date +%Y-%m-%d_%T`
@@ -66,19 +66,19 @@ ln -s ps.all.$date.tar.gz backups/ps.all.latest.tar.gz
 # uncomment to restore previous H2 transfer Model
 #tar -xzpf backups/ps.all.latest.tar.gz XMLVault/h2ps/all
 
-SCOREINPUT="-i config/jenaModels/h2.xml -I modelName=peopleSoftTempTransfer -I dbUrl=jdbc:h2:XMLVault/h2ps/all/store"
-SCOREDATA="-s config/jenaModels/h2.xml -S modelName=peopleSoftScoreData -S dbUrl=jdbc:h2:XMLVault/h2ps/score/store"
+SCOREINPUT="-i config/jenaModels/h2.xml -ImodelName=peopleSoftTempTransfer -IdbUrl=jdbc:h2:XMLVault/h2ps/all/store"
+SCOREDATA="-s config/jenaModels/h2.xml -SmodelName=peopleSoftScoreData -SdbUrl=jdbc:h2:XMLVault/h2ps/score/store"
 SCOREMODELS="$SCOREINPUT -v config/jenaModels/VIVO.xml $SCOREDATA"
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 # Execute Score for People
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/person/ -Aufid=$EQTEST -Wufid="1.0" -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid
+$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid
 # Execute Score for Departments
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/org/ -AdeptId=$EQTEST -WdeptId="1.0" -FdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -PdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID
+$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -PdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID
 # Execute Score for Positions
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/position/ -AposOrg=$EQTEST -WposOrg="1.0" -FposOrg=http://vivoweb.org/ontology/core#positionInOrganization -PposOrg=http://vivoweb.org/ontology/core#positionInOrganization -AposPer=$EQTEST -WposPer="1.0" -FposPer=http://vivoweb.org/ontology/core#positionForPerson -PposPer=http://vivoweb.org/ontology/core#positionForPerson -AdeptPos=$EQTEST -WdeptPos="1.0" -FdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition -PdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
+$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/position/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=http://vivoweb.org/ontology/core#positionInOrganization -PposOrg=http://vivoweb.org/ontology/core#positionInOrganization -AposPer=$EQTEST -WposPer=1.0 -FposPer=http://vivoweb.org/ontology/core#positionForPerson -PposPer=http://vivoweb.org/ontology/core#positionForPerson -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition -PdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
 
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREMODELS -t"1.0" -r
+$Match $SCOREMODELS -t 1.0 -r
 
 CNFLAGS="$SCOREINPUT -v config/jenaModels/VIVO.xml -n http://vivo.ufl.edu/individual/"
 # Execute ChangeNamespace to get unmatched People into current namespace
@@ -109,13 +109,13 @@ ln -s $DBNAME.ps.pretransfer.$date.sql backups/$DBNAME.ps.pretransfer.latest.sql
 #mysql -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME < backups/$DBNAME.ps.pretransfer.latest.sql
 
 # Find Subtractions
-$Diff -m config/jenaModels/VIVO.xml -M modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -s config/jenaModels/h2.xml -S dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -S modelName=peopleSoftTempTransfer -d XMLVault/update_Subtractions.rdf.xml
+$Diff -m config/jenaModels/VIVO.xml -MmodelName=http://vivoweb.org/ingest/ufl/peoplesoft -s config/jenaModels/h2.xml -SdbUrl=jdbc:h2:XMLVault/h2ps/all/store -SmodelName=peopleSoftTempTransfer -d XMLVault/update_Subtractions.rdf.xml
 # Find Additions
-$Diff -m config/jenaModels/h2.xml -M dbUrl="jdbc:h2:XMLVault/h2ps/all/store;MODE=HSQLDB" -M modelName=peopleSoftTempTransfer -s config/jenaModels/VIVO.xml -S modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -d XMLVault/update_Additions.rdf.xml
+$Diff -m config/jenaModels/h2.xml -MdbUrl=jdbc:h2:XMLVault/h2ps/all/store -MmodelName=peopleSoftTempTransfer -s config/jenaModels/VIVO.xml -SmodelName=http://vivoweb.org/ingest/ufl/peoplesoft -d XMLVault/update_Additions.rdf.xml
 # Apply Subtractions to Previous model
-$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o config/jenaModels/VIVO.xml -OmodelName=http://vivoweb.org/ingest/ufl/peoplesoft -r XMLVault/update_Subtractions.rdf.xml -m
 # Apply Additions to Previous model
-$Transfer -o config/jenaModels/VIVO.xml -O modelName="http://vivoweb.org/ingest/ufl/peoplesoft" -r XMLVault/update_Additions.rdf.xml
+$Transfer -o config/jenaModels/VIVO.xml -OmodelName=http://vivoweb.org/ingest/ufl/peoplesoft -r XMLVault/update_Additions.rdf.xml
 # Apply Subtractions to VIVO
 $Transfer -o config/jenaModels/VIVO.xml -r XMLVault/update_Subtractions.rdf.xml -m
 # Apply Additions to VIVO

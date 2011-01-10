@@ -34,19 +34,23 @@ public class ChangeNamespace {
 	/**
 	 * The model to change uris in
 	 */
-	private JenaConnect model;
+	private final JenaConnect model;
 	/**
 	 * The old namespace
 	 */
-	private String oldNamespace;
+	private final String oldNamespace;
 	/**
 	 * The new namespace
 	 */
-	private String newNamespace;
+	private final String newNamespace;
 	/**
 	 * The search model
 	 */
-	private JenaConnect vivo;
+	private final JenaConnect vivo;
+	/**
+	 * Log error messages for changed nodes
+	 */
+	private final boolean errorLogging;
 	
 	/**
 	 * Constructor
@@ -63,12 +67,14 @@ public class ChangeNamespace {
 	 * @param output output model
 	 * @param oldName old namespace
 	 * @param newName new namespacey
+	 * @param errorLog log error messages for changed nodes
 	 */
-	public ChangeNamespace(JenaConnect input,JenaConnect output, String oldName, String newName) {
+	public ChangeNamespace(JenaConnect input,JenaConnect output, String oldName, String newName, boolean errorLog) {
 		this.model = input;
 		this.vivo = output;
 		this.oldNamespace = oldName;
 		this.newNamespace = newName;
+		this.errorLogging = errorLog;
 		
 		this.model.printConnectionParameters();
 		this.vivo.printConnectionParameters();
@@ -89,6 +95,7 @@ public class ChangeNamespace {
 		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V"));
 		this.oldNamespace = argList.get("o");
 		this.newNamespace = argList.get("n");
+		this.errorLogging = argList.has("e");
 		//TODO Nicholas REMOVE DEBUG STATEMENTS		
 		//log.info("vivo size: " + this.vivo.size());
 		//log.info("input size: " + this.model.size());
@@ -130,9 +137,10 @@ public class ChangeNamespace {
 	 * @param vivo the model to search for uris in
 	 * @param oldNamespace the old namespace
 	 * @param newNamespace the new namespace
+	 * @param errorLog log error messages for changed nodes
 	 * @throws IllegalArgumentException empty namespace
 	 */
-	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace) throws IllegalArgumentException {
+	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IllegalArgumentException {
 		if (oldNamespace == null || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
@@ -143,7 +151,7 @@ public class ChangeNamespace {
 			log.trace("namespaces are equal, nothing to change");
 			return;
 		}
-		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim());
+		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim(), errorLog);
 	}
 
 	
@@ -153,8 +161,9 @@ public class ChangeNamespace {
 	 * @param vivo the model to search for uris in
 	 * @param oldNamespace the old namespace
 	 * @param newNamespace the new namespace
+	 * @param errorLog log error messages for changed nodes
 	 */
-	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace) {
+	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) {
 		//Grab all resources matching namespaces needing changed
 		String subjectQuery =	""+
 			"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
@@ -193,6 +202,9 @@ public class ChangeNamespace {
 			Resource res = model.getJenaModel().getResource(sub);
 			log.trace("Finding unused URI for resource <" + res + ">");
 			String uri = getUnusedURI(newNamespace, vivo, model);
+			if(errorLog) {
+				log.error("Resource <"+res.getURI()+"> was found and renamed to new uri <"+uri+">!");
+			}
 			ResourceUtils.renameResource(res, uri);
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
@@ -202,7 +214,7 @@ public class ChangeNamespace {
 	 * Change namespace
 	 */
 	public void execute() {
-		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace);
+		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.errorLogging);
 	}
 	
 	/**
@@ -220,6 +232,7 @@ public class ChangeNamespace {
 		// Params
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("oldNamespace").withParameter(true, "OLD_NAMESPACE").setDescription("The old namespace").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("newNamespace").withParameter(true, "NEW_NAMESPACE").setDescription("The new namespace").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("errorLogging").setDescription("Log error messages for each record changed").setRequired(false));
 		return parser;
 	}
 	
