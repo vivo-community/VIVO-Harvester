@@ -81,6 +81,7 @@ public class Match {
 	 * Constructor
 	 * @param inputJena model containing statements to be scored
 	 * @param scoreJena the model that contains the score values
+	 * @param outputJena the model to which matched structures are written
 	 * @param threshold match things with a total score greater than or equal to this threshold
 	 * @param renameRes should I just rename the args?
 	 * @param linkProps bidirectional link
