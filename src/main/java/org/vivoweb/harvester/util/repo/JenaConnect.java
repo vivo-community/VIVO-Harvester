@@ -750,13 +750,26 @@ public abstract class JenaConnect {
 	}
 	
 	/**
+	 * Is this model empty
+	 * @return true if empty, false otherwise
+	 */
+	public boolean isEmpty() {
+		String query =	"ASK " +
+			"{ " +
+				"?s ?p ?o " +
+			"}";
+//		log.debug(query);
+		return executeAskQuery(query);
+	}
+	
+	/**
 	 * Output the connection information
 	 */
 	public void printConnectionParameters() {
-		JenaConnect.log.info("'modelName' - '" + this.modelName + "'");
-		JenaConnect.log.info("'dbURL' - '" + this.dbUrl + "'");
-		JenaConnect.log.info("'dbType' - '" + this.dbType + "'");
-		JenaConnect.log.info("'dbClass' - '" + this.dbClass + "'");
+		JenaConnect.log.info("modelName: '" + this.modelName + "'");
+		JenaConnect.log.info("dbURL: '" + this.dbUrl + "'");
+		JenaConnect.log.info("dbType: '" + this.dbType + "'");
+		JenaConnect.log.info("dbClass: '" + this.dbClass + "'");
 	}
 	
 }
