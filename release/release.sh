@@ -14,6 +14,8 @@
 #This tool requires you to have your ssh key on the sourceforge server
 #No attempts to sanitize or rationalize input have been made
 
+cd ..
+
 echo -n "Enter sourceforge username: "
 read NAME
 
