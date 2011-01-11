@@ -79,6 +79,7 @@ fi
 mv usr/share/vivo/harvester/config/jenaModels/VIVO.xml usr/share/vivo/harvester/config/jenaModels/VIVO.xml.bck
 cp VIVO.xml usr/share/vivo/harvester/config/jenaModels/VIVO.xml
 cp vivotest.h2.db usr/share/vivo/harvester
+cp runPubmed.sh usr/share/vivo/harvester/scripts
 
 #modify configs?
 #config/tasks/PubmedFetch.xml
