@@ -14,7 +14,9 @@ if [ -n "$1" ]
 then
 
 # Set working directory
-cd $1
+DIR=$(cd "$(dirname "$0")"; pwd)
+cd DIR
+cd ..
 
 HARVESTER_TASK=csvmap
 

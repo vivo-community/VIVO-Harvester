@@ -10,7 +10,8 @@
 #     Eliza Chan
 
 # Set working directory
-cd `dirname $(readlink -f $0)`
+DIR=$(cd "$(dirname "$0")"; pwd)
+cd DIR
 cd ..
 
 HARVESTER_TASK=d2rmap
