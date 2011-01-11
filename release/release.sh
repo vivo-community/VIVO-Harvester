@@ -109,7 +109,7 @@ ar -x harvester-$RELEASENAME.deb
 mv data.tar.gz harvester-$RELEASENAME.tar.gz
 
 #Upload tarball and deb package to sourceforge
-if [ "UPLOAD" = "y" ]; then
+if [ "$UPLOAD" = "y" ]; then
 	scp harvester-$RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 	scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 fi
