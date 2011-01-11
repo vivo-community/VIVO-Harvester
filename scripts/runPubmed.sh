@@ -11,7 +11,7 @@
 
 # Set working directory
 DIR=$(cd "$(dirname "$0")"; pwd)
-cd DIR
+cd $DIR
 cd ..
 
 HARVESTER_TASK=pubmed
