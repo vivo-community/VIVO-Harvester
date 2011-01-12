@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task type="org.vivoweb.harvester.fetch.PubmedSOAPFetch">
+	<Param name="email">swilliams@ichp.ufl.edu</Param>
+	<Param name="output">config/recordHandlers/Pubmed-XML-h2RH.xml</Param>
+	<Param name="termSearch">bbyrne@ufl.edu</Param>
+	<Param name="numRecords">1</Param>
+	<Param name="batchSize">1000</Param>
+</Task>

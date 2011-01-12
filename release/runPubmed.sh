@@ -23,10 +23,11 @@ else
 fi
 
 #variables for model arguments
-INPUT="-i config/jenaModels/h2.xml -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
-OUTPUT="-o config/jenaModels/h2.xml -OmodelName=Pubmed -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
+HCONFIG="config/jenaModels/h2.xml"
+INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
+OUTPUT="-o $HCONFIG -OmodelName=Pubmed -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
 VIVO="-v $VIVOCONFIG"
-SCORE="-s config/jenaModels/h2.xml -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=PubmedScore"
+SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=PubmedScore"
 
 #variables for scoring
 LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
@@ -60,7 +61,7 @@ rm -rf XMLVault/h2Pubmed/score
 $Score $VIVO $INPUT $SCORE $WORKEMAIL $FNAME $LNAME $MNAME
 
 # Execute match to match and link data into "vivo" JENA model
-$Match $INPUT $SCORE -t 0.5
+$Match $INPUT $SCORE -t 0.1
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
@@ -68,16 +69,26 @@ $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmed
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthor/
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedJournal/
 
-#Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
+#Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
+VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
+INMODELNAME="modelName=pubmedScore"
+INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store"
+ADDFILE="XMLVault/update_Additions.rdf.xml"
+SUBFILE="XMLVault/update_Subtractions.rdf.xml"
+  
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=http://vivoweb.org/ingest/pubmed -s config/jenaModels/h2.xml -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
+$Diff -m $VIVOCONFIG -M $SCORE -d $SUBFILE
 # Find Additions
-$Diff -m config/jenaModels/h2.xml -MdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -MmodelName=pubmedScore -s $VIVOCONFIG -SmodelName=http://vivoweb.org/ingest/pubmed -d XMLVault/update_Additions.rdf.xml
+$Diff -m $HCONFIG -M$INURL -M$INMODELNAME -s $VIVOCONFIG -S$VIVOMODELNAME -d $ADDFILE
 # Apply Subtractions to Previous model
-$Transfer -o $VIVOCONFIG -OmodelName=http://vivoweb.org/ingest/pubmed -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o $VIVOCONFIG -O$VIVOMODELNAME -r $SUBFILE -m
 # Apply Additions to Previous model
-$Transfer -o $VIVOCONFIG -OmodelName=http://vivoweb.org/ingest/pubmed -r XMLVault/update_Additions.rdf.xml
+$Transfer -o $VIVOCONFIG -O$VIVOMODELNAME -r $ADDFILE
 # Apply Subtractions to VIVO
-$Transfer -o $VIVOCONFIG -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o $VIVOCONFIG -r $SUBFILE -m
 # Apply Additions to VIVO
-$Transfer -o $VIVOCONFIG -r XMLVault/update_Additions.rdf.xml
+$Transfer -o $VIVOCONFIG -r $ADDFILE
+
+#Dump vivo
+$Transfer -i $VIVOCONFIG -d vivo.rdf
+
