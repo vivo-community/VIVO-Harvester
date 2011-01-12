@@ -23,10 +23,11 @@ else
 fi
 
 #variables for model arguments
-INPUT="-i config/jenaModels/h2.xml -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
-OUTPUT="-o config/jenaModels/h2.xml -OmodelName=Pubmed -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
+HCONFIG="config/jenaModels/h2.xml"
+INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
+OUTPUT="-o $HCONFIG -OmodelName=Pubmed -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
 VIVO="-v $VIVOCONFIG"
-SCORE="-s config/jenaModels/h2.xml -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=PubmedScore"
+SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=PubmedScore"
 
 #variables for scoring
 LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
@@ -112,9 +113,9 @@ ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.la
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=http://vivoweb.org/ingest/pubmed -s config/jenaModels/h2.xml -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=pubmedScore -d XMLVault/update_Subtractions.rdf.xml
+$Diff -m $VIVOCONFIG -MmodelName=http://vivoweb.org/ingest/pubmed $SCORE -d XMLVault/update_Subtractions.rdf.xml
 # Find Additions
-$Diff -m config/jenaModels/h2.xml -MdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -MmodelName=pubmedScore -s $VIVOCONFIG -SmodelName=http://vivoweb.org/ingest/pubmed -d XMLVault/update_Additions.rdf.xml
+$Diff -m $HCONFIG -MdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -MmodelName=pubmedScore -s $VIVOCONFIG -SmodelName=http://vivoweb.org/ingest/pubmed -d XMLVault/update_Additions.rdf.xml
 # Apply Subtractions to Previous model
 $Transfer -o $VIVOCONFIG -OmodelName=http://vivoweb.org/ingest/pubmed -r XMLVault/update_Subtractions.rdf.xml -m
 # Apply Additions to Previous model
