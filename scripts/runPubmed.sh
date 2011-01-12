@@ -111,19 +111,25 @@ mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.p
 rm -rf backups/$DBNAME.pubmed.pretransfer.latest.sql
 ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.latest.sql
 
-#Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO  
+#Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
+VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
+INMODELNAME="modelName=pubmedScore"
+INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store"
+ADDFILE="XMLVault/update_Additions.rdf.xml"
+SUBFILE="XMLVault/update_Subtractions.rdf.xml"
+  
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=http://vivoweb.org/ingest/pubmed $SCORE -d XMLVault/update_Subtractions.rdf.xml
+$Diff -m $VIVOCONFIG -M $SCORE -d $SUBFILE
 # Find Additions
-$Diff -m $HCONFIG -MdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -MmodelName=pubmedScore -s $VIVOCONFIG -SmodelName=http://vivoweb.org/ingest/pubmed -d XMLVault/update_Additions.rdf.xml
+$Diff -m $HCONFIG -M$INURL -M$INMODELNAME -s $VIVOCONFIG -S$VIVOMODELNAME -d $ADDFILE
 # Apply Subtractions to Previous model
-$Transfer -o $VIVOCONFIG -OmodelName=http://vivoweb.org/ingest/pubmed -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o $VIVOCONFIG -O$VIVOMODELNAME -r $SUBFILE -m
 # Apply Additions to Previous model
-$Transfer -o $VIVOCONFIG -OmodelName=http://vivoweb.org/ingest/pubmed -r XMLVault/update_Additions.rdf.xml
+$Transfer -o $VIVOCONFIG -O$VIVOMODELNAME -r $ADDFILE
 # Apply Subtractions to VIVO
-$Transfer -o $VIVOCONFIG -r XMLVault/update_Subtractions.rdf.xml -m
+$Transfer -o $VIVOCONFIG -r $SUBFILE -m
 # Apply Additions to VIVO
-$Transfer -o $VIVOCONFIG -r XMLVault/update_Additions.rdf.xml
+$Transfer -o $VIVOCONFIG -r $ADDFILE
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
