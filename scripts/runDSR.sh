@@ -67,7 +67,7 @@ $Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=htt
 $Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Ptype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -n http://vivoweb.org/harvest/dsr/coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
-$Match -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -t 1.0 -r
+$Match $TEMPINPUT $SCOREDATA -t 1.0 -r
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
