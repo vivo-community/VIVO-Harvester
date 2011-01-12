@@ -19,13 +19,14 @@ MAX_MEM=2048M
 #-XX:+UseConcMarkSweepGC		Use concurrent (low pause time) garbage collector	
 #-XX:+DisableExplicitGC			Prevent direct calls to garbage collection in the code
 #-XX:+UseAdaptiveGCBoundary		Allow young/old boundary to move
-#-XX:MaxGCPauseMillis=500		“Target” maximum for garbage collection time
+#-XX:MaxGCPauseMillis=500		ï¿½Targetï¿½ maximum for garbage collection time
 #-XX:-UseGCOverheadLimit		Limit the amount of time that Java will stay in Garbage Collection before throwing an out of memory exception
 #-XX:SurvivorRatio=16			Shrink eden slightly (Normal is 25)
 #-Xnoclassgc				Disable collection of class objects
 #-XX:UseSSE=3				Use SSE3 Processor extensions
 #-XX:ParallelGCThreads=3		Maximum number of Parallel garbage collection tasks
-OPTS="-d64 -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
+#OPTS="-d64 -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
+OPTS="-XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
 DATE=`date +%Y-%m-%d_%T`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 echo "Full Logging in $HARVESTER_TASK.log"

@@ -36,6 +36,9 @@ FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.2 
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
 MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/score#middleName"
 
+#Dump vivo
+$Transfer -i $VIVOCONFIG -d vivo_start.rdf
+
 #clear old fetches
 rm -rf XMLVault/h2Pubmed/XML
 
@@ -71,13 +74,16 @@ $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmed
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
 VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
-INMODELNAME="modelName=pubmedScore"
-INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store"
+INMODELNAME="modelName=Pubmed"
+INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
 ADDFILE="XMLVault/update_Additions.rdf.xml"
 SUBFILE="XMLVault/update_Subtractions.rdf.xml"
-  
+
+#Dump score
+$Transfer -i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed -d score.rdf
+
 # Find Subtractions
-$Diff -m $VIVOCONFIG -M $SCORE -d $SUBFILE
+$Diff -m $VIVOCONFIG -M$VIVOMODELNAME -s $HCONFIG -S$INURL -S$INMODELNAME -d $SUBFILE
 # Find Additions
 $Diff -m $HCONFIG -M$INURL -M$INMODELNAME -s $VIVOCONFIG -S$VIVOMODELNAME -d $ADDFILE
 # Apply Subtractions to Previous model
@@ -90,5 +96,4 @@ $Transfer -o $VIVOCONFIG -r $SUBFILE -m
 $Transfer -o $VIVOCONFIG -r $ADDFILE
 
 #Dump vivo
-$Transfer -i $VIVOCONFIG -d vivo.rdf
-
+$Transfer -i $VIVOCONFIG -d vivo_end.rdf

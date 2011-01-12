@@ -113,13 +113,13 @@ ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.la
 
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
 VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
-INMODELNAME="modelName=pubmedScore"
-INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store"
+INMODELNAME="modelName=Pubmed"
+INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
 ADDFILE="XMLVault/update_Additions.rdf.xml"
 SUBFILE="XMLVault/update_Subtractions.rdf.xml"
   
 # Find Subtractions
-$Diff -m $VIVOCONFIG -M $SCORE -d $SUBFILE
+$Diff -m $VIVOCONFIG -M$VIVOMODELNAME -s $HCONFIG -S$INURL -S$INMODELNAME -d $SUBFILE
 # Find Additions
 $Diff -m $HCONFIG -M$INURL -M$INMODELNAME -s $VIVOCONFIG -S$VIVOMODELNAME -d $ADDFILE
 # Apply Subtractions to Previous model
