@@ -35,7 +35,7 @@
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
-	<xsl:variable name="baseURI">http://vivoweb.org/harvest/peoplesoft/</xsl:variable>
+	<xsl:variable name="baseURI">http://vivoweb.org/harvest/ufl/peoplesoft/</xsl:variable>
 
 	<!-- The main node of the record loaded 
 		This serves as the header of the RDF file produced
@@ -248,38 +248,31 @@
 			<core:personInPosition>
 				<rdf:Description rdf:about="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
 					<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
+					<rdfs:label><xsl:value-of select="$this/../rdf:Description[count(db-t_UF_DIR_EMP_STU_1:UF_WORK_TITLE) > 0]/db-t_UF_DIR_EMP_STU_1:UF_WORK_TITLE"/></rdfs:label>
 					<xsl:choose>
 						<xsl:when test="$typeCode=192">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-							<rdfs:label>Faculty</rdfs:label>
 						</xsl:when>
 						<xsl:when test="$typeCode=193">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-							<rdfs:label>Staff</rdfs:label>
 						</xsl:when>
 						<xsl:when test="$typeCode=194">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-							<rdfs:label>Staff</rdfs:label>
 						</xsl:when>
 						<xsl:when test="$typeCode=195">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-							<rdfs:label>Staff</rdfs:label>
 						</xsl:when>
 						<xsl:when test="$typeCode=197">
 							<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFacultyPos"/>
-							<rdfs:label>Faculty</rdfs:label>
 						</xsl:when>
 						<xsl:when test="$typeCode=200">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-							<rdfs:label>Faculty</rdfs:label>
 						</xsl:when>
 						<xsl:when test="$typeCode=219">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-							<rdfs:label>Faculty</rdfs:label>
 						</xsl:when>
 						<xsl:otherwise>
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
-							<rdfs:label>Employee</rdfs:label>
 						</xsl:otherwise>
 					</xsl:choose>
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>

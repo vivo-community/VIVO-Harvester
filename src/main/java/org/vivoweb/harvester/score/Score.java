@@ -30,6 +30,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
@@ -58,6 +59,10 @@ public class Score {
 	 */
 	private JenaConnect scoreJena;
 	/**
+	 * model in which to store temp copy of input and vivo data statements
+	 */
+	private JenaConnect tempJena;
+	/**
 	 * the class of the Algorithm to execute
 	 */
 	private Map<String,Class<? extends Algorithm>> algorithms;
@@ -83,14 +88,16 @@ public class Score {
 	 * @param inputJena model containing statements to be scored
 	 * @param vivoJena model containing vivoJena statements
 	 * @param scoreJena model containing scoring data statements
+	 * @param tempJena model in which to store temp copy of input and vivo data statements
 	 * @param algorithms the classes of the algorithms to execute
 	 * @param inputPredicates the predicates to look for in inputJena model
 	 * @param vivoPredicates the predicates to look for in vivoJena model
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param weights the weightings (0.0 , 1.0) for this score
+	 * @throws IOException error initializing jena models
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Float> weights) {
-		init(inputJena, vivoJena, scoreJena, algorithms, inputPredicates, vivoPredicates, namespace, weights);
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, JenaConnect tempJena, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Float> weights) throws IOException {
+		init(inputJena, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, namespace, weights);
 	}
 	
 	/**
@@ -112,6 +119,12 @@ public class Score {
 		JenaConnect i = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		JenaConnect v = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
 		JenaConnect s = JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S"));
+		JenaConnect t;
+		if(opts.has("t")) {
+			t = JenaConnect.parseConfig(opts.get("t"), opts.getValueMap("T"));
+		} else {
+			t = null;
+		}
 		Map<String,Class<? extends Algorithm>> a = new HashMap<String, Class<? extends Algorithm>>();
 		Map<String, String> algs = opts.getValueMap("A");
 		for(String runName : algs.keySet()) {
@@ -128,7 +141,7 @@ public class Score {
 		for(String runName : weigh.keySet()) {
 			w.put(runName, Float.valueOf(weigh.get(runName)));
 		}
-		init(i, v, s, a, opts.getValueMap("P"), opts.getValueMap("F"), opts.get("n"), w);
+		init(i, v, s, t, a, opts.getValueMap("P"), opts.getValueMap("F"), opts.get("n"), w);
 	}
 	
 	/**
@@ -136,13 +149,15 @@ public class Score {
 	 * @param i model containing statements to be scored
 	 * @param v model containing vivoJena statements
 	 * @param s model containing scoring data statements
+	 * @param t model in which to store temp copy of input and vivo data statements
 	 * @param a the class of the Algorithm to execute
 	 * @param iPred the predicate to look for in inputJena model
 	 * @param vPred the predicate to look for in vivoJena model
 	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param w the weighting (0.0 , 1.0) for this score
+	 * @throws IOException error initializing jena models
 	 */
-	private void init(JenaConnect i, JenaConnect v, JenaConnect s, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Float> w) {
+	private void init(JenaConnect i, JenaConnect v, JenaConnect s, JenaConnect t, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Float> w) throws IOException {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -157,6 +172,13 @@ public class Score {
 			throw new IllegalArgumentException("Score Data model cannot be null");
 		}
 		this.scoreJena = s;
+		
+		JenaConnect temp = t;
+		if(temp == null) {
+			log.info("temp model is not specified, using memory jena model");
+			temp = new MemJenaConnect();
+		}
+		this.tempJena = temp;
 		
 		if(a == null) {
 			throw new IllegalArgumentException("Algorithm cannot be null");
@@ -223,12 +245,14 @@ public class Score {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Score");
 		// Models
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").setDescription("inputJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").setDescription("inputJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoJena-config").setDescription("vivoJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoJena-config").setDescription("vivoJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivoJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("score data JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("score data JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("temp-config").setDescription("temp model JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of temp jena model config using VALUE").setRequired(false));
 		
 		// Parameters
 		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("algorithms").withParameterValueMap("RUN_NAME", "CLASS_NAME").setDescription("for RUN_NAME, use this CLASS_NAME (must implement Algorithm) to evaluate matches").setRequired(true));
@@ -244,24 +268,30 @@ public class Score {
 	 * @throws IOException error connecting
 	 */
 	public void execute() throws IOException {
-		log.info("Running specified Algorithims");
+		log.trace("Building Query");
 		String sQuery = buildSelectQuery();
 		log.debug("Match Query:\n"+sQuery);
 		
 		// Bring all models into a single Dataset
-		JenaConnect unionModel = new MemJenaConnect(); //TODO anyone: determine if this should be an h2 in temp file rather than h2 in memory
-		JenaConnect vivoClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
+		JenaConnect vivoClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
+		log.trace("Loading VIVO model into memory");
 		vivoClone.loadRdfFromJC(this.vivoJena);
-		JenaConnect inputClone = unionModel.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
+		JenaConnect inputClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
+		log.trace("Loading Input model into memory");
 		inputClone.loadRdfFromJC(this.inputJena);
-		Dataset ds = unionModel.getConnectionDataSet();
+		Dataset ds = this.tempJena.getConnectionDataSet();
 		
 		// Execute query
+		log.trace("Building Query Execution");
 		Query query = QueryFactory.create(sQuery, Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
-		for(QuerySolution solution : IterableAdaptor.adapt(queryExec.execSelect())) {
+		log.trace("Executing Query");
+		ResultSet rs = queryExec.execSelect();
+		log.trace("Processig Results");
+		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
 			String sInputURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
+			log.debug("Evaluating <"+sInputURI+"> from inputJena as match for <"+sVivoURI+"> from vivoJena");
 			// Build Score Record
 			StringBuilder rdf = new StringBuilder();
 			rdf.append("" +
@@ -273,7 +303,6 @@ public class Score {
 				"    <scoreValue:VivoRes rdf:resource=\""+sVivoURI+"\"/>\n" +
 				"    <scoreValue:InputRes rdf:resource=\""+sInputURI+"\"/>\n"
 			);
-			log.debug("Evaluating <"+sInputURI+"> from inputJena as match for <"+sVivoURI+"> from vivoJena");
 			for(String runName : this.vivoPredicates.keySet()) {
 				RDFNode os = solution.get("os_"+runName);
 				RDFNode op = solution.get("op_"+runName);
@@ -287,8 +316,10 @@ public class Score {
 			);
 			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+rdf.toString());
 			// Push Score Data into score model
+			log.trace("Loading Score Data into Score Model");
 			this.scoreJena.loadRdfFromString(rdf.toString(), null, null);
 		}
+		log.trace("Result Processing Complete");
 	}
 	
 	/**

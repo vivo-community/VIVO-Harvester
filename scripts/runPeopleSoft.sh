@@ -72,22 +72,22 @@ SCOREDATA="-s config/jenaModels/h2.xml -SmodelName=peopleSoftScoreData -SdbUrl=j
 SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG $SCOREDATA"
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 # Execute Score for People
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid
+$Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid
 # Execute Score for Departments
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -PdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID
+$Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -PdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID
 # Execute Score for Positions
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/peoplesoft/position/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=http://vivoweb.org/ontology/core#positionInOrganization -PposOrg=http://vivoweb.org/ontology/core#positionInOrganization -AposPer=$EQTEST -WposPer=1.0 -FposPer=http://vivoweb.org/ontology/core#positionForPerson -PposPer=http://vivoweb.org/ontology/core#positionForPerson -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition -PdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
+$Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/position/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=http://vivoweb.org/ontology/core#positionInOrganization -PposOrg=http://vivoweb.org/ontology/core#positionInOrganization -AposPer=$EQTEST -WposPer=1.0 -FposPer=http://vivoweb.org/ontology/core#positionForPerson -PposPer=http://vivoweb.org/ontology/core#positionForPerson -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition -PdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREMODELS -t 1.0 -r
 
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n http://vivo.ufl.edu/individual/"
 # Execute ChangeNamespace to get unmatched People into current namespace
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/peoplesoft/person/
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/ufl/peoplesoft/person/
 # Execute ChangeNamespace to get unmatched Departments into current namespace
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/peoplesoft/org/ -e
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/ufl/peoplesoft/org/ -e
 # Execute ChangeNamespace to get unmatched Positions into current namespace
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/peoplesoft/position/
+$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/ufl/peoplesoft/position/
 
 # backup H2 matched Model
 date=`date +%Y-%m-%d_%T`
