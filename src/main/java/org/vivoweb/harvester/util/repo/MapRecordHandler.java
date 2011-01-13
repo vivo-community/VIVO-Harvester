@@ -8,13 +8,12 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
 
 /**
@@ -140,8 +139,8 @@ public class MapRecordHandler extends RecordHandler {
 	}
 
 	@Override
-	public List<String> find(String idText) {
-		List<String> retVal = new LinkedList<String>();
+	public Set<String> find(String idText) {
+		Set<String> retVal = new HashSet<String>();
 		for(String id : this.map.keySet()) {
 			if(id.contains(idText)) {
 				retVal.add(id);

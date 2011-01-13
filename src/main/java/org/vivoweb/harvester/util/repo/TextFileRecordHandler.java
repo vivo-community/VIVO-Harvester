@@ -14,12 +14,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -615,8 +616,8 @@ public class TextFileRecordHandler extends RecordHandler {
 	}
 
 	@Override
-	public List<String> find(String idText) {
-		List<String> retVal = new LinkedList<String>();
+	public Set<String> find(String idText) {
+		Set<String> retVal = new HashSet<String>();
 		for(Record r : this) {
 			if(r.getID().contains(idText)) {
 				retVal.add(r.getID());

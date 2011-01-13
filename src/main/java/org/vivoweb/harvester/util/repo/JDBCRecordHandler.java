@@ -14,12 +14,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -169,7 +169,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void createTable() throws IOException {
 		try {
-			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "` ( `" + recordIdField + "` varchar(100) NOT NULL PRIMARY KEY, `" + this.dataField + "` blob NOT NULL)");
+			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "` ( `" + recordIdField + "` varchar(255) NOT NULL PRIMARY KEY, `" + this.dataField + "` blob NOT NULL)");
 		} catch(SQLException e) {
 			throw new IOException("Cannot Create Table: " + this.table, e);
 		}
@@ -219,7 +219,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	private void createMetaTable() throws IOException {
 		try {
 			this.cursor.executeUpdate("DROP TABLE IF EXISTS `" + this.table + "_rmd`");
-			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "_rmd` ( `" + rmdRelField + "` varchar(100) NOT NULL, `" + rmdCalField + "` varchar(25) NOT NULL, `" + rmdOperationField + "` varchar(10) NOT NULL, `" + rmdOperatorField + "` varchar(100) NOT NULL, `" + rmdMD5Field + "` varchar(32) NOT NULL, CONSTRAINT fk_RecordRel FOREIGN KEY (`" + rmdRelField + "`) REFERENCES `" + this.table + "` (`" + recordIdField + "`))");
+			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "_rmd` ( `" + rmdRelField + "` varchar(255) NOT NULL, `" + rmdCalField + "` varchar(25) NOT NULL, `" + rmdOperationField + "` varchar(10) NOT NULL, `" + rmdOperatorField + "` varchar(255) NOT NULL, `" + rmdMD5Field + "` varchar(32) NOT NULL, CONSTRAINT fk_RecordRel FOREIGN KEY (`" + rmdRelField + "`) REFERENCES `" + this.table + "` (`" + recordIdField + "`))");
 			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdCalField + "` ON `" + this.table + "_rmd` (`" + rmdCalField + "`)");
 			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdRelField + "` ON `" + this.table + "_rmd` (`" + rmdRelField + "`)");
 		} catch(SQLException e) {
@@ -443,9 +443,9 @@ public class JDBCRecordHandler extends RecordHandler {
 	}
 
 	@Override
-	public List<String> find(String idText) throws IOException {
-		List<String> retVal = new LinkedList<String>();
-		String query = "select " + JDBCRecordHandler.recordIdField + " from " + JDBCRecordHandler.this.table + " where " + JDBCRecordHandler.recordIdField + " LIKE '%"+idText+"%'";
+	public Set<String> find(String idText) throws IOException {
+		Set<String> retVal = new HashSet<String>();
+		String query = "select " + recordIdField + " from " + this.table + " where " + recordIdField + " LIKE '%"+idText+"%'";
 		try {
 			ResultSet rs = this.cursor.executeQuery(query);
 			while(rs.next()) {

@@ -161,7 +161,7 @@ public class Transfer {
 			if(this.input == null) {
 				newInput = true;
 			} else {
-				emptyJC(this.input);
+				this.input.truncate();
 			}
 		}
 		if(newInput && this.input == null) {
@@ -220,7 +220,7 @@ public class Transfer {
 		
 		// empty model
 		if(this.clearModel && !inputIsOutput) {
-			emptyJC(this.input);
+			this.input.truncate();
 		}
 		
 		// close the models;
@@ -257,25 +257,6 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-transfered-model").withParameter(false, "WIPE_FLAG").setDescription("If set, this will clear the input model after transfer is complete"));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("empty-input-model").withParameter(false, "EMPTY_FLAG").setDescription("If set, this will clear the input model before transfer is started").setRequired(false));
 		return parser;
-	}
-	
-	/**
-	 * clears all statements from a jena model
-	 * @param jc the jena model
-	 */
-	public static void emptyJC(JenaConnect jc) {
-		log.trace("Emptying Model");
-		jc.getJenaModel().removeAll();
-	}
-	
-	/**
-	 * maybe be deprecated
-	 * dumps the contents of a jena model into a file
-	 * @param jc the jena model from which the other is removed
-	 * @param remove the jena model to remove
-	 */
-	public static void removeJCFromJS(JenaConnect jc, JenaConnect remove) {
-		jc.getJenaModel().remove(remove.getJenaModel());
 	}
 	
 	/**

@@ -311,27 +311,23 @@ public class TranslateTest extends TestCase {
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.translate.XSLTranslator#main(java.lang.String[]) main(String... args)}.
+	 * @throws IOException error
 	 */
-	public void testPubMedXSLT() {
+	public void testPubMedXSLT() throws IOException {
 		log.info("BEGIN testPubMedXSLT");
-		try {
-			// add a record to the record handler
-			this.inRH.addRecord("1", inputData, this.getClass());
-			
-			// call the xlsTranslate
-			new XSLTranslator(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()}).execute();
-			
-			// verify that output record handler has some records
-			assertTrue(this.outRH.iterator().hasNext());
-			
-			// compare the record data with expected output
-			log.debug("Translation Output:\n"+this.outRH.getRecordData("1"));
-			
+		// add a record to the record handler
+		this.inRH.addRecord("1", inputData, this.getClass());
+		
+		// call the xlsTranslate
+		new XSLTranslator(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()}).execute();
+		
+		// verify that output record handler has some records
+		assertTrue(this.outRH.iterator().hasNext());
+		
+		// compare the record data with expected output
+		log.debug("Translation Output:\n"+this.outRH.getRecordData("1"));
+		
 //			assertEquals(outputData, this.outRH.getRecordData("1"));
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
 		log.info("END testPubMedXSLT");
 	}
 	

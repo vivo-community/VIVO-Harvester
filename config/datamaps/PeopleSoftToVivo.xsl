@@ -64,71 +64,66 @@
 	
 	<xsl:template match="rdf:Description">
 		<xsl:variable name="this" select="." />
-		<xsl:analyze-string select="../@xml:base" regex="^.*/([^/]+?)$">
+		<xsl:analyze-string select="$this/@rdf:about" regex="^.*/([^/]+?)#id_-_(.*?)(_-_.+)*?$">
 			<xsl:matching-substring>
 				<xsl:variable name="table" select="regex-group(1)" />
-				<xsl:variable name="rdfid" select="$this/@rdf:ID" />
-				<xsl:analyze-string select="$rdfid" regex="^id_-_(.*?)(_-_.+)*?$">
-					<xsl:matching-substring>
-						<xsl:variable name="ufid" select="regex-group(1)" />
-						<xsl:choose>
-							<xsl:when test="$table = 't_UF_DIR_EMP_STU_1'">
-								<xsl:call-template name="t_UF_DIR_EMP_STU_1">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when>
-							<xsl:when test="$table = 't_UF_DIR_EMP_STU_2'">
-								<xsl:call-template name="t_UF_DIR_EMP_STU_2">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when>
-							<!-- <xsl:when test="$table = 't_UF_DIR_EMP_STU_3'">
-								<xsl:call-template name="t_UF_DIR_EMP_STU_3">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when> -->
-							<xsl:when test="$table = 't_UF_DIR_EMP_STU_4'">
-								<xsl:call-template name="t_UF_DIR_EMP_STU_4">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when>
-							<xsl:when test="$table = 't_UF_DIR_EMP_STU_5'">
-								<xsl:call-template name="t_UF_DIR_EMP_STU_5">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when>
-							<!-- <xsl:when test="$table = 't_UF_DIR_EMP_STU_6'">
-								<xsl:call-template name="t_UF_DIR_EMP_STU_6">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when> -->
-							<xsl:when test="$table = 't_UF_PA_GL_ACCT'">
-								<xsl:call-template name="t_UF_PA_GL_ACCT">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when>
-							<xsl:when test="$table = 't_UF_PER_UFAU'">
-								<xsl:call-template name="t_UF_PER_UFAU">
-									<xsl:with-param name="ufid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when>
-							<!--<xsl:when test="$table = 't_PS_H_UF_ACAD_ORG'">
-								<xsl:call-template name="t_PS_H_UF_ACAD_ORG">
-									<xsl:with-param name="orgid" select="$ufid" />
-									<xsl:with-param name="this" select="$this" />
-								</xsl:call-template>
-							</xsl:when>-->
-						</xsl:choose>
-					</xsl:matching-substring>
-				</xsl:analyze-string>
+				<xsl:variable name="ufid" select="regex-group(2)" />
+				<xsl:choose>
+					<xsl:when test="$table = 't_UF_DIR_EMP_STU_1'">
+						<xsl:call-template name="t_UF_DIR_EMP_STU_1">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when>
+					<xsl:when test="$table = 't_UF_DIR_EMP_STU_2'">
+						<xsl:call-template name="t_UF_DIR_EMP_STU_2">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when>
+					<!-- <xsl:when test="$table = 't_UF_DIR_EMP_STU_3'">
+						<xsl:call-template name="t_UF_DIR_EMP_STU_3">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when> -->
+					<xsl:when test="$table = 't_UF_DIR_EMP_STU_4'">
+						<xsl:call-template name="t_UF_DIR_EMP_STU_4">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when>
+					<xsl:when test="$table = 't_UF_DIR_EMP_STU_5'">
+						<xsl:call-template name="t_UF_DIR_EMP_STU_5">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when>
+					<!-- <xsl:when test="$table = 't_UF_DIR_EMP_STU_6'">
+						<xsl:call-template name="t_UF_DIR_EMP_STU_6">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when> -->
+					<xsl:when test="$table = 't_UF_PA_GL_ACCT'">
+						<xsl:call-template name="t_UF_PA_GL_ACCT">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when>
+					<xsl:when test="$table = 't_UF_PER_UFAU'">
+						<xsl:call-template name="t_UF_PER_UFAU">
+							<xsl:with-param name="ufid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when>
+					<!--<xsl:when test="$table = 't_PS_H_UF_ACAD_ORG'">
+						<xsl:call-template name="t_PS_H_UF_ACAD_ORG">
+							<xsl:with-param name="orgid" select="$ufid" />
+							<xsl:with-param name="this" select="$this" />
+						</xsl:call-template>
+					</xsl:when>-->
+				</xsl:choose>
 			</xsl:matching-substring>
 		</xsl:analyze-string>
 	</xsl:template>

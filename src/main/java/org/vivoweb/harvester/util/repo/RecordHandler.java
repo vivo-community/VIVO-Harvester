@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -450,5 +450,5 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return list of ids that match
 	 * @throws IOException error searching
 	 */
-	public abstract List<String> find(String idText) throws IOException;
+	public abstract Set<String> find(String idText) throws IOException;
 }

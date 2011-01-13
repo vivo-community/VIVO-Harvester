@@ -35,7 +35,7 @@ public class SpecialEntitiesTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#htmlEncode(java.lang.String) htmlEncode(String s)}
+	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#htmlEncode(java.lang.String, char...) htmlEncode(String s, char... exceptions)}
 	 * .
 	 */
 	public final void testHtmlEncode() {
@@ -89,7 +89,7 @@ public class SpecialEntitiesTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlEncode(java.lang.String) xmlEncode(String s)}.
+	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlEncode(java.lang.String, char...) xmlEncode(String s, char... exceptions)}.
 	 */
 	public final void testXmlEncode() {
 		log.info("BEGIN testXmlEncode");

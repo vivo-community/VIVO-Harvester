@@ -41,15 +41,18 @@ public class ChangeNamespaceTest extends TestCase {
 		this.model = new SDBJenaConnect("jdbc:h2:mem:testChNSh2change", "sa", "", "H2", "org.h2.Driver", "layout2", "testChNSchange");
 		this.vivo = new RDBJenaConnect("jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSvivo");
 		//Preload arguments
-		this.args[0] = "-v config/jenaModels/h2.xml";
-		this.args[1] = "-V modelName=testChNSvivo";
-		this.args[2] = "-V dbUrl=jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB";
-		this.args[3] = "-V dbType=HSQLDB";
-		this.args[4] = "-i config/jenaModels/h2.xml";
-		this.args[5] = "-I modelName=testChNSchange";
-		this.args[6] = "-I dbUrl=jdbc:h2:mem:testChNSh2change";
-		this.args[7] = "-n " + this.namespace;
-		this.args[8] = "-o " + this.newNamespace;
+		this.args = new String[]{
+				"-v config/jenaModels/h2.xml",
+				"-V modelName=testChNSvivo",
+				"-V dbUrl=jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB",
+				"-V dbType=HSQLDB",
+				"-V type=rdb",
+				"-i config/jenaModels/h2.xml",
+				"-I modelName=testChNSchange",
+				"-I dbUrl=jdbc:h2:mem:testChNSh2change",
+				"-n " + this.newNamespace,
+				"-o " + this.namespace
+		};
 		String vivoData = ""+
 		"<rdf:RDF"+
 		"\n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""+
@@ -144,13 +147,11 @@ public class ChangeNamespaceTest extends TestCase {
 		ByteArrayOutputStream baos;
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
-		log.debug("VIVO");
-		log.debug(baos.toString());
+		log.debug("VIVO:\n"+baos.toString());
 		new ChangeNamespace(this.args).execute();
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
-		log.debug("Changed VIVO");
-		log.debug(baos.toString());
+		log.debug("Changed VIVO:\n"+baos.toString());
 		assertFalse(this.model.containsURI(this.namespace));
 		String query = ""+
 		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"+"\n"+
@@ -163,6 +164,7 @@ public class ChangeNamespaceTest extends TestCase {
 		assertTrue(rs.hasNext());
 		while(rs.hasNext()) {
 			String ns = rs.next().getResource("uri").getNameSpace();
+			log.debug(ns);
 			assertTrue(ns.equals(this.newNamespace) || ns.equals("http://norename.blah.com/blah/"));
 		}
 		log.info("END testArgChangeNS");

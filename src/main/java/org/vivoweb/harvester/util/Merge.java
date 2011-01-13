@@ -6,8 +6,6 @@
  ******************************************************************************/
 package org.vivoweb.harvester.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,13 +85,13 @@ public class Merge {
 			JenaConnect jc = new MemJenaConnect();
 			Matcher m = regex.matcher(r.getID());
 			if(m.matches()) {
-				for(String id : input.find(m.group(1))) {
-					jc.loadRdfFromStream(new ByteArrayInputStream(input.getRecord(id).getData().getBytes()), null, null);
+				String matchTerm = m.group(1);
+				log.debug("Matched record '"+r.getID()+"': merging based on '"+matchTerm+"'");
+				for(String id : input.find(matchTerm)) {
+					log.trace("Merging record '"+id+"' into '"+matchTerm+"'");
+					jc.loadRdfFromString(input.getRecord(id).getData(), null, null);
 				}
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				jc.exportRdfToStream(baos);
-				baos.flush();
-				output.addRecord(m.group(1), baos.toString("UTF-8"), Merge.class);
+				output.addRecord(m.group(1), jc.exportRdfToString(), Merge.class);
 			}
 		}
 	}
@@ -102,7 +100,7 @@ public class Merge {
 	 * Runs the merge
 	 * @throws IOException error executing
 	 */
-	private void execute() throws IOException {
+	public void execute() throws IOException {
 		merge(this.input,this.output,this.regex);
 	}
 	

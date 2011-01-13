@@ -47,6 +47,7 @@ public class SpecialEntities {
 	private static Map<String, String> getHtmlEncode() {
 		if(htmlEncode == null) {
 			htmlEncode = new HashMap<String, String>();
+			htmlEncode.put("&#32;", "&nbsp;");
 			htmlEncode.put("&#34;", "&quot;");
 			htmlEncode.put("&#38;", "&amp;");
 			htmlEncode.put("&#39;", "&apos;");
@@ -325,6 +326,7 @@ public class SpecialEntities {
 	private static Map<String, String> getXmlEncode() {
 		if(xmlEncode == null) {
 			xmlEncode = new HashMap<String, String>();
+			xmlEncode.put("&#32;", "&nbsp;");
 			xmlEncode.put("&#34;", "&quot;");
 			xmlEncode.put("&#38;", "&amp;");
 			xmlEncode.put("&#39;", "&apos;");
@@ -442,9 +444,9 @@ public class SpecialEntities {
 			acceptedChars.add(Character.valueOf('*'));
 			acceptedChars.add(Character.valueOf('-'));
 			acceptedChars.add(Character.valueOf('_'));
+			acceptedChars.add(Character.valueOf(' '));
 			acceptedChars.add(Character.valueOf('+'));
 			acceptedChars.add(Character.valueOf('='));
-			acceptedChars.add(Character.valueOf(' '));
 			acceptedChars.add(Character.valueOf('\t'));
 			acceptedChars.add(Character.valueOf('\n'));
 			acceptedChars.add(Character.valueOf('\r'));
@@ -456,10 +458,11 @@ public class SpecialEntities {
 	/**
 	 * Converts all special characters to HTML-entities
 	 * @param s input string
+	 * @param exceptions force these characters to be encoded
 	 * @return html encoded string
 	 */
-	public static String htmlEncode(String s) {
-		return encode(s, "html");
+	public static String htmlEncode(String s, char... exceptions) {
+		return encode(s, "html", exceptions);
 	}
 	
 	/**
@@ -474,10 +477,11 @@ public class SpecialEntities {
 	/**
 	 * Converts all special characters to XML-entities
 	 * @param s input string
+	 * @param exceptions force these characters to be encoded
 	 * @return xml encoded string
 	 */
-	public static String xmlEncode(String s) {
-		return encode(s, "xml");
+	public static String xmlEncode(String s, char... exceptions) {
+		return encode(s, "xml", exceptions);
 	}
 	
 	/**
@@ -493,21 +497,26 @@ public class SpecialEntities {
 	 * Converts all special characters to encoded-entities
 	 * @param s input string
 	 * @param encodeType the type of encoding
+	 * @param exceptions force these characters to be encoded
 	 * @return encoded string
 	 */
-	private static String encode(String s, String encodeType) {
+	private static String encode(String s, String encodeType, char... exceptions) {
 		Map<String, String> encodeMap;
+		List<Character> accept = new LinkedList<Character>(getAcceptedChars());
+		for(char c : exceptions) {
+			accept.remove(Character.valueOf(c));
+		}
 		if(encodeType.equalsIgnoreCase("html")) {
 			encodeMap = getHtmlEncode();
 		} else if(encodeType.equalsIgnoreCase("xml")) {
 			encodeMap = getXmlEncode();
 		} else {
-			throw new IllegalArgumentException("decodeType must be xml or html only");
+			throw new IllegalArgumentException("encodeType must be xml or html only");
 		}
 		StringBuilder b = new StringBuilder(s.length());
 		for(int i = 0; i < s.length(); i++) {
 			char ch = s.charAt(i);
-			if(getAcceptedChars().contains(Character.valueOf(ch))) {
+			if(accept.contains(Character.valueOf(ch))) {
 				b.append(ch);
 			} else {
 				StringBuilder b2 = new StringBuilder();
