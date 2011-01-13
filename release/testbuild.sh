@@ -4,16 +4,18 @@
 # which accompanies this distribution, and is available at
 # http://www.opensource.org/licenses/bsd-license.html
 #
-# Contributors:
-#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
-#	  James Pence
 
 #author: nskaggs@ctrip.ufl.edu
+#This will run a predetermined harvest against pubmed into a known set of data
+#For now, it is meant as a QA script for the harvester
 
 #WARNING: this code is fragile and not robust.
 #No attempts to sanitize or rationalize input have been made
 
 rm -rf usr
+rm *.log
+rm vivo_start.rdf
+rm vivo_end.rdf
 
 echo -n "Grab local?: "
 read LOCAL
@@ -62,10 +64,22 @@ cd usr/share/vivo/harvester
 bash scripts/runPubmed.sh
 
 #check for failure
-if [ "$?" = "1" ]; then
+if [ "$?" = "1" ]; then2
 	echo "TEST FAILED DURING runPubmed.sh" $?
 fi
 
 #copy out the log and remove
 cp logs/* ../../../..
-cp vivo.rdf ../../../..
+cp vivo_start.rdf ../../../..
+cp vivo_end.rdf ../../../..
+
+#check for data written to vivo, otherwise failure
+PRESIZE=`ls -l vivo_start.rdf | awk '{ print $5 }'`
+POSTSIZE=`ls -l vivo_end.rdf | awk '{ print $5 }'`
+
+if [[ $POSTSIZE > $PRESIZE ]]
+then
+  echo "SUCCESS -- Test harvest completed"
+else
+  echo "FAILED -- publication didn't get into vivo"
+fi

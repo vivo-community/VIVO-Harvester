@@ -4,6 +4,7 @@
 		more variables are used for readability
 	Config files no longer required to run any tool
 	Command line arguments have changed for several tools
+	Logging now logs to single file
 	
 	Pubmed
 		Fix for mesh term striping errors
