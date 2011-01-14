@@ -273,7 +273,7 @@
 					<xsl:when test="translate(string($pbType),$up,$lo)='book reviews'">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
 					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='case beports'">
+					<xsl:when test="translate(string($pbType),$up,$lo)='case reports'">
 						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CaseStudy" />
 					</xsl:when>
 					<xsl:when test="translate(string($pbType),$up,$lo)='charts'">
