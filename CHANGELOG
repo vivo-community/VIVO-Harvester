@@ -2,10 +2,15 @@
 	Updated scripts
 		env file no longer requires configuration
 		more variables are used for readability
+		env file contains optional performance enhancements for the JVM -- these are on by default
 	Config files no longer required to run any tool
 	Command line arguments have changed for several tools
 	Logging now logs to single file
 	
+	D2RMap
+		now supports csv files
+	MODS
+		new xsl file to convert from MODS to vivo
 	Pubmed
 		Fix for mesh term striping errors
 		Regex function for pulling out firstname and middlename/initial
@@ -30,7 +35,12 @@
 		In-line string replace
 		Moved Sanitize portion of scoring into qualify for removing ontologies/namespaces
 	Update
-		Wrapper class removed in favor of direct diff and transfer tool calls
+		Wrapper class removed in favor of direct diff and transfer tool calls	
+	Merge
+		Merge tool created to assist with merging RF; specifically during JDBC harvests
+	VIVO.xml
+		namespace added
+		type added (supported types are sdb, rdb, or mem)
 		
 
 0.7.1
