@@ -29,13 +29,6 @@ OUTPUT="-o $HCONFIG -OmodelName=Pubmed -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/sto
 VIVO="-v $VIVOCONFIG"
 SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=PubmedScore"
 
-#variables for scoring
-LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.4 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
-FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
-LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
-MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/score#middleName"
-
 #clear old fetches
 rm -rf XMLVault/h2Pubmed/XML
 
@@ -82,10 +75,16 @@ ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
 rm -rf XMLVault/h2Pubmed/score
 
 # Execute Score to disambiguate data in "scoring" JENA model
+LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
+WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.4 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
+FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
+LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
+MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/score#middleName"
+
 $Score $VIVO $INPUT $SCORE $WORKEMAIL $FNAME $LNAME $MNAME
 
 # Execute match to match and link data into "vivo" JENA model
-$Match $INPUT $SCORE -t 0.5
+$Match $INPUT $SCORE -t 0.5 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
@@ -98,6 +97,8 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 # Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
 # Off by default, examples show below
 #$Qualify -j $VIVOCONFIG -r JAMA -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
+
+#remove score statements
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
