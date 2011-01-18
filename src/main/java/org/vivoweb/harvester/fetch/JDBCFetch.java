@@ -61,15 +61,15 @@ public class JDBCFetch {
 	 */
 	private Map<String, List<String>> dataFields = null;
 	/**
-	 * set of table names
+	 * Set of table names
 	 */
 	private Set<String> tableNames = null;
 	/**
-	 * list of conditions
+	 * List of conditions
 	 */
 	private Map<String, List<String>> whereClauses;
 	/**
-	 * mapping of extra tables for the from section
+	 * Mapping of extra tables for the from section
 	 */
 	private Map<String, String> fromClauses;
 	/**
