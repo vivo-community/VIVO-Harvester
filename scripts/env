@@ -6,6 +6,7 @@
 
 VIVOCONFIG='config/jenaModels/VIVO.xml'
 SERVER=`grep dbUrl $VIVOCONFIG| sed 's|^.*://\([^:^\/]*\)[:\/].*$|\1|g'`
+#fix me!
 DBNAME=`grep modelName $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 USERNAME=`grep dbUser $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 PASSWORD=`grep dbPass $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
