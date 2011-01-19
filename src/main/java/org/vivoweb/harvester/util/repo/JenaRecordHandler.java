@@ -22,13 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -146,9 +141,8 @@ public class JenaRecordHandler extends RecordHandler {
 		}
 		Resource record = getRecordResource(rec.getID());
 		if(!overwrite && record != null) {
-			throw new IOException("Record already exists!");
+			throw new IOException("Record '" + rec.getID() + "' already exists!");
 		} else if(record == null) {
-			log.debug("Record did not exist...adding");
 			record = this.model.getJenaModel().createResource();
 		}
 		this.model.getJenaModel().add(this.model.getJenaModel().createStatement(record, this.isA, this.recType));
@@ -163,8 +157,7 @@ public class JenaRecordHandler extends RecordHandler {
 		delMetaData(recID);
 		Resource r = getRecordResource(recID);
 		if(r == null) {
-			log.debug("Record Does Not Exist");
-			return;
+			throw new IOException("Record '" + recID + "' Does Not Exist");
 		}
 		r.removeProperties();
 	}
@@ -172,15 +165,18 @@ public class JenaRecordHandler extends RecordHandler {
 	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
 		// create query string
-		String sQuery = "" + "PREFIX rhns: <" + rhNameSpace + "> \n" + "PREFIX lns: <" + this.dataType.getNameSpace() + "> \n" + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " + "Select ?dataField " + "WHERE { " + "  ?record rdf:type rhns:" + this.recType.getLocalName() + " . " + "  ?record rhns:" + this.idType.getLocalName() + " \"" + recID + "\" . " + "  ?record lns:" + this.dataType.getLocalName() + " ?dataField . " + "}";
+		String sQuery = "" +
+			"PREFIX rhns: <" + rhNameSpace + "> \n" +
+			"PREFIX lns: <" + this.dataType.getNameSpace() + "> \n" +
+			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+			"Select ?dataField \n" +
+			"WHERE { \n" +
+			"  ?record rdf:type rhns:" + this.recType.getLocalName() + " . \n" +
+			"  ?record rhns:" + this.idType.getLocalName() + " \"" + recID + "\" . \n" +
+			"  ?record lns:" + this.dataType.getLocalName() + " ?dataField . \n" +
+			"}";
 		
-		// create query
-		Query query = QueryFactory.create(sQuery);
-		
-		// execute the query and obtain results
-		QueryExecution qe = QueryExecutionFactory.create(query, this.model.getJenaModel());
-		ResultSet resultSet = qe.execSelect();
-		
+		ResultSet resultSet = this.model.executeSelectQuery(sQuery);
 		// read first result
 		String data = null;
 		if(resultSet.hasNext()) {
@@ -226,14 +222,17 @@ public class JenaRecordHandler extends RecordHandler {
 		 */
 		protected JenaRecordIterator() {
 			// create query string
-			String sQuery = "" + "PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + "> \n" + "PREFIX lns: <" + JenaRecordHandler.this.dataType.getNameSpace() + "> \n" + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + "Select ?idField \n" + "WHERE { \n" + "  ?record rdf:type rhns:" + JenaRecordHandler.this.recType.getLocalName() + " . \n" + "  ?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField . \n" + "  ?record lns:" + JenaRecordHandler.this.dataType.getLocalName() + " ?dataField . \n" + "}";
+			String sQuery = "" +
+				"PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + "> \n" +
+				"PREFIX lns: <" + JenaRecordHandler.this.dataType.getNameSpace() + "> \n" +
+				"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+				"Select ?idField \n" + "WHERE { \n" +
+				"  ?record rdf:type rhns:" + JenaRecordHandler.this.recType.getLocalName() + " . \n" +
+				"  ?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField . \n" +
+				"  ?record lns:" + JenaRecordHandler.this.dataType.getLocalName() + " ?dataField . \n" +
+				"} ORDER BY ?idField";
 			
-			// create query
-			Query query = QueryFactory.create(sQuery);
-			
-			// execute the query and obtain results
-			QueryExecution qe = QueryExecutionFactory.create(query, JenaRecordHandler.this.model.getJenaModel());
-			this.resultSet = qe.execSelect();
+			this.resultSet = JenaRecordHandler.this.model.executeSelectQuery(sQuery);
 		}
 		
 		@Override
@@ -244,13 +243,7 @@ public class JenaRecordHandler extends RecordHandler {
 		@Override
 		public Record next() {
 			try {
-				QuerySolution querySol = this.resultSet.next();
-				List<String> resultVars = this.resultSet.getResultVars();
-				String var = resultVars.get(0);
-				Literal lit = querySol.getLiteral(var);
-				String id = lit.getString();
-				Record result = getRecord(id);
-				return result;
+				return getRecord(this.resultSet.next().getLiteral("idField").getString());
 			} catch(IOException e) {
 				throw new NoSuchElementException(e.getMessage());
 			}
@@ -357,7 +350,7 @@ public class JenaRecordHandler extends RecordHandler {
 			"?record rdf:type rhns:" + JenaRecordHandler.this.recType.getLocalName() + " ."+"\n\t"+
 			"?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField ."+"\n\t"+
 			"FILTER regex(?idField, \"" + idText + "\")"+"\n"+
-		"}";
+		"} ORDER BY ?idField";
 		for(QuerySolution record : IterableAdaptor.adapt(this.model.executeSelectQuery(query))) {
 			retVal.add(record.getLiteral("idField").getString());
 		}

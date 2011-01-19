@@ -136,7 +136,7 @@ public class SDBJenaConnect extends JenaConnect {
 
 	@Override
 	public void truncate() {
-		this.store.getTableFormatter().truncate();
+		this.getJenaModel().removeAll();
 	}
 	
 }

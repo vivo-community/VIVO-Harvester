@@ -8,7 +8,6 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -84,7 +83,7 @@ public class MapRecordHandler extends RecordHandler {
 		 * Default Constructor
 		 */
 		protected MapRecordIterator() {
-			this.keyIter = MapRecordHandler.this.map.keySet().iterator();
+			this.keyIter = new TreeSet<String>(MapRecordHandler.this.map.keySet()).iterator();
 		}
 		
 		@Override
@@ -140,7 +139,7 @@ public class MapRecordHandler extends RecordHandler {
 
 	@Override
 	public Set<String> find(String idText) {
-		Set<String> retVal = new HashSet<String>();
+		Set<String> retVal = new TreeSet<String>();
 		for(String id : this.map.keySet()) {
 			if(id.contains(idText)) {
 				retVal.add(id);

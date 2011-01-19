@@ -16,11 +16,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +106,7 @@ public class JDBCFetch {
 	 */
 	private void prep() {
 		if(this.tableNames == null) {
-			this.tableNames = new HashSet<String>();
+			this.tableNames = new TreeSet<String>();
 		}
 		
 		if(this.fromClauses != null) {
@@ -187,7 +187,7 @@ public class JDBCFetch {
 		this.queryPre = opts.get("delimiterPrefix");
 		this.querySuf = opts.get("delimiterSuffix");
 		
-		this.tableNames = new HashSet<String>();
+		this.tableNames = new TreeSet<String>();
 		this.tableNames.addAll(opts.getAll("t"));
 		
 		if(opts.has("T")) {
@@ -620,7 +620,7 @@ public class JDBCFetch {
 					// Build RDF END
 					
 					// Write RDF to RecordHandler
-					log.trace("Adding record for " + tableName + ": " + recID);
+					log.trace("Adding record: " + tableName + "_" + recID);
 					this.rh.addRecord(tableName + "_" + recID, sb.toString(), this.getClass());
 				}
 			}

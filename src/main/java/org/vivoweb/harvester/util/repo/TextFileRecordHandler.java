@@ -14,9 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -458,7 +456,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		 * Default Constructor
 		 */
 		protected TextFileRecordIterator() {
-			LinkedList<String> allFileListing = new LinkedList<String>();
+			Set<String> allFileListing = new TreeSet<String>();
 			log.debug("Compiling list of records");
 			try {
 				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(Selectors.SELECT_CHILDREN)) {
@@ -617,7 +615,7 @@ public class TextFileRecordHandler extends RecordHandler {
 
 	@Override
 	public Set<String> find(String idText) {
-		Set<String> retVal = new HashSet<String>();
+		Set<String> retVal = new TreeSet<String>();
 		for(Record r : this) {
 			if(r.getID().contains(idText)) {
 				retVal.add(r.getID());

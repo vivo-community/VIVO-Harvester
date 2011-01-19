@@ -295,7 +295,6 @@ public abstract class JenaConnect {
 	 */
 	public void loadRdfFromStream(InputStream in, String namespace, String language) {
 		getJenaModel().read(in, namespace, language);
-		log.debug("RDF Data was loaded");
 	}
 	
 	/**
@@ -327,7 +326,6 @@ public abstract class JenaConnect {
 	 */
 	public void loadRdfFromJC(JenaConnect jc) {
 		getJenaModel().add(jc.getJenaModel());
-		log.debug("RDF Data was loaded");
 	}
 	
 	/**
@@ -344,7 +342,6 @@ public abstract class JenaConnect {
 		fasterWriter.write(this.jenaModel, osw, "");
 		osw.flush();
 		out.flush();
-		log.debug("RDF/XML Data was exported");
 	}
 	
 	/**
@@ -385,7 +382,6 @@ public abstract class JenaConnect {
 	 */
 	public void removeRdfFromStream(InputStream in, String namespace, String language) throws IOException {
 		this.removeRdfFromJC(new MemJenaConnect(in, namespace, language));
-		log.debug("RDF Data was removed");
 	}
 	
 	/**

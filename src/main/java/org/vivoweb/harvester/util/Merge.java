@@ -7,6 +7,9 @@
 package org.vivoweb.harvester.util;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -81,18 +84,28 @@ public class Merge {
 	 * @throws IOException error in record handling
 	 */
 	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) throws IOException {
+		Map<String,String> matchedIDs = new HashMap<String, String>();
+		log.info("Building List of Primary Records");
 		for(Record r : input) {
-			JenaConnect jc = new MemJenaConnect();
 			Matcher m = regex.matcher(r.getID());
 			if(m.matches()) {
-				String matchTerm = m.group(1);
-				log.debug("Matched record '"+r.getID()+"': merging based on '"+matchTerm+"'");
-				for(String id : input.find(matchTerm)) {
-					log.trace("Merging record '"+id+"' into '"+matchTerm+"'");
-					jc.loadRdfFromString(input.getRecord(id).getData(), null, null);
-				}
-				output.addRecord(m.group(1), jc.exportRdfToString(), Merge.class);
+				log.debug("Matched record '"+r.getID()+"' => '"+m.group(1)+"'");
+				matchedIDs.put(r.getID(),m.group(1));
 			}
+		}
+		int count = matchedIDs.size();
+		log.debug("Matched " + count + " records");
+		int cur = 0;
+		for(String rid : new TreeSet<String>(matchedIDs.keySet())) {
+			cur++;
+			String matchTerm = matchedIDs.get(rid);
+			log.debug("("+cur+"/"+count+": "+Math.round(10000f*cur/count)/100f+"%): merging '"+matchTerm+"'");
+			JenaConnect jc = new MemJenaConnect();
+			for(String id : input.find(matchTerm)) {
+				log.trace("Merging record '"+id+"' into '"+matchTerm+"'");
+				jc.loadRdfFromString(input.getRecord(id).getData(), null, null);
+			}
+			output.addRecord(matchTerm, jc.exportRdfToString(), Merge.class);
 		}
 	}
 	

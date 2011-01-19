@@ -44,7 +44,7 @@ public class ChangeNamespace {
 	 */
 	private final String newNamespace;
 	/**
-	 * The search model
+	 * The model in which to search for previously used uris
 	 */
 	private final JenaConnect vivo;
 	/**
@@ -63,15 +63,15 @@ public class ChangeNamespace {
 	
 	/**
 	 * Constructor
-	 * @param input input model
-	 * @param output output model
+	 * @param model model to change uris in
+	 * @param vivo model in which to search for previously used uris
 	 * @param oldName old namespace
 	 * @param newName new namespacey
 	 * @param errorLog log error messages for changed nodes
 	 */
-	public ChangeNamespace(JenaConnect input,JenaConnect output, String oldName, String newName, boolean errorLog) {
-		this.model = input;
-		this.vivo = output;
+	public ChangeNamespace(JenaConnect model, JenaConnect vivo, String oldName, String newName, boolean errorLog) {
+		this.model = model;
+		this.vivo = vivo;
 		this.oldNamespace = oldName;
 		this.newNamespace = newName;
 		this.errorLogging = errorLog;

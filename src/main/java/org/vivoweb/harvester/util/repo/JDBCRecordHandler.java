@@ -220,8 +220,8 @@ public class JDBCRecordHandler extends RecordHandler {
 		try {
 			this.cursor.executeUpdate("DROP TABLE IF EXISTS `" + this.table + "_rmd`");
 			this.cursor.executeUpdate("CREATE TABLE IF NOT EXISTS `" + this.table + "_rmd` ( `" + rmdRelField + "` varchar(255) NOT NULL, `" + rmdCalField + "` varchar(25) NOT NULL, `" + rmdOperationField + "` varchar(10) NOT NULL, `" + rmdOperatorField + "` varchar(255) NOT NULL, `" + rmdMD5Field + "` varchar(32) NOT NULL, CONSTRAINT fk_RecordRel FOREIGN KEY (`" + rmdRelField + "`) REFERENCES `" + this.table + "` (`" + recordIdField + "`))");
-			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdCalField + "` ON `" + this.table + "_rmd` (`" + rmdCalField + "`)");
-			this.cursor.executeUpdate("CREATE INDEX `ind_" + rmdRelField + "` ON `" + this.table + "_rmd` (`" + rmdRelField + "`)");
+			this.cursor.executeUpdate("CREATE INDEX `ind_" + this.table + "_" + rmdCalField + "` ON `" + this.table + "_rmd` (`" + rmdCalField + "`)");
+			this.cursor.executeUpdate("CREATE INDEX `ind_" + this.table + "_" + rmdRelField + "` ON `" + this.table + "_rmd` (`" + rmdRelField + "`)");
 		} catch(SQLException e) {
 			throw new IOException("Cannot Create Table: " + this.table + "_rmd", e);
 		}
@@ -345,7 +345,7 @@ public class JDBCRecordHandler extends RecordHandler {
 		 * @throws SQLException failed to read records
 		 */
 		protected JDBCRecordIterator() throws SQLException {
-			this.rs = JDBCRecordHandler.this.db.createStatement().executeQuery("select " + JDBCRecordHandler.recordIdField + " from " + JDBCRecordHandler.this.table);
+			this.rs = JDBCRecordHandler.this.db.createStatement().executeQuery("select " + JDBCRecordHandler.recordIdField + " from " + JDBCRecordHandler.this.table + " order by " + JDBCRecordHandler.recordIdField);
 		}
 		
 		@Override
@@ -445,7 +445,7 @@ public class JDBCRecordHandler extends RecordHandler {
 	@Override
 	public Set<String> find(String idText) throws IOException {
 		Set<String> retVal = new HashSet<String>();
-		String query = "select " + recordIdField + " from " + this.table + " where " + recordIdField + " LIKE '%"+idText+"%'";
+		String query = "SELECT " + recordIdField + " FROM " + this.table + " WHERE " + recordIdField + " LIKE '%"+idText+"%' ORDER BY " + recordIdField;
 		try {
 			ResultSet rs = this.cursor.executeQuery(query);
 			while(rs.next()) {
