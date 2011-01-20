@@ -55,17 +55,16 @@ public class CSVtoJDBC {
 	 * Command line Constructor
 	 * @param args command line arguments
 	 * @throws IOException error creating task
-	 * @throws ClassNotFoundException error loading driver
 	 * @throws SQLException error with connection
 	 */
-	public CSVtoJDBC(String[] args) throws IOException, ClassNotFoundException, SQLException {
+	public CSVtoJDBC(String[] args) throws IOException, SQLException {
 		this(new ArgList(getParser(), args));
 	}
 
 	/**
 	 * ArgList Constructor
 	 * @param argList option set of parsed args
-	 * @throws IOException error with recordhandler
+	 * @throws IOException error with connection
 	 * @throws SQLException error with connection
 	 */
 	public CSVtoJDBC(ArgList argList) throws IOException, SQLException {
@@ -88,9 +87,8 @@ public class CSVtoJDBC {
 	/**
 	 * move CSV data into a recordHandler
 	 * @throws SQLException error connecting
-	 * @throws IOException error outputting to recordhandler
 	 */
-	public void execute() throws SQLException, IOException {
+	public void execute() throws SQLException {
 		ResultSet rs = Csv.getInstance().read(this.csvFile, null, null);
         ResultSetMetaData meta = rs.getMetaData();
         Statement cursor = this.output.createStatement();

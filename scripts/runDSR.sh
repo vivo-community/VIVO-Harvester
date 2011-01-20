@@ -73,7 +73,7 @@ $Match $TEMPINPUT $SCOREDATA -t 1.0 -r
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/grant/
 
-# backup H2 change namesace Models
+# backup H2 change namespace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cngrant.$date.tar.gz XMLVault/h2dsr/All
 rm -rf backups/dsr.cngrant.latest.tar.gz
@@ -86,7 +86,7 @@ ln -s dsr.cngrant.$date.tar.gz backups/dsr.cngrant.latest.tar.gz
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/org/
 
-# backup H2 change namesace Models
+# backup H2 change namespace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnorg.$date.tar.gz XMLVault/h2dsr/All
 rm -rf backups/dsr.cnorg.latest.tar.gz
@@ -99,7 +99,7 @@ ln -s dsr.cnorg.$date.tar.gz backups/dsr.cnorg.latest.tar.gz
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/sponsor/
 
-# backup H2 change namesace Models
+# backup H2 change namespace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnsponsor.$date.tar.gz XMLVault/h2dsr/All
 rm -rf backups/dsr.cnsponsor.latest.tar.gz
@@ -112,7 +112,7 @@ ln -s dsr.cnsponsor.$date.tar.gz backups/dsr.cnsponsor.latest.tar.gz
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/person/
 
-# backup H2 change namesace Models
+# backup H2 change namespace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnpeople.$date.tar.gz XMLVault/h2dsr/All
 rm -rf backups/dsr.cnpeople.latest.tar.gz
@@ -125,7 +125,7 @@ ln -s dsr.cnpeople.$date.tar.gz backups/dsr.cnpeople.latest.tar.gz
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/piRole/
 
-# backup H2 change namesace Models
+# backup H2 change namespace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cnpirole.$date.tar.gz XMLVault/h2dsr/All
 rm -rf backups/dsr.cnpirole.latest.tar.gz
@@ -138,7 +138,7 @@ ln -s dsr.cnpirole.$date.tar.gz backups/dsr.cnpirole.latest.tar.gz
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/coPiRole/
 
-# backup H2 change namesace Models
+# backup H2 change namespace Models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/dsr.cncopirole.$date.tar.gz XMLVault/h2dsr/All
 rm -rf backups/dsr.cncopirole.latest.tar.gz
