@@ -96,17 +96,19 @@ public class Merge {
 		int count = matchedIDs.size();
 		log.debug("Matched " + count + " records");
 		int cur = 0;
+		JenaConnect jc = new MemJenaConnect();
 		for(String rid : new TreeSet<String>(matchedIDs.keySet())) {
 			cur++;
 			String matchTerm = matchedIDs.get(rid);
 			log.debug("("+cur+"/"+count+": "+Math.round(10000f*cur/count)/100f+"%): merging '"+matchTerm+"'");
-			JenaConnect jc = new MemJenaConnect();
+			jc.truncate();
 			for(String id : input.find(matchTerm)) {
 				log.trace("Merging record '"+id+"' into '"+matchTerm+"'");
 				jc.loadRdfFromString(input.getRecord(id).getData(), null, null);
 			}
 			output.addRecord(matchTerm, jc.exportRdfToString(), Merge.class);
 		}
+		jc.close();
 	}
 	
 	/**

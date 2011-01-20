@@ -3,7 +3,7 @@
   <appender name="AllAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <File>logs/${harvester-task:-harvester}.log</File>
     <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>ALL</level>
@@ -17,11 +17,11 @@
     </triggeringPolicy>
   </appender>
   
-    <!-- Uncomment to allow for individual log files for each tool - - >
-    <appender name="ClassAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <!-- Uncomment to allow for individual log files for each tool - ->
+  <appender name="ClassAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <File>logs/${harvester-task:-harvester}.${process-task:-all}.log</File>
     <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>OFF</level>
@@ -38,7 +38,7 @@
   <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
     <Target>System.out</Target>
     <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>TRACE</level>
@@ -70,7 +70,7 @@
   <appender name="Error" class="ch.qos.logback.core.ConsoleAppender">
     <Target>System.err</Target>
     <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}] %m%n</pattern>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>WARN</level>
@@ -81,13 +81,13 @@
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
-    <!-- - - ><appender-ref ref="ClassAppender"/><!- - -->
+    <!-- - -><appender-ref ref="ClassAppender"/><!- - -->
   </logger>
   <logger name="org.vivoweb.test.harvester" level="${test-level:-ALL}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
-    <!-- - - ><appender-ref ref="ClassAppender"/><!- - -->
+    <!-- - -><appender-ref ref="ClassAppender"/><!- - -->
   </logger>
   <logger name="com.hp.hpl.jena" level="${jena-level:-INFO}">
     <appender-ref ref="Console"/>

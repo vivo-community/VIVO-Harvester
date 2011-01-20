@@ -52,7 +52,6 @@ public class DemoPSMerge {
 	 */
 	@SuppressWarnings("unused")
 	private static void configFetchParams(Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) {
-		InitLog.initLogger(DemoPSMerge.class);
 		tableNames.add("t_UF_DIR_EMP_STU_1");
 		idFields.put("t_UF_DIR_EMP_STU_1", Arrays.asList("UF_IDENTIFIER"));
 		whereClauses.put("t_UF_DIR_EMP_STU_1", Arrays.asList(
@@ -163,6 +162,7 @@ public class DemoPSMerge {
 	 */
 //	@SuppressWarnings("unused")
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
+		InitLog.initLogger(DemoPSMerge.class);
 //		// setup fetch parameter variables
 //		Set<String> tableNames = new TreeSet<String>();
 //		Map<String,String> fromClauses = new HashMap<String,String>();

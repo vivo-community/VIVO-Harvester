@@ -112,15 +112,6 @@
                                       <prefix>/usr/share/vivo/harvester/docs</prefix>
                                     </mapper>
                                 </data>
-                                <!-- Hacked in support for logging failure, need to sort out -->
-                                <data>
-                                    <src>${project.basedir}/src/main/resources/logback.xml</src>
-                                    <type>file</type>
-                                    <mapper>
-                                      <type>perm</type>
-                                      <prefix>/usr/share/vivo/harvester/</prefix>
-                                    </mapper>
-                                </data>
                             </dataSet>
                         </configuration>
                     </execution>
