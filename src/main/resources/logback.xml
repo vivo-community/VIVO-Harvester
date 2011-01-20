@@ -17,7 +17,7 @@
     </triggeringPolicy>
   </appender>
   
-    <!-- Uncomment to allow for individual log files for each tool -- >
+    <!-- Uncomment to allow for individual log files for each tool - - >
     <appender name="ClassAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <File>logs/${harvester-task:-harvester}.${process-task:-all}.log</File>
     <encoder>
@@ -33,7 +33,7 @@
     <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
       <MaxFileSize>10240MB</MaxFileSize>
     </triggeringPolicy>
-  </appender> <!-- -->
+  </appender> <!- - -->
   
   <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
     <Target>System.out</Target>
@@ -81,13 +81,13 @@
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
-    <!-- -- ><appender-ref ref="ClassAppender"/><!-- -->
+    <!-- - - ><appender-ref ref="ClassAppender"/><!- - -->
   </logger>
   <logger name="org.vivoweb.test.harvester" level="${test-level:-ALL}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
-    <!-- -- ><appender-ref ref="ClassAppender"/><!-- -->
+    <!-- - - ><appender-ref ref="ClassAppender"/><!- - -->
   </logger>
   <logger name="com.hp.hpl.jena" level="${jena-level:-INFO}">
     <appender-ref ref="Console"/>
