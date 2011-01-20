@@ -6,14 +6,18 @@
  ******************************************************************************/
 package org.vivoweb.harvester.util;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemException;
+import org.apache.commons.vfs.VFS;
 import org.h2.tools.Csv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +27,6 @@ import org.vivoweb.harvester.util.args.ArgParser;
 
 /**
  * This Class takes the data from a csv file and places it into a database
- *
  */
 public class CSVtoJDBC {
 	/**
@@ -31,102 +34,119 @@ public class CSVtoJDBC {
 	 */
 	private static Logger log = LoggerFactory.getLogger(CSVtoJDBC.class);
 	/**
-	 * CSV to export from
+	 * CSV to read from
 	 */
-	private String csvFile;
+	private FileObject csvFile;
 	/**
-	 * DBconnection to import to
+	 * DBconnection into which to output
 	 */
 	private Connection output;
 	/**
-	 * Table names to Import
+	 * Table name into which to output
 	 */
 	private String tableName;
+	
 	/**
 	 * Library style Constructor
-	 * @param filename CSV to input from
+	 * @param filename CSV to read from
 	 * @param output The database connection for the output
+	 * @param tableName table name into which to output
+	 * @throws FileSystemException error establishing connection to file
 	 */
-	public CSVtoJDBC(String filename, Connection output) {
-		this.csvFile = filename;
+	public CSVtoJDBC(String filename, Connection output, String tableName) throws FileSystemException {
+		this.csvFile = VFS.getManager().resolveFile(new File("."), filename);
 		this.output = output;
+		this.tableName = tableName;
 	}
+	
+	/**
+	 * Library style Constructor
+	 * @param filename CSV to read from
+	 * @param jdbcDriverClass jdbc driver class
+	 * @param connLine the jdbc connection line
+	 * @param username username with which to connect
+	 * @param password password with which to connect
+	 * @param tableName table name into which to output
+	 * @throws IOException error establishing connection to database or file
+	 */
+	public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
+		this.csvFile = VFS.getManager().resolveFile(new File("."), filename);
+		try {
+			Class.forName(jdbcDriverClass);
+			this.output = DriverManager.getConnection(connLine, username, password);
+		} catch(ClassNotFoundException e) {
+			throw new IOException(e.getMessage(), e);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		this.tableName = tableName;
+	}
+	
 	/**
 	 * Command line Constructor
 	 * @param args command line arguments
-	 * @throws IOException error creating task
-	 * @throws SQLException error with connection
+	 * @throws IOException error establishing connection to database or file
 	 */
-	public CSVtoJDBC(String[] args) throws IOException, SQLException {
+	public CSVtoJDBC(String[] args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
 
 	/**
 	 * ArgList Constructor
 	 * @param argList option set of parsed args
-	 * @throws IOException error with connection
-	 * @throws SQLException error with connection
+	 * @throws IOException error establishing connection to database or file
 	 */
-	public CSVtoJDBC(ArgList argList) throws IOException, SQLException {
-		this.csvFile = argList.get("inputFile");
-		String jdbcDriverClass = argList.get("d");
-		try {
-			Class.forName(jdbcDriverClass);
-		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-		
-		// Setting the database connection parameters
-		String connLine = argList.get("c");
-		String username = argList.get("u");
-		String password = argList.get("p");
-		this.output = DriverManager.getConnection(connLine, username, password);
-		this.tableName = argList.get("t");
+	public CSVtoJDBC(ArgList argList) throws IOException {
+		this(argList.get("i"), argList.get("d"), argList.get("c"), argList.get("u"), argList.get("p"), argList.get("t"));
 	}
 	
 	/**
-	 * move CSV data into a recordHandler
-	 * @throws SQLException error connecting
+	 * Move CSV data into a recordHandler
+	 * @throws IOException error reading from database or file
 	 */
-	public void execute() throws SQLException {
-		ResultSet rs = Csv.getInstance().read(this.csvFile, null, null);
-        ResultSetMetaData meta = rs.getMetaData();
-        Statement cursor = this.output.createStatement();
-        int rowID = 0;
-        StringBuilder createTable = new StringBuilder("CREATE TABLE ");
-        createTable.append(this.tableName);
-        createTable.append("( ROWID int, ");
-        StringBuilder columnNames = new StringBuilder("( ROWID, ");
-    	for(int i = 0; i < meta.getColumnCount(); i++){
-    		createTable.append("\n");
-    		createTable.append(meta.getColumnLabel(i + 1));
-    		createTable.append((i==(meta.getColumnCount()-1) )?" TEXT )":" TEXT ,");
-    		
-    		columnNames.append(meta.getColumnLabel(i + 1));
-    		columnNames.append((i==(meta.getColumnCount()-1) )?" )":", ");
-		} 
-    	log.info("Create table command: \n" + createTable.toString());
-        cursor.execute(createTable.toString());
-        while(rs.next()){
-        	
-        	StringBuilder insertCommand =  new StringBuilder("INSERT INTO ");
-        	insertCommand.append(this.tableName);
-        	insertCommand.append(" ");
-        	insertCommand.append(columnNames.toString() );
-        	insertCommand.append("\nVALUES (");
-        	insertCommand.append(rowID);
-        	insertCommand.append(", '");
-        	for(int i = 0; i < meta.getColumnCount(); i++){
-//				System.out.println(meta.getColumnLabel(i + 1) + ": " + rs.getString(i + 1));
-        		insertCommand.append(rs.getString(i + 1));
-        		insertCommand.append((i==(meta.getColumnCount()-1) )?"')":"', '");
-			}       
-    		log.info("Insert command: \n" + insertCommand.toString());	
-			cursor.executeUpdate(insertCommand.toString());
-			rowID++;
-        }
-        
-
+	public void execute() throws IOException {
+		try {
+			ResultSet rs = Csv.getInstance().read(new InputStreamReader(this.csvFile.getContent().getInputStream()), null);
+	        ResultSetMetaData meta = rs.getMetaData();
+	        Statement cursor = this.output.createStatement();
+	        int rowID = 0;
+	        StringBuilder createTable = new StringBuilder("CREATE TABLE ");
+	        createTable.append(this.tableName);
+	        createTable.append("( ROWID int, ");
+	        StringBuilder columnNames = new StringBuilder("( ROWID, ");
+	    	for(int i = 0; i < meta.getColumnCount(); i++){
+	    		createTable.append("\n");
+	    		createTable.append(meta.getColumnLabel(i + 1));
+	    		createTable.append((i==(meta.getColumnCount()-1) )?" TEXT )":" TEXT ,");
+	    		
+	    		columnNames.append(meta.getColumnLabel(i + 1));
+	    		columnNames.append((i==(meta.getColumnCount()-1) )?" )":", ");
+			} 
+	    	log.info("Create table command: \n" + createTable.toString());
+	        cursor.execute(createTable.toString());
+	        while(rs.next()){
+	        	
+	        	StringBuilder insertCommand =  new StringBuilder("INSERT INTO ");
+	        	insertCommand.append(this.tableName);
+	        	insertCommand.append(" ");
+	        	insertCommand.append(columnNames.toString() );
+	        	insertCommand.append("\nVALUES (");
+	        	insertCommand.append(rowID);
+	        	insertCommand.append(", '");
+	        	for(int i = 0; i < meta.getColumnCount(); i++){
+//					System.out.println(meta.getColumnLabel(i + 1) + ": " + rs.getString(i + 1));
+	        		insertCommand.append(rs.getString(i + 1));
+	        		insertCommand.append((i==(meta.getColumnCount()-1) )?"')":"', '");
+				}       
+	    		log.info("Insert command: \n" + insertCommand.toString());	
+				cursor.executeUpdate(insertCommand.toString());
+				rowID++;
+	        }
+		} catch(FileSystemException e) {
+			throw new IOException(e.getMessage(), e);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
 	}
 	
 	/**
@@ -152,7 +172,7 @@ public class CSVtoJDBC {
 		InitLog.initLogger(CSVtoJDBC.class);
 		log.info(getParser().getAppName()+": Start");
 		try {
-			new CSVtoJDBC(new ArgList(getParser(), args)).execute();
+			new CSVtoJDBC(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
