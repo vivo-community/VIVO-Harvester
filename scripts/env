@@ -43,6 +43,7 @@ if [ ! -d backups ]; then
 fi
 
 # define shorthand aliases
+RenameResources="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=RenameResources -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.RenameResources"
 Diff="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Diff -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.diff.Diff"
 D2RMapFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=D2RMapFetch -Dprocess-task=D2RMapFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch"
 CSVMapFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=CSVMapFetch -Dprocess-task=CSVMapFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.CSVMapFetch"
