@@ -64,7 +64,6 @@ public class ArgList {
 			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(), args);
 			if(this.oCmdSet.hasOption("help")) {
 				String usage = this.argParser.getUsage();
-				log.info(usage);
 				System.out.println(usage);
 			} else {
 				String[] confArgs = {""};

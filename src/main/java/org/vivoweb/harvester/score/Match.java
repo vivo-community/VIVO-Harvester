@@ -70,7 +70,7 @@ public class Match {
 	/**
 	 * Pubmed Match threshold
 	 */
-	private final Float matchThreshold;
+	private final float matchThreshold;
 	/**
 	 * Clear all literal values out of matched sets
 	 */
@@ -100,7 +100,7 @@ public class Match {
 		
 		this.outputJena = outputJena;
 		
-		this.matchThreshold = Float.valueOf(threshold);
+		this.matchThreshold = threshold;
 		this.renameRes = renameRes;
 		this.linkProps = linkProps;
 		this.clearLiterals = clearLiterals;
@@ -137,7 +137,7 @@ public class Match {
 		
 		this.renameRes = opts.has("r");
 		this.linkProps = opts.getValueMap("l");
-		this.matchThreshold = Float.valueOf(opts.get("t"));
+		this.matchThreshold = Float.parseFloat(opts.get("t"));
 		this.clearLiterals = opts.has("c");
 	}
 	
@@ -146,7 +146,7 @@ public class Match {
 	 * @param threshold the value to look for in the sparql query
 	 * @return mapping of the found matches
 	 */
-	private Map<String,String> match(Float threshold){
+	private Map<String,String> match(float threshold){
 		//Build query to find all nodes matching on the given predicates
 		String sQuery =	"" +
 				"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
@@ -298,7 +298,7 @@ public class Match {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Match");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("scoreConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		
 		// Outputs
@@ -310,7 +310,7 @@ public class Match {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		
 		// Matching Algorithms
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("threshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("threshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(true));
 		
 		// Linking Methods
 		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").withParameterValueMap("VIVO_TO_INPUT_PREDICATE", "INPUT_TO_VIVO_PREDICATE").setDescription("link the two matched entities together using INPUT_TO_VIVO_PREDICATE and INPUT_TO_VIVO_PREDICATE").setRequired(false));
@@ -328,26 +328,24 @@ public class Match {
 	public void execute() throws IOException {
 		log.info("Running specified algorithims");
 		
-		if(this.matchThreshold != null) {
-			Map<String,String> pubmedResultMap = match(this.matchThreshold);
-			
-			if(this.renameRes) {
-				rename(pubmedResultMap);
+		Map<String,String> pubmedResultMap = match(this.matchThreshold);
+		
+		if(this.renameRes) {
+			rename(pubmedResultMap);
+		}
+		
+		if(this.linkProps != null) {
+			for(String vivoToInput : this.linkProps.keySet()) {
+				link(pubmedResultMap, vivoToInput, this.linkProps.get(vivoToInput));
 			}
-			
-			if(this.linkProps != null) {
-				for(String vivoToInput : this.linkProps.keySet()) {
-					link(pubmedResultMap, vivoToInput, this.linkProps.get(vivoToInput));
-				}
-			}
-			
-			if(this.clearLiterals) {
-				clearTypesAndLiterals(pubmedResultMap);
-			}
-			
-			if(this.outputJena != null) {
-				this.outputJena.getJenaModel().add(outputMatches(pubmedResultMap).getJenaModel());
-			}
+		}
+		
+		if(this.clearLiterals) {
+			clearTypesAndLiterals(pubmedResultMap);
+		}
+		
+		if(this.outputJena != null) {
+			this.outputJena.getJenaModel().add(outputMatches(pubmedResultMap).getJenaModel());
 		}
 	}
 
