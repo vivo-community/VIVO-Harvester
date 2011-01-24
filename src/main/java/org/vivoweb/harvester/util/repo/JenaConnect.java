@@ -620,8 +620,9 @@ public abstract class JenaConnect {
 		ArgParser parser = new ArgParser("JenaConnect");
 		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("jena").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("query").withParameter(true, "SPARQL_QUERY").setDescription("sparql query to execute").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("query").withParameter(true, "SPARQL_QUERY").setDescription("sparql query to execute").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("queryResultFormat").withParameter(true, "RESULT_FORMAT").setDescription("the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for construct/describe queries)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("truncate").setDescription("empty the jena model").setRequired(false));
 		return parser;
 	}
 	
@@ -634,7 +635,16 @@ public abstract class JenaConnect {
 		try {
 			ArgList argList = new ArgList(getParser(), args);
 			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
-			jc.executeQuery(argList.get("q"), argList.get("Q"));
+			if(argList.has("t")) {
+				if(argList.has("q") || argList.has("Q")) {
+					throw new IllegalArgumentException("Cannot Execute Query and Truncate");
+				}
+				jc.truncate();
+			} else if(argList.has("q")) {
+				jc.executeQuery(argList.get("q"), argList.get("Q"));
+			} else {
+				throw new IllegalArgumentException("No Operation Specified");
+			}
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.err.println(getParser().getUsage());
