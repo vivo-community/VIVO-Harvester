@@ -65,3 +65,5 @@ ChangeNamespace="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTE
 Update="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Update -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.update.Update"
 DatabaseClone="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=DatabaseClone -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.DatabaseClone"
 Merge="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Merge -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.Merge"
+JenaConnect="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=JenaConnect -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.repo.JenaConnect"
+
