@@ -48,7 +48,7 @@ public class ArgParser {
 		this.optMap = new HashMap<String, ArgDef>();
 		this.parser = new Options();
 		this.options.add(new ArgDef().setShortOption('X').setLongOpt("config").withParameter(true, "CONFIG_FILE").setDescription("XML Configuration File"));
-		this.options.add(new ArgDef().setShortOption('?').setLongOpt("help").setDescription("Help Message"));
+		this.options.add(new ArgDef().setShortOption('h').setLongOpt("help").setDescription("Help Message"));
 	}
 	
 	/**
