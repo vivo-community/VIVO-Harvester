@@ -10,6 +10,8 @@
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
 # Set working directory
+set -e
+
 DIR=$(cd "$(dirname "$0")"; pwd)
 cd $DIR
 cd ..

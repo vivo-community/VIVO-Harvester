@@ -14,6 +14,8 @@ if [ -n "$1" ]
 then
 
 # Set working directory
+set -e
+
 DIR=$(cd "$(dirname "$0")"; pwd)
 cd $DIR
 cd ..
