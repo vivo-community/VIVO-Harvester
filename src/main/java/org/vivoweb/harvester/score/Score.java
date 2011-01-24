@@ -274,11 +274,19 @@ public class Score {
 		
 		// Bring all models into a single Dataset
 		JenaConnect vivoClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
-		log.trace("Loading VIVO model into memory");
-		vivoClone.loadRdfFromJC(this.vivoJena);
+		if(vivoClone.isEmpty()) {
+			log.trace("Loading VIVO model into temp copy model");
+			vivoClone.loadRdfFromJC(this.vivoJena);
+		} else {
+			log.trace("VIVO model already in temp copy model");
+		}
 		JenaConnect inputClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
-		log.trace("Loading Input model into memory");
-		inputClone.loadRdfFromJC(this.inputJena);
+		if(inputClone.isEmpty()) {
+			log.trace("Loading Input model into temp copy model");
+			inputClone.loadRdfFromJC(this.inputJena);
+		} else {
+			log.trace("Input model already in temp copy model");
+		}
 		Dataset ds = this.tempJena.getConnectionDataSet();
 		
 		// Execute query

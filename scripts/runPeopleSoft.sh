@@ -37,11 +37,26 @@ ln -s ps.xml.$date.tar.gz backups/ps.xml.latest.tar.gz
 # uncomment to restore previous fetch
 #tar -xzpf backups/ps.xml.latest.tar.gz XMLVault/h2ps/XML
 
+# clear old merges
+rm -rf XMLVault/h2ps/Merge
+
+# Execute Merge
+$Merge -i config/recordHandlers/PeopleSoft-XML.xml -o config/recordHandlers/PeopleSoft-Merge.xml -b "t_UF_DIR_EMP_STU_1_(id_-_.*?)"
+
+# backup merges
+date=`date +%Y-%m-%d_%T`
+tar -czpf backups/ps.merge.$date.tar.gz XMLVault/h2ps/Merge
+rm -rf backups/ps.merge.latest.tar.gz
+ln -s ps.merge.$date.tar.gz backups/ps.merge.latest.tar.gz
+
+# uncomment to restore previous fetch
+#tar -xzpf backups/ps.merge.latest.tar.gz XMLVault/h2ps/Merge
+
 # clear old translates
 rm -rf XMLVault/h2ps/RDF
 
 # Execute Translate
-$XSLTranslator -i config/recordHandlers/PeopleSoft-XML.xml -o config/recordHandlers/PeopleSoft-RDF.xml -x config/datamaps/PeopleSoftToVivo.xsl
+$XSLTranslator -i config/recordHandlers/PeopleSoft-Merge.xml -o config/recordHandlers/PeopleSoft-RDF.xml -x config/datamaps/PeopleSoftToVivo.xsl
 
 # backup translate
 date=`date +%Y-%m-%d_%T`
@@ -68,18 +83,39 @@ ln -s ps.all.$date.tar.gz backups/ps.all.latest.tar.gz
 #tar -xzpf backups/ps.all.latest.tar.gz XMLVault/h2ps/all
 
 SCOREINPUT="-i config/jenaModels/h2.xml -ImodelName=peopleSoftTempTransfer -IdbUrl=jdbc:h2:XMLVault/h2ps/all/store"
-SCOREDATA="-s config/jenaModels/h2.xml -SmodelName=peopleSoftScoreData -SdbUrl=jdbc:h2:XMLVault/h2ps/score/store"
-SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG $SCOREDATA"
+SCOREDATA="-s config/jenaModels/h2.xml -SmodelName=peopleSoftScoreData -SdbUrl=jdbc:h2:XMLVault/h2ps/scoreData/store"
+TEMPCOPY="-t config/jenaModels/h2.xml -SmodelName=peopleSoftTempCopy -SdbUrl=jdbc:h2:XMLVault/h2ps/tempCopy/store"
+SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG $SCOREDATA $TEMPCOPY"
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+
+# Clear old H2 temp copy
+rm -rf XMLVault/h2ps/tempCopy
 # Execute Score for People
 $Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid
+
 # Execute Score for Departments
 $Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID -PdeptId=http://vivo.ufl.edu/ontology/vivo-ufl/deptID
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREMODELS -t 1.0 -r
+
 # Execute Score for Positions
 $Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/position/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=http://vivoweb.org/ontology/core#positionInOrganization -PposOrg=http://vivoweb.org/ontology/core#positionInOrganization -AposPer=$EQTEST -WposPer=1.0 -FposPer=http://vivoweb.org/ontology/core#positionForPerson -PposPer=http://vivoweb.org/ontology/core#positionForPerson -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition -PdeptPos=http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREMODELS -t 1.0 -r
+
+# Clear old H2 temp copy
+rm -rf XMLVault/h2ps/tempCopy
+
+# backup H2 score data Model
+date=`date +%Y-%m-%d_%T`
+tar -czpf backups/ps.scoredata.$date.tar.gz XMLVault/h2ps/scoreData
+rm -rf backups/ps.scoredata.latest.tar.gz
+ln -s ps.scoredata.$date.tar.gz backups/ps.scoredata.latest.tar.gz
+
+# uncomment to restore previous H2 matched Model
+#tar -xzpf backups/ps.scoredata.latest.tar.gz XMLVault/h2ps/scoreData
 
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n http://vivo.ufl.edu/individual/"
 # Execute ChangeNamespace to get unmatched People into current namespace
