@@ -12,6 +12,10 @@
 #WARNING: this code is fragile and not robust.
 #No attempts to sanitize or rationalize input have been made
 
+# Set working directory
+DIR=$(cd "$(dirname "$0")"; pwd)
+cd $DIR
+
 rm -rf usr
 rm *.log
 rm vivo_start.rdf
@@ -64,7 +68,7 @@ cd usr/share/vivo/harvester
 bash scripts/runPubmed.sh
 
 #check for failure
-if [ "$?" = "1" ]; then2
+if [ "$?" = "1" ]; then
 	echo "TEST FAILED DURING runPubmed.sh" $?
 fi
 
@@ -74,8 +78,8 @@ cp vivo_start.rdf ../../../..
 cp vivo_end.rdf ../../../..
 
 #check for data written to vivo, otherwise failure
-PRESIZE=`ls -l vivo_start.rdf | awk '{ print $5 }'`
-POSTSIZE=`ls -l vivo_end.rdf | awk '{ print $5 }'`
+PRESIZE=`du -b vivo_start.rdf | awk '{ print $1 }'`
+POSTSIZE=`du -b vivo_end.rdf | awk '{ print $1 }'`
 
 if [[ $POSTSIZE > $PRESIZE ]]
 then

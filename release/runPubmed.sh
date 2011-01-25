@@ -64,7 +64,7 @@ rm -rf XMLVault/h2Pubmed/score
 $Score $VIVO $INPUT $SCORE $WORKEMAIL $FNAME $LNAME $MNAME
 
 # Execute match to match and link data into "vivo" JENA model
-$Match $INPUT $SCORE -t 0.1
+$Match $INPUT $SCORE -t 0.1 -r
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/

@@ -373,13 +373,31 @@ public class ScoreTest extends TestCase {
 		
 		// run score
 		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
-//		log.debug("Score Dump Post-Score\n" + this.score.exportRdfToString());
+		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		new Match(this.input, this.score, null, true, 0.75f, null, false).execute();
+		//log.info("Match Dump Post-Match\n" + this.input.exportRdfToString());
 		
 		// check score model
-//		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
-//		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
-//		assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
+		//Check for matched person authorship
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
+		//Check to make sure pub doesn't have matched authorship
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
+		//Check to make sure information authorship exists on publication
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
+		
+		//assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship <http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1> }"));
+		
+		//assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
+		//assertTrue(this.input.containsURI("http://vivoweb.org/pubmed/pmid201138680/vivoAuthorship/l1"));
+	    
+		//pub has 
+	    //<j.1:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
+		
+		//person has
+		//<j.3:authorInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
+		
+		
+		//http://vivoweb.org/pubmed/article/pmid20113680/authorship1
 		log.info("END testEmailLastNameEqualityTest");
 	}
 	

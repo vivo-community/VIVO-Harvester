@@ -14,6 +14,9 @@
 #This tool requires you to have your ssh key on the sourceforge server
 #No attempts to sanitize or rationalize input have been made
 
+# Set working directory
+DIR=$(cd "$(dirname "$0")"; pwd)
+cd $DIR
 cd ..
 
 echo -n "Enter sourceforge username: "

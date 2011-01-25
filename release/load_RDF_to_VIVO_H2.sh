@@ -14,7 +14,7 @@ DIR=$(cd "$(dirname "$0")"; pwd)
 cd $DIR
 cd ..
 
-HARVESTER_TASK=pubmed
+HARVESTER_TASK=loadRDF
 
 if [ -f scripts/env ]; then
   . scripts/env
@@ -26,5 +26,6 @@ fi
 HCONFIG="config/jenaModels/h2.xml"
   
 # Apply Additions to VIVO
-$Transfer -r release/demo_clean.rdf -o $HCONFIG -OdbUrl=jdbc:h2:vivotest
+$Transfer -r release/demo_clean.rdf -o release/VIVO.xml
+mv vivotest.h2.db release
 
