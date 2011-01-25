@@ -185,7 +185,9 @@ public class Match {
 		for(String oldUri : matchSet.keySet()) {
 			//get resource in input model and perform rename
 			Resource res = this.inputJena.getJenaModel().getResource(oldUri);
-			ResourceUtils.renameResource(res, matchSet.get(oldUri));
+			String newUri = matchSet.get(oldUri);
+			log.trace("Renaming match <" + oldUri + "> to <" + newUri + ">");
+			ResourceUtils.renameResource(res, newUri);
 		}
 	}
 	
@@ -199,12 +201,15 @@ public class Match {
 		Property vivoToInputProperty = ResourceFactory.createProperty(vivoToInput);
 		Property inputToVivoProperty = ResourceFactory.createProperty(inputToVivo);
 		
-		for(String oldUri : matchSet.keySet()) {
+		for(String inputUri : matchSet.keySet()) {
 			// get resources and add linking triples
-			Resource scoreRes = this.inputJena.getJenaModel().getResource(oldUri);	
-			Resource vivoRes = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
-			this.inputJena.getJenaModel().add(vivoRes, vivoToInputProperty, scoreRes);
-			this.inputJena.getJenaModel().add(scoreRes, inputToVivoProperty, vivoRes);			
+			String vivoUri = matchSet.get(inputUri);
+			Resource inputRes = this.inputJena.getJenaModel().getResource(inputUri);	
+			Resource vivoRes = this.scoreJena.getJenaModel().getResource(vivoUri);
+			log.trace("Adding input to vivo match link [ <" + inputUri + "> <" + inputToVivo + "> <" + vivoUri + "> ]");
+			this.inputJena.getJenaModel().add(inputRes, inputToVivoProperty, vivoRes);
+			log.trace("Adding vivo to input match link [ <" + vivoUri + "> <" + vivoToInput + "> <" + inputUri + "> ]");
+			this.inputJena.getJenaModel().add(vivoRes, vivoToInputProperty, inputRes);			
 		}
 	}
 	

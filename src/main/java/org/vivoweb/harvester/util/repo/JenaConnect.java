@@ -260,7 +260,7 @@ public abstract class JenaConnect {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
 		
-		if (jc.isEmpty()) {
+		if ((!params.containsKey("checkEmpty") || params.get("checkEmpty").toLowerCase() == "true") && jc.isEmpty()) {
 			JenaConnect.log.warn(jc.getModelName() + " Jena model is empty");
 		}
 		
@@ -273,8 +273,7 @@ public abstract class JenaConnect {
 	 */
 	public int size() {
 		//Display count
-		String query = "SELECT (count(?s) as ?size) WHERE { ?s ?p ?o }";
-		ResultSet result = executeSelectQuery(query);		
+		ResultSet result = executeSelectQuery("SELECT (count(?s) as ?size) WHERE { ?s ?p ?o }");
 		return result.next().get("size").asLiteral().getInt();
 	}
 	
@@ -604,12 +603,7 @@ public abstract class JenaConnect {
 	 * @return true if found, false otherwise
 	 */
 	public boolean containsURI(String uri) {
-		String query =	"ASK " +
-						"{ " +
-							"<" + uri + "> ?p ?o " +
-						"}";
-//		log.debug(query); 
-		return executeAskQuery(query);
+		return executeAskQuery("ASK { <" + uri + "> ?p ?o }");
 	}
 	
 	/**
@@ -756,12 +750,7 @@ public abstract class JenaConnect {
 	 * @return true if empty, false otherwise
 	 */
 	public boolean isEmpty() {
-		String query =	"ASK " +
-			"{ " +
-				"?s ?p ?o " +
-			"}";
-//		log.debug(query);
-		return executeAskQuery(query);
+		return !executeAskQuery("ASK { ?s ?p ?o }");
 	}
 	
 	/**

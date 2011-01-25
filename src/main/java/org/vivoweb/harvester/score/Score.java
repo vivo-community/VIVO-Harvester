@@ -268,10 +268,6 @@ public class Score {
 	 * @throws IOException error connecting
 	 */
 	public void execute() throws IOException {
-		log.trace("Building Query");
-		String sQuery = buildSelectQuery();
-		log.debug("Match Query:\n"+sQuery);
-		
 		// Bring all models into a single Dataset
 		JenaConnect vivoClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
 		if(vivoClone.isEmpty()) {
@@ -288,46 +284,67 @@ public class Score {
 			log.trace("Input model already in temp copy model");
 		}
 		Dataset ds = this.tempJena.getConnectionDataSet();
-		
+
+		log.trace("Building Query");
+		String sQuery = buildSelectQuery();
+		log.debug("Match Query:\n"+sQuery);
 		// Execute query
 		log.trace("Building Query Execution");
 		Query query = QueryFactory.create(sQuery, Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		log.trace("Executing Query");
 		ResultSet rs = queryExec.execSelect();
-		log.trace("Processig Results");
+		log.trace("Processing Results");
+		int incrementer = 0;
+		StringBuilder indScore;
+		StringBuilder scoreSparql = new StringBuilder();
 		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
+			incrementer++;
+			indScore = new StringBuilder();
 			String sInputURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
 			log.debug("Evaluating <"+sInputURI+"> from inputJena as match for <"+sVivoURI+"> from vivoJena");
 			// Build Score Record
-			StringBuilder rdf = new StringBuilder();
-			rdf.append("" +
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-				"<rdf:RDF \n" +
-				"    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" \n" +
-				"    xmlns:scoreValue=\"http://vivoweb.org/harvester/scoreValue/\">\n" +
-				"  <rdf:Description>\n" +
-				"    <scoreValue:VivoRes rdf:resource=\""+sVivoURI+"\"/>\n" +
-				"    <scoreValue:InputRes rdf:resource=\""+sInputURI+"\"/>\n"
+			indScore.append("" +
+				"  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" +
+				"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
 			);
 			for(String runName : this.vivoPredicates.keySet()) {
 				RDFNode os = solution.get("os_"+runName);
 				RDFNode op = solution.get("op_"+runName);
 				log.trace("os_"+runName+": '"+os+"'");
 				log.trace("op_"+runName+": '"+op+"'");
-				rdf.append(buildScoreRdfFragment(op, os, runName));
+				indScore.append(buildScoreSparqlFragment(incrementer, op, os, runName));
 			}
-			rdf.append("" +
-				"  </rdf:Description>\n" +
-				"</rdf:RDF>\n"
-			);
-			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+rdf.toString());
-			// Push Score Data into score model
-			log.trace("Loading Score Data into Score Model");
-			this.scoreJena.loadRdfFromString(rdf.toString(), null, null);
+			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+indScore.toString());
+			scoreSparql.append(indScore);
+			if(incrementer == 50) {
+				loadRdfToScoreData(scoreSparql.toString());
+				incrementer = 0;
+				scoreSparql = new StringBuilder();
+			}
+		}
+		if(incrementer > 0) {
+			loadRdfToScoreData(scoreSparql.toString());
 		}
 		log.trace("Result Processing Complete");
+	}
+	
+	/**
+	 * Load a batch of scoring data to the score model
+	 * @param scores the score rdf/xml fragments
+	 */
+	private void loadRdfToScoreData(String scores) {
+		String sparql = "" +
+		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+		"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/> \n" +
+		"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" +
+		"INSERT DATA {\n" +
+			scores +
+		"}\n";
+		// Push Score Data into score model
+		log.trace("Loading Score Data into Score Model:\n"+sparql);
+		this.scoreJena.executeUpdateQuery(sparql);
 	}
 	
 	/**
@@ -387,13 +404,14 @@ public class Score {
 	}
 	
 	/**
-	 * Build the rdf/xml fragment for two rdf nodes
+	 * Build the sparql fragment for two rdf nodes
+	 * @param nodenum the node number
 	 * @param op vivoJena node
 	 * @param os inputJena node
 	 * @param runName the run identifier
-	 * @return the rdf/xml fragment
+	 * @return the sparql fragment
 	 */
-	private String buildScoreRdfFragment(RDFNode op, RDFNode os, String runName) {
+	private String buildScoreSparqlFragment(int nodenum, RDFNode op, RDFNode os, String runName) {
 		float score = 0f;
 		if(os != null && op != null) {
 			// if a resource and same uris
@@ -413,16 +431,14 @@ public class Score {
 		}
 		log.trace("score: "+score);
 		String fragment = "" +
-			"    <scoreValue:hasScoreValue>\n" +
-			"      <rdf:Description>\n" +
-			"        <scoreValue:VivoProp rdf:resource=\""+this.vivoPredicates.get(runName)+"\"/>\n" +
-			"        <scoreValue:InputProp rdf:resource=\""+this.inputPredicates.get(runName)+"\"/>\n" +
-			"        <scoreValue:Algorithm>" + this.algorithms.get(runName).getName() + "</scoreValue:Algorithm>\n" +
-			"        <scoreValue:Score rdf:datatype=\"http://www.w3.org/2001/XMLSchema#float\">" + score + "</scoreValue:Score>\n" +
-			"        <scoreValue:Weight rdf:datatype=\"http://www.w3.org/2001/XMLSchema#float\">" + this.weights.get(runName) + "</scoreValue:Weight>\n" +
-			"        <scoreValue:WeightedScore rdf:datatype=\"http://www.w3.org/2001/XMLSchema#float\">" + (this.weights.get(runName).doubleValue()*score) + "</scoreValue:WeightedScore>\n" +
-			"      </rdf:Description>\n" +
-			"    </scoreValue:hasScoreValue>\n";
+			"  _:node" + nodenum + " scoreValue:hasScoreValue _:nodeScoreValue" + nodenum + " .\n" +
+			"  _:nodeScoreValue" + nodenum + " scoreValue:VivoProp <" + this.vivoPredicates.get(runName) + "> .\n" +
+			"  _:nodeScoreValue" + nodenum + " scoreValue:InputProp <" + this.inputPredicates.get(runName) + "> .\n" +
+			"  _:nodeScoreValue" + nodenum + " scoreValue:Algorithm \"" + this.algorithms.get(runName).getName() + "\" .\n" +
+			"  _:nodeScoreValue" + nodenum + " scoreValue:Score \"" + score + "\"^^xsd:float .\n" +
+			"  _:nodeScoreValue" + nodenum + " scoreValue:Weight \"" + this.weights.get(runName) + "\"^^xsd:float .\n" +
+			"  _:nodeScoreValue" + nodenum + " scoreValue:WeightedScore \"" + (this.weights.get(runName).doubleValue()*score) + "\"^^xsd:float .\n" +
+			"";
 		return fragment;
 	}
 
