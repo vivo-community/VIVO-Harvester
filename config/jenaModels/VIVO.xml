@@ -7,5 +7,6 @@
 	<Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
 	<Param name="dbUser">USERNAME</Param>
 	<Param name="dbPass">PASSWORD</Param>
+	<!-- The default namespace for UF "http://vivo.ufl.edu/individual/", Make sure it matches the deploy.properties -->
 	<Param name="namespace">NAMESPACE</Param>
 </Model>
