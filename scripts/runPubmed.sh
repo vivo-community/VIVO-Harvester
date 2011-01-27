@@ -27,9 +27,10 @@ fi
 #variables for model arguments
 HCONFIG="config/jenaModels/h2.xml"
 INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
-OUTPUT="-o $HCONFIG -OmodelName=Pubmed -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
+OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -OmodelName=Pubmed"
+TEMP="-t $HCONFIG -tdbUrl=jdbc:h2:XMLVault/h2Pubmed/temp/store -tmodelName=Pubmed"
 VIVO="-v $VIVOCONFIG"
-SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=PubmedScore"
+SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=Pubmed"
 
 #clear old fetches
 rm -rf XMLVault/h2Pubmed/XML
@@ -61,6 +62,7 @@ ln -s pubmed.rdf.$date.tar.gz backups/pubmed.rdf.latest.tar.gz
 
 # Clear old H2 models
 rm -rf XMLVault/h2Pubmed/all
+rm -rf XMLVault/h2Pubmed/temp
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer $OUTPUT -h config/recordHandlers/Pubmed-RDF-h2RH.xml
@@ -77,16 +79,17 @@ ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
 rm -rf XMLVault/h2Pubmed/score
 
 # Execute Score to disambiguate data in "scoring" JENA model
-LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.4 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
-FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
-LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
-MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/score#middleName"
-
-$Score $VIVO $INPUT $SCORE $WORKEMAIL $FNAME $LNAME $MNAME
-
 # Execute match to match and link data into "vivo" JENA model
-$Match $INPUT $SCORE -t 0.5 -r
+LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
+WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.7 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
+FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
+LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
+MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.2 -PmName=http://vivoweb.org/ontology/score#middleName"
+
+$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $FNAME
+$Match $INPUT $SCORE -t 0.9 -r
+$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME $MNAME
+$Match $INPUT $SCORE -t 0.8 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
@@ -101,6 +104,7 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 #$Qualify -j $VIVOCONFIG -r JAMA -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 #remove score statements
+$Qualify -j $VIVOCONFIG -n http://vivoweb.org/ontology/score
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
@@ -142,4 +146,6 @@ ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-/etc/init.d/tomcat restart
+/etc/init.d/tomcat stop
+/etc/init.d/apache2 reload
+/etc/init.d/tomcat start

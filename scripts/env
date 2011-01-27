@@ -31,16 +31,23 @@ DATE=`date +%Y-%m-%d'T'%T`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
 echo "Full Logging in $HARVESTER_TASK.log"
 
-# Check for backups dir
-if [ ! $NAMESPACE ]; then
+# Check for proper namespace
+if [ -z "$NAMESPACE" ]; then
   echo "Please specify namespace in $VIVOCONFIG file before running"
   exit
 fi
+
+#if [[ $NAMESPACE != */ ]] || $NAMESPACE != *#]; then
+#  echo "Namespace appears incorrect -- Please check namespace in $VIVOCONFIG file"
+#  exit
+#fi
 
 # Check for backups dir
 if [ ! -d backups ]; then
   mkdir backups
 fi
+
+
 
 # define shorthand aliases
 RenameResources="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=RenameResources -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.RenameResources"
