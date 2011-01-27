@@ -14,9 +14,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,6 +38,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -57,7 +55,7 @@ public abstract class JenaConnect {
 	/**
 	 * SLF4J Logger
 	 */
-	protected static Logger log = LoggerFactory.getLogger(JenaConnect.class);
+	private static Logger log = LoggerFactory.getLogger(JenaConnect.class);
 	/**
 	 * Model we are connecting to
 	 */
@@ -66,78 +64,6 @@ public abstract class JenaConnect {
 	 * The modelname
 	 */
 	private String modelName;
-	/**
-	 * JDBC Connection Line
-	 */
-	private final String dbUrl;
-	/**
-	 * JDBC username
-	 */
-	private final String dbUser;
-	/**
-	 * JDBC password
-	 */
-	private final String dbPass;
-	/**
-	 * Database Type (for Jena)
-	 */
-	private final String dbType;
-	/**
-	 * JDBC driver class
-	 */
-	private final String dbClass;
-	
-	/**
-	 * Base Constructor
-	 * @param dbUrl the JDBC Connection Line
-	 * @param dbUser the JDBC username
-	 * @param dbPass the JDBC password
-	 * @param dbType the Database Type (for Jena)
-	 * @param dbClass the JDBC driver class
-	 */
-	protected JenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass) {
-		this.dbUrl = dbUrl;
-		this.dbUser = dbUser;
-		this.dbPass = dbPass;
-		this.dbType = dbType;
-		this.dbClass = dbClass;
-	}
-	
-	/**
-	 * Clone Constructor
-	 * @param original the original to clone
-	 */
-	protected JenaConnect(JenaConnect original) {
-		this.dbUrl = original.dbUrl;
-		this.dbUser = original.dbUser;
-		this.dbPass = original.dbPass;
-		this.dbType = original.dbType;
-		this.dbClass = original.dbClass;
-	}
-	
-	/**
-	 * Get the dbType for Jena
-	 * @return the dbType
-	 */
-	protected String getDbType() {
-		return this.dbType;
-	}
-	
-	/**
-	 * Build a new jdbc connection using connect info
-	 * @return a new jdbc connection
-	 * @throws IOException error making jdbc connection
-	 */
-	protected Connection buildConnection() throws IOException {
-		try {
-			Class.forName(this.dbClass);
-			return DriverManager.getConnection(this.dbUrl, this.dbUser, this.dbPass);
-		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
-		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(),e);
-		}
-	}
 	
 	/**
 	 * Factory (connects to the same jena triple store as another jena connect, but uses a different named model)
@@ -247,15 +173,17 @@ public abstract class JenaConnect {
 		// log.debug(param+" => "+params.get(param));
 		// }
 		if(!params.containsKey("type")) {
-			throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','mem'}");
+			throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','tdb','mem'}");
 		}
 		JenaConnect jc;
-		if(params.get("type").equalsIgnoreCase("memory")) {
+		if(params.get("type").equalsIgnoreCase("mem")) {
 			jc = new MemJenaConnect(params.get("modelName"));
 		} else if(params.get("type").equalsIgnoreCase("rdb")) {
 			jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
 		} else if(params.get("type").equalsIgnoreCase("sdb")) {
 			jc = new SDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("dbLayout"), params.get("modelName"));
+		} else if(params.get("type").equalsIgnoreCase("tdb")) {
+			jc = new TDBJenaConnect(params.get("dbDir"), params.get("modelName"));
 		} else {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
@@ -279,11 +207,11 @@ public abstract class JenaConnect {
 	
 	/**
 	 * Get the dataset for this connection
-	 * Can be very expensive when using RDB connections (SDB and Mem are fine)
+	 * Can be very expensive when using RDB connections (SDB, TDB, and Mem are fine)
 	 * @return the database connection's dataset
 	 * @throws IOException error connecting
 	 */
-	public abstract Dataset getConnectionDataSet() throws IOException;
+	public abstract Dataset getDataSet() throws IOException;
 	
 	/**
 	 * Load in RDF
@@ -466,7 +394,7 @@ public abstract class JenaConnect {
 	 * @return the executed query result set
 	 */
 	public ResultSet executeSelectQuery(String queryString) {
-		return buildQueryExec(queryString).execSelect();
+		return ResultSetFactory.copyResults(buildQueryExec(queryString).execSelect());
 	}
 	
 	/**
@@ -754,13 +682,9 @@ public abstract class JenaConnect {
 	}
 	
 	/**
-	 * Output the connection information
+	 * Output the jena model information
 	 */
-	public void printConnectionParameters() {
-		JenaConnect.log.info("modelName: '" + this.modelName + "'");
-		JenaConnect.log.info("dbURL: '" + this.dbUrl + "'");
-		JenaConnect.log.info("dbType: '" + this.dbType + "'");
-		JenaConnect.log.info("dbClass: '" + this.dbClass + "'");
+	public void printParameters() {
+		log.info("modelName: '" + getModelName() + "'");
 	}
-	
 }

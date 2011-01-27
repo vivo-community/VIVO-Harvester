@@ -228,7 +228,8 @@ public class DemoPSMerge {
 		JenaConnect scoreJena = psInput.neighborConnectClone("scoreData");
 		log.trace("Truncating Score Data Model");
 		scoreJena.truncate();
-		JenaConnect tempJena = psInput.neighborConnectClone("tempModel");
+//		JenaConnect tempJena = psInput.neighborConnectClone("tempModel");
+		String tempJena = "XMLVault/tempModel";
 		
 		// setup parameter variables
 		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
@@ -240,7 +241,6 @@ public class DemoPSMerge {
 		InitLog.initLogger(DemoPSMerge.class);
 		// clear parameters and temp model
 		log.trace("Truncating Temp Model");
-		tempJena.truncate();
 		algorithms.clear();
 		weights.clear();
 		inputPredicates.clear();
@@ -258,7 +258,6 @@ public class DemoPSMerge {
 		InitLog.initLogger(DemoPSMerge.class);
 		// clear parameters and temp model
 		log.trace("Truncating Temp Model");
-		tempJena.truncate();
 		algorithms.clear();
 		weights.clear();
 		inputPredicates.clear();
@@ -283,7 +282,6 @@ public class DemoPSMerge {
 		InitLog.initLogger(DemoPSMerge.class);
 		// clear parameters and temp model
 		log.trace("Truncating Temp Model");
-		tempJena.truncate();
 		algorithms.clear();
 		weights.clear();
 		inputPredicates.clear();

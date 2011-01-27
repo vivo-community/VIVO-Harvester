@@ -6,21 +6,28 @@
  ******************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.SpecialEntities;
 
 /**
  * Connection Helper for Memory Based Jena Models
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class MemJenaConnect extends SDBJenaConnect {
-	
+public class MemJenaConnect extends TDBJenaConnect {
 	/**
-	 * Set of already used memory model names
+	 * SLF4J Logger
 	 */
-	private static HashSet<String> usedModelNames = new HashSet<String>();
+	private static Logger log = LoggerFactory.getLogger(MemJenaConnect.class);
+	/**
+	 * Map of already used memory model names to directories
+	 */
+	private static HashMap<String,String> usedModelNames = new HashMap<String,String>();
 	
 	/**
 	 * Constructor (Memory Default Model)
@@ -36,7 +43,7 @@ public class MemJenaConnect extends SDBJenaConnect {
 	 * @throws IOException error connecting
 	 */
 	public MemJenaConnect(String modelName) throws IOException {
-		super("jdbc:h2:mem:"+((modelName != null)?modelName:generateUnusedModelName()), "sa", "", "H2", "org.h2.Driver", "layout2", modelName);
+		super(getDir(modelName), modelName);
 	}
 	
 	/**
@@ -53,6 +60,26 @@ public class MemJenaConnect extends SDBJenaConnect {
 	}
 	
 	/**
+	 * Get the directory in which the model named is held
+	 * @param modelName the model name
+	 * @return the directory path
+	 * @throws IOException error creating temp path
+	 */
+	private static String getDir(String modelName) throws IOException {
+		String mod = (modelName != null)?modelName:generateUnusedModelName();
+		mod = SpecialEntities.xmlEncode(mod, '/',':');
+		if(!usedModelNames.containsKey(modelName)) {
+			log.debug("attempting to create temp file for: "+mod);
+			File f = File.createTempFile(mod, ".tdb");
+			log.debug("created: "+f.getAbsolutePath());
+			f.delete();
+			f.mkdir();
+			usedModelNames.put(mod, f.getAbsolutePath());
+		}
+		return usedModelNames.get(mod);
+	}
+	
+	/**
 	 * Get an unused memory model name
 	 * @return the name
 	 */
@@ -61,12 +88,10 @@ public class MemJenaConnect extends SDBJenaConnect {
 		String name = null;
 		while(name == null) {
 			name = "DEFAULT"+random.nextInt(Integer.MAX_VALUE);
-			if(usedModelNames.contains(name)) {
+			if(usedModelNames.containsKey(name)) {
 				name = null;
 			}
 		}
-		usedModelNames.add(name);
 		return name;
 	}
-	
 }

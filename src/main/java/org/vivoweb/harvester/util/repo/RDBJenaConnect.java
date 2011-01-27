@@ -8,6 +8,8 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.sql.Connection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.GraphRDB;
@@ -21,7 +23,11 @@ import com.hp.hpl.jena.sparql.core.DataSourceImpl;
  * Connection Helper for RDB Jena Models
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class RDBJenaConnect extends JenaConnect {
+public class RDBJenaConnect extends DBJenaConnect {
+	/**
+	 * SLF4J Logger
+	 */
+	private static Logger log = LoggerFactory.getLogger(RDBJenaConnect.class);
 	/**
 	 * The jdbc connection
 	 */
@@ -123,12 +129,17 @@ public class RDBJenaConnect extends JenaConnect {
 	}
 
 	@Override
-	public Dataset getConnectionDataSet() throws IOException {
-		DataSourceImpl ds = new DataSourceImpl();
+	public Dataset getDataSet() throws IOException {
+		DataSourceImpl ds = new DataSourceImpl(getJenaModel());
 		for(String name : IterableAdaptor.adapt(this.conn.getAllModelNames())) {
 			ds.addNamedModel(name, neighborConnectClone(name).getJenaModel());
 		}
 		return ds;
 	}
 	
+	@Override
+	public void printParameters() {
+		super.printParameters();
+		log.info("type: 'rdb'");
+	}
 }

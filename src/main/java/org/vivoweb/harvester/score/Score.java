@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -24,6 +24,7 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.repo.TDBJenaConnect;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -88,7 +89,7 @@ public class Score {
 	 * @param inputJena model containing statements to be scored
 	 * @param vivoJena model containing vivoJena statements
 	 * @param scoreJena model containing scoring data statements
-	 * @param tempJena model in which to store temp copy of input and vivo data statements
+	 * @param tempJenaDir model in which to store temp copy of input and vivo data statements
 	 * @param algorithms the classes of the algorithms to execute
 	 * @param inputPredicates the predicates to look for in inputJena model
 	 * @param vivoPredicates the predicates to look for in vivoJena model
@@ -96,8 +97,8 @@ public class Score {
 	 * @param weights the weightings (0.0 , 1.0) for this score
 	 * @throws IOException error initializing jena models
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, JenaConnect tempJena, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Float> weights) throws IOException {
-		init(inputJena, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, namespace, weights);
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Float> weights) throws IOException {
+		init(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights);
 	}
 	
 	/**
@@ -119,12 +120,7 @@ public class Score {
 		JenaConnect i = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		JenaConnect v = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
 		JenaConnect s = JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S"));
-		JenaConnect t;
-		if(opts.has("t")) {
-			t = JenaConnect.parseConfig(opts.get("t"), opts.getValueMap("T"));
-		} else {
-			t = null;
-		}
+		String t = opts.get("t");
 		Map<String,Class<? extends Algorithm>> a = new HashMap<String, Class<? extends Algorithm>>();
 		Map<String, String> algs = opts.getValueMap("A");
 		for(String runName : algs.keySet()) {
@@ -149,7 +145,7 @@ public class Score {
 	 * @param i model containing statements to be scored
 	 * @param v model containing vivoJena statements
 	 * @param s model containing scoring data statements
-	 * @param t model in which to store temp copy of input and vivo data statements
+	 * @param t directory to put model in which to store temp copy of input and vivo data statements
 	 * @param a the class of the Algorithm to execute
 	 * @param iPred the predicate to look for in inputJena model
 	 * @param vPred the predicate to look for in vivoJena model
@@ -157,7 +153,7 @@ public class Score {
 	 * @param w the weighting (0.0 , 1.0) for this score
 	 * @throws IOException error initializing jena models
 	 */
-	private void init(JenaConnect i, JenaConnect v, JenaConnect s, JenaConnect t, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Float> w) throws IOException {
+	private void init(JenaConnect i, JenaConnect v, JenaConnect s, String t, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Float> w) throws IOException {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -173,12 +169,16 @@ public class Score {
 		}
 		this.scoreJena = s;
 		
-		JenaConnect temp = t;
-		if(temp == null) {
-			log.info("temp model is not specified, using memory jena model");
-			temp = new MemJenaConnect();
+		String tempDir = t;
+		if(tempDir == null) {
+			log.info("temp model directory is not specified, using system temp directory");
+//			tempDir = File.createTempFile("tempVivoInputCopyJena", "db").getAbsolutePath();
+//			log.info("temp model is not specifiedhi , using memory jena model");
+			this.tempJena = new MemJenaConnect();
+		} else {
+			this.tempJena = new TDBJenaConnect(tempDir);
 		}
-		this.tempJena = temp;
+		
 		
 		if(a == null) {
 			throw new IllegalArgumentException("Algorithm cannot be null");
@@ -251,8 +251,9 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivoJena jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("score data JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("temp-config").setDescription("temp model JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of temp jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempJenaDir").setDescription("directory to store temp jena model").withParameter(true, "DIRECTORY_PATH").setRequired(false));
+//		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("temp-config").setDescription("temp model JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+//		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of temp jena model config using VALUE").setRequired(false));
 		
 		// Parameters
 		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("algorithms").withParameterValueMap("RUN_NAME", "CLASS_NAME").setDescription("for RUN_NAME, use this CLASS_NAME (must implement Algorithm) to evaluate matches").setRequired(true));
@@ -283,7 +284,7 @@ public class Score {
 		} else {
 			log.trace("Input model already in temp copy model");
 		}
-		Dataset ds = this.tempJena.getConnectionDataSet();
+		Dataset ds = this.tempJena.getDataSet();
 
 		log.trace("Building Query");
 		String sQuery = buildSelectQuery();
@@ -294,10 +295,14 @@ public class Score {
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		log.trace("Executing Query");
 		ResultSet rs = queryExec.execSelect();
-		log.trace("Processing Results");
 		int incrementer = 0;
 		StringBuilder indScore;
 		StringBuilder scoreSparql = new StringBuilder();
+		if(!rs.hasNext()) {
+			log.info("No Results Found");
+		} else {
+			log.info("Processing Results");
+		}
 		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
 			incrementer++;
 			indScore = new StringBuilder();

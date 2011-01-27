@@ -172,8 +172,9 @@ public class Qualify {
 			"SELECT ?s ?o \n" +
 			"WHERE {\n" +
 			"  ?s <" + predicate + "> ?o .\n" +
-			"  FILTER (regex(str(?o), \"" + regexMatch + "\")) .\n" +
+			"  FILTER (regex(str(?o), \"" + regexMatch + "\", \"s\")) .\n" +
 			"}";
+		log.debug(query);
 		for(QuerySolution s : IterableAdaptor.adapt(this.model.executeSelectQuery(query))) {
 			Literal obj = s.getLiteral("o");
 			RDFDatatype datatype = obj.getDatatype();
@@ -249,26 +250,14 @@ public class Qualify {
 	 * @param ns the namespace to remove all predicates from
 	 */
 	private void cleanPredicates(String ns) {
-		String predicateQuery =	"SELECT ?s ?p ?o " +
-				"WHERE " +
-				"{ " +
+		String predicateQuery =	"" +
+			"DELETE { ?s ?p ?o } " +
+			"WHERE { " +
 				"?s ?p ?o .  " +
-				"FILTER regex(str(?p), \"" + ns + "\" ) " + 
-				"}";
+				"FILTER regex(str(?p), \"^" + ns + "\" ) " + 
+			"}";
 		log.debug(predicateQuery);
-		
-		ResultSet propList = this.model.executeSelectQuery(predicateQuery);
-		HashSet<Property> propArray = new HashSet<Property>();
-		
-		while (propList.hasNext()) {
-			propArray.add(ResourceFactory.createProperty(propList.next().getResource("p").getURI()));
-		}
-		
-		for(Property p : propArray) {
-			this.model.getJenaModel().removeAll(null, p, null);
-		}
-		
-		log.info("Removed " + propArray.size() + " unique properties");
+		this.model.executeUpdateQuery(predicateQuery);
 	}
 	
 	/**

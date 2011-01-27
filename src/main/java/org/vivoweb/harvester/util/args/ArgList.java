@@ -8,6 +8,7 @@ package org.vivoweb.harvester.util.args;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +61,13 @@ public class ArgList {
 		try {
 			this.argParser = p;
 			log.debug("running " + p.getAppName());
-			log.debug("command line args: " + StringUtils.join(args, " "));
+			List<String> sanitizedArgList = new ArrayList<String>(args.length);
+			for(String s : args) {
+				if(!s.toLowerCase().contains("user") && !s.toLowerCase().contains("pass")) {
+					sanitizedArgList.add(s);
+				}
+			}
+			log.debug("command line args: " + StringUtils.join(sanitizedArgList, " "));
 			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(), args);
 			if(this.oCmdSet.hasOption("help")) {
 				String usage = this.argParser.getUsage();
@@ -69,7 +76,13 @@ public class ArgList {
 				String[] confArgs = {""};
 				if(this.oCmdSet.hasOption("X")) {
 					confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
-					log.debug("config file args: " + StringUtils.join(confArgs, " "));
+					sanitizedArgList.clear();
+					for(String s : confArgs) {
+						if(!s.toLowerCase().contains("user") && !s.toLowerCase().contains("pass")) {
+							sanitizedArgList.add(s);
+						}
+					}
+					log.debug("config file args: " + StringUtils.join(sanitizedArgList, " "));
 					this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
 				} else {
 					this.oConfSet = null;

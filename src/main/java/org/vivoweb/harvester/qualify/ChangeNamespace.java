@@ -76,8 +76,8 @@ public class ChangeNamespace {
 		this.newNamespace = newName;
 		this.errorLogging = errorLog;
 		
-		this.model.printConnectionParameters();
-		this.vivo.printConnectionParameters();
+		this.model.printParameters();
+		this.vivo.printParameters();
 		//TODO Nicholas REMOVE DEBUG STATEMENTS
 		//log.info("vivo size: " + this.vivo.size());
 		//log.info("input size: " + this.model.size());

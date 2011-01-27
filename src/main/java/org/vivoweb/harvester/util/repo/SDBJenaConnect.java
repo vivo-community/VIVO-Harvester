@@ -9,6 +9,8 @@ package org.vivoweb.harvester.util.repo;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.sdb.SDBFactory;
 import com.hp.hpl.jena.sdb.Store;
@@ -21,7 +23,11 @@ import com.hp.hpl.jena.sparql.core.Quad;
  * Connection Helper for SDB Jena Models
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class SDBJenaConnect extends JenaConnect {
+public class SDBJenaConnect extends DBJenaConnect {
+	/**
+	 * SLF4J Logger
+	 */
+	private static Logger log = LoggerFactory.getLogger(SDBJenaConnect.class);
 	/**
 	 * The sdb store
 	 */
@@ -104,7 +110,7 @@ public class SDBJenaConnect extends JenaConnect {
 	}
 	
 	@Override
-	public Dataset getConnectionDataSet() {
+	public Dataset getDataSet() {
 		return SDBFactory.connectDataset(this.store);
 	}
 
@@ -139,4 +145,10 @@ public class SDBJenaConnect extends JenaConnect {
 		this.getJenaModel().removeAll();
 	}
 	
+	@Override
+	public void printParameters() {
+		super.printParameters();
+		log.info("type: 'sdb'");
+		log.info("dbLayout: '"+ this.dbLayout + "'");
+	}
 }

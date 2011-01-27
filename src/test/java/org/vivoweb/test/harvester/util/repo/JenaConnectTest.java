@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import junit.framework.TestCase;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -58,7 +57,7 @@ public class JenaConnectTest extends TestCase {
 	/** */
 	private static final String rdfIn = "" + "<?xml version=\"1.0\"?>\n" + "<rdf:RDF\n" + "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" + "    xmlns:si=\"http://www.w3schools.com/rdf/\" > \n" + "  <rdf:Description rdf:about=\"http://www.w3schools.com\">\n" + "    <si:author>Jan Egil Refsnes</si:author>\n" + "    <si:title>W3Schools</si:title>\n" + "  </rdf:Description>\n" + "</rdf:RDF>\n";
 	/** */
-	private static final String rdfOut = "" + "<?xml version=\"1.0\"?>" + nl + "<rdf:RDF" + nl + "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" + nl + "    xmlns:si=\"http://www.w3schools.com/rdf/\" > " + nl + "  <rdf:Description rdf:about=\"http://www.w3schools.com\">" + nl + "    <si:title>W3Schools</si:title>" + nl + "    <si:author>Jan Egil Refsnes</si:author>" + nl + "  </rdf:Description>" + nl + "</rdf:RDF>" + nl;
+	private static final String rdfOut = "" + "<?xml version=\"1.0\"?>" + nl + "<rdf:RDF" + nl + "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" + nl + "    xmlns:si=\"http://www.w3schools.com/rdf/\" > " + nl + "  <rdf:Description rdf:about=\"http://www.w3schools.com\">" + nl + "    <si:author>Jan Egil Refsnes</si:author>" + nl + "    <si:title>W3Schools</si:title>" + nl + "  </rdf:Description>" + nl + "</rdf:RDF>" + nl;
 	/** */
 	private JenaConnect jc;
 	/** */
@@ -199,11 +198,7 @@ public class JenaConnectTest extends TestCase {
 	public final void testExportRDF() throws IOException {
 		log.info("BEGIN testExportRDF");
 		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		this.jc.exportRdfToStream(baos);
-		baos.flush();
-		String output = baos.toString();
-		assertEquals(rdfOut, output);
+		assertEquals(rdfOut, this.jc.exportRdfToString());
 		log.info("END testExportRDF");
 	}
 	

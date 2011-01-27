@@ -37,6 +37,7 @@ public class QualifyTest extends TestCase {
 	public void setUp() throws Exception {
 		InitLog.initLogger(QualifyTest.class);
 		this.jena = new MemJenaConnect();
+		this.jena.truncate();
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 		this.scoreAffilitation = this.jena.getJenaModel().createProperty("http://vivoweb.org/harvester/score#Affiliation");
 	}
