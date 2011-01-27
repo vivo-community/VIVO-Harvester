@@ -7,7 +7,6 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
-import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -18,11 +17,8 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
@@ -202,47 +198,14 @@ public class Qualify {
 	 * @param ns the namespace to remove all resources from
 	 */
 	private void cleanResources(String ns) {
-		String subjectQuery =	"SELECT ?s ?p ?o " +
-				"WHERE " +
-				"{ " +
+		String query = "" +
+			"DELETE { ?s ?p ?o } " +
+			"WHERE { " +
 				"?s ?p ?o .  " +
-				"FILTER regex(str(?s), \"" + ns + "\" ) " + 
-				"}";
-		log.debug(subjectQuery);
-		
-		ResultSet subjList = this.model.executeSelectQuery(subjectQuery);
-		HashSet<Resource> subjArray = new HashSet<Resource>();
-		
-		while (subjList.hasNext()) {
-			subjArray.add(ResourceFactory.createResource(subjList.next().getResource("s").getURI()));
-		}
-		
-		for(Resource s : subjArray) {
-			this.model.getJenaModel().removeAll(s, null, null);
-		}
-		
-		log.info("Removed " + subjArray.size() + " unique subjects");
-		
-		String objectQuery =	"SELECT ?s ?p ?o " +
-				"WHERE " +
-				"{ " +
-				"?s ?p ?o .  " +
-				"FILTER regex(str(?o), \"" + ns + "\" ) " + 
-				"}";
-		log.debug(objectQuery);
-		
-		ResultSet objList = this.model.executeSelectQuery(objectQuery);
-		HashSet<Resource> objArray = new HashSet<Resource>();
-		
-		while (objList.hasNext()) {
-			objArray.add(ResourceFactory.createResource(objList.next().getResource("o").getURI()));
-		}
-		
-		for(Resource o : objArray) {
-			this.model.getJenaModel().removeAll(null, null, o);
-		}
-		
-		log.info("Removed " + objArray.size() + " unique objects");
+				"FILTER (regex(str(?s), \"^" + ns + "\" ) || regex(str(?o), \"^" + ns + "\" ))" +
+			"}";
+		log.debug(query);
+		this.model.executeUpdateQuery(query);
 	}
 	
 	/**
