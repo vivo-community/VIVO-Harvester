@@ -28,7 +28,6 @@ fi
 HCONFIG="config/jenaModels/h2.xml"
 INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
 OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -OmodelName=Pubmed"
-TEMP="-t $HCONFIG -tdbUrl=jdbc:h2:XMLVault/h2Pubmed/temp/store -tmodelName=Pubmed"
 VIVO="-v $VIVOCONFIG"
 SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=Pubmed"
 
@@ -85,6 +84,7 @@ WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail
 FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
 MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.2 -PmName=http://vivoweb.org/ontology/score#middleName"
+TEMP="-t XMLVault/h2Pubmed/temp/"
 
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $FNAME
 $Match $INPUT $SCORE -t 0.9 -r
@@ -104,7 +104,7 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 #$Qualify -j $VIVOCONFIG -r JAMA -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 #remove score statements
-$Qualify -j $VIVOCONFIG -n http://vivoweb.org/ontology/score
+$Qualify -j $VIVOCONFIG -n http://vivoweb.org/ontology/score -p
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
