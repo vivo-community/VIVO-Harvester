@@ -90,11 +90,11 @@ $Match $INPUT $SCORE -t 0.5 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.scored.$date.tar.gz XMLVault/h2Pubmed/scored
+tar -czpf backups/pubmed.scored.$date.tar.gz XMLVault/h2Pubmed/score
 rm -rf backups/pubmed.scored.latest.tar.gz
 ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 # uncomment to restore previous H2 score models
-#tar -xzpf backups/pubmed.scored.latest.tar.gz XMLVault/h2Pubmed/scored
+#tar -xzpf backups/pubmed.scored.latest.tar.gz XMLVault/h2Pubmed/score
 
 # Execute Qualify - depending on your data source you may not need to qualify follow the below examples for qualifying
 # Off by default, examples show below
