@@ -581,7 +581,7 @@ public class JDBCFetch {
 						// Field BEGIN
 						String field = tableNS + ":" + dataField.replaceAll(" ", "_");
 						sb.append("    <");
-						sb.append(field);
+						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(">");
 						
 						// insert field value
@@ -591,17 +591,16 @@ public class JDBCFetch {
 						
 						// Field END
 						sb.append("</");
-						sb.append(field);
+						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(">\n");
 					}
 					
 					// Relation Fields
 					for(String relationField : getFkRelationFields(tableName).keySet()) {
 						// Field BEGIN
+						String field = tableNS+":"+relationField.replaceAll(" ", "_");
 						sb.append("    <");
-						sb.append(tableNS);
-						sb.append(":");
-						sb.append(relationField.replaceAll(" ", "_"));
+						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(" rdf:resource=\"");
 						sb.append(this.buildTableRecordNS(getFkRelationFields(tableName).get(relationField)));
 						
