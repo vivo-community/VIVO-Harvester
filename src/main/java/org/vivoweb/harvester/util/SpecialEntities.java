@@ -520,10 +520,10 @@ public class SpecialEntities {
 				b.append(ch);
 			} else {
 				StringBuilder b2 = new StringBuilder();
-				if(Character.isWhitespace(ch)) {
-					b2.append("&#").append((int)ch).append(";");
-				} else if(Character.isISOControl(ch)) {
+				if(Character.isISOControl(ch)) {
 					// ignore
+				} else if(Character.isWhitespace(ch)) {
+					b2.append("&#").append((int)ch).append(";");
 				} else if(Character.isHighSurrogate(ch)) {
 					int codePoint;
 					if(i + 1 < s.length() && Character.isSurrogatePair(ch, s.charAt(i + 1)) && Character.isDefined(codePoint = (Character.toCodePoint(ch, s.charAt(i + 1))))) {
