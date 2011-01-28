@@ -64,7 +64,7 @@ public class OAIFetch {
 	}
 	
 	/**
-	 * Constuctor
+	 * Constructor
 	 * @param address The website address of the repository, without http://
 	 * @param startDate The date at which to begin fetching records, format and time resolution depends on repository.
 	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
@@ -79,7 +79,7 @@ public class OAIFetch {
 	
 	/**
 	 * Constructor
-	 * @param args commandline arguments
+	 * @param args command line arguments
 	 * @throws IOException error connecting to record handler
 	 */
 	public OAIFetch(String[] args) throws IOException {
@@ -135,7 +135,7 @@ public class OAIFetch {
 	
 	/**
 	 * Main method
-	 * @param args commandline arguments
+	 * @param args command line arguments
 	 */
 	public static void main(String... args) {
 		InitLog.initLogger(OAIFetch.class);

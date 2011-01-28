@@ -142,17 +142,17 @@ public class SPARQLTranslator {
 	    //Close the input stream
 	    in.close();
 		
-	    System.out.println(strQuery.toString());
+	    log.info(strQuery.toString());
 	    ResultSet rs = this.inputJC.executeSelectQuery(strQuery.toString());
 		
 	    if (!rs.hasNext())
 	    {
-	    	System.out.println("Failed to find");
+	    	log.info("Failed to find");
 	    }
 	    
 	    while(rs.hasNext()) {
 	    	QuerySolution qs = rs.next();
-	    	System.out.println(qs.toString());
+	    	log.info(qs.toString());
 	    }
 		
 		

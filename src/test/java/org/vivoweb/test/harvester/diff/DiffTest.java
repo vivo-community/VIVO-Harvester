@@ -171,7 +171,7 @@ public class DiffTest extends TestCase {
 		assertEquals("<ModelCom   {} | >", diffJC.getJenaModel().difference(expectedAddDiff.getJenaModel()).toString());
 		
 		diffJC = new MemJenaConnect();
-		System.out.println(diffJC.getJenaModel().toString());
+		log.info(diffJC.getJenaModel().toString());
 								
 		//testing old items
 		Diff.diff(previousJC, incomingJC, diffJC, null);
