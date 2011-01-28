@@ -30,6 +30,8 @@ INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubme
 OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -OmodelName=Pubmed"
 VIVO="-v $VIVOCONFIG"
 SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=Pubmed"
+MATCHOUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/match/store -OmodelName=Pubmed"
+MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/match/store -ImodelName=Pubmed"
 
 #clear old fetches
 rm -rf XMLVault/h2Pubmed/XML
@@ -86,10 +88,10 @@ LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -
 MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.2 -PmName=http://vivoweb.org/ontology/score#middleName"
 TEMP="-t XMLVault/h2Pubmed/temp/"
 
-$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $FNAME
-$Match $INPUT $SCORE -t 0.9 -r
-$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME $MNAME
-$Match $INPUT $SCORE -t 0.8 -r
+$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME
+$Match $INPUT $SCORE $MATCHOUTPUT -t 0.9 -r
+#$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME $MNAME
+#$Match $INPUT $SCORE -t 0.8 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
@@ -104,13 +106,13 @@ ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 #$Qualify -j $VIVOCONFIG -r JAMA -v "The Journal of American Medical Association" -d http://vivoweb.org/ontology/core#Title
 
 #remove score statements
-$Qualify -j $VIVOCONFIG -n http://vivoweb.org/ontology/score -p
+$Qualify -j $MATCHINPUT -n http://vivoweb.org/ontology/score -p
 
 # Execute ChangeNamespace to get into current namespace
-$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
-$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthorship/
-$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthor/
-$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedJournal/
+$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
+$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthorship/
+$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthor/
+$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedJournal/
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
@@ -121,7 +123,7 @@ ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.la
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
 VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
 INMODELNAME="modelName=Pubmed"
-INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store"
+INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/match/store"
 ADDFILE="XMLVault/update_Additions.rdf.xml"
 SUBFILE="XMLVault/update_Subtractions.rdf.xml"
   
