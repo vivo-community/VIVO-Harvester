@@ -639,7 +639,7 @@ public class JDBCFetch {
 		int count = rsmd.getColumnCount();
 		List<String> fields = new ArrayList<String>(count);
 		for(int x = 1; x <= count; x++) {
-			fields.add(rsmd.getColumnName(x));
+			fields.add(rsmd.getColumnLabel(x));
 		}
 		return fields;
 	}
