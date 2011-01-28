@@ -605,7 +605,7 @@ public class JDBCFetch {
 						sb.append(this.buildTableRecordNS(getFkRelationFields(tableName).get(relationField)));
 						
 						// insert field value
-						sb.append("#id-" + rs.getString(relationField).trim());
+						sb.append("#id_-_" + rs.getString(relationField).trim());
 						
 						// Field END
 						sb.append("\"/>\n");
