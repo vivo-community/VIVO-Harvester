@@ -6,7 +6,9 @@
  ******************************************************************************/
 package org.vivoweb.harvester.util.args;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -164,7 +166,10 @@ public class ArgParser {
 	 */
 	public String getUsage() {
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp(this.app, getOptions());
-		return "";
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintWriter pw = new PrintWriter(baos);
+		formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, this.app, null, getOptions(), HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null, false);
+		pw.flush();
+		return baos.toString();
 	}
 }

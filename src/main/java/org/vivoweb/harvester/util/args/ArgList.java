@@ -70,34 +70,32 @@ public class ArgList {
 			log.debug("command line args: " + StringUtils.join(sanitizedArgList, " "));
 			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(), args);
 			if(this.oCmdSet.hasOption("help")) {
-				String usage = this.argParser.getUsage();
-				System.out.println(usage);
-			} else {
-				String[] confArgs = {""};
-				if(this.oCmdSet.hasOption("X")) {
-					confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
-					sanitizedArgList.clear();
-					for(String s : confArgs) {
-						if(!s.toLowerCase().contains("user") && !s.toLowerCase().contains("pass")) {
-							sanitizedArgList.add(s);
-						}
+				throw new IllegalArgumentException("Printing Usage:");
+			}
+			String[] confArgs = {""};
+			if(this.oCmdSet.hasOption("X")) {
+				confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
+				sanitizedArgList.clear();
+				for(String s : confArgs) {
+					if(!s.toLowerCase().contains("user") && !s.toLowerCase().contains("pass")) {
+						sanitizedArgList.add(s);
 					}
-					log.debug("config file args: " + StringUtils.join(sanitizedArgList, " "));
-					this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
-				} else {
-					this.oConfSet = null;
 				}
-				for(ArgDef arg : this.argParser.getArgDefs()) {
-					if(arg.isRequired()) {
-						String argName;
-						if(arg.getShortOption() != null) {
-							argName = arg.getShortOption().toString();
-						} else {
-							argName = arg.getLongOption();
-						}
-						if(!has(argName)) {
-							throw new IllegalArgumentException("Missing Argument: " + argName);
-						}
+				log.debug("config file args: " + StringUtils.join(sanitizedArgList, " "));
+				this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
+			} else {
+				this.oConfSet = null;
+			}
+			for(ArgDef arg : this.argParser.getArgDefs()) {
+				if(arg.isRequired()) {
+					String argName;
+					if(arg.getShortOption() != null) {
+						argName = arg.getShortOption().toString();
+					} else {
+						argName = arg.getLongOption();
+					}
+					if(!has(argName)) {
+						throw new IllegalArgumentException("Missing Argument: " + argName);
 					}
 				}
 			}
