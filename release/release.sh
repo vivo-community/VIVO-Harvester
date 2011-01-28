@@ -22,7 +22,7 @@ cd ..
 echo -n "Enter sourceforge username: "
 read NAME
 
-echo -n "Build from? (dev, trunk, staging | blank for local): "
+echo -n "Build from? (dev, trunk | blank for local): "
 read CODELOC
 
 echo -n "Enter release version: "
@@ -51,22 +51,14 @@ if [ "$CODELOC" = "dev" ]; then
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
 	cd Development
 	#if we're pulling from dev, ask if releasing stable 
-	echo -n "Build a stable release? (merge down, tag and release from trunk): "
-	read BUILDSTABLE
-elif [ "$CODELOC" = "Staging" ]; then
-	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
-	cd Staging
-	#if we're pulling from Staging, ask if releasing point 
-	echo -n "Build a point release? (merge down, tag and release from trunk): "
-	read BUILDPOINT
+	echo -n "Merge to trunk?: "
+	read MERGETRUNK
 elif [ "$CODELOC" = "trunk" ]; then
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
 else
-	echo -n "Build a stable release? (merge down, tag and release from trunk): "
-	read BUILDSTABLE
-	echo -n "Build a point release? (merge down, tag and release from trunk): "
-	read BUILDPOINT
+	echo -n "Merge to trunk?: "
+	read MERGETRUNK
 fi
 
 #update pom.xml,deb control, and env file with new version
@@ -85,7 +77,7 @@ sed -i "s/VERSION=.*/VERSION=$RELEASENAME/" scripts/env
 
 #commit pom file and deb control file
 if [ "$COMMIT" = "y" ]; then
-	svn commit -m "Update pom.xml and deb control file for release"
+	svn commit -m "Update pom.xml and deb control file for release $RELEASENAME"
 fi
 
 #build
@@ -117,37 +109,16 @@ if [ "$UPLOAD" = "y" ]; then
 	scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 fi
 
+#tag
+cd ..
+svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+svn commit -m "Tag Release $RELEASENAME"
 
-if [ "$BUILDSTABLE" = "y" ]; then
-	#merge down to Staging
-	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging
-	cd Staging
-	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development@HEAD
-	svn commit -m $RELEASENAME
-	cd ..
-	rm -rf Staging
 
+if [ "$MERGETRUNK" = "y" ]; then
 	#merge down to trunk
 	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
 	cd trunk
-	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging@HEAD
-	svn commit -m $RELEASENAME
-
-	#tag inside trunk
-	svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	svn commit -m "Tag Release"
-	cd ..
-	rm -rf trunk
-elif [ "$BUILDPOINT" = "y" ]; then
-	#merge down to trunk
-	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
-	cd trunk
-	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Staging@HEAD
-	svn commit -m $RELEASENAME
-
-	#tag inside trunk
-	svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
-	svn commit -m "Tag Release"
-	cd ..
-	rm -rf trunk
+	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development@HEAD
+	svn commit -m "Commit Release $RELEASENAME"
 fi
