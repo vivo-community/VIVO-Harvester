@@ -116,7 +116,7 @@ public class Qualify {
 		if(!((argList.has("r") ^ argList.has("t") ^ argList.has("p")))) {
 			throw new IllegalArgumentException("Must provide one of --regex, --text, or --namespace, but not more than 1");
 		}
-		this.model = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
+		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		this.dataPredicate = argList.get("d");
 		this.regex = argList.has("r");
 		this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
