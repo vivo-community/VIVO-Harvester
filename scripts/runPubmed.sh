@@ -84,6 +84,7 @@ WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail
 #FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
 #MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.2 -PmName=http://vivoweb.org/ontology/score#middleName"
+mkdir XMLVault/h2Pubmed/temp/
 TEMP="-t XMLVault/h2Pubmed/temp/"
 
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME
