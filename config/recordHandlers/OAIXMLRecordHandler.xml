@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RecordHandler type="org.vivoweb.harvester.util.repo.JDBCRecordHandler">
+<RecordHandler>
+	<Param name="rhClass">org.vivoweb.harvester.util.repo.JDBCRecordHandler</Param>
 	<Param name="dbClass">org.h2.Driver</Param>
 	<Param name="dbUrl">jdbc:h2:XMLVault/h2oai/XML/store</Param>
 	<Param name="dbUser">sa</Param>

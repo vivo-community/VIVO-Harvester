@@ -322,7 +322,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 			try {
 				if(this.type == null) {
 					if(this.params.containsKey("rhType")) {
-						this.type = this.params.remove("rhType");
+						this.type = this.params.remove("rhClass");
 					} else if(this.params.containsKey("fileDir")) {
 						this.type = TextFileRecordHandler.class.getName();
 					} else if(this.params.containsKey("dataFieldType")) {

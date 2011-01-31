@@ -8,19 +8,19 @@ package org.vivoweb.harvester.util.args;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,13 +61,7 @@ public class ArgList {
 		try {
 			this.argParser = p;
 			log.debug("running " + p.getAppName());
-			List<String> sanitizedArgList = new ArrayList<String>(args.length);
-			for(String s : args) {
-				if(!s.toLowerCase().contains("user") && !s.toLowerCase().contains("pass")) {
-					sanitizedArgList.add(s);
-				}
-			}
-			log.debug("command line args: " + StringUtils.join(sanitizedArgList, " "));
+			log.debug("command line args: " + getSanitizedArgString(args));
 			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(), args);
 			if(this.oCmdSet.hasOption("help")) {
 				throw new IllegalArgumentException("Printing Usage:");
@@ -75,13 +69,7 @@ public class ArgList {
 			String[] confArgs = {""};
 			if(this.oCmdSet.hasOption("X")) {
 				confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
-				sanitizedArgList.clear();
-				for(String s : confArgs) {
-					if(!s.toLowerCase().contains("user") && !s.toLowerCase().contains("pass")) {
-						sanitizedArgList.add(s);
-					}
-				}
-				log.debug("config file args: " + StringUtils.join(sanitizedArgList, " "));
+				log.debug("config file args: " + getSanitizedArgString(confArgs));
 				this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
 			} else {
 				this.oConfSet = null;
@@ -102,6 +90,36 @@ public class ArgList {
 		} catch(ParseException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
+	}
+	
+	/**
+	 * Get the sanitized string of args
+	 * @param args the args
+	 * @return the sanitized string
+	 */
+	private String getSanitizedArgString(String[] args) {
+		StringBuilder sb = new StringBuilder();
+		String s;
+		Set<String> filters = new HashSet<String>();
+		filters.add("--username");
+		filters.add("--password");
+		filters.add("-.*dbUser");
+		filters.add("-.*dbPass");
+		for(int x = 0; x < args.length; x++) {
+			if(x != 0) {
+				sb.append(" ");
+			}
+			s = args[x];
+			sb.append(s);
+			for(String regex : filters) {
+				if(s.matches(regex)) {
+					sb.append(" ******");
+					x++;
+					break;
+				}
+			}
+		}
+		return sb.toString();
 	}
 	
 	/**
