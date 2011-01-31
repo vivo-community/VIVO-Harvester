@@ -165,9 +165,9 @@ public class Match {
 			String sInputURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
 			Float weight = Float.valueOf(solution.getLiteral("sum").getFloat());
-			System.out.println("input: "+sInputURI);
-			System.out.println("vivo: "+sVivoURI);
-			System.out.println("weight: "+weight);
+			log.trace("input: "+sInputURI);
+			log.trace("vivo: "+sVivoURI);
+			log.trace("weight: "+weight);
 			uriMatchMap.put(sInputURI, sVivoURI);
 			log.debug("Match found: <"+sInputURI+"> in Input matched with <"+sVivoURI+"> in Vivo");
 		}
@@ -230,7 +230,7 @@ public class Match {
 			"  ?s ?p ?o\n" +
 			"} WHERE {\n" +
 			"  ?s ?p ?o .\n" +
-			"  FILTER ( isLiteral(?o || (str(?p)=='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
+			"  FILTER ( isLiteral(?o || (str(?p)='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
 			"}";
 			String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
 			log.debug("Construct Query:\n"+conQuery);
