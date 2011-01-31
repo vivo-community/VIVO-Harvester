@@ -38,23 +38,10 @@ tar -czpf backups/ps.xml.$date.tar.gz XMLVault/h2ps/XML
 rm -rf backups/ps.xml.latest.tar.gz
 ln -s ps.xml.$date.tar.gz backups/ps.xml.latest.tar.gz
 
+exit
+
 # uncomment to restore previous fetch
 #tar -xzpf backups/ps.xml.latest.tar.gz XMLVault/h2ps/XML
-
-# clear old merges
-rm -rf XMLVault/h2ps/Merge
-
-# Execute Merge
-$Merge -i config/recordHandlers/PeopleSoft-XML.xml -o config/recordHandlers/PeopleSoft-Merge.xml -b "t_UF_DIR_EMP_STU_1_(id_-_.*?)"
-
-# backup merges
-date=`date +%Y-%m-%d_%T`
-tar -czpf backups/ps.merge.$date.tar.gz XMLVault/h2ps/Merge
-rm -rf backups/ps.merge.latest.tar.gz
-ln -s ps.merge.$date.tar.gz backups/ps.merge.latest.tar.gz
-
-# uncomment to restore previous fetch
-#tar -xzpf backups/ps.merge.latest.tar.gz XMLVault/h2ps/Merge
 
 # clear old translates
 rm -rf XMLVault/h2ps/RDF
