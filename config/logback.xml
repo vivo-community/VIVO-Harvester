@@ -24,7 +24,7 @@
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>OFF</level>
+      <level>ALL</level>
     </filter>
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <maxIndex>10</maxIndex>
@@ -95,6 +95,11 @@
     <appender-ref ref="AllAppender"/>
   </logger>
   <logger name="com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler" level="${rdf-error-level:-ERROR}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="com.hp.hpl.jena.arq" level="${arq-error-level:-ERROR}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>

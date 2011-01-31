@@ -18,7 +18,6 @@ import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
@@ -162,8 +161,6 @@ public class Qualify {
 	 * @param newValue new value
 	 */
 	private void regexReplace(String predicate, String regexMatch, String newValue) {
-		Property pred = this.model.getJenaModel().createProperty(predicate);
-//		ResIterator resItr = this.model.getJenaModel().listResourcesWithProperty(pred);
 		String query = "" +
 			"SELECT ?s ?o \n" +
 			"WHERE {\n" +
@@ -171,26 +168,38 @@ public class Qualify {
 			"  FILTER (regex(str(?o), \"" + regexMatch + "\", \"s\")) .\n" +
 			"}";
 		log.debug(query);
+		StringBuilder insertQ = new StringBuilder("INSERT DATA {\n");
+		StringBuilder deleteQ = new StringBuilder("DELETE DATA {\n");
 		for(QuerySolution s : IterableAdaptor.adapt(this.model.executeSelectQuery(query))) {
 			Literal obj = s.getLiteral("o");
 			RDFDatatype datatype = obj.getDatatype();
 			String lang = obj.getLanguage();
 			String objStr = obj.getValue().toString();
-			log.trace("Replacing record");
-			log.debug("oldValue: " + obj.toString());
-			String newStr = objStr.replaceAll(regexMatch, newValue);
-			Literal newObj;
+			String oldStr = "\""+objStr+"\"";
 			if(datatype != null) {
-				newObj = this.model.getJenaModel().createTypedLiteral(newStr, datatype);
-			} else if(!lang.equals("")) {
-				newObj = this.model.getJenaModel().createLiteral(newStr, lang);
-			} else {
-				newObj = this.model.getJenaModel().createLiteral(newStr);
+				oldStr += "^^<"+datatype.getURI()+">";
+			} else if(!lang.trim().equals("")) {
+				oldStr += "@"+lang.trim();
 			}
-			log.debug("newValue: " + newObj.toString());
-			this.model.getJenaModel().remove(s.getResource("s"), pred, obj);
-			this.model.getJenaModel().add(s.getResource("s"), pred, newObj);
+			log.trace("Replacing record");
+			log.debug("oldValue: " + oldStr);
+			String newStr = "\""+objStr.replaceAll(regexMatch, newValue)+"\"";
+			if(datatype != null) {
+				newStr += "^^<"+datatype.getURI()+">";
+			} else if(!lang.trim().equals("")) {
+				newStr += "@"+lang.trim();
+			}
+			String sUri = s.getResource("s").getURI();
+			log.debug("newValue: " + newStr);
+			deleteQ.append("  <"+sUri+"> <"+predicate+"> "+oldStr+" .\n");
+			insertQ.append("  <"+sUri+"> <"+predicate+"> "+newStr+" .\n");
 		}
+		insertQ.append("}");
+		deleteQ.append("}");
+		log.debug("Removing old data:\n"+deleteQ);
+		this.model.executeUpdateQuery(deleteQ.toString());
+		log.debug("Inserting updated data:\n"+insertQ);
+		this.model.executeUpdateQuery(insertQ.toString());
 	}
 	
 	/**

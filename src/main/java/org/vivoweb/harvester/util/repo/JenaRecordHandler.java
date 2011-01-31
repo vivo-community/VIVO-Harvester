@@ -232,7 +232,7 @@ public class JenaRecordHandler extends RecordHandler {
 				"  ?record lns:" + JenaRecordHandler.this.dataType.getLocalName() + " ?dataField . \n" +
 				"} ORDER BY ?idField";
 			
-			this.resultSet = JenaRecordHandler.this.model.executeSelectQuery(sQuery);
+			this.resultSet = JenaRecordHandler.this.model.executeSelectQuery(sQuery, true);
 		}
 		
 		@Override

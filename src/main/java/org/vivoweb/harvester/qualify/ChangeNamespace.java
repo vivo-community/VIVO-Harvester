@@ -18,7 +18,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.ResourceUtils;
 
@@ -189,11 +188,9 @@ public class ChangeNamespace {
 			"\t" + "FILTER regex(str(?sub), \"" + oldNamespace + "\" ) \n" + 
 			"}";
 		log.debug("Change Query:\n"+subjectQuery);
-		
-		ResultSet changeList = model.executeSelectQuery(subjectQuery);
 
 		HashSet<String> changeArray = new HashSet<String>();
-		for(QuerySolution solution : IterableAdaptor.adapt(changeList)) {
+		for(QuerySolution solution : IterableAdaptor.adapt(model.executeSelectQuery(subjectQuery))) {
 			String renameURI = solution.getResource("sub").getURI();
 			changeArray.add(renameURI);
 		}

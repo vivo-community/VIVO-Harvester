@@ -200,9 +200,13 @@ public abstract class JenaConnect {
 	 * @return the number of statement in this model
 	 */
 	public int size() {
-		//Display count
-		ResultSet result = executeSelectQuery("SELECT (count(?s) as ?size) WHERE { ?s ?p ?o }");
-		return result.next().get("size").asLiteral().getInt();
+		ResultSet resultSet = executeSelectQuery("SELECT (count(?s) as ?size) WHERE { ?s ?p ?o }");
+		// read first result
+		if(resultSet.hasNext()) {
+			//Display count
+			return resultSet.next().get("size").asLiteral().getInt();
+		}
+		return 0;
 	}
 	
 	/**
@@ -394,7 +398,21 @@ public abstract class JenaConnect {
 	 * @return the executed query result set
 	 */
 	public ResultSet executeSelectQuery(String queryString) {
-		return ResultSetFactory.copyResults(buildQueryExec(queryString).execSelect());
+		return executeSelectQuery(queryString, false);
+	}
+	
+	/**
+	 * Executes a sparql select query against the JENA model and returns the selected result set
+	 * @param queryString the query to execute against the model
+	 * @param copyResultSet copy the resultset
+	 * @return the executed query result set
+	 */
+	public ResultSet executeSelectQuery(String queryString, boolean copyResultSet) {
+		ResultSet rs = buildQueryExec(queryString).execSelect();
+		if(copyResultSet) {
+			rs = ResultSetFactory.copyResults(rs);
+		}
+		return rs;
 	}
 	
 	/**
