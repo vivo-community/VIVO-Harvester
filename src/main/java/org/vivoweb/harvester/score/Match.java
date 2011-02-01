@@ -246,15 +246,19 @@ public class Match {
 	 * @throws IOException no idea why it throws this 
 	 */
 	private JenaConnect outputMatches(Map<String,String> matchSet) throws IOException{
+		log.debug("Beginning seperate output of matches");
 		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
+		int i = 0;
 		for(String oldUri : matchSet.keySet()) {
+			i++;
 			Resource res = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
 			if (!linkRes.contains(res)){
 				returnModel = recursiveBuild(res, linkRes);
 				linkRes.push(res.getURI());
 			}			
 		}
+		log.debug("Outputted " + i + " matches");
 		return returnModel;
 	}
 	
@@ -277,20 +281,20 @@ public class Match {
 		while (mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
 			
-				// log.debug(stmt.toString());
-				returnModel.getJenaModel().add(stmt);
-				
-				//todo change the equals t o
-				if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
-					linkRes.push(mainRes.getURI());
-					returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
-					linkRes.pop();
-				}
-				if (!linkRes.contains(stmt.getSubject().getURI()) && !stmt.getSubject().equals(mainRes)) {
-					linkRes.push(mainRes.getURI());
-					returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
-					linkRes.pop();
-				}
+			// log.debug(stmt.toString());
+			returnModel.getJenaModel().add(stmt);
+			
+			//todo change the equals t o
+			if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
+				linkRes.push(mainRes.getURI());
+				returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
+				linkRes.pop();
+			}
+			if (!linkRes.contains(stmt.getSubject().getURI()) && !stmt.getSubject().equals(mainRes)) {
+				linkRes.push(mainRes.getURI());
+				returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
+				linkRes.pop();
+			}
 		}
 		
 		return returnModel;
