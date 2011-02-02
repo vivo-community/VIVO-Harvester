@@ -253,10 +253,16 @@ public class Match {
 		for(String oldUri : matchSet.keySet()) {
 			i++;
 			Resource res = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
-			if (!linkRes.contains(res)){
-				returnModel = recursiveBuild(res, linkRes);
-				linkRes.push(res.getURI());
-			}			
+			StmtIterator subjectStmts = this.scoreJena.getJenaModel().listStatements(null, null, res);
+			
+			while(subjectStmts.hasNext()) {
+				Statement stmt = subjectStmts.nextStatement();
+				Resource subj = stmt.getSubject();
+				if (!linkRes.contains(subj)){
+					returnModel = recursiveBuild(subj, linkRes);
+					linkRes.push(subj.getURI());
+				}
+			}
 		}
 		log.debug("Outputted " + i + " matches");
 		return returnModel;
@@ -277,7 +283,7 @@ public class Match {
 	private static JenaConnect recursiveBuild(Resource mainRes, Stack<String> linkRes) throws IOException {
 		JenaConnect returnModel = new MemJenaConnect();
 		StmtIterator mainStmts = mainRes.listProperties();
-		
+
 		while (mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
 			

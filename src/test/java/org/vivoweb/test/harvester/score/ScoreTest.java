@@ -340,6 +340,8 @@ public class ScoreTest extends TestCase {
 	/** */
 	private JenaConnect vivo;
 	/** */
+	private JenaConnect output;
+	/** */
 	private JenaConnect score;
 	
 	/**
@@ -374,7 +376,7 @@ public class ScoreTest extends TestCase {
 		// run score
 		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
-		new Match(this.input, this.score, null, true, 0.75f, null, false).execute();
+		new Match(this.input, this.score, this.output, true, 0.75f, null, false).execute();
 		//log.info("Match Dump Post-Match\n" + this.input.exportRdfToString());
 		
 		// check score model
@@ -384,6 +386,8 @@ public class ScoreTest extends TestCase {
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
 		//Check to make sure information authorship exists on publication
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
+		//check for records in output model records
+		assertTrue(!this.output.isEmpty());
 		
 		//assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship <http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1> }"));
 		
@@ -412,6 +416,8 @@ public class ScoreTest extends TestCase {
 			this.vivo = this.input.neighborConnectClone("vivo");
 			this.vivo.loadRdfFromString(vivoRDF, null, null);
 			
+			this.output = this.input.neighborConnectClone("output");
+						
 			this.score = this.input.neighborConnectClone("score");
 		} catch(IOException e) {
 			throw new IllegalArgumentException(e.getMessage(),e);
@@ -447,6 +453,20 @@ public class ScoreTest extends TestCase {
 				}
 			}
 			this.vivo = null;
+		}
+		if(this.output != null) {
+			try {
+				this.output.truncate();
+			} catch(Exception e) {
+				//Ignore
+			} finally {
+				try {
+					this.output.close();
+				} catch(Exception e) {
+					//Ignore
+				}
+			}
+			this.output = null;
 		}
 		if(this.score != null) {
 			try {
