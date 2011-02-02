@@ -258,7 +258,7 @@ public class Match {
 				Statement stmt = subjectStmts.nextStatement();
 				Resource subj = stmt.getSubject();
 				if (!linkRes.contains(subj)){
-					returnModel = recursiveBuild(subj, linkRes);
+					returnModel = recursiveBuild(subj, linkRes, returnModel);
 					linkRes.push(subj.getURI());
 				}
 			}
@@ -279,8 +279,7 @@ public class Match {
 	 * @return the model containing the sanitized info so far
 	 * @throws IOException error connecting
 	 */
-	private static JenaConnect recursiveBuild(Resource mainRes, Stack<String> linkRes) throws IOException {
-		JenaConnect returnModel = new MemJenaConnect();
+	private static JenaConnect recursiveBuild(Resource mainRes, Stack<String> linkRes, JenaConnect returnModel) throws IOException {
 		StmtIterator mainStmts = mainRes.listProperties();
 
 		while (mainStmts.hasNext()) {
@@ -292,12 +291,12 @@ public class Match {
 			//todo change the equals t o
 			if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
 				linkRes.push(mainRes.getURI());
-				returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes).getJenaModel());
+				returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes, returnModel).getJenaModel());
 				linkRes.pop();
 			}
 			if (!linkRes.contains(stmt.getSubject().getURI()) && !stmt.getSubject().equals(mainRes)) {
 				linkRes.push(mainRes.getURI());
-				returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes).getJenaModel());
+				returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes, returnModel).getJenaModel());
 				linkRes.pop();
 			}
 		}
