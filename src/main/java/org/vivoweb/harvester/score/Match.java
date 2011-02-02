@@ -251,8 +251,6 @@ public class Match {
 		JenaConnect returnModel = new MemJenaConnect();
 		int i = 0;
 		for(String oldUri : matchSet.keySet()) {
-			log.trace("oldUri: " + oldUri);
-			log.trace("matchSet: " + matchSet.keySet());
 			i++;
 			StmtIterator subjectStmts = this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(matchSet.get(oldUri)));
 			
@@ -266,13 +264,13 @@ public class Match {
 			}
 		}
 		log.debug("Outputted " + i + " matches");
-		log.debug(returnModel.exportRdfToString());
 		return returnModel;
 	}
 	
 	/**
 	 * @param mainRes item to push into returnModel
 	 * @param linkRes list of items to not move to
+	 * @param returnModel model to return
 	 * @return model thats being returned with matches
 	 * @throws IOException I have no idea why mem throws this
 	 */
@@ -361,10 +359,7 @@ public class Match {
 		}
 		
 		if(this.outputJena != null) {
-			log.debug("Constructing output model");
 			this.outputJena.getJenaModel().add(outputMatches(pubmedResultMap).getJenaModel());
-			log.debug("Output model");
-			log.debug(this.outputJena.exportRdfToString());
 		}
 	}
 
