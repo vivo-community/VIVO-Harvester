@@ -252,8 +252,7 @@ public class Match {
 		int i = 0;
 		for(String oldUri : matchSet.keySet()) {
 			i++;
-			Resource res = this.scoreJena.getJenaModel().getResource(matchSet.get(oldUri));
-			StmtIterator subjectStmts = this.scoreJena.getJenaModel().listStatements(null, null, res);
+			StmtIterator subjectStmts = this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(matchSet.get(oldUri)));
 			
 			while(subjectStmts.hasNext()) {
 				Statement stmt = subjectStmts.nextStatement();
