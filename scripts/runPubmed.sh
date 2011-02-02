@@ -82,17 +82,15 @@ rm -rf XMLVault/h2Pubmed/score
 # Execute Score to disambiguate data in "scoring" JENA model
 # Execute match to match and link data into "vivo" JENA model
 LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.5 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
-#FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
+WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.1 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
+FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
-#MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.2 -PmName=http://vivoweb.org/ontology/core#middleName"
+MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
 mkdir XMLVault/h2Pubmed/temp/
 TEMP="-t XMLVault/h2Pubmed/temp/"
 
-$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME
-$Match $INPUT $SCORE $MATCHOUTPUT -t 0.9 -r
-#$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME $MNAME
-#$Match $INPUT $SCORE -t 0.8 -r
+$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME $MNAME
+$Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
