@@ -20,6 +20,9 @@ rm -rf usr
 rm *.log
 rm vivo_start.rdf
 rm vivo_end.rdf
+rm pubmed.rdf
+rm match.rdf
+rm qualify.rdf
 
 echo -n "Grab local?: "
 read LOCAL
@@ -76,6 +79,10 @@ fi
 cp logs/* ../../../..
 cp vivo_start.rdf ../../../..
 cp vivo_end.rdf ../../../..
+cp pubmed.rdf ../../../..
+cp score.rdf ../../../..
+cp match.rdf ../../../..
+cp qualify.rdf ../../../..
 
 #check for data written to vivo, otherwise failure
 PRESIZE=`du -b vivo_start.rdf | awk '{ print $1 }'`

@@ -10,7 +10,7 @@ DBNAME=`grep dbUrl $VIVOCONFIG | sed 's|^.*>.*\/\([^<]*\)<.*$|\1|g'`
 USERNAME=`grep dbUser $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 PASSWORD=`grep dbPass $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 NAMESPACE=`grep namespace $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
-VERSION=1.0beta5
+VERSION=1.0beta6
 MIN_MEM=1024m
 MAX_MEM=2048M
 #Variable for optimizations to the Java virtual machine.

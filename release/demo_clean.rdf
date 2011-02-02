@@ -6,13 +6,11 @@
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:j.3="http://vivoweb.org/ontology/core#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
-  <rdf:Description rdf:about="http://vivo.ufl.edu/individual/n14560">
+  <rdf:Description rdf:about="http://vivo.ufl.edu/individual/n14560">    
+    <j.2:lastName>Byrne</j.2:lastName>
+    <j.2:firstName>Barry</j.2:firstName>
+    <j.3:middleName>J</j.3:middleName>
     <j.3:workEmail>bbyrne@ufl.edu</j.3:workEmail>
-    <j.3:preferredTitle>Professor &amp; Associate Chair</j.3:preferredTitle>
-    <j.3:overview>ASO CHAIR &amp; PROF</j.3:overview>
-    <j.3:workPhone>3522736563</j.3:workPhone>
-    <rdfs:label>Byrne, Barry J.</rdfs:label>
-    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Faculty"/>
-    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+    <rdfs:label>Byrne, Barry J.</rdfs:label>    
   </rdf:Description>
 </rdf:RDF>
