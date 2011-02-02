@@ -7,6 +7,8 @@
 	Command line arguments have changed for several tools
 	Logging now logs to single file
 	
+	Match
+		now uses TDB as the backend for inprocess temporary jena models
 	D2RMap
 		now supports csv files
 	MODS
@@ -41,7 +43,6 @@
 	VIVO.xml
 		namespace added
 		type added (supported types are sdb, rdb, or mem)
-		
 
 0.7.1
 	XSL
