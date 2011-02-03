@@ -292,7 +292,7 @@ public class Match {
 	 * @return the model containing the sanitized info so far
 	 * @throws IOException error connecting
 	 */
-	private static JenaConnect recursiveBuild(Resource mainRes, Stack<String> linkRes, JenaConnect returnModel) throws IOException {
+	private static null recursiveBuild(Resource mainRes, Stack<String> linkRes, JenaConnect returnModel) throws IOException {
 		StmtIterator mainStmts = mainRes.listProperties();
 		returnModel.getJenaModel().add(mainStmts);
 		
@@ -311,8 +311,6 @@ public class Match {
 				linkRes.pop();
 			}
 		}
-		
-		return returnModel;
 	}
 	
 	/**
