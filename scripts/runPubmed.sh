@@ -90,7 +90,7 @@ mkdir XMLVault/h2Pubmed/temp/
 TEMP="-t XMLVault/h2Pubmed/temp/"
 
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME $MNAME
-$Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r
+$Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r -c
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`

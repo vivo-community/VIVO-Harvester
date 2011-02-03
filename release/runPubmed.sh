@@ -70,7 +70,7 @@ mkdir XMLVault/h2Pubmed/temp/
 TEMP="-t XMLVault/h2Pubmed/temp/"
 
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $MNAME $FNAME
-$Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r -c
+$Match $INPUT $SCORE $MATCHOUTPUT -t 0.1 -r -c
 
 #Dump score
 $Transfer -i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -ImodelName=Pubmed -d score.rdf
