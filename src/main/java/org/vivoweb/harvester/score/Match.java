@@ -294,22 +294,20 @@ public class Match {
 	 */
 	private static JenaConnect recursiveBuild(Resource mainRes, Stack<String> linkRes, JenaConnect returnModel) throws IOException {
 		StmtIterator mainStmts = mainRes.listProperties();
+		returnModel.getJenaModel().add(mainStmts);
 		
 		while (mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
-			
-			// log.debug(stmt.toString());
-			returnModel.getJenaModel().add(stmt);
-			
+						
 			//todo change the equals t o
 			if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
 				linkRes.push(mainRes.getURI());
-				returnModel.getJenaModel().add(recursiveBuild(stmt.getObject().asResource(), linkRes, returnModel).getJenaModel());
+				recursiveBuild(stmt.getObject().asResource(), linkRes, returnModel).getJenaModel();
 				linkRes.pop();
 			}
-			if (!linkRes.contains(stmt.getSubject().getURI()) && !stmt.getSubject().equals(mainRes)) {
+			if (!linkRes.contains(stmt.getSubject().getURI())) {
 				linkRes.push(mainRes.getURI());
-				returnModel.getJenaModel().add(recursiveBuild(stmt.getSubject(), linkRes, returnModel).getJenaModel());
+				recursiveBuild(stmt.getSubject(), linkRes, returnModel).getJenaModel();
 				linkRes.pop();
 			}
 		}
