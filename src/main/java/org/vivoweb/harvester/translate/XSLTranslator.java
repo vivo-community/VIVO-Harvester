@@ -104,7 +104,7 @@ public class XSLTranslator {
 	}
 	
 	/**
-	 * Set translation file from a file
+	 * Set translation file from an inputSteam
 	 * @param transFileStream valid type of translation file is xslt
 	 * @throws IOException error reading from stream
 	 */

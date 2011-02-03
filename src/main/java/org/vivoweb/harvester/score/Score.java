@@ -245,13 +245,13 @@ public class Score {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Score");
 		// Models
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").setDescription("inputJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoJena-config").setDescription("vivoJena JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoJena-config").withParameter(true, "CONFIG_FILE").setDescription("vivoJena JENA configuration filename").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivoJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("score data JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").withParameter(true, "CONFIG_FILE").setDescription("score data JENA configuration filename").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempJenaDir").setDescription("directory to store temp jena model").withParameter(true, "DIRECTORY_PATH").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempJenaDir").withParameter(true, "DIRECTORY_PATH").setDescription("directory to store temp jena model").setRequired(false));
 //		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("temp-config").setDescription("temp model JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
 //		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of temp jena model config using VALUE").setRequired(false));
 		

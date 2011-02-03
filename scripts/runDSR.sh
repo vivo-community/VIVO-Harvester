@@ -63,10 +63,10 @@ $Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -AdeptID=$EQTEST -WdeptID=1.0 -Fdept
 $Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Alabel=$EQTEST -Wlabel=1.0 -Flabel=http://www.w3.org/2000/01/rdf-schema#label -Plabel=http://www.w3.org/2000/01/rdf-schema#label -n http://vivoweb.org/harvest/dsr/sponsor/
 
 # Scoring of PIs
-$Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Ptype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -n http://vivoweb.org/harvest/dsr/piRole/
+$Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Ptype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Aufid=$EQTEST -Wufid=1.0 -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -n http://vivoweb.org/harvest/dsr/piRole/
 
 # Scoring of coPIs
-$Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Ptype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -n http://vivoweb.org/harvest/dsr/coPiRole/
+$Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Ptype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Aufid=$EQTEST -Wufid=1.0 -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -n http://vivoweb.org/harvest/dsr/coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $TEMPINPUT $SCOREDATA -t 1.0 -r
