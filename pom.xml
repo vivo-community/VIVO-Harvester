@@ -97,6 +97,7 @@
                                 <data>
                                     <src>${project.basedir}/scripts</src>
                                     <type>directory</type>
+                                    <excludes>**/*.svn*/**</excludes>                                    
                                     <mapper>
                                       <type>perm</type>
                                       <prefix>/usr/share/vivo/harvester/scripts</prefix>
