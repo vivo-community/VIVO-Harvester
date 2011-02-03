@@ -270,8 +270,8 @@ public class Match {
 				Resource subj = stmt.getSubject();
 				if (!linkRes.contains(subj)){
 					log.trace("Submitting to recursive build " + subj.getURI());
-					returnModel = recursiveBuild(subj, linkRes, returnModel);
 					linkRes.push(subj.getURI());
+					recursiveBuild(subj, linkRes, returnModel);
 				}
 			}
 		}
@@ -292,7 +292,7 @@ public class Match {
 	 * @return the model containing the sanitized info so far
 	 * @throws IOException error connecting
 	 */
-	private static null recursiveBuild(Resource mainRes, Stack<String> linkRes, JenaConnect returnModel) throws IOException {
+	private static void recursiveBuild(Resource mainRes, Stack<String> linkRes, JenaConnect returnModel) throws IOException {
 		StmtIterator mainStmts = mainRes.listProperties();
 		returnModel.getJenaModel().add(mainStmts);
 		
@@ -302,12 +302,14 @@ public class Match {
 			//todo change the equals t o
 			if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
 				linkRes.push(mainRes.getURI());
-				recursiveBuild(stmt.getObject().asResource(), linkRes, returnModel).getJenaModel();
+				log.trace("Submitting to rcb from within rcb" + stmt.getObject().asResource().getURI());
+				recursiveBuild(stmt.getObject().asResource(), linkRes, returnModel);
 				linkRes.pop();
 			}
 			if (!linkRes.contains(stmt.getSubject().getURI())) {
 				linkRes.push(mainRes.getURI());
-				recursiveBuild(stmt.getSubject(), linkRes, returnModel).getJenaModel();
+				log.trace("Submitting to rcb from within rcb" + stmt.getObject().asResource().getURI());
+				recursiveBuild(stmt.getSubject(), linkRes, returnModel);
 				linkRes.pop();
 			}
 		}
