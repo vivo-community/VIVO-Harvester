@@ -262,7 +262,7 @@ public class Match {
 		int i = 0;
 		for(String oldUri : matchSet.keySet()) {
 			i++;
-			log.trace("Getting statements for matchSet" + oldUri);
+			log.trace("Getting statements for matchSet " + oldUri);
 			StmtIterator subjectStmts = this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(matchSet.get(oldUri)));
 			
 			while(subjectStmts.hasNext()) {
@@ -308,7 +308,7 @@ public class Match {
 			}
 			if (!linkRes.contains(stmt.getSubject().getURI())) {
 				linkRes.push(mainRes.getURI());
-				log.trace("Submitting to rcb from within rcb" + stmt.getObject().asResource().getURI());
+				log.trace("Submitting to rcb from within rcb" + stmt.getSubject().getURI());
 				recursiveBuild(stmt.getSubject(), linkRes, returnModel);
 				linkRes.pop();
 			}
