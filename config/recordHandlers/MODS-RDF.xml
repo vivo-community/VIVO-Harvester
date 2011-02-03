@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordHandler>
+	<Param name="rhClass">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>
+	<Param name="fileDir">XMLVault/MODS-RH-RDF</Param>
+</RecordHandler>
