@@ -161,7 +161,13 @@ public class Match {
 				"HAVING (?sum >= "+threshold+")" +
 				"";
 		Map<String,String> uriMatchMap = new HashMap<String,String>();
-		for(QuerySolution solution : IterableAdaptor.adapt(this.scoreJena.executeSelectQuery(sQuery))) {
+
+		//log trace
+		log.trace("Query Start");
+		Iterable<QuerySolution> matchQuery = IterableAdaptor.adapt(this.scoreJena.executeSelectQuery(sQuery));
+		log.trace("Query Complete");
+		
+		for(QuerySolution solution : matchQuery) {
 			String sInputURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
 			Float weight = Float.valueOf(solution.getLiteral("sum").getFloat());
@@ -173,7 +179,6 @@ public class Match {
 		}
 		
 		log.info("Match found " + uriMatchMap.keySet().size() + " links between Vivo and the Input model");
-		
 		return uriMatchMap;
 	}
 	
@@ -182,6 +187,7 @@ public class Match {
 	 * @param matchSet a result set of scoreResources, vivoResources
 	 */
 	private void rename(Map<String,String> matchSet){
+		log.trace("Beginning rename loop");
 		for(String oldUri : matchSet.keySet()) {
 			//get resource in input model and perform rename
 			Resource res = this.inputJena.getJenaModel().getResource(oldUri);
@@ -201,6 +207,7 @@ public class Match {
 		Property vivoToInputProperty = ResourceFactory.createProperty(vivoToInput);
 		Property inputToVivoProperty = ResourceFactory.createProperty(inputToVivo);
 		
+		log.trace("Beginning link method loop");
 		for(String inputUri : matchSet.keySet()) {
 			// get resources and add linking triples
 			String vivoUri = matchSet.get(inputUri);
@@ -221,6 +228,7 @@ public class Match {
 	 */
 	private void clearTypesAndLiterals(Map<String, String> resultMap) throws IOException {
 		if(!resultMap.values().isEmpty()) {
+			log.trace("Beginning clear types and literals");
 			Set<String> uriFilters = new HashSet<String>();
 			for(String uri : resultMap.values()) {
 				uriFilters.add("(str(?s) = \"" + uri + "\")");
@@ -237,6 +245,8 @@ public class Match {
 			log.debug("Constructed Literal Set:\n"+this.inputJena.executeConstructQuery(conQuery).toString());
 			log.debug("Clear Literal Query:\n" + query);
 			this.inputJena.executeUpdateQuery(query);
+			log.trace("Ending clear types and literals");
+		
 		}
 	}
 	
@@ -246,18 +256,20 @@ public class Match {
 	 * @throws IOException no idea why it throws this 
 	 */
 	private JenaConnect outputMatches(Map<String,String> matchSet) throws IOException{
-		log.debug("Beginning seperate output of matches");
+		log.trace("Beginning seperate output of matches");
 		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
 		int i = 0;
 		for(String oldUri : matchSet.keySet()) {
 			i++;
+			log.trace("Getting statements for matchSet" + oldUri);
 			StmtIterator subjectStmts = this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(matchSet.get(oldUri)));
 			
 			while(subjectStmts.hasNext()) {
 				Statement stmt = subjectStmts.nextStatement();
 				Resource subj = stmt.getSubject();
 				if (!linkRes.contains(subj)){
+					log.trace("Submitting to recursive build " + subj.getURI());
 					returnModel = recursiveBuild(subj, linkRes, returnModel);
 					linkRes.push(subj.getURI());
 				}
@@ -282,7 +294,7 @@ public class Match {
 	 */
 	private static JenaConnect recursiveBuild(Resource mainRes, Stack<String> linkRes, JenaConnect returnModel) throws IOException {
 		StmtIterator mainStmts = mainRes.listProperties();
-
+		
 		while (mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
 			
