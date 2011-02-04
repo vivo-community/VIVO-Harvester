@@ -90,7 +90,6 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Agreement"/>
-			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
 			<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Title"/></rdfs:label>
 			<core:administeredBy>

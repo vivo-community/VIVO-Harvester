@@ -28,6 +28,7 @@ fi
 # Setting variables for cleaner script lines.
 TEMPINPUT="-i config/jenaModels/h2.xml -I modelName=dsrTempTransfer -I dbUrl=jdbc:h2:XMLVault/h2dsr/All/store"
 SCOREDATA="-s config/jenaModels/h2.xml -S modelName=dsrScoreData -S dbUrl=jdbc:h2:XMLVault/h2dsr/All/store"
+ALTSCOREDATA="-s config/jenaModels/h2.xml -S modelName=dsrAltScoreData -S dbUrl=jdbc:h2:XMLVault/h2dsr/All/store"
 CNFLAGS="$TEMPINPUT -v $VIVOCONFIG -n http://vivo.ufl.edu/individual/"
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 
@@ -50,6 +51,7 @@ $Transfer -o config/jenaModels/h2.xml -OmodelName=dsrTempTransfer -OdbUrl=jdbc:h
 tar -czpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 #tar -xzpf backups/h2dsr-All.tar.gz XMLVault/h2dsr/All
 
+
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
@@ -70,6 +72,13 @@ $Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=htt
 
 # Find matches using scores and rename nodes to matching uri
 $Match $TEMPINPUT $SCOREDATA -t 1.0 -r
+
+
+# Execute a score on the previous harvest.
+# Should remove duplication issues
+$Score -v $VIVOCONFIG -VmodelName=http://vivoweb.org/ingest/dsr $TEMPINPUT $ALTSCOREDATA -Aufid=$EQTEST -Wufid=1.0 -FContractNumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber -PContractNumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber -n http://vivoweb.org/harvest/dsr/grant/
+
+$Match $TEMPINPUT $ALTSCOREDATA -t 1.0 -r
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
