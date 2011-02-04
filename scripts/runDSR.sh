@@ -71,7 +71,7 @@ $Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=htt
 $Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Ptype=http://www.w3.org/1999/02/22-rdf-syntax-ns#type -Aufid=$EQTEST -Wufid=1.0 -Fufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -Pufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid -n http://vivoweb.org/harvest/dsr/coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
-$Match $TEMPINPUT $SCOREDATA -t 1.0 -r
+$Match $TEMPINPUT $SCOREDATA -t 1.0 -r -c
 
 
 # Execute a score on the previous harvest.
