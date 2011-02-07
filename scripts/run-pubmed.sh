@@ -25,7 +25,7 @@ else
 fi
 
 #variables for model arguments
-HCONFIG="config/jenaModels/h2.xml"
+HCONFIG="config/models/h2-sdb.xml"
 INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/h2Pubmed/all/store -ImodelName=Pubmed"
 OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/h2Pubmed/all/store -OmodelName=Pubmed"
 VIVO="-v $VIVOCONFIG"
@@ -38,7 +38,7 @@ MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/h2Pubmed/match/store -Imo
 rm -rf harvested-data/h2Pubmed/XML
 
 # Execute Fetch for Pubmed
-$PubmedFetch -X config/tasks/PubmedFetch.xml
+$PubmedFetch -X config/tasks/example.pubmedfetch.xml
 
 # backup fetch
 date=`date +%Y-%m-%d_%T`
@@ -52,7 +52,7 @@ ln -s pubmed.xml.$date.tar.gz backups/pubmed.xml.latest.tar.gz
 rm -rf harvested-data/h2Pubmed/RDF
 
 # Execute Translate using the PubmedToVIVO.xsl file
-$XSLTranslator -i config/recordHandlers/Pubmed-XML-h2RH.xml -x config/datamaps/PubmedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml
+$XSLTranslator -i config/recordhandlers/pubmed-tf-raw.xml -x config/datamaps/pubmed-to-vivo.xsl -o config/recordHandlers/pubmed-tf-rdf.xml
 
 # backup translate
 date=`date +%Y-%m-%d_%T`
@@ -67,7 +67,7 @@ rm -rf harvested-data/h2Pubmed/all
 rm -rf harvested-data/h2Pubmed/temp
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer $OUTPUT -h config/recordHandlers/Pubmed-RDF-h2RH.xml
+$Transfer $OUTPUT -h config/recordhandlers/pubmed-tf-rdf.xml
 
 # backup H2 translate Models
 date=`date +%Y-%m-%d_%T`
@@ -153,5 +153,6 @@ ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
 /etc/init.d/tomcat stop
+wait 5
 /etc/init.d/apache2 reload
 /etc/init.d/tomcat start

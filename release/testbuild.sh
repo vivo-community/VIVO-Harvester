@@ -16,6 +16,8 @@
 DIR=$(cd "$(dirname "$0")"; pwd)
 cd $DIR
 
+echo $DIR
+
 rm -rf usr
 rm *.log
 rm vivo_start.rdf
@@ -60,19 +62,19 @@ else
 fi
 
 #test tarball
-mv usr/share/vivo/harvester/config/jenaModels/VIVO.xml usr/share/vivo/harvester/config/jenaModels/VIVO.xml.bck
-cp VIVO.xml usr/share/vivo/harvester/config/jenaModels/VIVO.xml
+mv usr/share/vivo/harvester/config/models/vivo.xml usr/share/vivo/harvester/config/models/vivo.xml.bck
+cp vivo.xml usr/share/vivo/harvester/config/models/vivo.xml
 cp vivotest.h2.db usr/share/vivo/harvester
-cp runPubmed.sh usr/share/vivo/harvester/scripts
-cp PubmedFetch.xml usr/share/vivo/harvester/config/tasks/PubmedFetch.xml
+cp run-pubmed.sh usr/share/vivo/harvester/scripts
+cp example.pubmedfetch.xml usr/share/vivo/harvester/config/tasks/example.pubmedfetch.xml
 
 #run example scripts
 cd usr/share/vivo/harvester
-bash scripts/runPubmed.sh
+bash scripts/run-pubmed.sh
 
 #check for failure
 if [ "$?" = "1" ]; then
-	echo "TEST FAILED DURING runPubmed.sh" $?
+	echo "TEST FAILED DURING run-pubmed.sh" $?
 fi
 
 #copy out the log and remove
@@ -85,10 +87,12 @@ cp match.rdf ../../../..
 cp qualify.rdf ../../../..
 
 #check for data written to vivo, otherwise failure
-PRESIZE=`du -b vivo_start.rdf | awk '{ print $1 }'`
-POSTSIZE=`du -b vivo_end.rdf | awk '{ print $1 }'`
+#PRESIZE=`du -b vivo_start.rdf | awk '{ print $1 }'`
+#POSTSIZE=`du -b vivo_end.rdf | awk '{ print $1 }'`
 
-if [[ $POSTSIZE > $PRESIZE ]]
+#if [[ $POSTSIZE > $PRESIZE ]]
+grep Authorship vivo_end.rdf
+if [ $? -eq 0 ]
 then
   echo "SUCCESS -- Test harvest completed"
 else
