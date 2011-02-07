@@ -26,37 +26,37 @@ fi
 
 #variables for model arguments
 HCONFIG="config/jenaModels/h2.xml"
-INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -ImodelName=Pubmed"
-OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/all/store -OmodelName=Pubmed"
+INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/h2Pubmed/all/store -ImodelName=Pubmed"
+OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/h2Pubmed/all/store -OmodelName=Pubmed"
 VIVO="-v $VIVOCONFIG"
-SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -SmodelName=Pubmed"
-MATCHOUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2Pubmed/match/store -OmodelName=Pubmed"
-MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/match/store -ImodelName=Pubmed"
+SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:harvested-data/h2Pubmed/score/store -SmodelName=Pubmed"
+MATCHOUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/h2Pubmed/match/store -OmodelName=Pubmed"
+MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/h2Pubmed/match/store -ImodelName=Pubmed"
 
 #Dump vivo
 $Transfer -i $VIVOCONFIG -d vivo_start.rdf
 
 #clear old fetches
-rm -rf XMLVault/h2Pubmed/XML
+rm -rf harvested-data/h2Pubmed/XML
 
 # Execute Fetch for Pubmed
 $PubmedFetch -X config/tasks/PubmedFetch.xml
 
 # clear old translates
-rm -rf XMLVault/h2Pubmed/RDF
+rm -rf harvested-data/h2Pubmed/RDF
 
 # Execute Translate using the PubmedToVIVO.xsl file
 $XSLTranslator -i config/recordHandlers/Pubmed-XML-h2RH.xml -x config/datamaps/PubmedToVivo.xsl -o config/recordHandlers/Pubmed-RDF-h2RH.xml
 
 # Clear old H2 models
-rm -rf XMLVault/h2Pubmed/all
-rm -rf XMLVault/h2Pubmed/temp
+rm -rf harvested-data/h2Pubmed/all
+rm -rf harvested-data/h2Pubmed/temp
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer $OUTPUT -h config/recordHandlers/Pubmed-RDF-h2RH.xml -d pubmed.rdf
 
 # clear old score models
-rm -rf XMLVault/h2Pubmed/score
+rm -rf harvested-data/h2Pubmed/score
 
 # Execute Score to disambiguate data in "scoring" JENA model
 # Execute match to match and link data into "vivo" JENA model
@@ -66,14 +66,14 @@ WORKEMAIL="-AwEmail=$EXACT -FwEmail=http://vivoweb.org/ontology/core#workEmail -
 FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
 MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
-mkdir XMLVault/h2Pubmed/temp/
-TEMP="-t XMLVault/h2Pubmed/temp/"
+mkdir harvested-data/h2Pubmed/temp/
+TEMP="-t harvested-data/h2Pubmed/temp/"
 
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $MNAME $FNAME
 $Match $INPUT $SCORE $MATCHOUTPUT -t 0.1 -r -c
 
 #Dump score
-$Transfer -i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2Pubmed/score/store -ImodelName=Pubmed -d score.rdf
+$Transfer -i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/h2Pubmed/score/store -ImodelName=Pubmed -d score.rdf
 
 #Dump Match
 $Transfer $MATCHINPUT -d match.rdf
@@ -93,10 +93,10 @@ $ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/p
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
 VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
 INMODELNAME="modelName=Pubmed"
-INURL="dbUrl=jdbc:h2:XMLVault/h2Pubmed/match/store"
-ADDFILE="XMLVault/update_Additions.rdf.xml"
-SUBFILE="XMLVault/update_Subtractions.rdf.xml"
-  
+INURL="dbUrl=jdbc:h2:harvested-data/h2Pubmed/match/store"
+ADDFILE="harvested-data/update_Additions.rdf.xml"
+SUBFILE="harvested-data/update_Subtractions.rdf.xml"
+
 # Find Subtractions
 $Diff -m $VIVOCONFIG -M$VIVOMODELNAME -s $HCONFIG -S$INURL -S$INMODELNAME -d $SUBFILE
 # Find Additions

@@ -180,7 +180,7 @@ public class DemoPSMerge {
 		Class.forName("net.sourceforge.jtds.jdbc.Driver");
 		String connLine = "jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD";
 		Connection dbConn = DriverManager.getConnection(connLine, args[0], args[1]);
-		RecordHandler rawRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:XMLVault/demoRawPS/store", "sa", "", "rawData", "rawID");
+		RecordHandler rawRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoRawPS/store", "sa", "", "rawData", "rawID");
 		
 		// Execute Fetch
 		log.trace("Fetching Raw Records");
@@ -190,7 +190,7 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Merge");
 		InitLog.initLogger(DemoPSMerge.class);
 		// Merge related records
-		RecordHandler mergedRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:XMLVault/demoMergedPS/store", "sa", "", "mergedData", "mergedID");
+		RecordHandler mergedRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoMergedPS/store", "sa", "", "mergedData", "mergedID");
 		log.trace("Merging Related Raw Records");
 		Merge psMerge = new Merge(rawRH, mergedRH, "t_UF_DIR_EMP_STU_1_(id_-_.*?)");
 		psMerge.execute();
@@ -199,7 +199,7 @@ public class DemoPSMerge {
 		InitLog.initLogger(DemoPSMerge.class);
 		// Execute Translate
 		InputStream xsl = VFS.getManager().resolveFile(new File("."), "config/datamaps/PeopleSoftToVivo.xsl").getContent().getInputStream();
-		RecordHandler transRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:XMLVault/demoTransPS/store", "sa", "", "transData", "transID");
+		RecordHandler transRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoTransPS/store", "sa", "", "transData", "transID");
 		log.trace("Translating Merged Records");
 		XSLTranslator psTranslate = new XSLTranslator(mergedRH, transRH, xsl, true);
 		psTranslate.execute();
@@ -207,7 +207,7 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Transfer");
 		InitLog.initLogger(DemoPSMerge.class);
 		// connect to input model
-		JenaConnect psInput = new SDBJenaConnect("jdbc:h2:XMLVault/demoInputPS/store", "sa", "", "H2", "org.h2.Driver", "layout2", "psTempModel");
+		JenaConnect psInput = new SDBJenaConnect("jdbc:h2:harvested-data/demoInputPS/store", "sa", "", "H2", "org.h2.Driver", "layout2", "psTempModel");
 		// clear model
 		log.trace("Truncating Input Model");
 		psInput.truncate();
@@ -218,18 +218,18 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Score.Setup");
 		InitLog.initLogger(DemoPSMerge.class);
 		// connect to vivo model
-		JenaConnect vivoJena = new SDBJenaConnect("jdbc:h2:XMLVault/demoVivo/store", "sa", "", "H2", "org.h2.Driver", "layout2", "vivoModel");
+		JenaConnect vivoJena = new SDBJenaConnect("jdbc:h2:harvested-data/demoVivo/store", "sa", "", "H2", "org.h2.Driver", "layout2", "vivoModel");
 		// clear model and load vivo data
 //		vivoJena.truncate();
 //		log.trace("Loading vivo rdf into model");
-//		vivoJena.loadRdfFromFile("XMLVault/vivoData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
+//		vivoJena.loadRdfFromFile("harvested-data/vivoData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
 		log.trace("Vivo Size: "+vivoJena.size());
 		
 		JenaConnect scoreJena = psInput.neighborConnectClone("scoreData");
 		log.trace("Truncating Score Data Model");
 		scoreJena.truncate();
 //		JenaConnect tempJena = psInput.neighborConnectClone("tempModel");
-		String tempJena = "XMLVault/tempModel";
+		String tempJena = "harvested-data/tempModel";
 		
 		// setup parameter variables
 		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
@@ -338,11 +338,11 @@ public class DemoPSMerge {
 //		// clear model and load previous connect data
 //		psPrevHarvest.truncate();
 //		log.trace("Loading previous harvest rdf into model");
-//		psPrevHarvest.loadRdfFromFile("XMLVault/psHarvestData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
+//		psPrevHarvest.loadRdfFromFile("harvested-data/psHarvestData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
 		log.trace("Previous Harvest Size: "+psPrevHarvest.size());
 		
 		// Setup adds/subs models
-		JenaConnect psSubsModel = new SDBJenaConnect("jdbc:h2:XMLVault/demoDiffs/store", "sa", "", "H2", "org.h2.Driver", "layout2", "subsModel");
+		JenaConnect psSubsModel = new SDBJenaConnect("jdbc:h2:harvested-data/demoDiffs/store", "sa", "", "H2", "org.h2.Driver", "layout2", "subsModel");
 		JenaConnect psAddsModel = psSubsModel.neighborConnectClone("addsModel");
 		
 		System.setProperty("process-task", "Diff.Subs");

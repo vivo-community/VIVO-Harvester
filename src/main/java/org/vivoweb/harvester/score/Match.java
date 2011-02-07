@@ -283,7 +283,6 @@ public class Match {
 	 * @param mainRes item to push into returnModel
 	 * @param linkRes list of items to not move to
 	 * @param returnModel model to return
-	 * @return model thats being returned with matches
 	 * @throws IOException I have no idea why mem throws this
 	 */
 	/* Traverses paperNode and adds to toReplace model

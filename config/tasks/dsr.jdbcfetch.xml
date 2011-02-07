@@ -4,9 +4,8 @@
 	<Param name="connection">jdbc:jtds:sqlserver://12.123.12.12/DATA</Param>
 	<Param name="username">USERNAME</Param>
 	<Param name="password">PASSWORD</Param>
-	<Param name="output">config/recordHandlers/DSR-XML-h2RH.xml</Param>
-<!--	limit the harvest for testing-->
-<!--	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='',dbo.vwContracts.ContractNumber LIKE '%187%'</Param>-->
+<!--	limit the harvest for testing -->
+<!--	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='',dbo.vwContracts.ContractNumber LIKE '%187%'</Param> -->
 	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential=''</Param>
 	<Param name="tableName">dbo.vwContracts</Param>
 	<Param name="id">dbo.vwContracts=ContractNumber</Param>

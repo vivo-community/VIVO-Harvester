@@ -4,7 +4,7 @@
 	<Param name="dbLayout">layout2</Param>
 	<Param name="dbClass">org.h2.Driver</Param>
 	<Param name="dbType">H2</Param>
-	<Param name="dbUrl">jdbc:h2:h2tripleStore/store</Param>
+	<Param name="dbUrl">jdbc:h2:h2-triple-store/store</Param>
 	<Param name="dbUser">sa</Param>
 	<Param name="dbPass"></Param>
 </Model>

@@ -27,19 +27,23 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
+echo "Full Logging in $HARVESTER_TASK.log"
+
+BASEDIR=harvested-data/examples/csv
+RDFRHDIR=$BASEDIR/rh-rdf
 
 # Execute Fetch/Translate using D2RMap
-$CSVMapFetch -o config/recordHandlers/CSVXMLRecordHandler.xml -u config/tasks/CSVMapFetchTask.d2r.xml -a $1 -s person.rdf
+$CSVMapFetch -o $TFRH -OfileDir=$RDFRHDIR -u config/datamaps/example.csv-map.xml -a $1 -s person.rdf
 
 # Execute Transfer to transfer rdf into "d2rStaging" JENA model
-$Transfer -h config/recordHandlers/CSVXMLRecordHandler.xml -o $VIVOCONFIG -OmodelName=d2rStaging
+$Transfer -h $TFRH -HfileDir=$RDFRHDIR -o $VIVOCONFIG -OmodelName=d2rStaging
 
 # Execute Transfer to load "d2rStaging" JENA model into VIVO
 $Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -o $VIVOCONFIG
 
 # Execute Transfer to dump "d2rStaging" JENA model rdf into file
 # Shown as example
-#$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -d dump.rdf
+#$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -d dump.rdf.xml
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO

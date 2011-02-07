@@ -1,18 +1,32 @@
 #!/bin/bash
 
+function get-date {
+  date +%Y-%m-%d'T'%T
+}
+
 #Mysql username, password, and server address for backups in scripts
 #parse VIVO.xml for these values
 #need to reconcile having 2 places for this
 
-VIVOCONFIG='config/jenaModels/VIVO.xml'
+DIR=$(cd "$(dirname "$0")"; pwd)
+
+# define shared variables
+#VIVOCONFIG="config/models/vivo.xml"
+VIVOCONFIG="config/models/local-vivo.xml'"
+H2MODEL="config/models/h2-sdb.xml"
+H2RH="config/recordhandlers/h2-jdbc.xml"
+TFRH="config/recordhandlers/tfrh.xml"
+BACKUPPATH="$DIR/../backups"
+LATESTBACKUPPATH="$BACKUPPATH/latest"
 SERVER=`grep dbUrl $VIVOCONFIG| sed 's|^.*://\([^:^\/]*\)[:\/].*$|\1|g'`
 DBNAME=`grep dbUrl $VIVOCONFIG | sed 's|^.*>.*\/\([^<]*\)<.*$|\1|g'`
 USERNAME=`grep dbUser $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 PASSWORD=`grep dbPass $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 NAMESPACE=`grep namespace $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
 VERSION=1.0beta7
-MIN_MEM=1024m
-MAX_MEM=2048M
+MIN_MEM=2048m
+MAX_MEM=3072M
+CHECKEMPTY=true
 #Variable for optimizations to the Java virtual machine.
 #-server				Run in server mode, which takes longer to start but runs faster
 #-d64					Use 64-bit JVM
@@ -28,9 +42,8 @@ MAX_MEM=2048M
 #OPTS="-d64 -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
 #OPTS="-XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
 OPTS=""
-DATE=`date +%Y-%m-%d'T'%T`
+DATE=`get-date`
 HARVESTER_TASK="$HARVESTER_TASK.$DATE"
-echo "Full Logging in $HARVESTER_TASK.log"
 
 # Check for proper namespace
 if [ -z "$NAMESPACE" ]; then
@@ -44,11 +57,14 @@ fi
 #fi
 
 # Check for backups dir
-if [ ! -d backups ]; then
-  mkdir backups
+if [ ! -d $BACKUPPATH ]; then
+  mkdir $BACKUPPATH
 fi
 
-
+# Check for latest backups dir
+if [ ! -d $LATESTBACKUPPATH ]; then
+  mkdir $LATESTBACKUPPATH
+fi
 
 # define shorthand aliases
 RenameResources="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=RenameResources -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.RenameResources"
@@ -75,3 +91,52 @@ DatabaseClone="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_
 Merge="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=Merge -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.Merge"
 JenaConnect="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK -Dprocess-task=JenaConnect -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.repo.JenaConnect"
 
+function backup-path {
+  # usage: backup-path <Directory> <BackupBaseFileName>
+  # backup the given directory to the given file
+  date=`get-date`
+  BACK="$HARVESTER_TASK.$2.tar.gz"
+  tar -czpf $BACKUPPATH/$date.$BACK $1
+  ln -sf $BACKUPPATH/$date.$BACK $LATESTBACKUPPATH/$BACK
+}
+
+function restore-path {
+  # usage: restore-path <Directory> <BackupBaseFileName>
+  # uncomment to restore the given file to the given directory
+  BACK=$HARVESTER_TASK.$2.tar.gz
+  tar -xzpf $LATESTBACKUPPATH/$BACK $1
+}
+
+function backup-file {
+  # usage: backup-file <FileName> <BackupBaseFileName>
+  # backup a file
+  date=`get-date`
+  BACK=$HARVESTER_TASK.$2
+  cp $1 $BACKUPPATH/$date.$BACK
+  ln -sf $BACKUPPATH/$date.$BACK $LATESTBACKUPPATH/$BACK
+}
+
+function restore-file {
+  # usage: restore-file <FileName> <BackupBaseFileName>
+  # restore a file
+  BACK=$HARVESTER_TASK.$2
+  cp -f $LATESTBACKUPPATH/$BACK $1
+}
+
+function backup-mysqldb {
+  # usage: backup-mysqldb <BackupBaseFileName>
+  # backup the vivo mysql database to the given file
+  date=`get-date`
+  BACK="$HARVESTER_TASK.$DBNAME.$1.sql"
+  mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > $BACKUPPATH/$date.$BACK
+  ln -sf $BACKUPPATH/$date.$BACK $LATESTBACKUPPATH/$BACK
+}
+
+function restore-mysqldb {
+  # usage: restore-mysqldb <BackupBaseFileName>
+  # Restore pretransfer vivo mysql database
+  BACK="$HARVESTER_TASK.$DBNAME.$1.sql"
+  mysql -h $SERVER -u $USERNAME -p$PASSWORD -e "drop database $DBNAME;"
+  mysql -h $SERVER -u $USERNAME -p$PASSWORD -e "create database $DBNAME;"
+  mysql -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME < $LATESTBACKUPPATH/$BACK
+}

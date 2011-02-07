@@ -4,5 +4,6 @@
 	<Param name="connection">jdbc:mysql://127.0.0.1:3306/jdbctestharvest</Param>
 	<Param name="username">jdbcTestHarvest</Param>
 	<Param name="password">xKzQVJhBnxYREmYK</Param>
-	<Param name="output">config/recordHandlers/JDBCXMLRecordHandler.xml</Param>
+	<Param name="output">config/recordhandlers/tfrh.xml</Param>
+	<Param name="outputOverride">fileDir=harvested-data/jdbc/raw</Param>
 </Task>

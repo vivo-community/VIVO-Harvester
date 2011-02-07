@@ -521,8 +521,7 @@ public class JDBCFetch {
 	 * @throws IOException error processing record handler or jdbc connection
 	 */
 	public void execute() throws IOException {
-
-
+		int count = 0;
 		// For each Table
 		try {
 			for(String tableName : getTableNames()) {
@@ -621,11 +620,13 @@ public class JDBCFetch {
 					// Write RDF to RecordHandler
 					log.trace("Adding record: " + tableName + "_" + recID);
 					this.rh.addRecord(tableName + "_" + recID, sb.toString(), this.getClass());
+					count++;
 				}
 			}
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
+		log.info("Added "+count+" Records");
 	}
 	
 	/**

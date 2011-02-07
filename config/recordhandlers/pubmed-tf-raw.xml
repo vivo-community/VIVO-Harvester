@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RecordHandler>
 	<Param name="rhClass">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>
-	<Param name="fileDir">XMLVault/DSR-RH-XML</Param>
+	<Param name="fileDir">harvested-data/pubmed/raw/tfrh</Param>
 </RecordHandler>
