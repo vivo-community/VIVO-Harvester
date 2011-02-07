@@ -30,8 +30,6 @@ public class ChangeNamespaceTest extends TestCase {
 	private String namespace;
 	/** */
 	private String newNamespace;
-	/** */
-	private String[] args = new String[9];
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -40,19 +38,6 @@ public class ChangeNamespaceTest extends TestCase {
 		this.newNamespace = "http://vivo.test.edu/individual/";
 		this.model = new SDBJenaConnect("jdbc:h2:mem:testChNSh2change", "sa", "", "H2", "org.h2.Driver", "layout2", "testChNSchange");
 		this.vivo = new RDBJenaConnect("jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSvivo");
-		//Preload arguments
-		this.args = new String[]{
-				"-v config/jenaModels/h2.xml",
-				"-V modelName=testChNSvivo",
-				"-V dbUrl=jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB",
-				"-V dbType=HSQLDB",
-				"-V type=rdb",
-				"-i config/jenaModels/h2.xml",
-				"-I modelName=testChNSchange",
-				"-I dbUrl=jdbc:h2:mem:testChNSh2change",
-				"-n " + this.newNamespace,
-				"-o " + this.namespace
-		};
 		String vivoData = ""+
 		"<rdf:RDF"+
 		"\n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""+
@@ -142,38 +127,7 @@ public class ChangeNamespaceTest extends TestCase {
 	/**
 	 * @throws IOException ioexception
 	 */
-	public void testArgChangeNS() throws IOException {
-		log.info("BEGIN testArgChangeNS");
-		ByteArrayOutputStream baos;
-		baos = new ByteArrayOutputStream();
-		this.model.exportRdfToStream(baos);
-		log.debug("VIVO:\n"+baos.toString());
-		new ChangeNamespace(this.args).execute();
-		baos = new ByteArrayOutputStream();
-		this.model.exportRdfToStream(baos);
-		log.debug("Changed VIVO:\n"+baos.toString());
-		assertFalse(this.model.containsURI(this.namespace));
-		String query = ""+
-		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"+"\n"+
-		"PREFIX localVivo: <http://vivo.test.edu/ontology/vivo-test/>"+"\n"+
-		"SELECT ?uri"+"\n"+
-		"WHERE {"+"\n\t"+
-			"?uri localVivo:uniqueId ?id ."+"\n\t"+
-		"}";
-		ResultSet rs = this.model.executeSelectQuery(query);
-		assertTrue(rs.hasNext());
-		while(rs.hasNext()) {
-			String ns = rs.next().getResource("uri").getNameSpace();
-			log.debug(ns);
-			assertTrue(ns.equals(this.newNamespace) || ns.equals("http://norename.blah.com/blah/"));
-		}
-		log.info("END testArgChangeNS");
-	}
-	
-	/**
-	 * @throws IOException ioexception
-	 */
-	public void testObjChangeNS() throws IOException {
+	public void testChangeNS() throws IOException {
 		log.info("BEGIN testObjChangeNS");
 		ByteArrayOutputStream baos;
 		baos = new ByteArrayOutputStream();
@@ -200,39 +154,5 @@ public class ChangeNamespaceTest extends TestCase {
 			assertTrue(ns.equals(this.newNamespace) || ns.equals("http://norename.blah.com/blah/"));
 		}
 		log.info("END testObjChangeNS");
-	}
-	
-	
-	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.ChangeNamespace#changeNS(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String, java.lang.String, boolean) changeNS(JenaConnect model, String oldNamespace, String newNamespace, boolean errorLog)}.
-	 * @throws IOException error
-	 */
-	public void testChangeNS() throws IOException {
-		log.info("BEGIN testChangeNS");
-		ByteArrayOutputStream baos;
-		baos = new ByteArrayOutputStream();
-		this.model.exportRdfToStream(baos);
-		log.debug("VIVO");
-		log.debug(baos.toString());
-		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace, false);
-		baos = new ByteArrayOutputStream();
-		this.model.exportRdfToStream(baos);
-		log.debug("Changed VIVO");
-		log.debug(baos.toString());
-		assertFalse(this.model.containsURI(this.namespace));
-		String query = ""+
-		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"+"\n"+
-		"PREFIX localVivo: <http://vivo.test.edu/ontology/vivo-test/>"+"\n"+
-		"SELECT ?uri"+"\n"+
-		"WHERE {"+"\n\t"+
-			"?uri localVivo:uniqueId ?id ."+"\n\t"+
-		"}";
-		ResultSet rs = this.model.executeSelectQuery(query);
-		assertTrue(rs.hasNext());
-		while(rs.hasNext()) {
-			String ns = rs.next().getResource("uri").getNameSpace();
-			assertTrue(ns.equals(this.newNamespace) || ns.equals("http://norename.blah.com/blah/"));
-		}
-		log.info("END testChangeNS");
 	}
 }
