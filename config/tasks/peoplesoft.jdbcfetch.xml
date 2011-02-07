@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<Param name="driver">net.sourceforge.jtds.jdbc.Driver</Param>
+	<Param name="connection">jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD</Param>
+	<Param name="username">USERNAME</Param>
+	<Param name="password">PASSWORD</Param>
+	<Param name="tableName">people</Param>
+	<Param name="id">people=ufid</Param>
+	<Param name="query">people=
+SELECT 
+	stu1.UF_IDENTIFIER AS ufid, 
+	stu1.UF_NAME_TXT AS busName, 
+	stu1.UF_EMAIL AS email, 
+	stu2phone.UF_AREA_CD AS phone_area, 
+	stu2phone.UF_PHONE_NO AS phone_num, 
+	stu2fax.UF_AREA_CD AS fax_area, 
+	stu2fax.UF_PHONE_NO AS fax_num, 
+	stu4first.UF_NAME_TXT AS fname, 
+	stu4last.UF_NAME_TXT AS lname, 
+	stu4mid.UF_NAME_TXT AS mname, 
+	stu4pre.UF_NAME_TXT AS prename, 
+	stu4suf.UF_NAME_TXT AS sufname, 
+	stu4full.UF_NAME_TXT AS fullname, 
+	glAcct.USERIDALIAS AS gatorlink, 
+	ufau.UF_JOB_LONG AS title 
+FROM t_UF_DIR_EMP_STU_1 AS stu1 
+LEFT JOIN t_UF_DIR_EMP_STU_2 AS stu2phone ON 
+	stu1.UF_IDENTIFIER = stu2phone.UF_UUID AND stu2phone.UF_TYPE_CD = 10 
+LEFT JOIN t_UF_DIR_EMP_STU_2 AS stu2fax ON 
+	stu1.UF_IDENTIFIER = stu2fax.UF_UUID AND stu2fax.UF_TYPE_CD = 11
+LEFT JOIN t_UF_DIR_EMP_STU_4 AS stu4first ON 
+	stu1.UF_IDENTIFIER = stu4first.UF_UUID AND stu4first.UF_TYPE_CD = 35 
+LEFT JOIN t_UF_DIR_EMP_STU_4 AS stu4last ON 
+	stu1.UF_IDENTIFIER = stu4last.UF_UUID AND stu4last.UF_TYPE_CD = 36 
+LEFT JOIN t_UF_DIR_EMP_STU_4 AS stu4mid ON 
+	stu1.UF_IDENTIFIER = stu4mid.UF_UUID AND stu4mid.UF_TYPE_CD = 37 
+LEFT JOIN t_UF_DIR_EMP_STU_4 AS stu4pre ON 
+	stu1.UF_IDENTIFIER = stu4pre.UF_UUID AND stu4pre.UF_TYPE_CD = 38 
+LEFT JOIN t_UF_DIR_EMP_STU_4 AS stu4suf ON 
+	stu1.UF_IDENTIFIER = stu4suf.UF_UUID AND stu4suf.UF_TYPE_CD = 39 
+LEFT JOIN t_UF_DIR_EMP_STU_4 AS stu4full ON 
+	stu1.UF_IDENTIFIER = stu4full.UF_UUID AND stu4full.UF_TYPE_CD = 232 
+LEFT JOIN t_UF_PA_GL_ACCT AS glAcct ON 
+	stu1.UF_IDENTIFIER = glAcct.OPRID 
+LEFT JOIN t_UF_PER_UFAU AS ufau ON 
+	stu1.UF_IDENTIFIER = ufau.UF_UUID 
+WHERE 
+	stu1.UF_PROTECT_FLG='N' AND 
+	stu1.UF_SECURITY_FLG='N'<!-- --> AND 
+	stu1.UF_IDENTIFIER LIKE '%8973%'<!-- -->
+	</Param>
+	<Param name="tableName">positions</Param>
+	<Param name="id">positions=ufid,typeCode,deptId,beginTS</Param>
+	<Param name="query">positions=
+SELECT 
+	stu1.UF_IDENTIFIER AS ufid, 
+	stu5.UF_TYPE_CD AS typeCode, 
+	stu5.PS_DEPTID AS deptId, 
+	stu5.UF_BEGIN_TS AS beginTS, 
+	stu1.UF_WORK_TITLE AS workTitle 
+FROM t_UF_DIR_EMP_STU_5 AS stu5 
+INNER JOIN t_UF_DIR_EMP_STU_1 AS stu1 ON 
+	stu1.UF_IDENTIFIER = stu5.UF_UUID1 
+WHERE 
+	stu1.UF_PROTECT_FLG='N' AND 
+	stu1.UF_SECURITY_FLG='N'<!-- --> AND 
+	stu1.UF_IDENTIFIER LIKE '%8973%'<!-- -->
+	</Param>
+</Task>
