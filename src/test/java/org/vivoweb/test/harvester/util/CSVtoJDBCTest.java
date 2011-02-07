@@ -7,13 +7,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import org.apache.commons.vfs.FileSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.CSVtoJDBC;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.test.harvester.fetch.JDBCFetchTest;
 import junit.framework.TestCase;
 
@@ -48,28 +45,28 @@ public class CSVtoJDBCTest extends TestCase {
 	}
 	
 	/**
-	 * @throws IOException 
+	 * @throws IOException if the file is missing or not read properly
 	 * 
 	 */
 	public void testCSVtoJDBCStringConnectionString() throws IOException {
 		log.info("BEGIN testCSVtoJDBCStringConnectionString");
-		CSVtoJDBC subject = new CSVtoJDBC("files/person.csv", this.conn, "Person");
+		new CSVtoJDBC("files/person.csv", this.conn, "Person");
 		log.info("END testCSVtoJDBCStringConnectionString");
 	}
 	
 	/**
-	 * @throws IOException 
+	 * @throws IOException if the file is missing or not read properly
 	 * 
 	 */
 	public void testCSVtoJDBCStringStringStringStringStringString() throws IOException {
 		log.info("BEGIN testCSVtoJDBCStringStringStringStringStringString");
-		CSVtoJDBC subject = new CSVtoJDBC("files/person.csv", "org.h2.Driver","jdbc:h2:mem:TestJDBCFetchDB","sa","", "Person");
+		new CSVtoJDBC("files/person.csv", "org.h2.Driver","jdbc:h2:mem:TestJDBCFetchDB","sa","", "Person");
 		log.info("END testCSVtoJDBCStringStringStringStringStringString");
 	}
 	
 	
 	/**
-	 * @throws IOException 
+	 * @throws IOException if the file is missing or not read properly
 	 * 
 	 */
 	public void testExecute() throws IOException {
