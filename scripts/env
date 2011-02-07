@@ -11,8 +11,7 @@ function get-date {
 DIR=$(cd "$(dirname "$0")"; pwd)
 
 # define shared variables
-#VIVOCONFIG="config/models/vivo.xml"
-VIVOCONFIG="config/models/local-vivo.xml'"
+VIVOCONFIG="config/models/vivo.xml"
 H2MODEL="config/models/h2-sdb.xml"
 H2RH="config/recordhandlers/h2-jdbc.xml"
 TFRH="config/recordhandlers/tfrh.xml"
