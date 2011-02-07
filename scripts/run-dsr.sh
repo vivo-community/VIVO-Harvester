@@ -27,18 +27,39 @@ fi
 echo "Full Logging in $HARVESTER_TASK.log"
 
 # Setting variables for cleaner script lines.
+#Base data directory
 BASEDIR=harvested-data/dsr
+
+#raw recordhandler directory
 RAWRHDIR=$BASEDIR/rh-raw
+
+#raw recordhandler database url
 RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
+
+#RDF/xml recordhandler directory
 RDFRHDIR=$BASEDIR/rh-rdf
+
+#RDF/xml recordhandler database url
 RDFRHDBURL=jdbc:h2:$RDFRHDIR/store
+
+#model directory
 MODELDIR=$BASEDIR/model
+
+#model database url
 MODELDBURL=jdbc:h2:$MODELDIR/store
+
+#scoring data models
 SCOREINPUT="-i $H2MODEL -ImodelName=dsrTempTransfer -IdbUrl=$MODELDBURL"
 SCOREDATA="-s $H2MODEL -SmodelName=dsrScoreData -SdbUrl=$MODELDBURL"
-ALTSCOREDATA="-s $H2MODEL -S modelName=dsrAltScoreData -S dbUrl=$MODELDBURL"
+
+#Changenamespace settings
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n http://vivo.ufl.edu/individual/"
+
+#The equality test algorithm
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+
+#matching properties
+CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
@@ -83,6 +104,10 @@ backup-path $MODELDIR $BACKMODEL
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
+
+#scoring of grants on contractnumber
+$Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n http://vivoweb.org/harvest/dsr/grant/
+
 # Scoring on UF ID person
 $Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n http://vivoweb.org/harvest/dsr/person/
 
@@ -100,12 +125,6 @@ $Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=$R
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
-
-# Execute a score on the previous harvest.
-# Should remove duplication issues
-$Score -v $VIVOCONFIG -VmodelName=http://vivoweb.org/ingest/dsr $TEMPINPUT $ALTSCOREDATA -Aufid=$EQTEST -Wufid=1.0 -FContractNumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber -PContractNumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber -n http://vivoweb.org/harvest/dsr/grant/
-
-$Match $SCOREINPUT $ALTSCOREDATA -t 1.0 -r
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
