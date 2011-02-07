@@ -27,27 +27,6 @@ MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2MODS/match/store -ImodelName=
 
 
 
-
-#clear old fetches
-rm -rf XMLVault/h2MODS/XML
-
-# Execute Fetch for MODS
-$MODSFetch -X config/tasks/MODSFetch.xml
-
-# backup fetch
-date=`date +%Y-%m-%d_%T`
-tar -czpf backups/.$date.tar.gz XMLVault/h2MODS/XML
-rm -rf backups/mods.xml.latest.tar.gz
-ln -s mods.xml.$date.tar.gz backups/mods.xml.latest.tar.gz
-# uncomment to restore previous fetch
-#tar -xzpf backups/mods.xml.latest.tar.gz XMLVault/h2MODS/XML
-
-
-
-
-
-
-
 # clear old translates
 rm -rf XMLVault/h2MODS/RDF
 
@@ -110,7 +89,9 @@ $Qualify $MATCHINPUT -n http://vivoweb.org/ontology/score -p
 $ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPub/
 $ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthorship/
 $ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthor/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsJournal/
+$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPublisher/
+$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubVenue/
+$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubDate/
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
