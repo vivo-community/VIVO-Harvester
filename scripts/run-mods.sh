@@ -16,7 +16,7 @@ else
 fi
 
 #variables for model arguments
-HCONFIG="config/jenaModels/h2.xml"
+HCONFIG="config/models/h2-sdb.xml"
 INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2MODS/all/store -ImodelName=MODS"
 OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2MODS/all/store -OmodelName=MODS"
 VIVO="-v $VIVOCONFIG"
