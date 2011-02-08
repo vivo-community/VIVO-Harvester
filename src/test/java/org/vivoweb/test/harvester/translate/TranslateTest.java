@@ -279,7 +279,7 @@ public class TranslateTest extends TestCase {
 		 + "</rdf:RDF>";
    
    /** */
-	private static final String mapFilePath = "config/datamaps/PubmedToVivo.xsl";
+	private static final String mapFilePath = "config/datamaps/pubmed-to-vivo.xsl";
 	/** */
 	private File inFile;
 	/** */

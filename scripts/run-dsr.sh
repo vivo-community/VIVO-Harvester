@@ -106,7 +106,7 @@ backup-path $MODELDIR $BACKMODEL
 # The -A -W -F & -P flags need to be internally consistent per call
 
 #scoring of grants on contractnumber
-$Score -v $VIVOCONFIG $TEMPINPUT $SCOREDATA -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n http://vivoweb.org/harvest/dsr/grant/
+$Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n http://vivoweb.org/harvest/dsr/grant/
 
 # Scoring on UF ID person
 $Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n http://vivoweb.org/harvest/dsr/person/
