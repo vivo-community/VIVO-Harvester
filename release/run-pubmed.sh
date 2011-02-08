@@ -56,6 +56,9 @@ rm -rf harvested-data/h2Pubmed/temp
 # Execute Transfer to import from record handler into local temp model
 $Transfer $OUTPUT -h config/recordhandlers/pubmed-tf-rdf.xml
 
+#Dump 
+$Transfer $INPUT -d transfer.rdf   
+
 # clear old score models
 rm -rf harvested-data/h2Pubmed/score
 
