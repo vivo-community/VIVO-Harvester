@@ -85,7 +85,7 @@ rm -rf harvested-data/h2Pubmed/score
 LEVDIFF="org.vivoweb.harvester.score.algorithm.EqualityTest"
 EQDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
 WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.5 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
-PMID="-AwPMID=$EQDIFF -FwEmail=http://purl.org/ontology/bibo/pmid -WwEmail=1.0 -PwEmail=http://purl.org/ontology/bibo/pmid"
+PMID="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/pmid -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/pmid"
 FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
 MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
