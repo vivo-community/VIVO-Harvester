@@ -85,7 +85,6 @@ rm -rf harvested-data/h2Pubmed/score
 LEVDIFF="org.vivoweb.harvester.score.algorithm.EqualityTest"
 EQDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
 WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.5 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
-PMID="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/pmid -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/pmid"
 FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
 MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
@@ -97,7 +96,28 @@ $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME $MNAME
 $Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r -c
  
 # for previously harvested data rename the publications uid to thier old harvested uid
+OFNAME="-AfName=$EQDIFF -FfName=http://vivoweb.org/ontology/score#foreName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
+OLNAME="-AlName=$EQDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
+OMNAME="-AmName=$EQDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
+PMID="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/pmid -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/pmid"
+
+#find the originally ingested publication
 $Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
+$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+#Clear $SCOREOLDPUB 
+
+#find the originally ingested journal
+$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB #Match Journal
+$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+#Clear $SCOREOLDPUB
+
+#find the originally ingested Authorship
+$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
+$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+#Clear $SCOREOLDPUB
+
+#find the originally ingested  Author
+$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
 $Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
  
 # back H2 score models
