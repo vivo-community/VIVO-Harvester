@@ -102,23 +102,23 @@ OMNAME="-AmName=$EQDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmN
 PMID="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/pmid -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/pmid"
 
 #find the originally ingested publication
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
+#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
 #Clear $SCOREOLDPUB 
 
 #find the originally ingested journal
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB #Match Journal
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB #Match Journal
+#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
 #Clear $SCOREOLDPUB
 
 #find the originally ingested Authorship
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
+#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
 #Clear $SCOREOLDPUB
 
 #find the originally ingested  Author
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
+#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
