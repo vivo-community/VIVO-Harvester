@@ -30,8 +30,8 @@ MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2MODS/match/store -ImodelName=
 # clear old translates
 rm -rf XMLVault/h2MODS/RDF
 
-# Execute Translate using the MODSToVIVO.xsl file
-$XSLTranslator -i config/recordHandlers/MODS-XML.xml -x config/datamaps/MODSToVivo.xsl -o config/recordHandlers/MODS-RDF.xml
+# Execute Translate using the mods-to-vivo.xsl file
+$XSLTranslator -i config/recordhandlers/MODS-XML.xml -x config/datamaps/mods-to-vivo.xsl -o config/recordhandlers/MODS-RDF.xml
 
 # backup translate
 date=`date +%Y-%m-%d_%T`
@@ -46,7 +46,7 @@ rm -rf XMLVault/h2MODS/all
 rm -rf XMLVault/h2MODS/temp
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer $OUTPUT -h config/recordHandlers/MODS-RDF.xml
+$Transfer $OUTPUT -h config/recordhandlers/MODS-RDF.xml
 
 # backup H2 translate Models
 date=`date +%Y-%m-%d_%T`
