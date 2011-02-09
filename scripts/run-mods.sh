@@ -28,18 +28,18 @@ MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2MODS/match/store -ImodelName=
 
 
 # clear old translates
-rm -rf XMLVault/h2MODS/RDF
+rm -rf XMLVault/MODS-RH-RDF
 
 # Execute Translate using the mods-to-vivo.xsl file
 $XSLTranslator -i config/recordhandlers/MODS-XML.xml -x config/datamaps/mods-to-vivo.xsl -o config/recordhandlers/MODS-RDF.xml
 
 # backup translate
 date=`date +%Y-%m-%d_%T`
-tar -czpf backups/mods.rdf.$date.tar.gz XMLVault/h2MODS/RDF
+tar -czpf backups/mods.rdf.$date.tar.gz XMLVault/MODS-RH-RDF
 rm -rf backups/mods.rdf.latest.tar.gz
 ln -s mods.rdf.$date.tar.gz backups/mods.rdf.latest.tar.gz
 # uncomment to restore previous translate
-#tar -xzpf backups/mods.rdf.latest.tar.gz XMLVault/h2MODS/RDF
+#tar -xzpf backups/mods.rdf.latest.tar.gz XMLVault/MODS-RH-RDF
 
 # Clear old H2 models
 rm -rf XMLVault/h2MODS/all
