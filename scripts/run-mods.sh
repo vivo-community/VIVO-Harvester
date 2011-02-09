@@ -69,7 +69,12 @@ LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -
 mkdir XMLVault/h2MODS/temp/
 TEMP="-t XMLVault/h2MODS/temp/"
 
+$Transfer $INPUT -d ../transferDump1.txt
+
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME
+
+$Transfer $SCORE -d ../transferDump2.txt
+
 $Match $INPUT $SCORE $MATCHOUTPUT -t 0.9 -r
 #$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME $MNAME
 #$Match $INPUT $SCORE -t 0.8 -r
@@ -82,8 +87,12 @@ ln -s ps.scored.$date.tar.gz backups/mods.scored.latest.tar.gz
 # uncomment to restore previous H2 score models
 #tar -xzpf backups/mods.scored.latest.tar.gz XMLVault/h2MODS/score
 
+$Transfer $MATCHINPUT -d ../transferDump3.txt
+
 #remove score statements
 $Qualify $MATCHINPUT -n http://vivoweb.org/ontology/score -p
+
+$Transfer $MATCHINPUT -d ../transferDump4.txt
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPub/
