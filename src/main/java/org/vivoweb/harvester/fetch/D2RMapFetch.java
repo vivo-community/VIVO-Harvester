@@ -17,7 +17,7 @@ import de.fuberlin.wiwiss.d2r.D2rProcessor;
 import de.fuberlin.wiwiss.d2r.exception.D2RException;
 
 /**
- * Fetches rdf data using D2RMap
+ * Fetches database or csv data using D2RMap
  * @author Eliza Chan (elc2013@med.cornell.edu)
  */
 public class D2RMapFetch {
@@ -37,6 +37,10 @@ public class D2RMapFetch {
 	 * D2RMap output file
 	 */
 	private String d2rOutputFile;
+	/**
+	 * D2RMap working directory
+	 */
+	private String d2rWDir;
 	
 	/**
 	 * Constructor
@@ -63,6 +67,7 @@ public class D2RMapFetch {
 	public D2RMapFetch(ArgList opts) throws IOException {
 		this.d2rConfigPath = opts.get("u");
 		this.d2rOutputFile = opts.get("s");
+		this.d2rWDir = opts.get("a");
 		this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
 	}
 	
@@ -71,15 +76,24 @@ public class D2RMapFetch {
 	 * @throws IOException error processing
 	 */
 	public void execute() throws IOException {
+		log.info("Fetch: Start");
 		D2rProcessor proc = new D2rProcessor();
 		proc.harvesterInit();
-		String output;
 		try {
-			output = proc.processMap("RDF/XML", this.d2rConfigPath);
-			this.rh.addRecord(this.d2rOutputFile, output, this.getClass());
-		} catch(D2RException e) {
-			throw new IOException(e.getMessage(), e);
+			if(this.d2rConfigPath != null) {
+				String output;
+				if(this.d2rWDir != null) { // process CSV file
+					output = proc.processCsvMap("RDF/XML", this.d2rWDir, this.d2rConfigPath);
+				} else { // process data from database
+					output = proc.processMap("RDF/XML", this.d2rConfigPath);
+				}
+				this.rh.addRecord(this.d2rOutputFile, output, this.getClass());
+			}
+			
+		} catch(Exception e) {
+			System.err.println("D2RMapFetch errors: " + e);
 		}
+		log.info("Fetch: End");
 	}
 	
 	/**
@@ -90,9 +104,13 @@ public class D2RMapFetch {
 		ArgParser parser = new ArgParser("D2RMapFetch");
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		// d2RMap specific
+		
+		// d2RMap specific arguments
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("d2rMapConfigFile").withParameter(true, "D2RMAP_CONFIG_FILE").setDescription("D2RMap config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("d2rMapOutputFile").withParameter(true, "D2RMAP_OUTPUT_FILE").setDescription("D2RMap output file").setRequired(true));
+		
+		// This option is for CSV data ingest only
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("d2rMapWorkingDirectory").withParameter(true, "D2RMAP_WORKING_DIRECTORY").setDescription("D2RMap working directory").setRequired(false));
 		return parser;
 	}
 	
@@ -102,7 +120,7 @@ public class D2RMapFetch {
 	 */
 	public static void main(String... args) {
 		InitLog.initLogger(D2RMapFetch.class);
-		log.info(getParser().getAppName()+": Start");
+		log.info(getParser().getAppName() + ": Start");
 		try {
 			new D2RMapFetch(args).execute();
 		} catch(IllegalArgumentException e) {
@@ -111,6 +129,6 @@ public class D2RMapFetch {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		log.info(getParser().getAppName()+": End");
+		log.info(getParser().getAppName() + ": End");
 	}
 }

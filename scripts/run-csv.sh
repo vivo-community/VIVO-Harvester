@@ -9,10 +9,6 @@
 # Contributors:
 #     Eliza Chan
 
-if [ -n "$1" ]
-
-then
-
 # Set working directory
 set -e
 
@@ -33,7 +29,7 @@ BASEDIR=harvested-data/examples/csv
 RDFRHDIR=$BASEDIR/rh-rdf
 
 # Execute Fetch/Translate using D2RMap
-$CSVMapFetch -o $TFRH -OfileDir=$RDFRHDIR -u config/datamaps/example.csv-map.xml -a $1 -s person.rdf
+$D2RMapFetch -o $TFRH -OfileDir=$RDFRHDIR -u config/datamaps/example.csv-map.xml -a $DIR -s person.rdf
 
 # Execute Transfer to transfer rdf into "d2rStaging" JENA model
 $Transfer -h $TFRH -HfileDir=$RDFRHDIR -o $VIVOCONFIG -OmodelName=d2rStaging
@@ -49,11 +45,3 @@ $Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -o $VIVOCONFIG
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 #/etc/init.d/tomcat restart
 
-else
-
-echo
-echo To continue, specify working directory
-echo e.g. ./[your filename].sh /usr/share/harvester
-echo
-
-fi
