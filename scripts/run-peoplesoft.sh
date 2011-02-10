@@ -23,25 +23,38 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
-echo "Full Logging in $HARVESTER_TASK.log"
+echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
-BASEDIR=harvested-data/peoplesoft
+BASEDIR=harvested-data/$HARVESTER_TASK
 RAWRHDIR=$BASEDIR/rh-raw
 RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
 RDFRHDIR=$BASEDIR/rh-rdf
 RDFRHDBURL=jdbc:h2:$RDFRHDIR/store
 MODELDIR=$BASEDIR/model
 MODELDBURL=jdbc:h2:$MODELDIR/store
+MODELNAME=peopleSoftTempTransfer
 SCOREDATADIR=$BASEDIR/score-data
 SCOREDATADBURL=jdbc:h2:$SCOREDATADIR/store
+SCOREDATANAME=peopleSoftScoreData
 TEMPCOPYDIR=$BASEDIR/temp-copy
+
+#scoring algorithms
+EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+
+#matching properties
+UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
+UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
+POSINORG="http://vivoweb.org/ontology/core#positionInOrganization"
+POSFORPERSON="http://vivoweb.org/ontology/core#positionForPerson"
+UFPOSDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition"
+BASEURI="http://vivoweb.org/harvest/ufl/peoplesoft/"
 
 #clear old fetches
 rm -rf $RAWRHDIR
 
 # Execute Fetch
 $JDBCFetch -X config/tasks/PeopleSoftFetch.xml -o $TFRH -OfileDir=$RAWRHDIR
-#-o $TFRH -OdbURL=$RAWRHDBURL
+#$JDBCFetch -X config/tasks/PeopleSoftFetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # backup fetch
 BACKRAW="raw"
@@ -56,6 +69,7 @@ rm -rf $RDFRHDIR
 
 # Execute Translate
 $XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/peoplesoft-to-vivo.xsl
+#$XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/peoplesoft-to-vivo.xsl
 
 # backup translate
 BACKRDF="rdf"
@@ -67,7 +81,8 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=peopleSoftTempTransfer -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $TFRH -HfileDir=$RDFRHDIR -n http://vivo.ufl.edu/individual/
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $TFRH -HfileDir=$RDFRHDIR -n http://vivo.ufl.edu/individual/
+#$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n http://vivo.ufl.edu/individual/
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -75,15 +90,9 @@ backup-path $MODELDIR $BACKMODEL
 # uncomment to restore previous H2 transfer Model
 #restore-path $MODELDIR $BACKMODEL
 
-SCOREINPUT="-i $H2MODEL -ImodelName=peopleSoftTempTransfer -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
-SCOREDATA="-s $H2MODEL -SmodelName=peopleSoftScoreData -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
+SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
+SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
 SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR"
-EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
-UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
-UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
-POSINORG="http://vivoweb.org/ontology/core#positionInOrganization"
-POSFORPERSON="http://vivoweb.org/ontology/core#positionForPerson"
-UFPOSDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition"
 
 # Clear old H2 score data
 rm -rf $SCOREDATADIR
@@ -92,16 +101,16 @@ rm -rf $SCOREDATADIR
 rm -rf $TEMPCOPYDIR
 
 # Execute Score for People
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
+$Score $SCOREMODELS -n $BASEURIperson/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
 
 # Execute Score for Departments
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$UFDEPTID -PdeptId=$UFDEPTID
+$Score $SCOREMODELS -n $BASEURIorg/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$UFDEPTID -PdeptId=$UFDEPTID
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r
 
 # Execute Score for Positions
-$Score $SCOREMODELS -n http://vivoweb.org/harvest/ufl/peoplesoft/position/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=$POSINORG -PposOrg=$POSINORG -AposPer=$EQTEST -WposPer=1.0 -FposPer=$POSFORPERSON -PposPer=$POSFORPERSON -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID
+$Score $SCOREMODELS -n $BASEURIposition/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=$POSINORG -PposOrg=$POSINORG -AposPer=$EQTEST -WposPer=1.0 -FposPer=$POSFORPERSON -PposPer=$POSFORPERSON -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r
@@ -115,13 +124,14 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 # uncomment to restore previous H2 matched Model
 #restore-path $SCOREDATADIR $BACKSCOREDATA
 
+# Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n http://vivo.ufl.edu/individual/"
 # Execute ChangeNamespace to get unmatched People into current namespace
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/ufl/peoplesoft/person/
+$ChangeNamespace $CNFLAGS -o $BASEURIperson/
 # Execute ChangeNamespace to get unmatched Departments into current namespace
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/ufl/peoplesoft/org/ -e
+$ChangeNamespace $CNFLAGS -o $BASEURIorg/ -e
 # Execute ChangeNamespace to get unmatched Positions into current namespace
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/ufl/peoplesoft/position/
+$ChangeNamespace $CNFLAGS -o $BASEURIposition/
 
 # backup H2 matched Model
 BACKMATCHED="matched"
@@ -141,9 +151,9 @@ ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=peopleSoftTempTransfer -d $SUBFILE
+$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=peopleSoftTempTransfer -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml

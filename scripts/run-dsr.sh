@@ -24,11 +24,11 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
-echo "Full Logging in $HARVESTER_TASK.log"
+echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 # Setting variables for cleaner script lines.
 #Base data directory
-BASEDIR=harvested-data/dsr
+BASEDIR=harvested-data/$HARVESTER_TASK
 
 #raw recordhandler directory
 RAWRHDIR=$BASEDIR/rh-raw
@@ -48,9 +48,25 @@ MODELDIR=$BASEDIR/model
 #model database url
 MODELDBURL=jdbc:h2:$MODELDIR/store
 
+#model name
+MODELNAME=dsrTempTransfer
+
+#score data directory
+SCOREDATADIR=$BASEDIR/score-data
+
+#score data database url
+SCOREDATADBURL=jdbc:h2:$SCOREDATADIR/store
+
+#score data model name
+SCOREDATANAME=dsrScoreData
+
+#temporary copy directory
+TEMPCOPYDIR=$BASEDIR/temp-copy
+
 #scoring data models
-SCOREINPUT="-i $H2MODEL -ImodelName=dsrTempTransfer -IdbUrl=$MODELDBURL"
-SCOREDATA="-s $H2MODEL -SmodelName=dsrScoreData -SdbUrl=$MODELDBURL"
+SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
+SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
+SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR"
 
 #Changenamespace settings
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n http://vivo.ufl.edu/individual/"
@@ -64,6 +80,7 @@ RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
 UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
+BASEURI="http://vivoweb.org/harvest/ufl/dsr/"
 
 #clear old fetches
 rm -rf $RAWRHDIR
@@ -93,7 +110,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=dsrTempTransfer -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n http://vivo.ufl.edu/individual/
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n http://vivo.ufl.edu/individual/
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -106,49 +123,49 @@ backup-path $MODELDIR $BACKMODEL
 # The -A -W -F & -P flags need to be internally consistent per call
 
 #scoring of grants on contractnumber
-$Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n http://vivoweb.org/harvest/dsr/grant/
+$Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n $BASEURIgrant/
 
 # Scoring on UF ID person
-$Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n http://vivoweb.org/harvest/dsr/person/
+$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n $BASEURIperson/
 
 # Scoring on Dept ID
-$Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n http://vivoweb.org/harvest/dsr/org/
+$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n $BASEURIorg/
 
 # Scoring sponsors by labels
-$Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n http://vivoweb.org/harvest/dsr/sponsor/
+$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n $BASEURIsponsor/
 
 # Scoring of PIs
-$Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=$RDFTYPE -Ptype=$RDFTYPE -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n http://vivoweb.org/harvest/dsr/piRole/
+$Score $SCOREMODELS -Atype=$EQTEST -Wtype=1.0 -Ftype=$RDFTYPE -Ptype=$RDFTYPE -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n $BASEURIpiRole/
 
 # Scoring of coPIs
-$Score -v $VIVOCONFIG $SCOREINPUT $SCOREDATA -Atype=$EQTEST -Wtype=1.0 -Ftype=$RDFTYPE -Ptype=$RDFTYPE -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n http://vivoweb.org/harvest/dsr/coPiRole/
+$Score $SCOREMODELS -Atype=$EQTEST -Wtype=1.0 -Ftype=$RDFTYPE -Ptype=$RDFTYPE -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n $BASEURIcoPiRole/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/grant/
+$ChangeNamespace $CNFLAGS -o $BASEURIgrant/
 
 # Execute ChangeNamespace to get orgs into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/org/
+$ChangeNamespace $CNFLAGS -o $BASEURIorg/
 
 # Execute ChangeNamespace to get sponsors into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/sponsor/
+$ChangeNamespace $CNFLAGS -o $BASEURIsponsor/
 
 # Execute ChangeNamespace to get people into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/person/
+$ChangeNamespace $CNFLAGS -o $BASEURIperson/
 
 # Execute ChangeNamespace to get PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/piRole/
+$ChangeNamespace $CNFLAGS -o $BASEURIpiRole/
 
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o http://vivoweb.org/harvest/dsr/coPiRole/
+$ChangeNamespace $CNFLAGS -o $BASEURIcoPiRole/
 
 # backup H2 matched Model
 BACKMATCHED="matched"
@@ -167,9 +184,9 @@ ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=dsrTempTransfer -d $SUBFILE
+$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=dsrTempTransfer -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml

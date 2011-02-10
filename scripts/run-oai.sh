@@ -23,9 +23,9 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
-echo "Full Logging in $HARVESTER_TASK.log"
+echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
-BASEDIR=harvested-data/examples/oai
+BASEDIR=harvested-data/examples/$HARVESTER_TASK
 RAWRHDIR=$BASEDIR/rh-raw
 RDFRHDIR=$BASEDIR/rh-rdf
 MODELDIR=$BASEDIR/model

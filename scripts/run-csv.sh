@@ -23,9 +23,9 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
-echo "Full Logging in $HARVESTER_TASK.log"
+echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
-BASEDIR=harvested-data/examples/csv
+BASEDIR=harvested-data/examples/$HARVESTER_TASK
 RDFRHDIR=$BASEDIR/rh-rdf
 
 # Execute Fetch/Translate using D2RMap

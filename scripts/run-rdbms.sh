@@ -23,6 +23,7 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
+echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 # Execute Fetch/Translate using D2RMap
 $D2RMapFetch -o config/recordHandlers/JDBCXMLRecordHandler.xml -u config/tasks/D2RMapFetchTask.d2r.xml -s person.rdf

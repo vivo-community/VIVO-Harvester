@@ -17,6 +17,7 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
+echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 #variables for model arguments
 HCONFIG="config/models/h2-sdb.xml"
