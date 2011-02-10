@@ -1,5 +1,8 @@
 #!/bin/bash
 
+###under construction
+
+
 # Set working directory
 set -e
 
@@ -24,14 +27,20 @@ SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:XMLVault/h2MODS/score/store -SmodelName=MODS"
 MATCHOUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:XMLVault/h2MODS/match/store -OmodelName=MODS"
 MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2MODS/match/store -ImodelName=MODS"
 
+SCOREINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:XMLVault/h2MODS/score/store -ImodelName=MODS"
+
+SANITIZEROUTPUTPATH=`grep fileDir config/recordhandlers/mods-xml.xml| sed 's|^.*>\(.*\/[^<]*\)<.*$|\1|g'`
 
 
+
+# Sanitize input
+$SanitizeMODSXML -inputPath XMLVault/MODS-RH-XML-unsanitized -outputPath $SANITIZEROUTPUTPATH
 
 # clear old translates
 rm -rf XMLVault/MODS-RH-RDF
 
 # Execute Translate using the mods-to-vivo.xsl file
-$XSLTranslator -i config/recordhandlers/MODS-XML.xml -x config/datamaps/mods-to-vivo.xsl -o config/recordhandlers/MODS-RDF.xml
+$XSLTranslator -i config/recordhandlers/mods-xml.xml -x config/datamaps/mods-to-vivo.xsl -o config/recordhandlers/mods-rdf.xml
 
 # backup translate
 date=`date +%Y-%m-%d_%T`
@@ -46,7 +55,7 @@ rm -rf XMLVault/h2MODS/all
 rm -rf XMLVault/h2MODS/temp
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer $OUTPUT -h config/recordhandlers/MODS-RDF.xml
+$Transfer $OUTPUT -h config/recordhandlers/mods-rdf.xml
 
 # backup H2 translate Models
 date=`date +%Y-%m-%d_%T`
@@ -73,12 +82,13 @@ $Transfer $INPUT -d ../transferDump1.txt
 
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME
 
-$Transfer $SCORE -d ../transferDump2.txt
+$Transfer $INPUT -d ../transferDump2.txt
+$Transfer $SCOREINPUT -d ../transferDump3.txt
 
 $Match $INPUT $SCORE $MATCHOUTPUT -t 0.9 -r
 #$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME $MNAME
 #$Match $INPUT $SCORE -t 0.8 -r
- 
+
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
 tar -czpf backups/mods.scored.$date.tar.gz XMLVault/h2MODS/score
@@ -87,20 +97,29 @@ ln -s ps.scored.$date.tar.gz backups/mods.scored.latest.tar.gz
 # uncomment to restore previous H2 score models
 #tar -xzpf backups/mods.scored.latest.tar.gz XMLVault/h2MODS/score
 
-$Transfer $MATCHINPUT -d ../transferDump3.txt
+$Transfer $MATCHINPUT -d ../transferDump4.txt
 
 #remove score statements
 $Qualify $MATCHINPUT -n http://vivoweb.org/ontology/score -p
 
-$Transfer $MATCHINPUT -d ../transferDump4.txt
+$Transfer $MATCHINPUT -d ../transferDump5.txt
 
 # Execute ChangeNamespace to get into current namespace
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPub/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthorship/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthor/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPublisher/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubVenue/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubDate/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPub/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthorship/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthor/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPublisher/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubVenue/
+$ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubDate/
+
+$Transfer $INPUT -d ../transferDump6.txt
+
+#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPub/
+#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthorship/
+#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthor/
+#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPublisher/
+#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubVenue/
+#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubDate/
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
@@ -114,7 +133,7 @@ INMODELNAME="modelName=MODS"
 INURL="dbUrl=jdbc:h2:XMLVault/h2MODS/match/store"
 ADDFILE="XMLVault/update_Additions.rdf.xml"
 SUBFILE="XMLVault/update_Subtractions.rdf.xml"
-  
+
 # Find Subtractions
 $Diff -m $VIVOCONFIG -M$VIVOMODELNAME -s $HCONFIG -S$INURL -S$INMODELNAME -d $SUBFILE
 # Find Additions
