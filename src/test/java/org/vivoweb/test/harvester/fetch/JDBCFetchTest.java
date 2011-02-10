@@ -47,7 +47,7 @@ public class JDBCFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(JDBCFetchTest.class);
+		InitLog.initLogger(JDBCFetchTest.class, null, null);
 		Class.forName("org.h2.Driver");
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TestJDBCFetchDB", "sa", "");
 		this.conn.setAutoCommit(false);

@@ -281,16 +281,17 @@ public class Qualify {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(Qualify.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(Qualify.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new Qualify(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 }

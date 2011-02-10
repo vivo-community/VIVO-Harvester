@@ -238,16 +238,17 @@ public class ChangeNamespace {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(ChangeNamespace.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(ChangeNamespace.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new ChangeNamespace(args).execute();
 		} catch (IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 }

@@ -42,17 +42,17 @@
     </encoder>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>TRACE</level>
-      <onMatch>ACCEPT</onMatch>
+      <onMatch>${console-trace:-DENY}</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>DEBUG</level>
-      <onMatch>ACCEPT</onMatch>
+      <onMatch>${console-debug:-DENY}</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>INFO</level>
-      <onMatch>ACCEPT</onMatch>
+      <onMatch>${console-info:-ACCEPT}</onMatch>
       <onMismatch>NEUTRAL</onMismatch>
     </filter>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -73,7 +73,7 @@
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>WARN</level>
+      <level>${console-warnerror:-WARN}</level>
     </filter>
   </appender>
   
@@ -82,6 +82,11 @@
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
     <!-- - -><appender-ref ref="ClassAppender"/><!- - -->
+  </logger>
+  <logger name="org.vivoweb.harvester.util.XPathTool" level="WARN" additivity="false">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
   </logger>
   <logger name="org.vivoweb.test.harvester" level="${test-level:-ALL}">
     <appender-ref ref="Console"/>
@@ -99,12 +104,12 @@
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
   </logger>
-  <logger name="com.hp.hpl.jena.arq" level="${arq-error-level:-ERROR}">
+  <logger name="com.hp.hpl.jena.arq" level="${arq-level:-ERROR}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
   </logger>
-  <logger name="org.apache.commons.vfs" level="ERROR">
+  <logger name="org.apache.commons.vfs" level="${vfs-level:-ERROR}">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>

@@ -210,16 +210,17 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(PubmedHTTPFetch.class);
-		log.info("PubmedHTTPFetch: Start");
 		try {
+			InitLog.initLogger(PubmedHTTPFetch.class, args, getParser("PubmedHTTPFetch"));
+			log.info("PubmedHTTPFetch: Start");
 			new PubmedHTTPFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser("PubmedHTTPFetch").getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info("PubmedHTTPFetch: End");
 		}
-		log.info("PubmedHTTPFetch: End");
 	}
 }

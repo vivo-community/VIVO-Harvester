@@ -216,16 +216,17 @@ public class GlozeTranslator {
 	 * @param args list of arguments required to execute glozetranslate
 	 */
 	public static void main(String[] args) {
-		InitLog.initLogger(GlozeTranslator.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(GlozeTranslator.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new GlozeTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 	
 }

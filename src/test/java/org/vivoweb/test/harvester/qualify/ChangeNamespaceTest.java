@@ -33,7 +33,7 @@ public class ChangeNamespaceTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(ChangeNamespaceTest.class);
+		InitLog.initLogger(ChangeNamespaceTest.class, null, null);
 		this.namespace = "http://testChNS.vivoweb.org/individual/";
 		this.newNamespace = "http://vivo.test.edu/individual/";
 		this.model = new SDBJenaConnect("jdbc:h2:mem:testChNSh2change", "sa", "", "H2", "org.h2.Driver", "layout2", "testChNSchange");

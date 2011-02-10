@@ -31,7 +31,7 @@ public class SpecialEntitiesTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(SpecialEntitiesTest.class);
+		InitLog.initLogger(SpecialEntitiesTest.class, null, null);
 	}
 	
 	/**

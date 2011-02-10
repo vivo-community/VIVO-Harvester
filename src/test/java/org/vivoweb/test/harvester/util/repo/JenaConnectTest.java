@@ -65,7 +65,7 @@ public class JenaConnectTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(JenaConnectTest.class);
+		InitLog.initLogger(JenaConnectTest.class, null, null);
 		this.configFile = File.createTempFile("jcConfig", "xml");
 		this.jc = null;
 	}

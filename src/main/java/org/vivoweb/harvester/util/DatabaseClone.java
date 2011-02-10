@@ -119,16 +119,17 @@ public class DatabaseClone {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(DatabaseClone.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(DatabaseClone.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new DatabaseClone(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 }

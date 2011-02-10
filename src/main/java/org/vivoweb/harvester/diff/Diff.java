@@ -196,9 +196,9 @@ public class Diff {
 	 * @param args commandline arguments
 	 */
 	public static void main(String[] args) {
-		InitLog.initLogger(Diff.class);
-		log.info(getParser().getAppName() + ": Start");
 		try {
+			InitLog.initLogger(Diff.class, args, getParser());
+			log.info(getParser().getAppName() + ": Start");
 			new Diff(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
@@ -208,7 +208,8 @@ public class Diff {
 			// System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName() + ": End");
 		}
-		log.info(getParser().getAppName() + ": End");
 	}
 }

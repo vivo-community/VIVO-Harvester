@@ -29,7 +29,7 @@ public class CSVtoJDBCTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		InitLog.initLogger(CSVtoJDBCTest.class);
+		InitLog.initLogger(CSVtoJDBCTest.class, null, null);
 		Class.forName("org.h2.Driver");
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TestJDBCFetchDB", "sa", "");
 		this.conn.setAutoCommit(false);

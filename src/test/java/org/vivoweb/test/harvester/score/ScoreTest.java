@@ -405,22 +405,18 @@ public class ScoreTest extends TestCase {
 	}
 	
 	@Override
-	protected void setUp() {
-		InitLog.initLogger(ScoreTest.class);
-		try {
-			// load input models
-			this.input = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "input");
-			this.input.loadRdfFromString(inputRDF, null, null);
-			
-			this.vivo = this.input.neighborConnectClone("vivo");
-			this.vivo.loadRdfFromString(vivoRDF, null, null);
-			
-			this.output = this.input.neighborConnectClone("output");
-						
-			this.score = this.input.neighborConnectClone("score");
-		} catch(IOException e) {
-			throw new IllegalArgumentException(e.getMessage(),e);
-		}
+	protected void setUp() throws Exception {
+		InitLog.initLogger(ScoreTest.class, null, null);
+		// load input models
+		this.input = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "input");
+		this.input.loadRdfFromString(inputRDF, null, null);
+		
+		this.vivo = this.input.neighborConnectClone("vivo");
+		this.vivo.loadRdfFromString(vivoRDF, null, null);
+		
+		this.output = this.input.neighborConnectClone("output");
+					
+		this.score = this.input.neighborConnectClone("score");
 	}
 	
 	@Override

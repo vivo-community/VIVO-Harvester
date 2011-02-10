@@ -7,12 +7,15 @@
 package org.vivoweb.harvester.util;
 
 import java.io.File;
+import java.io.IOException;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.args.ArgParser;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
@@ -40,10 +43,53 @@ public class InitLog {
 	/**
 	 * Setup the logger
 	 * @param classname the classname initializing the log
+	 * @param args the commandline args passed
+	 * @param parser the arg parser to use
+	 * @throws IOException error processing
 	 */
-	public static void initLogger(@SuppressWarnings("unused") Class<?> classname) {
+	public static void initLogger(@SuppressWarnings("unused") Class<?> classname, String[] args, ArgParser parser) throws IOException {
+		String logLevel = System.getProperty("console-log-level");
+		if(args != null && parser != null) {
+			ArgList argList = new ArgList(parser, args);
+			if(argList.has("w")) {
+				logLevel = argList.get("w");
+			}
+		}
+		if(logLevel != null) {
+			if(logLevel.equalsIgnoreCase("trace") || logLevel.equalsIgnoreCase("all")) {
+				System.setProperty("console-trace", "ACCEPT");
+				System.setProperty("console-debug", "ACCEPT");
+				System.setProperty("console-info", "ACCEPT");
+				System.setProperty("console-warnerror", "WARN");
+			} else if(logLevel.equalsIgnoreCase("debug")) {
+				System.setProperty("console-trace", "DENY");
+				System.setProperty("console-debug", "ACCEPT");
+				System.setProperty("console-info", "ACCEPT");
+				System.setProperty("console-warnerror", "WARN");
+			} else if(logLevel.equalsIgnoreCase("info")) {
+				System.setProperty("console-trace", "DENY");
+				System.setProperty("console-debug", "DENY");
+				System.setProperty("console-info", "ACCEPT");
+				System.setProperty("console-warnerror", "WARN");
+			} else if(logLevel.equalsIgnoreCase("warn")) {
+				System.setProperty("console-trace", "DENY");
+				System.setProperty("console-debug", "DENY");
+				System.setProperty("console-info", "DENY");
+				System.setProperty("console-warnerror", "WARN");
+			} else if(logLevel.equalsIgnoreCase("error")) {
+				System.setProperty("console-trace", "DENY");
+				System.setProperty("console-debug", "DENY");
+				System.setProperty("console-info", "DENY");
+				System.setProperty("console-warnerror", "ERROR");
+			} else if(logLevel.equalsIgnoreCase("off")) {
+				System.setProperty("console-trace", "DENY");
+				System.setProperty("console-debug", "DENY");
+				System.setProperty("console-info", "DENY");
+				System.setProperty("console-warnerror", "OFF");
+			}
+		}
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-		String task = getFirstValidString(System.getenv("HARVESTER_TASK"), System.getProperty("harvester-task"), "harvester."+DateFormatUtils.ISO_DATETIME_FORMAT.format(System.currentTimeMillis()));
+		String task = getFirstValidString(System.getenv("HARVESTER_TASK_DATE"), System.getProperty("harvester-task"), "harvester."+DateFormatUtils.ISO_DATETIME_FORMAT.format(System.currentTimeMillis()));
 		context.putProperty("harvester-task", task);
 		String process = getFirstValidString(System.getenv("PROCESS_TASK"), System.getProperty("process-task"), "all");
 		context.putProperty("process-task", process);

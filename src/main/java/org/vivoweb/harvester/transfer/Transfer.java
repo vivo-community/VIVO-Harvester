@@ -6,10 +6,7 @@
  ******************************************************************************/
 package org.vivoweb.harvester.transfer;
 
-import java.io.File;
 import java.io.IOException;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -43,14 +40,6 @@ public class Transfer {
 	 */
 	private String dumpFile;
 	/**
-	 * clear model after transfer
-	 */
-	private boolean clearModel;
-	/**
-	 * empty model before transfer
-	 */
-	private boolean emptyModel;
-	/**
 	 * input rdf file
 	 */
 	private String inRDF;
@@ -73,27 +62,6 @@ public class Transfer {
 	
 	/**
 	 * Constructor
-	 * @param in input Model
-	 * @param out output Model
-	 * @param outputFile dump to file option
-	 * @param clear clear transferred data option
-	 * @param empty empty model before transfer
-	 * @param removeMode remove rather than add
-	 */
-	public Transfer(JenaConnect in, JenaConnect out, String outputFile, boolean clear, boolean empty, boolean removeMode) {
-		if(in == null) {
-			throw new IllegalArgumentException("Must provide non-null input jena connect");
-		}
-		this.input = in;
-		this.output = out;
-		this.dumpFile = outputFile;
-		this.clearModel = clear;
-		this.emptyModel = empty;
-		this.removeMode = removeMode;
-	}
-	
-	/**
-	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
 	 */
@@ -107,33 +75,23 @@ public class Transfer {
 	 * @throws IOException error creating task
 	 */
 	public Transfer(ArgList argList) throws IOException {
-		// Require input args
-		if(!argList.has("r") && !argList.has("i") && !argList.has("h")) {
-			throw new IllegalArgumentException("Must provide input via -i, -r, or -h");
-		}
 		// Require output args
 		if(!argList.has("o") && !argList.has("O") && !argList.has("d")) {
-			throw new IllegalArgumentException("Must provide one of -o, -O, or -d");
+			throw new IllegalArgumentException("Must provide an output {-o, -O, or -d}");
 		}
 		
 		// setup input model
-		if(argList.has("i")) {
-			this.input = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("i")), argList.getValueMap("I"));
-		}
+		this.input = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		
 		// setup output
-		if(argList.has("o")) {
-			this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getValueMap("O"));
-		}
+		this.output = JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O"));
 		
 		// load any specified rdf file data
 		this.inRDF = argList.get("r");
 		this.inRDFlang = argList.get("R");
 		
 		// load data from recordhandler
-		if(argList.has("h")) {
-			this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getValueMap("H"));
-		}
+		this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getValueMap("H"));
 		
 		// output to file, if requested
 		this.dumpFile = argList.get("d");
@@ -141,164 +99,42 @@ public class Transfer {
 		// get namespace
 		this.namespace = argList.get("n");
 		
-		// empty model
-		this.clearModel = argList.has("w");
-		this.emptyModel = argList.has("e");
+		// remove mode
 		this.removeMode = argList.has("m");
 	}
 	
 	/**
 	 * Copy data from input to output
-	 * @throws IOException error writing
+	 * @throws IOException error
 	 */
 	private void execute() throws IOException {
-		boolean inputIsOutput = false;
-		if(this.input == null || this.output == null) {
-			inputIsOutput = true;
-			if(this.input == null){
-				this.input = this.output;
-				if(this.dumpFile != null || this.emptyModel){
-					this.input = new MemJenaConnect();
-				}
-			}else{
-				this.output = this.input;
+		if(this.output == null) {
+			this.output = new MemJenaConnect();
+		}
+		if(this.removeMode) {
+			if(this.input != null) {
+				this.output.removeRdfFromJC(this.input);
+			}
+			if(this.inRDF != null) {
+				this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
+			}
+			if(this.inRH != null) {
+				this.output.removeRdfFromRH(this.inRH, this.namespace);
+			}
+		} else {
+			if(this.input != null) {
+				this.output.loadRdfFromJC(this.input);
+			}
+			if(this.inRDF != null) {
+				this.output.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
+			}
+			if(this.inRH != null) {
+				this.output.loadRdfFromRH(this.inRH, this.namespace);
 			}
 		}
-
-		if(this.emptyModel){
-			this.input.truncate();
-		}
-		
-		try {
-			log.debug("removeMode?: " + this.removeMode);
-			if(this.removeMode) {
-				if(this.inRDF != null){
-					log.trace("removing inputfile from output");
-					this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
-				}else if(this.inRH != null){
-					log.info("Remving Records from RecordHandler");
-					int processCount = this.output.removeRdfFromRH(this.inRH, this.namespace);
-					log.info("Removed " + processCount + " records");
-				}
-				if(!inputIsOutput){
-					log.trace("removing input from output");
-					this.output.removeRdfFromJC(this.input);
-				}
-			} else {
-				if(this.inRDF != null){
-					log.trace("adding inputfile to input");
-					this.input.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
-				}else if(this.inRH != null){
-					log.info("Loading Records from RecordHandler");
-					int processCount = this.input.loadRdfFromRH(this.inRH, this.namespace);
-					log.info("Loaded " + processCount + " records");
-				}
-				if(!inputIsOutput){
-					log.trace("adding input to output");
-					this.output.loadRdfFromJC(this.input);
-				}
-			}
-		} catch(FileSystemException e) {
-			log.error(e.getMessage(), e);
-		}
-		
 		if(this.dumpFile != null) {
-			log.trace("dumping input to dumpfile");
-			this.input.exportRdfToFile(this.dumpFile);
+			this.output.exportRdfToFile(this.dumpFile);
 		}
-		
-		if(!inputIsOutput) {
-//			 empty model	
-			if(this.clearModel) {
-				this.input.truncate();
-			}
-			
-//			 close the models		
-			if(this.output != null) {
-				this.output.close();
-			}
-		}
-		
-		if(this.input != null) {
-			this.input.close();
-		}
-		
-//		if(this.dumpFile != null && this.input == null) {
-//			newInput = true;
-//		}
-//		if(this.emptyModel) {
-//			if(this.input == null) {
-//				newInput = true;
-//			} else {
-//				this.input.truncate();
-//			}
-//		}
-//		if(newInput && this.input == null) {
-//			this.input = new MemJenaConnect();
-//		}
-//		boolean inputIsOutput = false;
-//		if(this.input == null && this.output != null) {
-//			inputIsOutput = true;
-//			this.input = this.output;
-//		} else if(this.input != null && this.output == null) {
-//			inputIsOutput = true;
-//			this.output = this.input;
-//		}
-//		
-//		if(this.inRDF != null) {
-//			try {
-//				log.debug("removeMode?: " + this.removeMode);
-//				if(this.removeMode) {
-//					log.trace("removing inputfile from output");
-//					this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
-//				} else {
-//					log.trace("adding inputfile to input");
-//					this.input.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
-//				}
-//			} catch(FileSystemException e) {
-//				log.error(e.getMessage(), e);
-//			}
-//		}
-//		
-//		if(this.inRH != null) {
-//			if(this.removeMode) {
-//				log.info("Remving Records from RecordHandler");
-//				int processCount = this.output.removeRdfFromRH(this.inRH, this.namespace);
-//				log.info("Removed " + processCount + " records");
-//			} else {
-//				log.info("Loading Records from RecordHandler");
-//				int processCount = this.input.loadRdfFromRH(this.inRH, this.namespace);
-//				log.info("Loaded " + processCount + " records");
-//			}
-//		}
-//		
-//		if(this.dumpFile != null) {
-//			log.trace("dumping input to dumpfile");
-//			this.input.exportRdfToFile(this.dumpFile);
-//		}
-//		
-//		if(!inputIsOutput) {
-//			if(this.removeMode) {
-//				log.trace("removing input from output");
-//				this.output.removeRdfFromJC(this.input);
-//			} else {
-//				log.trace("adding input to output");
-//				this.output.loadRdfFromJC(this.input);
-//			}
-//		}
-//		
-//		// empty model
-//		if(this.clearModel && !inputIsOutput) {
-//			this.input.truncate();
-//		}
-//		
-//		// close the models;
-//		if(this.input != null) {
-//			this.input.close();
-//		}
-//		if(this.output != null && !inputIsOutput) {
-//			this.output.close();
-//		}
 	}
 	
 	/**
@@ -320,11 +156,7 @@ public class Transfer {
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
-		
-		// options
-		parser.addArgument(new ArgDef().setShortOption('w').setLongOpt("wipe-transfered-model").withParameter(false, "WIPE_FLAG").setDescription("If set, this will clear the input model after transfer is complete"));
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("empty-input-model").withParameter(false, "EMPTY_FLAG").setDescription("If set, this will clear the input model before transfer is started").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output to be dumped to").setRequired(false));
 		return parser;
 	}
 	
@@ -333,16 +165,17 @@ public class Transfer {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(Transfer.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(Transfer.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new Transfer(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 }

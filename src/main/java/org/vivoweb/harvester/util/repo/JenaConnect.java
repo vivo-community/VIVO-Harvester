@@ -89,10 +89,9 @@ public abstract class JenaConnect {
 		}
 		for(String param : paramList.keySet()) {
 			if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
-				JenaConnect.log.debug("'" + param + "' - '" + paramList.get(param) + "'");
+				log.debug("'" + param + "' - '" + paramList.get(param) + "'");
 			}
 		}
-		
 		return build(paramList);
 	}
 	
@@ -172,6 +171,9 @@ public abstract class JenaConnect {
 		// for(String param : params.keySet()) {
 		// log.debug(param+" => "+params.get(param));
 		// }
+		if(params == null || params.isEmpty()) {
+			return null;
+		}
 		if(!params.containsKey("type")) {
 			throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','tdb','mem'}");
 		}
@@ -187,11 +189,9 @@ public abstract class JenaConnect {
 		} else {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
-		
 		if ((!params.containsKey("checkEmpty") || params.get("checkEmpty").toLowerCase() == "true") && jc.isEmpty()) {
 			JenaConnect.log.warn(jc.getModelName() + " Jena model is empty");
 		}
-		
 		return jc;
 	}
 	
@@ -571,8 +571,8 @@ public abstract class JenaConnect {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(JenaConnect.class);
 		try {
+			InitLog.initLogger(JenaConnect.class, args, getParser());
 			ArgList argList = new ArgList(getParser(), args);
 			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
 			if(argList.has("t")) {

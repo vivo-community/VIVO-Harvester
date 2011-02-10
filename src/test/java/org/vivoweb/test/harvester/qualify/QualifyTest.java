@@ -35,7 +35,7 @@ public class QualifyTest extends TestCase {
 	
 	@Override
 	public void setUp() throws Exception {
-		InitLog.initLogger(QualifyTest.class);
+		InitLog.initLogger(QualifyTest.class, null, null);
 		this.jena = new MemJenaConnect();
 		this.jena.truncate();
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");

@@ -6,41 +6,37 @@
  ******************************************************************************/
 package org.vivoweb.harvester.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Map;
 import java.util.Hashtable;
 import java.util.Set;
-import java.io.*;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 
-
 /**
  * @author Michael Barbieri (mbarbier@ufl.edu)
  */
-public class SanitizeMODSXML
-{
+public class SanitizeMODSXML {
 	/**
 	 * The XML file to sanitize.
 	 */
 	private final String inputPath;
-	
 	/**
 	 * The sanitized XML file.
 	 */
 	private final String outputPath;
-
 	/**
 	 * The mapping of XML-illegal characters to their sanitized-string versions.
 	 */
 	private final Map<String, String> replacementMapping = generateReplacementMapping();
-	
 	/**
 	 * SLF4J Logger
 	 */
@@ -71,10 +67,7 @@ public class SanitizeMODSXML
 	 * @param argList option set of parsed args
 	 */
 	public SanitizeMODSXML(ArgList argList) {
-
-		this.inputPath = stripFinalSlash(argList.get("inputPath"));
-		this.outputPath = stripFinalSlash(argList.get("outputPath"));
-		checkValidInputs();
+		this(argList.get("inputPath"), argList.get("outputPath"));
 	}
 	
 	
@@ -139,12 +132,9 @@ public class SanitizeMODSXML
 	 * Initialize the mapping of bad values to their replacements
 	 * @return the mapping
 	 */
-	private Map<String, String> generateReplacementMapping()
-	{
+	private Map<String, String> generateReplacementMapping() {
 		Map<String, String> mapping = new Hashtable<String, String>();
-
 		//not using for now
-		
 		return mapping;
 	}
 	
@@ -154,7 +144,6 @@ public class SanitizeMODSXML
 	 * @throws IOException if an error in reading or writing occurs
 	 */
 	public void execute() throws IOException {
-
 		File inputDir = new File(this.inputPath);
 		File outputDir = new File(this.outputPath);
 		
@@ -192,21 +181,17 @@ public class SanitizeMODSXML
 	 * @return a String containing all data in the file
 	 * @throws IOException if a read error occurs
 	 */
-	private String readFile(String filePath) throws IOException
-	{
+	private String readFile(String filePath) throws IOException {
 		File file = new File(filePath);
-
 		long fileLength = file.length();
 		StringBuilder builder = new StringBuilder(fileLength > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)fileLength);
 		Reader reader = new InputStreamReader(new FileInputStream(file));
 		int character = 0;
-		while(character != -1)
-		{
+		while(character != -1) {
 			character = reader.read();
 			char characterAsChar = (char)character;
 			builder.append(getReplacement(characterAsChar));
 		}
-
 		reader.close();
 		String output = builder.toString();
 		output = trimBadUnicodeCharacters(output);
@@ -223,15 +208,11 @@ public class SanitizeMODSXML
 	 * @param input the string to trim the characters off of
 	 * @return the trimmed string
 	 */
-	private String trimBadUnicodeCharacters(String input)
-	{
+	private String trimBadUnicodeCharacters(String input) {
 		String output = input;
-		
-		while(output.charAt(output.length() - 1) == 65535)
-		{
+		while (output.charAt(output.length() - 1) == 65535) {
 			output = output.substring(0, output.length() - 1);
 		}
-		
 		return output;
 	}
 	
@@ -242,11 +223,9 @@ public class SanitizeMODSXML
 	 * @param content the data to write to the file
 	 * @throws IOException if an error occurred writing to the file
 	 */
-	private void writeFile(String filePath, String content) throws IOException
-	{
+	private void writeFile(String filePath, String content) throws IOException {
 		//PrintStream outputStream = new PrintStream(new File(filePath));
 		//outputStream.print(content);
-		
 		FileOutputStream outputStream = new FileOutputStream(new File(filePath));
 		outputStream.write(content.getBytes());
 	}
@@ -257,15 +236,12 @@ public class SanitizeMODSXML
 	 * @param character the character to test
 	 * @return The character to replace
 	 */
-	private String getReplacement(char character)
-	{
+	private String getReplacement(char character) {
 		String replacement;
-		
 		/* these replacements were determined by inspection.  For example, it was observed that words with a Unicode 11 made
 		 * sense only when that character was replaced by "ff", for example "no performance di#erence between Gigabit Ethernet",
 		 * where # represents Unicode 11 */
-		switch(character)
-		{
+		switch(character) {
 			case 11:
 				replacement = "ff";
 				break;
@@ -281,7 +257,6 @@ public class SanitizeMODSXML
 			default:
 				replacement = String.valueOf(character);
 		}
-
 		return replacement;
 	}
 	
@@ -293,16 +268,13 @@ public class SanitizeMODSXML
 	 * @param input the String to perform the search and replace on
 	 * @return the String with the replacements made
 	 */
-	private String doReplacement(String input)
-	{
+	@SuppressWarnings("unused")
+	private String doReplacement(String input) {
 		String output = input;
-		
 		Set<String> keySet = this.replacementMapping.keySet();
-		for(String key : keySet)
-		{
+		for(String key : keySet) {
 			output = output.replace(key, this.replacementMapping.get(key));
 		}
-		
 		return output;
 	}
 
@@ -313,16 +285,17 @@ public class SanitizeMODSXML
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(SanitizeMODSXML.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(SanitizeMODSXML.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new SanitizeMODSXML(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 }

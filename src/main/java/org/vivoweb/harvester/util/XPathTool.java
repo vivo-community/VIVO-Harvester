@@ -115,16 +115,24 @@ public class XPathTool {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(Merge.class);
-		log.debug(getParser().getAppName()+": Start");
 		try {
+			String harvLev = System.getProperty("harvester-level");
+			System.setProperty("harvester-level", "WARN");
+			InitLog.initLogger(XPathTool.class, args, getParser());
+			if(harvLev == null) {
+				System.clearProperty("harvester-level");
+			} else {
+				System.setProperty("harvester-level", harvLev);
+			}
+			log.info(getParser().getAppName()+": Start");
 			new XPathTool(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.debug(getParser().getAppName()+": End");
 	}
 }

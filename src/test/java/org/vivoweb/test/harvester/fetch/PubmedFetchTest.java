@@ -42,7 +42,7 @@ public class PubmedFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(PubmedFetchTest.class);
+		InitLog.initLogger(PubmedFetchTest.class, null, null);
 //		this.configFile = File.createTempFile("rhConfig", "xml");
 //		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
 //		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.JDBCRecordHandler\">\n	<Param name=\"jdbcDriverClass\">org.h2.Driver</Param>\n	<Param name=\"connLine\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"username\">sa</Param>\n	<Param name=\"password\"></Param>\n	<Param name=\"tableName\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");

@@ -14,7 +14,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import de.fuberlin.wiwiss.d2r.D2rProcessor;
-import de.fuberlin.wiwiss.d2r.exception.D2RException;
 
 /**
  * Fetches database or csv data using D2RMap
@@ -73,9 +72,8 @@ public class D2RMapFetch {
 	
 	/**
 	 * Executes the task
-	 * @throws IOException error processing
 	 */
-	public void execute() throws IOException {
+	public void execute() {
 		log.info("Fetch: Start");
 		D2rProcessor proc = new D2rProcessor();
 		proc.harvesterInit();
@@ -119,16 +117,17 @@ public class D2RMapFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(D2RMapFetch.class);
-		log.info(getParser().getAppName() + ": Start");
 		try {
+			InitLog.initLogger(D2RMapFetch.class, args, getParser());
+			log.info(getParser().getAppName() + ": Start");
 			new D2RMapFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName() + ": End");
 		}
-		log.info(getParser().getAppName() + ": End");
 	}
 }

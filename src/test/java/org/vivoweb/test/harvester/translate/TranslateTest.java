@@ -291,11 +291,11 @@ public class TranslateTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(TranslateTest.class);
+		InitLog.initLogger(TranslateTest.class, null, null);
 		// create config file for input record handler
 		this.inFile = File.createTempFile("inputRHConfig", "xml");
 		Writer output = new BufferedWriter(new FileWriter(this.inFile));
-		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.TextFileRecordHandler\">\n  <Param name=\"fileDir\">tmp://TranslateTestXML</Param>\n</RecordHandler>");
+		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler>\n  <Param name=\"rhClass\">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>\n  <Param name=\"fileDir\">tmp://TranslateTestXML</Param>\n</RecordHandler>");
 		output.close();
 		// get the input record handler
 		this.inRH = RecordHandler.parseConfig(this.inFile.getAbsolutePath());
@@ -303,7 +303,7 @@ public class TranslateTest extends TestCase {
 		// create config file for output record handler
 		this.outFile = File.createTempFile("outRHConfig", "xml");
 		output = new BufferedWriter(new FileWriter(this.outFile));
-		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.TextFileRecordHandler\">\n  <Param name=\"fileDir\">tmp://TranslateTestRDF</Param>\n</RecordHandler>");
+		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler>\n  <Param name=\"rhClass\">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>\n  <Param name=\"fileDir\">tmp://TranslateTestRDF</Param>\n</RecordHandler>");
 		output.close();
 		// get the output record handler
 		this.outRH = RecordHandler.parseConfig(this.outFile.getAbsolutePath());

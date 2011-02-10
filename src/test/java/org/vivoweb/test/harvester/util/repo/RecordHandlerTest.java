@@ -39,25 +39,27 @@ public class RecordHandlerTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(RecordHandlerTest.class);
+		InitLog.initLogger(RecordHandlerTest.class, null, null);
 		this.rh = null;
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
-		ArrayList<String> ids = new ArrayList<String>();
-		// Get list of record ids
-		for(Record r : this.rh) {
-			/*
-			 * Do not do this: this.rh.delRecord(r.getID()); since that will generate ConcurrentModificationException
-			 */
-			ids.add(r.getID());
+		if(this.rh != null) {
+			ArrayList<String> ids = new ArrayList<String>();
+			// Get list of record ids
+			for(Record r : this.rh) {
+				/*
+				 * Do not do this: this.rh.delRecord(r.getID()); since that will generate ConcurrentModificationException
+				 */
+				ids.add(r.getID());
+			}
+			// Delete records for all ids
+			for(String id : ids) {
+				this.rh.delRecord(id);
+			}
+			this.rh.close();
 		}
-		// Delete records for all ids
-		for(String id : ids) {
-			this.rh.delRecord(id);
-		}
-		this.rh.close();
 	}
 	
 	/**
@@ -68,8 +70,9 @@ public class RecordHandlerTest extends TestCase {
 	public void testParseNoConfigTFRH() throws IOException {
 		log.info("BEGIN testParseNoConfigTFRH");
 		Map<String,String> overrideParams = new HashMap<String, String>();
+		overrideParams.put("rhClass", TextFileRecordHandler.class.getCanonicalName());
 		overrideParams.put("fileDir", "tmp://testingNoConfRH-Text");
-		this.rh = RecordHandler.parseConfig(null, overrideParams);
+		this.rh = RecordHandler.parseConfig((String)null, overrideParams);
 		log.info("END testParseNoConfigTFRH");
 	}
 	
@@ -81,13 +84,14 @@ public class RecordHandlerTest extends TestCase {
 	public void testParseNoConfigJDBCRH() throws IOException {
 		log.info("BEGIN testParseNoConfigJDBCRH");
 		Map<String,String> overrideParams = new HashMap<String, String>();
+		overrideParams.put("rhClass", JDBCRecordHandler.class.getCanonicalName());
 		overrideParams.put("dbClass", "org.h2.Driver");
 		overrideParams.put("dbUrl", "jdbc:h2:mem:TestNoConfRH-JDBC");
 		overrideParams.put("dbUser", "sa");
 		overrideParams.put("dbPass", "");
 		overrideParams.put("dbTable", "testdb");
 		overrideParams.put("dataFieldName", "data");
-		this.rh = RecordHandler.parseConfig(null, overrideParams);
+		this.rh = RecordHandler.parseConfig((String)null, overrideParams);
 		log.info("END testParseNoConfigJDBCRH");
 	}
 	
@@ -99,6 +103,7 @@ public class RecordHandlerTest extends TestCase {
 	public void testParseNoConfigJenaRH() throws IOException {
 		log.info("BEGIN testParseNoConfigJenaRH");
 		Map<String,String> overrideParams = new HashMap<String, String>();
+		overrideParams.put("rhClass", JenaRecordHandler.class.getCanonicalName());
 		overrideParams.put("dbClass", "org.h2.Driver");
 		overrideParams.put("dbUrl", "jdbc:h2:mem:TestNoConfRH-Jena");
 		overrideParams.put("dbUser", "sa");
@@ -108,7 +113,7 @@ public class RecordHandlerTest extends TestCase {
 		overrideParams.put("dbLayout", "layout2");
 		overrideParams.put("modelName", "namedModel");
 		overrideParams.put("dataFieldType", "http://localhost/jenarecordhandlerdemo#data");
-		this.rh = RecordHandler.parseConfig(null, overrideParams);
+		this.rh = RecordHandler.parseConfig((String)null, overrideParams);
 		log.info("END testParseNoConfigJenaRH");
 	}
 	
@@ -117,10 +122,11 @@ public class RecordHandlerTest extends TestCase {
 	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
-	public void testParseNoConfigMapRH() throws IOException {
-		log.info("BEGIN testParseNoConfigMapRH");
-		this.rh = RecordHandler.parseConfig(null, new HashMap<String, String>());
-		log.info("END testParseNoConfigMapRH");
+	public void testParseNoConfigNoOverFailRH() throws IOException {
+		log.info("BEGIN testParseNoConfigNoOverFailRH");
+		this.rh = RecordHandler.parseConfig((String)null, new HashMap<String, String>());
+		assertNull(this.rh);
+		log.info("END testParseNoConfigNoOverFailRH");
 	}
 	
 	/**

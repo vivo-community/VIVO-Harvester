@@ -196,16 +196,17 @@ public class XSLTranslator {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(XSLTranslator.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(XSLTranslator.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new XSLTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 	
 }

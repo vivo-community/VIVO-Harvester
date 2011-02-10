@@ -28,7 +28,7 @@ public class ArgListTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(ArgListTest.class);
+		InitLog.initLogger(ArgListTest.class, null, null);
 		parser = new ArgParser("ArgListTest");
 	}
 	

@@ -169,17 +169,18 @@ public class CSVtoJDBC {
 	 * @param args commandline arguments
 	 */
 	public static void main(String[] args) {
-		InitLog.initLogger(CSVtoJDBC.class);
-		log.info(getParser().getAppName()+": Start");
 		try {
+			InitLog.initLogger(CSVtoJDBC.class, args, getParser());
+			log.info(getParser().getAppName()+": Start");
 			new CSVtoJDBC(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+		} finally {
+			log.info(getParser().getAppName()+": End");
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 	
 }

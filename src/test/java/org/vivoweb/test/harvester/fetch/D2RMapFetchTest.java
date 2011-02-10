@@ -6,31 +6,14 @@
  ******************************************************************************/
 package org.vivoweb.test.harvester.fetch;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.D2RMapFetch;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
-import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * @author Eliza Chan (elc2013@med.cornell.edu)
@@ -47,7 +30,7 @@ public class D2RMapFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(D2RMapFetchTest.class);
+		InitLog.initLogger(D2RMapFetchTest.class, null, null);
 	}
 	
 	@Override
@@ -62,6 +45,10 @@ public class D2RMapFetchTest extends TestCase {
 		this.rh = null;
 	}
 	
+	/**
+	 * test d2rmat
+	 * @throws Exception error
+	 */
 	public final void testD2RMapFetchInit() throws Exception {
 		log.info("BEGIN testD2RMapFetchInit");
 		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestD2RMapFetchRHDB", "sa", "", "recordTable", "dataField");
