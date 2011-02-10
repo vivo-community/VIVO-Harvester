@@ -100,25 +100,31 @@ OFNAME="-AfName=$EQDIFF -FfName=http://vivoweb.org/ontology/score#foreName -WfNa
 OLNAME="-AlName=$EQDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
 OMNAME="-AmName=$EQDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
 PMID="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/pmid -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/pmid"
+TITLE="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#title -WPMID=1.0 -PPMID=http://vivoweb.org/ontology/core#title"
+ISSN="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/ISSN -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/ISSN"
+JOURNALPUB="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#publicationVenueFor -WPMID=1.0 -PPMID=http://vivoweb.org/ontology/core#publicationVenueFor"
+RDFSLABEL="-APMID=$EQDIFF -FPMID=http://www.w3.org/2000/01/rdf-schema#label -WPMID=.5 -PPMID=http://www.w3.org/2000/01/rdf-schema#label"
+AUTHORSHIPPUB="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#linkedInformationResource -WPMID=.5 -PPMID=http://vivoweb.org/ontology/core#linkedInformationResource"
+AUTHORTOSHIP="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#authorInAuthorship -WPMID=.5 -PPMID=http://vivoweb.org/ontology/core#authorInAuthorship"
 
 #find the originally ingested publication
-#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
-#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-#Clear $SCOREOLDPUB 
+$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
+$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+$JenaConnect -j $SCOREOLDPUB -t		//clears out the model 
 
 #find the originally ingested journal
-#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB #Match Journal
-#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-#Clear $SCOREOLDPUB
+$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $TITLE $ISSN $JOURNALPUB #Match Journal
+$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+$JenaConnect -j $SCOREOLDPUB -t		//clears out the model
 
 #find the originally ingested Authorship
-#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
-#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-#Clear $SCOREOLDPUB
+$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $RDFSLABEL $AUTHORSHIPPUB
+$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+$JenaConnect -j $SCOREOLDPUB -t		//clears out the model
 
 #find the originally ingested  Author
-#$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB
-#$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
+$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $RDFSLABEL $AUTHORTOSHIP
+$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
