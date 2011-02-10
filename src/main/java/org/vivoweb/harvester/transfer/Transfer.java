@@ -152,55 +152,54 @@ public class Transfer {
 	 * @throws IOException error writing
 	 */
 	private void execute() throws IOException {
-		boolean newInput = false;
-		
-		if(this.dumpFile != null && this.input == null) {
-			newInput = true;
-		}
-		if(this.emptyModel) {
-			if(this.input == null) {
-				newInput = true;
-			} else {
-				this.input.truncate();
+		boolean inputIsOutput = false;
+		if(this.input == null || this.output == null) {
+			inputIsOutput = true;
+			if(this.input == null){
+				this.input = this.output;
+				if(this.dumpFile != null || this.emptyModel){
+					this.input = new MemJenaConnect();
+				}
+			}else{
+				this.output = this.input;
 			}
 		}
-		if(newInput && this.input == null) {
-			this.input = new MemJenaConnect();
-		}
-		boolean inputIsOutput = false;
-		if(this.input == null && this.output != null) {
-			inputIsOutput = true;
-			this.input = this.output;
-		} else if(this.input != null && this.output == null) {
-			inputIsOutput = true;
-			this.output = this.input;
+
+		if(this.emptyModel){
+			this.input.truncate();
 		}
 		
-		if(this.inRDF != null) {
-			try {
-				log.debug("removeMode?: " + this.removeMode);
-				if(this.removeMode) {
+		try {
+			log.debug("removeMode?: " + this.removeMode);
+			if(this.removeMode) {
+				if(this.inRDF != null){
 					log.trace("removing inputfile from output");
 					this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
-				} else {
+				}else if(this.inRH != null){
+					log.info("Remving Records from RecordHandler");
+					int processCount = this.output.removeRdfFromRH(this.inRH, this.namespace);
+					log.info("Removed " + processCount + " records");
+				}
+				if(!inputIsOutput){
+					log.trace("removing input from output");
+					this.output.removeRdfFromJC(this.input);
+				}
+			} else {
+				if(this.inRDF != null){
 					log.trace("adding inputfile to input");
 					this.input.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
+				}else if(this.inRH != null){
+					log.info("Loading Records from RecordHandler");
+					int processCount = this.input.loadRdfFromRH(this.inRH, this.namespace);
+					log.info("Loaded " + processCount + " records");
 				}
-			} catch(FileSystemException e) {
-				log.error(e.getMessage(), e);
+				if(!inputIsOutput){
+					log.trace("adding input to output");
+					this.output.loadRdfFromJC(this.input);
+				}
 			}
-		}
-		
-		if(this.inRH != null) {
-			if(this.removeMode) {
-				log.info("Remving Records from RecordHandler");
-				int processCount = this.output.removeRdfFromRH(this.inRH, this.namespace);
-				log.info("Removed " + processCount + " records");
-			} else {
-				log.info("Loading Records from RecordHandler");
-				int processCount = this.input.loadRdfFromRH(this.inRH, this.namespace);
-				log.info("Loaded " + processCount + " records");
-			}
+		} catch(FileSystemException e) {
+			log.error(e.getMessage(), e);
 		}
 		
 		if(this.dumpFile != null) {
@@ -209,27 +208,97 @@ public class Transfer {
 		}
 		
 		if(!inputIsOutput) {
-			if(this.removeMode) {
-				log.trace("removing input from output");
-				this.output.removeRdfFromJC(this.input);
-			} else {
-				log.trace("adding input to output");
-				this.output.loadRdfFromJC(this.input);
+//			 empty model	
+			if(this.clearModel) {
+				this.input.truncate();
+			}
+			
+//			 close the models		
+			if(this.output != null) {
+				this.output.close();
 			}
 		}
 		
-		// empty model
-		if(this.clearModel && !inputIsOutput) {
-			this.input.truncate();
-		}
-		
-		// close the models;
 		if(this.input != null) {
 			this.input.close();
 		}
-		if(this.output != null && !inputIsOutput) {
-			this.output.close();
-		}
+		
+//		if(this.dumpFile != null && this.input == null) {
+//			newInput = true;
+//		}
+//		if(this.emptyModel) {
+//			if(this.input == null) {
+//				newInput = true;
+//			} else {
+//				this.input.truncate();
+//			}
+//		}
+//		if(newInput && this.input == null) {
+//			this.input = new MemJenaConnect();
+//		}
+//		boolean inputIsOutput = false;
+//		if(this.input == null && this.output != null) {
+//			inputIsOutput = true;
+//			this.input = this.output;
+//		} else if(this.input != null && this.output == null) {
+//			inputIsOutput = true;
+//			this.output = this.input;
+//		}
+//		
+//		if(this.inRDF != null) {
+//			try {
+//				log.debug("removeMode?: " + this.removeMode);
+//				if(this.removeMode) {
+//					log.trace("removing inputfile from output");
+//					this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
+//				} else {
+//					log.trace("adding inputfile to input");
+//					this.input.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
+//				}
+//			} catch(FileSystemException e) {
+//				log.error(e.getMessage(), e);
+//			}
+//		}
+//		
+//		if(this.inRH != null) {
+//			if(this.removeMode) {
+//				log.info("Remving Records from RecordHandler");
+//				int processCount = this.output.removeRdfFromRH(this.inRH, this.namespace);
+//				log.info("Removed " + processCount + " records");
+//			} else {
+//				log.info("Loading Records from RecordHandler");
+//				int processCount = this.input.loadRdfFromRH(this.inRH, this.namespace);
+//				log.info("Loaded " + processCount + " records");
+//			}
+//		}
+//		
+//		if(this.dumpFile != null) {
+//			log.trace("dumping input to dumpfile");
+//			this.input.exportRdfToFile(this.dumpFile);
+//		}
+//		
+//		if(!inputIsOutput) {
+//			if(this.removeMode) {
+//				log.trace("removing input from output");
+//				this.output.removeRdfFromJC(this.input);
+//			} else {
+//				log.trace("adding input to output");
+//				this.output.loadRdfFromJC(this.input);
+//			}
+//		}
+//		
+//		// empty model
+//		if(this.clearModel && !inputIsOutput) {
+//			this.input.truncate();
+//		}
+//		
+//		// close the models;
+//		if(this.input != null) {
+//			this.input.close();
+//		}
+//		if(this.output != null && !inputIsOutput) {
+//			this.output.close();
+//		}
 	}
 	
 	/**
