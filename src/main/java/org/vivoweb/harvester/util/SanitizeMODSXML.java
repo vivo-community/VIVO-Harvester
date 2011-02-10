@@ -52,8 +52,9 @@ public class SanitizeMODSXML
 	 * @param outputPath the sanitized XML file
 	 */
 	public SanitizeMODSXML(String inputPath, String outputPath) {
-		this.inputPath = inputPath;
-		this.outputPath = outputPath;
+		this.inputPath = stripFinalSlash(inputPath);
+		this.outputPath = stripFinalSlash(outputPath);
+		checkValidInputs();
 	}
 	
 	/**
@@ -71,8 +72,9 @@ public class SanitizeMODSXML
 	 */
 	public SanitizeMODSXML(ArgList argList) {
 
-		this.inputPath = argList.get("inputPath");
-		this.outputPath = argList.get("outputPath");
+		this.inputPath = stripFinalSlash(argList.get("inputPath"));
+		this.outputPath = stripFinalSlash(argList.get("outputPath"));
+		checkValidInputs();
 	}
 	
 	
@@ -86,6 +88,52 @@ public class SanitizeMODSXML
 		parser.addArgument(new ArgDef().setLongOpt("outputPath").withParameter(true, "OUTPUT_PATH").setDescription("Path of file to output (will overwrite)").setRequired(true));
 		return parser;
 	}
+	
+	
+	/**
+	 * Checks to see if the given path has a slash at the end, and if so, removes it
+	 * @param path the path to check
+	 * @return the path with the slash removed
+	 */
+	private String stripFinalSlash(String path)
+	{
+		String returnValue = path;
+		if(returnValue.endsWith("/"))
+			returnValue = returnValue.substring(0, returnValue.length() - 1);
+			
+		return returnValue;
+	}
+
+	/**
+	 * Checks to make sure the input path and the output path are both directories.  It not, log errors and explode.
+	 * @throws RuntimeException if either input path or output path is not a directory
+	 */
+	private void checkValidInputs()
+	{
+		File inputDir = new File(this.inputPath);
+		File outputDir = new File(this.outputPath);
+
+		String errorMessage = "";
+		if(!inputDir.isDirectory())
+		{
+			String oneLineError = "Not a directory: " + this.inputPath;
+			log.error(oneLineError);
+			errorMessage += oneLineError + "\n";
+		}
+		if(outputDir.exists() && (!outputDir.isDirectory()))
+		{
+			String oneLineError = "Not a directory: " + this.outputPath;
+			log.error(oneLineError);
+			errorMessage += oneLineError + "\n";
+		}
+
+		if(!errorMessage.equals(""))
+		{
+			errorMessage = errorMessage.substring(0, errorMessage.length() - 1); //strip last newline
+			throw new RuntimeException(errorMessage); //explode
+		}
+	}
+
 
 	/**
 	 * Initialize the mapping of bad values to their replacements
@@ -102,15 +150,41 @@ public class SanitizeMODSXML
 	
 	
 	/**
-	 * Sanitize a MODS XML file
+	 * Sanitize all files in directory
 	 * @throws IOException if an error in reading or writing occurs
 	 */
 	public void execute() throws IOException {
 
-		String xmlData = readFile(this.inputPath);
-		//xmlData = doReplacement(xmlData);
-		writeFile(this.outputPath, xmlData);
+		File inputDir = new File(this.inputPath);
+		File outputDir = new File(this.outputPath);
+		
+		if(!outputDir.exists())
+			outputDir.mkdir();
+		
+		File[] children = inputDir.listFiles();
+		for(File file : children)
+		{
+			if(file.isFile())
+			{
+				String inputFilePath = this.inputPath + "/" + file.getName();
+				String outputFilePath = this.outputPath + "/" + file.getName();
+				sanitizeFile(inputFilePath, outputFilePath);
+			}
+		}
 	}
+	
+	/**
+	 * Sanitize a MODS XML file
+	 * @param inputFilePath the path to the file to sanitize
+	 * @param outputFilePath the path to which to write the sanitized file
+	 * @throws IOException if an error in reading or writing occurs
+	 */
+	private void sanitizeFile(String inputFilePath, String outputFilePath) throws IOException
+	{
+		String xmlData = readFile(inputFilePath);
+		writeFile(outputFilePath, xmlData);
+	}
+	
 	
 	/**
 	 * Loads an entire file into a String.
