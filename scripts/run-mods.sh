@@ -78,16 +78,11 @@ LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -
 mkdir XMLVault/h2MODS/temp/
 TEMP="-t XMLVault/h2MODS/temp/"
 
-$Transfer $INPUT -d ../transferDump1.txt
+#$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME
 
-$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME
-
-$Transfer $INPUT -d ../transferDump2.txt
-$Transfer $SCOREINPUT -d ../transferDump3.txt
-
-$Match $INPUT $SCORE $MATCHOUTPUT -t 0.9 -r
-#$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME $MNAME
-#$Match $INPUT $SCORE -t 0.8 -r
+#$Match $INPUT $SCORE $MATCHOUTPUT -t 0.9 -r
+$Score $VIVO $INPUT $TEMP $SCORE $FNAME $LNAME
+$Match $INPUT $SCORE -t 0.8 -r
 
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
@@ -97,12 +92,8 @@ ln -s ps.scored.$date.tar.gz backups/mods.scored.latest.tar.gz
 # uncomment to restore previous H2 score models
 #tar -xzpf backups/mods.scored.latest.tar.gz XMLVault/h2MODS/score
 
-$Transfer $MATCHINPUT -d ../transferDump4.txt
-
 #remove score statements
 $Qualify $MATCHINPUT -n http://vivoweb.org/ontology/score -p
-
-$Transfer $MATCHINPUT -d ../transferDump5.txt
 
 # Execute ChangeNamespace to get into current namespace
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPub/
@@ -111,15 +102,6 @@ $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAu
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPublisher/
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubVenue/
 $ChangeNamespace $VIVO $INPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubDate/
-
-$Transfer $INPUT -d ../transferDump6.txt
-
-#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPub/
-#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthorship/
-#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsAuthor/
-#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPublisher/
-#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubVenue/
-#$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/modsPubDate/
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 date=`date +%Y-%m-%d_%T`
