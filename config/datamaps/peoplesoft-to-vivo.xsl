@@ -20,15 +20,8 @@
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
-	xmlns:db-t_UF_DIR_EMP_STU_1="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_1/"
-	xmlns:db-t_UF_DIR_EMP_STU_2="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_2/"
-	xmlns:db-t_UF_DIR_EMP_STU_3="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_3/"
-	xmlns:db-t_UF_DIR_EMP_STU_4="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_4/"
-	xmlns:db-t_UF_DIR_EMP_STU_5="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_5/"
-	xmlns:db-t_UF_DIR_EMP_STU_6="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_6/"
-	xmlns:db-t_UF_PA_GL_ACCT="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_PA_GL_ACCT/"
-	xmlns:db-t_UF_PER_UFAU="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_PER_UFAU/"
-	xmlns:db-t_PS_H_UF_ACAD_ORG="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_PS_H_UF_ACAD_ORG/"
+	xmlns:db-people="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/people/"
+	xmlns:db-positions="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/positions/"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'>
@@ -44,15 +37,8 @@
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
 			xmlns:ufl="http://vivo.ufl.edu/ontology/vivo-ufl/"
-			xmlns:db-t_UF_DIR_EMP_STU_1="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_1/"
-			xmlns:db-t_UF_DIR_EMP_STU_2="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_2/"
-			xmlns:db-t_UF_DIR_EMP_STU_3="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_3/"
-			xmlns:db-t_UF_DIR_EMP_STU_4="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_4/"
-			xmlns:db-t_UF_DIR_EMP_STU_5="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_5/"
-			xmlns:db-t_UF_DIR_EMP_STU_6="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_DIR_EMP_STU_6/"
-			xmlns:db-t_UF_PA_GL_ACCT="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_PA_GL_ACCT/"
-			xmlns:db-t_UF_PER_UFAU="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_UF_PER_UFAU/"
-			xmlns:db-t_PS_H_UF_ACAD_ORG="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/t_PS_H_UF_ACAD_ORG/"
+			xmlns:db-people="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/people/"
+			xmlns:db-positions="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/positions/"
 			xmlns:foaf="http://xmlns.com/foaf/0.1/"
 			xmlns:owl="http://www.w3.org/2002/07/owl#"
 			xmlns:core="http://vivoweb.org/ontology/core#"
@@ -64,418 +50,157 @@
 	
 	<xsl:template match="rdf:Description">
 		<xsl:variable name="this" select="." />
-		<xsl:analyze-string select="$this/@rdf:about" regex="^.*/([^/]+?)#id_-_(.*?)(_-_.+)*?$">
-			<xsl:matching-substring>
-				<xsl:variable name="table" select="regex-group(1)" />
-				<xsl:variable name="ufid" select="regex-group(2)" />
-				<xsl:choose>
-					<xsl:when test="$table = 't_UF_DIR_EMP_STU_1'">
-						<xsl:call-template name="t_UF_DIR_EMP_STU_1">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when>
-					<xsl:when test="$table = 't_UF_DIR_EMP_STU_2'">
-						<xsl:call-template name="t_UF_DIR_EMP_STU_2">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when>
-					<!-- <xsl:when test="$table = 't_UF_DIR_EMP_STU_3'">
-						<xsl:call-template name="t_UF_DIR_EMP_STU_3">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when> -->
-					<xsl:when test="$table = 't_UF_DIR_EMP_STU_4'">
-						<xsl:call-template name="t_UF_DIR_EMP_STU_4">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when>
-					<xsl:when test="$table = 't_UF_DIR_EMP_STU_5'">
-						<xsl:call-template name="t_UF_DIR_EMP_STU_5">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when>
-					<!-- <xsl:when test="$table = 't_UF_DIR_EMP_STU_6'">
-						<xsl:call-template name="t_UF_DIR_EMP_STU_6">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when> -->
-					<xsl:when test="$table = 't_UF_PA_GL_ACCT'">
-						<xsl:call-template name="t_UF_PA_GL_ACCT">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when>
-					<xsl:when test="$table = 't_UF_PER_UFAU'">
-						<xsl:call-template name="t_UF_PER_UFAU">
-							<xsl:with-param name="ufid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when>
-					<!--<xsl:when test="$table = 't_PS_H_UF_ACAD_ORG'">
-						<xsl:call-template name="t_PS_H_UF_ACAD_ORG">
-							<xsl:with-param name="orgid" select="$ufid" />
-							<xsl:with-param name="this" select="$this" />
-						</xsl:call-template>
-					</xsl:when>-->
-				</xsl:choose>
-			</xsl:matching-substring>
-		</xsl:analyze-string>
+		<xsl:variable name="table">
+			<xsl:analyze-string select="../@xml:base" regex="^.*/([^/]+?)$">
+				<xsl:matching-substring>
+					<xsl:value-of select="regex-group(1)" />
+				</xsl:matching-substring>
+			</xsl:analyze-string>
+		</xsl:variable>
+		<xsl:choose>
+			<xsl:when test="$table = 'people'">
+				<xsl:call-template name="people">
+					<xsl:with-param name="this" select="$this" />
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="$table = 'positions'">
+				<xsl:call-template name="people">
+					<xsl:with-param name="this" select="$this" />
+				</xsl:call-template>
+			</xsl:when>
+		</xsl:choose>
 	</xsl:template>
 	
-	<xsl:template name="t_UF_DIR_EMP_STU_1">
-		<xsl:param name='ufid' />
+	<xsl:template name="people">
 		<xsl:param name='this' />
+		<xsl:variable name="ufid" select="$this/db-people:ufid"/>
 		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
 			<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid"/></ufVivo:ufid>
 			<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-			<ufVivo:businessName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_NAME_TXT" /></ufVivo:businessName>
-			<core:workEmail><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_1:UF_EMAIL" /></core:workEmail>
-		</rdf:Description>
-	</xsl:template>
-	
-	<xsl:template name="t_UF_DIR_EMP_STU_2">
-		<xsl:param name='ufid' />
-		<xsl:param name='this' />
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-			<xsl:if test="$this/db-t_UF_DIR_EMP_STU_2:UF_TYPE_CD = 10">
-				<core:workPhone><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_AREA_CD"/><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_PHONE_NO"/></core:workPhone>
+			<ufVivo:businessName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:busName" /></ufVivo:businessName>
+			<core:workEmail><xsl:value-of select="$this/db-people:email" /></core:workEmail>
+			<xsl:if test="normalize-space( $this/db-people:phone_area ) || normalize-space( $this/db-people:phone_num )">
+				<core:workPhone><xsl:value-of select="$this/db-people:phone_area"/><xsl:value-of select="$this/db-people:phone_num"/></core:workPhone>
 			</xsl:if>
-			<xsl:if test="$this/db-t_UF_DIR_EMP_STU_2:UF_TYPE_CD = 11">
-				<core:workFax><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_AREA_CD"/><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_2:UF_PHONE_NO"/></core:workFax>
+			<xsl:if test="normalize-space( $this/db-people:fax_area ) || normalize-space( $this/db-people:fax_num )">
+				<core:workFax><xsl:value-of select="$this/db-people:fax_area"/><xsl:value-of select="$this/db-people:fax_num"/></core:workFax>
+			</xsl:if>
+			<xsl:if test="normalize-space( $this/db-people:fname )">
+				<foaf:firstName><xsl:value-of select="$this/db-people:fname"/></foaf:firstName>
+			</xsl:if>
+			<xsl:if test="normalize-space( $this/db-people:lname )">
+				<foaf:lastName><xsl:value-of select="$this/db-people:lname"/></foaf:lastName>
+			</xsl:if>
+			<xsl:if test="normalize-space( $this/db-people:mname )">
+				<core:middleName><xsl:value-of select="$this/db-people:mname"/></core:middleName>
+			</xsl:if>
+			<xsl:if test="normalize-space( $this/db-people:prename )">
+				<bibo:prefixName><xsl:value-of select="$this/db-people:prename"/></bibo:prefixName>
+			</xsl:if>
+			<xsl:if test="normalize-space( $this/db-people:sufname )">
+				<bibo:suffixName><xsl:value-of select="$this/db-people:sufname"/></bibo:suffixName>
+			</xsl:if>
+			<xsl:if test="normalize-space( $this/db-people:fullname )">
+				<rdfs:label><xsl:value-of select="$this/db-people:fullname"/></rdfs:label>
+				<ufVivo:activeDirName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:fullname"/></ufVivo:activeDirName>
+			</xsl:if>
+			<xsl:if test="normalize-space( $this/db-people:gatorlink )">
+				<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:gatorlink"/></ufVivo:gatorlink>
+			</xsl:if>
+		    <xsl:if test="normalize-space( $this/db-people:title )">
+				<core:overview><xsl:value-of select="$this/db-people:title"/></core:overview>
 			</xsl:if>
 		</rdf:Description>
 	</xsl:template>
 	
-	<!-- <xsl:template name="t_UF_DIR_EMP_STU_3">
-		<xsl:param name='ufid' />
+	<xsl:template name="positions">
 		<xsl:param name='this' />
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-			<core:mailingAddress>
-				<xsl:variable name="typeCode" select="$this/db-t_UF_DIR_EMP_STU_3:UF_TYPE_CD"/>
-				<rdf:Description rdf:about="{$baseURI}address/addressFor{$ufid}type{$typeCode}">
-					<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#USPostalAddress"/>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AbstractInformation"/>
-					<core:mailingAddressFor rdf:resource="{$baseURI}ufid{$ufid}"/>
-				    <rdfs:label>
-				    	<xsl:if test="string($this/db-t_UF_DIR_EMP_STU_3:UF_ADDR_LINE1)">
-				    		<xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_3:UF_ADDR_LINE1" />
-				    		<xsl:text> </xsl:text>
-				    	</xsl:if>
-				    	<xsl:if test="string($this/db-t_UF_DIR_EMP_STU_3:UF_ADDR_LINE2)">
-				    		<xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_3:UF_ADDR_LINE2" />
-				    		<xsl:text> </xsl:text>
-				    	</xsl:if>
-				    	<xsl:if test="string($this/db-t_UF_DIR_EMP_STU_3:UF_ADDR_LINE3)">
-				    		<xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_3:UF_ADDR_LINE3" />
-				    	</xsl:if>
-				    </rdfs:label>
-				    <core:addressState><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_3:UF_STATE_CD" /></core:addressState>
-				    <core:addressPostalCode><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_3:UF_ZIP_CD" /></core:addressPostalCode>
-				    <core:addressCity><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_3:UF_CITY" /></core:addressCity>
-				</rdf:Description>
-			</core:mailingAddress>
-		</rdf:Description>
-	</xsl:template> -->
-	
-	<xsl:template name="t_UF_DIR_EMP_STU_4">
-		<xsl:param name='ufid' />
-		<xsl:param name='this' />
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-			<xsl:variable name="typeCode" select="$this/db-t_UF_DIR_EMP_STU_4:UF_TYPE_CD"/>
-			<xsl:choose>
-				<xsl:when test="$typeCode=35">
-					<foaf:firstName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></foaf:firstName>
-				</xsl:when>
-				<xsl:when test="$typeCode=36">
-					<foaf:lastName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></foaf:lastName>
-				</xsl:when>
-				<xsl:when test="$typeCode=37">
-					<core:middleName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></core:middleName>
-				</xsl:when>
-				<xsl:when test="$typeCode=38">
-					<bibo:prefixName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></bibo:prefixName>
-				</xsl:when>
-				<xsl:when test="$typeCode=39">
-					<bibo:suffixName><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></bibo:suffixName>
-				</xsl:when>
-				<xsl:when test="$typeCode=232">
-					<rdfs:label><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></rdfs:label>
-					<ufVivo:activeDirName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-t_UF_DIR_EMP_STU_4:UF_NAME_TXT"/></ufVivo:activeDirName>
-				</xsl:when>
-			</xsl:choose>
-		</rdf:Description>
-	</xsl:template>
-	
-	<xsl:template name="t_UF_DIR_EMP_STU_5">
-		<xsl:param name='ufid' />
-		<xsl:param name='this' />
-		<xsl:variable name="fullorgnum" select="$this/db-t_UF_DIR_EMP_STU_5:PS_DEPTID"/>
-		<xsl:variable name="typeCode" select="$this/db-t_UF_DIR_EMP_STU_5:UF_TYPE_CD"/>
-		<xsl:variable name="startYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_5:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
-		<xsl:variable name="startDate"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_5:UF_BEGIN_TS" regex="^(....-..-..).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-			<xsl:choose>
-				<xsl:when test="$typeCode=192">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=193">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=194">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=195">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=197">
-					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFaculty"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=200">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EmeritusProfessor"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=219">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
-				</xsl:when>
-			</xsl:choose>
-			<core:personInPosition>
-				<rdf:Description rdf:about="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
-					<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
-					<rdfs:label><xsl:value-of select="$this/../rdf:Description[count(db-t_UF_DIR_EMP_STU_1:UF_WORK_TITLE) > 0]/db-t_UF_DIR_EMP_STU_1:UF_WORK_TITLE"/></rdfs:label>
-					<xsl:choose>
-						<xsl:when test="$typeCode=192">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=193">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=194">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=195">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=197">
-							<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFacultyPos"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=200">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=219">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
-						</xsl:otherwise>
-					</xsl:choose>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
-					<ufVivo:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufVivo:deptIDofPosition>
-					<core:positionInOrganization>
-						<rdf:Description rdf:about="{$baseURI}org/org{$fullorgnum}">
-							<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
-							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-				    		<ufVivo:deptID><xsl:value-of select="$fullorgnum"/></ufVivo:deptID>
-							<core:organizationForPosition rdf:resource="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
-						</rdf:Description>
-					</core:positionInOrganization>
-					<core:positionForPerson rdf:resource="{$baseURI}person/ufid{$ufid}"/>
-					<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="$startYear"/></core:startYear>
-				</rdf:Description>
-			</core:personInPosition>
-		</rdf:Description>
-	</xsl:template>
-	
-	<!-- <xsl:template name="t_UF_DIR_EMP_STU_6">
-		<xsl:param name='ufid' />
-		<xsl:param name='this' />
-		<xsl:variable name="fullorgnum" select="$this/db-t_UF_DIR_EMP_STU_6:PS_DEPTID"/>
-		<xsl:variable name="typeCode" select="$this/db-t_UF_DIR_EMP_STU_6:UF_TYPE_CD"/>
-		<xsl:variable name="startYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_BEGIN_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
-		<xsl:variable name="endYear"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_END_TS" regex="^(....).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
-		<xsl:variable name="startDate"><xsl:analyze-string select="$this/db-t_UF_DIR_EMP_STU_6:UF_BEGIN_TS" regex="^(....-..-..).*?$"><xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring></xsl:analyze-string></xsl:variable>
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-			<xsl:choose>
-				<xsl:when test="$typeCode=192">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=193">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=194">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=195">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=197">
-					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFaculty"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=200">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EmeritusProfessor"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=219">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
-				</xsl:when>
-			</xsl:choose>
-			<core:personInPosition>
-				<rdf:Description rdf:about="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
-					<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
-					<xsl:choose>
-						<xsl:when test="$typeCode=192">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-							<rdfs:label>Faculty</rdfs:label>
-						</xsl:when>
-						<xsl:when test="$typeCode=193">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-							<rdfs:label>Staff</rdfs:label>
-						</xsl:when>
-						<xsl:when test="$typeCode=194">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-							<rdfs:label>Staff</rdfs:label>
-						</xsl:when>
-						<xsl:when test="$typeCode=195">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-							<rdfs:label>Staff</rdfs:label>
-						</xsl:when>
-						<xsl:when test="$typeCode=197">
-							<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFacultyPos"/>
-							<rdfs:label>Faculty</rdfs:label>
-						</xsl:when>
-						<xsl:when test="$typeCode=200">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-							<rdfs:label>Faculty</rdfs:label>
-						</xsl:when>
-						<xsl:when test="$typeCode=219">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-							<rdfs:label>Faculty</rdfs:label>
-						</xsl:when>
-						<xsl:otherwise>
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
-							<rdfs:label>Employee</rdfs:label>
-						</xsl:otherwise>
-					</xsl:choose>
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
-					<ufVivo:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufVivo:deptIDofPosition>
-					<core:positionInOrganization>
-						<rdf:Description rdf:about="{$baseURI}org/org{$fullorgnum}">
-							<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
-							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-				    		<ufVivo:deptID><xsl:value-of select="$fullorgnum"/></ufVivo:deptID>
-							<core:organizationForPosition rdf:resource="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
-						</rdf:Description>
-					</core:positionInOrganization>
-					<core:positionForPerson rdf:resource="{$baseURI}person/ufid{$ufid}"/>
-					<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="$startYear"/></core:startYear>
-					<core:endYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="$endYear"/></core:endYear>
-				</rdf:Description>
-			</core:personInPosition>
-		</rdf:Description>
-	</xsl:template> -->
-	
-	<xsl:template name="t_UF_PA_GL_ACCT">
-		<xsl:param name='ufid' />
-		<xsl:param name='this' />
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-			<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-t_UF_PA_GL_ACCT:USERIDALIAS"/></ufVivo:gatorlink>
-		</rdf:Description>
-	</xsl:template>
-	
-	<xsl:template name="t_UF_PER_UFAU">
-		<xsl:param name='ufid' />
-		<xsl:param name='this' />
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-		    <core:overview><xsl:value-of select="$this/db-t_UF_PER_UFAU:UF_JOB_LONG"/></core:overview>
-		</rdf:Description>
-	</xsl:template>
-	
-	<!-- <xsl:template name="t_PS_H_UF_ACAD_ORG">
-		<xsl:param name='orgid' />
-		<xsl:param name='this' />
-		<rdf:Description rdf:about="{$baseURI}org/org{$orgid}">
-			<ufVivo:peopleSoftLabel xml:lang="en-US"><xsl:value-of select="$this/db-t_PS_H_UF_ACAD_ORG:DTL_DESC"/></ufVivo:peopleSoftLabel>
-		    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
-		    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-		    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-		    <ufVivo:deptID><xsl:value-of select="$orgid"/></ufVivo:deptID>
-			< ! - - <xsl:analyze-string select="$orgid" regex="^(..)(..)(..)(..).*?$">
+		<xsl:variable name="ufid" select="$this/db-positions:ufid"/>
+		<xsl:variable name="fullorgnum" select="$this/db-positions:deptId"/>
+		<xsl:variable name="typeCode" select="$this/db-positions:typeCode"/>
+		<xsl:variable name="startYear">
+			<xsl:analyze-string select="$this/db-positions:beginTS" regex="^(....).*?$">
 				<xsl:matching-substring>
-					<xsl:variable name="p1" select="regex-group(1)"/>
-					<xsl:variable name="p2" select="regex-group(2)"/>
-					<xsl:variable name="p3" select="regex-group(3)"/>
-					<xsl:variable name="p4" select="regex-group(4)"/>
-					<xsl:variable name="L2desc" select="$this/db-t_PS_H_UF_ACAD_ORG:L2_DESC"/>
-					<xsl:variable name="L3desc" select="$this/db-t_PS_H_UF_ACAD_ORG:L3_DESC"/>
-					<xsl:variable name="L4desc" select="$this/db-t_PS_H_UF_ACAD_ORG:L4_DESC"/>
-					<xsl:variable name="L2id" select="$this/db-t_PS_H_UF_ACAD_ORG:L2_ID"/>
-					<xsl:variable name="L3id" select="$this/db-t_PS_H_UF_ACAD_ORG:L3_ID"/>
-					<xsl:variable name="L4id" select="$this/db-t_PS_H_UF_ACAD_ORG:L4_ID"/>
-					<xsl:variable name="p1xs"><xsl:value-of select="$p1"/>XXXXXX</xsl:variable>
-					<xsl:variable name="p1p2xs"><xsl:value-of select="$p1"/><xsl:value-of select="$p2"/>XXXX</xsl:variable>
-					<xsl:variable name="p1p2p3xs"><xsl:value-of select="$p1"/><xsl:value-of select="$p2"/><xsl:value-of select="$p3"/>XX</xsl:variable>
-					<xsl:variable name="p1zeros">org<xsl:value-of select="$p1"/>000000</xsl:variable>
-					<xsl:variable name="p1p2zeros">org<xsl:value-of select="$p1"/><xsl:value-of select="$p2"/>0000</xsl:variable>
-					<xsl:variable name="p1p2p3zeros">org<xsl:value-of select="$p1"/><xsl:value-of select="$p2"/><xsl:value-of select="$p3"/>00</xsl:variable>
-					<xsl:variable name="uf">UniversityofFlorida</xsl:variable>
-					<xsl:variable name="level">
-						<xsl:choose><xsl:when test="$p4!='00'">
-							<xsl:value-of select="4"/>
-						</xsl:when><xsl:when test="$p3!='00'">
-							<xsl:value-of select="3"/>
-						</xsl:when><xsl:when test="$p2!='00'">
-							<xsl:value-of select="2"/>
-						</xsl:when><xsl:otherwise>
-							<xsl:value-of select="1"/>
-						</xsl:otherwise></xsl:choose>
-					</xsl:variable>
-					<xsl:variable name="superorg">
-						<xsl:choose><! - - <xsl:when test="$level=4">
-							<xsl:choose><xsl:when test="$L4id=$p1p2p3xs">
-								<xsl:value-of select="$p1p2p3zeros"/>
-							</xsl:when><xsl:when test="$L3id=$p1p2xs">
-								<xsl:value-of select="$p1p2zeros"/>
-							</xsl:when><xsl:when test="$L2id=$p1xs">
-								<xsl:value-of select="$p1zeros"/>
-							</xsl:when><xsl:otherwise>
-								<xsl:value-of select="$uf"/>
-							</xsl:otherwise></xsl:choose>
-						</xsl:when><xsl:when test="$level=3">
-							</xsl:when><xsl:when test="$L3id=$p1p2xs">
-								<xsl:value-of select="$p1p2zeros"/>
-							</xsl:when><xsl:when test="$L2id=$p1xs">
-								<xsl:value-of select="$p1zeros"/>
-							</xsl:when><xsl:otherwise>
-								<xsl:value-of select="$uf"/>
-							</xsl:otherwise></xsl:choose>
+					<xsl:value-of select="regex-group(1)"/>
+				</xsl:matching-substring>
+			</xsl:analyze-string>
+		</xsl:variable>
+		<xsl:variable name="startDate">
+			<xsl:analyze-string select="$this/db-positions:beginTS" regex="^(....-..-..).*?$">
+				<xsl:matching-substring>
+					<xsl:value-of select="regex-group(1)"/>
+				</xsl:matching-substring>
+			</xsl:analyze-string>
+		</xsl:variable>
+		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
+			<xsl:choose>
+				<xsl:when test="$typeCode=192">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=193">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=194">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=195">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=197">
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFaculty"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=200">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EmeritusProfessor"/>
+				</xsl:when>
+				<xsl:when test="$typeCode=219">
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+				</xsl:when>
+			</xsl:choose>
+			<core:personInPosition>
+				<rdf:Description rdf:about="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
+					<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
+					<rdfs:label><xsl:value-of select="$this/db-positions:workTitle"/></rdfs:label>
+					<xsl:choose>
+						<xsl:when test="$typeCode=192">
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
 						</xsl:when>
-						
-						
-						
-						<xsl:when test="$level=3 and $L4id!=$p1p2p3xs and $L3id=$p1p2xs">
-							<xsl:value-of select="$p1p2zeros"/>
-						</xsl:when><xsl:when test="$level=2 and $L4id!=$p1p2p3xs and $L3id!=$p1p2xs and $L2id=$p1xs">
-							<xsl:value-of select="$p1zeros"/>
-						</xsl:when>- - >
-						<xsl:when test="$level!=1">
-							<xsl:value-of select="$p1zeros"/>
+						<xsl:when test="$typeCode=193">
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+						</xsl:when>
+						<xsl:when test="$typeCode=194">
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+						</xsl:when>
+						<xsl:when test="$typeCode=195">
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
+						</xsl:when>
+						<xsl:when test="$typeCode=197">
+							<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFacultyPos"/>
+						</xsl:when>
+						<xsl:when test="$typeCode=200">
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+						</xsl:when>
+						<xsl:when test="$typeCode=219">
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="$uf"/>
-						</xsl:otherwise></xsl:choose>
-					</xsl:variable>
-					<core:subOrganizationWithin>
-						<rdf:Description rdf:about="{$baseURI}org/{$superorg}">
-							<core:hasSubOrganization rdf:resource="{$baseURI}org/org{$orgid}"/>
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
+						</xsl:otherwise>
+					</xsl:choose>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+					<ufVivo:deptIDofPosition><xsl:value-of select="$fullorgnum"/></ufVivo:deptIDofPosition>
+					<core:positionInOrganization>
+						<rdf:Description rdf:about="{$baseURI}org/org{$fullorgnum}">
+							<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+				    		<ufVivo:deptID><xsl:value-of select="$fullorgnum"/></ufVivo:deptID>
+							<core:organizationForPosition rdf:resource="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}"/>
 						</rdf:Description>
-					</core:subOrganizationWithin>
-				</xsl:matching-substring>
-			</xsl:analyze-string> - - >
+					</core:positionInOrganization>
+					<core:positionForPerson rdf:resource="{$baseURI}person/ufid{$ufid}"/>
+					<core:startYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="$startYear"/></core:startYear>
+				</rdf:Description>
+			</core:personInPosition>
 		</rdf:Description>
-	</xsl:template> -->
+	</xsl:template>
 </xsl:stylesheet>
