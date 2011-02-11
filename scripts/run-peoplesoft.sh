@@ -53,8 +53,8 @@ BASEURI="http://vivoweb.org/harvest/ufl/peoplesoft/"
 rm -rf $RAWRHDIR
 
 # Execute Fetch
-$JDBCFetch -X config/tasks/PeopleSoftFetch.xml -o $TFRH -OfileDir=$RAWRHDIR
-#$JDBCFetch -X config/tasks/PeopleSoftFetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
+$JDBCFetch -X config/tasks/peoplesoft.jdbcfetch.xml -o $TFRH -OfileDir=$RAWRHDIR
+#$JDBCFetch -X config/tasks/peoplesoft.jdbcfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # backup fetch
 BACKRAW="raw"
