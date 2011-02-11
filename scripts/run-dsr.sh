@@ -110,7 +110,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n http://vivo.ufl.edu/individual/
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -123,49 +123,49 @@ backup-path $MODELDIR $BACKMODEL
 # The -A -W -F & -P flags need to be internally consistent per call
 
 #scoring of grants on contractnumber
-$Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n $BASEURIgrant/
+$Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
 # Scoring on UF ID person
-$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n $BASEURIperson/
+$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
 
 # Scoring on Dept ID
-$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n $BASEURIorg/
+$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
 
 # Scoring sponsors by labels
-$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n $BASEURIsponsor/
+$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
 
 # Scoring of PIs
-$Score $SCOREMODELS -Atype=$EQTEST -Wtype=1.0 -Ftype=$RDFTYPE -Ptype=$RDFTYPE -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n $BASEURIpiRole/
+$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}piRole/
 
 # Scoring of coPIs
-$Score $SCOREMODELS -Atype=$EQTEST -Wtype=1.0 -Ftype=$RDFTYPE -Ptype=$RDFTYPE -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n $BASEURIcoPiRole/
+$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o $BASEURIgrant/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}grant/
 
 # Execute ChangeNamespace to get orgs into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o $BASEURIorg/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}org/
 
 # Execute ChangeNamespace to get sponsors into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o $BASEURIsponsor/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}sponsor/
 
 # Execute ChangeNamespace to get people into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o $BASEURIperson/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}person/
 
 # Execute ChangeNamespace to get PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o $BASEURIpiRole/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}piRole/
 
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o $BASEURIcoPiRole/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}coPiRole/
 
 # backup H2 matched Model
 BACKMATCHED="matched"
