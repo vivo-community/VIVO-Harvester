@@ -2,7 +2,7 @@
 <Task>
 	<Param name="email">swilliams@ichp.ufl.edu</Param>
 	<Param name="output">config/recordhandlers/h2-jdbc.xml</Param>
-	<Param name="outputOverrides">dbUrl=jdbc:h2:harvested-data/pubmed/raw/store</Param>
+	<Param name="outputOverride">dbUrl=jdbc:h2:harvested-data/pubmed/raw/store</Param>
 <!--	TextFileRecordHandler for testing -->
 <!--	<Param name="output">config/recordhandlers/tfrh.xml</Param> -->
 <!--	<Param name="outputOverrides">fileDir=harvested-data/pubmed/raw/tfrh</Param> -->
