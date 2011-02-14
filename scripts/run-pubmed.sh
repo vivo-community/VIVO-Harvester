@@ -27,75 +27,83 @@ echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 #variables for model arguments
 HCONFIG="config/models/h2-sdb.xml"
-INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/h2Pubmed/all/store -ImodelName=Pubmed"
-OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/h2Pubmed/all/store -OmodelName=Pubmed"
+INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/pubmed/all/store -ImodelName=Pubmed"
+OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/pubmed/all/store -OmodelName=Pubmed"
 VIVO="-v $VIVOCONFIG"
-SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:harvested-data/h2Pubmed/score/store -SmodelName=Pubmed"
-SCOREOLDPUB="-s $HCONFIG -SdbUrl=jdbc:h2:harvested-data/h2Pubmed/score/store -SmodelName=PubmedPubOld"
-MATCHOUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/h2Pubmed/match/store -OmodelName=Pubmed"
-MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/h2Pubmed/match/store -ImodelName=Pubmed"
+SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:harvested-data/pubmed/score/store -SmodelName=Pubmed"
+SCOREOLDPUB="-s $HCONFIG -SdbUrl=jdbc:h2:harvested-data/pubmed/score/store -SmodelName=PubmedOldPub"
+OLDPUBJENACONNECT="-j $HCONFIG -JdbUrl=jdbc:h2:harvested-data/pubmed/score/store -JmodelName=PubmedOldPub"
+MATCHOUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/pubmed/match/store -OmodelName=Pubmed"
+MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/pubmed/match/store -ImodelName=Pubmed"
 
 #clear old fetches
-rm -rf harvested-data/h2Pubmed/XML
+rm -rf harvested-data/pubmed/raw
 
 # Execute Fetch for Pubmed
-$PubmedFetch -X config/tasks/example.pubmedfetch.xml
+#$PubmedFetch -X config/tasks/example.pubmedfetch.xml
+$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml
 
 # backup fetch
 date=`date +%Y-%m-%d_%T`
-tar -czpf backups/.$date.tar.gz harvested-data/h2Pubmed/XML
+tar -czpf backups/.$date.tar.gz harvested-data/pubmed/raw
 rm -rf backups/pubmed.xml.latest.tar.gz
 ln -s pubmed.xml.$date.tar.gz backups/pubmed.xml.latest.tar.gz
 # uncomment to restore previous fetch
-#tar -xzpf backups/pubmed.xml.latest.tar.gz harvested-data/h2Pubmed/XML
+#tar -xzpf backups/pubmed.xml.latest.tar.gz harvested-data/pubmed/raw/store
 
 # clear old translates
-rm -rf harvested-data/h2Pubmed/RDF
+rm -rf harvested-data/pubmed/rdf
 
 # Execute Translate using the PubmedToVIVO.xsl file
-$XSLTranslator -i config/recordhandlers/pubmed-tf-raw.xml -x config/datamaps/pubmed-to-vivo.xsl -o config/recordHandlers/pubmed-tf-rdf.xml
+$XSLTranslator -i config/recordhandlers/pubmed-raw.xml -x config/datamaps/pubmed-to-vivo.xsl -o config/recordhandlers/pubmed-rdf.xml
 
 # backup translate
 date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.rdf.$date.tar.gz harvested-data/h2Pubmed/RDF
+tar -czpf backups/pubmed.rdf.$date.tar.gz harvested-data/pubmed/rdf
 rm -rf backups/pubmed.rdf.latest.tar.gz
 ln -s pubmed.rdf.$date.tar.gz backups/pubmed.rdf.latest.tar.gz
 # uncomment to restore previous translate
-#tar -xzpf backups/pubmed.rdf.latest.tar.gz harvested-data/h2Pubmed/RDF
+#tar -xzpf backups/pubmed.rdf.latest.tar.gz harvested-data/pubmed/rdf
 
 # Clear old H2 models
-rm -rf harvested-data/h2Pubmed/all
-rm -rf harvested-data/h2Pubmed/temp
+rm -rf harvested-data/pubmed/all
+rm -rf harvested-data/pubmed/temp
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer $OUTPUT -h config/recordhandlers/pubmed-tf-rdf.xml
+$Transfer $OUTPUT -h config/recordhandlers/pubmed-rdf.xml
+
+#$Transfer $INPUT -h config/recordhandlers/pubmed-rdf.xml -d ../dumpfile.txt
+#$Transfer $INPUT -d ../dumpfile.txt
 
 # backup H2 translate Models
 date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.all.$date.tar.gz harvested-data/h2Pubmed/all
+tar -czpf backups/pubmed.all.$date.tar.gz harvested-data/pubmed/all
 rm -rf backups/pubmed.all.latest.tar.gz
 ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
 # uncomment to restore previous H2 translate models
-#tar -xzpf backups/pubmed.all.latest.tar.gz harvested-data/h2Pubmed/all
+#tar -xzpf backups/pubmed.all.latest.tar.gz harvested-data/pubmed/all
 
 # clear old score models
-rm -rf harvested-data/h2Pubmed/score
+rm -rf harvested-data/pubmed/score
 
 # Execute Score to disambiguate data in "scoring" JENA model
 # Execute match to match and link data into "vivo" JENA model
 LEVDIFF="org.vivoweb.harvester.score.algorithm.EqualityTest"
 EQDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.5 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
+WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.7 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
 FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
 LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
 MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
 VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
-mkdir harvested-data/h2Pubmed/temp/
-TEMP="-t harvested-data/h2Pubmed/temp/"
+mkdir harvested-data/pubmed/temp/
+TEMP="-t harvested-data/pubmed/temp/"
 
-$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME $MNAME
+#$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME $MNAME
+$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME
 $Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r -c
- 
+$Transfer $MATCHINPUT -d ../dumpfile.txt
+
+
 # for previously harvested data rename the publications uid to thier old harvested uid
 OFNAME="-AfName=$EQDIFF -FfName=http://vivoweb.org/ontology/score#foreName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
 OLNAME="-AlName=$EQDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
@@ -111,17 +119,17 @@ AUTHORTOSHIP="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#authorInAut
 #find the originally ingested publication
 $Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
 $Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-$JenaConnect -j $SCOREOLDPUB -t		//clears out the model 
+$JenaConnect $OLDPUBJENACONNECT -t		//clears out the model 
 
 #find the originally ingested journal
 $Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $TITLE $ISSN $JOURNALPUB #Match Journal
 $Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-$JenaConnect -j $SCOREOLDPUB -t		//clears out the model
+$JenaConnect $OLDPUBJENACONNECT -t		//clears out the model
 
 #find the originally ingested Authorship
 $Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $RDFSLABEL $AUTHORSHIPPUB
 $Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-$JenaConnect -j $SCOREOLDPUB -t		//clears out the model
+$JenaConnect $OLDPUBJENACONNECT -t		//clears out the model
 
 #find the originally ingested  Author
 $Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $RDFSLABEL $AUTHORTOSHIP
@@ -129,11 +137,11 @@ $Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
  
 # back H2 score models
 date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.scored.$date.tar.gz harvested-data/h2Pubmed/score
+tar -czpf backups/pubmed.scored.$date.tar.gz harvested-data/pubmed/score
 rm -rf backups/pubmed.scored.latest.tar.gz
 ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
 # uncomment to restore previous H2 score models
-#tar -xzpf backups/pubmed.scored.latest.tar.gz harvested-data/h2Pubmed/score
+#tar -xzpf backups/pubmed.scored.latest.tar.gz harvested-data/pubmed/score
 
 #remove score statements
 $Qualify $MATCHINPUT -n http://vivoweb.org/ontology/score -p
@@ -153,7 +161,7 @@ ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.la
 #Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
 
 INMODELNAME="modelName=Pubmed"
-INURL="dbUrl=jdbc:h2:harvested-data/h2Pubmed/match/store"
+INURL="dbUrl=jdbc:h2:harvested-data/pubmed/match/store"
 ADDFILE="harvested-data/update_Additions.rdf.xml"
 SUBFILE="harvested-data/update_Subtractions.rdf.xml"
   
@@ -180,6 +188,5 @@ ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
 /etc/init.d/tomcat stop
-wait 5
 /etc/init.d/apache2 reload
 /etc/init.d/tomcat start
