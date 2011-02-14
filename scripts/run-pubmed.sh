@@ -40,8 +40,8 @@ MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/pubmed/match/store -Imode
 rm -rf harvested-data/pubmed/raw
 
 # Execute Fetch for Pubmed
-#$PubmedFetch -X config/tasks/example.pubmedfetch.xml
-$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml
+$PubmedFetch -X config/tasks/example.pubmedfetch.xml
+#$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml
 
 # backup fetch
 date=`date +%Y-%m-%d_%T`
@@ -101,20 +101,20 @@ TEMP="-t harvested-data/pubmed/temp/"
 #$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME $MNAME
 $Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME
 $Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r -c
-$Transfer $MATCHINPUT -d ../dumpfile.txt
+#$Transfer $MATCHINPUT -d ../dumpfile.txt
 
 
 # for previously harvested data rename the publications uid to thier old harvested uid
 OFNAME="-AfName=$EQDIFF -FfName=http://vivoweb.org/ontology/score#foreName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
 OLNAME="-AlName=$EQDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
 OMNAME="-AmName=$EQDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
-PMID="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/pmid -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/pmid"
-TITLE="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#title -WPMID=1.0 -PPMID=http://vivoweb.org/ontology/core#title"
-ISSN="-APMID=$EQDIFF -FPMID=http://purl.org/ontology/bibo/ISSN -WPMID=1.0 -PPMID=http://purl.org/ontology/bibo/ISSN"
-JOURNALPUB="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#publicationVenueFor -WPMID=1.0 -PPMID=http://vivoweb.org/ontology/core#publicationVenueFor"
-RDFSLABEL="-APMID=$EQDIFF -FPMID=http://www.w3.org/2000/01/rdf-schema#label -WPMID=.5 -PPMID=http://www.w3.org/2000/01/rdf-schema#label"
-AUTHORSHIPPUB="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#linkedInformationResource -WPMID=.5 -PPMID=http://vivoweb.org/ontology/core#linkedInformationResource"
-AUTHORTOSHIP="-APMID=$EQDIFF -FPMID=http://vivoweb.org/ontology/core#authorInAuthorship -WPMID=.5 -PPMID=http://vivoweb.org/ontology/core#authorInAuthorship"
+PMID="-Apmid=$EQDIFF -Fpmid=http://purl.org/ontology/bibo/pmid -Wpmid=1.0 -Ppmid=http://purl.org/ontology/bibo/pmid"
+TITLE="-Atitle=$EQDIFF -Ftitle=http://vivoweb.org/ontology/core#title -Wtitle=1.0 -Ptitle=http://vivoweb.org/ontology/core#title"
+ISSN="-Aissn=$EQDIFF -Fissn=http://purl.org/ontology/bibo/ISSN -Wissn=1.0 -Pissn=http://purl.org/ontology/bibo/ISSN"
+JOURNALPUB="-Ajournalpub=$EQDIFF -Fjournalpub=http://vivoweb.org/ontology/core#publicationVenueFor -Wjournalpub=1.0 -Pjournalpub=http://vivoweb.org/ontology/core#publicationVenueFor"
+RDFSLABEL="-Ardfslabel=$EQDIFF -Frdfslabel=http://www.w3.org/2000/01/rdf-schema#label -Wrdfslabel=.5 -Prdfslabel=http://www.w3.org/2000/01/rdf-schema#label"
+AUTHORSHIPPUB="-Aauthorshippub=$EQDIFF -Fauthorshippub=http://vivoweb.org/ontology/core#linkedInformationResource -Wauthorshippub=.5 -Pauthorshippub=http://vivoweb.org/ontology/core#linkedInformationResource"
+AUTHORTOSHIP="-Aauthortoship=$EQDIFF -Fauthortoship=http://vivoweb.org/ontology/core#authorInAuthorship -Wauthortoship=.5 -Pauthortoship=http://vivoweb.org/ontology/core#authorInAuthorship"
 
 #find the originally ingested publication
 $Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
