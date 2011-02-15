@@ -83,7 +83,7 @@ $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$M
 BACKMODEL="model"
 backup-path $MODELDIR $BACKMODEL
 # uncomment to restore previous H2 transfer Model
-restore-path $MODELDIR $BACKMODEL
+#restore-path $MODELDIR $BACKMODEL
 
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
