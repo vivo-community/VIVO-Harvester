@@ -109,12 +109,19 @@ public class InitLog {
 	 */
 	public static void initLogger(@SuppressWarnings("unused") Class<?> classname, String[] args, ArgParser parser) throws IOException {
 		String logLevel = System.getProperty("console-log-level");
+		String harvLevel = System.getProperty("harvester-level");
+		System.setProperty("harvester-level", "OFF");
 		setLogLevel("OFF");
 		if(args != null && parser != null) {
 			ArgList argList = new ArgList(parser, args);
 			if(argList.has("w")) {
 				logLevel = argList.get("w");
 			}
+		}
+		if(harvLevel != null) {
+			System.setProperty("harvester-level", harvLevel);
+		} else {
+			System.clearProperty("harvester-level");
 		}
 		setLogLevel(logLevel);
 	}

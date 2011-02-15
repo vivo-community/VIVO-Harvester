@@ -10,6 +10,7 @@ package org.vivoweb.harvester.score;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -306,7 +307,7 @@ public class Score {
 
 		log.trace("Building Query");
 		String sQuery = buildSelectQuery();
-		log.debug("Match Query:\n"+sQuery);
+		log.debug("Score Query:\n"+sQuery);
 		// Execute query
 		log.trace("Building Query Execution");
 		Query query = QueryFactory.create(sQuery, Syntax.syntaxARQ);
@@ -321,7 +322,12 @@ public class Score {
 		} else {
 			log.info("Building Record Set");
 		}
-		Set<Map<String,String>> solSet = new TreeSet<Map<String,String>>();
+		Set<Map<String,String>> solSet = new TreeSet<Map<String,String>>(new Comparator<Map<String,String>>() {
+			@Override
+			public int compare(Map<String, String> o1, Map<String, String> o2) {
+				return o1.get("sInput").compareTo(o2.get("sInput"));
+			}
+		});
 		Map<String,String> tempMap;
 		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
 			String sinputuri = solution.getResource("sInput").getURI();
