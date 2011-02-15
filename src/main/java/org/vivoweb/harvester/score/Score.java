@@ -325,7 +325,9 @@ public class Score {
 		Set<Map<String,String>> solSet = new TreeSet<Map<String,String>>(new Comparator<Map<String,String>>() {
 			@Override
 			public int compare(Map<String, String> o1, Map<String, String> o2) {
-				return o1.get("sInput").compareTo(o2.get("sInput"));
+				String o1key = o1.get("sInput")+o1.get("sVivo");
+				String o2key = o2.get("sInput")+o2.get("sVivo");
+				return o1key.compareTo(o2key);
 			}
 		});
 		Map<String,String> tempMap;

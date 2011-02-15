@@ -159,12 +159,13 @@ public class Match {
 				"  ?value scoreValue:WeightedScore ?weightValue . \n" +
 				"}" +
 				"GROUP BY ?sVivo ?sInput \n" +
-				"HAVING (?sum >= "+threshold+")" +
-				"ORDERY BY ?sInput";
+				"HAVING (?sum >= "+threshold+") \n" +
+				"ORDER BY ?sInput";
 		Map<String,String> uriMatchMap = new HashMap<String,String>();
 
 		//log trace
 		log.trace("Query Start");
+		log.debug("Query:\n"+sQuery);
 		Iterable<QuerySolution> matchQuery = IterableAdaptor.adapt(this.scoreJena.executeSelectQuery(sQuery));
 		log.trace("Query Complete");
 		
