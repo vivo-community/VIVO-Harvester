@@ -64,7 +64,7 @@
 				</xsl:call-template>
 			</xsl:when>
 			<xsl:when test="$table = 'positions'">
-				<xsl:call-template name="people">
+				<xsl:call-template name="positions">
 					<xsl:with-param name="this" select="$this" />
 				</xsl:call-template>
 			</xsl:when>
