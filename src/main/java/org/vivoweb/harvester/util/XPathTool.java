@@ -79,7 +79,9 @@ public class XPathTool {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true); // never forget this!
 			Document doc = factory.newDocumentBuilder().parse(VFS.getManager().resolveFile(new File("."), xmlFile).getContent().getInputStream());
-			return XPathFactory.newInstance().newXPath().compile(expression).evaluate(doc, XPathConstants.STRING).toString();
+			String value = XPathFactory.newInstance().newXPath().compile(expression).evaluate(doc, XPathConstants.STRING).toString();
+			log.debug("xpath result for '"+expression+"' on file '"+xmlFile+"': '"+value+"'");
+			return value;
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
 		} catch(SAXException e) {
@@ -116,13 +118,13 @@ public class XPathTool {
 	 */
 	public static void main(String... args) {
 		try {
-			String harvLev = System.getProperty("harvester-level");
-			System.setProperty("harvester-level", "WARN");
+			String harvLev = System.getProperty("console-log-level");
+			System.setProperty("console-log-level", "OFF");
 			InitLog.initLogger(XPathTool.class, args, getParser());
 			if(harvLev == null) {
-				System.clearProperty("harvester-level");
+				System.clearProperty("console-log-level");
 			} else {
-				System.setProperty("harvester-level", harvLev);
+				System.setProperty("console-log-level", harvLev);
 			}
 			log.info(getParser().getAppName()+": Start");
 			new XPathTool(args).execute();

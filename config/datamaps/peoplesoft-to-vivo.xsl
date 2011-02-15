@@ -80,10 +80,10 @@
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 			<ufVivo:businessName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:busName" /></ufVivo:businessName>
 			<core:workEmail><xsl:value-of select="$this/db-people:email" /></core:workEmail>
-			<xsl:if test="normalize-space( $this/db-people:phone_area ) || normalize-space( $this/db-people:phone_num )">
+			<xsl:if test="normalize-space( $this/db-people:phone_area ) or normalize-space( $this/db-people:phone_num )">
 				<core:workPhone><xsl:value-of select="$this/db-people:phone_area"/><xsl:value-of select="$this/db-people:phone_num"/></core:workPhone>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:fax_area ) || normalize-space( $this/db-people:fax_num )">
+			<xsl:if test="normalize-space( $this/db-people:fax_area ) or normalize-space( $this/db-people:fax_num )">
 				<core:workFax><xsl:value-of select="$this/db-people:fax_area"/><xsl:value-of select="$this/db-people:fax_num"/></core:workFax>
 			</xsl:if>
 			<xsl:if test="normalize-space( $this/db-people:fname )">

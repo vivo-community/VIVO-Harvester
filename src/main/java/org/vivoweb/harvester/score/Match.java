@@ -159,7 +159,7 @@ public class Match {
 				"}" +
 				"GROUP BY ?sVivo ?sInput \n" +
 				"HAVING (?sum >= "+threshold+")" +
-				"";
+				"ORDERY BY ?sInput";
 		Map<String,String> uriMatchMap = new HashMap<String,String>();
 
 		//log trace

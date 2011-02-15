@@ -41,20 +41,10 @@ public class InitLog {
 	}
 	
 	/**
-	 * Setup the logger
-	 * @param classname the classname initializing the log
-	 * @param args the commandline args passed
-	 * @param parser the arg parser to use
-	 * @throws IOException error processing
+	 * Set the log level variables
+	 * @param logLevel the log level
 	 */
-	public static void initLogger(@SuppressWarnings("unused") Class<?> classname, String[] args, ArgParser parser) throws IOException {
-		String logLevel = System.getProperty("console-log-level");
-		if(args != null && parser != null) {
-			ArgList argList = new ArgList(parser, args);
-			if(argList.has("w")) {
-				logLevel = argList.get("w");
-			}
-		}
+	private static void setLogLevel(String logLevel) {
 		if(logLevel != null) {
 			if(logLevel.equalsIgnoreCase("trace") || logLevel.equalsIgnoreCase("all")) {
 				System.setProperty("console-trace", "ACCEPT");
@@ -108,5 +98,24 @@ public class InitLog {
 		} catch(JoranException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+	
+	/**
+	 * Setup the logger
+	 * @param classname the classname initializing the log
+	 * @param args the commandline args passed
+	 * @param parser the arg parser to use
+	 * @throws IOException error processing
+	 */
+	public static void initLogger(@SuppressWarnings("unused") Class<?> classname, String[] args, ArgParser parser) throws IOException {
+		String logLevel = System.getProperty("console-log-level");
+		setLogLevel("OFF");
+		if(args != null && parser != null) {
+			ArgList argList = new ArgList(parser, args);
+			if(argList.has("w")) {
+				logLevel = argList.get("w");
+			}
+		}
+		setLogLevel(logLevel);
 	}
 }

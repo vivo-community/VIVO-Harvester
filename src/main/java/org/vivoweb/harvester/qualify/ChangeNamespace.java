@@ -186,7 +186,7 @@ public class ChangeNamespace {
 			"WHERE {\n" +
 			"\t" + "?sub ?p ?o . \n" +
 			"\t" + "FILTER regex(str(?sub), \"" + oldNamespace + "\" ) \n" + 
-			"}";
+			"} ORDER BY ?sub";
 		log.debug("Change Query:\n"+subjectQuery);
 
 		HashSet<String> changeArray = new HashSet<String>();

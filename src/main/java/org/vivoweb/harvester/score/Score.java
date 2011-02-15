@@ -11,12 +11,15 @@ package org.vivoweb.harvester.score;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
+import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -83,6 +86,10 @@ public class Score {
 	 * the weighting (0.0 , 1.0) for this score
 	 */
 	private Map<String,Float> weights;
+	/**
+	 * are all algorithms org.vivoweb.harvester.score.algorithm.EqualityTest
+	 */
+	private boolean equalityOnlyMode;
 
 	/**
 	 * Constructor
@@ -218,6 +225,17 @@ public class Score {
 		maps.put("algorithms", this.algorithms);
 		maps.put("weights", this.weights);
 		verifyRunNames(maps);
+		boolean test = true;
+		for(Class<?> algClass : this.algorithms.values()) {
+			try {
+				algClass.asSubclass(EqualityTest.class);
+			} catch(ClassCastException e) {
+				test = false;
+				break;
+			}
+		}
+		this.equalityOnlyMode = test;
+		log.trace("equalityOnlyMode: "+this.equalityOnlyMode);
 	}
 	
 	/**
@@ -301,29 +319,62 @@ public class Score {
 		if(!rs.hasNext()) {
 			log.info("No Results Found");
 		} else {
+			log.info("Building Record Set");
+		}
+		Set<Map<String,String>> solSet = new HashSet<Map<String,String>>();
+		Map<String,String> tempMap;
+		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
+			String sinputuri = solution.getResource("sInput").getURI();
+			String svivouri = solution.getResource("sVivo").getURI();
+			tempMap = new HashMap<String, String>();
+			tempMap.put("sInput", sinputuri);
+			tempMap.put("sVivo", svivouri);
+			for(String runName : this.vivoPredicates.keySet()) {
+				RDFNode os = solution.get("os_"+runName);
+				if(os.isResource()) {
+					tempMap.put("URI_os_"+runName, os.asResource().getURI());
+				} else if(os.isLiteral()) {
+					tempMap.put("LIT_os_"+runName, os.asLiteral().getValue().toString());
+				}
+				RDFNode op = solution.get("op_"+runName);
+				if(op.isResource()) {
+					tempMap.put("URI_op_"+runName, op.asResource().getURI());
+				} else if(op.isLiteral()) {
+					tempMap.put("LIT_op_"+runName, op.asLiteral().getValue().toString());
+				}
+			}
+			solSet.add(tempMap);
+		}
+		if(!solSet.isEmpty()) {
 			log.info("Processing Results");
 		}
-		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
+		int total = solSet.size();
+		int count = 0;
+		for(Map<String,String> eval : solSet) {
+			count++;
 			incrementer++;
 			indScore = new StringBuilder();
-			String sInputURI = solution.getResource("sInput").getURI();
-			String sVivoURI = solution.getResource("sVivo").getURI();
-			log.debug("Evaluating <"+sInputURI+"> from inputJena as match for <"+sVivoURI+"> from vivoJena");
+			String sInputURI = eval.get("sInput");
+			String sVivoURI = eval.get("sVivo");
+			float percent = Math.round(10000f*count/total)/100f;
+			log.debug("("+count+"/"+total+": "+percent+"%): Evaluating <"+sInputURI+"> from inputJena as match for <"+sVivoURI+"> from vivoJena");
 			// Build Score Record
 			indScore.append("" +
 				"  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" +
 				"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
 			);
 			for(String runName : this.vivoPredicates.keySet()) {
-				RDFNode os = solution.get("os_"+runName);
-				RDFNode op = solution.get("op_"+runName);
-				log.trace("os_"+runName+": '"+os+"'");
-				log.trace("op_"+runName+": '"+op+"'");
-				indScore.append(buildScoreSparqlFragment(incrementer, op, os, runName));
+				String osUri = eval.get("URI_os_"+runName);
+				String osLit = eval.get("LIT_os_"+runName);
+				String opUri = eval.get("URI_op_"+runName);
+				String opLit = eval.get("LIT_op_"+runName);
+				log.trace("os_"+runName+": '"+((osUri != null)?osUri:osLit)+"'");
+				log.trace("op_"+runName+": '"+((opUri != null)?opUri:opLit)+"'");
+				indScore.append(buildScoreSparqlFragment(incrementer, opUri, opLit, osUri, osLit, runName));
 			}
 			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+indScore.toString());
 			scoreSparql.append(indScore);
-			if(incrementer == 50) {
+			if(incrementer == 500) {
 				loadRdfToScoreData(scoreSparql.toString());
 				incrementer = 0;
 				scoreSparql = new StringBuilder();
@@ -353,10 +404,57 @@ public class Score {
 	}
 	
 	/**
+	 * Builds the select query for equality only mode
+	 * @return the equality only mode query
+	 */
+	private String buildEqualitySelectQuery() {
+		//Build query to find all nodes matching on the given predicates
+		StringBuilder sQuery =	new StringBuilder(
+				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
+				"SELECT DISTINCT ?sVivo ?sInput"
+		);
+		
+		List<String> filters = new ArrayList<String>();
+		List<String> vivoSelects = new ArrayList<String>();
+		List<String> inputSelects = new ArrayList<String>();
+		
+		for (String runName : this.inputPredicates.keySet()) {
+			String vivoProperty = this.vivoPredicates.get(runName);
+			String inputProperty = this.inputPredicates.get(runName);
+			sQuery.append(" ?os_" + runName);
+			sQuery.append(" ?op_" + runName);
+			vivoSelects.add("?sVivo <" + vivoProperty + "> ?op_" + runName + " .");
+			inputSelects.add("?sInput <" + inputProperty + "> ?os_" + runName + " .");
+			filters.add("sameTerm(?os_" + runName + ", ?op_" + runName + ")");
+		}
+		
+		sQuery.append("\n" +
+				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
+				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
+				"WHERE {\n");
+		sQuery.append("  GRAPH scoring:vivoClone {\n    ");
+		sQuery.append(StringUtils.join(vivoSelects, "\n    "));
+		sQuery.append("\n  } . \n  GRAPH scoring:inputClone {\n"+"    ");
+		sQuery.append(StringUtils.join(inputSelects, "\n    "));
+		sQuery.append("\n  } . \n  FILTER( (");
+		sQuery.append(StringUtils.join(filters, " && "));
+		sQuery.append(") && (str(?sVivo) != str(?sInput))");
+		if(this.namespace != null) {
+			sQuery.append(" && regex(str(?sInput), \"^"+this.namespace+"\")");
+		}
+		sQuery.append(" ) .\n");
+		sQuery.append("}");
+		return sQuery.toString();
+	}
+	
+	/**
 	 * Build the select query
 	 * @return the query
 	 */
 	private String buildSelectQuery() {
+		if(this.equalityOnlyMode) {
+			return buildEqualitySelectQuery();
+		}
 		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery =	new StringBuilder(
 				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
@@ -411,27 +509,25 @@ public class Score {
 	/**
 	 * Build the sparql fragment for two rdf nodes
 	 * @param nodenum the node number
-	 * @param op vivoJena node
-	 * @param os inputJena node
+	 * @param opUri vivoJena node as a URI
+	 * @param opLit vivoJena node as a Literal string
+	 * @param osUri inputJena node as a URI
+	 * @param osLit inputJena node as a Literal string
 	 * @param runName the run identifier
 	 * @return the sparql fragment
 	 */
-	private String buildScoreSparqlFragment(int nodenum, RDFNode op, RDFNode os, String runName) {
+	private String buildScoreSparqlFragment(int nodenum, String opUri, String opLit, String osUri, String osLit, String runName) {
 		float score = 0f;
-		if(os != null && op != null) {
-			// if a resource and same uris
-			if(os.isResource() && op.isResource() && os.asResource().getURI().equals(op.asResource().getURI())) {
-				score = 1/1;
-			} else if(os.isLiteral() && op.isLiteral()) {
-				String osStrValue = os.asLiteral().getValue().toString();
-				String opStrValue = op.asLiteral().getValue().toString();
-				try {
-					score = this.algorithms.get(runName).newInstance().calculate(osStrValue, opStrValue);
-				} catch(IllegalAccessException e) {
-					throw new IllegalArgumentException(e.getMessage(), e);
-				} catch(InstantiationException e) {
-					throw new IllegalArgumentException(e.getMessage(), e);
-				}
+		// if a resource and same uris
+		if(this.equalityOnlyMode || (osUri != null && opUri != null && osUri.equals(opUri))) {
+			score = 1/1f;
+		} else if(osLit != null && opLit != null) {
+			try {
+				score = this.algorithms.get(runName).newInstance().calculate(osLit, opLit);
+			} catch(IllegalAccessException e) {
+				throw new IllegalArgumentException(e.getMessage(), e);
+			} catch(InstantiationException e) {
+				throw new IllegalArgumentException(e.getMessage(), e);
 			}
 		}
 		log.trace("score: "+score);
