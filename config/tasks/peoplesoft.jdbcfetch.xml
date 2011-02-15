@@ -46,8 +46,8 @@ LEFT JOIN t_UF_PER_UFAU AS ufau ON
 	stu1.UF_IDENTIFIER = ufau.UF_UUID 
 WHERE 
 	stu1.UF_PROTECT_FLG='N' AND 
-	stu1.UF_SECURITY_FLG='N'<!-- --> AND 
-	stu1.UF_IDENTIFIER LIKE '%8973%'<!-- -->
+	stu1.UF_SECURITY_FLG='N'<!-- - -> AND 
+	stu1.UF_IDENTIFIER LIKE '%8973%'<!- - -->
 	</Param>
 	<Param name="tableName">positions</Param>
 	<Param name="id">positions=ufid,typeCode,deptId,beginTS</Param>
@@ -63,7 +63,7 @@ INNER JOIN t_UF_DIR_EMP_STU_1 AS stu1 ON
 	stu1.UF_IDENTIFIER = stu5.UF_UUID1 
 WHERE 
 	stu1.UF_PROTECT_FLG='N' AND 
-	stu1.UF_SECURITY_FLG='N'<!-- --> AND 
-	stu1.UF_IDENTIFIER LIKE '%8973%'<!-- -->
+	stu1.UF_SECURITY_FLG='N'<!-- - -> AND 
+	stu1.UF_IDENTIFIER LIKE '%8973%'<!- - -->
 	</Param>
 </Task>

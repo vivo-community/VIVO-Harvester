@@ -9,12 +9,11 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
-# Set working directory
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd)
-cd $DIR
-cd ..
+# Set working directory
+HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 HARVESTER_TASK=peoplesoft
 
@@ -23,6 +22,7 @@ if [ -f scripts/env ]; then
 else
   exit 1
 fi
+prep
 echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 BASEDIR=harvested-data/$HARVESTER_TASK
@@ -53,8 +53,7 @@ BASEURI="http://vivoweb.org/harvest/ufl/peoplesoft/"
 rm -rf $RAWRHDIR
 
 # Execute Fetch
-$JDBCFetch -X config/tasks/peoplesoft.jdbcfetch.xml -o $TFRH -OfileDir=$RAWRHDIR
-#$JDBCFetch -X config/tasks/peoplesoft.jdbcfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
+$JDBCFetch -X config/tasks/peoplesoft.jdbcfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # backup fetch
 BACKRAW="raw"
@@ -62,14 +61,11 @@ backup-path $RAWRHDIR $BACKRAW
 # uncomment to restore previous fetch
 #restore-path $RAWRHDIR $BACKRAW
 
-exit
-
 # clear old translates
 rm -rf $RDFRHDIR
 
 # Execute Translate
-$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/peoplesoft-to-vivo.xsl
-#$XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/peoplesoft-to-vivo.xsl
+$XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/peoplesoft-to-vivo.xsl
 
 # backup translate
 BACKRDF="rdf"
@@ -81,14 +77,13 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $TFRH -HfileDir=$RDFRHDIR -n http://vivo.ufl.edu/individual/
-#$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n http://vivo.ufl.edu/individual/
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n http://vivo.ufl.edu/individual/
 
 # backup H2 transfer Model
 BACKMODEL="model"
 backup-path $MODELDIR $BACKMODEL
 # uncomment to restore previous H2 transfer Model
-#restore-path $MODELDIR $BACKMODEL
+restore-path $MODELDIR $BACKMODEL
 
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
@@ -101,16 +96,25 @@ rm -rf $SCOREDATADIR
 rm -rf $TEMPCOPYDIR
 
 # Execute Score for People
-$Score $SCOREMODELS -n $BASEURIperson/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
+$Score $SCOREMODELS -n ${BASEURI}person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
 
 # Execute Score for Departments
-$Score $SCOREMODELS -n $BASEURIorg/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$UFDEPTID -PdeptId=$UFDEPTID
+$Score $SCOREMODELS -n ${BASEURI}org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$UFDEPTID -PdeptId=$UFDEPTID
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r
 
+# backup H2 score data Model
+BACKSCOREDATA="scoredata-prepos"
+backup-path $SCOREDATADIR $BACKSCOREDATA
+# uncomment to restore previous H2 matched Model
+#restore-path $SCOREDATADIR $BACKSCOREDATA
+
+# clear H2 score data Model
+rm -rf $SCOREDATADIR
+
 # Execute Score for Positions
-$Score $SCOREMODELS -n $BASEURIposition/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=$POSINORG -PposOrg=$POSINORG -AposPer=$EQTEST -WposPer=1.0 -FposPer=$POSFORPERSON -PposPer=$POSFORPERSON -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID
+$Score $SCOREMODELS -n ${BASEURI}position/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=$POSINORG -PposOrg=$POSINORG -AposPer=$EQTEST -WposPer=1.0 -FposPer=$POSFORPERSON -PposPer=$POSFORPERSON -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r
@@ -119,19 +123,22 @@ $Match $SCOREINPUT $SCOREDATA -t 1.0 -r
 rm -rf $TEMPCOPYDIR
 
 # backup H2 score data Model
-BACKSCOREDATA="scoredata"
+BACKSCOREDATA="scoredata-postpos"
 backup-path $SCOREDATADIR $BACKSCOREDATA
 # uncomment to restore previous H2 matched Model
 #restore-path $SCOREDATADIR $BACKSCOREDATA
 
+# clear H2 score data Model
+rm -rf $SCOREDATADIR
+
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n http://vivo.ufl.edu/individual/"
 # Execute ChangeNamespace to get unmatched People into current namespace
-$ChangeNamespace $CNFLAGS -o $BASEURIperson/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}person/
 # Execute ChangeNamespace to get unmatched Departments into current namespace
-$ChangeNamespace $CNFLAGS -o $BASEURIorg/ -e
+$ChangeNamespace $CNFLAGS -o ${BASEURI}org/ -e
 # Execute ChangeNamespace to get unmatched Positions into current namespace
-$ChangeNamespace $CNFLAGS -o $BASEURIposition/
+$ChangeNamespace $CNFLAGS -o ${BASEURI}position/
 
 # backup H2 matched Model
 BACKMATCHED="matched"

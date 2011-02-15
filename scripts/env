@@ -4,35 +4,24 @@ function get-date {
   date +%Y-%m-%d'T'%T
 }
 
-#Mysql username, password, and server address for backups in scripts
-#parse VIVO.xml for these values
-#need to reconcile having 2 places for this
-
-DIR=$(cd "$(dirname "$0")"; pwd)
+HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 # define shared variables
 VIVOCONFIG="config/models/vivo.xml"
-H2MODEL="config/models/h2-sdb.xml"
-H2RH="config/recordhandlers/h2-jdbc.xml"
-TFRH="config/recordhandlers/tfrh.xml"
-BACKUPPATH="$DIR/../backups"
-LATESTBACKUPPATH="$BACKUPPATH/latest"
-SERVER=`grep dbUrl $VIVOCONFIG| sed 's|^.*://\([^:^\/]*\)[:\/].*$|\1|g'`
-DBNAME=`grep dbUrl $VIVOCONFIG | sed 's|^.*>.*\/\([^<]*\)<.*$|\1|g'`
-USERNAME=`grep dbUser $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
-PASSWORD=`grep dbPass $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
-NAMESPACE=`grep namespace $VIVOCONFIG | sed 's|^.*>\([^<]*\)<.*$|\1|g'`
+LOG_LEVEL=INFO
 VERSION=1.0beta7
 MIN_MEM=1024m
 MAX_MEM=3072m
 CHECKEMPTY=true
+
 #Variable for optimizations to the Java virtual machine.
 #-server				Run in server mode, which takes longer to start but runs faster
 #-d64					Use 64-bit JVM
 #-XX:+UseConcMarkSweepGC		Use concurrent (low pause time) garbage collector	
 #-XX:+DisableExplicitGC			Prevent direct calls to garbage collection in the code
 #-XX:+UseAdaptiveGCBoundary		Allow young/old boundary to move
-#-XX:MaxGCPauseMillis=500		�Target� maximum for garbage collection time
+#-XX:MaxGCPauseMillis=500		Target maximum for garbage collection time
 #-XX:-UseGCOverheadLimit		Limit the amount of time that Java will stay in Garbage Collection before throwing an out of memory exception
 #-XX:SurvivorRatio=16			Shrink eden slightly (Normal is 25)
 #-Xnoclassgc				Disable collection of class objects
@@ -44,51 +33,68 @@ OPTS=""
 DATE=`get-date`
 HARVESTER_TASK_DATE="$HARVESTER_TASK.$DATE"
 
-# Check for proper namespace
-if [ -z "$NAMESPACE" ]; then
-  echo "Please specify namespace in $VIVOCONFIG file before running"
-  exit
-fi
-
-#if [[ $NAMESPACE != */ ]] || $NAMESPACE != *#]; then
-#  echo "Namespace appears incorrect -- Please check namespace in $VIVOCONFIG file"
-#  exit
-#fi
-
-# Check for backups dir
-if [ ! -d $BACKUPPATH ]; then
-  mkdir $BACKUPPATH
-fi
-
-# Check for latest backups dir
-if [ ! -d $LATESTBACKUPPATH ]; then
-  mkdir $LATESTBACKUPPATH
-fi
-
 # define shorthand aliases
-RenameResources="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=RenameResources -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.RenameResources"
-Diff="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Diff -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.diff.Diff"
-D2RMapFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=D2RMapFetch -Dprocess-task=D2RMapFetch -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch"
-JDBCFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=JDBCFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.JDBCFetch"
-NIHFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=NIHFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.NIHFetch"
-NLMJournalFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=NLMJournalFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.NLMJournalFetch"
-OAIFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=OAIFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.OAIFetch"
-PubmedFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=PubmedFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.PubmedFetch"
-PubmedHTTPFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=PubmedHTTPFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.PubmedHTTPFetch"
-Qualify="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Qualify -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.Qualify"
-Score="java -server $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Score -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.score.Score"
-Match="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Match -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.score.Match"
-Transfer="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Transfer -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.transfer.Transfer"
-GlozeTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=GlozeTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.GlozeTranslator"
-RDFTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=RDFTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.RDFTranslator"
-SPARQLTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=SPARQLTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.SPARQLTranslator"
-XSLTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=XSLTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.XSLTranslator"
-ChangeNamespace="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=ChangeNamespace -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.ChangeNamespace"
-Update="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Update -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.update.Update"
-DatabaseClone="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=DatabaseClone -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.DatabaseClone"
-Merge="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Merge -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.Merge"
-JenaConnect="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=JenaConnect -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.repo.JenaConnect"
-SanitizeMODSXML="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=SanitizeMODSXML -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.SanitizeMODSXML"
+RenameResources="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=RenameResources -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.RenameResources"
+Diff="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Diff -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.diff.Diff"
+D2RMapFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=D2RMapFetch -Dprocess-task=D2RMapFetch -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.D2RMapFetch"
+JDBCFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=JDBCFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.JDBCFetch"
+NIHFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=NIHFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.NIHFetch"
+NLMJournalFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=NLMJournalFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.NLMJournalFetch"
+OAIFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=OAIFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.OAIFetch"
+PubmedFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=PubmedFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.PubmedFetch"
+PubmedHTTPFetch="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=PubmedHTTPFetch -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.fetch.PubmedHTTPFetch"
+Qualify="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Qualify -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.Qualify"
+Score="java -server $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Score -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.score.Score"
+Match="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Match -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.score.Match"
+Transfer="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Transfer -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.transfer.Transfer"
+GlozeTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=GlozeTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.GlozeTranslator"
+RDFTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=RDFTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.RDFTranslator"
+SPARQLTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=SPARQLTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.SPARQLTranslator"
+XSLTranslator="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=XSLTranslator -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.translate.XSLTranslator"
+ChangeNamespace="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=ChangeNamespace -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.qualify.ChangeNamespace"
+Update="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Update -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.update.Update"
+DatabaseClone="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=DatabaseClone -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.DatabaseClone"
+Merge="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=Merge -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.Merge"
+JenaConnect="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=JenaConnect -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.repo.JenaConnect"
+SanitizeMODSXML="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=SanitizeMODSXML -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.SanitizeMODSXML"
+XPathTool="java $OPTS -Xms$MIN_MEM -Xmx$MAX_MEM -Dconsole-log-level=$LOG_LEVEL -Dharvester-task=$HARVESTER_TASK_DATE -Dprocess-task=XPathTool -cp bin/harvester-$VERSION.jar:bin/dependency/* org.vivoweb.harvester.util.XPathTool"
+
+#Mysql username, password, and server address for backups in scripts
+#parse VIVO.xml for these values
+#need to reconcile having 2 places for this
+SERVER=`$XPathTool -e "/Model/Param[@name='dbUrl']" -x $VIVOCONFIG | sed 's|^.*://\([^:^/]*\)[:/].*$|\1|g'`
+DBNAME=`$XPathTool -e "/Model/Param[@name='dbUrl']" -x $VIVOCONFIG | sed 's|^.*/\(.*\)$|\1|g'`
+USERNAME=`$XPathTool -e "/Model/Param[@name='dbUser']" -x $VIVOCONFIG`
+PASSWORD=`$XPathTool -e "/Model/Param[@name='dbPass']" -x $VIVOCONFIG`
+NAMESPACE=`$XPathTool -e "/Model/Param[@name='namespace']" -x $VIVOCONFIG`
+H2MODEL="config/models/h2-sdb.xml"
+H2RH="config/recordhandlers/h2-jdbc.xml"
+TFRH="config/recordhandlers/tfrh.xml"
+BACKUPPATH="$HARVESTERDIR/backups"
+LATESTBACKUPPATH="$BACKUPPATH/latest"
+
+function prep {
+  # Check for proper namespace
+  if [ -z "$NAMESPACE" ]; then
+    echo "Please specify namespace in $VIVOCONFIG file before running"
+    exit
+  fi
+  
+  #if [[ $NAMESPACE != */ ]] || $NAMESPACE != *#]; then
+  #  echo "Namespace appears incorrect -- Please check namespace in $VIVOCONFIG file"
+  #  exit
+  #fi
+  
+  # Check for backups dir
+  if [ ! -d $BACKUPPATH ]; then
+    mkdir $BACKUPPATH
+  fi
+  
+  # Check for latest backups dir
+  if [ ! -d $LATESTBACKUPPATH ]; then
+    mkdir $LATESTBACKUPPATH
+  fi
+}
 
 function backup-path {
   # usage: backup-path <Directory> <BackupBaseFileName>
