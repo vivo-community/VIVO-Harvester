@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,11 +189,15 @@ public class Match {
 	 */
 	private void rename(Map<String,String> matchSet){
 		log.trace("Beginning rename loop");
-		for(String oldUri : matchSet.keySet()) {
+		int total = matchSet.size();
+		int count = 0;
+		for(String oldUri : new TreeSet<String>(matchSet.keySet())) {
+			count++;
 			//get resource in input model and perform rename
 			Resource res = this.inputJena.getJenaModel().getResource(oldUri);
 			String newUri = matchSet.get(oldUri);
-			log.trace("Renaming match <" + oldUri + "> to <" + newUri + ">");
+			float percent = Math.round(10000f*count/total)/100f;
+			log.trace("("+count+"/"+total+": "+percent+"%): Renaming match <" + oldUri + "> to <" + newUri + ">");
 			ResourceUtils.renameResource(res, newUri);
 		}
 	}
@@ -208,11 +213,15 @@ public class Match {
 		Property inputToVivoProperty = ResourceFactory.createProperty(inputToVivo);
 		
 		log.trace("Beginning link method loop");
+		int total = matchSet.size();
+		int count = 0;
 		for(String inputUri : matchSet.keySet()) {
 			// get resources and add linking triples
 			String vivoUri = matchSet.get(inputUri);
 			Resource inputRes = this.inputJena.getJenaModel().getResource(inputUri);	
 			Resource vivoRes = this.scoreJena.getJenaModel().getResource(vivoUri);
+			float percent = Math.round(10000f*count/total)/100f;
+			log.trace("("+count+"/"+total+": "+percent+"%): Linking match <" + inputUri + "> to <" + vivoUri + ">");
 			log.trace("Adding input to vivo match link [ <" + inputUri + "> <" + inputToVivo + "> <" + vivoUri + "> ]");
 			this.inputJena.getJenaModel().add(inputRes, inputToVivoProperty, vivoRes);
 			log.trace("Adding vivo to input match link [ <" + vivoUri + "> <" + vivoToInput + "> <" + inputUri + "> ]");

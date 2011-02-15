@@ -11,10 +11,10 @@ package org.vivoweb.harvester.score;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,7 +321,7 @@ public class Score {
 		} else {
 			log.info("Building Record Set");
 		}
-		Set<Map<String,String>> solSet = new HashSet<Map<String,String>>();
+		Set<Map<String,String>> solSet = new TreeSet<Map<String,String>>();
 		Map<String,String> tempMap;
 		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
 			String sinputuri = solution.getResource("sInput").getURI();

@@ -7,8 +7,9 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -189,15 +190,19 @@ public class ChangeNamespace {
 			"} ORDER BY ?sub";
 		log.debug("Change Query:\n"+subjectQuery);
 
-		HashSet<String> changeArray = new HashSet<String>();
+		Set<String> changeArray = new TreeSet<String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(model.executeSelectQuery(subjectQuery))) {
 			String renameURI = solution.getResource("sub").getURI();
 			changeArray.add(renameURI);
 		}
 		
+		int total = changeArray.size();
+		int count = 0;
 		for(String sub : changeArray) {
+			count++;
 			Resource res = model.getJenaModel().getResource(sub);
-			log.trace("Finding unused URI for resource <" + res + ">");
+			float percent = Math.round(10000f*count/total)/100f;
+			log.trace("("+count+"/"+total+": "+percent+"%): Finding unused URI for resource <" + res + ">");
 			String uri = getUnusedURI(newNamespace, vivo, model);
 			if(errorLog) {
 				log.error("Resource <"+res.getURI()+"> was found and renamed to new uri <"+uri+">!");
