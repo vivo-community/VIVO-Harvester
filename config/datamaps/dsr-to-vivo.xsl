@@ -54,12 +54,6 @@
 					<xsl:matching-substring>
 <!--					This is where the types of data are translated differently-->
 						<xsl:choose>
-	<!--						<xsl:when test="$table = 'dbo.vwVIVO'">-->
-	<!--							<xsl:call-template name="t_vwVIVO">-->
-	<!--								<xsl:with-param name="ufid" select="$ufid" />-->
-	<!--								<xsl:with-param name="this" select="$this" />-->
-	<!--							</xsl:call-template>-->
-	<!--						</xsl:when>-->
 							<xsl:when test="$table = 'dbo.vwContracts'">
 								<xsl:call-template name="t_vwContracts">
 									<xsl:with-param name="grantid" select="normalize-space( regex-group(1) )" />
@@ -77,9 +71,6 @@
 			</xsl:matching-substring>
 		</xsl:analyze-string>
 	
-	</xsl:template>
-		
-	<xsl:template name="t_vwVIVO">
 	</xsl:template>
 		
 	<xsl:template name="t_vwContracts">
@@ -102,7 +93,6 @@
 					<ufVivo:deptID><xsl:value-of select="$this/db-dbo.vwContracts:ContractDeptID"/></ufVivo:deptID>
 					<core:administers rdf:resource="{$baseURI}grant/grant{$grantid}" />
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-					<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 				</rdf:Description>
 			</core:administeredBy>
 			<core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
