@@ -64,22 +64,22 @@ public class RegexQueryFailInTDBvsSDB {
 		Resource res8 = jena.createResource("http://test.my.tld/testRegex/item#8");
 		String searchValue = "IATMRR";
 		String replaceWithValue = "I Am Testing Multi Regex Replace";
-		jena.add(res1, label, searchValue+" "+searchValue);
-		jena.add(res2, label, "woo"+searchValue+"blah"+searchValue+"quak");
+		jena.add(res1, label, searchValue + " " + searchValue);
+		jena.add(res2, label, "woo" + searchValue + "blah" + searchValue + "quak");
 		jena.add(res3, label, "I A T M R R and I A T M R R");
-		jena.add(res4, label, searchValue+"bob "+searchValue);
-		jena.add(res5, label, searchValue+" heh"+searchValue);
-		jena.add(res6, label, "hmm "+searchValue+" "+searchValue);
-		jena.add(res7, label, "wut ok"+searchValue+" lol "+searchValue);
-		jena.add(res8, label, "odd "+searchValue+searchValue+" fun");
-		String expectedValue1 = replaceWithValue+" "+replaceWithValue;
-		String expectedValue2 = "woo"+replaceWithValue+"blah"+replaceWithValue+"quak";
+		jena.add(res4, label, searchValue + "bob " + searchValue);
+		jena.add(res5, label, searchValue + " heh" + searchValue);
+		jena.add(res6, label, "hmm " + searchValue + " " + searchValue);
+		jena.add(res7, label, "wut ok" + searchValue + " lol " + searchValue);
+		jena.add(res8, label, "odd " + searchValue + searchValue + " fun");
+		String expectedValue1 = replaceWithValue + " " + replaceWithValue;
+		String expectedValue2 = "woo" + replaceWithValue + "blah" + replaceWithValue + "quak";
 		String expectedValue3 = "I A T M R R and I A T M R R";
-		String expectedValue4 = replaceWithValue+"bob "+replaceWithValue;
-		String expectedValue5 = replaceWithValue+" heh"+replaceWithValue;
-		String expectedValue6 = "hmm "+replaceWithValue+" "+replaceWithValue;
-		String expectedValue7 = "wut ok"+replaceWithValue+" lol "+replaceWithValue;
-		String expectedValue8 = "odd "+replaceWithValue+replaceWithValue+" fun";
+		String expectedValue4 = replaceWithValue + "bob " + replaceWithValue;
+		String expectedValue5 = replaceWithValue + " heh" + replaceWithValue;
+		String expectedValue6 = "hmm " + replaceWithValue + " " + replaceWithValue;
+		String expectedValue7 = "wut ok" + replaceWithValue + " lol " + replaceWithValue;
+		String expectedValue8 = "odd " + replaceWithValue + replaceWithValue + " fun";
 		// call qualify
 		String query = "" +
 			"SELECT ?s ?o \n" +
@@ -123,12 +123,12 @@ public class RegexQueryFailInTDBvsSDB {
 	}
 	
 	/**
-	 * @param expectedValue expected 
+	 * @param expectedValue expected
 	 * @param trueValue true
 	 */
 	private static void assertEquals(String expectedValue, String trueValue) {
 		if(!trueValue.equals(expectedValue)) {
-			System.out.println("Expected: '"+expectedValue+"', but got '"+trueValue+"'");
+			System.out.println("Expected: '" + expectedValue + "', but got '" + trueValue + "'");
 		}
 	}
 	

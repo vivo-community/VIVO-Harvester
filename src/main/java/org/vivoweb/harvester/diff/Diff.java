@@ -1,8 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
+ * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
+ * implementation
  ******************************************************************************/
 package org.vivoweb.harvester.diff;
 
@@ -49,14 +50,13 @@ public class Diff {
 	 */
 	private String dumpFile;
 	
-	
 	/**
 	 * Constructor
 	 * @param mJC minuend jenaconnect
 	 * @param sJC subtrahend jenaconnect
 	 * @param oJC output jenaconnect
 	 */
-	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC){
+	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC) {
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
 		this.output = oJC;
@@ -68,7 +68,7 @@ public class Diff {
 	 * @param sJC subtrahend jenaconnect
 	 * @param dF dump file path
 	 */
-	public Diff(JenaConnect mJC, JenaConnect sJC, String dF){
+	public Diff(JenaConnect mJC, JenaConnect sJC, String dF) {
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
 		this.dumpFile = dF;
@@ -156,19 +156,16 @@ public class Diff {
 	 * @param dF dump file path
 	 * @throws FileSystemException error accessing file
 	 */
-	public static void diff(JenaConnect mJC,JenaConnect sJC,JenaConnect oJC, String dF) throws FileSystemException {
+	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) throws FileSystemException {
 		/*
-		 * c - b = a
-		 * minuend - subtrahend = difference
-		 * minuend.diff(subtrahend) = differenece
-		 * c.diff(b) = a
+		 * c - b = a minuend - subtrahend = difference minuend.diff(subtrahend) = differenece c.diff(b) = a
 		 */
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();
 		Model subtrahendModel = sJC.getJenaModel();
 		
 		diffModel = minuendModel.difference(subtrahendModel);
-				
+		
 		if(dF != null) {
 			RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
 			fasterWriter.setProperty("showXmlDeclaration", "true");
@@ -178,7 +175,7 @@ public class Diff {
 			fasterWriter.write(diffModel, osw, "");
 			log.debug("RDF/XML Data was exported");
 		}
-		if (oJC != null){
+		if(oJC != null) {
 			oJC.getJenaModel().add(diffModel);
 		}
 	}
@@ -188,7 +185,7 @@ public class Diff {
 	 * @throws FileSystemException error accessing file
 	 */
 	public void execute() throws FileSystemException {
-		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile);		
+		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile);
 	}
 	
 	/**

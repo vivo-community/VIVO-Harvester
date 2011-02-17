@@ -103,7 +103,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 			urlSb.append("&term=");
 			urlSb.append(term);
 			if(logMessage) {
-//				log.debug(urlSb.toString());
+				//				log.debug(urlSb.toString());
 			}
 			
 			DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
@@ -145,7 +145,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 		urlSb.append("&retmax=" + numRecords);
 		// set number to start at
 		urlSb.append("&retstart=" + retStart);
-//		log.debug(urlSb.toString());
+		//		log.debug(urlSb.toString());
 		int retEnd = Integer.parseInt(retStart) + Integer.parseInt(numRecords);
 		log.info("Fetching " + retStart + " to " + retEnd + " records from search");
 		try {
@@ -185,12 +185,12 @@ public class PubmedHTTPFetch extends NIHFetch {
 		String footerRegEx = "</PubmedArticleSet>";
 		log.debug("Sanitizing Output");
 		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
-//		System.out.println("===============================\n          PRE-SANITIZE         \n===============================\n");
-//		System.out.println(strInput);
+		//		System.out.println("===============================\n          PRE-SANITIZE         \n===============================\n");
+		//		System.out.println(strInput);
 		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle").replaceAll(headerRegEx, "").replaceAll(footerRegEx, "");
 		log.debug("XML File Length - Post Sanitze: " + newS.length());
-//		System.out.println("===============================\n          POST-SANITIZE        \n===============================\n");
-//		System.out.println(newS);
+		//		System.out.println("===============================\n          POST-SANITIZE        \n===============================\n");
+		//		System.out.println(newS);
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
 		getOsWriter().write(newS);

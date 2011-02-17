@@ -89,9 +89,9 @@ public abstract class DBJenaConnect extends JenaConnect {
 			Class.forName(this.dbClass);
 			return DriverManager.getConnection(this.dbUrl, this.dbUser, this.dbPass);
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(),e);
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	

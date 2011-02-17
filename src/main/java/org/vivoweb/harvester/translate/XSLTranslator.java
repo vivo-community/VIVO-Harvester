@@ -198,14 +198,14 @@ public class XSLTranslator {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(XSLTranslator.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new XSLTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 	

@@ -79,7 +79,7 @@ public class InitLog {
 			}
 		}
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-		String task = getFirstValidString(System.getenv("HARVESTER_TASK_DATE"), System.getProperty("harvester-task"), "harvester."+DateFormatUtils.ISO_DATETIME_FORMAT.format(System.currentTimeMillis()));
+		String task = getFirstValidString(System.getenv("HARVESTER_TASK_DATE"), System.getProperty("harvester-task"), "harvester." + DateFormatUtils.ISO_DATETIME_FORMAT.format(System.currentTimeMillis()));
 		context.putProperty("harvester-task", task);
 		String process = getFirstValidString(System.getenv("PROCESS_TASK"), System.getProperty("process-task"), "all");
 		context.putProperty("process-task", process);

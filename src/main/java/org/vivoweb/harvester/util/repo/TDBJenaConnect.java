@@ -38,7 +38,7 @@ public class TDBJenaConnect extends JenaConnect {
 	private TDBJenaConnect(TDBJenaConnect original, String modelName) {
 		this(original.dbDir, modelName);
 	}
-
+	
 	/**
 	 * Constructor (Default Model)
 	 * @param dbDir tdb directory name
@@ -72,13 +72,13 @@ public class TDBJenaConnect extends JenaConnect {
 	
 	@Override
 	public Dataset getDataSet() {
-		log.debug("dbDir: "+this.dbDir);
+		log.debug("dbDir: " + this.dbDir);
 		if(!dirDatasets.containsKey(this.dbDir)) {
 			dirDatasets.put(this.dbDir, TDBFactory.createDataset(this.dbDir));
 		}
 		return dirDatasets.get(this.dbDir);
 	}
-
+	
 	@Override
 	public JenaConnect neighborConnectClone(String modelName) {
 		return new TDBJenaConnect(this, modelName);
@@ -88,7 +88,7 @@ public class TDBJenaConnect extends JenaConnect {
 	public void close() {
 		getJenaModel().close();
 	}
-
+	
 	@Override
 	public void truncate() {
 		getJenaModel().removeAll();
@@ -98,6 +98,6 @@ public class TDBJenaConnect extends JenaConnect {
 	public void printParameters() {
 		super.printParameters();
 		log.info("type: 'sdb'");
-		log.info("dbDir: '"+ this.dbDir + "'");
+		log.info("dbDir: '" + this.dbDir + "'");
 	}
 }

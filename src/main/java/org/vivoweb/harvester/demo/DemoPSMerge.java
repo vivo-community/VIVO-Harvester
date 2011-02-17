@@ -54,89 +54,58 @@ public class DemoPSMerge {
 	private static void configFetchParams(Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) {
 		tableNames.add("t_UF_DIR_EMP_STU_1");
 		idFields.put("t_UF_DIR_EMP_STU_1", Arrays.asList("UF_IDENTIFIER"));
-		whereClauses.put("t_UF_DIR_EMP_STU_1", Arrays.asList(
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_DIR_EMP_STU_1", Arrays.asList("t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		
 		tableNames.add("t_UF_DIR_EMP_STU_2");
 		idFields.put("t_UF_DIR_EMP_STU_2", Arrays.asList("UF_UUID", "UF_TYPE_CD"));
-		whereClauses.put("t_UF_DIR_EMP_STU_2", Arrays.asList(
-				"t_UF_DIR_EMP_STU_2.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER",
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_DIR_EMP_STU_2", Arrays.asList("t_UF_DIR_EMP_STU_2.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER", "t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		fromClauses.put("t_UF_DIR_EMP_STU_2", "t_UF_DIR_EMP_STU_1");
 		
 		tableNames.add("t_UF_DIR_EMP_STU_3");
 		idFields.put("t_UF_DIR_EMP_STU_3", Arrays.asList("UF_UUID", "UF_TYPE_CD"));
-		whereClauses.put("t_UF_DIR_EMP_STU_3", Arrays.asList(
-				"t_UF_DIR_EMP_STU_3.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER",
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_DIR_EMP_STU_3", Arrays.asList("t_UF_DIR_EMP_STU_3.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER", "t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		fromClauses.put("t_UF_DIR_EMP_STU_3", "t_UF_DIR_EMP_STU_1");
 		
 		tableNames.add("t_UF_DIR_EMP_STU_4");
 		idFields.put("t_UF_DIR_EMP_STU_4", Arrays.asList("UF_UUID", "UF_TYPE_CD"));
-		whereClauses.put("t_UF_DIR_EMP_STU_4", Arrays.asList(
-				"t_UF_DIR_EMP_STU_4.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER",
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_DIR_EMP_STU_4", Arrays.asList("t_UF_DIR_EMP_STU_4.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER", "t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		fromClauses.put("t_UF_DIR_EMP_STU_4", "t_UF_DIR_EMP_STU_1");
 		
 		tableNames.add("t_UF_DIR_EMP_STU_5");
 		idFields.put("t_UF_DIR_EMP_STU_5", Arrays.asList("UF_UUID1", "UF_TYPE_CD", "UF_UUID2", "PS_DEPTID", "UF_BEGIN_TS"));
-		whereClauses.put("t_UF_DIR_EMP_STU_5", Arrays.asList(
-				"t_UF_DIR_EMP_STU_5.UF_UUID1=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER",
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_DIR_EMP_STU_5", Arrays.asList("t_UF_DIR_EMP_STU_5.UF_UUID1=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER", "t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		fromClauses.put("t_UF_DIR_EMP_STU_5", "t_UF_DIR_EMP_STU_1");
 		
 		tableNames.add("t_UF_DIR_EMP_STU_6");
 		idFields.put("t_UF_DIR_EMP_STU_6", Arrays.asList("UF_UUID1", "UF_TYPE_CD", "UF_UUID2", "PS_DEPTID", "UF_BEGIN_TS"));
-		whereClauses.put("t_UF_DIR_EMP_STU_6", Arrays.asList(
-				"t_UF_DIR_EMP_STU_6.UF_UUID1=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER",
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_DIR_EMP_STU_6", Arrays.asList("t_UF_DIR_EMP_STU_6.UF_UUID1=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER", "t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		fromClauses.put("t_UF_DIR_EMP_STU_6", "t_UF_DIR_EMP_STU_1");
 		
 		tableNames.add("t_UF_PER_UFAU");
 		idFields.put("t_UF_PER_UFAU", Arrays.asList("UF_UUID", "UF_JOB_TITLE", "UF_PS_DEPTID"));
-		whereClauses.put("t_UF_PER_UFAU", Arrays.asList(
-				"t_UF_PER_UFAU.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER",
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_PER_UFAU", Arrays.asList("t_UF_PER_UFAU.UF_UUID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER", "t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		fromClauses.put("t_UF_PER_UFAU", "t_UF_DIR_EMP_STU_1");
 		
 		tableNames.add("t_UF_PA_GL_ACCT");
 		idFields.put("t_UF_PA_GL_ACCT", Arrays.asList("OPRID", "USERIDALIAS"));
-		whereClauses.put("t_UF_PA_GL_ACCT", Arrays.asList(
-				"t_UF_PA_GL_ACCT.OPRID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER",
-				"t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'",
-				"t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"
-		));
+		whereClauses.put("t_UF_PA_GL_ACCT", Arrays.asList("t_UF_PA_GL_ACCT.OPRID=t_UF_DIR_EMP_STU_1.UF_IDENTIFIER", "t_UF_DIR_EMP_STU_1.UF_PROTECT_FLG='N'", "t_UF_DIR_EMP_STU_1.UF_SECURITY_FLG='N'"));
 		fromClauses.put("t_UF_PA_GL_ACCT", "t_UF_DIR_EMP_STU_1");
 		
-//		tableNames.add("t_PS_H_UF_ACAD_ORG");
-//		idFields.put("t_PS_H_UF_ACAD_ORG", Arrays.asList("DTL_ID"));
-//		dataFields.put("t_PS_H_UF_ACAD_ORG", Arrays.asList(
-//			"DTL_DESC"//,
-//			//"TREE_NAME",
-//			//"L2_ID",
-//			//"L2_DESC",
-//			//"L3_ID",
-//			//"L3_DESC",
-//			//"L4_ID",
-//			//"L4_DESC"
-//		));
+		//		tableNames.add("t_PS_H_UF_ACAD_ORG");
+		//		idFields.put("t_PS_H_UF_ACAD_ORG", Arrays.asList("DTL_ID"));
+		//		dataFields.put("t_PS_H_UF_ACAD_ORG", Arrays.asList(
+		//			"DTL_DESC"//,
+		//			//"TREE_NAME",
+		//			//"L2_ID",
+		//			//"L2_DESC",
+		//			//"L3_ID",
+		//			//"L3_DESC",
+		//			//"L4_ID",
+		//			//"L4_DESC"
+		//		));
 		
 		List<String> ufidLimiters = Arrays.asList(
-//			"t_UF_DIR_EMP_STU_1.UF_IDENTIFIER LIKE '%8973%'"
+		//			"t_UF_DIR_EMP_STU_1.UF_IDENTIFIER LIKE '%8973%'"
 		);
 		whereClauses.put("t_UF_DIR_EMP_STU_1", new ArrayList<String>(whereClauses.get("t_UF_DIR_EMP_STU_1")));
 		whereClauses.get("t_UF_DIR_EMP_STU_1").addAll(ufidLimiters);
@@ -162,18 +131,18 @@ public class DemoPSMerge {
 	 * @throws ClassNotFoundException error
 	 * @throws IOException error
 	 */
-//	@SuppressWarnings("unused")
+	//	@SuppressWarnings("unused")
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
 		System.setProperty("process-task", "Fetch");
 		InitLog.initLogger(DemoPSMerge.class, null, null);
 		// setup fetch parameter variables
 		Set<String> tableNames = new TreeSet<String>();
-		Map<String,String> fromClauses = new HashMap<String,String>();
-		Map<String,List<String>> dataFields = new HashMap<String, List<String>>();
-		Map<String,List<String>> idFields = new HashMap<String, List<String>>();
-		Map<String,List<String>> whereClauses = new HashMap<String, List<String>>();
-		Map<String,Map<String,String>> relations = new HashMap<String, Map<String,String>>();
-		Map<String,String> queryStrings = new HashMap<String,String>();
+		Map<String, String> fromClauses = new HashMap<String, String>();
+		Map<String, List<String>> dataFields = new HashMap<String, List<String>>();
+		Map<String, List<String>> idFields = new HashMap<String, List<String>>();
+		Map<String, List<String>> whereClauses = new HashMap<String, List<String>>();
+		Map<String, Map<String, String>> relations = new HashMap<String, Map<String, String>>();
+		Map<String, String> queryStrings = new HashMap<String, String>();
 		
 		// configure parameters
 		configFetchParams(tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings);
@@ -184,9 +153,9 @@ public class DemoPSMerge {
 		
 		// Execute Fetch
 		log.trace("Fetching Raw Records");
-		JDBCFetch psFetch = new JDBCFetch(dbConn, rawRH, connLine+"/", "", "", tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings);
+		JDBCFetch psFetch = new JDBCFetch(dbConn, rawRH, connLine + "/", "", "", tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings);
 		psFetch.execute();
-
+		
 		System.setProperty("process-task", "Merge");
 		InitLog.initLogger(DemoPSMerge.class, null, null);
 		// Merge related records
@@ -194,7 +163,7 @@ public class DemoPSMerge {
 		log.trace("Merging Related Raw Records");
 		Merge psMerge = new Merge(rawRH, mergedRH, "t_UF_DIR_EMP_STU_1_(id_-_.*?)");
 		psMerge.execute();
-
+		
 		System.setProperty("process-task", "Translate");
 		InitLog.initLogger(DemoPSMerge.class, null, null);
 		// Execute Translate
@@ -203,7 +172,7 @@ public class DemoPSMerge {
 		log.trace("Translating Merged Records");
 		XSLTranslator psTranslate = new XSLTranslator(mergedRH, transRH, xsl, true);
 		psTranslate.execute();
-
+		
 		System.setProperty("process-task", "Transfer");
 		InitLog.initLogger(DemoPSMerge.class, null, null);
 		// connect to input model
@@ -214,21 +183,21 @@ public class DemoPSMerge {
 		// import from record handler into input model
 		log.trace("Loading Translated Data into Input Model");
 		psInput.loadRdfFromRH(transRH, "http://vivo.ufl.edu/individual/");
-
+		
 		System.setProperty("process-task", "Score.Setup");
 		InitLog.initLogger(DemoPSMerge.class, null, null);
 		// connect to vivo model
 		JenaConnect vivoJena = new SDBJenaConnect("jdbc:h2:harvested-data/demoVivo/store", "sa", "", "H2", "org.h2.Driver", "layout2", "vivoModel");
 		// clear model and load vivo data
-//		vivoJena.truncate();
-//		log.trace("Loading vivo rdf into model");
-//		vivoJena.loadRdfFromFile("harvested-data/vivoData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
-		log.trace("Vivo Size: "+vivoJena.size());
+		//		vivoJena.truncate();
+		//		log.trace("Loading vivo rdf into model");
+		//		vivoJena.loadRdfFromFile("harvested-data/vivoData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
+		log.trace("Vivo Size: " + vivoJena.size());
 		
 		JenaConnect scoreJena = psInput.neighborConnectClone("scoreData");
 		log.trace("Truncating Score Data Model");
 		scoreJena.truncate();
-//		JenaConnect tempJena = psInput.neighborConnectClone("tempModel");
+		//		JenaConnect tempJena = psInput.neighborConnectClone("tempModel");
 		String tempJena = "harvested-data/tempModel";
 		
 		// setup parameter variables
@@ -335,11 +304,11 @@ public class DemoPSMerge {
 		InitLog.initLogger(DemoPSMerge.class, null, null);
 		// Connect to previous harvest model
 		JenaConnect psPrevHarvest = vivoJena.neighborConnectClone("uflPeopleSoft");
-//		// clear model and load previous connect data
-//		psPrevHarvest.truncate();
-//		log.trace("Loading previous harvest rdf into model");
-//		psPrevHarvest.loadRdfFromFile("harvested-data/psHarvestData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
-		log.trace("Previous Harvest Size: "+psPrevHarvest.size());
+		//		// clear model and load previous connect data
+		//		psPrevHarvest.truncate();
+		//		log.trace("Loading previous harvest rdf into model");
+		//		psPrevHarvest.loadRdfFromFile("harvested-data/psHarvestData.rdf.ttl", "http://vivo.ufl.edu/individual/", "TTL");
+		log.trace("Previous Harvest Size: " + psPrevHarvest.size());
 		
 		// Setup adds/subs models
 		JenaConnect psSubsModel = new SDBJenaConnect("jdbc:h2:harvested-data/demoDiffs/store", "sa", "", "H2", "org.h2.Driver", "layout2", "subsModel");

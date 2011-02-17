@@ -80,8 +80,8 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
 	 */
-	public static JenaConnect parseConfig(InputStream configStream, Map<String,String> overrideParams) throws IOException {
-		Map<String,String> paramList = new JenaConnectConfigParser().parseConfig(configStream);
+	public static JenaConnect parseConfig(InputStream configStream, Map<String, String> overrideParams) throws IOException {
+		Map<String, String> paramList = new JenaConnectConfigParser().parseConfig(configStream);
 		if(overrideParams != null) {
 			for(String key : overrideParams.keySet()) {
 				paramList.put(key, overrideParams.get(key));
@@ -112,8 +112,8 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
 	 */
-	public static JenaConnect parseConfig(FileObject configFile, Map<String,String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null)?null:configFile.getContent().getInputStream();
+	public static JenaConnect parseConfig(FileObject configFile, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFile == null) ? null : configFile.getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -134,8 +134,8 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException error connecting
 	 */
-	public static JenaConnect parseConfig(File configFile, Map<String,String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null)?null:VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
+	public static JenaConnect parseConfig(File configFile, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFile == null) ? null : VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -156,8 +156,8 @@ public abstract class JenaConnect {
 	 * @return JenaConnect instance
 	 * @throws IOException xml parse error
 	 */
-	public static JenaConnect parseConfig(String configFileName, Map<String,String> overrideParams) throws IOException {
-		InputStream confStream = (configFileName == null)?null:VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
+	public static JenaConnect parseConfig(String configFileName, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFileName == null) ? null : VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -167,7 +167,7 @@ public abstract class JenaConnect {
 	 * @return the JenaConnect
 	 * @throws IOException error connecting to jena model
 	 */
-	private static JenaConnect build(Map<String,String> params) throws IOException {
+	private static JenaConnect build(Map<String, String> params) throws IOException {
 		// for(String param : params.keySet()) {
 		// log.debug(param+" => "+params.get(param));
 		// }
@@ -189,7 +189,7 @@ public abstract class JenaConnect {
 		} else {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
-		if ((!params.containsKey("checkEmpty") || params.get("checkEmpty").toLowerCase() == "true") && jc.isEmpty()) {
+		if((!params.containsKey("checkEmpty") || params.get("checkEmpty").toLowerCase() == "true") && jc.isEmpty()) {
 			JenaConnect.log.warn(jc.getModelName() + " Jena model is empty");
 		}
 		return jc;
@@ -210,8 +210,7 @@ public abstract class JenaConnect {
 	}
 	
 	/**
-	 * Get the dataset for this connection
-	 * Can be very expensive when using RDB connections (SDB, TDB, and Mem are fine)
+	 * Get the dataset for this connection Can be very expensive when using RDB connections (SDB, TDB, and Mem are fine)
 	 * @return the database connection's dataset
 	 * @throws IOException error connecting
 	 */
@@ -490,12 +489,13 @@ public abstract class JenaConnect {
 	/**
 	 * Execute a Query
 	 * @param queryParam the query
-	 * @param resultFormatParam the format to return the results in ('RS_TEXT' default for select queries / 'RDF/XML' default for construct/describe queries)
+	 * @param resultFormatParam the format to return the results in ('RS_TEXT' default for select queries / 'RDF/XML'
+	 * default for construct/describe queries)
 	 * @param output output stream to write to - null uses System.out
 	 * @throws IOException error writing to output
 	 */
 	public void executeQuery(String queryParam, String resultFormatParam, OutputStream output) throws IOException {
-		OutputStream out = (output != null)?output:System.out;
+		OutputStream out = (output != null) ? output : System.out;
 		QueryExecution qe = null;
 		try {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
@@ -601,7 +601,7 @@ public abstract class JenaConnect {
 		/**
 		 * Param list from the config file
 		 */
-		private Map<String,String> params;
+		private Map<String, String> params;
 		/**
 		 * temporary storage for cdata
 		 */
@@ -626,7 +626,7 @@ public abstract class JenaConnect {
 		 * @return the JenaConnect described by the stream
 		 * @throws IOException error reading stream
 		 */
-		protected Map<String,String> parseConfig(InputStream inputStream) throws IOException {
+		protected Map<String, String> parseConfig(InputStream inputStream) throws IOException {
 			if(inputStream != null) {
 				// get a factory
 				SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -669,12 +669,12 @@ public abstract class JenaConnect {
 			}
 		}
 	}
-
+	
 	/**
 	 * Remove all statements from model
 	 */
 	public abstract void truncate();
-
+	
 	/**
 	 * Set the modelName
 	 * @param modelName the model name
@@ -682,7 +682,7 @@ public abstract class JenaConnect {
 	protected void setModelName(String modelName) {
 		this.modelName = modelName;
 	}
-
+	
 	/**
 	 * Get the modelName
 	 * @return the modelName

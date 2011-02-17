@@ -49,7 +49,7 @@ public class SDBJenaConnect extends DBJenaConnect {
 		this.store = connectStore(original.buildConnection(), original.getDbType(), this.dbLayout);
 		init(modelName);
 	}
-
+	
 	/**
 	 * Constructor (Default Model)
 	 * @param dbUrl jdbc connection url
@@ -113,7 +113,7 @@ public class SDBJenaConnect extends DBJenaConnect {
 	public Dataset getDataSet() {
 		return SDBFactory.connectDataset(this.store);
 	}
-
+	
 	@Override
 	public JenaConnect neighborConnectClone(String modelName) throws IOException {
 		return new SDBJenaConnect(this, modelName);
@@ -139,7 +139,7 @@ public class SDBJenaConnect extends DBJenaConnect {
 		this.store.close();
 		this.store.getConnection().close();
 	}
-
+	
 	@Override
 	public void truncate() {
 		this.getJenaModel().removeAll();
@@ -149,6 +149,6 @@ public class SDBJenaConnect extends DBJenaConnect {
 	public void printParameters() {
 		super.printParameters();
 		log.info("type: 'sdb'");
-		log.info("dbLayout: '"+ this.dbLayout + "'");
+		log.info("dbLayout: '" + this.dbLayout + "'");
 	}
 }

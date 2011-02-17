@@ -441,11 +441,11 @@ public class JDBCRecordHandler extends RecordHandler {
 			throw new IOException(e.getMessage(), e);
 		}
 	}
-
+	
 	@Override
 	public Set<String> find(String idText) throws IOException {
 		Set<String> retVal = new HashSet<String>();
-		String query = "SELECT " + recordIdField + " FROM " + this.table + " WHERE " + recordIdField + " LIKE '%"+idText+"%' ORDER BY " + recordIdField;
+		String query = "SELECT " + recordIdField + " FROM " + this.table + " WHERE " + recordIdField + " LIKE '%" + idText + "%' ORDER BY " + recordIdField;
 		try {
 			ResultSet rs = this.cursor.executeQuery(query);
 			while(rs.next()) {

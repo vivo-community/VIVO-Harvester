@@ -612,7 +612,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		this.fileDirObj.close();
 		this.metaDirObj.close();
 	}
-
+	
 	@Override
 	public Set<String> find(String idText) {
 		Set<String> retVal = new TreeSet<String>();

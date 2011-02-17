@@ -338,7 +338,7 @@ public class JenaRecordHandler extends RecordHandler {
 	public void close() throws IOException {
 		this.model.close();
 	}
-
+	
 	@Override
 	public Set<String> find(String idText) {
 		Set<String> retVal = new HashSet<String>();

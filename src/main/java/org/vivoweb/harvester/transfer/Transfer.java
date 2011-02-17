@@ -44,7 +44,8 @@ public class Transfer {
 	 */
 	private String inRDF;
 	/**
-	 * the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 * the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or "TTL") and "N3".
+	 * null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
 	 */
 	private String inRDFlang;
 	/**
@@ -167,7 +168,7 @@ public class Transfer {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(Transfer.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new Transfer(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
@@ -175,7 +176,7 @@ public class Transfer {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

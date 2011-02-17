@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
+ * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation Christopher
- * Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm Christopher Barnes - regex
- * scoring algorithim
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
+ * implementation Christopher Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm
+ * Christopher Barnes - regex scoring algorithim
  ******************************************************************************/
 package org.vivoweb.harvester.score;
 
@@ -32,10 +32,11 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.ResourceUtils;
-//import com.hp.hpl.jena.rdf.model.Statement;
-//import com.hp.hpl.jena.rdf.model.StmtIterator;
-//import org.vivoweb.harvester.util.repo.MemJenaConnect;
-//import java.util.Stack;
+
+// import com.hp.hpl.jena.rdf.model.Statement;
+// import com.hp.hpl.jena.rdf.model.StmtIterator;
+// import org.vivoweb.harvester.util.repo.MemJenaConnect;
+// import java.util.Stack;
 
 /**
  * VIVO Match
@@ -76,7 +77,6 @@ public class Match {
 	 * Clear all literal values out of matched sets
 	 */
 	private final boolean clearLiterals;
-
 	
 	/**
 	 * Constructor
@@ -129,12 +129,11 @@ public class Match {
 		this.inputJena = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		
 		// Connect to output model
-		if (opts.has("o")){
+		if(opts.has("o")) {
 			this.outputJena = JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O"));
 		} else {
 			this.outputJena = null;
 		}
-			
 		
 		this.renameRes = opts.has("r");
 		this.linkProps = opts.getValueMap("l");
@@ -147,7 +146,7 @@ public class Match {
 	 * @param threshold the value to look for in the sparql query
 	 * @return mapping of the found matches
 	 */
-	private Map<String,String> match(float threshold){
+	private Map<String, String> match(float threshold) {
 		//Build query to find all nodes matching on the given predicates
 		String sQuery =	"" +
 				"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
@@ -165,7 +164,7 @@ public class Match {
 
 		//log trace
 		log.trace("Query Start");
-		log.debug("Query:\n"+sQuery);
+		log.debug("Query:\n" + sQuery);
 		Iterable<QuerySolution> matchQuery = IterableAdaptor.adapt(this.scoreJena.executeSelectQuery(sQuery));
 		log.trace("Query Complete");
 		
@@ -173,11 +172,11 @@ public class Match {
 			String sInputURI = solution.getResource("sInput").getURI();
 			String sVivoURI = solution.getResource("sVivo").getURI();
 			Float weight = Float.valueOf(solution.getLiteral("sum").getFloat());
-			log.trace("input: "+sInputURI);
-			log.trace("vivo: "+sVivoURI);
-			log.trace("weight: "+weight);
+			log.trace("input: " + sInputURI);
+			log.trace("vivo: " + sVivoURI);
+			log.trace("weight: " + weight);
 			uriMatchMap.put(sInputURI, sVivoURI);
-			log.debug("Match found: <"+sInputURI+"> in Input matched with <"+sVivoURI+"> in Vivo");
+			log.debug("Match found: <" + sInputURI + "> in Input matched with <" + sVivoURI + "> in Vivo");
 		}
 		
 		log.info("Match found " + uriMatchMap.keySet().size() + " links between Vivo and the Input model");
@@ -188,7 +187,7 @@ public class Match {
 	 * Rename the resource set as the key to the value matched
 	 * @param matchSet a result set of scoreResources, vivoResources
 	 */
-	private void rename(Map<String,String> matchSet){
+	private void rename(Map<String, String> matchSet) {
 		log.trace("Beginning rename loop");
 		int total = matchSet.size();
 		int count = 0;
@@ -197,8 +196,8 @@ public class Match {
 			//get resource in input model and perform rename
 			Resource res = this.inputJena.getJenaModel().getResource(oldUri);
 			String newUri = matchSet.get(oldUri);
-			float percent = Math.round(10000f*count/total)/100f;
-			log.trace("("+count+"/"+total+": "+percent+"%): Renaming match <" + oldUri + "> to <" + newUri + ">");
+			float percent = Math.round(10000f * count / total) / 100f;
+			log.trace("(" + count + "/" + total + ": " + percent + "%): Renaming match <" + oldUri + "> to <" + newUri + ">");
 			ResourceUtils.renameResource(res, newUri);
 		}
 	}
@@ -209,7 +208,7 @@ public class Match {
 	 * @param vivoToInput vivo to input property
 	 * @param inputToVivo input to vivo property
 	 */
-	private void link(Map<String,String> matchSet, String vivoToInput, String inputToVivo) {
+	private void link(Map<String, String> matchSet, String vivoToInput, String inputToVivo) {
 		Property vivoToInputProperty = ResourceFactory.createProperty(vivoToInput);
 		Property inputToVivoProperty = ResourceFactory.createProperty(inputToVivo);
 		
@@ -219,20 +218,19 @@ public class Match {
 		for(String inputUri : matchSet.keySet()) {
 			// get resources and add linking triples
 			String vivoUri = matchSet.get(inputUri);
-			Resource inputRes = this.inputJena.getJenaModel().getResource(inputUri);	
+			Resource inputRes = this.inputJena.getJenaModel().getResource(inputUri);
 			Resource vivoRes = this.scoreJena.getJenaModel().getResource(vivoUri);
-			float percent = Math.round(10000f*count/total)/100f;
-			log.trace("("+count+"/"+total+": "+percent+"%): Linking match <" + inputUri + "> to <" + vivoUri + ">");
+			float percent = Math.round(10000f * count / total) / 100f;
+			log.trace("(" + count + "/" + total + ": " + percent + "%): Linking match <" + inputUri + "> to <" + vivoUri + ">");
 			log.trace("Adding input to vivo match link [ <" + inputUri + "> <" + inputToVivo + "> <" + vivoUri + "> ]");
 			this.inputJena.getJenaModel().add(inputRes, inputToVivoProperty, vivoRes);
 			log.trace("Adding vivo to input match link [ <" + vivoUri + "> <" + vivoToInput + "> <" + inputUri + "> ]");
-			this.inputJena.getJenaModel().add(vivoRes, vivoToInputProperty, inputRes);			
+			this.inputJena.getJenaModel().add(vivoRes, vivoToInputProperty, inputRes);
 		}
 	}
 	
 	/**
-	 * Clear out rdf:type and literal values of matched scoreResources
-	 * TODO stephen: TEST
+	 * Clear out rdf:type and literal values of matched scoreResources TODO stephen: TEST
 	 * @param resultMap a mapping of matched scoreResources to vivoResources
 	 * @throws IOException error building construct
 	 */
@@ -251,21 +249,21 @@ public class Match {
 			"  FILTER ( isLiteral(?o || (str(?p)='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
 			"}";
 			String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
-			log.debug("Construct Query:\n"+conQuery);
-			log.debug("Constructed Literal Set:\n"+this.inputJena.executeConstructQuery(conQuery).toString());
+			log.debug("Construct Query:\n" + conQuery);
+			log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).toString());
 			log.debug("Clear Literal Query:\n" + query);
 			this.inputJena.executeUpdateQuery(query);
 			log.trace("Ending clear types and literals");
-		
+			
 		}
 	}
 	
 	/**
 	 * @param matchSet the set of matches to run against
 	 * @return the completed model of matches
-	 * @throws IOException no idea why it throws this 
+	 * @throws IOException no idea why it throws this
 	 */
-	private JenaConnect outputMatches(Map<String,String> matchSet) throws IOException{
+	private JenaConnect outputMatches(Map<String, String> matchSet) throws IOException {
 		log.trace("Beginning seperate output of matches");
 		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
@@ -278,7 +276,7 @@ public class Match {
 			while(subjectStmts.hasNext()) {
 				Statement stmt = subjectStmts.nextStatement();
 				Resource subj = stmt.getSubject();
-				if (!linkRes.contains(subj)){
+				if(!linkRes.contains(subj)) {
 					log.trace("Submitting to recursive build " + subj.getURI());
 					linkRes.push(subj.getURI());
 					recursiveBuild(subj, linkRes, returnModel);
@@ -295,7 +293,8 @@ public class Match {
 	 * @param returnModel model to return
 	 * @throws IOException I have no idea why mem throws this
 	 */
-	/* Traverses paperNode and adds to toReplace model
+	/*
+	 * Traverses paperNode and adds to toReplace model
 	 * @param mainRes the main resource
 	 * @param linkRes the resource to link it to
 	 * @return the model containing the sanitized info so far
@@ -305,17 +304,17 @@ public class Match {
 		StmtIterator mainStmts = mainRes.listProperties();
 		returnModel.getJenaModel().add(mainStmts);
 		
-		while (mainStmts.hasNext()) {
+		while(mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
-						
+			
 			//todo change the equals t o
-			if (stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
+			if(stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
 				linkRes.push(mainRes.getURI());
 				log.trace("Submitting to rcb from within rcb" + stmt.getObject().asResource().getURI());
 				recursiveBuild(stmt.getObject().asResource(), linkRes, returnModel);
 				linkRes.pop();
 			}
-			if (!linkRes.contains(stmt.getSubject().getURI())) {
+			if(!linkRes.contains(stmt.getSubject().getURI())) {
 				linkRes.push(mainRes.getURI());
 				log.trace("Submitting to rcb from within rcb" + stmt.getSubject().getURI());
 				recursiveBuild(stmt.getSubject(), linkRes, returnModel);
@@ -352,7 +351,7 @@ public class Match {
 		// options
 		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-type-and-literals").setDescription("clear all rdf:type and literal values out of the nodes matched").setRequired(false));
 		return parser;
-	}	
+	}
 	
 	/**
 	 * Execute scoreJena object algorithms
@@ -361,7 +360,7 @@ public class Match {
 	public void execute() throws IOException {
 		log.info("Running specified algorithims");
 		
-		Map<String,String> pubmedResultMap = match(this.matchThreshold);
+		Map<String, String> pubmedResultMap = match(this.matchThreshold);
 		
 		if(this.renameRes) {
 			rename(pubmedResultMap);
@@ -381,7 +380,7 @@ public class Match {
 			this.outputJena.getJenaModel().add(outputMatches(pubmedResultMap).getJenaModel());
 		}
 	}
-
+	
 	/**
 	 * Main method
 	 * @param args command line arguments
@@ -389,7 +388,7 @@ public class Match {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(Match.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new Match(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
@@ -397,7 +396,7 @@ public class Match {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 	

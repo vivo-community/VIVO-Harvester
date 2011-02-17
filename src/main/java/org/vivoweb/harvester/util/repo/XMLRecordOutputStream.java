@@ -116,7 +116,7 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Set the record handler
 	 * @param rh new record handler

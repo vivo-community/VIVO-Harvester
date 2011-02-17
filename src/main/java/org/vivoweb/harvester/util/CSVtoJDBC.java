@@ -1,8 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * Copyright (c) 2010 Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights
+ * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and
+ * implementation
  ******************************************************************************/
 package org.vivoweb.harvester.util;
 
@@ -90,7 +91,7 @@ public class CSVtoJDBC {
 	public CSVtoJDBC(String[] args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
-
+	
 	/**
 	 * ArgList Constructor
 	 * @param argList option set of parsed args
@@ -107,41 +108,41 @@ public class CSVtoJDBC {
 	public void execute() throws IOException {
 		try {
 			ResultSet rs = Csv.getInstance().read(new InputStreamReader(this.csvFile.getContent().getInputStream()), null);
-	        ResultSetMetaData meta = rs.getMetaData();
-	        Statement cursor = this.output.createStatement();
-	        int rowID = 0;
-	        StringBuilder createTable = new StringBuilder("CREATE TABLE ");
-	        createTable.append(this.tableName);
-	        createTable.append("( ROWID int, ");
-	        StringBuilder columnNames = new StringBuilder("( ROWID, ");
-	    	for(int i = 0; i < meta.getColumnCount(); i++){
-	    		createTable.append("\n");
-	    		createTable.append(meta.getColumnLabel(i + 1));
-	    		createTable.append((i==(meta.getColumnCount()-1) )?" TEXT )":" TEXT ,");
-	    		
-	    		columnNames.append(meta.getColumnLabel(i + 1));
-	    		columnNames.append((i==(meta.getColumnCount()-1) )?" )":", ");
-			} 
-	    	log.info("Create table command: \n" + createTable.toString());
-	        cursor.execute(createTable.toString());
-	        while(rs.next()){
-	        	
-	        	StringBuilder insertCommand =  new StringBuilder("INSERT INTO ");
-	        	insertCommand.append(this.tableName);
-	        	insertCommand.append(" ");
-	        	insertCommand.append(columnNames.toString() );
-	        	insertCommand.append("\nVALUES (");
-	        	insertCommand.append(rowID);
-	        	insertCommand.append(", '");
-	        	for(int i = 0; i < meta.getColumnCount(); i++){
-//					System.out.println(meta.getColumnLabel(i + 1) + ": " + rs.getString(i + 1));
-	        		insertCommand.append(rs.getString(i + 1));
-	        		insertCommand.append((i==(meta.getColumnCount()-1) )?"')":"', '");
-				}       
-	    		log.info("Insert command: \n" + insertCommand.toString());	
+			ResultSetMetaData meta = rs.getMetaData();
+			Statement cursor = this.output.createStatement();
+			int rowID = 0;
+			StringBuilder createTable = new StringBuilder("CREATE TABLE ");
+			createTable.append(this.tableName);
+			createTable.append("( ROWID int, ");
+			StringBuilder columnNames = new StringBuilder("( ROWID, ");
+			for(int i = 0; i < meta.getColumnCount(); i++) {
+				createTable.append("\n");
+				createTable.append(meta.getColumnLabel(i + 1));
+				createTable.append((i == (meta.getColumnCount() - 1)) ? " TEXT )" : " TEXT ,");
+				
+				columnNames.append(meta.getColumnLabel(i + 1));
+				columnNames.append((i == (meta.getColumnCount() - 1)) ? " )" : ", ");
+			}
+			log.info("Create table command: \n" + createTable.toString());
+			cursor.execute(createTable.toString());
+			while(rs.next()) {
+				
+				StringBuilder insertCommand = new StringBuilder("INSERT INTO ");
+				insertCommand.append(this.tableName);
+				insertCommand.append(" ");
+				insertCommand.append(columnNames.toString());
+				insertCommand.append("\nVALUES (");
+				insertCommand.append(rowID);
+				insertCommand.append(", '");
+				for(int i = 0; i < meta.getColumnCount(); i++) {
+					//					System.out.println(meta.getColumnLabel(i + 1) + ": " + rs.getString(i + 1));
+					insertCommand.append(rs.getString(i + 1));
+					insertCommand.append((i == (meta.getColumnCount() - 1)) ? "')" : "', '");
+				}
+				log.info("Insert command: \n" + insertCommand.toString());
 				cursor.executeUpdate(insertCommand.toString());
 				rowID++;
-	        }
+			}
 		} catch(FileSystemException e) {
 			throw new IOException(e.getMessage(), e);
 		} catch(SQLException e) {
@@ -163,7 +164,7 @@ public class CSVtoJDBC {
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameter(true, "TABLE_NAME").setDescription("a single database table name").setRequired(true));
 		return parser;
 	}
-
+	
 	/**
 	 * Main method
 	 * @param args commandline arguments
@@ -171,7 +172,7 @@ public class CSVtoJDBC {
 	public static void main(String[] args) {
 		try {
 			InitLog.initLogger(CSVtoJDBC.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new CSVtoJDBC(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
@@ -179,7 +180,7 @@ public class CSVtoJDBC {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 	

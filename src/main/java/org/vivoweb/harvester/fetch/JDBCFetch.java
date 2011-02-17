@@ -87,7 +87,7 @@ public class JDBCFetch {
 	/**
 	 * The user defined SQL Query string
 	 */
-	private Map<String,String> queryStrings;
+	private Map<String, String> queryStrings;
 	
 	/**
 	 * Constructor
@@ -101,8 +101,7 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Perform post-construction data prep and validation
-	 * Prevents null pointer exceptions
+	 * Perform post-construction data prep and validation Prevents null pointer exceptions
 	 */
 	private void prep() {
 		if(this.tableNames == null) {
@@ -197,7 +196,7 @@ public class JDBCFetch {
 		// Set the data fields map according to the command line -F values
 		if(opts.has("F")) {
 			this.dataFields = new HashMap<String, List<String>>();
-			Map<String,String> fields = opts.getValueMap("F");
+			Map<String, String> fields = opts.getValueMap("F");
 			for(String tableName : fields.keySet()) {
 				this.dataFields.put(tableName, Arrays.asList(fields.get(tableName).split("\\s?,\\s?")));
 			}
@@ -206,7 +205,7 @@ public class JDBCFetch {
 		// Set the ID fields map according to the command line -I values		
 		if(opts.has("I")) {
 			this.idFields = new HashMap<String, List<String>>();
-			Map<String,String> ids = opts.getValueMap("I");
+			Map<String, String> ids = opts.getValueMap("I");
 			for(String tableName : ids.keySet()) {
 				this.idFields.put(tableName, Arrays.asList(ids.get(tableName).split("\\s?,\\s?")));
 			}
@@ -215,7 +214,7 @@ public class JDBCFetch {
 		// Sets a map of the SQL Where clauses to be applied
 		if(opts.has("W")) {
 			this.whereClauses = new HashMap<String, List<String>>();
-			Map<String,String> wheres = opts.getValueMap("W");
+			Map<String, String> wheres = opts.getValueMap("W");
 			for(String tableName : wheres.keySet()) {
 				this.whereClauses.put(tableName, Arrays.asList(wheres.get(tableName).split("\\s?,\\s?")));
 			}
@@ -224,7 +223,7 @@ public class JDBCFetch {
 		// settign manual foriegn key relations
 		if(opts.has("R")) {
 			this.fkRelations = new HashMap<String, Map<String, String>>();
-			Map<String,String> rels = opts.getValueMap("R");
+			Map<String, String> rels = opts.getValueMap("R");
 			for(String tableName : rels.keySet()) {
 				if(!this.fkRelations.containsKey(tableName)) {
 					this.fkRelations.put(tableName, new HashMap<String, String>());
@@ -435,7 +434,7 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to db
 	 */
 	private String buildSelect(String tableName) throws SQLException {
-		if(this.queryStrings != null && this.queryStrings.containsKey(tableName) ){
+		if(this.queryStrings != null && this.queryStrings.containsKey(tableName)) {
 			String query = this.queryStrings.get(tableName);
 			log.debug("User defined SQL Query:\n" + query);
 			return query;
@@ -528,9 +527,9 @@ public class JDBCFetch {
 				StringBuilder sb = new StringBuilder();
 				// For each Record
 				ResultSet rs = this.cursor.executeQuery(buildSelect(tableName));
-//				ResultSetMetaData rsmd = rs.getMetaData();
-//				int ColumnCount = rsmd.getColumnCount();
-//				Map<String,String> columnData = new HashMap<String,String>();
+				//				ResultSetMetaData rsmd = rs.getMetaData();
+				//				int ColumnCount = rsmd.getColumnCount();
+				//				Map<String,String> columnData = new HashMap<String,String>();
 				while(rs.next()) {
 					StringBuilder recID = new StringBuilder();
 					recID.append("id");
@@ -597,7 +596,7 @@ public class JDBCFetch {
 					// Relation Fields
 					for(String relationField : getFkRelationFields(tableName).keySet()) {
 						// Field BEGIN
-						String field = tableNS+":"+relationField.replaceAll(" ", "_");
+						String field = tableNS + ":" + relationField.replaceAll(" ", "_");
 						sb.append("    <");
 						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(" rdf:resource=\"");
@@ -626,7 +625,7 @@ public class JDBCFetch {
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-		log.info("Added "+count+" Records");
+		log.info("Added " + count + " Records");
 	}
 	
 	/**
@@ -644,7 +643,7 @@ public class JDBCFetch {
 		}
 		return fields;
 	}
-
+	
 	/**
 	 * Main method
 	 * @param args commandline arguments
@@ -652,7 +651,7 @@ public class JDBCFetch {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(JDBCFetch.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new JDBCFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
@@ -660,7 +659,7 @@ public class JDBCFetch {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

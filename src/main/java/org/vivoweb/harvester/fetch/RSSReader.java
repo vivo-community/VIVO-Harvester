@@ -46,7 +46,6 @@ public class RSSReader {
 	
 	/**
 	 * @throws IOException error
-	 * 
 	 */
 	public void writeNews() throws IOException {
 		try {

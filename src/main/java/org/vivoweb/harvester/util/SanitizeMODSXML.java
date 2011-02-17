@@ -1,8 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri - initial API and implementation
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri. All
+ * rights reserved. This program and the accompanying materials are made available under the terms of the new BSD
+ * license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors: Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri - initial
+ * API and implementation
  ******************************************************************************/
 package org.vivoweb.harvester.util;
 
@@ -61,7 +62,7 @@ public class SanitizeMODSXML {
 	public SanitizeMODSXML(String[] args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
-
+	
 	/**
 	 * Constructor
 	 * @param argList option set of parsed args
@@ -69,7 +70,6 @@ public class SanitizeMODSXML {
 	public SanitizeMODSXML(ArgList argList) {
 		this(argList.get("inputPath"), argList.get("outputPath"));
 	}
-	
 	
 	/**
 	 * Get the ArgParser for this task
@@ -82,52 +82,45 @@ public class SanitizeMODSXML {
 		return parser;
 	}
 	
-	
 	/**
 	 * Checks to see if the given path has a slash at the end, and if so, removes it
 	 * @param path the path to check
 	 * @return the path with the slash removed
 	 */
-	private String stripFinalSlash(String path)
-	{
+	private String stripFinalSlash(String path) {
 		String returnValue = path;
 		if(returnValue.endsWith("/"))
 			returnValue = returnValue.substring(0, returnValue.length() - 1);
-			
+		
 		return returnValue;
 	}
-
+	
 	/**
-	 * Checks to make sure the input path and the output path are both directories.  It not, log errors and explode.
+	 * Checks to make sure the input path and the output path are both directories. It not, log errors and explode.
 	 * @throws RuntimeException if either input path or output path is not a directory
 	 */
-	private void checkValidInputs()
-	{
+	private void checkValidInputs() {
 		File inputDir = new File(this.inputPath);
 		File outputDir = new File(this.outputPath);
-
+		
 		String errorMessage = "";
-		if(!inputDir.isDirectory())
-		{
+		if(!inputDir.isDirectory()) {
 			String oneLineError = "Not a directory: " + this.inputPath;
 			log.error(oneLineError);
 			errorMessage += oneLineError + "\n";
 		}
-		if(outputDir.exists() && (!outputDir.isDirectory()))
-		{
+		if(outputDir.exists() && (!outputDir.isDirectory())) {
 			String oneLineError = "Not a directory: " + this.outputPath;
 			log.error(oneLineError);
 			errorMessage += oneLineError + "\n";
 		}
-
-		if(!errorMessage.equals(""))
-		{
+		
+		if(!errorMessage.equals("")) {
 			errorMessage = errorMessage.substring(0, errorMessage.length() - 1); //strip last newline
 			throw new RuntimeException(errorMessage); //explode
 		}
 	}
-
-
+	
 	/**
 	 * Initialize the mapping of bad values to their replacements
 	 * @return the mapping
@@ -137,7 +130,6 @@ public class SanitizeMODSXML {
 		//not using for now
 		return mapping;
 	}
-	
 	
 	/**
 	 * Sanitize all files in directory
@@ -151,10 +143,8 @@ public class SanitizeMODSXML {
 			outputDir.mkdir();
 		
 		File[] children = inputDir.listFiles();
-		for(File file : children)
-		{
-			if(file.isFile())
-			{
+		for(File file : children) {
+			if(file.isFile()) {
 				String inputFilePath = this.inputPath + "/" + file.getName();
 				String outputFilePath = this.outputPath + "/" + file.getName();
 				sanitizeFile(inputFilePath, outputFilePath);
@@ -168,12 +158,10 @@ public class SanitizeMODSXML {
 	 * @param outputFilePath the path to which to write the sanitized file
 	 * @throws IOException if an error in reading or writing occurs
 	 */
-	private void sanitizeFile(String inputFilePath, String outputFilePath) throws IOException
-	{
+	private void sanitizeFile(String inputFilePath, String outputFilePath) throws IOException {
 		String xmlData = readFile(inputFilePath);
 		writeFile(outputFilePath, xmlData);
 	}
-	
 	
 	/**
 	 * Loads an entire file into a String.
@@ -195,27 +183,25 @@ public class SanitizeMODSXML {
 		reader.close();
 		String output = builder.toString();
 		output = trimBadUnicodeCharacters(output);
-//		System.out.println(output.substring(output.length() - 10));
-//		System.out.println((int)(output.charAt(output.length() - 1)));
+		//		System.out.println(output.substring(output.length() - 10));
+		//		System.out.println((int)(output.charAt(output.length() - 1)));
 		return output;
 	}
-
 	
 	/**
-	 * Pure hack for now.  readFile() is adding three Unicode-65535 characters to the end of the file for some reason.  Ideally
-	 * this should be prevented/filtered at the moment the character is "read", but this has been attempted and did not work.
-	 * Doing it this way to bypass the problem for now.
+	 * Pure hack for now. readFile() is adding three Unicode-65535 characters to the end of the file for some reason.
+	 * Ideally this should be prevented/filtered at the moment the character is "read", but this has been attempted and
+	 * did not work. Doing it this way to bypass the problem for now.
 	 * @param input the string to trim the characters off of
 	 * @return the trimmed string
 	 */
 	private String trimBadUnicodeCharacters(String input) {
 		String output = input;
-		while (output.charAt(output.length() - 1) == 65535) {
+		while(output.charAt(output.length() - 1) == 65535) {
 			output = output.substring(0, output.length() - 1);
 		}
 		return output;
 	}
-	
 	
 	/**
 	 * Writes a string to a file.
@@ -230,7 +216,6 @@ public class SanitizeMODSXML {
 		outputStream.write(content.getBytes());
 	}
 	
-	
 	/**
 	 * Tests a character to see if it should be replaced with another one or combination
 	 * @param character the character to test
@@ -238,9 +223,11 @@ public class SanitizeMODSXML {
 	 */
 	private String getReplacement(char character) {
 		String replacement;
-		/* these replacements were determined by inspection.  For example, it was observed that words with a Unicode 11 made
-		 * sense only when that character was replaced by "ff", for example "no performance di#erence between Gigabit Ethernet",
-		 * where # represents Unicode 11 */
+		/*
+		 * these replacements were determined by inspection. For example, it was observed that words with a Unicode 11
+		 * made sense only when that character was replaced by "ff", for example
+		 * "no performance di#erence between Gigabit Ethernet", where # represents Unicode 11
+		 */
 		switch(character) {
 			case 11:
 				replacement = "ff";
@@ -260,8 +247,6 @@ public class SanitizeMODSXML {
 		return replacement;
 	}
 	
-	
-	
 	/**
 	 * Goes through a string, and replaces all instances of the keys in the replacement mapping with the values in the
 	 * replacement mapping.
@@ -277,8 +262,6 @@ public class SanitizeMODSXML {
 		}
 		return output;
 	}
-
-	
 	
 	/**
 	 * Main method
@@ -287,7 +270,7 @@ public class SanitizeMODSXML {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(SanitizeMODSXML.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new SanitizeMODSXML(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
@@ -295,7 +278,7 @@ public class SanitizeMODSXML {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

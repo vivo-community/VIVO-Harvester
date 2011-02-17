@@ -57,7 +57,6 @@ public class SPARQLTranslator {
 	 */
 	protected RecordHandler outputRC;
 	
-	
 	/**
 	 * Default constructor
 	 */
@@ -107,11 +106,11 @@ public class SPARQLTranslator {
 			this.outputRC = null;
 		}
 		
-		if(argumentList.has("s")){
+		if(argumentList.has("s")) {
 			this.sparqlFile = new File(argumentList.get("s"));
 		} else {
 			this.sparqlFile = null;
-		}		
+		}
 	}
 	
 	/***
@@ -130,36 +129,32 @@ public class SPARQLTranslator {
 		} catch(FileNotFoundException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-	    // Get the object of DataInputStream
-	    DataInputStream in = new DataInputStream(fstream);
-	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-	    String strLine;
-	    //Read File Line By Line
-	    while ((strLine = br.readLine()) != null)   {
-	      // Print the content on the console
-    		strQuery.append(strLine);	
-	    }
-	    //Close the input stream
-	    in.close();
+		// Get the object of DataInputStream
+		DataInputStream in = new DataInputStream(fstream);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		String strLine;
+		//Read File Line By Line
+		while((strLine = br.readLine()) != null) {
+			// Print the content on the console
+			strQuery.append(strLine);
+		}
+		//Close the input stream
+		in.close();
 		
-	    log.info(strQuery.toString());
-	    ResultSet rs = this.inputJC.executeSelectQuery(strQuery.toString());
+		log.info(strQuery.toString());
+		ResultSet rs = this.inputJC.executeSelectQuery(strQuery.toString());
 		
-	    if (!rs.hasNext())
-	    {
-	    	log.info("Failed to find");
-	    }
-	    
-	    while(rs.hasNext()) {
-	    	QuerySolution qs = rs.next();
-	    	log.info(qs.toString());
-	    }
+		if(!rs.hasNext()) {
+			log.info("Failed to find");
+		}
 		
+		while(rs.hasNext()) {
+			QuerySolution qs = rs.next();
+			log.info(qs.toString());
+		}
 		
 		log.info("Translation: End");
 	}
-	
-
 	
 	/**
 	 * Get the ArgParser for this task
@@ -186,14 +181,14 @@ public class SPARQLTranslator {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(SPARQLTranslator.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new SPARQLTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 	

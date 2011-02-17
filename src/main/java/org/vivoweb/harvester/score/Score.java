@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
+ * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation Christopher
- * Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm Christopher Barnes - regex
- * scoring algorithim
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
+ * implementation Christopher Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm
+ * Christopher Barnes - regex scoring algorithim
  ******************************************************************************/
 package org.vivoweb.harvester.score;
 
@@ -70,15 +70,15 @@ public class Score {
 	/**
 	 * the class of the Algorithm to execute
 	 */
-	private Map<String,Class<? extends Algorithm>> algorithms;
+	private Map<String, Class<? extends Algorithm>> algorithms;
 	/**
 	 * the predicates to look for in inputJena model
 	 */
-	private Map<String,String> inputPredicates;
+	private Map<String, String> inputPredicates;
 	/**
 	 * the predicates to look for in vivoJena model
 	 */
-	private Map<String,String> vivoPredicates;
+	private Map<String, String> vivoPredicates;
 	/**
 	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
@@ -86,12 +86,12 @@ public class Score {
 	/**
 	 * the weighting (0.0 , 1.0) for this score
 	 */
-	private Map<String,Float> weights;
+	private Map<String, Float> weights;
 	/**
 	 * are all algorithms org.vivoweb.harvester.score.algorithm.EqualityTest
 	 */
 	private boolean equalityOnlyMode;
-
+	
 	/**
 	 * Constructor
 	 * @param inputJena model containing statements to be scored
@@ -105,7 +105,7 @@ public class Score {
 	 * @param weights the weightings (0.0 , 1.0) for this score
 	 * @throws IOException error initializing jena models
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String,Class<? extends Algorithm>> algorithms, Map<String,String> inputPredicates, Map<String,String> vivoPredicates, String namespace, Map<String,Float> weights) throws IOException {
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights) throws IOException {
 		init(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights);
 	}
 	
@@ -119,8 +119,7 @@ public class Score {
 	}
 	
 	/**
-	 * Constructor
-			Scoring.close();
+	 * Constructor Scoring.close();
 	 * @param opts parsed argument list
 	 * @throws IOException error parsing options
 	 */
@@ -129,7 +128,7 @@ public class Score {
 		JenaConnect v = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
 		JenaConnect s = JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S"));
 		String t = opts.get("t");
-		Map<String,Class<? extends Algorithm>> a = new HashMap<String, Class<? extends Algorithm>>();
+		Map<String, Class<? extends Algorithm>> a = new HashMap<String, Class<? extends Algorithm>>();
 		Map<String, String> algs = opts.getValueMap("A");
 		for(String runName : algs.keySet()) {
 			try {
@@ -140,8 +139,8 @@ public class Score {
 				throw new IllegalArgumentException(e.getMessage(), e);
 			}
 		}
-		Map<String,Float> w = new HashMap<String, Float>();
-		Map<String,String> weigh = opts.getValueMap("W");
+		Map<String, Float> w = new HashMap<String, Float>();
+		Map<String, String> weigh = opts.getValueMap("W");
 		for(String runName : weigh.keySet()) {
 			w.put(runName, Float.valueOf(weigh.get(runName)));
 		}
@@ -161,7 +160,7 @@ public class Score {
 	 * @param w the weighting (0.0 , 1.0) for this score
 	 * @throws IOException error initializing jena models
 	 */
-	private void init(JenaConnect i, JenaConnect v, JenaConnect s, String t, Map<String,Class<? extends Algorithm>> a, Map<String,String> iPred, Map<String,String> vPred, String ns, Map<String,Float> w) throws IOException {
+	private void init(JenaConnect i, JenaConnect v, JenaConnect s, String t, Map<String, Class<? extends Algorithm>> a, Map<String, String> iPred, Map<String, String> vPred, String ns, Map<String, Float> w) throws IOException {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -180,13 +179,12 @@ public class Score {
 		String tempDir = t;
 		if(tempDir == null) {
 			log.info("temp model directory is not specified, using system temp directory");
-//			tempDir = File.createTempFile("tempVivoInputCopyJena", "db").getAbsolutePath();
-//			log.info("temp model is not specifiedhi , using memory jena model");
+			//			tempDir = File.createTempFile("tempVivoInputCopyJena", "db").getAbsolutePath();
+			//			log.info("temp model is not specifiedhi , using memory jena model");
 			this.tempJena = new MemJenaConnect();
 		} else {
 			this.tempJena = new TDBJenaConnect(tempDir);
 		}
-		
 		
 		if(a == null) {
 			throw new IllegalArgumentException("Algorithm cannot be null");
@@ -203,7 +201,7 @@ public class Score {
 		}
 		this.vivoPredicates = vPred;
 		
-		if (this.algorithms.size() < 1) {
+		if(this.algorithms.size() < 1) {
 			throw new IllegalArgumentException("No runs specified!");
 		}
 		
@@ -220,7 +218,7 @@ public class Score {
 		}
 		this.weights = w;
 		
-		Map<String,Map<String,? extends Object>> maps = new HashMap<String, Map<String,? extends Object>>();
+		Map<String, Map<String, ? extends Object>> maps = new HashMap<String, Map<String, ? extends Object>>();
 		maps.put("vivoJena predicates", this.vivoPredicates);
 		maps.put("inputJena predicates", this.inputPredicates);
 		maps.put("algorithms", this.algorithms);
@@ -236,20 +234,20 @@ public class Score {
 			}
 		}
 		this.equalityOnlyMode = test;
-		log.trace("equalityOnlyMode: "+this.equalityOnlyMode);
+		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
 	}
 	
 	/**
 	 * Verify that each map contains the same keys
 	 * @param maps mapping of map name to map
 	 */
-	private void verifyRunNames(Map<String,Map<String,? extends Object>> maps) {
+	private void verifyRunNames(Map<String, Map<String, ? extends Object>> maps) {
 		for(String x : maps.keySet()) {
 			for(String y : maps.keySet()) {
 				if(x != y && !maps.get(y).keySet().containsAll(maps.get(x).keySet())) {
-					for(String runName: maps.get(x).keySet()) {
+					for(String runName : maps.get(x).keySet()) {
 						if(x != y && !maps.get(y).containsKey(runName)) {
-							throw new IllegalArgumentException("run name '"+runName+"' found in "+x+", but not in "+y);
+							throw new IllegalArgumentException("run name '" + runName + "' found in " + x + ", but not in " + y);
 						}
 					}
 				}
@@ -271,8 +269,8 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").withParameter(true, "CONFIG_FILE").setDescription("score data JENA configuration filename").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempJenaDir").withParameter(true, "DIRECTORY_PATH").setDescription("directory to store temp jena model").setRequired(false));
-//		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("temp-config").setDescription("temp model JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
-//		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of temp jena model config using VALUE").setRequired(false));
+		//		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("temp-config").setDescription("temp model JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		//		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tempOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of temp jena model config using VALUE").setRequired(false));
 		
 		// Parameters
 		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("algorithms").withParameterValueMap("RUN_NAME", "CLASS_NAME").setDescription("for RUN_NAME, use this CLASS_NAME (must implement Algorithm) to evaluate matches").setRequired(true));
@@ -281,7 +279,7 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivoJena-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
 		return parser;
-	}	
+	}
 	
 	/**
 	 * Execute score object algorithms
@@ -304,10 +302,10 @@ public class Score {
 			log.trace("Input model already in temp copy model");
 		}
 		Dataset ds = this.tempJena.getDataSet();
-
+		
 		log.trace("Building Query");
 		String sQuery = buildSelectQuery();
-		log.debug("Score Query:\n"+sQuery);
+		log.debug("Score Query:\n" + sQuery);
 		// Execute query
 		log.trace("Building Query Execution");
 		Query query = QueryFactory.create(sQuery, Syntax.syntaxARQ);
@@ -322,15 +320,15 @@ public class Score {
 		} else {
 			log.info("Building Record Set");
 		}
-		Set<Map<String,String>> solSet = new TreeSet<Map<String,String>>(new Comparator<Map<String,String>>() {
+		Set<Map<String, String>> solSet = new TreeSet<Map<String, String>>(new Comparator<Map<String, String>>() {
 			@Override
 			public int compare(Map<String, String> o1, Map<String, String> o2) {
-				String o1key = o1.get("sInput")+o1.get("sVivo");
-				String o2key = o2.get("sInput")+o2.get("sVivo");
+				String o1key = o1.get("sInput") + o1.get("sVivo");
+				String o2key = o2.get("sInput") + o2.get("sVivo");
 				return o1key.compareTo(o2key);
 			}
 		});
-		Map<String,String> tempMap;
+		Map<String, String> tempMap;
 		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
 			String sinputuri = solution.getResource("sInput").getURI();
 			String svivouri = solution.getResource("sVivo").getURI();
@@ -338,17 +336,17 @@ public class Score {
 			tempMap.put("sInput", sinputuri);
 			tempMap.put("sVivo", svivouri);
 			for(String runName : this.vivoPredicates.keySet()) {
-				RDFNode os = solution.get("os_"+runName);
+				RDFNode os = solution.get("os_" + runName);
 				if(os.isResource()) {
-					tempMap.put("URI_os_"+runName, os.asResource().getURI());
+					tempMap.put("URI_os_" + runName, os.asResource().getURI());
 				} else if(os.isLiteral()) {
-					tempMap.put("LIT_os_"+runName, os.asLiteral().getValue().toString());
+					tempMap.put("LIT_os_" + runName, os.asLiteral().getValue().toString());
 				}
-				RDFNode op = solution.get("op_"+runName);
+				RDFNode op = solution.get("op_" + runName);
 				if(op.isResource()) {
-					tempMap.put("URI_op_"+runName, op.asResource().getURI());
+					tempMap.put("URI_op_" + runName, op.asResource().getURI());
 				} else if(op.isLiteral()) {
-					tempMap.put("LIT_op_"+runName, op.asLiteral().getValue().toString());
+					tempMap.put("LIT_op_" + runName, op.asLiteral().getValue().toString());
 				}
 			}
 			solSet.add(tempMap);
@@ -358,29 +356,26 @@ public class Score {
 		}
 		int total = solSet.size();
 		int count = 0;
-		for(Map<String,String> eval : solSet) {
+		for(Map<String, String> eval : solSet) {
 			count++;
 			incrementer++;
 			indScore = new StringBuilder();
 			String sInputURI = eval.get("sInput");
 			String sVivoURI = eval.get("sVivo");
-			float percent = Math.round(10000f*count/total)/100f;
-			log.debug("("+count+"/"+total+": "+percent+"%): Evaluating <"+sInputURI+"> from inputJena as match for <"+sVivoURI+"> from vivoJena");
+			float percent = Math.round(10000f * count / total) / 100f;
+			log.debug("(" + count + "/" + total + ": " + percent + "%): Evaluating <" + sInputURI + "> from inputJena as match for <" + sVivoURI + "> from vivoJena");
 			// Build Score Record
-			indScore.append("" +
-				"  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" +
-				"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
-			);
+			indScore.append("" + "  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" + "  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n");
 			for(String runName : this.vivoPredicates.keySet()) {
-				String osUri = eval.get("URI_os_"+runName);
-				String osLit = eval.get("LIT_os_"+runName);
-				String opUri = eval.get("URI_op_"+runName);
-				String opLit = eval.get("LIT_op_"+runName);
-				log.trace("os_"+runName+": '"+((osUri != null)?osUri:osLit)+"'");
-				log.trace("op_"+runName+": '"+((opUri != null)?opUri:opLit)+"'");
+				String osUri = eval.get("URI_os_" + runName);
+				String osLit = eval.get("LIT_os_" + runName);
+				String opUri = eval.get("URI_op_" + runName);
+				String opLit = eval.get("LIT_op_" + runName);
+				log.trace("os_" + runName + ": '" + ((osUri != null) ? osUri : osLit) + "'");
+				log.trace("op_" + runName + ": '" + ((opUri != null) ? opUri : opLit) + "'");
 				indScore.append(buildScoreSparqlFragment(incrementer, opUri, opLit, osUri, osLit, runName));
 			}
-			log.debug("Scores for inputJena node <"+sInputURI+"> to vivoJena node <"+sVivoURI+">:\n"+indScore.toString());
+			log.debug("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
 			scoreSparql.append(indScore);
 			if(incrementer == 500) {
 				loadRdfToScoreData(scoreSparql.toString());
@@ -399,15 +394,9 @@ public class Score {
 	 * @param scores the score rdf/xml fragments
 	 */
 	private void loadRdfToScoreData(String scores) {
-		String sparql = "" +
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
-		"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/> \n" +
-		"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" +
-		"INSERT DATA {\n" +
-			scores +
-		"}\n";
+		String sparql = "" + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + "PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/> \n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" + "INSERT DATA {\n" + scores + "}\n";
 		// Push Score Data into score model
-		log.trace("Loading Score Data into Score Model:\n"+sparql);
+		log.trace("Loading Score Data into Score Model:\n" + sparql);
 		this.scoreJena.executeUpdateQuery(sparql);
 	}
 	
@@ -417,16 +406,13 @@ public class Score {
 	 */
 	private String buildEqualitySelectQuery() {
 		//Build query to find all nodes matching on the given predicates
-		StringBuilder sQuery =	new StringBuilder(
-				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
-				"SELECT DISTINCT ?sVivo ?sInput"
-		);
+		StringBuilder sQuery = new StringBuilder("PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" + "SELECT DISTINCT ?sVivo ?sInput");
 		
 		List<String> filters = new ArrayList<String>();
 		List<String> vivoSelects = new ArrayList<String>();
 		List<String> inputSelects = new ArrayList<String>();
 		
-		for (String runName : this.inputPredicates.keySet()) {
+		for(String runName : this.inputPredicates.keySet()) {
 			String vivoProperty = this.vivoPredicates.get(runName);
 			String inputProperty = this.inputPredicates.get(runName);
 			sQuery.append(" ?os_" + runName);
@@ -436,19 +422,16 @@ public class Score {
 			filters.add("sameTerm(?os_" + runName + ", ?op_" + runName + ")");
 		}
 		
-		sQuery.append("\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
-				"WHERE {\n");
+		sQuery.append("\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" + "WHERE {\n");
 		sQuery.append("  GRAPH scoring:vivoClone {\n    ");
 		sQuery.append(StringUtils.join(vivoSelects, "\n    "));
-		sQuery.append("\n  } . \n  GRAPH scoring:inputClone {\n"+"    ");
+		sQuery.append("\n  } . \n  GRAPH scoring:inputClone {\n" + "    ");
 		sQuery.append(StringUtils.join(inputSelects, "\n    "));
 		sQuery.append("\n  } . \n  FILTER( (");
 		sQuery.append(StringUtils.join(filters, " && "));
 		sQuery.append(") && (str(?sVivo) != str(?sInput))");
 		if(this.namespace != null) {
-			sQuery.append(" && regex(str(?sInput), \"^"+this.namespace+"\")");
+			sQuery.append(" && regex(str(?sInput), \"^" + this.namespace + "\")");
 		}
 		sQuery.append(" ) .\n");
 		sQuery.append("}");
@@ -464,10 +447,7 @@ public class Score {
 			return buildEqualitySelectQuery();
 		}
 		//Build query to find all nodes matching on the given predicates
-		StringBuilder sQuery =	new StringBuilder(
-				"PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" +
-				"SELECT DISTINCT ?sVivo ?sInput"
-		);
+		StringBuilder sQuery = new StringBuilder("PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" + "SELECT DISTINCT ?sVivo ?sInput");
 		
 		StringBuilder vivoOptionals = new StringBuilder();
 		StringBuilder inputOptionals = new StringBuilder();
@@ -475,30 +455,27 @@ public class Score {
 		List<String> vivoUnions = new ArrayList<String>();
 		List<String> inputUnions = new ArrayList<String>();
 		
-		for (String runName : this.inputPredicates.keySet()) {
+		for(String runName : this.inputPredicates.keySet()) {
 			String vivoProperty = this.vivoPredicates.get(runName);
 			String inputProperty = this.inputPredicates.get(runName);
 			sQuery.append(" ?os_" + runName);
-//			sQuery.append(" ?ov_" + runName);
+			//			sQuery.append(" ?ov_" + runName);
 			sQuery.append(" ?op_" + runName);
-//			sQuery.append(" ?oi_" + runName);
+			//			sQuery.append(" ?oi_" + runName);
 			vivoUnions.add("{ ?sVivo <" + vivoProperty + "> ?ov_" + runName + " }");
 			vivoOptionals.append("    OPTIONAL { ?sVivo <").append(vivoProperty).append("> ").append("?op_" + runName).append(" } . \n");
 			inputUnions.add("{ ?sInput <" + inputProperty + "> ?oi_" + runName + " }");
-			inputOptionals.append("    "+"OPTIONAL { "+"?sInput <").append(inputProperty).append("> ").append("?os_" + runName).append(" }"+" . \n");
+			inputOptionals.append("    " + "OPTIONAL { " + "?sInput <").append(inputProperty).append("> ").append("?os_" + runName).append(" }" + " . \n");
 			filters.add("sameTerm(?os_" + runName + ", ?ov_" + runName + ")");
 		}
 		
-		sQuery.append("\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" +
-				"FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" +
-				"WHERE {\n");
+		sQuery.append("\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" + "WHERE {\n");
 		sQuery.append("  GRAPH scoring:vivoClone {\n    ");
 		sQuery.append(StringUtils.join(vivoUnions, " UNION \n    "));
 		sQuery.append(" . \n");
 		sQuery.append(vivoOptionals.toString());
 		sQuery.append("  } . \n");
-		sQuery.append("  GRAPH scoring:inputClone {\n"+"    ");
+		sQuery.append("  GRAPH scoring:inputClone {\n" + "    ");
 		sQuery.append(StringUtils.join(inputUnions, " UNION \n    "));
 		sQuery.append(" . \n");
 		sQuery.append(inputOptionals.toString());
@@ -507,7 +484,7 @@ public class Score {
 		sQuery.append(StringUtils.join(filters, " || "));
 		sQuery.append(") && (str(?sVivo) != str(?sInput))");
 		if(this.namespace != null) {
-			sQuery.append(" && regex(str(?sInput), \"^"+this.namespace+"\")");
+			sQuery.append(" && regex(str(?sInput), \"^" + this.namespace + "\")");
 		}
 		sQuery.append(" ) .\n");
 		sQuery.append("}");
@@ -528,7 +505,7 @@ public class Score {
 		float score = 0f;
 		// if a resource and same uris
 		if(this.equalityOnlyMode || (osUri != null && opUri != null && osUri.equals(opUri))) {
-			score = 1/1f;
+			score = 1 / 1f;
 		} else if(osLit != null && opLit != null) {
 			try {
 				score = this.algorithms.get(runName).newInstance().calculate(osLit, opLit);
@@ -538,19 +515,11 @@ public class Score {
 				throw new IllegalArgumentException(e.getMessage(), e);
 			}
 		}
-		log.trace("score: "+score);
-		String fragment = "" +
-			"  _:node" + nodenum + " scoreValue:hasScoreValue _:nodeScoreValue" + nodenum + " .\n" +
-			"  _:nodeScoreValue" + nodenum + " scoreValue:VivoProp <" + this.vivoPredicates.get(runName) + "> .\n" +
-			"  _:nodeScoreValue" + nodenum + " scoreValue:InputProp <" + this.inputPredicates.get(runName) + "> .\n" +
-			"  _:nodeScoreValue" + nodenum + " scoreValue:Algorithm \"" + this.algorithms.get(runName).getName() + "\" .\n" +
-			"  _:nodeScoreValue" + nodenum + " scoreValue:Score \"" + score + "\"^^xsd:float .\n" +
-			"  _:nodeScoreValue" + nodenum + " scoreValue:Weight \"" + this.weights.get(runName) + "\"^^xsd:float .\n" +
-			"  _:nodeScoreValue" + nodenum + " scoreValue:WeightedScore \"" + (this.weights.get(runName).doubleValue()*score) + "\"^^xsd:float .\n" +
-			"";
+		log.trace("score: " + score);
+		String fragment = "" + "  _:node" + nodenum + " scoreValue:hasScoreValue _:nodeScoreValue" + nodenum + " .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:VivoProp <" + this.vivoPredicates.get(runName) + "> .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:InputProp <" + this.inputPredicates.get(runName) + "> .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:Algorithm \"" + this.algorithms.get(runName).getName() + "\" .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:Score \"" + score + "\"^^xsd:float .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:Weight \"" + this.weights.get(runName) + "\"^^xsd:float .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:WeightedScore \"" + (this.weights.get(runName).doubleValue() * score) + "\"^^xsd:float .\n" + "";
 		return fragment;
 	}
-
+	
 	/**
 	 * Main method
 	 * @param args command line arguments
@@ -558,7 +527,7 @@ public class Score {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(Score.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new Score(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
@@ -566,7 +535,7 @@ public class Score {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 	

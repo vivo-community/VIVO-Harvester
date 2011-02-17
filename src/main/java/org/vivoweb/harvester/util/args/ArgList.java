@@ -158,7 +158,7 @@ public class ArgList {
 	 * @param arg argument to get
 	 * @return the value map
 	 */
-	public Map<String,String> getValueMap(String arg) {
+	public Map<String, String> getValueMap(String arg) {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
 		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
@@ -169,7 +169,7 @@ public class ArgList {
 			}
 			throw new IllegalArgumentException(arg + " is not a value map parameter, use get()");
 		}
-		Map<String,String> p = new HashMap<String, String>();
+		Map<String, String> p = new HashMap<String, String>();
 		if(this.oConfSet != null) {
 			Properties props = this.oConfSet.getOptionProperties(arg);
 			for(String prop : props.stringPropertyNames()) {
@@ -233,11 +233,11 @@ public class ArgList {
 	 */
 	public boolean has(String arg) {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
-		if (this.oCmdSet.hasOption(arg)) {
+		if(this.oCmdSet.hasOption(arg)) {
 			return true;
-		} else if (this.oConfSet != null && this.oConfSet.hasOption(arg)) {
+		} else if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
 			return true;
-		} else if (argdef != null && argdef.hasDefaultValue()) {
+		} else if(argdef != null && argdef.hasDefaultValue()) {
 			return true;
 		}
 		return false;

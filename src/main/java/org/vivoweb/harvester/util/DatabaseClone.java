@@ -121,7 +121,7 @@ public class DatabaseClone {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(DatabaseClone.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new DatabaseClone(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
@@ -129,7 +129,7 @@ public class DatabaseClone {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

@@ -1,8 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
+ * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
+ * implementation
  ******************************************************************************/
 package org.vivoweb.harvester.fetch;
 
@@ -37,13 +38,11 @@ public class NLMJournalFetch extends NIHFetch {
 	 * The name of the NLM Journals Database
 	 */
 	private static String database = "???NLMJouranals???";
-
 	
 	/**
-	 * Constructor:
-	 * Primary method for running a Journal Fetch. The email address of the person responsible
-	 * for this install of the program is required by NIH guidelines so the person can be
-	 * contacted if there is a problem, such as sending too many queries too quickly.
+	 * Constructor: Primary method for running a Journal Fetch. The email address of the person responsible for this
+	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
+	 * as sending too many queries too quickly.
 	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
 	 * @param outStream output stream to write to
 	 */
@@ -52,10 +51,9 @@ public class NLMJournalFetch extends NIHFetch {
 	}
 	
 	/**
-	 * Constructor:
-	 * Primary method for running a Journal Fetch. The email address of the person responsible
-	 * for this install of the program is required by NIH guidelines so the person can be
-	 * contacted if there is a problem, such as sending too many queries too quickly.
+	 * Constructor: Primary method for running a Journal Fetch. The email address of the person responsible for this
+	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
+	 * as sending too many queries too quickly.
 	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
 	 * @param searchTerm query to run on pubmed data
 	 * @param maxRecords maximum number of records to fetch
@@ -84,7 +82,6 @@ public class NLMJournalFetch extends NIHFetch {
 		super(argList, database, new XMLRecordOutputStream("Serial", "<?xml version=\"1.0\"?>\n<!DOCTYPE SerialSet PUBLIC \"-//NLM//DTD Serial, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<SerialSet>\n", "\n</SerialSet>", ".*?<NlmUniqueID>(.*?)</NlmUniqueID>.*?", null, NLMJournalFetch.class));
 	}
 	
-	
 	@Override
 	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) throws IOException {
 		EFetchJournalsServiceStub.EFetchRequest req = new EFetchJournalsServiceStub.EFetchRequest();
@@ -97,11 +94,10 @@ public class NLMJournalFetch extends NIHFetch {
 		log.info("Fetching records from search");
 		try {
 			serializeFetchRequest(req);
-		}catch(RemoteException e) {
+		} catch(RemoteException e) {
 			throw new IOException("Could not run search", e);
 		}
 	}
-	
 	
 	/**
 	 * Runs, sanitizes, and outputs the results of a EFetch request to the xmlWriter
@@ -110,13 +106,13 @@ public class NLMJournalFetch extends NIHFetch {
 	 */
 	private void serializeFetchRequest(EFetchJournalsServiceStub.EFetchRequest req) throws RemoteException {
 		//Create buffer for raw, pre-sanitized output
-		ByteArrayOutputStream buffer=new ByteArrayOutputStream();
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		//Connect to NLM
 		EFetchJournalsServiceStub service = new EFetchJournalsServiceStub();
 		//Run the EFetch request
 		EFetchResult result = service.run_eFetch(req);
 		//Get the article set
-		SerialsSet_type0 serialSet = result.getSerialsSet();	
+		SerialsSet_type0 serialSet = result.getSerialsSet();
 		XMLStreamWriter writer;
 		try {
 			//Create a temporary xml writer to our buffer
@@ -127,21 +123,21 @@ public class NLMJournalFetch extends NIHFetch {
 			serialSet.serialize(new QName("RemoveMe"), null, serial);
 			serial.flush();
 			log.debug("Buffering complete");
-			log.debug("buffer size: "+buffer.size());
+			log.debug("buffer size: " + buffer.size());
 			//Dump buffer to String
 			String iString = buffer.toString("UTF-8");
 			//Sanitize string (which writes it to xmlWriter)
 			sanitizeXML(iString);
 		} catch(XMLStreamException e) {
-			log.error("Unable to write to output",e);
+			log.error("Unable to write to output", e);
 		} catch(UnsupportedEncodingException e) {
-			log.error("Cannot get xml from buffer",e);
+			log.error("Cannot get xml from buffer", e);
 		}
 	}
 	
 	/**
-	 * Sanitizes XML in preparation for writing to output stream
-	 * Removes xml namespace attributes, XML wrapper tag, and splits each record on a new line
+	 * Sanitizes XML in preparation for writing to output stream Removes xml namespace attributes, XML wrapper tag, and
+	 * splits each record on a new line
 	 * @param strInput The XML to Sanitize.
 	 */
 	private void sanitizeXML(String strInput) {
@@ -158,7 +154,7 @@ public class NLMJournalFetch extends NIHFetch {
 			getOsWriter().flush();
 			log.trace("Writing complete");
 		} catch(IOException e) {
-			log.error("Unable to write XML to file.",e);
+			log.error("Unable to write XML to file.", e);
 		}
 	}
 	
@@ -178,13 +174,13 @@ public class NLMJournalFetch extends NIHFetch {
 			log.info("NLMJournalFetch: Start");
 			new NLMJournalFetch(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(),e);
+			log.debug(e.getMessage(), e);
 			System.out.println(getParser("NLMJournalFetch").getUsage());
 		} catch(Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		} finally {
 			log.info("NLMJournalFetch: End");
 		}
 	}
-
+	
 }

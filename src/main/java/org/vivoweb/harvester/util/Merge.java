@@ -84,13 +84,13 @@ public class Merge {
 	 * @throws IOException error in record handling
 	 */
 	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) throws IOException {
-		Map<String,String> matchedIDs = new HashMap<String, String>();
+		Map<String, String> matchedIDs = new HashMap<String, String>();
 		log.info("Building List of Primary Records");
 		for(Record r : input) {
 			Matcher m = regex.matcher(r.getID());
 			if(m.matches()) {
-				log.debug("Matched record '"+r.getID()+"' => '"+m.group(1)+"'");
-				matchedIDs.put(r.getID(),m.group(1));
+				log.debug("Matched record '" + r.getID() + "' => '" + m.group(1) + "'");
+				matchedIDs.put(r.getID(), m.group(1));
 			}
 		}
 		int count = matchedIDs.size();
@@ -100,10 +100,10 @@ public class Merge {
 		for(String rid : new TreeSet<String>(matchedIDs.keySet())) {
 			cur++;
 			String matchTerm = matchedIDs.get(rid);
-			log.debug("("+cur+"/"+count+": "+Math.round(10000f*cur/count)/100f+"%): merging '"+matchTerm+"'");
+			log.debug("(" + cur + "/" + count + ": " + Math.round(10000f * cur / count) / 100f + "%): merging '" + matchTerm + "'");
 			jc.truncate();
 			for(String id : input.find(matchTerm)) {
-				log.trace("Merging record '"+id+"' into '"+matchTerm+"'");
+				log.trace("Merging record '" + id + "' into '" + matchTerm + "'");
 				jc.loadRdfFromString(input.getRecord(id).getData(), null, null);
 			}
 			output.addRecord(matchTerm, jc.exportRdfToString(), Merge.class);
@@ -116,7 +116,7 @@ public class Merge {
 	 * @throws IOException error executing
 	 */
 	public void execute() throws IOException {
-		merge(this.input,this.output,this.regex);
+		merge(this.input, this.output, this.regex);
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class Merge {
 		ArgParser parser = new ArgParser("Merge");
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));		
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
@@ -143,7 +143,7 @@ public class Merge {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(Merge.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new Merge(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
@@ -151,7 +151,7 @@ public class Merge {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

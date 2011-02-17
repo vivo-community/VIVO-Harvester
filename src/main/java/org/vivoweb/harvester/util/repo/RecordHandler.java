@@ -219,8 +219,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return RecordHandler instance
 	 * @throws IOException error configuring
 	 */
-	public static RecordHandler parseConfig(InputStream configStream, Map<String,String> overrideParams) throws IOException {
-		Map<String,String> paramList = new RecordHandlerParser().parseConfig(configStream);
+	public static RecordHandler parseConfig(InputStream configStream, Map<String, String> overrideParams) throws IOException {
+		Map<String, String> paramList = new RecordHandlerParser().parseConfig(configStream);
 		if(overrideParams != null) {
 			for(String key : overrideParams.keySet()) {
 				paramList.put(key, overrideParams.get(key));
@@ -251,8 +251,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return RecordHandler instance
 	 * @throws IOException error configuring
 	 */
-	public static RecordHandler parseConfig(FileObject configFile, Map<String,String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null)?null:configFile.getContent().getInputStream();
+	public static RecordHandler parseConfig(FileObject configFile, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFile == null) ? null : configFile.getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -273,8 +273,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return RecordHandler instance
 	 * @throws IOException error configuring
 	 */
-	public static RecordHandler parseConfig(File configFile, Map<String,String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null)?null:VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
+	public static RecordHandler parseConfig(File configFile, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFile == null) ? null : VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -295,8 +295,8 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return RecordHandler instance
 	 * @throws IOException xml parse error
 	 */
-	public static RecordHandler parseConfig(String configFileName, Map<String,String> overrideParams) throws IOException {
-		InputStream confStream = (configFileName == null)?null:VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
+	public static RecordHandler parseConfig(String configFileName, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFileName == null) ? null : VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -306,7 +306,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @return the RecordHandler
 	 * @throws IOException error configuring
 	 */
-	private static RecordHandler build(Map<String,String> params) throws IOException {
+	private static RecordHandler build(Map<String, String> params) throws IOException {
 		// for(String param : params.keySet()) {
 		// log.debug(param+" => "+params.get(param));
 		// }
@@ -319,7 +319,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 			type = MapRecordHandler.class.getCanonicalName();
 		}
 		RecordHandler rh;
-		log.debug("Using class: '"+type+"'");
+		log.debug("Using class: '" + type + "'");
 		try {
 			Object tempRH = Class.forName(type).newInstance();
 			if(!(tempRH instanceof RecordHandler)) {
@@ -392,7 +392,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		 * @return the RecordHandler described by the config file
 		 * @throws IOException xml parsing error
 		 */
-		protected Map<String,String> parseConfig(InputStream configStream) throws IOException {
+		protected Map<String, String> parseConfig(InputStream configStream) throws IOException {
 			if(configStream != null) {
 				try {
 					// get a factory
@@ -456,7 +456,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 			return (processed.compareTo(write) < 0);
 		} catch(IOException e) {
 			// error getting metadata file... assume it does not exist
-//			log.debug("Record "+id+" has no metadata... need to update.");
+			//			log.debug("Record "+id+" has no metadata... need to update.");
 			return true;
 		}
 	}
@@ -488,11 +488,11 @@ public abstract class RecordHandler implements Iterable<Record> {
 			return true;
 		} catch(IOException e) {
 			// error getting metadata file... assume it does not exist
-//			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
+			//			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
 			return true;
 		}
 	}
-
+	
 	/**
 	 * Find records with idText in their id
 	 * @param idText the text to find

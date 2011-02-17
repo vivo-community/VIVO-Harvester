@@ -1,8 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * Copyright (c) 2010 Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights
+ * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
+ * Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and
+ * implementation
  ******************************************************************************/
 package org.vivoweb.harvester.qualify;
 
@@ -161,12 +162,7 @@ public class Qualify {
 	 * @param newValue new value
 	 */
 	private void regexReplace(String predicate, String regexMatch, String newValue) {
-		String query = "" +
-			"SELECT ?s ?o \n" +
-			"WHERE {\n" +
-			"  ?s <" + predicate + "> ?o .\n" +
-			"  FILTER (regex(str(?o), \"" + regexMatch + "\", \"s\")) .\n" +
-			"}";
+		String query = "" + "SELECT ?s ?o \n" + "WHERE {\n" + "  ?s <" + predicate + "> ?o .\n" + "  FILTER (regex(str(?o), \"" + regexMatch + "\", \"s\")) .\n" + "}";
 		log.debug(query);
 		StringBuilder insertQ = new StringBuilder("INSERT DATA {\n");
 		StringBuilder deleteQ = new StringBuilder("DELETE DATA {\n");
@@ -175,30 +171,30 @@ public class Qualify {
 			RDFDatatype datatype = obj.getDatatype();
 			String lang = obj.getLanguage();
 			String objStr = obj.getValue().toString();
-			String oldStr = "\""+objStr+"\"";
+			String oldStr = "\"" + objStr + "\"";
 			if(datatype != null) {
-				oldStr += "^^<"+datatype.getURI()+">";
+				oldStr += "^^<" + datatype.getURI() + ">";
 			} else if(!lang.trim().equals("")) {
-				oldStr += "@"+lang.trim();
+				oldStr += "@" + lang.trim();
 			}
 			log.trace("Replacing record");
 			log.debug("oldValue: " + oldStr);
-			String newStr = "\""+objStr.replaceAll(regexMatch, newValue)+"\"";
+			String newStr = "\"" + objStr.replaceAll(regexMatch, newValue) + "\"";
 			if(datatype != null) {
-				newStr += "^^<"+datatype.getURI()+">";
+				newStr += "^^<" + datatype.getURI() + ">";
 			} else if(!lang.trim().equals("")) {
-				newStr += "@"+lang.trim();
+				newStr += "@" + lang.trim();
 			}
 			String sUri = s.getResource("s").getURI();
 			log.debug("newValue: " + newStr);
-			deleteQ.append("  <"+sUri+"> <"+predicate+"> "+oldStr+" .\n");
-			insertQ.append("  <"+sUri+"> <"+predicate+"> "+newStr+" .\n");
+			deleteQ.append("  <" + sUri + "> <" + predicate + "> " + oldStr + " .\n");
+			insertQ.append("  <" + sUri + "> <" + predicate + "> " + newStr + " .\n");
 		}
 		insertQ.append("}");
 		deleteQ.append("}");
-		log.debug("Removing old data:\n"+deleteQ);
+		log.debug("Removing old data:\n" + deleteQ);
 		this.model.executeUpdateQuery(deleteQ.toString());
-		log.debug("Inserting updated data:\n"+insertQ);
+		log.debug("Inserting updated data:\n" + insertQ);
 		this.model.executeUpdateQuery(insertQ.toString());
 	}
 	
@@ -207,12 +203,7 @@ public class Qualify {
 	 * @param ns the namespace to remove all resources from
 	 */
 	private void cleanResources(String ns) {
-		String query = "" +
-			"DELETE { ?s ?p ?o } " +
-			"WHERE { " +
-				"?s ?p ?o .  " +
-				"FILTER (regex(str(?s), \"^" + ns + "\" ) || regex(str(?o), \"^" + ns + "\" ))" +
-			"}";
+		String query = "" + "DELETE { ?s ?p ?o } " + "WHERE { " + "?s ?p ?o .  " + "FILTER (regex(str(?s), \"^" + ns + "\" ) || regex(str(?o), \"^" + ns + "\" ))" + "}";
 		log.debug(query);
 		this.model.executeUpdateQuery(query);
 	}
@@ -222,12 +213,7 @@ public class Qualify {
 	 * @param ns the namespace to remove all predicates from
 	 */
 	private void cleanPredicates(String ns) {
-		String predicateQuery =	"" +
-			"DELETE { ?s ?p ?o } " +
-			"WHERE { " +
-				"?s ?p ?o .  " +
-				"FILTER regex(str(?p), \"^" + ns + "\" ) " + 
-			"}";
+		String predicateQuery = "" + "DELETE { ?s ?p ?o } " + "WHERE { " + "?s ?p ?o .  " + "FILTER regex(str(?p), \"^" + ns + "\" ) " + "}";
 		log.debug(predicateQuery);
 		this.model.executeUpdateQuery(predicateQuery);
 	}
@@ -236,7 +222,7 @@ public class Qualify {
 	 * Executes the task
 	 */
 	public void execute() {
-		if(this.namespace != null && !this.namespace.isEmpty()){
+		if(this.namespace != null && !this.namespace.isEmpty()) {
 			if(this.cleanPredicates) {
 				log.info("Running clean predicates for " + this.namespace);
 				cleanPredicates(this.namespace);
@@ -283,7 +269,7 @@ public class Qualify {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(Qualify.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new Qualify(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
@@ -291,7 +277,7 @@ public class Qualify {
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

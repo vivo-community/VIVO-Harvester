@@ -1,8 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
+ * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
+ * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
  * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
+ * implementation
  ******************************************************************************/
 package org.vivoweb.harvester.qualify;
 
@@ -84,7 +85,6 @@ public class ChangeNamespace {
 		//log.info("INPUT:\n" + this.model.exportRdfToString());
 	}
 	
-
 	/**
 	 * Constructor
 	 * @param argList parsed argument list
@@ -110,24 +110,24 @@ public class ChangeNamespace {
 	 * @throws IllegalArgumentException empty namespace
 	 */
 	public static String getUnusedURI(String namespace, JenaConnect... models) throws IllegalArgumentException {
-		if (namespace == null || namespace.equals("")) {
+		if(namespace == null || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
 		String uri = null;
 		Random random = new Random();
-		while (uri == null) {
+		while(uri == null) {
 			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
-			log.trace("evaluating uri <"+uri+">");
-			for (JenaConnect model : models) {
+			log.trace("evaluating uri <" + uri + ">");
+			for(JenaConnect model : models) {
 				boolean modelContains = model.containsURI(uri);
-				log.trace("model <"+model.getModelName()+"> contains this uri?: "+modelContains);
-				if (modelContains) {
+				log.trace("model <" + model.getModelName() + "> contains this uri?: " + modelContains);
+				if(modelContains) {
 					uri = null;
 					break;
 				}
 			}
 		}
-		log.debug("Using new URI: <"+uri+">");
+		log.debug("Using new URI: <" + uri + ">");
 		return uri;
 	}
 	
@@ -141,19 +141,18 @@ public class ChangeNamespace {
 	 * @throws IllegalArgumentException empty namespace
 	 */
 	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IllegalArgumentException {
-		if (oldNamespace == null || oldNamespace.trim().equals("")) {
+		if(oldNamespace == null || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
-		if (newNamespace == null || newNamespace.trim().equals("")) {
+		if(newNamespace == null || newNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("new namespace cannot be empty");
 		}
-		if (oldNamespace.trim().equals(newNamespace.trim())) {
+		if(oldNamespace.trim().equals(newNamespace.trim())) {
 			log.trace("namespaces are equal, nothing to change");
 			return;
 		}
 		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim(), errorLog);
 	}
-
 	
 	/**
 	 * Rename unmatched resources from a given namespace in the given model to another (vivo) model
@@ -165,31 +164,9 @@ public class ChangeNamespace {
 	 */
 	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) {
 		//Grab all resources matching namespaces needing changed
-		String subjectQuery =	""+
-			"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
-			"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" +
-			"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> \n" +
-			"PREFIX owl:   <http://www.w3.org/2002/07/owl#> \n" +
-			"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> \n" +
-			"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> \n" +
-			"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> \n" +
-			"PREFIX bibo: <http://purl.org/ontology/bibo/> \n" +
-			"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> \n" +
-			"PREFIX dcterms: <http://purl.org/dc/terms/> \n" +
-			"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> \n" +
-			"PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n" +
-			"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> \n" +
-			"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" +
-			"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> \n" +
-			"PREFIX core: <http://vivoweb.org/ontology/core#> \n" +
-			"\n" +
-			"SELECT ?sub \n" +
-			"WHERE {\n" +
-			"\t" + "?sub ?p ?o . \n" +
-			"\t" + "FILTER regex(str(?sub), \"" + oldNamespace + "\" ) \n" + 
-			"} ORDER BY ?sub";
-		log.debug("Change Query:\n"+subjectQuery);
-
+		String subjectQuery = "" + "PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" + "PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> \n" + "PREFIX owl:   <http://www.w3.org/2002/07/owl#> \n" + "PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> \n" + "PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> \n" + "PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> \n" + "PREFIX bibo: <http://purl.org/ontology/bibo/> \n" + "PREFIX dcelem: <http://purl.org/dc/elements/1.1/> \n" + "PREFIX dcterms: <http://purl.org/dc/terms/> \n" + "PREFIX event: <http://purl.org/NET/c4dm/event.owl#> \n" + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n" + "PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> \n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" + "PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> \n" + "PREFIX core: <http://vivoweb.org/ontology/core#> \n" + "\n" + "SELECT ?sub \n" + "WHERE {\n" + "\t" + "?sub ?p ?o . \n" + "\t" + "FILTER regex(str(?sub), \"" + oldNamespace + "\" ) \n" + "} ORDER BY ?sub";
+		log.debug("Change Query:\n" + subjectQuery);
+		
 		Set<String> changeArray = new TreeSet<String>();
 		for(QuerySolution solution : IterableAdaptor.adapt(model.executeSelectQuery(subjectQuery))) {
 			String renameURI = solution.getResource("sub").getURI();
@@ -201,11 +178,11 @@ public class ChangeNamespace {
 		for(String sub : changeArray) {
 			count++;
 			Resource res = model.getJenaModel().getResource(sub);
-			float percent = Math.round(10000f*count/total)/100f;
-			log.trace("("+count+"/"+total+": "+percent+"%): Finding unused URI for resource <" + res + ">");
+			float percent = Math.round(10000f * count / total) / 100f;
+			log.trace("(" + count + "/" + total + ": " + percent + "%): Finding unused URI for resource <" + res + ">");
 			String uri = getUnusedURI(newNamespace, vivo, model);
 			if(errorLog) {
-				log.error("Resource <"+res.getURI()+"> was found and renamed to new uri <"+uri+">!");
+				log.error("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
 			}
 			ResourceUtils.renameResource(res, uri);
 		}
@@ -245,15 +222,15 @@ public class ChangeNamespace {
 	public static void main(String... args) {
 		try {
 			InitLog.initLogger(ChangeNamespace.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			log.info(getParser().getAppName() + ": Start");
 			new ChangeNamespace(args).execute();
-		} catch (IllegalArgumentException e) {
+		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch (Exception e) {
+		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

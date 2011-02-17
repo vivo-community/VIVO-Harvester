@@ -92,23 +92,23 @@ public class FailingToDeleteFromSDB {
 			}
 			Model jenaModel = SDBFactory.connectNamedModel(store, modelName);
 			jenaModel.read(new ByteArrayInputStream(previousRDF.getBytes()), null, null);
-			System.out.println("jenaModel:\n"+exportRdfToString(jenaModel)+"\n");
-
+			System.out.println("jenaModel:\n" + exportRdfToString(jenaModel) + "\n");
+			
 			Model incoming = ModelFactory.createMemModelMaker().createDefaultModel();
 			incoming.read(new ByteArrayInputStream(incomingRDF.getBytes()), null, null);
-			System.out.println("incoming:\n"+exportRdfToString(incoming)+"\n");
+			System.out.println("incoming:\n" + exportRdfToString(incoming) + "\n");
 			
 			Model subs = jenaModel.difference(incoming);
-			System.out.println("subs:\n"+exportRdfToString(subs)+"\n");
+			System.out.println("subs:\n" + exportRdfToString(subs) + "\n");
 			
 			Model adds = incoming.difference(jenaModel);
-			System.out.println("adds:\n"+exportRdfToString(adds)+"\n");
+			System.out.println("adds:\n" + exportRdfToString(adds) + "\n");
 			
 			jenaModel.remove(subs);
-			System.out.println("jenaModel - post remove 'subs':\n"+exportRdfToString(jenaModel)+"\n");
+			System.out.println("jenaModel - post remove 'subs':\n" + exportRdfToString(jenaModel) + "\n");
 			
 			jenaModel.add(adds);
-			System.out.println("jenaModel - post add 'adds':\n"+exportRdfToString(jenaModel)+"\n");
+			System.out.println("jenaModel - post add 'adds':\n" + exportRdfToString(jenaModel) + "\n");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
