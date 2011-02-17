@@ -1,13 +1,14 @@
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.score.algorithm;
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
- * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
- * implementation
- * Christopher Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm
- * Christopher Barnes - regex scoring algorithim
- ******************************************************************************/
+
 import java.util.HashMap;
 import java.util.Map;
 import org.vivoweb.harvester.util.MathHelper;
@@ -34,10 +35,10 @@ public class NormalizedTypoDifference implements Algorithm {
 	/**
 	 * US Enlgish Standard Keyboard Proximity Map
 	 */
-	public static final Map<Character,Map<Character,Float>> USEngKeyboard;
+	public static final Map<Character, Map<Character, Float>> USEngKeyboard;
 	static {
-		Map<Character,String> reduce1Map = new HashMap<Character, String>();
-		Map<Character,String> reduce1ShiftMap = new HashMap<Character, String>();
+		Map<Character, String> reduce1Map = new HashMap<Character, String>();
+		Map<Character, String> reduce1ShiftMap = new HashMap<Character, String>();
 		
 		reduce1Map.put(Character.valueOf('`'), "1q");
 		reduce1ShiftMap.put(Character.valueOf('`'), "!Q");
@@ -150,74 +151,74 @@ public class NormalizedTypoDifference implements Algorithm {
 		reduce1ShiftMap.put(Character.valueOf('|'), "]=");
 		
 		reduce1Map.put(Character.valueOf('/'), ".;'");
-		reduce1ShiftMap.put(Character.valueOf('/'),"?>:\"");
+		reduce1ShiftMap.put(Character.valueOf('/'), "?>:\"");
 		reduce1Map.put(Character.valueOf('?'), ">:\"");
 		reduce1ShiftMap.put(Character.valueOf('?'), ".;'");
 		
 		reduce1Map.put(Character.valueOf('.'), ",l;/");
-		reduce1ShiftMap.put(Character.valueOf('.'),"<L:?");
+		reduce1ShiftMap.put(Character.valueOf('.'), "<L:?");
 		reduce1Map.put(Character.valueOf('>'), "<L:?");
 		reduce1ShiftMap.put(Character.valueOf('>'), ",l;/");
 		
 		reduce1Map.put(Character.valueOf(','), "mkl.");
-		reduce1ShiftMap.put(Character.valueOf(','),"MKL>");
+		reduce1ShiftMap.put(Character.valueOf(','), "MKL>");
 		reduce1Map.put(Character.valueOf('<'), "MKL>");
 		reduce1ShiftMap.put(Character.valueOf('<'), "mkl.");
 		
 		reduce1Map.put(Character.valueOf('m'), "njk,");
-		reduce1ShiftMap.put(Character.valueOf('m'),"NJK<");
+		reduce1ShiftMap.put(Character.valueOf('m'), "NJK<");
 		
 		reduce1Map.put(Character.valueOf('n'), "bhjm");
-		reduce1ShiftMap.put(Character.valueOf('n'),"BHJM");
+		reduce1ShiftMap.put(Character.valueOf('n'), "BHJM");
 		
 		reduce1Map.put(Character.valueOf('b'), "vghn");
-		reduce1ShiftMap.put(Character.valueOf('b'),"VGHN");
+		reduce1ShiftMap.put(Character.valueOf('b'), "VGHN");
 		
 		reduce1Map.put(Character.valueOf('v'), "cfgb");
-		reduce1ShiftMap.put(Character.valueOf('v'),"CFGB");
+		reduce1ShiftMap.put(Character.valueOf('v'), "CFGB");
 		
 		reduce1Map.put(Character.valueOf('c'), "xdfv");
-		reduce1ShiftMap.put(Character.valueOf('c'),"XDFV");
+		reduce1ShiftMap.put(Character.valueOf('c'), "XDFV");
 		
 		reduce1Map.put(Character.valueOf('x'), "zsdc");
-		reduce1ShiftMap.put(Character.valueOf('x'),"ZSDC");
+		reduce1ShiftMap.put(Character.valueOf('x'), "ZSDC");
 		
 		reduce1Map.put(Character.valueOf('z'), "asx");
-		reduce1ShiftMap.put(Character.valueOf('z'),"ASX");
+		reduce1ShiftMap.put(Character.valueOf('z'), "ASX");
 		
 		reduce1Map.put(Character.valueOf('a'), "qwsxz");
-		reduce1ShiftMap.put(Character.valueOf('a'),"QWSXZ");
+		reduce1ShiftMap.put(Character.valueOf('a'), "QWSXZ");
 		
 		reduce1Map.put(Character.valueOf('s'), "qwedcxza");
-		reduce1ShiftMap.put(Character.valueOf('s'),"QWEDCXZA");
+		reduce1ShiftMap.put(Character.valueOf('s'), "QWEDCXZA");
 		
 		reduce1Map.put(Character.valueOf('d'), "werfvcxs");
-		reduce1ShiftMap.put(Character.valueOf('d'),"WERFVCXS");
+		reduce1ShiftMap.put(Character.valueOf('d'), "WERFVCXS");
 		
 		reduce1Map.put(Character.valueOf('f'), "ertgbvcd");
-		reduce1ShiftMap.put(Character.valueOf('f'),"ERTGBVCD");
+		reduce1ShiftMap.put(Character.valueOf('f'), "ERTGBVCD");
 		
 		reduce1Map.put(Character.valueOf('g'), "rtyhnbvf");
-		reduce1ShiftMap.put(Character.valueOf('g'),"RTYHNBVF");
+		reduce1ShiftMap.put(Character.valueOf('g'), "RTYHNBVF");
 		
 		reduce1Map.put(Character.valueOf('h'), "tyujmnbg");
-		reduce1ShiftMap.put(Character.valueOf('h'),"TYUJMNBG");
+		reduce1ShiftMap.put(Character.valueOf('h'), "TYUJMNBG");
 		
 		reduce1Map.put(Character.valueOf('j'), "yuik,mnh");
-		reduce1ShiftMap.put(Character.valueOf('j'),"YUIK<MNH");
+		reduce1ShiftMap.put(Character.valueOf('j'), "YUIK<MNH");
 		
 		reduce1Map.put(Character.valueOf('k'), "uiol.,mj");
-		reduce1ShiftMap.put(Character.valueOf('k'),"UIOL><MJ");
+		reduce1ShiftMap.put(Character.valueOf('k'), "UIOL><MJ");
 		
 		reduce1Map.put(Character.valueOf('l'), "iop;/.,k");
-		reduce1ShiftMap.put(Character.valueOf('l'),"IOP:?><K");
+		reduce1ShiftMap.put(Character.valueOf('l'), "IOP:?><K");
 		
 		reduce1Map.put(Character.valueOf(';'), "op['/.l");
-		reduce1ShiftMap.put(Character.valueOf(';'),"OP{\"?>L");
-		reduce1Map.put(Character.valueOf(':'),"OP{\"?>L");
+		reduce1ShiftMap.put(Character.valueOf(';'), "OP{\"?>L");
+		reduce1Map.put(Character.valueOf(':'), "OP{\"?>L");
 		reduce1ShiftMap.put(Character.valueOf(':'), "op['/.l");
 		
-		Map<Character, Map<Character, Float>> tmp = new HashMap<Character, Map<Character,Float>>();
+		Map<Character, Map<Character, Float>> tmp = new HashMap<Character, Map<Character, Float>>();
 		for(Character c : reduce1Map.keySet()) {
 			// handle uppercase variants
 			Character d = Character.valueOf(Character.toUpperCase(c.charValue()));
@@ -253,22 +254,23 @@ public class NormalizedTypoDifference implements Algorithm {
 	 * Typo-Accounting Modified Damerau-Levenshtein Distance
 	 * @param x a string
 	 * @param y another string
-	 * @param keyWeights map of charA to charB to float showing how much to decrease distance when a substition of charA to charB happens
+	 * @param keyWeights map of charA to charB to float showing how much to decrease distance when a substition of charA
+	 *        to charB happens
 	 * @return the distance
 	 */
-	public static float getTypoDamerauLevenshtein(CharSequence x, CharSequence y, Map<Character,Map<Character,Float>> keyWeights) {
-        if(x == null) {
-        	throw new IllegalArgumentException("x cannot be null");
-        }
-        if(y == null) {
-        	throw new IllegalArgumentException("y cannot be null");
-        }
+	public static float getTypoDamerauLevenshtein(CharSequence x, CharSequence y, Map<Character, Map<Character, Float>> keyWeights) {
+		if(x == null) {
+			throw new IllegalArgumentException("x cannot be null");
+		}
+		if(y == null) {
+			throw new IllegalArgumentException("y cannot be null");
+		}
 		int sLen = x.length();
 		int bLen = y.length();
 		if(sLen == 0) {
 			return bLen;
 		}
-		if (bLen == 0) {
+		if(bLen == 0) {
 			return sLen;
 		}
 		CharSequence small;
@@ -283,9 +285,9 @@ public class NormalizedTypoDifference implements Algorithm {
 			big = y;
 			small = x;
 		}
-		int[] prevprev = new int[sLen+1];
-		int[] prev = new int[sLen+1];
-		int[] dist = new int[sLen+1];
+		int[] prevprev = new int[sLen + 1];
+		int[] prev = new int[sLen + 1];
+		int[] dist = new int[sLen + 1];
 		int[] editCosts = new int[3];
 		int[] tmp; // memory holder
 		char bigJm1; // big[j-1]
@@ -298,24 +300,24 @@ public class NormalizedTypoDifference implements Algorithm {
 		}
 		for(int j = 1; j <= bLen; j++) {
 			dist[0] = j;
-			bigJm1 = big.charAt(j-1);
+			bigJm1 = big.charAt(j - 1);
 			for(int i = 1; i <= sLen; i++) {
-				sameChar = (small.charAt(i-1) == bigJm1) ? 0 : 1;
-				editCosts[0] = dist[i-1] + 1; // deletion
+				sameChar = (small.charAt(i - 1) == bigJm1) ? 0 : 1;
+				editCosts[0] = dist[i - 1] + 1; // deletion
 				editCosts[1] = prev[i] + 1; // addition
-				editCosts[2] = prev[i-1] + sameChar; //substitution
+				editCosts[2] = prev[i - 1] + sameChar; //substitution
 				editTypeIndex = MathHelper.minIntIndex(editCosts);
 				if(editTypeIndex == 2) {
 					try {
-						System.out.println(small.charAt(i)+" => "+big.charAt(j));
+						System.out.println(small.charAt(i) + " => " + big.charAt(j));
 						decost += keyWeights.get(Character.valueOf(small.charAt(i))).get(Character.valueOf(big.charAt(j))).floatValue();
 					} catch(NullPointerException e) {
 						// mapping must for small[i] to big[j] must not exist - ignore
 					}
 				}
 				dist[i] = editCosts[editTypeIndex];
-				if(i > 1 && j > 1 && small.charAt(i) == big.charAt(j-1) && small.charAt(i-1) == big.charAt(j)) {
-					dist[i] = MathHelper.minIntIndex(dist[i], prevprev[i-2] + sameChar); // transposition
+				if((i > 1) && (j > 1) && (small.charAt(i) == big.charAt(j - 1)) && (small.charAt(i - 1) == big.charAt(j))) {
+					dist[i] = MathHelper.minIntIndex(dist[i], prevprev[i - 2] + sameChar); // transposition
 				}
 			}
 			tmp = prevprev; // hold existing memory
@@ -323,6 +325,6 @@ public class NormalizedTypoDifference implements Algorithm {
 			prev = dist;
 			dist = tmp; // reuse existing memory
 		}
-		return prev[sLen]-decost;
+		return prev[sLen] - decost;
 	}
 }

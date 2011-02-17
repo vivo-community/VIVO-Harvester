@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.translate;
 
 import java.io.ByteArrayInputStream;
@@ -68,11 +71,11 @@ public class XSLTranslator {
 	/**
 	 * Constructor
 	 * @param argumentList <ul>
-	 * <li>translationStream the file that details the translation from the original xml to the target format</li>
-	 * <li>inRecordHandler the files/records that require translation</li>
-	 * <li>outRecordHandler the output record for the translated files</li>
-	 * <li>force translate all input records, even if previously processed</li>
-	 * </ul>
+	 *        <li>translationStream the file that details the translation from the original xml to the target format</li>
+	 *        <li>inRecordHandler the files/records that require translation</li>
+	 *        <li>outRecordHandler the output record for the translated files</li>
+	 *        <li>force translate all input records, even if previously processed</li>
+	 *        </ul>
 	 * @throws IOException error reading files
 	 */
 	public XSLTranslator(ArgList argumentList) throws IOException {
@@ -197,7 +200,7 @@ public class XSLTranslator {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(XSLTranslator.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new XSLTranslator(args).execute();
 		} catch(IllegalArgumentException e) {

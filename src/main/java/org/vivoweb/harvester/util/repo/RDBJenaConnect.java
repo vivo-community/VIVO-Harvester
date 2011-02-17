@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
@@ -73,31 +76,31 @@ public class RDBJenaConnect extends DBJenaConnect {
 		this.conn = initDB(buildConnection(), getDbType());
 		init(modelName);
 	}
-
+	
 	/**
 	 * Constructor (connects to existing connection, using a specified named model)
 	 * @param modelName the model name to use
 	 */
 	private void init(String modelName) {
 		if(modelName != null) {
-			this.setModelName(modelName);
-			this.setJenaModel(initModel(this.conn).openModel(modelName, false));
+			setModelName(modelName);
+			setJenaModel(initModel(this.conn).openModel(modelName, false));
 		} else {
-			this.setModelName(GraphRDB.DEFAULT);
-			this.setJenaModel(initModel(this.conn).createDefaultModel());
+			setModelName(GraphRDB.DEFAULT);
+			setJenaModel(initModel(this.conn).createDefaultModel());
 		}
 	}
 	
 	@Override
 	public void close() {
-		this.getJenaModel().close();
+		getJenaModel().close();
 		try {
 			this.conn.close();
 		} catch(Exception e) {
 			// ignore
 		}
 	}
-
+	
 	@Override
 	public JenaConnect neighborConnectClone(String modelName) throws IOException {
 		return new RDBJenaConnect(this, modelName);
@@ -122,12 +125,12 @@ public class RDBJenaConnect extends DBJenaConnect {
 	private static IDBConnection initDB(Connection conn, String dbType) {
 		return new DBConnection(conn, dbType);
 	}
-
+	
 	@Override
 	public void truncate() {
-		this.getJenaModel().removeAll();
+		getJenaModel().removeAll();
 	}
-
+	
 	@Override
 	public Dataset getDataSet() throws IOException {
 		DataSourceImpl ds = new DataSourceImpl(getJenaModel());
@@ -140,6 +143,6 @@ public class RDBJenaConnect extends DBJenaConnect {
 	@Override
 	public void printParameters() {
 		super.printParameters();
-		log.info("type: 'rdb'");
+		log.debug("type: 'rdb'");
 	}
 }

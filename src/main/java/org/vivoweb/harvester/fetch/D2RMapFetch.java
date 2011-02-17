@@ -1,8 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Eliza Chan All rights reserved. This program and the accompanying materials are made available
- * under the terms of the new BSD license which accompanies this distribution, and is available at
- * http://www.opensource.org/licenses/bsd-license.html Contributors: Eliza Chan
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Eliza Chan
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Eliza Chan
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
@@ -118,7 +122,7 @@ public class D2RMapFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(D2RMapFetch.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new D2RMapFetch(args).execute();
 		} catch(IllegalArgumentException e) {

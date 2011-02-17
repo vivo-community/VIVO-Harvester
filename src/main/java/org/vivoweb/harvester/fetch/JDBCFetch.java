@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
@@ -333,16 +336,16 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private List<String> getDataFields(String tableName) throws SQLException {
-		if(this.dataFields == null || (this.queryStrings != null && this.queryStrings.containsKey(tableName))) {
+		if((this.dataFields == null) || ((this.queryStrings != null) && this.queryStrings.containsKey(tableName))) {
 			this.dataFields = new HashMap<String, List<String>>();
 		}
 		if(!this.dataFields.containsKey(tableName)) {
 			this.dataFields.put(tableName, new LinkedList<String>());
-			if(this.queryStrings == null || !this.queryStrings.containsKey(tableName)) {
+			if((this.queryStrings == null) || !this.queryStrings.containsKey(tableName)) {
 				ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
 				while(columnData.next()) {
 					String colName = columnData.getString("COLUMN_NAME");
-					if((getIDFields(tableName).size() > 1 || !getIDFields(tableName).contains(colName)) && !getFkRelationFields(tableName).containsKey(colName)) {
+					if(((getIDFields(tableName).size() > 1) || !getIDFields(tableName).contains(colName)) && !getFkRelationFields(tableName).containsKey(colName)) {
 						this.dataFields.get(tableName).add(colName);
 					}
 				}
@@ -358,12 +361,12 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private Map<String, String> getFkRelationFields(String tableName) throws SQLException {
-		if(this.fkRelations == null || (this.queryStrings != null && this.queryStrings.containsKey(tableName))) {
+		if((this.fkRelations == null) || ((this.queryStrings != null) && this.queryStrings.containsKey(tableName))) {
 			this.fkRelations = new HashMap<String, Map<String, String>>();
 		}
 		if(!this.fkRelations.containsKey(tableName)) {
 			this.fkRelations.put(tableName, new HashMap<String, String>());
-			if(this.queryStrings == null || !this.queryStrings.containsKey(tableName)) {
+			if((this.queryStrings == null) || !this.queryStrings.containsKey(tableName)) {
 				ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 				while(foreignKeys.next()) {
 					this.fkRelations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
@@ -434,17 +437,17 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to db
 	 */
 	private String buildSelect(String tableName) throws SQLException {
-		if(this.queryStrings != null && this.queryStrings.containsKey(tableName)) {
+		if((this.queryStrings != null) && this.queryStrings.containsKey(tableName)) {
 			String query = this.queryStrings.get(tableName);
 			log.debug("User defined SQL Query:\n" + query);
 			return query;
 		}
-		boolean multiTable = this.fromClauses != null && this.fromClauses.containsKey(tableName);
+		boolean multiTable = (this.fromClauses != null) && this.fromClauses.containsKey(tableName);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for(String dataField : getDataFields(tableName)) {
 			sb.append(getFieldPrefix());
-			if(multiTable && dataField.split("\\.").length <= 1) {
+			if(multiTable && (dataField.split("\\.").length <= 1)) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -454,7 +457,7 @@ public class JDBCFetch {
 		}
 		for(String relField : getFkRelationFields(tableName).keySet()) {
 			sb.append(getFieldPrefix());
-			if(multiTable && relField.split("\\.").length <= 1) {
+			if(multiTable && (relField.split("\\.").length <= 1)) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -464,7 +467,7 @@ public class JDBCFetch {
 		}
 		for(String idField : getIDFields(tableName)) {
 			sb.append(getFieldPrefix());
-			if(multiTable && idField.split("\\.").length <= 1) {
+			if(multiTable && (idField.split("\\.").length <= 1)) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -570,7 +573,7 @@ public class JDBCFetch {
 					
 					// DataFields
 					List<String> dataFieldList;
-					if(this.queryStrings != null && this.queryStrings.containsKey(tableName)) {
+					if((this.queryStrings != null) && this.queryStrings.containsKey(tableName)) {
 						dataFieldList = getResultSetFields(rs);
 					} else {
 						dataFieldList = getDataFields(tableName);
@@ -600,7 +603,7 @@ public class JDBCFetch {
 						sb.append("    <");
 						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(" rdf:resource=\"");
-						sb.append(this.buildTableRecordNS(getFkRelationFields(tableName).get(relationField)));
+						sb.append(buildTableRecordNS(getFkRelationFields(tableName).get(relationField)));
 						
 						// insert field value
 						sb.append("#id_-_" + rs.getString(relationField).trim());
@@ -650,7 +653,7 @@ public class JDBCFetch {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(JDBCFetch.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new JDBCFetch(args).execute();
 		} catch(IllegalArgumentException e) {

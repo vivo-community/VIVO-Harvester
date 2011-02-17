@@ -1,6 +1,12 @@
-/**
- * 
- */
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.diff;
 
 import java.io.ByteArrayInputStream;
@@ -15,10 +21,9 @@ import org.vivoweb.harvester.util.repo.MemJenaConnect;
 
 /**
  * @author drspeedo
- *
  */
 public class DiffTest extends TestCase {
-
+	
 	/**
 	 * SLF4J Logger
 	 */
@@ -39,12 +44,12 @@ public class DiffTest extends TestCase {
 	 * vivo test configuration
 	 */
 	private String expectedSubRDF;
-
+	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(DiffTest.class, null, null);
+		InitLog.initLogger(null, null);
 		// Create vivo rdf
-		this.previousRDF = ""+
+		this.previousRDF = "" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 				"<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
 					"xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
@@ -85,7 +90,7 @@ public class DiffTest extends TestCase {
 		//		changed email address
 		// 		removal of middlename
 		//		addition of prefix
-		this.incomingRDF = ""+
+		this.incomingRDF = "" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 				"<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
 					"xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
@@ -121,7 +126,7 @@ public class DiffTest extends TestCase {
 					"</rdf:Description>" +
 				"</rdf:RDF>";
 		
-		this.expectedAddRDF = ""+
+		this.expectedAddRDF = "" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 				"<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
 					"xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
@@ -132,7 +137,7 @@ public class DiffTest extends TestCase {
 					"</rdf:Description>" +
 				"</rdf:RDF>";
 		
-		this.expectedSubRDF = ""+
+		this.expectedSubRDF = "" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 				"<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
 					"xmlns:core=\"http://vivoweb.org/ontology/core#\">" +
@@ -146,44 +151,43 @@ public class DiffTest extends TestCase {
 	/**
 	 * @throws IOException error
 	 */
-	public void testDiff() throws IOException{
+	public void testDiff() throws IOException {
 		log.info("BEGIN testDiff");
-
+		
 		JenaConnect diffJC = new MemJenaConnect();
 		
 		JenaConnect previousJC = new MemJenaConnect(new ByteArrayInputStream(this.previousRDF.getBytes()), null, null);
-
+		
 		JenaConnect incomingJC = new MemJenaConnect(new ByteArrayInputStream(this.incomingRDF.getBytes()), null, null);
 		
 		JenaConnect expectedAddDiff = new MemJenaConnect(new ByteArrayInputStream(this.expectedAddRDF.getBytes()), null, null);
 		
 		JenaConnect expectedSubDiff = new MemJenaConnect(new ByteArrayInputStream(this.expectedSubRDF.getBytes()), null, null);
-					
+		
 		//System.out.println("prevModel");
 		//previousJC.exportRDF(System.out);
 		
 		//System.out.println("incomingModel");
 		//incomingJC.exportRDF(System.out);
 		
-					
 		//testing new items
 		Diff.diff(incomingJC, previousJC, diffJC, null);
 		assertEquals("<ModelCom   {} | >", diffJC.getJenaModel().difference(expectedAddDiff.getJenaModel()).toString());
 		
 		diffJC = new MemJenaConnect();
 		log.info(diffJC.getJenaModel().toString());
-								
+		
 		//testing old items
 		Diff.diff(previousJC, incomingJC, diffJC, null);
 		assertEquals("<ModelCom   {} | >", diffJC.getJenaModel().difference(expectedSubDiff.getJenaModel()).toString());
 		//testing delete items
 		log.info("END testDiff");
 	}
-
+	
 	@Override
 	protected void tearDown() throws Exception {
 		this.incomingRDF = null;
 		this.previousRDF = null;
 	}
-
+	
 }

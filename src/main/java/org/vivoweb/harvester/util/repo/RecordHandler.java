@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.File;
@@ -134,7 +137,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 */
 	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
-			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
+			if(((type == null) || (rmd.getOperation() == type)) && ((operator == null) || rmd.getOperator().equals(operator))) {
 				return rmd;
 			}
 		}
@@ -310,7 +313,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		// for(String param : params.keySet()) {
 		// log.debug(param+" => "+params.get(param));
 		// }
-		if(params == null || params.isEmpty()) {
+		if((params == null) || params.isEmpty()) {
 			return null;
 		}
 		String type = params.get("rhClass");

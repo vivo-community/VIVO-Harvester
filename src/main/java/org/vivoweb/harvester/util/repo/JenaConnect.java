@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.ByteArrayInputStream;
@@ -171,7 +174,7 @@ public abstract class JenaConnect {
 		// for(String param : params.keySet()) {
 		// log.debug(param+" => "+params.get(param));
 		// }
-		if(params == null || params.isEmpty()) {
+		if((params == null) || params.isEmpty()) {
 			return null;
 		}
 		if(!params.containsKey("type")) {
@@ -189,7 +192,7 @@ public abstract class JenaConnect {
 		} else {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
-		if((!params.containsKey("checkEmpty") || params.get("checkEmpty").toLowerCase() == "true") && jc.isEmpty()) {
+		if((!params.containsKey("checkEmpty") || (params.get("checkEmpty").toLowerCase() == "true")) && jc.isEmpty()) {
 			JenaConnect.log.warn(jc.getModelName() + " Jena model is empty");
 		}
 		return jc;
@@ -221,7 +224,8 @@ public abstract class JenaConnect {
 	 * @param in input stream to read rdf from
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
-	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
 	 */
 	public void loadRdfFromStream(InputStream in, String namespace, String language) {
 		getJenaModel().read(in, namespace, language);
@@ -232,11 +236,12 @@ public abstract class JenaConnect {
 	 * @param fileName the file to read from
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
-	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
 	 * @throws FileSystemException error accessing file
 	 */
 	public void loadRdfFromFile(String fileName, String namespace, String language) throws FileSystemException {
-		this.loadRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+		loadRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
 	}
 	
 	/**
@@ -244,10 +249,11 @@ public abstract class JenaConnect {
 	 * @param rdf rdf string
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
-	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
 	 */
 	public void loadRdfFromString(String rdf, String namespace, String language) {
-		this.loadRdfFromStream(new ByteArrayInputStream(rdf.getBytes()), namespace, language);
+		loadRdfFromStream(new ByteArrayInputStream(rdf.getBytes()), namespace, language);
 	}
 	
 	/**
@@ -291,7 +297,7 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to file
 	 */
 	public void exportRdfToFile(String fileName) throws IOException {
-		this.exportRdfToStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
+		exportRdfToStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
 	}
 	
 	/**
@@ -307,11 +313,12 @@ public abstract class JenaConnect {
 	 * @param in input stream to read rdf from
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
-	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
 	 * @throws IOException error connecting
 	 */
 	public void removeRdfFromStream(InputStream in, String namespace, String language) throws IOException {
-		this.removeRdfFromJC(new MemJenaConnect(in, namespace, language));
+		removeRdfFromJC(new MemJenaConnect(in, namespace, language));
 	}
 	
 	/**
@@ -319,11 +326,12 @@ public abstract class JenaConnect {
 	 * @param fileName the file to read from
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
-	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
 	 * @throws IOException error connecting
 	 */
 	public void removeRdfFromFile(String fileName, String namespace, String language) throws IOException {
-		this.removeRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+		removeRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
 	}
 	
 	/**
@@ -341,7 +349,7 @@ public abstract class JenaConnect {
 				// log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
-			this.getJenaModel().remove(new MemJenaConnect(bais, namespace, null).getJenaModel());
+			getJenaModel().remove(new MemJenaConnect(bais, namespace, null).getJenaModel());
 			try {
 				bais.close();
 			} catch(IOException e) {
@@ -366,7 +374,7 @@ public abstract class JenaConnect {
 				// log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
-			this.getJenaModel().read(bais, namespace);
+			getJenaModel().read(bais, namespace);
 			try {
 				bais.close();
 			} catch(IOException e) {
@@ -479,7 +487,7 @@ public abstract class JenaConnect {
 	 * Execute a Query and output result to System.out
 	 * @param queryParam the query
 	 * @param resultFormatParam the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for
-	 * construct/describe queries)
+	 *        construct/describe queries)
 	 * @throws IOException error writing to output
 	 */
 	public void executeQuery(String queryParam, String resultFormatParam) throws IOException {
@@ -490,7 +498,7 @@ public abstract class JenaConnect {
 	 * Execute a Query
 	 * @param queryParam the query
 	 * @param resultFormatParam the format to return the results in ('RS_TEXT' default for select queries / 'RDF/XML'
-	 * default for construct/describe queries)
+	 *        default for construct/describe queries)
 	 * @param output output stream to write to - null uses System.out
 	 * @throws IOException error writing to output
 	 */
@@ -572,7 +580,7 @@ public abstract class JenaConnect {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(JenaConnect.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			ArgList argList = new ArgList(getParser(), args);
 			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
 			if(argList.has("t")) {
@@ -703,6 +711,6 @@ public abstract class JenaConnect {
 	 * Output the jena model information
 	 */
 	public void printParameters() {
-		log.info("modelName: '" + getModelName() + "'");
+		log.debug("modelName: '" + getModelName() + "'");
 	}
 }

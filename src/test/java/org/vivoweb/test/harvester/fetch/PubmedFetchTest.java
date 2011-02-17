@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.fetch;
 
 import java.io.ByteArrayInputStream;
@@ -35,19 +38,12 @@ public class PubmedFetchTest extends TestCase {
 	 * SLF4J Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(PubmedFetchTest.class);
-//	/** */
-//	private File configFile;
 	/** */
 	private RecordHandler rh;
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(PubmedFetchTest.class, null, null);
-//		this.configFile = File.createTempFile("rhConfig", "xml");
-//		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-//		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.JDBCRecordHandler\">\n	<Param name=\"jdbcDriverClass\">org.h2.Driver</Param>\n	<Param name=\"connLine\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"username\">sa</Param>\n	<Param name=\"password\"></Param>\n	<Param name=\"tableName\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
-//		bw.close();
-//		this.rh = null;
+		InitLog.initLogger(null, null);
 		this.rh = new JenaRecordHandler(new MemJenaConnect(), "http://vivoweb.org/harvester/test/datatype");
 	}
 	
@@ -59,7 +55,9 @@ public class PubmedFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler) PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
+	 * Test method for
+	 * {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
@@ -79,7 +77,9 @@ public class PubmedFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler) PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
+	 * Test method for
+	 * {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 */
 	public final void testPubmedFetchManyRecords() throws IOException {

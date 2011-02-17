@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util;
 
 import junit.framework.TestCase;
@@ -31,12 +34,12 @@ public class SpecialEntitiesTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(SpecialEntitiesTest.class, null, null);
+		InitLog.initLogger(null, null);
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#htmlEncode(java.lang.String, char...) htmlEncode(String s, char... exceptions)}
-	 * .
+	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#htmlEncode(java.lang.String, char...)
+	 * htmlEncode(String s, char... exceptions)} .
 	 */
 	public final void testHtmlEncode() {
 		log.info("BEGIN testHtmlEncode");
@@ -48,8 +51,8 @@ public class SpecialEntitiesTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#htmlDecode(java.lang.String) htmlDecode(String s)}
-	 * .
+	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#htmlDecode(java.lang.String) htmlDecode(String
+	 * s)} .
 	 */
 	public final void testHtmlDecode() {
 		log.info("BEGIN testHtmlDecode");
@@ -89,7 +92,8 @@ public class SpecialEntitiesTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlEncode(java.lang.String, char...) xmlEncode(String s, char... exceptions)}.
+	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlEncode(java.lang.String, char...)
+	 * xmlEncode(String s, char... exceptions)}.
 	 */
 	public final void testXmlEncode() {
 		log.info("BEGIN testXmlEncode");
@@ -101,7 +105,8 @@ public class SpecialEntitiesTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlDecode(java.lang.String) xmlDecode(String s)}.
+	 * Test method for {@link org.vivoweb.harvester.util.SpecialEntities#xmlDecode(java.lang.String) xmlDecode(String
+	 * s)}.
 	 */
 	public final void testXmlDecode() {
 		log.info("BEGIN testXmlDecode");

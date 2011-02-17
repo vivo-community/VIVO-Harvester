@@ -1,3 +1,12 @@
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util;
 
 import java.io.IOException;
@@ -7,16 +16,15 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.CSVtoJDBC;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.test.harvester.fetch.JDBCFetchTest;
-import junit.framework.TestCase;
 
 /**
  * @author jrpence
- *
  */
 public class CSVtoJDBCTest extends TestCase {
 	/**
@@ -29,7 +37,7 @@ public class CSVtoJDBCTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		InitLog.initLogger(CSVtoJDBCTest.class, null, null);
+		InitLog.initLogger(null, null);
 		Class.forName("org.h2.Driver");
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TestJDBCFetchDB", "sa", "");
 		this.conn.setAutoCommit(false);
@@ -46,7 +54,6 @@ public class CSVtoJDBCTest extends TestCase {
 	
 	/**
 	 * @throws IOException if the file is missing or not read properly
-	 * 
 	 */
 	public void testCSVtoJDBCStringConnectionString() throws IOException {
 		log.info("BEGIN testCSVtoJDBCStringConnectionString");
@@ -56,18 +63,15 @@ public class CSVtoJDBCTest extends TestCase {
 	
 	/**
 	 * @throws IOException if the file is missing or not read properly
-	 * 
 	 */
 	public void testCSVtoJDBCStringStringStringStringStringString() throws IOException {
 		log.info("BEGIN testCSVtoJDBCStringStringStringStringStringString");
-		new CSVtoJDBC("files/person.csv", "org.h2.Driver","jdbc:h2:mem:TestJDBCFetchDB","sa","", "Person");
+		new CSVtoJDBC("files/person.csv", "org.h2.Driver", "jdbc:h2:mem:TestJDBCFetchDB", "sa", "", "Person");
 		log.info("END testCSVtoJDBCStringStringStringStringStringString");
 	}
 	
-	
 	/**
 	 * @throws IOException if the file is missing or not read properly
-	 * 
 	 */
 	public void testExecute() throws IOException {
 		log.info("BEGIN testExecute");
@@ -77,27 +81,27 @@ public class CSVtoJDBCTest extends TestCase {
 			Statement cursor = this.conn.createStatement();
 			String sqlQuery = "SELECT * from Person";
 			ResultSet results = cursor.executeQuery(sqlQuery);
-			ResultSetMetaData resMeta= results.getMetaData();
+			ResultSetMetaData resMeta = results.getMetaData();
 			{
 				StringBuilder line = new StringBuilder();
-				for(int x = 1; x <= resMeta.getColumnCount();x++){
+				for(int x = 1; x <= resMeta.getColumnCount(); x++) {
 					line.append("[");
-					line.append(resMeta.getColumnName(x) );
+					line.append(resMeta.getColumnName(x));
 					line.append("]");
 				}
 				assertEquals("[ROWID][NAME][ID]", line.toString());
 				log.info(line.toString());
 			}
-			String name[] = {"Burton, Joe D","Smith, Jane W","Schwarz, Elizabeth R","Silverstein, Steven"};
+			String name[] = {"Burton, Joe D", "Smith, Jane W", "Schwarz, Elizabeth R", "Silverstein, Steven"};
 			int rowid = 0;
 			while(results.next()) {
 				StringBuilder line = new StringBuilder();
-				for(int x = 1; x <= resMeta.getColumnCount();x++){
+				for(int x = 1; x <= resMeta.getColumnCount(); x++) {
 					line.append("|");
-					line.append(results.getString(x) );
+					line.append(results.getString(x));
 					line.append("|");
 				}
-				String expected = "|" + rowid++ + "||" + name[rowid-1] + "||" + rowid + "|";
+				String expected = "|" + rowid++ + "||" + name[rowid - 1] + "||" + rowid + "|";
 				assertEquals(expected, line.toString());
 				log.info(line.toString());
 			}

@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
@@ -140,7 +143,7 @@ public class JenaRecordHandler extends RecordHandler {
 			return false;
 		}
 		Resource record = getRecordResource(rec.getID());
-		if(!overwrite && record != null) {
+		if(!overwrite && (record != null)) {
 			throw new IOException("Record '" + rec.getID() + "' already exists!");
 		} else if(record == null) {
 			record = this.model.getJenaModel().createResource();
@@ -195,7 +198,7 @@ public class JenaRecordHandler extends RecordHandler {
 	 */
 	private Resource getRecordResource(String recID) {
 		List<Statement> a = this.model.getJenaModel().listStatements(null, this.idType, recID).toList();
-		if(a == null || a.isEmpty()) {
+		if((a == null) || a.isEmpty()) {
 			return null;
 		}
 		return a.get(0).getSubject();
@@ -226,7 +229,8 @@ public class JenaRecordHandler extends RecordHandler {
 				"PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + "> \n" +
 				"PREFIX lns: <" + JenaRecordHandler.this.dataType.getNameSpace() + "> \n" +
 				"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
-				"Select ?idField \n" + "WHERE { \n" +
+				"Select ?idField \n" +
+				"WHERE { \n" +
 				"  ?record rdf:type rhns:" + JenaRecordHandler.this.recType.getLocalName() + " . \n" +
 				"  ?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField . \n" +
 				"  ?record lns:" + JenaRecordHandler.this.dataType.getLocalName() + " ?dataField . \n" +
@@ -289,7 +293,7 @@ public class JenaRecordHandler extends RecordHandler {
 			throw new IOException("No Matching Record Found For Which To Delete MetaData");
 		}
 		List<Resource> list = this.model.getJenaModel().listResourcesWithProperty(this.metaRel, r).toList();
-		if(list == null || list.isEmpty()) {
+		if((list == null) || list.isEmpty()) {
 			log.debug("No Metadata to delete");
 			return;
 		}
@@ -307,7 +311,7 @@ public class JenaRecordHandler extends RecordHandler {
 			throw new IOException("No Matching Record Found For Which To Retrieve MetaData");
 		}
 		List<Resource> list = this.model.getJenaModel().listResourcesWithProperty(this.metaRel, r).toList();
-		if(list == null || list.isEmpty()) {
+		if((list == null) || list.isEmpty()) {
 			throw new IOException("No Matching MetaData Found");
 		}
 		for(Resource metaRes : list) {
@@ -342,15 +346,15 @@ public class JenaRecordHandler extends RecordHandler {
 	@Override
 	public Set<String> find(String idText) {
 		Set<String> retVal = new HashSet<String>();
-		String query = ""+
-		"PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + ">"+"\n"+
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"+"\n"+
-		"SELECT ?idField"+"\n"+
-		"WHERE {"+"\n\t"+
-			"?record rdf:type rhns:" + JenaRecordHandler.this.recType.getLocalName() + " ."+"\n\t"+
-			"?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField ."+"\n\t"+
-			"FILTER regex(?idField, \"" + idText + "\")"+"\n"+
-		"} ORDER BY ?idField";
+		String query = "" +
+			"PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + "> \n" +
+			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+			"SELECT ?idField \n" +
+			"WHERE { \n" +
+			"  ?record rdf:type rhns:" + JenaRecordHandler.this.recType.getLocalName() + " . \n" +
+			"  ?record rhns:" + JenaRecordHandler.this.idType.getLocalName() + " ?idField . \n" +
+			"  FILTER regex(?idField, \"" + idText + "\") \n" +
+			"} ORDER BY ?idField";
 		for(QuerySolution record : IterableAdaptor.adapt(this.model.executeSelectQuery(query))) {
 			retVal.add(record.getLiteral("idField").getString());
 		}

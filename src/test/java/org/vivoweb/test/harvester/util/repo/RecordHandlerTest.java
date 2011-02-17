@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util.repo;
 
 import java.io.File;
@@ -39,7 +42,7 @@ public class RecordHandlerTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(RecordHandlerTest.class, null, null);
+		InitLog.initLogger(null, null);
 		this.rh = null;
 	}
 	
@@ -64,12 +67,13 @@ public class RecordHandlerTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map)
+	 * parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigTFRH() throws IOException {
 		log.info("BEGIN testParseNoConfigTFRH");
-		Map<String,String> overrideParams = new HashMap<String, String>();
+		Map<String, String> overrideParams = new HashMap<String, String>();
 		overrideParams.put("rhClass", TextFileRecordHandler.class.getCanonicalName());
 		overrideParams.put("fileDir", "tmp://testingNoConfRH-Text");
 		this.rh = RecordHandler.parseConfig((String)null, overrideParams);
@@ -78,12 +82,13 @@ public class RecordHandlerTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map)
+	 * parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigJDBCRH() throws IOException {
 		log.info("BEGIN testParseNoConfigJDBCRH");
-		Map<String,String> overrideParams = new HashMap<String, String>();
+		Map<String, String> overrideParams = new HashMap<String, String>();
 		overrideParams.put("rhClass", JDBCRecordHandler.class.getCanonicalName());
 		overrideParams.put("dbClass", "org.h2.Driver");
 		overrideParams.put("dbUrl", "jdbc:h2:mem:TestNoConfRH-JDBC");
@@ -97,12 +102,13 @@ public class RecordHandlerTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map)
+	 * parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigJenaRH() throws IOException {
 		log.info("BEGIN testParseNoConfigJenaRH");
-		Map<String,String> overrideParams = new HashMap<String, String>();
+		Map<String, String> overrideParams = new HashMap<String, String>();
 		overrideParams.put("rhClass", JenaRecordHandler.class.getCanonicalName());
 		overrideParams.put("dbClass", "org.h2.Driver");
 		overrideParams.put("dbUrl", "jdbc:h2:mem:TestNoConfRH-Jena");
@@ -119,7 +125,8 @@ public class RecordHandlerTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map) parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
+	 * {@link org.vivoweb.harvester.util.repo.RecordHandler#parseConfig(java.lang.String, java.util.Map)
+	 * parseConfig(String filename, Map&lt;String,String&gt; overrideParams)}.
 	 * @throws IOException error
 	 */
 	public void testParseNoConfigNoOverFailRH() throws IOException {
@@ -157,8 +164,7 @@ public class RecordHandlerTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.TextFileRecordHandler#iterator()
+	 * Test method for {@link org.vivoweb.harvester.util.repo.TextFileRecordHandler#iterator()
 	 * iterator()}.
 	 * @throws IOException error
 	 */
@@ -170,9 +176,9 @@ public class RecordHandlerTest extends TestCase {
 		this.rh.addRecord("test456", "data test on record 'test456'", RecordHandlerTest.class);
 		this.rh.addRecord("funABC", "data in record 'funABC'", RecordHandlerTest.class);
 		this.rh.addRecord("wooDEF", "blah data of record 'wooDEF'", RecordHandlerTest.class);
-		VFS.getManager().resolveFile(new File("."), tfrhDir+"/.metadata").delete(new AllFileSelector());
+		VFS.getManager().resolveFile(new File("."), tfrhDir + "/.metadata").delete(new AllFileSelector());
 		for(Record r : this.rh) {
-			log.debug("Record '"+r.getID()+"': "+r.getData());
+			log.debug("Record '" + r.getID() + "': " + r.getData());
 		}
 		log.info("END testNoMetaTextFileIterate");
 	}

@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.args;
 
 import java.io.File;
@@ -141,7 +144,7 @@ public class ArgList {
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal = this.oCmdSet.getOptionValue(arg);
 		} else {
-			if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
+			if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
 				retVal = this.oConfSet.getOptionValue(arg);
 			} else {
 				retVal = this.argParser.getOptMap().get(arg).getDefaultValue();
@@ -215,7 +218,7 @@ public class ArgList {
 				retVal.add(value.trim());
 			}
 		}
-		if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
+		if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
 			for(String value : this.oConfSet.getOptionValues(arg)) {
 				retVal.add(value.trim());
 			}
@@ -235,9 +238,9 @@ public class ArgList {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
 		if(this.oCmdSet.hasOption(arg)) {
 			return true;
-		} else if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
+		} else if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
 			return true;
-		} else if(argdef != null && argdef.hasDefaultValue()) {
+		} else if((argdef != null) && argdef.hasDefaultValue()) {
 			return true;
 		}
 		return false;

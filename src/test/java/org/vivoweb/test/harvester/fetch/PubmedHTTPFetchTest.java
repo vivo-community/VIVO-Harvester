@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.fetch;
 
 import java.io.BufferedWriter;
@@ -43,7 +46,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(PubmedHTTPFetchTest.class, null, null);
+		InitLog.initLogger(null, null);
 		this.configFile = File.createTempFile("rhConfig", "xml");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler>\n	<Param name=\"rhClass\">org.vivoweb.harvester.util.repo.JDBCRecordHandler</Param>\n	<Param name=\"dbClass\">org.h2.Driver</Param>\n	<Param name=\"dbUrl\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"dbUser\">sa</Param>\n	<Param name=\"dbPass\"></Param>\n	<Param name=\"dbTable\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
@@ -59,9 +62,10 @@ public class PubmedHTTPFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedHTTPFetch#main(java.lang.String[]) main(String... args)}.
+	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedHTTPFetch#main(java.lang.String[]) main(String... args)}
+	 * .
 	 * @throws IOException error
-	 * @throws ParserConfigurationException error 
+	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
 	 */
 	public final void testPubmedHTTPFetchMain() throws IOException, ParserConfigurationException, SAXException {

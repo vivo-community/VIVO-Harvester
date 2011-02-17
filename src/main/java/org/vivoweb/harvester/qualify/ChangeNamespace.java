@@ -1,10 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
- * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
- * implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
@@ -110,7 +112,7 @@ public class ChangeNamespace {
 	 * @throws IllegalArgumentException empty namespace
 	 */
 	public static String getUnusedURI(String namespace, JenaConnect... models) throws IllegalArgumentException {
-		if(namespace == null || namespace.equals("")) {
+		if((namespace == null) || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
 		String uri = null;
@@ -141,10 +143,10 @@ public class ChangeNamespace {
 	 * @throws IllegalArgumentException empty namespace
 	 */
 	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IllegalArgumentException {
-		if(oldNamespace == null || oldNamespace.trim().equals("")) {
+		if((oldNamespace == null) || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
-		if(newNamespace == null || newNamespace.trim().equals("")) {
+		if((newNamespace == null) || newNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("new namespace cannot be empty");
 		}
 		if(oldNamespace.trim().equals(newNamespace.trim())) {
@@ -221,7 +223,7 @@ public class ChangeNamespace {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(ChangeNamespace.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new ChangeNamespace(args).execute();
 		} catch(IllegalArgumentException e) {

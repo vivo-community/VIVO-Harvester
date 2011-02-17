@@ -1,11 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
- * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
- * implementation Christopher Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm
- * Christopher Barnes - regex scoring algorithim
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.score;
 
 import java.io.IOException;
@@ -148,7 +149,7 @@ public class Match {
 	 */
 	private Map<String, String> match(float threshold) {
 		//Build query to find all nodes matching on the given predicates
-		String sQuery =	"" +
+		String sQuery = "" +
 				"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
 				"SELECT DISTINCT ?sVivo ?sInput (sum(?weightValue) AS ?sum) \n" +
 				"WHERE { \n" +
@@ -158,10 +159,10 @@ public class Match {
 				"  ?value scoreValue:WeightedScore ?weightValue . \n" +
 				"}" +
 				"GROUP BY ?sVivo ?sInput \n" +
-				"HAVING (?sum >= "+threshold+") \n" +
+				"HAVING (?sum >= " + threshold + ") \n" +
 				"ORDER BY ?sInput";
-		Map<String,String> uriMatchMap = new HashMap<String,String>();
-
+		Map<String, String> uriMatchMap = new HashMap<String, String>();
+		
 		//log trace
 		log.trace("Query Start");
 		log.debug("Query:\n" + sQuery);
@@ -242,12 +243,12 @@ public class Match {
 				uriFilters.add("(str(?s) = \"" + uri + "\")");
 			}
 			String query = "" +
-			"DELETE {\n" +
-			"  ?s ?p ?o\n" +
-			"} WHERE {\n" +
-			"  ?s ?p ?o .\n" +
-			"  FILTER ( isLiteral(?o || (str(?p)='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && ("+StringUtils.join(uriFilters, " || ")+")) .\n" +
-			"}";
+				"DELETE {\n" +
+				"  ?s ?p ?o\n" +
+				"} WHERE {\n" +
+				"  ?s ?p ?o .\n" +
+				"  FILTER ( isLiteral(?o || (str(?p)='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && (" + StringUtils.join(uriFilters, " || ") + ")) .\n" +
+				"}";
 			String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
 			log.debug("Construct Query:\n" + conQuery);
 			log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).toString());
@@ -387,7 +388,7 @@ public class Match {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(Match.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new Match(args).execute();
 		} catch(IllegalArgumentException e) {

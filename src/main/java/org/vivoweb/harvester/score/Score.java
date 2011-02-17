@@ -1,11 +1,14 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights
- * reserved. This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and
- * implementation Christopher Barnes, Narayan Raum - scoring ideas and algorithim Yang Li - pairwise scoring Algorithm
- * Christopher Barnes - regex scoring algorithim
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ * Narayan Raum, Yang Li, Christopher Barnes, Chris Westling
+ * - scoring algorithm ideas
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.score;
 
 import java.io.IOException;
@@ -244,9 +247,9 @@ public class Score {
 	private void verifyRunNames(Map<String, Map<String, ? extends Object>> maps) {
 		for(String x : maps.keySet()) {
 			for(String y : maps.keySet()) {
-				if(x != y && !maps.get(y).keySet().containsAll(maps.get(x).keySet())) {
+				if((x != y) && !maps.get(y).keySet().containsAll(maps.get(x).keySet())) {
 					for(String runName : maps.get(x).keySet()) {
-						if(x != y && !maps.get(y).containsKey(runName)) {
+						if((x != y) && !maps.get(y).containsKey(runName)) {
 							throw new IllegalArgumentException("run name '" + runName + "' found in " + x + ", but not in " + y);
 						}
 					}
@@ -504,9 +507,9 @@ public class Score {
 	private String buildScoreSparqlFragment(int nodenum, String opUri, String opLit, String osUri, String osLit, String runName) {
 		float score = 0f;
 		// if a resource and same uris
-		if(this.equalityOnlyMode || (osUri != null && opUri != null && osUri.equals(opUri))) {
+		if(this.equalityOnlyMode || ((osUri != null) && (opUri != null) && osUri.equals(opUri))) {
 			score = 1 / 1f;
-		} else if(osLit != null && opLit != null) {
+		} else if((osLit != null) && (opLit != null)) {
 			try {
 				score = this.algorithms.get(runName).newInstance().calculate(osLit, opLit);
 			} catch(IllegalAccessException e) {
@@ -526,7 +529,7 @@ public class Score {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(Score.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new Score(args).execute();
 		} catch(IllegalArgumentException e) {

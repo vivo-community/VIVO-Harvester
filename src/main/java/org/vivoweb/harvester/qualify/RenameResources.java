@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
@@ -99,16 +102,16 @@ public class RenameResources {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(RenameResources.class, args, getParser());
-			log.info(getParser().getAppName()+": Start");
+			InitLog.initLogger(args, getParser());
+			log.info(getParser().getAppName() + ": Start");
 			new RenameResources(args).execute();
-		} catch (IllegalArgumentException e) {
+		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch (Exception e) {
+		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			log.info(getParser().getAppName()+": End");
+			log.info(getParser().getAppName() + ": End");
 		}
 	}
 }

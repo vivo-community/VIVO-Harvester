@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.BufferedReader;
@@ -51,6 +54,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * Record Handler that stores each record as a file in a directory
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class TextFileRecordHandler extends RecordHandler {
@@ -460,7 +464,7 @@ public class TextFileRecordHandler extends RecordHandler {
 			log.debug("Compiling list of records");
 			try {
 				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(Selectors.SELECT_CHILDREN)) {
-					if(!file.isHidden() && file.getType() == FileType.FILE) {
+					if(!file.isHidden() && (file.getType() == FileType.FILE)) {
 						allFileListing.add(file.getName().getBaseName());
 						// log.debug("Found file "+file.getName().getBaseName());
 					}

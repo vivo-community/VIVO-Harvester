@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.translate;
 
 import java.io.ByteArrayInputStream;
@@ -71,7 +74,7 @@ public class GlozeTranslator {
 	 * Default Constructor
 	 */
 	public GlozeTranslator() {
-		this.setURIBase("http://vivoweb.org/glozeTranslation/noURI/");
+		setURIBase("http://vivoweb.org/glozeTranslation/noURI/");
 	}
 	
 	/**
@@ -85,22 +88,22 @@ public class GlozeTranslator {
 	
 	/**
 	 * @param argumentList <ul>
-	 * <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
-	 * <li><em>schema</em> the incoming schema for gloze translation</li>
-	 * <li><em>outRecordHandler</em> the out record handler</li>
-	 * <li><em>uriBase</em> required for gloze translation the unset URIBASE used is
-	 * http://vivoweb.org/glozeTranslation/noURI/</li>
-	 * </ul>
+	 *        <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
+	 *        <li><em>schema</em> the incoming schema for gloze translation</li>
+	 *        <li><em>outRecordHandler</em> the out record handler</li>
+	 *        <li><em>uriBase</em> required for gloze translation the unset URIBASE used is
+	 *        http://vivoweb.org/glozeTranslation/noURI/</li>
+	 *        </ul>
 	 * @throws IOException error connecting to record handlers
 	 */
 	public GlozeTranslator(ArgList argumentList) throws IOException {
 		// the uri base if not set is http://vivoweb.org/glozeTranslation/noURI/"
 		if(argumentList.has("uriBase")) {
-			this.setURIBase(argumentList.get("uriBase"));
+			setURIBase(argumentList.get("uriBase"));
 		}
 		// pull in the translation xsl
 		if(argumentList.has("xmlSchema")) {
-			this.setIncomingSchema(new File(argumentList.get("xmlSchema")));
+			setIncomingSchema(new File(argumentList.get("xmlSchema")));
 		}
 		
 		// create record handlers
@@ -172,7 +175,7 @@ public class GlozeTranslator {
 	 * 
 	 */
 	public void execute() {
-		if(this.uriBase != null && this.inStream != null) {
+		if((this.uriBase != null) && (this.inStream != null)) {
 			try {
 				// create a output stream for writing to the out store
 				ByteArrayOutputStream buff = new ByteArrayOutputStream();
@@ -181,7 +184,7 @@ public class GlozeTranslator {
 					if(r.needsProcessed(this.getClass())) {
 						this.inStream = new ByteArrayInputStream(r.getData().getBytes());
 						this.outStream = buff;
-						this.translateFile();
+						translateFile();
 						buff.flush();
 						this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
 						r.setProcessed(this.getClass());
@@ -217,7 +220,7 @@ public class GlozeTranslator {
 	 */
 	public static void main(String[] args) {
 		try {
-			InitLog.initLogger(GlozeTranslator.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new GlozeTranslator(args).execute();
 		} catch(IllegalArgumentException e) {

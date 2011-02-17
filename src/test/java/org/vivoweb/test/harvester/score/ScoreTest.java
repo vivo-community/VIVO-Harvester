@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.score;
 
 import java.io.IOException;
@@ -31,8 +34,8 @@ public class ScoreTest extends TestCase {
 	/**
 	 * Score input test file
 	 */
-	protected static final String inputRDF = ""+
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + 
+	protected static final String inputRDF = "" +
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 		"<rdf:RDF xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
 				"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" " +
 				"xmlns:owlPlus=\"http://www.w3.org/2006/12/owl2-xml#\" " +
@@ -277,7 +280,7 @@ public class ScoreTest extends TestCase {
 	/**
 	 * vivo rdf statements to load for test
 	 */
-	protected static final String vivoRDF = ""+
+	protected static final String vivoRDF = "" +
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 		"<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
 				"xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
@@ -367,9 +370,9 @@ public class ScoreTest extends TestCase {
 		vivoPredicates.put("fName", "http://xmlns.com/foaf/0.1/firstName");
 		
 		HashMap<String, Float> weights = new HashMap<String, Float>();
-		weights.put("wEmail", Float.valueOf(1/2f));
-		weights.put("lName", Float.valueOf(1/3f));
-		weights.put("fName", Float.valueOf(1/6f));
+		weights.put("wEmail", Float.valueOf(1 / 2f));
+		weights.put("lName", Float.valueOf(1 / 3f));
+		weights.put("fName", Float.valueOf(1 / 6f));
 		
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
@@ -381,24 +384,23 @@ public class ScoreTest extends TestCase {
 		
 		// check score model
 		//Check for matched person authorship
-		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 		//Check to make sure pub doesn't have matched authorship
-		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 		//Check to make sure information authorship exists on publication
-		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));		
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 		//check for records in output model records
 		assertTrue(!this.output.isEmpty());
 		//assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship <http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1> }"));
 		
 		//assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
 		//assertTrue(this.input.containsURI("http://vivoweb.org/pubmed/pmid201138680/vivoAuthorship/l1"));
-	    
+		
 		//pub has 
-	    //<j.1:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
+		//<j.1:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
 		
 		//person has
 		//<j.3:authorInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
-		
 		
 		//http://vivoweb.org/pubmed/article/pmid20113680/authorship1
 		log.info("END testEmailLastNameEqualityTest");
@@ -406,7 +408,7 @@ public class ScoreTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(ScoreTest.class, null, null);
+		InitLog.initLogger(null, null);
 		// load input models
 		this.input = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "input");
 		this.input.loadRdfFromString(inputRDF, null, null);
@@ -415,7 +417,7 @@ public class ScoreTest extends TestCase {
 		this.vivo.loadRdfFromString(vivoRDF, null, null);
 		
 		this.output = this.input.neighborConnectClone("output");
-					
+		
 		this.score = this.input.neighborConnectClone("score");
 	}
 	

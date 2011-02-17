@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.ByteArrayOutputStream;
@@ -11,20 +14,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An Output Stream that breaks XML blobs into individual Records and writes to a RecordHandler
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class XMLRecordOutputStream extends OutputStream implements Cloneable {
-	/**
-	 * SLF4J Logger
-	 */
-	// log lines are commented because it slowed down the process significantly
-	@SuppressWarnings("unused")
-	private static Logger log = LoggerFactory.getLogger(XMLRecordOutputStream.class);
 	/**
 	 * Buffer to hold data until a complete record is formed
 	 */
@@ -85,14 +80,10 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 		this.buf.write(arg0);
 		byte[] a = this.buf.toByteArray();
 		if(compareByteArrays(a, this.closeTag)) {
-			// Slows things down ALOT to have these
-			// log.debug("Complete Record Written to buffer");
 			String record = new String(a);
 			Matcher m = this.idRegex.matcher(record);
 			m.find();
 			String id = m.group(1);
-			// Slows things down ALOT to have these
-			// log.debug("Adding record id: "+id);
 			this.rh.addRecord(id.trim(), this.header + record.trim() + this.footer, this.opClass);
 			this.buf.reset();
 		}

@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
@@ -98,8 +101,8 @@ public abstract class DBJenaConnect extends JenaConnect {
 	@Override
 	public void printParameters() {
 		super.printParameters();
-		log.info("dbUrl: '" + this.dbUrl + "'");
-		log.info("dbType: '" + this.dbType + "'");
-		log.info("dbClass: '" + this.dbClass + "'");
+		log.debug("dbUrl: '" + this.dbUrl + "'");
+		log.debug("dbType: '" + this.dbType + "'");
+		log.debug("dbClass: '" + this.dbClass + "'");
 	}
 }

@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
@@ -101,11 +104,11 @@ public class SDBJenaConnect extends DBJenaConnect {
 	private void init(String modelName) throws IOException {
 		initStore();
 		if(modelName != null) {
-			this.setModelName(modelName);
-			this.setJenaModel(SDBFactory.connectNamedModel(this.store, modelName));
+			setModelName(modelName);
+			setJenaModel(SDBFactory.connectNamedModel(this.store, modelName));
 		} else {
-			this.setModelName(Quad.defaultGraphIRI.getURI());
-			this.setJenaModel(SDBFactory.connectDefaultModel(this.store));
+			setModelName(Quad.defaultGraphIRI.getURI());
+			setJenaModel(SDBFactory.connectDefaultModel(this.store));
 		}
 	}
 	
@@ -135,14 +138,14 @@ public class SDBJenaConnect extends DBJenaConnect {
 	
 	@Override
 	public void close() {
-		this.getJenaModel().close();
+		getJenaModel().close();
 		this.store.close();
 		this.store.getConnection().close();
 	}
 	
 	@Override
 	public void truncate() {
-		this.getJenaModel().removeAll();
+		getJenaModel().removeAll();
 	}
 	
 	@Override

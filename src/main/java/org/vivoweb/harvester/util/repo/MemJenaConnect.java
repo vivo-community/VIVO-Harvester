@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.File;
@@ -27,7 +30,7 @@ public class MemJenaConnect extends TDBJenaConnect {
 	/**
 	 * Map of already used memory model names to directories
 	 */
-	private static HashMap<String,String> usedModelNames = new HashMap<String,String>();
+	private static HashMap<String, String> usedModelNames = new HashMap<String, String>();
 	
 	/**
 	 * Constructor (Memory Default Model)
@@ -51,12 +54,13 @@ public class MemJenaConnect extends TDBJenaConnect {
 	 * @param in input stream to load rdf from
 	 * @param namespace the base uri to use for imported uris
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
-	 * "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for "RDF/XML"
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
 	 * @throws IOException error connecting
 	 */
 	public MemJenaConnect(InputStream in, String namespace, String language) throws IOException {
 		this(null);
-		this.loadRdfFromStream(in, namespace, language);
+		loadRdfFromStream(in, namespace, language);
 	}
 	
 	/**
@@ -66,12 +70,12 @@ public class MemJenaConnect extends TDBJenaConnect {
 	 * @throws IOException error creating temp path
 	 */
 	private static String getDir(String modelName) throws IOException {
-		String mod = (modelName != null)?modelName:generateUnusedModelName();
-		mod = SpecialEntities.xmlEncode(mod, '/',':');
+		String mod = (modelName != null) ? modelName : generateUnusedModelName();
+		mod = SpecialEntities.xmlEncode(mod, '/', ':');
 		if(!usedModelNames.containsKey(modelName)) {
-			log.debug("attempting to create temp file for: "+mod);
+			log.debug("attempting to create temp file for: " + mod);
 			File f = File.createTempFile(mod, ".tdb");
-			log.debug("created: "+f.getAbsolutePath());
+			log.debug("created: " + f.getAbsolutePath());
 			f.delete();
 			f.mkdir();
 			usedModelNames.put(mod, f.getAbsolutePath());
@@ -87,7 +91,7 @@ public class MemJenaConnect extends TDBJenaConnect {
 		Random random = new Random();
 		String name = null;
 		while(name == null) {
-			name = "DEFAULT"+random.nextInt(Integer.MAX_VALUE);
+			name = "DEFAULT" + random.nextInt(Integer.MAX_VALUE);
 			if(usedModelNames.containsKey(name)) {
 				name = null;
 			}

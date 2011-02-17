@@ -1,10 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri. All
- * rights reserved. This program and the accompanying materials are made available under the terms of the new BSD
- * license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
- * Contributors: Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri - initial
- * API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
 import java.io.File;
@@ -13,8 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Map;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +91,9 @@ public class SanitizeMODSXML {
 	 */
 	private String stripFinalSlash(String path) {
 		String returnValue = path;
-		if(returnValue.endsWith("/"))
+		if(returnValue.endsWith("/")) {
 			returnValue = returnValue.substring(0, returnValue.length() - 1);
+		}
 		
 		return returnValue;
 	}
@@ -139,8 +142,9 @@ public class SanitizeMODSXML {
 		File inputDir = new File(this.inputPath);
 		File outputDir = new File(this.outputPath);
 		
-		if(!outputDir.exists())
+		if(!outputDir.exists()) {
 			outputDir.mkdir();
+		}
 		
 		File[] children = inputDir.listFiles();
 		for(File file : children) {
@@ -269,7 +273,7 @@ public class SanitizeMODSXML {
 	 */
 	public static void main(String... args) {
 		try {
-			InitLog.initLogger(SanitizeMODSXML.class, args, getParser());
+			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new SanitizeMODSXML(new ArgList(getParser(), args)).execute();
 		} catch(IllegalArgumentException e) {

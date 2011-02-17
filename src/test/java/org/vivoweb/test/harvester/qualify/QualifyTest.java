@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.qualify;
 
 import java.io.IOException;
@@ -35,7 +38,7 @@ public class QualifyTest extends TestCase {
 	
 	@Override
 	public void setUp() throws Exception {
-		InitLog.initLogger(QualifyTest.class, null, null);
+		InitLog.initLogger(null, null);
 		this.jena = new MemJenaConnect();
 		this.jena.truncate();
 		this.label = this.jena.getJenaModel().createProperty("http://www.w3.org/2000/01/rdf-schema#label");
@@ -60,19 +63,18 @@ public class QualifyTest extends TestCase {
 		Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
 		Resource res3 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#3");
 		String searchValue = "IATRR";
-		this.jena.getJenaModel().add(res1, this.label, this.jena.getJenaModel().createLiteral(searchValue,"en"));
-		this.jena.getJenaModel().add(res2, this.label, this.jena.getJenaModel().createTypedLiteral("woo"+searchValue+"blah"));
+		this.jena.getJenaModel().add(res1, this.label, this.jena.getJenaModel().createLiteral(searchValue, "en"));
+		this.jena.getJenaModel().add(res2, this.label, this.jena.getJenaModel().createTypedLiteral("woo" + searchValue + "blah"));
 		this.jena.getJenaModel().add(res3, this.label, "I A T R R");
 		String replaceValue = "I Am Testing Regex Replace";
-		log.debug("Pre-Qualify:\n"+this.jena.exportRdfToString());
+		log.debug("Pre-Qualify:\n" + this.jena.exportRdfToString());
 		// call qualify
 		new Qualify(this.jena, this.label.getURI(), searchValue, replaceValue, true, null, false, false).execute();
-		log.debug("Post-Qualify:\n"+this.jena.exportRdfToString());
+		log.debug("Post-Qualify:\n" + this.jena.exportRdfToString());
 		assertEquals(replaceValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
-		assertEquals("woo"+replaceValue+"blah", this.jena.getJenaModel().getProperty(res2, this.label).getString());
+		assertEquals("woo" + replaceValue + "blah", this.jena.getJenaModel().getProperty(res2, this.label).getString());
 		log.info("END testRegexReplace");
 	}
-	
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using

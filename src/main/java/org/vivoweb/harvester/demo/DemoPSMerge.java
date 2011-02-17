@@ -1,3 +1,12 @@
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.demo;
 
 import java.io.File;
@@ -105,8 +114,8 @@ public class DemoPSMerge {
 		//		));
 		
 		List<String> ufidLimiters = Arrays.asList(
-		//			"t_UF_DIR_EMP_STU_1.UF_IDENTIFIER LIKE '%8973%'"
-		);
+			//			"t_UF_DIR_EMP_STU_1.UF_IDENTIFIER LIKE '%8973%'"
+			);
 		whereClauses.put("t_UF_DIR_EMP_STU_1", new ArrayList<String>(whereClauses.get("t_UF_DIR_EMP_STU_1")));
 		whereClauses.get("t_UF_DIR_EMP_STU_1").addAll(ufidLimiters);
 		whereClauses.put("t_UF_DIR_EMP_STU_2", new ArrayList<String>(whereClauses.get("t_UF_DIR_EMP_STU_2")));
@@ -134,7 +143,7 @@ public class DemoPSMerge {
 	//	@SuppressWarnings("unused")
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
 		System.setProperty("process-task", "Fetch");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// setup fetch parameter variables
 		Set<String> tableNames = new TreeSet<String>();
 		Map<String, String> fromClauses = new HashMap<String, String>();
@@ -157,7 +166,7 @@ public class DemoPSMerge {
 		psFetch.execute();
 		
 		System.setProperty("process-task", "Merge");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Merge related records
 		RecordHandler mergedRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoMergedPS/store", "sa", "", "mergedData", "mergedID");
 		log.trace("Merging Related Raw Records");
@@ -165,7 +174,7 @@ public class DemoPSMerge {
 		psMerge.execute();
 		
 		System.setProperty("process-task", "Translate");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Execute Translate
 		InputStream xsl = VFS.getManager().resolveFile(new File("."), "config/datamaps/PeopleSoftToVivo.xsl").getContent().getInputStream();
 		RecordHandler transRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoTransPS/store", "sa", "", "transData", "transID");
@@ -174,7 +183,7 @@ public class DemoPSMerge {
 		psTranslate.execute();
 		
 		System.setProperty("process-task", "Transfer");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// connect to input model
 		JenaConnect psInput = new SDBJenaConnect("jdbc:h2:harvested-data/demoInputPS/store", "sa", "", "H2", "org.h2.Driver", "layout2", "psTempModel");
 		// clear model
@@ -185,7 +194,7 @@ public class DemoPSMerge {
 		psInput.loadRdfFromRH(transRH, "http://vivo.ufl.edu/individual/");
 		
 		System.setProperty("process-task", "Score.Setup");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// connect to vivo model
 		JenaConnect vivoJena = new SDBJenaConnect("jdbc:h2:harvested-data/demoVivo/store", "sa", "", "H2", "org.h2.Driver", "layout2", "vivoModel");
 		// clear model and load vivo data
@@ -207,7 +216,7 @@ public class DemoPSMerge {
 		HashMap<String, Float> weights = new HashMap<String, Float>();
 		
 		System.setProperty("process-task", "Score.People");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// clear parameters and temp model
 		log.trace("Truncating Temp Model");
 		algorithms.clear();
@@ -224,7 +233,7 @@ public class DemoPSMerge {
 		psScorePeople.execute();
 		
 		System.setProperty("process-task", "Score.Departments");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// clear parameters and temp model
 		log.trace("Truncating Temp Model");
 		algorithms.clear();
@@ -241,14 +250,14 @@ public class DemoPSMerge {
 		psScoreDepts.execute();
 		
 		System.setProperty("process-task", "Match.PeopleDepartments");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Find matches for people and departments using scores and rename nodes to matching uri
 		log.trace("Running Match for People and Departments");
 		Match psPeopleOrgMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false);
 		psPeopleOrgMatch.execute();
 		
 		System.setProperty("process-task", "Score.Positions");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// clear parameters and temp model
 		log.trace("Truncating Temp Model");
 		algorithms.clear();
@@ -273,35 +282,35 @@ public class DemoPSMerge {
 		psScorePos.execute();
 		
 		System.setProperty("process-task", "Match.Positions");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Find matches for positions using scores and rename nodes to matching uri
 		log.trace("Running Match for Positions");
 		Match psPosMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false);
 		psPosMatch.execute();
 		
 		System.setProperty("process-task", "ChangeNamespace.People");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Execute ChangeNamespace to get unmatched People into current namespace
 		log.trace("Running People Change Namespace");
 		ChangeNamespace psCNpeople = new ChangeNamespace(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/person/", "http://vivo.ufl.edu/individual/", false);
 		psCNpeople.execute();
 		
 		System.setProperty("process-task", "ChangeNamespace.Departments");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Execute ChangeNamespace to get unmatched Departments into current namespace
 		log.trace("Running Departments Change Namespace");
 		ChangeNamespace psCNdepts = new ChangeNamespace(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/org/", "http://vivo.ufl.edu/individual/", true);
 		psCNdepts.execute();
 		
 		System.setProperty("process-task", "ChangeNamespace.Positions");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Execute ChangeNamespace to get unmatched Positions into current namespace
 		log.trace("Running Positions Change Namespace");
 		ChangeNamespace psCNpos = new ChangeNamespace(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/position/", "http://vivo.ufl.edu/individual/", false);
 		psCNpos.execute();
 		
 		System.setProperty("process-task", "DiffSetup");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Connect to previous harvest model
 		JenaConnect psPrevHarvest = vivoJena.neighborConnectClone("uflPeopleSoft");
 		//		// clear model and load previous connect data
@@ -315,21 +324,21 @@ public class DemoPSMerge {
 		JenaConnect psAddsModel = psSubsModel.neighborConnectClone("addsModel");
 		
 		System.setProperty("process-task", "Diff.Subs");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Find Subtractions
 		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel);
 		log.trace("Finding subtractions");
 		psDiffSubs.execute();
 		
 		System.setProperty("process-task", "Diff.Adds");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Find Additions
 		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel);
 		log.trace("Finding additions");
 		psDiffAdds.execute();
 		
 		System.setProperty("process-task", "Diff.ApplyPrev");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Apply Subtractions to Previous model
 		log.trace("Applying subtractions to harvest model");
 		psPrevHarvest.removeRdfFromJC(psSubsModel);
@@ -338,7 +347,7 @@ public class DemoPSMerge {
 		psPrevHarvest.loadRdfFromJC(psAddsModel);
 		
 		System.setProperty("process-task", "Diff.ApplyVivo");
-		InitLog.initLogger(DemoPSMerge.class, null, null);
+		InitLog.initLogger(null, null);
 		// Apply Subtractions to VIVO
 		log.trace("Applying subtractions to vivo");
 		vivoJena.removeRdfFromJC(psSubsModel);

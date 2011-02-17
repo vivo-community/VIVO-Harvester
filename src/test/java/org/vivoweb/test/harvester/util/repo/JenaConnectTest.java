@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util.repo;
 
 import java.io.BufferedWriter;
@@ -65,7 +68,7 @@ public class JenaConnectTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(JenaConnectTest.class, null, null);
+		InitLog.initLogger(null, null);
 		this.configFile = File.createTempFile("jcConfig", "xml");
 		this.jc = null;
 	}
@@ -87,7 +90,8 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#parseConfig(org.apache.commons.vfs.FileObject)
+	 * Test method for
+	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#parseConfig(org.apache.commons.vfs.FileObject)
 	 * JenaConnect.parseConfig(FileObject configFile)}.
 	 * @throws IOException error
 	 */
@@ -128,8 +132,7 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#neighborConnectClone(java.lang.String)
+	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#neighborConnectClone(java.lang.String)
 	 * connect(String modelName)}.
 	 * @throws IOException error
 	 */
@@ -165,7 +168,8 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.lang.String) MemJenaConnect(String
+	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.lang.String)
+	 * MemJenaConnect(String
 	 * modelName)}.
 	 * @throws IOException error
 	 */
@@ -177,7 +181,8 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRdfFromStream(java.io.InputStream, java.lang.String, java.lang.String)
+	 * Test method for
+	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRdfFromStream(java.io.InputStream, java.lang.String, java.lang.String)
 	 * loadRDF(InputStream in, String namespace)}.
 	 * @throws IOException error
 	 */
