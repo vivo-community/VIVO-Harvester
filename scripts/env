@@ -16,7 +16,7 @@ MAX_MEM=3072m
 CHECKEMPTY=true
 
 DATE=`get-date`
-HARVESTER_TASK_DATE="$HARVESTER_TASK.$DATE"
+HARVESTER_TASK_DATE="$HARVESTER_TASK.$DATE.harvester$VERSION"
 #Variable for optimizations to the Java virtual machine.
 #-server				Run in server mode, which takes longer to start but runs faster
 #-d64					Use 64-bit JVM

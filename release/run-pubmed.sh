@@ -47,7 +47,7 @@ $PubmedFetch -X config/tasks/example.pubmedfetch.xml
 rm -rf harvested-data/h2Pubmed/RDF
 
 # Execute Translate using the PubmedToVIVO.xsl file
-$XSLTranslator -i config/recordhandlers/pubmed-tf-raw.xml -x config/datamaps/pubmed-to-vivo.xsl -o config/recordHandlers/pubmed-tf-rdf.xml
+$XSLTranslator -i config/recordhandlers/pubmed-tf-raw.xml -x config/datamaps/pubmed-to-vivo.xsl -o config/recordhandlers/pubmed-tf-rdf.xml
 
 # Clear old H2 models
 rm -rf harvested-data/h2Pubmed/all

@@ -24,7 +24,9 @@ rm vivo_start.rdf
 rm vivo_end.rdf
 rm pubmed.rdf
 rm match.rdf
+rm score.rdf
 rm qualify.rdf
+rm transfer.rdf
 
 echo -n "Grab local?: "
 read LOCAL
@@ -85,6 +87,7 @@ cp pubmed.rdf ../../../..
 cp score.rdf ../../../..
 cp match.rdf ../../../..
 cp qualify.rdf ../../../..
+cp transfer.rdf ../../../..
 
 #check for data written to vivo, otherwise failure
 #PRESIZE=`du -b vivo_start.rdf | awk '{ print $1 }'`
