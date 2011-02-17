@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Task>
 	<Param name="email">YOU@YOUR.TLD</Param>
-	<Param name="output">config/recordhandlers/h2-jdbc.xml</Param>
-	<Param name="outputOverride">dbUrl=jdbc:h2:harvested-data/pubmed/raw/store</Param>
-<!--	TextFileRecordHandler for testing -->
-<!--	<Param name="output">config/recordhandlers/tfrh.xml</Param> -->
-<!--	<Param name="outputOverride">fileDir=harvested-data/pubmed/raw/tfrh</Param> -->
 	<Param name="termSearch">your pubmed query</Param>
 	<Param name="numRecords">100</Param>
 	<Param name="batchSize">1000</Param>

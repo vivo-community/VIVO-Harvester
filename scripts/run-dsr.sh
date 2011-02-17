@@ -69,7 +69,7 @@ SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -Schec
 SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR"
 
 #Changenamespace settings
-CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n http://vivo.ufl.edu/individual/"
+CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n $NAMESPACE"
 
 #The equality test algorithm
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
@@ -209,4 +209,7 @@ backup-mysqldb $BACKPOSTDB
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-/etc/init.d/tomcat restart
+echo $HARVESTER_TASK ' completed successfully'
+/etc/init.d/tomcat stop
+/etc/init.d/apache2 reload
+/etc/init.d/tomcat start

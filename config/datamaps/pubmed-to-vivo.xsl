@@ -25,6 +25,7 @@
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
+	<xsl:variable name="baseURI">http://vivoweb.org/harvest/pubmed/</xsl:variable>
 
 	<!-- The main Article Set of all pubmed citations loaded 
 		This serves as the header of the RDF file produced
@@ -69,7 +70,7 @@
 				</xsl:matching-substring>			
 			</xsl:analyze-string>
 		</xsl:variable>
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedPub/pmid{child::MedlineCitation/PMID}">
+		<rdf:Description rdf:about="{$baseURI}pub/pmid{child::MedlineCitation/PMID}">
 			<xsl:apply-templates select='MedlineCitation/Article/PublicationTypeList/PublicationType' />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
@@ -125,25 +126,25 @@
 	</xsl:template>
 
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
-		<core:hasPublicationVenue rdf:resource="http://vivoweb.org/harvest/pubmedJournal/journal{child::ISSN}" />
+		<core:hasPublicationVenue rdf:resource="{$baseURI}journal/journal{child::ISSN}" />
 	</xsl:template>
 
 <!-- The Main Journal Entity -->
 	<xsl:template match="MedlineCitation/Article/Journal" mode="fullJournal">
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedJournal/journal{child::ISSN}" >
+		<rdf:Description rdf:about="{$baseURI}journal/journal{child::ISSN}" >
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:Title><xsl:value-of select="Title" /></core:Title>
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
 			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
-			<core:publicationVenueFor rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid{ancestor::MedlineCitation/PMID}"/>
+			<core:publicationVenueFor rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
 	</xsl:template>	
 
 	<!-- Links to From the Paper to the Terms and Authors -->
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef">
-		<core:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 	</xsl:template>
 
 	<!-- Author List Navigation --> 
@@ -157,14 +158,14 @@
 	<!-- The Authors -->
 	<xsl:template match="Author" mode="fullAuthor">
 		<xsl:param name='email' />
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}">
+		<rdf:Description rdf:about="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
-			<core:linkedAuthor rdf:resource="http://vivoweb.org/harvest/pubmedAuthor/pmid{ancestor::MedlineCitation/PMID}author{position()}" />
-			<core:linkedInformationResource rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid{ancestor::MedlineCitation/PMID}"/>
+			<core:linkedAuthor rdf:resource="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}" />
+			<core:linkedInformationResource rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
@@ -178,7 +179,7 @@
 			</xsl:choose>
 			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
-		<rdf:Description rdf:about="http://vivoweb.org/harvest/pubmedAuthor/pmid{ancestor::MedlineCitation/PMID}author{position()}">
+		<rdf:Description rdf:about="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<score:workEmail><xsl:value-of select="$email" /></score:workEmail>
 			<xsl:choose>
@@ -195,7 +196,7 @@
 							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
 							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
 						</xsl:matching-substring>
-					</xsl:analyze-string>			
+					</xsl:analyze-string>
 				</xsl:when>
 				<xsl:when test="string(LastName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
@@ -219,7 +220,7 @@
 			</xsl:choose>
 			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<core:authorInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedAuthorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 		</rdf:Description>
 	</xsl:template>
 	
@@ -377,7 +378,7 @@
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 					</xsl:when>
 					<!-- Government Publications -->
-					<xsl:when test="translate(string($pbType),$up,$lo)='guideBooks'">
+					<xsl:when test="translate(string($pbType),$up,$lo)='guidebooks'">
 						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
 					</xsl:when>
 					<xsl:when test="translate(string($pbType),$up,$lo)='guideline'">

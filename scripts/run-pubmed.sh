@@ -9,12 +9,11 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
-# Set working directory
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd)
-cd $DIR
-cd ..
+# Set working directory
+HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 HARVESTER_TASK=pubmed
 
@@ -25,167 +24,205 @@ else
 fi
 echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
-#variables for model arguments
-HCONFIG="config/models/h2-sdb.xml"
-INPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/pubmed/all/store -ImodelName=Pubmed"
-OUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/pubmed/all/store -OmodelName=Pubmed"
-VIVO="-v $VIVOCONFIG"
-SCORE="-s $HCONFIG -SdbUrl=jdbc:h2:harvested-data/pubmed/score/store -SmodelName=Pubmed"
-SCOREOLDPUB="-s $HCONFIG -SdbUrl=jdbc:h2:harvested-data/pubmed/score/store -SmodelName=PubmedOldPub"
-OLDPUBJENACONNECT="-j $HCONFIG -JdbUrl=jdbc:h2:harvested-data/pubmed/score/store -JmodelName=PubmedOldPub"
-MATCHOUTPUT="-o $HCONFIG -OdbUrl=jdbc:h2:harvested-data/pubmed/match/store -OmodelName=Pubmed"
-MATCHINPUT="-i $HCONFIG -IdbUrl=jdbc:h2:harvested-data/pubmed/match/store -ImodelName=Pubmed"
+BASEDIR=harvested-data/$HARVESTER_TASK
+RAWRHDIR=$BASEDIR/rh-raw
+RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
+RDFRHDIR=$BASEDIR/rh-rdf
+RDFRHDBURL=jdbc:h2:$RDFRHDIR/store
+MODELDIR=$BASEDIR/model
+MODELDBURL=jdbc:h2:$MODELDIR/store
+MODELNAME=pubmedTempTransfer
+SCOREDATADIR=$BASEDIR/score-data
+SCOREDATADBURL=jdbc:h2:$SCOREDATADIR/store
+SCOREDATANAME=pubmedScoreData
+TEMPCOPYDIR=$BASEDIR/temp-copy
+MATCHEDDIR=$BASEDIR/matched
+MATCHEDDBURL=jdbc:h2:$SCOREDATADIR/store
+MATCHEDNAME=matchedData
+
+#scoring algorithms
+EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
+
+#matching properties
+CWEMAIL="http://vivoweb.org/ontology/core#workEmail"
+SWEMAIL="http://vivoweb.org/ontology/score#workEmail"
+FFNAME="http://xmlns.com/foaf/0.1/firstName"
+SFNAME="http://vivoweb.org/ontology/score#foreName"
+FLNAME="http://xmlns.com/foaf/0.1/lastName"
+CMNAME="http://vivoweb.org/ontology/core#middleName"
+BPMID="http://purl.org/ontology/bibo/pmid"
+CTITLE="http://vivoweb.org/ontology/core#title"
+BISSN="http://purl.org/ontology/bibo/ISSN"
+PVENUEFOR="http://vivoweb.org/ontology/core#publicationVenueFor"
+LINKINFORES="http://vivoweb.org/ontology/core#linkedInformationResource"
+AUTHINAUTH="http://vivoweb.org/ontology/core#authorInAuthorship"
+RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
+BASEURI="http://vivoweb.org/harvest/pubmed/"
 
 #clear old fetches
-rm -rf harvested-data/pubmed/raw
+rm -rf $RAWRHDIR
 
 # Execute Fetch for Pubmed
-$PubmedFetch -X config/tasks/example.pubmedfetch.xml
-#$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml
+$PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
+#$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # backup fetch
-date=`date +%Y-%m-%d_%T`
-tar -czpf backups/.$date.tar.gz harvested-data/pubmed/raw
-rm -rf backups/pubmed.xml.latest.tar.gz
-ln -s pubmed.xml.$date.tar.gz backups/pubmed.xml.latest.tar.gz
+BACKRAW="raw"
+#backup-path $RAWRHDIR $BACKRAW
 # uncomment to restore previous fetch
-#tar -xzpf backups/pubmed.xml.latest.tar.gz harvested-data/pubmed/raw/store
+#restore-path $RAWRHDIR $BACKRAW
 
 # clear old translates
-rm -rf harvested-data/pubmed/rdf
+rm -rf $RDFRHDIR
 
 # Execute Translate using the PubmedToVIVO.xsl file
-$XSLTranslator -i config/recordhandlers/pubmed-raw.xml -x config/datamaps/pubmed-to-vivo.xsl -o config/recordhandlers/pubmed-rdf.xml
+$XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/pubmed-to-vivo.xsl
 
 # backup translate
-date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.rdf.$date.tar.gz harvested-data/pubmed/rdf
-rm -rf backups/pubmed.rdf.latest.tar.gz
-ln -s pubmed.rdf.$date.tar.gz backups/pubmed.rdf.latest.tar.gz
+BACKRDF="rdf"
+#backup-path $RDFRHDIR $BACKRDF
 # uncomment to restore previous translate
-#tar -xzpf backups/pubmed.rdf.latest.tar.gz harvested-data/pubmed/rdf
+#restore-path $RDFRHDIR $BACKRDF
 
-# Clear old H2 models
-rm -rf harvested-data/pubmed/all
-rm -rf harvested-data/pubmed/temp
+# Clear old H2 transfer model
+rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer $OUTPUT -h config/recordhandlers/pubmed-rdf.xml
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
+#$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../dumpfile.txt
 
-#$Transfer $INPUT -h config/recordhandlers/pubmed-rdf.xml -d ../dumpfile.txt
-#$Transfer $INPUT -d ../dumpfile.txt
+# backup H2 transfer Model
+BACKMODEL="model"
+#backup-path $MODELDIR $BACKMODEL
+# uncomment to restore previous H2 transfer Model
+restore-path $MODELDIR $BACKMODEL
 
-# backup H2 translate Models
-date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.all.$date.tar.gz harvested-data/pubmed/all
-rm -rf backups/pubmed.all.latest.tar.gz
-ln -s ps.all.$date.tar.gz backups/pubmed.all.latest.tar.gz
-# uncomment to restore previous H2 translate models
-#tar -xzpf backups/pubmed.all.latest.tar.gz harvested-data/pubmed/all
+SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
+SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
+MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckEmpty=$CHECKEMPTY"
+SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR"
 
-# clear old score models
-rm -rf harvested-data/pubmed/score
+# Clear old H2 score data
+rm -rf $SCOREDATADIR
+
+# Clear old H2 temp copy
+rm -rf $TEMPCOPYDIR
 
 # Execute Score to disambiguate data in "scoring" JENA model
-# Execute match to match and link data into "vivo" JENA model
-LEVDIFF="org.vivoweb.harvester.score.algorithm.EqualityTest"
-EQDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=http://vivoweb.org/ontology/core#workEmail -WwEmail=0.7 -PwEmail=http://vivoweb.org/ontology/score#workEmail"
-FNAME="-AfName=$LEVDIFF -FfName=http://xmlns.com/foaf/0.1/firstName -WfName=0.3 -PfName=http://vivoweb.org/ontology/score#foreName"
-LNAME="-AlName=$LEVDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.5 -PlName=http://xmlns.com/foaf/0.1/lastName"
-MNAME="-AmName=$LEVDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
-VIVOMODELNAME="modelName=http://vivoweb.org/ingest/pubmed"
-mkdir harvested-data/pubmed/temp/
-TEMP="-t harvested-data/pubmed/temp/"
+WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$CWEMAIL -WwEmail=0.7 -PwEmail=$SWEMAIL"
+FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$SFNAME"
+LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
+MNAME="-AmName=$LEVDIFF -FmName=$CMNAME -WmName=0.1 -PmName=$CMNAME"
+$Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
 
-#$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME $MNAME
-$Score $VIVO $INPUT $TEMP $SCORE $WORKEMAIL $LNAME $FNAME
-$Match $INPUT $SCORE $MATCHOUTPUT -t 0.7 -r -c
-#$Transfer $MATCHINPUT -d ../dumpfile.txt
+# Find matches using scores and rename nodes to matching uri and clear literals
+$Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 0.7 -r -c
+#$Transfer $MATCHOUTPUT -d ../dumpfile.txt
 
+# backup H2 score data Model
+BACKSCOREDATA="scoredata-auths"
+backup-path $SCOREDATADIR $BACKSCOREDATA
+# uncomment to restore previous H2 matched Model
+#restore-path $SCOREDATADIR $BACKSCOREDATA
 
-# for previously harvested data rename the publications uid to thier old harvested uid
-OFNAME="-AfName=$EQDIFF -FfName=http://vivoweb.org/ontology/score#foreName -WfName=0.2 -PfName=http://vivoweb.org/ontology/score#foreName"
-OLNAME="-AlName=$EQDIFF -FlName=http://xmlns.com/foaf/0.1/lastName -WlName=0.3 -PlName=http://xmlns.com/foaf/0.1/lastName"
-OMNAME="-AmName=$EQDIFF -FmName=http://vivoweb.org/ontology/core#middleName -WmName=0.1 -PmName=http://vivoweb.org/ontology/core#middleName"
-PMID="-Apmid=$EQDIFF -Fpmid=http://purl.org/ontology/bibo/pmid -Wpmid=1.0 -Ppmid=http://purl.org/ontology/bibo/pmid"
-TITLE="-Atitle=$EQDIFF -Ftitle=http://vivoweb.org/ontology/core#title -Wtitle=1.0 -Ptitle=http://vivoweb.org/ontology/core#title"
-ISSN="-Aissn=$EQDIFF -Fissn=http://purl.org/ontology/bibo/ISSN -Wissn=1.0 -Pissn=http://purl.org/ontology/bibo/ISSN"
-JOURNALPUB="-Ajournalpub=$EQDIFF -Fjournalpub=http://vivoweb.org/ontology/core#publicationVenueFor -Wjournalpub=1.0 -Pjournalpub=http://vivoweb.org/ontology/core#publicationVenueFor"
-RDFSLABEL="-Ardfslabel=$EQDIFF -Frdfslabel=http://www.w3.org/2000/01/rdf-schema#label -Wrdfslabel=.5 -Prdfslabel=http://www.w3.org/2000/01/rdf-schema#label"
-AUTHORSHIPPUB="-Aauthorshippub=$EQDIFF -Fauthorshippub=http://vivoweb.org/ontology/core#linkedInformationResource -Wauthorshippub=.5 -Pauthorshippub=http://vivoweb.org/ontology/core#linkedInformationResource"
-AUTHORTOSHIP="-Aauthortoship=$EQDIFF -Fauthortoship=http://vivoweb.org/ontology/core#authorInAuthorship -Wauthortoship=.5 -Pauthortoship=http://vivoweb.org/ontology/core#authorInAuthorship"
+# clear H2 score data Model
+rm -rf $SCOREDATADIR
 
-#find the originally ingested publication
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $PMID
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-$JenaConnect $OLDPUBJENACONNECT -t		//clears out the model 
+# Clear old H2 temp copy
+rm -rf $TEMPCOPYDIR
 
-#find the originally ingested journal
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $TITLE $ISSN $JOURNALPUB #Match Journal
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-$JenaConnect $OLDPUBJENACONNECT -t		//clears out the model
+MATCHEDINPUT="-i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY"
+SCOREMODELS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR"
 
-#find the originally ingested Authorship
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $RDFSLABEL $AUTHORSHIPPUB
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
-$JenaConnect $OLDPUBJENACONNECT -t		//clears out the model
+# find the originally ingested publication
+$Score $SCOREMODELS -Apmid=$EQTEST -Fpmid=$BPMID -Wpmid=1.0 -Ppmid=$BPMID -n ${BASEURI}pub/
 
-#find the originally ingested  Author
-$Score $MATCHINPUT -v $VIVOCONFIG -V $VIVOMODELNAME $SCOREOLDPUB $RDFSLABEL $AUTHORTOSHIP
-$Match $MATCHINPUT $SCOREOLDPUB -t 1.0 -r
- 
-# back H2 score models
-date=`date +%Y-%m-%d_%T`
-tar -czpf backups/pubmed.scored.$date.tar.gz harvested-data/pubmed/score
-rm -rf backups/pubmed.scored.latest.tar.gz
-ln -s ps.scored.$date.tar.gz backups/pubmed.scored.latest.tar.gz
-# uncomment to restore previous H2 score models
-#tar -xzpf backups/pubmed.scored.latest.tar.gz harvested-data/pubmed/score
+# find the originally ingested journal
+TITLE="-Atitle=$EQTEST -Ftitle=$CTITLE -Wtitle=1.0 -Ptitle=$CTITLE"
+ISSN="-Aissn=$EQTEST -Fissn=$BISSN -Wissn=1.0 -Pissn=$BISSN"
+JOURNALPUB="-Ajournalpub=$EQTEST -Fjournalpub=$PVENUEFOR -Wjournalpub=1.0 -Pjournalpub=$PVENUEFOR"
+$Score $SCOREMODELS $TITLE $ISSN $JOURNALPUB -n ${BASEURI}journal/
+
+RDFSLAB="-Ardfslabel=$EQTEST -Frdfslabel=$RDFSLABEL -Wrdfslabel=0.5 -Prdfslabel=$RDFSLABEL"
+
+# find the originally ingested Authorship
+$Score $SCOREMODELS $RDFSLAB -Aauthpub=$EQTEST -Fauthpub=$LINKINFORES -Wauthpub=0.5 -Pauthpub=$LINKINFORES -n ${BASEURI}authorship/
+
+# find the originally ingested  Author
+$Score $SCOREMODELS $RDFSLAB -Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Wauthtoship=0.5 -Pauthtoship=$AUTHINAUTH -n ${BASEURI}author/
+
+# Find matches using scores and rename nodes to matching uri and clear literals
+$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
+
+# Clear old H2 temp copy
+rm -rf $TEMPCOPYDIR
+
+# backup H2 score data Model
+BACKSCOREDATA="scoredata-rest"
+backup-path $SCOREDATADIR $BACKSCOREDATA
+# uncomment to restore previous H2 matched Model
+#restore-path $SCOREDATADIR $BACKSCOREDATA
+
+# clear H2 score data Model
+rm -rf $SCOREDATADIR
 
 #remove score statements
-$Qualify $MATCHINPUT -n http://vivoweb.org/ontology/score -p
+$Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
 
-# Execute ChangeNamespace to get into current namespace
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedPub/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthorship/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedAuthor/
-$ChangeNamespace $VIVO $MATCHINPUT -n $NAMESPACE -o http://vivoweb.org/harvest/pubmedJournal/
+# Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
+CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n http://vivo.ufl.edu/individual/"
+# Execute ChangeNamespace to get unmatched Publications into current namespace
+$ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
+# Execute ChangeNamespace to get unmatched Authorships into current namespace
+$ChangeNamespace $CNFLAGS -o ${BASEURI}authorship/
+# Execute ChangeNamespace to get unmatched Authors into current namespace
+$ChangeNamespace $CNFLAGS -o ${BASEURI}author/
+# Execute ChangeNamespace to get unmatched Journals into current namespace
+$ChangeNamespace $CNFLAGS -o ${BASEURI}journal/
+
+# backup H2 matched Model
+BACKMATCHED="matched"
+backup-path $MODELDIR $BACKMATCHED
+# uncomment to restore previous H2 matched Model
+#restore-path $MODELDIR $BACKMATCHED
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%T`
-mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.pretransfer.$date.sql
-rm -rf backups/$DBNAME.pubmed.pretransfer.latest.sql
-ln -s $DBNAME.pubmed.pretransfer.$date.sql backups/$DBNAME.pubmed.pretransfer.latest.sql
+BACKPREDB="pretransfer"
+backup-mysqldb $BACKPREDB
+# uncomment to restore pretransfer vivo database
+#restore-mysqldb $BACKPREDB
 
-#Update VIVO, using previous model as comparison. On first run, previous model won't exist resulting in all statements being passed to VIVO
+PREVHARVESTMODEL="http://vivoweb.org/ingest/pubmed"
+ADDFILE="$BASEDIR/additions.rdf.xml"
+SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
-INMODELNAME="modelName=Pubmed"
-INURL="dbUrl=jdbc:h2:harvested-data/pubmed/match/store"
-ADDFILE="harvested-data/update_Additions.rdf.xml"
-SUBFILE="harvested-data/update_Subtractions.rdf.xml"
-  
 # Find Subtractions
-$Diff -m $VIVOCONFIG -M$VIVOMODELNAME -s $HCONFIG -S$INURL -S$INMODELNAME -d $SUBFILE
+$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-$Diff -m $HCONFIG -M$INURL -M$INMODELNAME -s $VIVOCONFIG -S$VIVOMODELNAME -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+
+# Backup adds and subs
+backup-file $ADDFILE adds.rdf.xml
+backup-file $SUBFILE subs.rdf.xml
+
 # Apply Subtractions to Previous model
-$Transfer -o $VIVOCONFIG -O$VIVOMODELNAME -r $SUBFILE -m
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
 # Apply Additions to Previous model
-$Transfer -o $VIVOCONFIG -O$VIVOMODELNAME -r $ADDFILE
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
 # Apply Subtractions to VIVO
-$Transfer -o $VIVOCONFIG -r $SUBFILE -m
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
-$Transfer -o $VIVOCONFIG -r $ADDFILE
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
-date=`date +%Y-%m-%d_%T`
-mysqldump -h $SERVER -u $USERNAME -p$PASSWORD $DBNAME > backups/$DBNAME.pubmed.posttransfer.$date.sql
-rm -rf backups/$DBNAME.pubmed.posttransfer.latest.sql
-ln -s $DBNAME.pubmed.posttransfer.$date.sql backups/$DBNAME.pubmed.posttransfer.latest.sql
+BACKPOSTDB="posttransfer"
+backup-mysqldb $BACKPOSTDB
+# uncomment to restore posttransfer vivo database
+#restore-mysqldb $BACKPOSTDB
 
-#Restart Tomcat
-#Tomcat must be restarted in order for the harvested data to appear in VIVO
+# Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
 /etc/init.d/tomcat stop
 /etc/init.d/apache2 reload

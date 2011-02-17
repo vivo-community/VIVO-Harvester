@@ -34,11 +34,6 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.ResourceUtils;
 
-// import com.hp.hpl.jena.rdf.model.Statement;
-// import com.hp.hpl.jena.rdf.model.StmtIterator;
-// import org.vivoweb.harvester.util.repo.MemJenaConnect;
-// import java.util.Stack;
-
 /**
  * VIVO Match
  * @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
