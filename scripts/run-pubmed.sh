@@ -173,7 +173,7 @@ rm -rf $SCOREDATADIR
 $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
-CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n http://vivo.ufl.edu/individual/"
+CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 # Execute ChangeNamespace to get unmatched Publications into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
@@ -185,9 +185,9 @@ $ChangeNamespace $CNFLAGS -o ${BASEURI}journal/
 
 # backup H2 matched Model
 BACKMATCHED="matched"
-backup-path $MODELDIR $BACKMATCHED
+backup-path $MATCHEDDIR $BACKMATCHED
 # uncomment to restore previous H2 matched Model
-#restore-path $MODELDIR $BACKMATCHED
+#restore-path $MATCHEDDIR $BACKMATCHED
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 BACKPREDB="pretransfer"
@@ -200,9 +200,9 @@ ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
+$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MATCHEDDBURL -SmodelName=$MATCHEDNAME -d $SUBFILE
 # Find Additions
-$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MATCHEDDBURL -MmodelName=$MATCHEDNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml
