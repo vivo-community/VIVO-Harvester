@@ -510,8 +510,10 @@ public abstract class JenaConnect {
 		try {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
 			if(datasetMode) {
+				log.debug("executing query against dataset");
 				qe = QueryExecutionFactory.create(query, getDataSet());
 			} else {
+				log.debug("Executing query against model");
 				qe = QueryExecutionFactory.create(query, getJenaModel());
 			}
 			if(query.isSelectType()) {
