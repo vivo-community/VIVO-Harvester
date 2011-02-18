@@ -124,24 +124,46 @@ backup-path $MODELDIR $BACKMODEL
 
 #scoring of grants on contractnumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+#clear score model for next batch.
+rm -r $SCOREDATADIR/store
 
 # Scoring on UF ID person
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+#clear score model for next batch.
+rm -r $SCOREDATADIR/store
 
 # Scoring on Dept ID
 $Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+#clear score model for next batch.
+rm -r $SCOREDATADIR/store
 
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+#clear score model for next batch.
+rm -r $SCOREDATADIR/store
 
 # Scoring of PIs
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}piRole/
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+#clear score model for next batch.
+rm -r $SCOREDATADIR/store
 
 # Scoring of coPIs
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}coPiRole/
-
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+#clear score model for next batch.
+rm -r $SCOREDATADIR/store
+
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
