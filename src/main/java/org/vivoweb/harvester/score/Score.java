@@ -94,6 +94,10 @@ public class Score {
 	 * are all algorithms org.vivoweb.harvester.score.algorithm.EqualityTest
 	 */
 	private boolean equalityOnlyMode;
+	/**
+	 * number of records to use in batch
+	 */
+	private int batchSize;
 	
 	/**
 	 * Constructor
@@ -109,7 +113,7 @@ public class Score {
 	 * @throws IOException error initializing jena models
 	 */
 	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights) throws IOException {
-		init(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights);
+		init(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights, 500);
 	}
 	
 	/**
@@ -143,13 +147,21 @@ public class Score {
 			}
 		}
 		Map<String, Float> w = new HashMap<String, Float>();
-		Map<String, String> weigh = opts.getValueMap("W");
-		for(String runName : weigh.keySet()) {
-			w.put(runName, Float.valueOf(weigh.get(runName)));
+		Map<String, String> weight = opts.getValueMap("W");
+		for(String runName : weight.keySet()) {
+			w.put(runName, Float.valueOf(weight.get(runName)));
 		}
-		init(i, v, s, t, a, opts.getValueMap("P"), opts.getValueMap("F"), opts.get("n"), w);
+		init(i, v, s, t, a, opts.getValueMap("P"), opts.getValueMap("F"), opts.get("n"), w, Integer.parseInt(opts.get("b")));
 	}
 	
+	/**
+	 * Set the processing batch size
+	 * @param size the size to use
+	 */
+	public void setBatchSize(int size) {
+		this.batchSize = size;
+	}
+
 	/**
 	 * Initialize variables
 	 * @param i model containing statements to be scored
@@ -161,9 +173,10 @@ public class Score {
 	 * @param vPred the predicate to look for in vivoJena model
 	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param w the weighting (0.0 , 1.0) for this score
+	 * @param size the processing batch size
 	 * @throws IOException error initializing jena models
 	 */
-	private void init(JenaConnect i, JenaConnect v, JenaConnect s, String t, Map<String, Class<? extends Algorithm>> a, Map<String, String> iPred, Map<String, String> vPred, String ns, Map<String, Float> w) throws IOException {
+	private void init(JenaConnect i, JenaConnect v, JenaConnect s, String t, Map<String, Class<? extends Algorithm>> a, Map<String, String> iPred, Map<String, String> vPred, String ns, Map<String, Float> w, int size) throws IOException {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -237,6 +250,7 @@ public class Score {
 			}
 		}
 		this.equalityOnlyMode = test;
+		this.batchSize = size;
 		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
 	}
 	
@@ -281,6 +295,7 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("inputJena-predicates").withParameterValueMap("RUN_NAME", "PREDICATE").setDescription("for RUN_NAME, match ").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivoJena-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("number of records to process in batch - default 500 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("500").setRequired(false));
 		return parser;
 	}
 	
@@ -383,7 +398,7 @@ public class Score {
 			}
 			log.debug("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
 			scoreSparql.append(indScore);
-			if(incrementer == 500) {
+			if(incrementer == this.batchSize) {
 				loadRdfToScoreData(scoreSparql.toString());
 				incrementer = 0;
 				scoreSparql = new StringBuilder();

@@ -191,8 +191,8 @@ public abstract class NIHFetch {
 			recToFetch = Integer.parseInt(this.maxRecords);
 		}
 		int intBatchSize = Integer.parseInt(this.batchSize);
-		//		log.debug("recToFetch: "+recToFetch);
-		//		log.debug("intBatchSize: "+intBatchSize);
+//		log.debug("recToFetch: "+recToFetch);
+//		log.debug("intBatchSize: "+intBatchSize);
 		if(recToFetch <= intBatchSize) {
 			fetchRecords(runESearch(this.searchTerm), "0", "" + recToFetch);
 		} else {
@@ -203,13 +203,13 @@ public abstract class NIHFetch {
 			if(Integer.parseInt(env[2]) < recToFetch) {
 				recToFetch = Integer.parseInt(env[2]);
 			}
-			//			log.debug("recToFetch: "+recToFetch);
+//			log.debug("recToFetch: "+recToFetch);
 			log.info("Fetching " + recToFetch + " records from search");
 			for(int x = recToFetch; x > 0; x -= intBatchSize) {
 				int maxRec = (x <= intBatchSize) ? x : intBatchSize;
 				int startRec = recToFetch - x;
-				//				log.debug("maxRec: "+maxRec);
-				//				log.debug("startRec: "+startRec);
+//				log.debug("maxRec: "+maxRec);
+//				log.debug("startRec: "+startRec);
 				fetchRecords(WebEnv, QueryKey, startRec + "", maxRec + "");
 			}
 		}
