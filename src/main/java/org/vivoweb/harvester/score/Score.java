@@ -488,7 +488,7 @@ public class Score {
 			vivoOptionals.append("    OPTIONAL { ?sVivo <").append(vivoProperty).append("> ").append("?op_" + runName).append(" } . \n");
 			inputUnions.add("{ ?sInput <" + inputProperty + "> ?oi_" + runName + " }");
 			inputOptionals.append("    " + "OPTIONAL { " + "?sInput <").append(inputProperty).append("> ").append("?os_" + runName).append(" }" + " . \n");
-			filters.add("sameTerm(?os_" + runName + ", ?ov_" + runName + ")");
+			filters.add("(str(?os_" + runName + ") = str(?ov_" + runName + "))");
 		}
 		
 		sQuery.append("\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" + "WHERE {\n");
