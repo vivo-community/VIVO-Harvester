@@ -172,7 +172,7 @@ rm -rf $SCOREDATADIR
 $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
-CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n http://vivo.ufl.edu/individual/"
+CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n http://vivo.ufl.edu/individual/"
 # Execute ChangeNamespace to get unmatched Publications into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
