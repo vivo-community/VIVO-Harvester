@@ -368,7 +368,10 @@ public class Score {
 			float percent = Math.round(10000f * count / total) / 100f;
 			log.debug("(" + count + "/" + total + ": " + percent + "%): Evaluating <" + sInputURI + "> from inputJena as match for <" + sVivoURI + "> from vivoJena");
 			// Build Score Record
-			indScore.append("" + "  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" + "  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n");
+			indScore.append("" +
+				"  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" +
+				"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
+				);
 			for(String runName : this.vivoPredicates.keySet()) {
 				String osUri = eval.get("URI_os_" + runName);
 				String osLit = eval.get("LIT_os_" + runName);
@@ -519,7 +522,14 @@ public class Score {
 			}
 		}
 		log.trace("score: " + score);
-		String fragment = "" + "  _:node" + nodenum + " scoreValue:hasScoreValue _:nodeScoreValue" + nodenum + " .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:VivoProp <" + this.vivoPredicates.get(runName) + "> .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:InputProp <" + this.inputPredicates.get(runName) + "> .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:Algorithm \"" + this.algorithms.get(runName).getName() + "\" .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:Score \"" + score + "\"^^xsd:float .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:Weight \"" + this.weights.get(runName) + "\"^^xsd:float .\n" + "  _:nodeScoreValue" + nodenum + " scoreValue:WeightedScore \"" + (this.weights.get(runName).doubleValue() * score) + "\"^^xsd:float .\n" + "";
+		String fragment = "" +
+			"  _:node" + nodenum + " scoreValue:hasScoreValue _:nodeScoreValue" + runName + nodenum + " .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:VivoProp <" + this.vivoPredicates.get(runName) + "> .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:InputProp <" + this.inputPredicates.get(runName) + "> .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Algorithm \"" + this.algorithms.get(runName).getName() + "\" .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Score \"" + score + "\"^^xsd:float .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Weight \"" + this.weights.get(runName) + "\"^^xsd:float .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:WeightedScore \"" + (this.weights.get(runName).doubleValue() * score) + "\"^^xsd:float .\n";
 		return fragment;
 	}
 	
