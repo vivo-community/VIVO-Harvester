@@ -119,6 +119,7 @@ $Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
 
 # Find matches using scores and rename nodes to matching uri and clear literals
 $Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 0.7 -r -c
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../scoreddumpfile.txt
 $Transfer $MATCHOUTPUT -d ../matcheddumpfile.txt
 
 # backup H2 score data Model
