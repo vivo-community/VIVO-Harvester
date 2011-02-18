@@ -91,7 +91,7 @@ rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
-#$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../dumpfile.txt
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.txt
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -119,7 +119,7 @@ $Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
 
 # Find matches using scores and rename nodes to matching uri and clear literals
 $Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 0.7 -r -c
-#$Transfer $MATCHOUTPUT -d ../dumpfile.txt
+$Transfer $MATCHOUTPUT -d ../matcheddumpfile.txt
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-auths"
