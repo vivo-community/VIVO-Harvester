@@ -246,7 +246,7 @@ public class Match {
 				"}";
 			String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
 			log.debug("Construct Query:\n" + conQuery);
-			log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).toString());
+			log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).exportRdfToString());
 			log.debug("Clear Literal Query:\n" + query);
 			this.inputJena.executeUpdateQuery(query);
 			log.trace("Ending clear types and literals");
