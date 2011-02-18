@@ -100,7 +100,7 @@ public class TDBJenaConnect extends JenaConnect {
 	@Override
 	public void printParameters() {
 		super.printParameters();
-		log.debug("type: 'sdb'");
+		log.debug("type: 'tdb'");
 		log.debug("dbDir: '" + this.dbDir + "'");
 	}
 }
