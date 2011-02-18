@@ -350,6 +350,7 @@ public class Score {
 		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
 			String sinputuri = solution.getResource("sInput").getURI();
 			String svivouri = solution.getResource("sVivo").getURI();
+			log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
 			tempMap = new HashMap<String, String>();
 			tempMap.put("sInput", sinputuri);
 			tempMap.put("sVivo", svivouri);
