@@ -193,7 +193,7 @@ public abstract class JenaConnect {
 			throw new IllegalArgumentException("unknown type: " + params.get("type"));
 		}
 		if((!params.containsKey("checkEmpty") || (params.get("checkEmpty").toLowerCase() == "true")) && jc.isEmpty()) {
-			JenaConnect.log.warn("jena model empty database: " + params.get("dbUrl") + " modelName: " + jc.getModelName());
+			JenaConnect.log.warn("jena model empty database: " + ((params.get("type").equalsIgnoreCase("tdb"))?params.get("dbDir"):params.get("dbUrl")) + " modelName: " + jc.getModelName());
 		}
 		return jc;
 	}
