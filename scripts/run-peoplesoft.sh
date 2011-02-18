@@ -77,7 +77,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n http://vivo.ufl.edu/individual/
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -87,7 +87,7 @@ backup-path $MODELDIR $BACKMODEL
 
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
-SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR"
+SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
 # Clear old H2 score data
 rm -rf $SCOREDATADIR
@@ -95,8 +95,15 @@ rm -rf $SCOREDATADIR
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
 
+# uncomment to restore previous H2 temp copy Model
+BACKTEMPDATA="tempdata"
+#restore-path $TEMPCOPYDIR $BACKTEMPDATA
+
 # Execute Score for People
 $Score $SCOREMODELS -n ${BASEURI}person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
+
+# backup H2 temp copy Model
+backup-path $TEMPCOPYDIR $BACKTEMPDATA
 
 # Execute Score for Departments
 $Score $SCOREMODELS -n ${BASEURI}org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$UFDEPTID -PdeptId=$UFDEPTID
@@ -132,7 +139,7 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 rm -rf $SCOREDATADIR
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
-CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n http://vivo.ufl.edu/individual/"
+CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 # Execute ChangeNamespace to get unmatched People into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}person/
 # Execute ChangeNamespace to get unmatched Departments into current namespace
@@ -152,8 +159,7 @@ backup-mysqldb $BACKPREDB
 # uncomment to restore pretransfer vivo database
 #restore-mysqldb $BACKPREDB
 
-#PREVHARVESTMODEL="http://vivoweb.org/ingest/ufl/peoplesoft"
-PREVHARVESTMODEL="uflPeopleSoft"
+PREVHARVESTMODEL="http://vivoweb.org/ingest/ufl/peoplesoft"
 ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
@@ -182,4 +188,7 @@ backup-mysqldb $BACKPOSTDB
 #restore-mysqldb $BACKPOSTDB
 
 # Tomcat must be restarted in order for the harvested data to appear in VIVO
-/etc/init.d/tomcat restart
+echo $HARVESTER_TASK ' completed successfully'
+/etc/init.d/tomcat stop
+/etc/init.d/apache2 reload
+/etc/init.d/tomcat start
