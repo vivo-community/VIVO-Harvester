@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -338,14 +339,14 @@ public class Score {
 		} else {
 			log.info("Building Record Set");
 		}
-		Set<Map<String, String>> solSet = new TreeSet<Map<String, String>>(new Comparator<Map<String, String>>() {
+		Set<Map<String, String>> solSet = new HashSet<Map<String, String>>();/*new Comparator<Map<String, String>>() {
 			@Override
 			public int compare(Map<String, String> o1, Map<String, String> o2) {
 				String o1key = o1.get("sInput") + o1.get("sVivo");
 				String o2key = o2.get("sInput") + o2.get("sVivo");
 				return o1key.compareTo(o2key);
 			}
-		});
+		});*/
 		Map<String, String> tempMap;
 		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
 			String sinputuri = solution.getResource("sInput").getURI();
