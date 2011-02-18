@@ -260,7 +260,7 @@ public class Match {
 	 * @throws IOException no idea why it throws this
 	 */
 	private JenaConnect outputMatches(Map<String, String> matchSet) throws IOException {
-		log.trace("Beginning seperate output of matches");
+		log.trace("Beginning separate output of matches");
 		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
 		int i = 0;
