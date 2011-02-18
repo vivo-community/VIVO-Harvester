@@ -488,10 +488,11 @@ public abstract class JenaConnect {
 	 * @param queryParam the query
 	 * @param resultFormatParam the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for
 	 *        construct/describe queries)
+	 * @param datasetMode run against dataset rather than model
 	 * @throws IOException error writing to output
 	 */
-	public void executeQuery(String queryParam, String resultFormatParam) throws IOException {
-		executeQuery(queryParam, resultFormatParam, System.out);
+	public void executeQuery(String queryParam, String resultFormatParam, boolean datasetMode) throws IOException {
+		executeQuery(queryParam, resultFormatParam, System.out, datasetMode);
 	}
 	
 	/**
@@ -500,14 +501,19 @@ public abstract class JenaConnect {
 	 * @param resultFormatParam the format to return the results in ('RS_TEXT' default for select queries / 'RDF/XML'
 	 *        default for construct/describe queries)
 	 * @param output output stream to write to - null uses System.out
+	 * @param datasetMode run against dataset rather than model
 	 * @throws IOException error writing to output
 	 */
-	public void executeQuery(String queryParam, String resultFormatParam, OutputStream output) throws IOException {
+	public void executeQuery(String queryParam, String resultFormatParam, OutputStream output, boolean datasetMode) throws IOException {
 		OutputStream out = (output != null) ? output : System.out;
 		QueryExecution qe = null;
 		try {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
-			qe = QueryExecutionFactory.create(query, getJenaModel());
+			if(datasetMode) {
+				qe = QueryExecutionFactory.create(query, getDataSet());
+			} else {
+				qe = QueryExecutionFactory.create(query, getJenaModel());
+			}
 			if(query.isSelectType()) {
 				ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
 				if(rsf == null) {
@@ -570,6 +576,7 @@ public abstract class JenaConnect {
 		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("query").withParameter(true, "SPARQL_QUERY").setDescription("sparql query to execute").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("queryResultFormat").withParameter(true, "RESULT_FORMAT").setDescription("the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for construct/describe queries)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataset").setDescription("execute query against dataset rather than model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("truncate").setDescription("empty the jena model").setRequired(false));
 		return parser;
 	}
@@ -589,7 +596,7 @@ public abstract class JenaConnect {
 				}
 				jc.truncate();
 			} else if(argList.has("q")) {
-				jc.executeQuery(argList.get("q"), argList.get("Q"));
+				jc.executeQuery(argList.get("q"), argList.get("Q"), argList.has("d"));
 			} else {
 				throw new IllegalArgumentException("No Operation Specified");
 			}
