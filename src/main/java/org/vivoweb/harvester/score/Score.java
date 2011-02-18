@@ -340,15 +340,15 @@ public class Score {
 			tempMap.put("sVivo", svivouri);
 			for(String runName : this.vivoPredicates.keySet()) {
 				RDFNode os = solution.get("os_" + runName);
-				if(os.isResource()) {
+				if((os != null) && os.isResource()) {
 					tempMap.put("URI_os_" + runName, os.asResource().getURI());
-				} else if(os.isLiteral()) {
+				} else if((os != null) && os.isLiteral()) {
 					tempMap.put("LIT_os_" + runName, os.asLiteral().getValue().toString());
 				}
 				RDFNode op = solution.get("op_" + runName);
-				if(op.isResource()) {
+				if((op != null) && op.isResource()) {
 					tempMap.put("URI_op_" + runName, op.asResource().getURI());
-				} else if(op.isLiteral()) {
+				} else if((op != null) && op.isLiteral()) {
 					tempMap.put("LIT_op_" + runName, op.asLiteral().getValue().toString());
 				}
 			}
