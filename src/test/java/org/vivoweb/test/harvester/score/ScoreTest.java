@@ -22,6 +22,9 @@ import org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
@@ -51,7 +54,7 @@ public class ScoreTest extends TestCase {
 				"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
 				"xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
 				"xmlns:score=\"http://vivoweb.org/ontology/score#\">" +
-			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid20113680\">" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776\">" +
 				"<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Document\"/>" +
 				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
 				"<bibo:pmid>12345678</bibo:pmid>" +
@@ -390,7 +393,19 @@ public class ScoreTest extends TestCase {
 		//Check to make sure information authorship exists on publication
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
 		//check for records in output model records
+		Property rdfType = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+		Resource authorshipType = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#Authorship");
+		Resource journalType = ResourceFactory.createProperty("http://purl.org/ontology/bibo/Journal");
+		//Resource publicationType = ResourceFactory.createProperty("");
+		Resource authorType = ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/Person");
+
 		assertTrue(!this.output.isEmpty());
+		System.out.println(this.output.exportRdfToString());
+		//assertTrue(this.output.getJenaModel().contains(null, rdfType, publicationType));
+		assertTrue(this.output.getJenaModel().contains(null, rdfType, journalType));
+		assertTrue(this.output.getJenaModel().contains(null, rdfType, authorType));
+		assertTrue(this.output.getJenaModel().contains(null, rdfType, authorshipType));
+		
 		//assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship <http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1> }"));
 		
 		//assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));

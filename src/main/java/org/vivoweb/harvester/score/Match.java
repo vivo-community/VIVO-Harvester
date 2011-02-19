@@ -12,8 +12,10 @@ package org.vivoweb.harvester.score;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -260,32 +262,27 @@ public class Match {
 	 */
 	private JenaConnect outputMatches(Map<String, String> matchSet) throws IOException {
 		log.trace("Beginning separate output of matches");
-		Set<String> linkRes = new HashSet<String>();
+		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
-		int count = 0;
-		Set<String> uriSet = new TreeSet<String>();
-		if(this.renameRes) {
-			uriSet.addAll(matchSet.values());
-		} else {
-			uriSet.addAll(matchSet.keySet());
-		}
-		for(String oldUri : uriSet) {
-			count++;
+		int i = 0;
+		for(String oldUri : matchSet.keySet()) {
+			i++;
 			log.trace("Getting statements for matchSet " + oldUri);
-			recursiveBuild(this.inputJena.getJenaModel().getResource(oldUri), linkRes, returnModel);
-//			StmtIterator subjectStmts = this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(oldUri));
-//			
-//			while(subjectStmts.hasNext()) {
-//				Statement stmt = subjectStmts.nextStatement();
-//				Resource subj = stmt.getSubject();
-//				if(!linkRes.contains(subj)) {
-//					log.trace("Submitting to recursive build " + subj.getURI());
-//					linkRes.push(subj.getURI());
-//					recursiveBuild(subj, linkRes, returnModel);
-//				}
-//			}
+			StmtIterator subjectStmts = this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(matchSet.get(oldUri)));
+			
+			while(subjectStmts.hasNext()) {
+				Statement stmt = subjectStmts.nextStatement();
+				Resource subj = stmt.getSubject();
+				if(!linkRes.contains(subj)) {
+					log.trace("Submitting to recursive build " + subj.getURI());
+					linkRes.push(subj.getURI());
+					returnModel.getJenaModel().add(recursiveBuild(subj, linkRes));
+				}
+			}
+			
+			returnModel.getJenaModel().add(this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(matchSet.get(oldUri))));			
 		}
-		log.debug("Outputted " + count + " matches");
+		log.debug("Outputted " + i + " matches");
 		return returnModel;
 	}
 	
@@ -293,21 +290,36 @@ public class Match {
 	 * @param mainRes item to push into returnModel
 	 * @param linkRes list of items to not move to
 	 * @param returnModel model to return
+	 * @return 
 	 * @throws IOException I have no idea why mem throws this
 	 */
-	private static void recursiveBuild(Resource mainRes, Set<String> linkRes, JenaConnect returnModel) throws IOException {
-		linkRes.add(mainRes.getURI());
+	/*
+	 * Traverses paperNode and adds to toReplace model
+	 * @param mainRes the main resource
+	 * @param linkRes the resource to link it to
+	 * @return the model containing the sanitized info so far
+	 * @throws IOException error connecting
+	 */
+	private static List<Statement> recursiveBuild(Resource mainRes, Stack<String> linkRes) throws IOException {
 		StmtIterator mainStmts = mainRes.listProperties();
-		returnModel.getJenaModel().add(mainStmts);
+		List<Statement> rtnStmtList = mainRes.listProperties().toList();
 		
 		while(mainStmts.hasNext()) {
 			Statement stmt = mainStmts.nextStatement();
 			
+			//todo change the equals t o
 			if(stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
-				log.trace("Submitting to rcb from within rcb" + stmt.getObject().asResource().getURI());
-				recursiveBuild(stmt.getObject().asResource(), linkRes, returnModel);
-			}
+				linkRes.push(mainRes.getURI());
+				System.out.println("Submitting to rcb from within rcb " + stmt.getObject().asResource().getURI());
+				rtnStmtList.addAll(recursiveBuild(stmt.getObject().asResource(), linkRes));
+			}			
 		}
+		
+		log.debug("**************************************************");
+		log.debug(mainRes.getURI());
+		log.debug(Integer.toString(rtnStmtList.size()));
+		log.debug("**************************************************");
+		return rtnStmtList;
 	}
 	
 	/**
