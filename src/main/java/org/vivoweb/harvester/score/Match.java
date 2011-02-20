@@ -289,16 +289,8 @@ public class Match {
 	/**
 	 * @param mainRes item to push into returnModel
 	 * @param linkRes list of items to not move to
-	 * @param returnModel model to return
-	 * @return 
+	 * @return list of recursively built statements
 	 * @throws IOException I have no idea why mem throws this
-	 */
-	/*
-	 * Traverses paperNode and adds to toReplace model
-	 * @param mainRes the main resource
-	 * @param linkRes the resource to link it to
-	 * @return the model containing the sanitized info so far
-	 * @throws IOException error connecting
 	 */
 	private static List<Statement> recursiveBuild(Resource mainRes, Stack<String> linkRes) throws IOException {
 		StmtIterator mainStmts = mainRes.listProperties();
@@ -315,10 +307,8 @@ public class Match {
 			}			
 		}
 		
-		log.debug("**************************************************");
 		log.debug(mainRes.getURI());
 		log.debug(Integer.toString(rtnStmtList.size()));
-		log.debug("**************************************************");
 		return rtnStmtList;
 	}
 	
