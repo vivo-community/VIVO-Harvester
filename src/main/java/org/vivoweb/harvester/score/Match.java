@@ -74,6 +74,10 @@ public class Match {
 	 * Clear all literal values out of matched sets
 	 */
 	private final boolean clearLiterals;
+	/**
+	 * number of records to use in batch
+	 */
+	private int batchSize;
 	
 	/**
 	 * Constructor
@@ -85,7 +89,7 @@ public class Match {
 	 * @param linkProps bidirectional link
 	 * @param clearLiterals clear all the literal values out of matches
 	 */
-	public Match(JenaConnect inputJena, JenaConnect scoreJena, JenaConnect outputJena, boolean renameRes, float threshold, Map<String, String> linkProps, boolean clearLiterals) {
+	public Match(JenaConnect inputJena, JenaConnect scoreJena, JenaConnect outputJena, boolean renameRes, float threshold, Map<String, String> linkProps, boolean clearLiterals, int size) {
 		if(scoreJena == null) {
 			throw new IllegalArgumentException("Score Model cannot be null");
 		}
@@ -102,6 +106,8 @@ public class Match {
 		this.renameRes = renameRes;
 		this.linkProps = linkProps;
 		this.clearLiterals = clearLiterals;
+		
+		this.batchSize = size;
 	}
 	
 	/**
@@ -111,6 +117,14 @@ public class Match {
 	 */
 	public Match(String... args) throws IOException {
 		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Set the processing batch size
+	 * @param size the size to use
+	 */
+	public void setBatchSize(int size) {
+		this.batchSize = size;
 	}
 	
 	/**
@@ -136,6 +150,7 @@ public class Match {
 		this.linkProps = opts.getValueMap("l");
 		this.matchThreshold = Float.parseFloat(opts.get("t"));
 		this.clearLiterals = opts.has("c");
+		this.batchSize = Integer.parseInt(opts.get("b"));
 	}
 	
 	/**
@@ -235,24 +250,36 @@ public class Match {
 		if(!resultMap.values().isEmpty()) {
 			log.trace("Beginning clear types and literals");
 			Set<String> uriFilters = new HashSet<String>();
+			int inc = 0;
 			for(String uri : resultMap.values()) {
+				if(inc == this.batchSize){
+					buildTypesAndLiteralsQuery(uriFilters);
+					log.trace("Cleared " + inc + " types and literals");
+					inc =0;
+					uriFilters.clear();
+				}
 				uriFilters.add("(str(?s) = \"" + uri + "\")");
+				inc++;
 			}
-			String query = "" +
-				"DELETE {\n" +
-				"  ?s ?p ?o\n" +
-				"} WHERE {\n" +
-				"  ?s ?p ?o .\n" +
-				"  FILTER ( isLiteral(?o || (str(?p)='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && (" + StringUtils.join(uriFilters, " || ") + ")) .\n" +
-				"}";
-			String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
-			log.debug("Construct Query:\n" + conQuery);
-			log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).exportRdfToString());
-			log.debug("Clear Literal Query:\n" + query);
-			this.inputJena.executeUpdateQuery(query);
+			log.trace("Last clear types and literals batch");
+			buildTypesAndLiteralsQuery(uriFilters);
 			log.trace("Ending clear types and literals");
-			
 		}
+	}
+	
+	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) throws IOException{
+		String query = "" +
+		"DELETE {\n" +
+		"  ?s ?p ?o\n" +
+		"} WHERE {\n" +
+		"  ?s ?p ?o .\n" +
+		"  FILTER ( isLiteral(?o || (str(?p)='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && (" + StringUtils.join(uriFilters, " || ") + ")) .\n" +
+		"}";
+		String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
+		log.debug("Construct Query:\n" + conQuery);
+		log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).exportRdfToString());
+		log.debug("Clear Literal Query:\n" + query);
+		this.inputJena.executeUpdateQuery(query);		
 	}
 	
 	/**
@@ -339,6 +366,7 @@ public class Match {
 		
 		// options
 		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-type-and-literals").setDescription("clear all rdf:type and literal values out of the nodes matched").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("number of records to process in batch - default 500 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("500").setRequired(false));
 		return parser;
 	}
 	
