@@ -300,10 +300,11 @@ public class Score {
 	}
 	
 	/**
-	 * Execute score object algorithms
-	 * @throws IOException error connecting
+	 * Build the vivo and input clones and get the dataset
+	 * @return the dataset
+	 * @throws IOException error connecting to the models
 	 */
-	public void execute() throws IOException {
+	private Dataset prepDataset() throws IOException {
 		// Bring all models into a single Dataset
 		JenaConnect vivoClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
 		if(vivoClone.isEmpty()) {
@@ -320,7 +321,16 @@ public class Score {
 			log.trace("Input model already in temp copy model");
 		}
 		Dataset ds = this.tempJena.getDataSet();
-		
+		return ds;
+	}
+	
+	/**
+	 * Get the result set
+	 * @return the resultset
+	 * @throws IOException error connecting to the models
+	 */
+	private ResultSet getResultSet() throws IOException {
+		Dataset ds = prepDataset();
 		log.trace("Building Query");
 		String sQuery = buildSelectQuery();
 		log.debug("Score Query:\n" + sQuery);
@@ -330,9 +340,16 @@ public class Score {
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		log.trace("Executing Query");
 		ResultSet rs = queryExec.execSelect();
-		int incrementer = 0;
-		StringBuilder indScore;
-		StringBuilder scoreSparql = new StringBuilder();
+		return rs;
+	}
+	
+	/**
+	 * Build the solution set
+	 * @return the solution set
+	 * @throws IOException error connecting to the models
+	 */
+	private Set<Map<String, String>> buildSolutionSet() throws IOException {
+		ResultSet rs = getResultSet();
 		if(!rs.hasNext()) {
 			log.info("No Results Found");
 		} else {
@@ -370,11 +387,23 @@ public class Score {
 			}
 			solSet.add(tempMap);
 		}
+		return solSet;
+	}
+	
+	/**
+	 * Execute score object algorithms
+	 * @throws IOException error connecting
+	 */
+	public void execute() throws IOException {
+		Set<Map<String, String>> solSet = buildSolutionSet();
 		if(!solSet.isEmpty()) {
 			log.info("Processing Results");
 		}
 		int total = solSet.size();
 		int count = 0;
+		int incrementer = 0;
+		StringBuilder indScore;
+		StringBuilder scoreSparql = new StringBuilder();
 		for(Map<String, String> eval : solSet) {
 			count++;
 			incrementer++;

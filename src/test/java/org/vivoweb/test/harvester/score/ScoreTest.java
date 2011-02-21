@@ -382,7 +382,7 @@ public class ScoreTest extends TestCase {
 		// run score
 		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
-		new Match(this.input, this.score, this.output, true, 0.75f, null, false).execute();
+		new Match(this.input, this.score, this.output, true, 0.75f, null, true).execute();
 		//log.info("Match Dump Post-Match\n" + this.input.exportRdfToString());
 		
 		// check score model
@@ -397,19 +397,20 @@ public class ScoreTest extends TestCase {
 		Resource authorshipType = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#Authorship");
 		Resource journalType = ResourceFactory.createProperty("http://purl.org/ontology/bibo/Journal");
 		//Resource publicationType = ResourceFactory.createProperty("");
-		Resource authorType = ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/Person");
 
 		assertTrue(!this.output.isEmpty());
 		System.out.println(this.output.exportRdfToString());
 		//assertTrue(this.output.getJenaModel().contains(null, rdfType, publicationType));
 		assertTrue(this.output.getJenaModel().contains(null, rdfType, journalType));
-		assertTrue(this.output.getJenaModel().contains(null, rdfType, authorType));
 		assertTrue(this.output.getJenaModel().contains(null, rdfType, authorshipType));
 		
 		//assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship <http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1> }"));
 		
 		//assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
 		//assertTrue(this.input.containsURI("http://vivoweb.org/pubmed/pmid201138680/vivoAuthorship/l1"));
+		
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type }"));
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> ?p ?lit . FILTER(isLiteral(?lit)) }"));
 		
 		//pub has 
 		//<j.1:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
