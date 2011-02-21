@@ -335,7 +335,7 @@ public class Match {
 			//todo change the equals t o
 			if(stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
 				linkRes.push(mainRes.getURI());
-				System.out.println("Submitting to rcb from within rcb " + stmt.getObject().asResource().getURI());
+				log.trace("Submitting to rcb from within rcb " + stmt.getObject().asResource().getURI());
 				rtnStmtList.addAll(recursiveBuild(stmt.getObject().asResource(), linkRes));
 			}			
 		}
