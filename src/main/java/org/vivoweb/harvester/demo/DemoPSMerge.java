@@ -253,7 +253,7 @@ public class DemoPSMerge {
 		InitLog.initLogger(null, null);
 		// Find matches for people and departments using scores and rename nodes to matching uri
 		log.trace("Running Match for People and Departments");
-		Match psPeopleOrgMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false);
+		Match psPeopleOrgMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false,200);
 		psPeopleOrgMatch.execute();
 		
 		System.setProperty("process-task", "Score.Positions");
