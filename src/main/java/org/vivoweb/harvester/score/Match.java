@@ -340,8 +340,6 @@ public class Match {
 			}			
 		}
 		
-		log.debug(mainRes.getURI());
-		log.debug(Integer.toString(rtnStmtList.size()));
 		return rtnStmtList;
 	}
 	
