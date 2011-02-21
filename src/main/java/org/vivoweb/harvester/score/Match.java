@@ -88,6 +88,7 @@ public class Match {
 	 * @param renameRes should I just rename the args?
 	 * @param linkProps bidirectional link
 	 * @param clearLiterals clear all the literal values out of matches
+	 * @param size the size of each batch
 	 */
 	public Match(JenaConnect inputJena, JenaConnect scoreJena, JenaConnect outputJena, boolean renameRes, float threshold, Map<String, String> linkProps, boolean clearLiterals, int size) {
 		if(scoreJena == null) {
@@ -267,7 +268,12 @@ public class Match {
 		}
 	}
 	
-	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) throws IOException{
+	/**
+	 * Build the query for matching types and literals
+	 * @param uriFilters uris to match on
+	 * @throws IOException error executing query
+	 */
+	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) throws IOException {
 		String query = "" +
 		"DELETE {\n" +
 		"  ?s ?p ?o\n" +
