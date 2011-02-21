@@ -97,7 +97,7 @@ $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$M
 BACKMODEL="model"
 #backup-path $MODELDIR $BACKMODEL
 # uncomment to restore previous H2 transfer Model
-restore-path $MODELDIR $BACKMODEL
+#restore-path $MODELDIR $BACKMODEL
 
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
@@ -146,10 +146,18 @@ ISSN="-Aissn=$EQTEST -Fissn=$BISSN -Wissn=1.0 -Pissn=$BISSN"
 JOURNALPUB="-Ajournalpub=$EQTEST -Fjournalpub=$PVENUEFOR -Wjournalpub=1.0 -Pjournalpub=$PVENUEFOR"
 $Score $SCOREMODELS $TITLE $ISSN $JOURNALPUB -n ${BASEURI}journal/
 
+# Find matches using scores and rename nodes to matching uri and clear literals
+$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
+rm -rf $SCOREDATADIR
+
 RDFSLAB="-Ardfslabel=$EQTEST -Frdfslabel=$RDFSLABEL -Wrdfslabel=0.5 -Prdfslabel=$RDFSLABEL"
 
 # find the originally ingested Authorship
 $Score $SCOREMODELS $RDFSLAB -Aauthpub=$EQTEST -Fauthpub=$LINKINFORES -Wauthpub=0.5 -Pauthpub=$LINKINFORES -n ${BASEURI}authorship/
+
+# Find matches using scores and rename nodes to matching uri and clear literals
+$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
+rm -rf $SCOREDATADIR
 
 # find the originally ingested  Author
 $Score $SCOREMODELS $RDFSLAB -Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Wauthtoship=0.5 -Pauthtoship=$AUTHINAUTH -n ${BASEURI}author/
@@ -158,7 +166,7 @@ $Score $SCOREMODELS $RDFSLAB -Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Waut
 $Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
 
 # Clear old H2 temp copy
-rm -rf $TEMPCOPYDIR
+#rm -rf $TEMPCOPYDIR
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-rest"
@@ -179,7 +187,8 @@ $ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}authorship/
 # Execute ChangeNamespace to get unmatched Authors into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}author/
+#$ChangeNamespace $CNFLAGS -o ${BASEURI}author/
+$Qualify $MATCHEDINPUT -n ${BASEURI}author/ -c
 # Execute ChangeNamespace to get unmatched Journals into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}journal/
 
