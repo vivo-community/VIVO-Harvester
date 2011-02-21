@@ -115,8 +115,8 @@ public class Qualify {
 	 * @throws IOException error creating task
 	 */
 	public Qualify(ArgList argList) throws IOException {
-		if(!((argList.has("r") ^ argList.has("t") ^ argList.has("p")))) {
-			throw new IllegalArgumentException("Must provide one of --regex, --text, or --namespace, but not more than one");
+		if(!((argList.has("r") ^ argList.has("t") ^ (argList.has("n") && (argList.has("p") || argList.has("c")))))) {
+			throw new IllegalArgumentException("Must provide one of --regex, --text, or --remove-namespace, but not more than one");
 		}
 		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		this.dataPredicate = argList.get("d");
