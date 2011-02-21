@@ -285,7 +285,7 @@ public class DemoPSMerge {
 		InitLog.initLogger(null, null);
 		// Find matches for positions using scores and rename nodes to matching uri
 		log.trace("Running Match for Positions");
-		Match psPosMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false);
+		Match psPosMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false,200);
 		psPosMatch.execute();
 		
 		System.setProperty("process-task", "ChangeNamespace.People");
