@@ -258,7 +258,7 @@ public class Qualify {
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").setDescription("replace matching record data with this value").withParameter(true, "REPLACE_VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("remove-namespace").setDescription("remove all statements where the predicate is of the given namespace").withParameter(true, "RDF_NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("remove-namespace").setDescription("specify namespace for -p/--predicate-clean and -c/--clean-resources flag").withParameter(true, "RDF_NAMESPACE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("predicate-clean").setDescription("remove all statements where the predicate is from the given -n/--remove-namespace").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clean-resources").setDescription("remove all statements where the subject or object is from the given -n/--remove-namespace").setRequired(false));
 		return parser;
