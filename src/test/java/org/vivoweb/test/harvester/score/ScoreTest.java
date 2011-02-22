@@ -279,6 +279,18 @@ public class ScoreTest extends TestCase {
 				"<foaf:firstName>Victoria</foaf:firstName>" +
 				"<foaf:lastName>Vendetta</foaf:lastName>" +
 			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/harvester/org/deptid019283\">" +
+				"<rdfs:label>Department of Medicine</rdfs:label>" +
+				"<localVIVO:harvestedBy>Org-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptid>019283</localVIVO:deptid>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/harvester/position/posFor7821299012in019283start20091203\">" +
+				"<rdfs:label>Head of Nursing</rdfs:label>" +
+				"<localVIVO:harvestedBy>Position-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptidForPosition>019283</localVIVO:deptidForPosition>" +
+				"<core:positionForPerson rdf:resource=\"http://vivoweb.org/harvester/people/uniqueid7821299012\"/>" +
+				"<core:positionInOrganization rdf:resource=\"http://vivoweb.org/harvester/org/deptid019283\"/>" +
+			"</rdf:Description>" +
 		"</rdf:RDF>";
 	/**
 	 * vivo rdf statements to load for test
@@ -340,6 +352,18 @@ public class ScoreTest extends TestCase {
 				"<foaf:lastName>Mans</foaf:lastName>" +
 				"<core:workEmail>dgm@mydomain.edu</core:workEmail>" +
 			"</rdf:Description>" +
+				"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n821173458\">" +
+				"<rdfs:label>Department of Medicine</rdfs:label>" +
+				"<localVIVO:harvestedBy>Org-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptid>019283</localVIVO:deptid>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n675720185\">" +
+				"<rdfs:label>Head of Nursing</rdfs:label>" +
+				"<localVIVO:harvestedBy>Position-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptidForPosition>019283</localVIVO:deptidForPosition>" +
+				"<core:positionForPerson rdf:resource=\"http://vivo.mydomain.edu/individual/n3574\"/>" +
+				"<core:positionInOrganization rdf:resource=\"http://vivo.mydomain.edu/individual/n821173458\"/>" +
+			"</rdf:Description>" +
 		"</rdf:RDF>";
 	/** */
 	private SDBJenaConnect input;
@@ -349,6 +373,79 @@ public class ScoreTest extends TestCase {
 	private JenaConnect output;
 	/** */
 	private JenaConnect score;
+	
+	/**
+	 * Test URI EqualityTest Algorithm
+	 * @throws IOException error
+	 */
+	public void testURIEqualityTest() throws IOException {
+		log.info("BEGIN testURIEqualityTest");
+		// prep org arguments
+		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
+		algorithms.put("deptid", EqualityTest.class);
+		HashMap<String, String> inputPredicates = new HashMap<String, String>();
+		inputPredicates.put("deptid", "http://vivo.mydomain.edu/ontology/vivo-local/deptid");
+		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
+		vivoPredicates.put("deptid", "http://vivo.mydomain.edu/ontology/vivo-local/deptid");
+		HashMap<String, Float> weights = new HashMap<String, Float>();
+		weights.put("deptid", Float.valueOf(1f));
+		String namespace = "http://vivoweb.org/harvester/org/";
+		// run org score
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights).execute();
+		// run org match
+		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
+		
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/org/deptid019283> ?p ?o }"));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n821173458> ?p ?o }"));
+		
+		// prep people arguments
+		this.score.truncate();
+		algorithms.clear();
+		algorithms.put("uid", EqualityTest.class);
+		inputPredicates.clear();
+		inputPredicates.put("uid", "http://vivo.mydomain.edu/ontology/vivo-local/uniqueid");
+		vivoPredicates.clear();
+		vivoPredicates.put("uid", "http://vivo.mydomain.edu/ontology/vivo-local/uniqueid");
+		weights.clear();
+		weights.put("uid", Float.valueOf(1f));
+		namespace = "http://vivoweb.org/harvester/people/";
+		// run people score
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights).execute();
+		// run people match
+		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
+		
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/people/uniqueid7821299012> ?p ?o }"));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> ?p ?o }"));
+		
+		// prep position arguments
+		this.score.truncate();
+		algorithms.clear();
+		algorithms.put("deptForPos", EqualityTest.class);
+		algorithms.put("posForPer", EqualityTest.class);
+		algorithms.put("posInOrg", EqualityTest.class);
+		inputPredicates.clear();
+		inputPredicates.put("deptForPos", "http://vivo.mydomain.edu/ontology/vivo-local/deptidForPosition");
+		inputPredicates.put("posForPer", "http://vivoweb.org/ontology/core#positionForPerson");
+		inputPredicates.put("posInOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
+		vivoPredicates.clear();
+		vivoPredicates.put("deptForPos", "http://vivo.mydomain.edu/ontology/vivo-local/deptidForPosition");
+		vivoPredicates.put("posForPer", "http://vivoweb.org/ontology/core#positionForPerson");
+		vivoPredicates.put("posInOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
+		weights.clear();
+		weights.put("deptForPos", Float.valueOf(1/3f));
+		weights.put("posForPer", Float.valueOf(1/3f));
+		weights.put("posInOrg", Float.valueOf(1/3f));
+		namespace = "http://vivoweb.org/harvester/position/";
+		// run position score
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights).execute();
+		// run position match
+		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
+		
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/position/posFor7821299012in019283start20091203> ?p ?o }"));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n675720185> ?p ?o }"));
+		
+		log.info("END testURIEqualityTest");
+	}
 	
 	/**
 	 * Test EqualityTest Algorithm
