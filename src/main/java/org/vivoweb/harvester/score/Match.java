@@ -281,9 +281,9 @@ public class Match {
 		"  ?s ?p ?o .\n" +
 		"  FILTER ( isLiteral(?o || (str(?p)='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) && (" + StringUtils.join(uriFilters, " || ") + ")) .\n" +
 		"}";
-		String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
-		log.debug("Construct Query:\n" + conQuery);
-		log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).exportRdfToString());
+//		String conQuery = query.replaceFirst("DELETE", "CONSTRUCT");
+//		log.debug("Construct Query:\n" + conQuery);
+//		log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).exportRdfToString());
 		log.debug("Clear Literal Query:\n" + query);
 		this.inputJena.executeUpdateQuery(query);		
 	}
