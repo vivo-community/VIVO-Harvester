@@ -10,7 +10,7 @@ HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 # define shared variables
 VIVOCONFIG="config/models/vivo.xml"
 LOG_LEVEL=INFO
-VERSION=1.0beta7
+VERSION=1.0RC1
 MIN_MEM=1024m
 MAX_MEM=3072m
 SCOREBATCHSIZE=500
