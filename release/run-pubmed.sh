@@ -69,7 +69,6 @@ $Transfer -i $VIVOCONFIG -d vivo_start.rdf
 
 # Execute Fetch for Pubmed
 $PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
-#$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # clear old translates
 rm -rf $RDFRHDIR
@@ -128,10 +127,18 @@ ISSN="-Aissn=$EQTEST -Fissn=$BISSN -Wissn=1.0 -Pissn=$BISSN"
 JOURNALPUB="-Ajournalpub=$EQTEST -Fjournalpub=$PVENUEFOR -Wjournalpub=1.0 -Pjournalpub=$PVENUEFOR"
 $Score $SCOREMODELS $TITLE $ISSN $JOURNALPUB -n ${BASEURI}journal/
 
+# Find matches using scores and rename nodes to matching uri and clear literals
+$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
+rm -rf $SCOREDATADIR
+
 RDFSLAB="-Ardfslabel=$EQTEST -Frdfslabel=$RDFSLABEL -Wrdfslabel=0.5 -Prdfslabel=$RDFSLABEL"
 
 # find the originally ingested Authorship
 $Score $SCOREMODELS $RDFSLAB -Aauthpub=$EQTEST -Fauthpub=$LINKINFORES -Wauthpub=0.5 -Pauthpub=$LINKINFORES -n ${BASEURI}authorship/
+
+# Find matches using scores and rename nodes to matching uri and clear literals
+$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
+rm -rf $SCOREDATADIR
 
 # find the originally ingested  Author
 $Score $SCOREMODELS $RDFSLAB -Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Wauthtoship=0.5 -Pauthtoship=$AUTHINAUTH -n ${BASEURI}author/
@@ -145,18 +152,11 @@ $Transfer $SCOREINPUT -d score.rdf
 #Dump Match
 $Transfer $MATCHEDINPUT -d match.rdf
 
-
-# Clear old H2 temp copy
-rm -rf $TEMPCOPYDIR
-
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
 
 #remove score statements
 $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
-
-#Dump Qualify
-$Transfer $MATCHEDINPUT -d qualify.rdf
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
 CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
@@ -165,7 +165,8 @@ $ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}authorship/
 # Execute ChangeNamespace to get unmatched Authors into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}author/
+#$ChangeNamespace $CNFLAGS -o ${BASEURI}author/
+$Qualify $MATCHEDINPUT -n ${BASEURI}author/ -c
 # Execute ChangeNamespace to get unmatched Journals into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}journal/
 
