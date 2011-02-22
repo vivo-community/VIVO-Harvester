@@ -83,7 +83,7 @@ public class XPathTool {
 			factory.setNamespaceAware(true); // never forget this!
 			Document doc = factory.newDocumentBuilder().parse(VFS.getManager().resolveFile(new File("."), xmlFile).getContent().getInputStream());
 			String value = XPathFactory.newInstance().newXPath().compile(expression).evaluate(doc, XPathConstants.STRING).toString();
-			log.debug("xpath result for '" + expression + "' on file '" + xmlFile + "': '" + value + "'");
+//			log.debug("xpath result for '" + expression + "' on file '" + xmlFile + "': '" + value + "'");
 			return value;
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
