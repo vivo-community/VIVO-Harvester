@@ -121,7 +121,10 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 rm -rf $SCOREDATADIR
 
 # Execute Score for Positions
-$Score $SCOREMODELS -n ${BASEURI}position/ -AposOrg=$EQTEST -WposOrg=1.0 -FposOrg=$POSINORG -PposOrg=$POSINORG -AposPer=$EQTEST -WposPer=1.0 -FposPer=$POSFORPERSON -PposPer=$POSFORPERSON -AdeptPos=$EQTEST -WdeptPos=1.0 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID
+POSORG="-AposOrg=$EQTEST -WposOrg=0.34 -FposOrg=$POSINORG -PposOrg=$POSINORG"
+POSPER="-AposPer=$EQTEST -WposPer=0.34 -FposPer=$POSFORPERSON -PposPer=$POSFORPERSON"
+DEPTPOS="-AdeptPos=$EQTEST -WdeptPos=0.34 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID"
+$Score $SCOREMODELS -n ${BASEURI}position/ $POSORG $POSPER $DEPTPOS
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -t 1.0 -r
