@@ -64,6 +64,9 @@ BASEURI="http://vivoweb.org/harvest/pubmed/"
 #clear old fetches
 rm -rf $RAWRHDIR
 
+#Dump vivo
+#$Transfer -i $VIVOCONFIG -d vivo_start.rdf
+
 # Execute Fetch for Pubmed
 $PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 #$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
@@ -93,11 +96,8 @@ rm -rf $MODELDIR
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.xml
 
-# backup H2 transfer Model
-BACKMODEL="model"
-#backup-path $MODELDIR $BACKMODEL
-# uncomment to restore previous H2 transfer Model
-#restore-path $MODELDIR $BACKMODEL
+#Dump Transfer
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d transfer.rdf   
 
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
@@ -165,14 +165,11 @@ $Score $SCOREMODELS $RDFSLAB -Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Waut
 # Find matches using scores and rename nodes to matching uri and clear literals
 $Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
 
-# Clear old H2 temp copy
-#rm -rf $TEMPCOPYDIR
+#Dump score
+$Transfer $SCOREINPUT -d score.rdf
 
-# backup H2 score data Model
-BACKSCOREDATA="scoredata-rest"
-backup-path $SCOREDATADIR $BACKSCOREDATA
-# uncomment to restore previous H2 matched Model
-#restore-path $SCOREDATADIR $BACKSCOREDATA
+#Dump Match
+$Transfer $MATCHEDINPUT -d match.rdf
 
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
@@ -226,14 +223,5 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
-# Backup posttransfer vivo database, symlink latest to latest.sql
-BACKPOSTDB="posttransfer"
-backup-mysqldb $BACKPOSTDB
-# uncomment to restore posttransfer vivo database
-#restore-mysqldb $BACKPOSTDB
-
-# Tomcat must be restarted in order for the harvested data to appear in VIVO
-echo $HARVESTER_TASK ' completed successfully'
-/etc/init.d/tomcat stop
-/etc/init.d/apache2 reload
-/etc/init.d/tomcat start
+#Dump vivo
+#$Transfer -i $VIVOCONFIG -d vivo_end.rdf
