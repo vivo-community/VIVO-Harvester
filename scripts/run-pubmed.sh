@@ -73,7 +73,7 @@ $PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBUR
 
 # backup fetch
 BACKRAW="raw"
-#backup-path $RAWRHDIR $BACKRAW
+backup-path $RAWRHDIR $BACKRAW
 # uncomment to restore previous fetch
 #restore-path $RAWRHDIR $BACKRAW
 
@@ -85,7 +85,7 @@ $XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x conf
 
 # backup translate
 BACKRDF="rdf"
-#backup-path $RDFRHDIR $BACKRDF
+backup-path $RDFRHDIR $BACKRDF
 # uncomment to restore previous translate
 #restore-path $RDFRHDIR $BACKRDF
 
@@ -96,8 +96,11 @@ rm -rf $MODELDIR
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.xml
 
-#Dump Transfer
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d transfer.rdf   
+# backup H2 transfer Model
+BACKMODEL="model"
+backup-path $MODELDIR $BACKMODEL
+# uncomment to restore previous H2 transfer Model
+#restore-path $MODELDIR $BACKMODEL
 
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
