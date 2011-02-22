@@ -470,7 +470,7 @@ public class Score {
 			sQuery.append(" ?op_" + runName);
 			vivoSelects.add("?sVivo <" + vivoProperty + "> ?op_" + runName + " .");
 			inputSelects.add("?sInput <" + inputProperty + "> ?os_" + runName + " .");
-			filters.add("(str(?os_" + runName + ") = str(?op_" + runName + "))");
+			filters.add("((str(?os_" + runName + ") = str(?op_" + runName + ")) || sameTerm(?os_" + runName + ", ?op_" + runName + "))");
 		}
 		
 		sQuery.append("\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" + "WHERE {\n");
