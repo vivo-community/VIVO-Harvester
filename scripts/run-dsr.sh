@@ -7,8 +7,7 @@
 # http://www.opensource.org/licenses/bsd-license.html
 # 
 # Contributors:
-#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
-#	  James Pence
+#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence- initial API and implementation
 
 # Set working directory
 set -e
