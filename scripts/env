@@ -74,6 +74,9 @@ TFRH="config/recordhandlers/tfrh.xml"
 BACKUPPATH="$HARVESTERDIR/backups"
 LATESTBACKUPPATH="$BACKUPPATH/latest"
 
+#make directorys for backup, if not created
+mkdir -p $BACKUPPATH $LATESTBACKUPPATH
+
 function prep {
   # Check for proper namespace
   if [ -z "$NAMESPACE" ]; then
