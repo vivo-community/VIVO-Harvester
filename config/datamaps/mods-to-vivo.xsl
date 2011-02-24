@@ -41,7 +41,9 @@
 			<bibo:identity><xsl:value-of select="$modsId"></xsl:value-of></bibo:identity>
 			<bibo:isbn-13><xsl:value-of select="identifier[@type='isbn']"></xsl:value-of></bibo:isbn-13>
 			<bibo:doi><xsl:value-of select="identifier[@type='doi']"></xsl:value-of></bibo:doi>
-			
+			<core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher>
+			<core:placeOfPublication><xsl:value-of select="originInfo/place/placeTerm" /></core:placeOfPublication>
+
 			<xsl:choose>
 				<xsl:when test="contains(originInfo/dateIssued, '-')">
 					<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="originInfo/dateIssued"/></core:year>
@@ -54,6 +56,7 @@
 			</xsl:choose>
 
 			<xsl:apply-templates select="name" mode="withinPub" />
+			<xsl:apply-templates select="typeOfResource" />
 		</rdf:description>
 
 		<xsl:apply-templates select="name" mode="standAlone" />
@@ -84,7 +87,7 @@
 		<xsl:variable name="lastName" select="namePart[@type='family']" />
 		<xsl:variable name="allFirstNames" select="string-join($firstName, ' ')" />
 
-		<xsl:if test="$role = 'author'">
+		<xsl:if test="$role='author'">
 	 		<rdf:description>
 				<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthorship/modsId_', $modsId)" /></xsl:attribute>
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
@@ -103,12 +106,12 @@
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 			<foaf:firstName><xsl:value-of select="$firstName" /></foaf:firstName>
 			<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
-			<xsl:if test="$role = 'author'">
+			<xsl:if test="$role='author'">
 	 			<core:authorInAuthorship>
 					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthorship/modsId_', $modsId)" /></xsl:attribute>
 	 			</core:authorInAuthorship>
 			</xsl:if>
-			<xsl:if test="$role = 'editor'">
+			<xsl:if test="$role='editor'">
 				<core:editorOf>
 					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPub/modsId_', $modsId)" /></xsl:attribute>
 				</core:editorOf>
@@ -116,6 +119,68 @@
 		</rdf:description>
 	</xsl:template>
 
+
+	<xsl:template match="typeOfResource">
+		<xsl:variable name="typeOfResource" select="." />
+		<xsl:variable name="genre" select="../genre" />
+		<xsl:choose>
+					<xsl:when test="$typeOfResource='text'">
+						<xsl:choose>
+							<xsl:when test="$genre='article'">
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+							</xsl:when>
+							<xsl:when test="$genre='book'">
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+							</xsl:when>
+							<xsl:when test="$genre='conference publication'">
+								<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
+							</xsl:when>
+							<xsl:when test="$genre='encyclopedia'">
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+							</xsl:when>
+							<xsl:when test="$genre='patent'">
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
+							</xsl:when>
+							<xsl:otherwise>
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:when>
+					<xsl:when test="$typeOfResource='cartographic'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Map" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='notated music'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='sound recording'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='sound recording-musical'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='sound recording-nonmusical'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='still image'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='moving image'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='three dimensional object'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='software, multimedia'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+					</xsl:when>
+					<xsl:when test="$typeOfResource='mixed material'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+					</xsl:when>
+					<xsl:otherwise>
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+					</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
 
 
 <!--	<xsl:template match="mods/originInfo/place">-->
