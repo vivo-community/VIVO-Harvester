@@ -134,6 +134,9 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
 
+# clear H2 match data Model
+rm -rf $MATCHEDDIR
+
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
 
