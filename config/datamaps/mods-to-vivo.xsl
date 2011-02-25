@@ -103,7 +103,7 @@
 		</xsl:if>
 
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'athor/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 			<foaf:firstName><xsl:value-of select="$firstName" /></foaf:firstName>
 			<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
