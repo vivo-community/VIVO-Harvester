@@ -23,6 +23,7 @@
 	xmlns:foaf="http://xmlns.com/foaf/0.1/">
 
 	<xsl:output method="xml" indent="yes" />
+	<xsl:variable name="baseURI">http://vivoweb.org/harvest/mods/</xsl:variable>
 
 	<xsl:template match="/modsCollection">
 		<rdf:RDF>
@@ -33,7 +34,7 @@
 	<xsl:template match="mods">
 		<xsl:variable name="modsId" select="@ID" />
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPub/modsId_', $modsId)" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 			<rdfs:label><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></rdfs:label>
 			<core:title><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></core:title>
 			<bibo:abstract><xsl:value-of select="abstract"></xsl:value-of></bibo:abstract>
@@ -68,12 +69,12 @@
 		
 		<xsl:if test="$role = 'author'">
 			<core:informationResource>
-				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthorship/modsId_', $modsId)" /></xsl:attribute>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId)" /></xsl:attribute>
 			</core:informationResource>
 		</xsl:if>
 		<xsl:if test="$role = 'editor'">
 			<bibo:editor>
-				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthor/modsId_', $modsId)" /></xsl:attribute>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId)" /></xsl:attribute>
 			</bibo:editor>
 		</xsl:if>
 
@@ -89,31 +90,31 @@
 
 		<xsl:if test="$role='author'">
 	 		<rdf:description>
-				<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthorship/modsId_', $modsId)" /></xsl:attribute>
+				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId)" /></xsl:attribute>
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 				<core:authorNameAsListed><xsl:value-of select="namePart" /></core:authorNameAsListed>
 				<core:linkedInformationResource>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPub/modsId_', $modsId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 				</core:linkedInformationResource>
 				<core:linkedAuthor>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthor/modsId_', $modsId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId)" /></xsl:attribute>
 				</core:linkedAuthor>
 			</rdf:description>
 		</xsl:if>
 
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthor/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'athor/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 			<foaf:firstName><xsl:value-of select="$firstName" /></foaf:firstName>
 			<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
 			<xsl:if test="$role='author'">
 	 			<core:authorInAuthorship>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsAuthorship/modsId_', $modsId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId)" /></xsl:attribute>
 	 			</core:authorInAuthorship>
 			</xsl:if>
 			<xsl:if test="$role='editor'">
 				<core:editorOf>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPub/modsId_', $modsId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 				</core:editorOf>
 			</xsl:if>
 		</rdf:description>
@@ -186,11 +187,11 @@
 <!--	<xsl:template match="mods/originInfo/place">-->
 <!--		<xsl:variable name="modsId" select="../../@ID" />-->
 <!--		<rdf:description>-->
-<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPubVenue/modsId_', $modsId)" /></xsl:attribute>-->
+<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'PubVenue/modsId_', $modsId)" /></xsl:attribute>-->
 <!--			<core:placeOfPublication><xsl:value-of select="placeTerm" />-->
 <!--			</core:placeOfPublication>-->
 <!--			<core:publicationVenueFor>-->
-<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPub/modsId_', $modsId)" /></xsl:attribute>-->
+<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'Pub/modsId_', $modsId)" /></xsl:attribute>-->
 <!--			</core:publicationVenueFor>-->
 <!--		</rdf:description>-->
 <!--	</xsl:template>-->
@@ -198,17 +199,17 @@
 <!--	<xsl:template match="mods/originInfo">-->
 <!--		<xsl:variable name="modsId" select="../@ID" />-->
 <!--		<rdf:description>-->
-<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPublisher/modsId_', $modsId)" /></xsl:attribute>-->
+<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'Publisher/modsId_', $modsId)" /></xsl:attribute>-->
 <!--			<attribution><xsl:value-of select="publisher" /></attribution>-->
 <!--			<core:publisherOf>-->
-<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPub/modsId_', $modsId)" /></xsl:attribute>-->
+<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'Pub/modsId_', $modsId)" /></xsl:attribute>-->
 <!--			</core:publisherOf>-->
 <!--		</rdf:description>-->
 <!--		<rdf:description>-->
-<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPubDate/modsId_', $modsId)" /></xsl:attribute>-->
+<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'PubDate/modsId_', $modsId)" /></xsl:attribute>-->
 <!--			<core:date><xsl:value-of select="dateIssued" /></core:date>-->
 <!--			<core:timeIntervalFor>-->
-<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat('http://vivoweb.org/harvest/modsPub/modsId_', $modsId)" /></xsl:attribute>-->
+<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'Pub/modsId_', $modsId)" /></xsl:attribute>-->
 <!--			</core:timeIntervalFor>-->
 <!--		</rdf:description>-->
 <!--	</xsl:template>-->
