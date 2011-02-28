@@ -62,7 +62,7 @@ RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 BASEURI="http://vivoweb.org/harvest/mods/"
 
 #clear old fetches
-rm -rf $RAWRHDIR
+#rm -rf $RAWRHDIR
 
 #Dump vivo
 #$Transfer -i $VIVOCONFIG -d vivo_start.rdf
@@ -85,6 +85,8 @@ $XSLTranslator -i config/recordhandlers/mods-xml.xml -o $H2RH -OdbUrl=$RDFRHDBUR
 #$XSLTranslator -i config/recordhandlers/mods-xml.xml -x config/datamaps/mods-to-vivo.xsl -o config/recordhandlers/mods-rdf.xml
 #$XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/mods-to-vivo.xsl
 
+$Transfer -h $H2RH -HdbUrl=$RDFRHDBURL -d ../dumpfile1.xml
+
 # backup translate
 BACKRDF="rdf"
 backup-path $RDFRHDIR $BACKRDF
@@ -96,7 +98,9 @@ rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.xml
+#$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.xml
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IcheckEmpty=$CHECKEMPTY -IdbUrl=$MODELDBURL -d ../dumpfile2.xml
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -136,6 +140,9 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
+
+# clear H2 match data Model
+#rm -rf $MATCHEDDIR
 
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
@@ -183,8 +190,14 @@ rm -rf $SCOREDATADIR
 #remove score statements
 $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
 
+$Transfer $MATCHEDINPUT -d ../dumpfile3.xml
+$Transfer $SCOREINPUT -d ../dumpfile4.xml
+
+
+
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
-CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
+#CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
+CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 # Execute ChangeNamespace to get unmatched Publications into current namespace
 $ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
@@ -194,6 +207,9 @@ $ChangeNamespace $CNFLAGS -o ${BASEURI}author/
 #$Qualify $MATCHEDINPUT -n ${BASEURI}author/ -c
 ## Execute ChangeNamespace to get unmatched Journals into current namespace
 #$ChangeNamespace $CNFLAGS -o ${BASEURI}journal/
+
+$Transfer $SCOREINPUT -d ../dumpfile5.xml
+
 
 # backup H2 matched Model
 BACKMATCHED="matched"
@@ -212,9 +228,10 @@ ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MATCHEDDBURL -SmodelName=$MATCHEDNAME -d $SUBFILE
+#$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MATCHEDDBURL -SmodelName=$MATCHEDNAME -d $SUBFILE
 # Find Additions
-$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MATCHEDDBURL -MmodelName=$MATCHEDNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+#$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MATCHEDDBURL -MmodelName=$MATCHEDNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml
@@ -230,7 +247,14 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 #Dump vivo
-#$Transfer -i $VIVOCONFIG -d vivo_end.rdf
+$Transfer -i $VIVOCONFIG -d ../vivo_end_dump.rdf
+
+#Restart Tomcat
+#Tomcat must be restarted in order for the harvested data to appear in VIVO
+echo $HARVESTER_TASK ' completed successfully'
+/etc/init.d/tomcat stop
+/etc/init.d/apache2 reload
+/etc/init.d/tomcat start
 
 
 
@@ -268,10 +292,7 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 
 
-
-
-
-
+exit
 
 #!/bin/bash
 
