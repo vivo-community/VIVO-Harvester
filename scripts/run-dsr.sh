@@ -29,35 +29,24 @@ echo "Full Logging in $HARVESTER_TASK_DATE.log"
 #Base data directory
 BASEDIR=harvested-data/$HARVESTER_TASK
 
-#raw recordhandler directory
+#data directories
 RAWRHDIR=$BASEDIR/rh-raw
-
-#raw recordhandler database url
-RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
-
-#RDF/xml recordhandler directory
 RDFRHDIR=$BASEDIR/rh-rdf
-
-#RDF/xml recordhandler database url
-RDFRHDBURL=jdbc:h2:$RDFRHDIR/store
-
-#model directory
 MODELDIR=$BASEDIR/model
-
-#model database url
-MODELDBURL=jdbc:h2:$MODELDIR/store
-
-#model name
-MODELNAME=dsrTempTransfer
-
-#score data directory
 SCOREDATADIR=$BASEDIR/score-data
 
-#score data database url
+#model database urls
+RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
+RDFRHDBURL=jdbc:h2:$RDFRHDIR/store
+MODELDBURL=jdbc:h2:$MODELDIR/store
 SCOREDATADBURL=jdbc:h2:$SCOREDATADIR/store
+MATCHEDDBURL=jdbc:h2:$SCOREDATADIR/match
 
-#score data model name
+#model names
+MODELNAME=dsrTempTransfer
 SCOREDATANAME=dsrScoreData
+MATCHEDNAME=dsrTempMatch
+
 
 #temporary copy directory
 TEMPCOPYDIR=$BASEDIR/temp-copy
@@ -66,6 +55,7 @@ TEMPCOPYDIR=$BASEDIR/temp-copy
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
 SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
+MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckEmpty=$CHECKEMPTY"
 
 #Changenamespace settings
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n $NAMESPACE"
@@ -117,6 +107,9 @@ backup-path $MODELDIR $BACKMODEL
 # uncomment to restore previous H2 transfer Model
 #restore-path $MODELDIR $BACKMODEL
 
+#clear score model for next batch.
+rm -rf $SCOREDATADIR
+
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
@@ -124,45 +117,61 @@ backup-path $MODELDIR $BACKMODEL
 #scoring of grants on contractnumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
+
+#dumping Match output
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchgrant.rdf.xml
 
 # Scoring on UF ID person
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
+
+#dumping Match output
+$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchperson.rdf.xml
 
 # Scoring on Dept ID
 $Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
+
+#dumping Match output
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchorg.rdf.xml
 
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
+
+#dumping Match output
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchsponser.rdf.xml
 
 # Scoring of PIs
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}piRole/
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
+
+#dumping Match output
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchpirole.rdf.xml
 
 # Scoring of coPIs
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}coPiRole/
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
-#clear score model for next batch.
-rm -rf $SCOREDATADIR
+$Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 1.0 -r -c
 
+
+#dumping Match output
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchcopirole.rdf.xml
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
@@ -187,6 +196,9 @@ $ChangeNamespace $CNFLAGS -o ${BASEURI}piRole/
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -o ${BASEURI}coPiRole/
+
+#dumping changed data
+#$Transfer $SCOREINPUT 
 
 # backup H2 matched Model
 BACKMATCHED="matched"

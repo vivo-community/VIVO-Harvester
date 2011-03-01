@@ -166,7 +166,28 @@ public class ChangeNamespace {
 	 */
 	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) {
 		//Grab all resources matching namespaces needing changed
-		String subjectQuery = "" + "PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" + "PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> \n" + "PREFIX owl:   <http://www.w3.org/2002/07/owl#> \n" + "PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> \n" + "PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> \n" + "PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> \n" + "PREFIX bibo: <http://purl.org/ontology/bibo/> \n" + "PREFIX dcelem: <http://purl.org/dc/elements/1.1/> \n" + "PREFIX dcterms: <http://purl.org/dc/terms/> \n" + "PREFIX event: <http://purl.org/NET/c4dm/event.owl#> \n" + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n" + "PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> \n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" + "PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> \n" + "PREFIX core: <http://vivoweb.org/ontology/core#> \n" + "\n" + "SELECT ?sub \n" + "WHERE {\n" + "\t" + "?sub ?p ?o . \n" + "\t" + "FILTER regex(str(?sub), \"" + oldNamespace + "\" ) \n" + "} ORDER BY ?sub";
+		String subjectQuery = "" + 
+		"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + 
+		"PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n" + 
+		"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> \n" + 
+		"PREFIX owl:   <http://www.w3.org/2002/07/owl#> \n" + 
+		"PREFIX swrl:  <http://www.w3.org/2003/11/swrl#> \n" + 
+		"PREFIX swrlb: <http://www.w3.org/2003/11/swrlb#> \n" + 
+		"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> \n" + 
+		"PREFIX bibo: <http://purl.org/ontology/bibo/> \n" + 
+		"PREFIX dcelem: <http://purl.org/dc/elements/1.1/> \n" + 
+		"PREFIX dcterms: <http://purl.org/dc/terms/> \n" + 
+		"PREFIX event: <http://purl.org/NET/c4dm/event.owl#> \n" + 
+		"PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n" + 
+		"PREFIX geo: <http://aims.fao.org/aos/geopolitical.owl#> \n" + 
+		"PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" + 
+		"PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> \n" + 
+		"PREFIX core: <http://vivoweb.org/ontology/core#> \n" + 
+		"\n" + 
+		"SELECT ?sub \n" + 
+		"WHERE {\n" + 
+		"\t" + "?sub ?p ?o . \n" + 
+		"\t" + "FILTER regex(str(?sub), \"" + oldNamespace + "\" ) \n" + "} ORDER BY ?sub";
 		log.debug("Change Query:\n" + subjectQuery);
 		
 		Set<String> changeArray = new TreeSet<String>();
