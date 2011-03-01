@@ -56,24 +56,32 @@
 				</xsl:otherwise>
 			</xsl:choose>
 
-			<xsl:apply-templates select="name[@type='personal']" mode="withinPub" />
+			<xsl:apply-templates select="name" mode="withinPub" />
 			<xsl:apply-templates select="typeOfResource" />
 		</rdf:description>
 
-		<xsl:apply-templates select="name[@type='personal']" mode="standAlone" />
+		<xsl:apply-templates select="name" mode="standAlone" />
 	</xsl:template>
 
-	<xsl:template match="name[@type='personal']" mode="withinPub">
+	<xsl:template match="name" mode="withinPub">
 		<xsl:variable name="modsId" select="../@ID" />
+		<xsl:variable name="type" select="@type" />
 		<xsl:variable name="role" select="role/roleTerm" />
 		<xsl:variable name="firstName" select="namePart[@type='given']" />
 		<xsl:variable name="lastName" select="namePart[@type='family']" />
 		<xsl:variable name="allFirstNames" select="string-join($firstName, ' ')" />
 
 		<xsl:if test="$role='author'">
-			<core:informationResourceInAuthorship>
-				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
-			</core:informationResourceInAuthorship>
+			<xsl:if test="$type='personal'">
+				<core:informationResourceInAuthorship>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+				</core:informationResourceInAuthorship>
+			</xsl:if>
+			<xsl:if test="$type='corporate'">
+				<core:informationResourceInAuthorship>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', namePart)" /></xsl:attribute>
+				</core:informationResourceInAuthorship>
+			</xsl:if>
 		</xsl:if>
 		<xsl:if test="$role='editor'">
 			<bibo:editor>
@@ -83,12 +91,23 @@
 	</xsl:template>
 
 
-	<xsl:template match="mods/name[@type='personal']" mode="standAlone">
+	<xsl:template match="mods/name" mode="standAlone">
 		<xsl:variable name="modsId" select="../@ID" />
+		<xsl:variable name="type" select="@type" />
 		<xsl:variable name="role" select="role/roleTerm" />
 		<xsl:variable name="firstName" select="namePart[@type='given']" />
 		<xsl:variable name="lastName" select="namePart[@type='family']" />
 		<xsl:variable name="allFirstNames" select="string-join($firstName, ' ')" />
+		
+		<xsl:variable name="label">
+			<xsl:if test="$type='personal'">
+				<xsl:value-of select="concat($lastName, ', ', $allFirstNames)" />
+			</xsl:if>
+			<xsl:if test="$type='corporate'">
+				<xsl:value-of select="namePart" />
+			</xsl:if>
+		</xsl:variable>
+
 
 		<xsl:if test="$role='author'">
 	 		<rdf:description>
@@ -105,11 +124,18 @@
 		</xsl:if>
 
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
-			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-			<rdfs:label><xsl:value-of select="concat($lastName, ' ', $allFirstNames)" /></rdfs:label>
-			<foaf:firstName><xsl:value-of select="$firstName" /></foaf:firstName>
-			<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
+			<xsl:if test="$type='personal'">
+				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+				<foaf:firstName><xsl:value-of select="$firstName" /></foaf:firstName>
+				<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
+			</xsl:if>
+			<xsl:if test="$type='corporate'">
+				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', $label)" /></xsl:attribute>
+				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+			</xsl:if>
+			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
+			
 			<xsl:if test="$role='author'">
 	 			<core:authorInAuthorship>
 					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
