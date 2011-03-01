@@ -24,6 +24,7 @@
 
 	<xsl:output method="xml" indent="yes" />
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/mods/</xsl:variable>
+	<xsl:variable name="isbn" select="identifier[@type='isbn']" />
 
 	<xsl:template match="/modsCollection">
 		<rdf:RDF>
@@ -33,34 +34,71 @@
 
 	<xsl:template match="mods">
 		<xsl:variable name="modsId" select="@ID" />
-		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
-			<rdfs:label><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></rdfs:label>
-			<core:title><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></core:title>
-			<bibo:abstract><xsl:value-of select="abstract"></xsl:value-of></bibo:abstract>
-			<bibo:volume><xsl:value-of select="part/detail[@type='volume']"/></bibo:volume>
-			<bibo:identity><xsl:value-of select="$modsId"></xsl:value-of></bibo:identity>
-			<bibo:isbn-13><xsl:value-of select="identifier[@type='isbn']"></xsl:value-of></bibo:isbn-13>
-			<bibo:doi><xsl:value-of select="identifier[@type='doi']"></xsl:value-of></bibo:doi>
-			<core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher>
-			<core:placeOfPublication><xsl:value-of select="originInfo/place/placeTerm" /></core:placeOfPublication>
-
-			<xsl:choose>
-				<xsl:when test="contains(originInfo/dateIssued, '-')">
-					<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth">
-						<xsl:value-of select="substring(originInfo/dateIssued, 1, 4)"/>-<xsl:copy-of select="substring(originInfo/dateIssued, 6, 2)" />
-					</core:yearMonth>
-				</xsl:when>
-				<xsl:otherwise>
-					<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="originInfo/dateIssued"/></core:year>
-				</xsl:otherwise>
-			</xsl:choose>
-
-			<xsl:apply-templates select="name" mode="withinPub" />
-			<xsl:apply-templates select="typeOfResource" />
-		</rdf:description>
-
-		<xsl:apply-templates select="name" mode="standAlone" />
+		
+		<xsl:if test="typeOfResource='text'">
+			<rdf:description>
+				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
+				<rdfs:label><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></rdfs:label>
+	
+				<xsl:if test="issuance = 'monographic'">
+					<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+				</xsl:if>
+				<xsl:if test="issuance != 'monographic'">
+					<xsl:choose>
+						<xsl:when test="genre='book'" >
+							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+						</xsl:when>
+						<xsl:when test="genre='periodical'" >
+							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+						</xsl:when>
+						<xsl:when test="genre='academic journal'" >
+							<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+						</xsl:when>
+						<xsl:when test="genre='conference publication'" >
+							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+						</xsl:when>
+					</xsl:choose>
+				</xsl:if>
+	
+				<core:dateTimeValue><xsl:value-of select="originInfo/dateIssued"/></core:dateTimeValue>
+				<core:supplementalInformation><xsl:value-of select="note" /></core:supplementalInformation>
+				<xsl:if test="string-length(replace($isbn, '-', '')) = 10">
+					<bibo:isbn10><xsl:value-of select="$isbn" /></bibo:isbn10>
+				</xsl:if>
+				<xsl:if test="string-length($isbn) != 10">
+					<bibo:isbn13><xsl:value-of select="$isbn" /></bibo:isbn13>
+				</xsl:if>
+				<ufVivo:language><xsl:value-of select="language" /></ufVivo:language>
+				<core:freetextKeyword><xsl:value-of select="subject/topic" /></core:freetextKeyword>
+				<bibo:volume><xsl:value-of select="part/detail[@type='volume']/number" /></bibo:volume>
+				<bibo:issue><xsl:value-of select="part/detail[@type='number']/number" /></bibo:issue>
+				<bibo:pageStart><xsl:value-of select="extent[@unit='page']/start" /></bibo:pageStart>
+				<bibo:pageEnd><xsl:value-of select="extent[@unit='page']/end" /></bibo:pageEnd>
+				<bibo:abstract><xsl:value-of select="abstract"></xsl:value-of></bibo:abstract>
+	
+	
+	
+				<!-- 
+	
+				foaf:organization linked via core:publisher = publisher
+				  if publisher has placeTerm, use to match core:hasGeographicLocation on core:publisher
+				typeOfResource must be text
+	
+				core:hasPublicationVenue linked to bibo:journal = relatedItem w/ type=host -> titleInfo->title
+	
+	
+	
+				-->
+	
+	
+				<core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher>
+				<core:placeOfPublication><xsl:value-of select="originInfo/place/placeTerm" /></core:placeOfPublication>
+	
+				<xsl:apply-templates select="name" mode="withinPub" />
+			</rdf:description>
+	
+			<xsl:apply-templates select="name" mode="standAlone" />
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="name" mode="withinPub">
@@ -135,7 +173,7 @@
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 			</xsl:if>
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
-			
+
 			<xsl:if test="$role='author'">
 	 			<core:authorInAuthorship>
 					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
@@ -150,97 +188,10 @@
 	</xsl:template>
 
 
-	<xsl:template match="typeOfResource">
-		<xsl:variable name="typeOfResource" select="." />
-		<xsl:variable name="genre" select="../genre" />
-		<xsl:choose>
-					<xsl:when test="$typeOfResource='text'">
-						<xsl:choose>
-							<xsl:when test="$genre='article'">
-								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-							</xsl:when>
-							<xsl:when test="$genre='book'">
-								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-							</xsl:when>
-							<xsl:when test="$genre='conference publication'">
-								<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
-							</xsl:when>
-							<xsl:when test="$genre='encyclopedia'">
-								<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-							</xsl:when>
-							<xsl:when test="$genre='patent'">
-								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
-							</xsl:when>
-							<xsl:otherwise>
-								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:when>
-					<xsl:when test="$typeOfResource='cartographic'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Map" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='notated music'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='sound recording'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='sound recording-musical'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='sound recording-nonmusical'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='still image'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='moving image'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='three dimensional object'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='software, multimedia'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-					</xsl:when>
-					<xsl:when test="$typeOfResource='mixed material'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-					</xsl:when>
-					<xsl:otherwise>
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-					</xsl:otherwise>
-		</xsl:choose>
+	<xsl:template match="genre">
+		<xsl:variable name="issuance" select="../issuance" />
+		<xsl:variable name="genre" select="." />
+		
 	</xsl:template>
 
-
-<!--	<xsl:template match="mods/originInfo/place">-->
-<!--		<xsl:variable name="modsId" select="../../@ID" />-->
-<!--		<rdf:description>-->
-<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'PubVenue/modsId_', $modsId)" /></xsl:attribute>-->
-<!--			<core:placeOfPublication><xsl:value-of select="placeTerm" />-->
-<!--			</core:placeOfPublication>-->
-<!--			<core:publicationVenueFor>-->
-<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'Pub/modsId_', $modsId)" /></xsl:attribute>-->
-<!--			</core:publicationVenueFor>-->
-<!--		</rdf:description>-->
-<!--	</xsl:template>-->
-<!---->
-<!--	<xsl:template match="mods/originInfo">-->
-<!--		<xsl:variable name="modsId" select="../@ID" />-->
-<!--		<rdf:description>-->
-<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'Publisher/modsId_', $modsId)" /></xsl:attribute>-->
-<!--			<attribution><xsl:value-of select="publisher" /></attribution>-->
-<!--			<core:publisherOf>-->
-<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'Pub/modsId_', $modsId)" /></xsl:attribute>-->
-<!--			</core:publisherOf>-->
-<!--		</rdf:description>-->
-<!--		<rdf:description>-->
-<!--			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'PubDate/modsId_', $modsId)" /></xsl:attribute>-->
-<!--			<core:date><xsl:value-of select="dateIssued" /></core:date>-->
-<!--			<core:timeIntervalFor>-->
-<!--				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'Pub/modsId_', $modsId)" /></xsl:attribute>-->
-<!--			</core:timeIntervalFor>-->
-<!--		</rdf:description>-->
-<!--	</xsl:template>-->
-<!--	-->
 </xsl:stylesheet>
