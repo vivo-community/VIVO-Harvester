@@ -198,7 +198,7 @@ $ChangeNamespace $CNFLAGS -o ${BASEURI}piRole/
 $ChangeNamespace $CNFLAGS -o ${BASEURI}coPiRole/
 
 #dumping changed data
-#$Transfer $SCOREINPUT 
+#$Transfer $SCOREINPUT -d dumps/changed.rdf.xml
 
 # backup H2 matched Model
 BACKMATCHED="matched"
