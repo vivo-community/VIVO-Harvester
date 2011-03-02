@@ -245,9 +245,8 @@ public class Match {
 	/**
 	 * Clear out rdf:type and literal values of matched scoreResources TODO stephen: TEST
 	 * @param resultMap a mapping of matched scoreResources to vivoResources
-	 * @throws IOException error building construct
 	 */
-	private void clearTypesAndLiterals(Map<String, String> resultMap) throws IOException {
+	private void clearTypesAndLiterals(Map<String, String> resultMap) {
 		if(!resultMap.values().isEmpty()) {
 			log.trace("Beginning clear types and literals");
 			Set<String> uriFilters = new HashSet<String>();
@@ -271,9 +270,8 @@ public class Match {
 	/**
 	 * Build the query for matching types and literals
 	 * @param uriFilters uris to match on
-	 * @throws IOException error executing query
 	 */
-	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) throws IOException {
+	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) {
 		String query = "" +
 		"DELETE {\n" +
 		"  ?s ?p ?o\n" +
