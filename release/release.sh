@@ -74,11 +74,6 @@ sed -i "s/VERSION=.*/VERSION=$RELEASENAME/" scripts/env
 #update conffiles from config
 
 
-#commit pom file and deb control file
-if [ "$COMMIT" = "y" ]; then
-	svn commit -m "Update pom.xml and deb control file for release $RELEASENAME"
-fi
-
 #build
 if [ "$RUNTEST" = "y" ]; then
 	mvn clean dependency:copy-dependencies package
@@ -91,6 +86,12 @@ if [ "$?" = "1" ]; then
 	echo "Exiting - Maven failure:" $?
 	exit
 fi
+
+#commit pom file and deb control file
+if [ "$COMMIT" = "y" ]; then
+	svn commit -m "Update pom.xml and deb control file for release $RELEASENAME"
+fi
+
 
 cd bin
 #rename deb to use -
