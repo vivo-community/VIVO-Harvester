@@ -15,9 +15,8 @@
 #No attempts to sanitize or rationalize input have been made
 
 # Set working directory
-DIR=$(cd "$(dirname "$0")"; pwd)
-cd $DIR
-cd ..
+HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 echo -n "Enter sourceforge username: "
 read NAME
@@ -48,13 +47,13 @@ read UPLOAD
 
 #get code
 if [ "$CODELOC" = "dev" ]; then
-	svn co svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/branches/Development
+	svn co svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/branches/Development
 	cd Development
 	#if we're pulling from dev, ask if releasing stable 
 	echo -n "Merge to trunk?: "
 	read MERGETRUNK
 elif [ "$CODELOC" = "trunk" ]; then
-	svn co svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/vivo/Harvester/trunk
+	svn co svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/vivo/Harvester/trunk
 	cd trunk
 else
 	echo -n "Merge to trunk?: "
@@ -111,14 +110,14 @@ fi
 
 #tag
 cd ..
-svn cp . svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/tags/$RELEASENAME
+svn cp . svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/tags/$RELEASENAME
 svn commit -m "Tag Release $RELEASENAME"
 
 
 if [ "$MERGETRUNK" = "y" ]; then
 	#merge down to trunk
-	svn co svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/trunk
+	svn co svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/trunk
 	cd trunk
-	svn merge --depth=infinity svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/trunk@HEAD svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/branches/Development@HEAD
+	svn merge --depth=infinity svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/trunk@HEAD svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/branches/Development@HEAD
 	svn commit -m "Commit Release $RELEASENAME"
 fi
