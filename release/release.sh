@@ -82,7 +82,7 @@ else
 fi
 
 #check for failure
-if [ "$?" = "1" ]; then
+if [ "$?" -ne "0" ]; then
 	echo "Exiting - Maven failure:" $?
 	exit
 fi

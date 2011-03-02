@@ -2,10 +2,14 @@ VIVO Harvester
 VIVO: Enabling National Networking of Scientists
 
 Quick start
-To harvest all of your institution data from pubmed into your vivo instance, you need to minimally do the following things:
+See this wiki page for a user guide to the harvester
+https://sourceforge.net/apps/mediawiki/vivo/index.php?title=VIVO_Harvester_User_Guide
 
-Edit config/jenaModels/VIVO.xml and set it to point to your vivo database
-Edit config/tasks/PubmedFetch.xml and change the options as follows:
+For example, 
+	to harvest all of your institution data from pubmed into your vivo instance, you need to minimally do the following things:
+
+Edit config/models/vivo.xml and set it to point to your vivo database
+Edit config/tasks/example.pubmedfetch.xml and change the options as follows:
 
 	<Param id="email">YOUREMAIL</Param>
 	<Param id="output">config/recordHandlers/PubmedXMLRecordHandler.xml</Param>
@@ -13,16 +17,19 @@ Edit config/tasks/PubmedFetch.xml and change the options as follows:
 	<Param id="numRecords">ALL</Param>
 	<Param id="batchSize">1000</Param>
 	
-run scripts/runPubMedHarvest.sh
+run scripts/run-pubmed.sh
 
 The termSearch is the same search string you would use on pubmed. 
 
 Project Documentation
 For more information about the project, visit http://sourceforge/projects/vivo/.  
-Documentation can be found on the source forge wiki at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Documentation
+Documentation can be found on the sourceforge wiki at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Documentation
 
 Execution Scripts
 Several example scripts are provided in the scripts folder.
+
+Java Library Demo
+A demo of using the tools as a java library is included in the examples folder also
 
 Contacting Us
 We would love to hear from you and answer any questions, take patches, or bugs. Join us on IRC and/or our mailing lists:

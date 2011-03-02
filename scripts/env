@@ -16,7 +16,8 @@ CHECKEMPTY=true
 DATE=`get-date`
 HARVESTER_TASK_DATE="$HARVESTER_TASK.$DATE.harvester$VERSION"
 
-#update memory to match your hardware
+#update memory to match your hardware -- set both to be the same, in general the more memory the better, but too much can cause errors as well.
+#8G-12G on large vivo's seems to work well
 MIN_MEM=2048m
 MAX_MEM=2048m
 

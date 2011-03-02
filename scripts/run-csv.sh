@@ -41,7 +41,3 @@ $Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -o $VIVOCONFIG
 # Shown as example
 #$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -d dump.rdf.xml
 
-#Restart Tomcat
-#Tomcat must be restarted in order for the harvested data to appear in VIVO
-#/etc/init.d/tomcat restart
-
