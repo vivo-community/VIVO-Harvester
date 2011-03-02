@@ -56,7 +56,7 @@ public class RenameResources {
 	 * @throws IOException error connecting to jena model
 	 */
 	public RenameResources(ArgList argList) throws IOException {
-		this(JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J")), argList.get("n"), argList.getAll("o").toArray(new String[]{}));
+		this(JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), argList.get("n"), argList.getAll("u").toArray(new String[]{}));
 	}
 	
 	/**
@@ -87,12 +87,12 @@ public class RenameResources {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("RenameResources");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('j').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
 		
 		// Params
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("new-uri").withParameter(true, "RESOURCE_URI").setDescription("The resource uri to which old uri will be renamed").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("old-uri").withParameters(true, "RESOURCE_URI").setDescription("The resource uri to be renamed to the new uri").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("old-uri").withParameters(true, "RESOURCE_URI").setDescription("The resource uri to be renamed to the new uri").setRequired(true));
 		return parser;
 	}
 	
