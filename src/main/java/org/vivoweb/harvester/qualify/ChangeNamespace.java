@@ -95,7 +95,7 @@ public class ChangeNamespace {
 	public ChangeNamespace(ArgList argList) throws IOException {
 		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V"));
-		this.oldNamespace = argList.get("o");
+		this.oldNamespace = argList.get("u");
 		this.newNamespace = argList.get("n");
 		this.errorLogging = argList.has("e");
 		//TODO Nicholas REMOVE DEBUG STATEMENTS		
@@ -232,7 +232,7 @@ public class ChangeNamespace {
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
 		
 		// Params
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("oldNamespace").withParameter(true, "OLD_NAMESPACE").setDescription("The old namespace").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("oldNamespace").withParameter(true, "OLD_NAMESPACE").setDescription("The old namespace").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("newNamespace").withParameter(true, "NEW_NAMESPACE").setDescription("The new namespace").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("errorLogging").setDescription("Log error messages for each record changed").setRequired(false));
 		return parser;
