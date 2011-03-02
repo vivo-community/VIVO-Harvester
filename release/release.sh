@@ -48,13 +48,13 @@ read UPLOAD
 
 #get code
 if [ "$CODELOC" = "dev" ]; then
-	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development
+	svn co svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/branches/Development
 	cd Development
 	#if we're pulling from dev, ask if releasing stable 
 	echo -n "Merge to trunk?: "
 	read MERGETRUNK
 elif [ "$CODELOC" = "trunk" ]; then
-	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
+	svn co svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/vivo/Harvester/trunk
 	cd trunk
 else
 	echo -n "Merge to trunk?: "
@@ -111,14 +111,14 @@ fi
 
 #tag
 cd ..
-svn cp . https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/tags/$RELEASENAME
+svn cp . svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/tags/$RELEASENAME
 svn commit -m "Tag Release $RELEASENAME"
 
 
 if [ "$MERGETRUNK" = "y" ]; then
 	#merge down to trunk
-	svn co https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk
+	svn co svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/trunk
 	cd trunk
-	svn merge --depth=infinity https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/trunk@HEAD https://vivo.svn.sourceforge.net/svnroot/vivo/Harvester/branches/Development@HEAD
+	svn merge --depth=infinity svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/trunk@HEAD svn+ssh://mbarbier@svn.code.sf.net/p/vivo/code/Harvester/branches/Development@HEAD
 	svn commit -m "Commit Release $RELEASENAME"
 fi
