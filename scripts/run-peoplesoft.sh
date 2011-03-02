@@ -96,20 +96,17 @@ rm -rf $SCOREDATADIR
 rm -rf $TEMPCOPYDIR
 
 # uncomment to restore previous H2 temp copy Model
-BACKTEMPDATA="tempdata"
-#restore-path $TEMPCOPYDIR $BACKTEMPDATA
+BACKPREPEOPLEORGTEMPDATA="prepeopleorg-tempdata"
+#restore-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
 
 # Execute Score for People
 $Score $SCOREMODELS -n ${BASEURI}person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
 
 # backup H2 temp copy Model
-backup-path $TEMPCOPYDIR $BACKTEMPDATA
+backup-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
 
 # Execute Score for Departments
 $Score $SCOREMODELS -n ${BASEURI}org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$UFDEPTID -PdeptId=$UFDEPTID
-
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-prepos"
@@ -117,8 +114,24 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 # uncomment to restore previous H2 matched Model
 #restore-path $SCOREDATADIR $BACKSCOREDATA
 
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r
+
+# backup H2 transfer Model
+BACKPOSTPEOPLEDEPTS="postpeopledepts"
+backup-path $MODELDIR $BACKPOSTPEOPLEDEPTS
+# uncomment to restore previous H2 transfer Model
+#restore-path $MODELDIR $BACKPOSTPEOPLEDEPTS
+
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
+
+# Clear old H2 temp copy of input
+$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
+
+# uncomment to restore previous H2 temp copy Model
+BACKPOSTPEOPLEORGTEMPDATA="postpeopleorg-tempdata"
+#restore-path $TEMPCOPYDIR $BACKPOSTPEOPLEORGTEMPDATA
 
 # Execute Score for Positions
 POSORG="-AposOrg=$EQTEST -WposOrg=0.34 -FposOrg=$POSINORG -PposOrg=$POSINORG"
@@ -126,11 +139,8 @@ POSPER="-AposPer=$EQTEST -WposPer=0.34 -FposPer=$POSFORPERSON -PposPer=$POSFORPE
 DEPTPOS="-AdeptPos=$EQTEST -WdeptPos=0.34 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID"
 $Score $SCOREMODELS -n ${BASEURI}position/ $POSORG $POSPER $DEPTPOS
 
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r
-
-# Clear old H2 temp copy
-rm -rf $TEMPCOPYDIR
+# backup H2 temp copy Model
+backup-path $TEMPCOPYDIR $BACKPOSTPEOPLEORGTEMPDATA
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-postpos"
@@ -138,17 +148,23 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 # uncomment to restore previous H2 matched Model
 #restore-path $SCOREDATADIR $BACKSCOREDATA
 
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r
+
+# Clear old H2 temp copy
+rm -rf $TEMPCOPYDIR
+
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 # Execute ChangeNamespace to get unmatched People into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}person/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}person/
 # Execute ChangeNamespace to get unmatched Departments into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}org/ -e
+$ChangeNamespace $CNFLAGS -u ${BASEURI}org/ -e
 # Execute ChangeNamespace to get unmatched Positions into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}position/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}position/
 
 # backup H2 matched Model
 BACKMATCHED="matched"

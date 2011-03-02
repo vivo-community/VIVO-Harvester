@@ -416,7 +416,7 @@ public class Score {
 			indScore.append("" +
 				"  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" +
 				"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
-				);
+			);
 			for(String runName : this.vivoPredicates.keySet()) {
 				String osUri = eval.get("URI_os_" + runName);
 				String osLit = eval.get("LIT_os_" + runName);
@@ -445,7 +445,13 @@ public class Score {
 	 * @param scores the score rdf/xml fragments
 	 */
 	private void loadRdfToScoreData(String scores) {
-		String sparql = "" + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + "PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/> \n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" + "INSERT DATA {\n" + scores + "}\n";
+		String sparql = "" +
+			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+			"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/> \n" +
+			"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" +
+			"INSERT DATA {\n" +
+				scores +
+			"}\n";
 		// Push Score Data into score model
 		log.trace("Loading Score Data into Score Model:\n" + sparql);
 		this.scoreJena.executeUpdateQuery(sparql);
@@ -510,9 +516,9 @@ public class Score {
 			String vivoProperty = this.vivoPredicates.get(runName);
 			String inputProperty = this.inputPredicates.get(runName);
 			sQuery.append(" ?os_" + runName);
-			//			sQuery.append(" ?ov_" + runName);
+//			sQuery.append(" ?ov_" + runName);
 			sQuery.append(" ?op_" + runName);
-			//			sQuery.append(" ?oi_" + runName);
+//			sQuery.append(" ?oi_" + runName);
 			vivoUnions.add("{ ?sVivo <" + vivoProperty + "> ?ov_" + runName + " }");
 			vivoOptionals.append("    OPTIONAL { ?sVivo <").append(vivoProperty).append("> ").append("?op_" + runName).append(" } . \n");
 			inputUnions.add("{ ?sInput <" + inputProperty + "> ?oi_" + runName + " }");
