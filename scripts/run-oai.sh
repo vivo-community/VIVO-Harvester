@@ -9,12 +9,12 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
-# Set working directory
+# Exit on first error
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd)
-cd $DIR
-cd ..
+# Set working directory
+HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 HARVESTER_TASK=oai
 

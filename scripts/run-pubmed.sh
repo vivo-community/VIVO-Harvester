@@ -9,6 +9,7 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
+# Exit on first error
 set -e
 
 # Set working directory
@@ -186,14 +187,14 @@ $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
 CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 # Execute ChangeNamespace to get unmatched Publications into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}authorship/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}authorship/
 # Execute ChangeNamespace to get unmatched Authors into current namespace
-#$ChangeNamespace $CNFLAGS -o ${BASEURI}author/
+#$ChangeNamespace $CNFLAGS -u ${BASEURI}author/
 $Qualify $MATCHEDINPUT -n ${BASEURI}author/ -c
 # Execute ChangeNamespace to get unmatched Journals into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}journal/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
 
 # backup H2 matched Model
 BACKMATCHED="matched"

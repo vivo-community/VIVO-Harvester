@@ -9,6 +9,7 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri - initial API and implementation
 
+# Exit on first error
 set -e
 
 # Set working directory
@@ -61,31 +62,11 @@ RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 BASEURI="http://vivoweb.org/harvest/mods/"
 
-#clear old fetches
-#rm -rf $RAWRHDIR
-
-#Dump vivo
-#$Transfer -i $VIVOCONFIG -d vivo_start.rdf
-
-## Execute Fetch for Pubmed
-#$PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
-#$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
-
-## backup fetch
-#BACKRAW="raw"
-#backup-path $RAWRHDIR $BACKRAW
-## uncomment to restore previous fetch
-##restore-path $RAWRHDIR $BACKRAW
-
 # clear old translates
 rm -rf $RDFRHDIR
 
 # Execute Translate using the mods-to-vivo.xsl file
-$XSLTranslator -i config/recordhandlers/mods-xml.xml -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/mods-to-vivo.xsl
-#$XSLTranslator -i config/recordhandlers/mods-xml.xml -x config/datamaps/mods-to-vivo.xsl -o config/recordhandlers/mods-rdf.xml
-#$XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/mods-to-vivo.xsl
-
-#$Transfer -h $H2RH -HdbUrl=$RDFRHDBURL -d ../dumpfile1.xml
+$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/mods-to-vivo.xsl
 
 # backup translate
 BACKRDF="rdf"
@@ -98,9 +79,8 @@ rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
+# Dump
 #$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.xml
-
-#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IcheckEmpty=$CHECKEMPTY -IdbUrl=$MODELDBURL -d ../dumpfile2.xml
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -108,16 +88,17 @@ backup-path $MODELDIR $BACKMODEL
 # uncomment to restore previous H2 transfer Model
 #restore-path $MODELDIR $BACKMODEL
 
-SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
-SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
-MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckEmpty=$CHECKEMPTY"
-SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
-
 # Clear old H2 score data
 rm -rf $SCOREDATADIR
 
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
+
+# Score variables for cleaner lines
+SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
+SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
+MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckEmpty=$CHECKEMPTY"
+SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
 # Execute Score to disambiguate data in "scoring" JENA model
 WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$CWEMAIL -WwEmail=0.5 -PwEmail=$SWEMAIL"
@@ -128,9 +109,8 @@ $Score $SCOREMODELS $WORKEMAIL $LNAME -n ${BASEURI}author/
 #$Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
 
 # Find matches using scores and rename nodes to matching uri and clear literals
-$Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 0.7 -r -c
+#$Match $SCOREINPUT $SCOREDATA -t 0.7 -r -c
 #$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../scoreddumpfile.xml
-#$Transfer $MATCHOUTPUT -d ../matcheddumpfile.xml
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-auths"
@@ -140,9 +120,6 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
-
-# clear H2 match data Model
-#rm -rf $MATCHEDDIR
 
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
@@ -154,9 +131,9 @@ SCOREMODELS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t
 #$Score $SCOREMODELS -Apmid=$EQTEST -Fpmid=$BPMID -Wpmid=1.0 -Ppmid=$BPMID -n ${BASEURI}pub/
 
 # find the originally ingested journal
-TITLE="-Atitle=$EQTEST -Ftitle=$CTITLE -Wtitle=1.0 -Ptitle=$CTITLE"
-ISSN="-Aissn=$EQTEST -Fissn=$BISSN -Wissn=1.0 -Pissn=$BISSN"
-JOURNALPUB="-Ajournalpub=$EQTEST -Fjournalpub=$PVENUEFOR -Wjournalpub=1.0 -Pjournalpub=$PVENUEFOR"
+TITLE="-Atitle=$EQTEST -Ftitle=$CTITLE -Wtitle=0.34 -Ptitle=$CTITLE"
+ISSN="-Aissn=$EQTEST -Fissn=$BISSN -Wissn=0.34 -Pissn=$BISSN"
+JOURNALPUB="-Ajournalpub=$EQTEST -Fjournalpub=$PVENUEFOR -Wjournalpub=0.34 -Pjournalpub=$PVENUEFOR"
 #$Score $SCOREMODELS $TITLE $ISSN $JOURNALPUB -n ${BASEURI}journal/
 
 # Find matches using scores and rename nodes to matching uri and clear literals
@@ -199,14 +176,13 @@ $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
 #CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 # Execute ChangeNamespace to get unmatched Publications into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}pub/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}authorship/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}authorship/
 # Execute ChangeNamespace to get unmatched Authors into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}author/
-#$Qualify $MATCHEDINPUT -n ${BASEURI}author/ -c
+$ChangeNamespace $CNFLAGS -u ${BASEURI}author/
 # Execute ChangeNamespace to get unmatched Journals into current namespace
-$ChangeNamespace $CNFLAGS -o ${BASEURI}journal/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
 
 #$Transfer $SCOREINPUT -d ../dumpfile5.xml
 

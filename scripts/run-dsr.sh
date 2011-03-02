@@ -9,12 +9,12 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence- initial API and implementation
 
-# Set working directory
+# Exit on first error
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd)
-cd $DIR
-cd ..
+# Set working directory
+HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 HARVESTER_TASK=dsr
 
@@ -47,7 +47,6 @@ MODELNAME=dsrTempTransfer
 SCOREDATANAME=dsrScoreData
 MATCHEDNAME=dsrTempMatch
 
-
 #temporary copy directory
 TEMPCOPYDIR=$BASEDIR/temp-copy
 
@@ -69,6 +68,9 @@ RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
 UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
+ROLEIN="http://vivoweb.org/ontology/core#roleIn"
+PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
+COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
 BASEURI="http://vivoweb.org/harvest/ufl/dsr/"
 
 #clear old fetches
@@ -114,91 +116,68 @@ rm -rf $SCOREDATADIR
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
 
-#scoring of grants on contractnumber
+# Scoring of Grants on ContractNumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
+
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r
+
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
-#dumping Match output
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchgrant.rdf.xml
-
-# Scoring on UF ID person
+# Scoring of people on UFID
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
-#clear score model for next batch.
-rm -rf $SCOREDATADIR
 
-#dumping Match output
-$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchperson.rdf.xml
-
-# Scoring on Dept ID
+# Scoring of orgs on DeptID
 $Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
-#clear score model for next batch.
-rm -rf $SCOREDATADIR
-
-#dumping Match output
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchorg.rdf.xml
 
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
+
+# Find matches using scores and rename nodes to matching uri clearing types and literals
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
-#dumping Match output
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchsponser.rdf.xml
+# Clear old H2 temp copy of input
+$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
 
-# Scoring of PIs
-$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}piRole/
+# Scoring of PI Roles
+PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$ROLEOF -Pperson=$PIROLEOF"
+GRANTURI="-Agrant=$EQTEST -Wgrant=0.5 -Fgrant=$ROLEIN -Pgrant=$ROLEIN"
+$Score $SCOREMODELS $PIURI $GRANTURI -n ${BASEURI}piRole/
+
+# Scoring of coPI Roles
+COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COROLEOF -Pperson=$COPIROLEOF"
+$Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
+
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA  $MATCHOUTPUT -t 1.0 -r -c
-#clear score model for next batch.
-rm -rf $SCOREDATADIR
-
-#dumping Match output
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchpirole.rdf.xml
-
-# Scoring of coPIs
-$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}coPiRole/
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 1.0 -r -c
-
-
-#dumping Match output
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY -d dumps/matchcopirole.rdf.xml
+$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o ${BASEURI}grant/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}grant/
 
 # Execute ChangeNamespace to get orgs into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o ${BASEURI}org/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}org/
 
 # Execute ChangeNamespace to get sponsors into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o ${BASEURI}sponsor/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}sponsor/
 
 # Execute ChangeNamespace to get people into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o ${BASEURI}person/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}person/
 
 # Execute ChangeNamespace to get PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o ${BASEURI}piRole/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}piRole/
 
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -o ${BASEURI}coPiRole/
-
-#dumping changed data
-#$Transfer $SCOREINPUT -d dumps/changed.rdf.xml
+$ChangeNamespace $CNFLAGS -u ${BASEURI}coPiRole/
 
 # backup H2 matched Model
 BACKMATCHED="matched"

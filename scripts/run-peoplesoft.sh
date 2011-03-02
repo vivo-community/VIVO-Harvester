@@ -9,6 +9,7 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 
+# Exit on first error
 set -e
 
 # Set working directory
