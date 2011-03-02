@@ -32,7 +32,8 @@ MAX_MEM=2048m
 #-Xnoclassgc					Disable collection of class objects
 #-XX:UseSSE=3					Use SSE3 Processor extensions
 #-XX:ParallelGCThreads=3		Maximum number of Parallel garbage collection tasks
-OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM -Dharvester-task=$HARVESTER_TASK_DATE -Dconsole-log-level=$LOG_LEVEL -Dconsole-log-level=$LOG_LEVEL -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/*"
+HARVESTER_JAVA_OPTS=""
+OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM $HARVESTER_JAVA_OPTS -Dharvester-task=$HARVESTER_TASK_DATE -Dconsole-log-level=$LOG_LEVEL -Dconsole-log-level=$LOG_LEVEL -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/*"
 
 # define shorthand aliases
 RenameResources="java $OPTS -Dprocess-task=RenameResources org.vivoweb.harvester.qualify.RenameResources"
