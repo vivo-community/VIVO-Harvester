@@ -113,7 +113,7 @@ if [ "$UPLOAD" = "y" ]; then
 fi
 
 #tag
-cd ..
+cd $HARVESTERDIR
 svn cp . svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/tags/$RELEASENAME
 svn commit -m "Tag Release $RELEASENAME"
 
