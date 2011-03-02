@@ -584,33 +584,6 @@ public abstract class JenaConnect {
 	}
 	
 	/**
-	 * Main method
-	 * @param args commandline arguments
-	 */
-	public static void main(String... args) {
-		try {
-			InitLog.initLogger(args, getParser());
-			ArgList argList = new ArgList(getParser(), args);
-			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
-			if(argList.has("t")) {
-				if(argList.has("q") || argList.has("Q")) {
-					throw new IllegalArgumentException("Cannot Execute Query and Truncate");
-				}
-				jc.truncate();
-			} else if(argList.has("q")) {
-				jc.executeQuery(argList.get("q"), argList.get("Q"), argList.has("d"));
-			} else {
-				throw new IllegalArgumentException("No Operation Specified");
-			}
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.err.println(getParser().getUsage());
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-		}
-	}
-	
-	/**
 	 * Config parser for Jena Models
 	 * @author Christopher Haines (hainesc@ctrip.ufl.edu)
 	 */
@@ -721,5 +694,39 @@ public abstract class JenaConnect {
 	 */
 	public void printParameters() {
 		log.debug("modelName: '" + getModelName() + "'");
+	}
+	
+	/**
+	 * Main method
+	 * @param args commandline arguments
+	 */
+	public static void main(String... args) {
+		Exception error = null;
+		try {
+			InitLog.initLogger(args, getParser());
+			ArgList argList = new ArgList(getParser(), args);
+			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
+			if(argList.has("t")) {
+				if(argList.has("q") || argList.has("Q")) {
+					throw new IllegalArgumentException("Cannot Execute Query and Truncate");
+				}
+				jc.truncate();
+			} else if(argList.has("q")) {
+				jc.executeQuery(argList.get("q"), argList.get("Q"), argList.has("d"));
+			} else {
+				throw new IllegalArgumentException("No Operation Specified");
+			}
+		} catch(IllegalArgumentException e) {
+			log.error(e.getMessage(), e);
+			System.err.println(getParser().getUsage());
+			error = e;
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+			error = e;
+		} finally {
+			if(error != null) {
+				System.exit(1);
+			}
+		}
 	}
 }

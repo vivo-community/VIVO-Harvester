@@ -120,6 +120,7 @@ public class XPathTool {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		Exception error = null;
 		try {
 			String harvLev = System.getProperty("console-log-level");
 			System.setProperty("console-log-level", "OFF");
@@ -134,10 +135,15 @@ public class XPathTool {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
 	}
 }

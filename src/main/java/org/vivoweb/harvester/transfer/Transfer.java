@@ -169,6 +169,7 @@ public class Transfer {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
@@ -176,10 +177,15 @@ public class Transfer {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
 	}
 }

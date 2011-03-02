@@ -171,17 +171,23 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser("NLMJournalFetch"));
 			log.info("NLMJournalFetch: Start");
 			new NLMJournalFetch(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			System.out.println(getParser("NLMJournalFetch").getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			error = e;
 		} finally {
 			log.info("NLMJournalFetch: End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
 	}
 	
