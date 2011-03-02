@@ -100,8 +100,11 @@ mv harvester_*.deb harvester-$RELEASENAME.deb
 #unpack debian package
 ar -x harvester-$RELEASENAME.deb
 
-#rename tarball
-mv data.tar.gz harvester-$RELEASENAME.tar.gz
+#create tarball
+tar -xvzf data.tar.gz
+cd usr/share/vivo/
+tar -cvzf harvester-$RELEASENAME.tar.gz harvester/
+
 
 #Upload tarball and deb package to sourceforge
 if [ "$UPLOAD" = "y" ]; then
