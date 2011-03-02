@@ -110,6 +110,9 @@ SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $
 # Clear old H2 score data
 rm -rf $SCOREDATADIR
 
+# Clear old H2 match data
+rm -rf $MATCHEDDIR
+
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
 
@@ -133,9 +136,6 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
-
-# clear H2 match data Model
-rm -rf $MATCHEDDIR
 
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
