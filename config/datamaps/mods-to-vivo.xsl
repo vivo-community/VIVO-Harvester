@@ -20,7 +20,8 @@
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:bibo="http://purl.org/ontology/bibo/"
-	xmlns:foaf="http://xmlns.com/foaf/0.1/">
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/">
 
 	<xsl:output method="xml" indent="yes" />
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/mods/</xsl:variable>
@@ -40,10 +41,10 @@
 				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 				<rdfs:label><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></rdfs:label>
 	
-				<xsl:if test="issuance = 'monographic'">
+				<xsl:if test="originInfo/issuance='monographic'">
 					<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 				</xsl:if>
-				<xsl:if test="issuance != 'monographic'">
+				<xsl:if test="originInfo/issuance!='monographic'">
 					<xsl:choose>
 						<xsl:when test="genre='book'" >
 							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
@@ -76,30 +77,49 @@
 				<bibo:pageEnd><xsl:value-of select="extent[@unit='page']/end" /></bibo:pageEnd>
 				<bibo:abstract><xsl:value-of select="abstract"></xsl:value-of></bibo:abstract>
 	
-	
-	
 				<!-- 
-	
-				foaf:organization linked via core:publisher = publisher
+				*foaf:organization linked via core:publisher = publisher
 				  if publisher has placeTerm, use to match core:hasGeographicLocation on core:publisher
-				typeOfResource must be text
 	
 				core:hasPublicationVenue linked to bibo:journal = relatedItem w/ type=host -> titleInfo->title
-	
-	
-	
 				-->
-	
 	
 				<core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher>
 				<core:placeOfPublication><xsl:value-of select="originInfo/place/placeTerm" /></core:placeOfPublication>
 	
 				<xsl:apply-templates select="name" mode="withinPub" />
+				<xsl:apply-templates select="originInfo/publisher" mode="withinPub" />
 			</rdf:description>
 	
 			<xsl:apply-templates select="name" mode="standAlone" />
+			<xsl:apply-templates select="originInfo/publisher" mode="standAlone" />
 		</xsl:if>
 	</xsl:template>
+
+	<xsl:template match="originInfo/publisher" mode="withinPub">
+		<xsl:variable name="modsId" select="../../@ID" />
+		<xsl:variable name="label" select="." />
+
+		<core:publisher>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'journal/modsId_', $modsId, '_', $label)" /></xsl:attribute>
+		</core:publisher>
+	</xsl:template>
+
+	<xsl:template match="originInfo/publisher" mode="standAlone">
+		<xsl:variable name="modsId" select="../../@ID" />
+		<xsl:variable name="label" select="." />
+
+		<rdf:description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'journal/modsId_', $modsId, '_', $label)" /></xsl:attribute>
+			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+			<rdf:label><xsl:value-of select="$label" /></rdf:label>
+			<core:publisherOf>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
+			</core:publisherOf>
+		</rdf:description>
+
+	</xsl:template>
+
 
 	<xsl:template match="name" mode="withinPub">
 		<xsl:variable name="modsId" select="../@ID" />
@@ -117,7 +137,7 @@
 			</xsl:if>
 			<xsl:if test="$type='corporate'">
 				<core:informationResourceInAuthorship>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', namePart)" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'journal/modsId_', $modsId, '_', namePart)" /></xsl:attribute>
 				</core:informationResourceInAuthorship>
 			</xsl:if>
 		</xsl:if>
@@ -149,14 +169,24 @@
 
 		<xsl:if test="$role='author'">
 	 		<rdf:description>
-				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+				<xsl:if test="$type='personal'">
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+				</xsl:if>
+				<xsl:if test="$type='corporate'">
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', namePart)" /></xsl:attribute>
+				</xsl:if>
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 				<core:authorNameAsListed><xsl:value-of select="namePart" /></core:authorNameAsListed>
 				<core:linkedInformationResource>
 					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 				</core:linkedInformationResource>
 				<core:linkedAuthor>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+					<xsl:if test="$type='personal'">
+						<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+					</xsl:if>
+					<xsl:if test="$type='corporate'">
+						<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'journal/modsId_', $modsId, '_', namePart)" /></xsl:attribute>
+					</xsl:if>
 				</core:linkedAuthor>
 			</rdf:description>
 		</xsl:if>
@@ -169,14 +199,19 @@
 				<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
 			</xsl:if>
 			<xsl:if test="$type='corporate'">
-				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', $label)" /></xsl:attribute>
+				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'journal/modsId_', $modsId, '_', $label)" /></xsl:attribute>
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 			</xsl:if>
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
 
 			<xsl:if test="$role='author'">
 	 			<core:authorInAuthorship>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+					<xsl:if test="$type='personal'">
+						<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName)" /></xsl:attribute>
+					</xsl:if>
+					<xsl:if test="$type='corporate'">
+						<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', namePart)" /></xsl:attribute>
+					</xsl:if>
 	 			</core:authorInAuthorship>
 			</xsl:if>
 			<xsl:if test="$role='editor'">
@@ -186,12 +221,4 @@
 			</xsl:if>
 		</rdf:description>
 	</xsl:template>
-
-
-	<xsl:template match="genre">
-		<xsl:variable name="issuance" select="../issuance" />
-		<xsl:variable name="genre" select="." />
-		
-	</xsl:template>
-
 </xsl:stylesheet>
