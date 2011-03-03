@@ -118,9 +118,9 @@ rm -rf $MATCHEDDIR
 rm -rf $TEMPCOPYDIR
 
 # Execute Score to disambiguate data in "scoring" JENA model
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$CWEMAIL -WwEmail=0.7 -PwEmail=$SWEMAIL"
+WORKEMAIL="-AwEmail=$EQTEST -FwEmail=$CWEMAIL -WwEmail=0.7 -PwEmail=$SWEMAIL"
 FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$SFNAME"
-LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
+LNAME="-AlName=$EQTEST -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
 MNAME="-AmName=$LEVDIFF -FmName=$CMNAME -WmName=0.1 -PmName=$CMNAME"
 $Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
 
