@@ -79,8 +79,7 @@ rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
-# Dump
-#$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.xml
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY -d ../dumpfile1.xml
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -101,16 +100,17 @@ MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckE
 SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
 # Execute Score to disambiguate data in "scoring" JENA model
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$CWEMAIL -WwEmail=0.5 -PwEmail=$SWEMAIL"
+#WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$CWEMAIL -WwEmail=0.5 -PwEmail=$SWEMAIL"
 LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
-#FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$SFNAME"
+FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$SFNAME"
 #MNAME="-AmName=$LEVDIFF -FmName=$CMNAME -WmName=0.1 -PmName=$CMNAME"
-$Score $SCOREMODELS $WORKEMAIL $LNAME -n ${BASEURI}author/
+$Score $SCOREMODELS $FNAME $LNAME -n ${BASEURI}author/
+$Transfer $SCOREINPUT -d ../dumpfile2.xml
 #$Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
+exit
 
 # Find matches using scores and rename nodes to matching uri and clear literals
 #$Match $SCOREINPUT $SCOREDATA -t 0.7 -r -c
-#$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../scoreddumpfile.xml
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-auths"
@@ -167,8 +167,8 @@ rm -rf $SCOREDATADIR
 #remove score statements
 $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
 
-#$Transfer $MATCHEDINPUT -d ../dumpfile3.xml
-#$Transfer $SCOREINPUT -d ../dumpfile4.xml
+$Transfer $MATCHEDINPUT -d ../dumpfile3.xml
+$Transfer $SCOREINPUT -d ../dumpfile4.xml
 
 
 
@@ -184,7 +184,7 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}author/
 # Execute ChangeNamespace to get unmatched Journals into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
 
-#$Transfer $SCOREINPUT -d ../dumpfile5.xml
+$Transfer $SCOREINPUT -d ../dumpfile5.xml
 
 
 # backup H2 matched Model
@@ -223,7 +223,7 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 #Dump vivo
-#$Transfer -i $VIVOCONFIG -d ../vivo_end_dump.rdf
+$Transfer -i $VIVOCONFIG -d ../vivo_end_dump.rdf
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
