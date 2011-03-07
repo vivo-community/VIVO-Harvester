@@ -41,7 +41,7 @@
 				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 				<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 				<rdfs:label><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></rdfs:label>
-	
+
 				<xsl:if test="originInfo/issuance='monographic'">
 					<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 				</xsl:if>
@@ -61,7 +61,7 @@
 						</xsl:when>
 					</xsl:choose>
 				</xsl:if>
-	
+
 				<core:dateTimeValue><xsl:value-of select="originInfo/dateIssued"/></core:dateTimeValue>
 				<core:supplementalInformation><xsl:value-of select="note" /></core:supplementalInformation>
 				<xsl:if test="string-length(replace($isbn, '-', '')) = 10">
@@ -77,37 +77,69 @@
 				<bibo:pageStart><xsl:value-of select="extent[@unit='page']/start" /></bibo:pageStart>
 				<bibo:pageEnd><xsl:value-of select="extent[@unit='page']/end" /></bibo:pageEnd>
 				<bibo:abstract><xsl:value-of select="abstract"></xsl:value-of></bibo:abstract>
-	
+
 				<!-- 
 				*foaf:organization linked via core:publisher = publisher
 				  if publisher has placeTerm, use to match core:hasGeographicLocation on core:publisher
 	
 				core:hasPublicationVenue linked to bibo:journal = relatedItem w/ type=host -> titleInfo->title
 				-->
-	
+
 				<core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher>
 				<core:placeOfPublication><xsl:value-of select="originInfo/place/placeTerm" /></core:placeOfPublication>
-	
+
 				<xsl:apply-templates select="name" mode="withinPub">
 					<xsl:with-param name="modsId" select="$modsId" />
 				</xsl:apply-templates>
 				<xsl:apply-templates select="originInfo/publisher" mode="withinPub">
 					<xsl:with-param name="modsId" select="$modsId" />
 				</xsl:apply-templates>
+				<xsl:apply-templates select="originInfo/place/placeTerm" mode="withinPub">
+					<xsl:with-param name="modsId" select="$modsId" />
+				</xsl:apply-templates>
 			</rdf:description>
-	
+
 			<xsl:apply-templates select="name" mode="standAlone">
 				<xsl:with-param name="modsId" select="$modsId" />
 			</xsl:apply-templates>
 			<xsl:apply-templates select="originInfo/publisher" mode="standAlone">
 				<xsl:with-param name="modsId" select="$modsId" />
 			</xsl:apply-templates>
+			<xsl:apply-templates select="originInfo/place/placeTerm" mode="standAlone">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:apply-templates>
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="originInfo/place/placeTerm" mode="withinPub">
+		<xsl:param name='modsId' />
+
+		<xsl:variable name="label" select="." />
+
+		<core:hasGeographicLocation>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+		</core:hasGeographicLocation>
+	</xsl:template>
+
+	<xsl:template match="originInfo/place/placeTerm" mode="standAlone">
+		<xsl:param name='modsId' />
+
+		<xsl:variable name="label" select="." />
+
+		<rdf:description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#GeographicLocation"></rdf:type>
+			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
+			<core:geographicLocationOf>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
+			</core:geographicLocationOf>
+		</rdf:description>
 	</xsl:template>
 
 	<xsl:template match="originInfo/publisher" mode="withinPub">
 		<xsl:param name='modsId' />
-		
+
 		<xsl:variable name="label" select="." />
 
 		<core:publisher>
@@ -117,7 +149,7 @@
 
 	<xsl:template match="originInfo/publisher" mode="standAlone">
 		<xsl:param name='modsId' />
-		
+
 		<xsl:variable name="label" select="." />
 
 		<rdf:description>
@@ -171,7 +203,7 @@
 		<xsl:variable name="firstName" select="namePart[@type='given']" />
 		<xsl:variable name="lastName" select="namePart[@type='family']" />
 		<xsl:variable name="allFirstNames" select="string-join($firstName, ' ')" />
-		
+
 		<xsl:variable name="label">
 			<xsl:if test="$type='personal'">
 				<xsl:value-of select="concat($lastName, ', ', $allFirstNames)" />
@@ -224,7 +256,7 @@
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 				</xsl:if>
 				<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
-	
+
 				<xsl:if test="$role='author'">
 		 			<core:authorInAuthorship>
 						<xsl:if test="$type='personal'">

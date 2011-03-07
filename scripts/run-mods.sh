@@ -9,8 +9,7 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri - initial API and implementation
 
-#TODO: from Nick Rejack's MODS mapping, "if <publisher> has <place><placeTerm>, use to match core:hasGeographicLocation (target is core:Geographic Location) on core:Publisher"
-#TODO: from MODS mapping: "core:hasPublicationVenue linked to bibo:Journal (match on name, stub if no match)"
+#TODO: from Nick Rejack's MODS mapping: "core:hasPublicationVenue linked to bibo:Journal (match on name, stub if no match)"
 
 
 # Exit on first error
@@ -127,6 +126,7 @@ RDFSLABELSCORE="-ArdfsLabel=$LEVDIFF -FrdfsLabel=$RDFSLABEL -WrdfsLabel=1.0 -Prd
 
 $Score $SCOREMODELS $FNAME $LNAME -n ${BASEURI}author/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}org/
+$Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}geo/
 $Match $SCOREINPUT $SCOREDATA -t 0.7 -r
 
 
