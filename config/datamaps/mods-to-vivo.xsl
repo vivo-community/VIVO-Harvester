@@ -81,7 +81,7 @@
 				<!-- 
 				*foaf:organization linked via core:publisher = publisher
 				  if publisher has placeTerm, use to match core:hasGeographicLocation on core:publisher
-	
+
 				core:hasPublicationVenue linked to bibo:journal = relatedItem w/ type=host -> titleInfo->title
 				-->
 
@@ -97,6 +97,9 @@
 				<xsl:apply-templates select="originInfo/place/placeTerm" mode="withinPub">
 					<xsl:with-param name="modsId" select="$modsId" />
 				</xsl:apply-templates>
+				<xsl:apply-templates select="relatedItem[@type='host']/titleInfo/title" mode="withinPub">
+					<xsl:with-param name="modsId" select="$modsId" />
+				</xsl:apply-templates>
 			</rdf:description>
 
 			<xsl:apply-templates select="name" mode="standAlone">
@@ -108,8 +111,44 @@
 			<xsl:apply-templates select="originInfo/place/placeTerm" mode="standAlone">
 				<xsl:with-param name="modsId" select="$modsId" />
 			</xsl:apply-templates>
+			<xsl:apply-templates select="relatedItem[@type='host']/titleInfo/title" mode="standAlone">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:apply-templates>
 		</xsl:if>
 	</xsl:template>
+
+	<xsl:template match="relatedItem[@type='host']/titleInfo/title" mode="withinPub">
+		<xsl:param name='modsId' />
+
+		<xsl:variable name="label" select="." />
+		<xsl:variable name="uriLabel" select="replace(replace($label, ':', '_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
+
+		<core:hasPublicationVenue>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'journal/', $uriLabel)" /></xsl:attribute>
+		</core:hasPublicationVenue>
+	</xsl:template>
+
+	<xsl:template match="relatedItem[@type='host']/titleInfo/title" mode="standAlone">
+		<xsl:param name='modsId' />
+
+		<xsl:variable name="label" select="." />
+		<xsl:variable name="uriLabel" select="replace(replace($label, ':', '_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
+
+		<rdf:description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'journal/', $uriLabel)" /></xsl:attribute>
+			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
+			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal"></rdf:type>
+			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
+			<core:publicationVenueFor>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
+			</core:publicationVenueFor>
+		</rdf:description>
+	</xsl:template>
+
+
+
+
+
 
 	<xsl:template match="originInfo/place/placeTerm" mode="withinPub">
 		<xsl:param name='modsId' />

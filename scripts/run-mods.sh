@@ -11,6 +11,9 @@
 
 #TODO: from Nick Rejack's MODS mapping: "core:hasPublicationVenue linked to bibo:Journal (match on name, stub if no match)"
 
+#KNOWN ISSUE: Seems to tie in matches that were originally in VIVO into the input model, so that if the input model is cleaned out of VIVO,
+#             then those matches will be removed.  Actually they remain, hidden, but much of their data including their rdf:type is gone.  An
+#             RDF export will show this.
 
 # Exit on first error
 set -e
@@ -119,7 +122,7 @@ $Match $SCOREINPUT $SCOREDATA -t 0.7 -r
 rm -rf $SCOREDATADIR
 
 
-#Author and Organization match
+#Author, Organization, Geographic Location, Journal match
 LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
 FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$FFNAME"
 RDFSLABELSCORE="-ArdfsLabel=$LEVDIFF -FrdfsLabel=$RDFSLABEL -WrdfsLabel=1.0 -PrdfsLabel=$RDFSLABEL"
@@ -127,6 +130,7 @@ RDFSLABELSCORE="-ArdfsLabel=$LEVDIFF -FrdfsLabel=$RDFSLABEL -WrdfsLabel=1.0 -Prd
 $Score $SCOREMODELS $FNAME $LNAME -n ${BASEURI}author/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}org/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}geo/
+$Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}journal/
 $Match $SCOREINPUT $SCOREDATA -t 0.7 -r
 
 
@@ -174,8 +178,12 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}pub/
 $ChangeNamespace $CNFLAGS -u ${BASEURI}authorship/
 # Execute ChangeNamespace to get unmatched Authors into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}author/
-# Execute ChangeNamespace to get unmatched Journals into current namespace
+# Execute ChangeNamespace to get unmatched Organizations into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}org/
+# Execute ChangeNamespace to get unmatched Geographic Locations into current namespace
+$ChangeNamespace $CNFLAGS -u ${BASEURI}geo/
+# Execute ChangeNamespace to get unmatched Journals into current namespace
+$ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
 
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
