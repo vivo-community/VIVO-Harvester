@@ -39,7 +39,7 @@
 		<xsl:if test="typeOfResource='text'">
 			<rdf:description>
 				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
-				<ufVivo:harvestedBy>MODS-Harvester</ufVivo:harvestedBy>
+				<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 				<rdfs:label><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></rdfs:label>
 	
 				<xsl:if test="originInfo/issuance='monographic'">
@@ -122,7 +122,7 @@
 
 		<rdf:description>
 			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
-			<ufVivo:harvestedBy>MODS-Harvester</ufVivo:harvestedBy>
+			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
 			<core:publisherOf>
@@ -190,7 +190,7 @@
 				<xsl:if test="$type='corporate'">
 					<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'authorship/modsId_', $modsId, '_', namePart), ' ', '_-_SPACE_-_')" /></xsl:attribute>
 				</xsl:if>
-				<ufVivo:harvestedBy>MODS-Harvester</ufVivo:harvestedBy>
+				<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 				<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 				<core:authorNameAsListed><xsl:value-of select="namePart" /></core:authorNameAsListed>
@@ -212,7 +212,7 @@
 			<rdf:description>
 				<xsl:if test="$type='personal'">
 					<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName), ' ', '_-_SPACE_-_')" /></xsl:attribute>
-					<ufVivo:harvestedBy>MODS-Harvester</ufVivo:harvestedBy>
+					<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 					<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 					<foaf:firstName><xsl:value-of select="$firstName" /></foaf:firstName>
@@ -220,7 +220,7 @@
 				</xsl:if>
 				<xsl:if test="$type='corporate'">
 					<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
-					<ufVivo:harvestedBy>MODS-Harvester</ufVivo:harvestedBy>
+					<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 				</xsl:if>
 				<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
