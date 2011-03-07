@@ -10,6 +10,7 @@
 package org.vivoweb.harvester.fetch;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
+import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.IdListType;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -169,7 +170,15 @@ public abstract class NIHFetch {
 			env[0] = res.getWebEnv();
 			env[1] = res.getQueryKey();
 			env[2] = "" + res.getCount();//getIdList().getId().length;
-			env[3] = res.getIdList().getId()[0];
+			if(env[2] == null) {
+				throw new IllegalArgumentException("Query Has No Results");
+			}
+			IdListType ids = res.getIdList();
+			if(ids != null) {
+				env[3] = ids.getId()[0];
+			} else {
+				throw new IllegalArgumentException("Query Has No Results");
+			}
 			if(logMessage) {
 				log.info("Query resulted in a total of " + env[2] + " records.");
 			}
@@ -193,24 +202,31 @@ public abstract class NIHFetch {
 		int intBatchSize = Integer.parseInt(this.batchSize);
 //		log.debug("recToFetch: "+recToFetch);
 //		log.debug("intBatchSize: "+intBatchSize);
-		if(recToFetch <= intBatchSize) {
-			fetchRecords(runESearch(this.searchTerm), "0", "" + recToFetch);
-		} else {
-			String[] env = runESearch(this.searchTerm);
-			String WebEnv = env[0];
-			String QueryKey = env[1];
-			// sanity check for max records
-			if(Integer.parseInt(env[2]) < recToFetch) {
-				recToFetch = Integer.parseInt(env[2]);
-			}
-//			log.debug("recToFetch: "+recToFetch);
-			log.info("Fetching " + recToFetch + " records from search");
-			for(int x = recToFetch; x > 0; x -= intBatchSize) {
-				int maxRec = (x <= intBatchSize) ? x : intBatchSize;
-				int startRec = recToFetch - x;
-//				log.debug("maxRec: "+maxRec);
-//				log.debug("startRec: "+startRec);
-				fetchRecords(WebEnv, QueryKey, startRec + "", maxRec + "");
+		String[] env = null;
+		try {
+			env = runESearch(this.searchTerm);
+		} catch(IllegalArgumentException e) {
+			log.error(e.getMessage());
+		}
+		if(env != null) {
+			if(recToFetch <= intBatchSize) {
+				fetchRecords(env, "0", "" + recToFetch);
+			} else {
+				String WebEnv = env[0];
+				String QueryKey = env[1];
+				// sanity check for max records
+				if(Integer.parseInt(env[2]) < recToFetch) {
+					recToFetch = Integer.parseInt(env[2]);
+				}
+//				log.debug("recToFetch: "+recToFetch);
+				log.info("Fetching " + recToFetch + " records from search");
+				for(int x = recToFetch; x > 0; x -= intBatchSize) {
+					int maxRec = (x <= intBatchSize) ? x : intBatchSize;
+					int startRec = recToFetch - x;
+//					log.debug("maxRec: "+maxRec);
+//					log.debug("startRec: "+startRec);
+					fetchRecords(WebEnv, QueryKey, startRec + "", maxRec + "");
+				}
 			}
 		}
 	}

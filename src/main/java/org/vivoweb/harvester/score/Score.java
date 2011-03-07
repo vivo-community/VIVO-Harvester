@@ -295,7 +295,7 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("inputJena-predicates").withParameterValueMap("RUN_NAME", "PREDICATE").setDescription("for RUN_NAME, match ").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivoJena-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("number of records to process in batch - default 500 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("500").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("number of records to process in batch - default 500 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("100").setRequired(false));
 		return parser;
 	}
 	

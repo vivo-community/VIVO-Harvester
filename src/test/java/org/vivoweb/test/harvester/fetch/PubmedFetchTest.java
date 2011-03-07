@@ -59,6 +59,20 @@ public class PubmedFetchTest extends TestCase {
 	 * {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
 	 * PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
+	 */
+	public final void testPubmedFetchNoRecordQuery() throws IOException {
+		log.info("BEGIN testPubmedFetchNoRecordQuery");
+		//test 1 record
+		new PubmedFetch("test@test.com", "", "100", "100", this.rh).execute();
+		assertFalse(this.rh.iterator().hasNext());
+		log.info("END testPubmedFetchNoRecordQuery");
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.vivoweb.harvester.fetch.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
+	 * @throws IOException error
 	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
 	 */

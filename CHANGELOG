@@ -8,7 +8,7 @@
 	Logging now logs to single file
 	
 	Match
-		now uses TDB as the backend for inprocess temporary jena models
+		Create methods for renaming nodes and linking nodes, based on a match meeting a threshold
 	D2RMap
 		now supports csv files
 	MODS
@@ -28,7 +28,7 @@
 		Removed exact match, foriegnkey match, and name match
 		Removed output model for scoring
 		Combined previous functions along with cmw python code to create weighted search
-		Create methods for renaming nodes and linking nodes, based on a match meeting a threshold
+		now uses TDB as the backend for inprocess temporary jena models
 	Node Renaming
 		Moved to Qualify Package
 		Removed matching algorithms (use score ahead of node renaming)
