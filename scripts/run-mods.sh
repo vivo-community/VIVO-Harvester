@@ -9,6 +9,10 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri - initial API and implementation
 
+#TODO: from Nick Rejack's MODS mapping, "if <publisher> has <place><placeTerm>, use to match core:hasGeographicLocation (target is core:Geographic Location) on core:Publisher"
+#TODO: from MODS mapping: "core:hasPublicationVenue linked to bibo:Journal (match on name, stub if no match)"
+
+
 # Exit on first error
 set -e
 
@@ -56,11 +60,15 @@ BPMID="http://purl.org/ontology/bibo/pmid"
 CTITLE="http://vivoweb.org/ontology/core#title"
 BISSN="http://purl.org/ontology/bibo/ISSN"
 PVENUEFOR="http://vivoweb.org/ontology/core#publicationVenueFor"
+LINKAUTH="http://vivoweb.org/ontology/core#linkedAuthor"
 LINKINFORES="http://vivoweb.org/ontology/core#linkedInformationResource"
 AUTHINAUTH="http://vivoweb.org/ontology/core#authorInAuthorship"
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 BASEURI="http://vivoweb.org/harvest/mods/"
+
+
+
 
 # clear old translates
 rm -rf $RDFRHDIR
@@ -79,7 +87,6 @@ rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY -d ../dumpfile1.xml
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -90,6 +97,9 @@ backup-path $MODELDIR $BACKMODEL
 # Clear old H2 score data
 rm -rf $SCOREDATADIR
 
+# Clear old H2 match data
+rm -rf $MATCHEDDIR
+
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
 
@@ -97,20 +107,47 @@ rm -rf $TEMPCOPYDIR
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
 MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckEmpty=$CHECKEMPTY"
+MATCHEDINPUT="-i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
 # Execute Score to disambiguate data in "scoring" JENA model
-#WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$CWEMAIL -WwEmail=0.5 -PwEmail=$SWEMAIL"
-LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
-FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$SFNAME"
-#MNAME="-AmName=$LEVDIFF -FmName=$CMNAME -WmName=0.1 -PmName=$CMNAME"
-$Score $SCOREMODELS $FNAME $LNAME -n ${BASEURI}author/
-$Transfer $SCOREINPUT -d ../dumpfile2.xml
-#$Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
-exit
+TITLE="-Atitle=$EQTEST -Ftitle=$RDFSLABEL -Wtitle=1.0 -Ptitle=$RDFSLABEL"
 
-# Find matches using scores and rename nodes to matching uri and clear literals
-#$Match $SCOREINPUT $SCOREDATA -t 0.7 -r -c
+$Score $SCOREMODELS $TITLE -n  ${BASEURI}pub/
+$Match $SCOREINPUT $SCOREDATA -t 0.7 -r
+
+# clear H2 score data Model
+rm -rf $SCOREDATADIR
+
+
+#Author and Organization match
+LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
+FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$FFNAME"
+RDFSLABELSCORE="-ArdfsLabel=$LEVDIFF -FrdfsLabel=$RDFSLABEL -WrdfsLabel=1.0 -PrdfsLabel=$RDFSLABEL"
+
+$Score $SCOREMODELS $FNAME $LNAME -n ${BASEURI}author/
+$Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}org/
+$Match $SCOREINPUT $SCOREDATA -t 0.7 -r
+
+
+# clear H2 score data Model
+rm -rf $SCOREDATADIR
+
+# Clear old H2 temp copy of input (URI here is hardcoded in Score)
+$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
+
+
+#Authorship match
+AUTHPUB="-Aauthpub=$EQTEST -Fauthpub=$LINKINFORES -Wauthpub=0.5 -Pauthpub=$LINKINFORES"
+AUTHAUTH="-Aauthauth=$EQTEST -Fauthauth=$LINKAUTH -Wauthauth=0.5 -Pauthauth=$LINKAUTH"
+
+$Score $SCOREMODELS $AUTHPUB $AUTHAUTH -n ${BASEURI}authorship/
+$Match $SCOREINPUT $SCOREDATA -t 0.7 -r
+
+
+
+
+
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-auths"
@@ -124,56 +161,12 @@ rm -rf $SCOREDATADIR
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
 
-MATCHEDINPUT="-i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY"
-SCOREMODELS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
-# find the originally ingested publication
-#$Score $SCOREMODELS -Apmid=$EQTEST -Fpmid=$BPMID -Wpmid=1.0 -Ppmid=$BPMID -n ${BASEURI}pub/
 
-# find the originally ingested journal
-TITLE="-Atitle=$EQTEST -Ftitle=$CTITLE -Wtitle=0.34 -Ptitle=$CTITLE"
-ISSN="-Aissn=$EQTEST -Fissn=$BISSN -Wissn=0.34 -Pissn=$BISSN"
-JOURNALPUB="-Ajournalpub=$EQTEST -Fjournalpub=$PVENUEFOR -Wjournalpub=0.34 -Pjournalpub=$PVENUEFOR"
-#$Score $SCOREMODELS $TITLE $ISSN $JOURNALPUB -n ${BASEURI}journal/
-
-# Find matches using scores and rename nodes to matching uri and clear literals
-#$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
-rm -rf $SCOREDATADIR
-
-RDFSLAB="-Ardfslabel=$EQTEST -Frdfslabel=$RDFSLABEL -Wrdfslabel=0.5 -Prdfslabel=$RDFSLABEL"
-
-# find the originally ingested Authorship
-#$Score $SCOREMODELS $RDFSLAB -Aauthpub=$EQTEST -Fauthpub=$LINKINFORES -Wauthpub=0.5 -Pauthpub=$LINKINFORES -n ${BASEURI}authorship/
-
-# Find matches using scores and rename nodes to matching uri and clear literals
-#$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
-rm -rf $SCOREDATADIR
-
-# find the originally ingested  Author
-#$Score $SCOREMODELS $RDFSLAB -Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Wauthtoship=0.5 -Pauthtoship=$AUTHINAUTH -n ${BASEURI}author/
-
-# Find matches using scores and rename nodes to matching uri and clear literals
-#$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
-
-#Dump score
-#$Transfer $SCOREINPUT -d score.rdf
-
-#Dump Match
-#$Transfer $MATCHEDINPUT -d match.rdf
-
-# clear H2 score data Model
-rm -rf $SCOREDATADIR
-
-#remove score statements
-$Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
-
-$Transfer $MATCHEDINPUT -d ../dumpfile3.xml
-$Transfer $SCOREINPUT -d ../dumpfile4.xml
 
 
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
-#CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 # Execute ChangeNamespace to get unmatched Publications into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}pub/
@@ -182,16 +175,8 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}authorship/
 # Execute ChangeNamespace to get unmatched Authors into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}author/
 # Execute ChangeNamespace to get unmatched Journals into current namespace
-$ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
+$ChangeNamespace $CNFLAGS -u ${BASEURI}org/
 
-$Transfer $SCOREINPUT -d ../dumpfile5.xml
-
-
-# backup H2 matched Model
-BACKMATCHED="matched"
-backup-path $MATCHEDDIR $BACKMATCHED
-# uncomment to restore previous H2 matched Model
-#restore-path $MATCHEDDIR $BACKMATCHED
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 BACKPREDB="pretransfer"
@@ -204,10 +189,12 @@ ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
 # Find Subtractions
-#$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MATCHEDDBURL -SmodelName=$MATCHEDNAME -d $SUBFILE
+$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-#$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MATCHEDDBURL -MmodelName=$MATCHEDNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
 $Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+
+PREVHARVESTMODELINPUT="-i $VIVOCONFIG -ImodelName=$PREVHARVESTMODEL -IcheckEmpty=$CHECKEMPTY"
+
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml
@@ -222,10 +209,10 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
-#Dump vivo
-$Transfer -i $VIVOCONFIG -d ../vivo_end_dump.rdf
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
-
+/etc/init.d/tomcat stop
+/etc/init.d/apache2 reload
+/etc/init.d/tomcat start
