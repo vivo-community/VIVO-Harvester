@@ -13,10 +13,10 @@
 set -e
 
 # Set working directory
-HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
-HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
+DIR=$(cd "$(dirname "$0")"; cd ..; pwd)
+cd $DIR
 
-HARVESTER_TASK=csvmap
+HARVESTER_TASK=d2rcsvmap
 
 if [ -f scripts/env ]; then
   . scripts/env
@@ -40,4 +40,3 @@ $Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -o $VIVOCONFIG
 # Execute Transfer to dump "d2rStaging" JENA model rdf into file
 # Shown as example
 #$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -d dump.rdf.xml
-
