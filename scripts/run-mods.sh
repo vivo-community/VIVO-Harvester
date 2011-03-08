@@ -9,8 +9,6 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, Michael Barbieri - initial API and implementation
 
-#TODO: from Nick Rejack's MODS mapping: "core:hasPublicationVenue linked to bibo:Journal (match on name, stub if no match)"
-
 #KNOWN ISSUE: Seems to tie in matches that were originally in VIVO into the input model, so that if the input model is cleaned out of VIVO,
 #             then those matches will be removed.  Actually they remain, hidden, but much of their data including their rdf:type is gone.  An
 #             RDF export will show this.
