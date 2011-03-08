@@ -9,23 +9,38 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * @author Michael Barbieri (mbarbier@ufl.edu)
+ * This file does two things.  First, it removes bad characters from the input file so that they can be read as XML by XSLTranslator.  Second, it removes
+ * the unprefixed "xmlns=" attribute found in the root node of many MODS files, which left alone causes XSLTranslator to explode as if by magic.
  */
 public class SanitizeMODSXML {
 	/**
@@ -79,8 +94,8 @@ public class SanitizeMODSXML {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SanitizeMODSXML");
-		parser.addArgument(new ArgDef().setLongOpt("inputPath").withParameter(true, "INPUT_PATH").setDescription("Path to input file").setRequired(true));
-		parser.addArgument(new ArgDef().setLongOpt("outputPath").withParameter(true, "OUTPUT_PATH").setDescription("Path of file to output (will overwrite)").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputPath").withParameter(true, "INPUT_PATH").setDescription("Path to folder containing input files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputPath").withParameter(true, "OUTPUT_PATH").setDescription("Path of folder to which to write output files").setRequired(true));
 		return parser;
 	}
 	
@@ -164,8 +179,56 @@ public class SanitizeMODSXML {
 	 */
 	private void sanitizeFile(String inputFilePath, String outputFilePath) throws IOException {
 		String xmlData = readFile(inputFilePath);
+		xmlData = removeBadAttribute(xmlData);
 		writeFile(outputFilePath, xmlData);
 	}
+	
+
+	/**
+	 * Removes the unprefixed "xmlns" attribute from the root node.
+	 * @param inputXml the input XML
+	 * @return the XML with the bad attribute removed
+	 * @throws IOException error reading XML
+	 */
+	private String removeBadAttribute(String inputXml) throws IOException {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			Document doc = factory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(inputXml.getBytes("utf-8"))));
+			Element documentElement = doc.getDocumentElement();
+			if(documentElement.hasAttribute("xmlns")) {
+				log.debug("Removing xmlns element");
+				documentElement.removeAttribute("xmlns");
+			}
+			return xmlToString(doc);
+		}
+		catch(SAXException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+	}
+	
+	
+	/**
+	 * Takes a Document and turns it into a String
+	 * @param doc the Document to serialize
+	 * @return the string version
+	 * @throws IOException if a problem occurred in conversion
+	 */
+	private String xmlToString(Document doc) throws IOException {
+        try {
+            StringWriter stringWriter = new StringWriter();
+            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(stringWriter));
+            return stringWriter.getBuffer().toString();
+        } catch (TransformerConfigurationException e) {
+            throw new IOException(e.getMessage(), e);
+        } catch (TransformerException e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
+	
 	
 	/**
 	 * Loads an entire file into a String.
