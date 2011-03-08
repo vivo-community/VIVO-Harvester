@@ -4,7 +4,7 @@
   are made available under the terms of the new BSD license
   which accompanies this distribution, and is available at
   http://www.opensource.org/licenses/bsd-license.html
-  
+
   Contributors:
       Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
 -->
@@ -13,6 +13,13 @@
 	The style sheet requires xmlns for each prefix you use in constructing
 	the new elements
 -->
+
+<!--
+KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of different genres such as Book.  Current MODS mapping calls for assuming only
+             one (non-nested) relatedItem and assuming it is always a Journal.  That is how this is currently implemented.  Need to talk with Nick about
+             this issue. 
+-->
+
 
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -25,7 +32,6 @@
 
 	<xsl:output method="xml" indent="yes" />
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/mods/</xsl:variable>
-	<xsl:variable name="isbn" select="identifier[@type='isbn']" />
 
 	<xsl:template match="/modsCollection">
 		<rdf:RDF>
@@ -35,32 +41,47 @@
 
 	<xsl:template match="mods">
 		<xsl:variable name="modsId" select="replace(replace(@ID,':','_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
+		<xsl:variable name="isbn" select="identifier[@type='isbn']" />
+		
+		<xsl:variable name="title">
+			<xsl:if test="normalize-space(titleInfo/title)=''"> 
+				<xsl:value-of select="'(untitled)'" />
+			</xsl:if>
+			<xsl:if test="normalize-space(titleInfo/title)!=''"> 
+				<xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" />
+			</xsl:if>
+		</xsl:variable>
 
 		<xsl:if test="typeOfResource='text'">
 			<rdf:description>
 				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 				<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
-				<rdfs:label><xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" /></rdfs:label>
+				<rdfs:label><xsl:value-of select="$title" /></rdfs:label>
 
-				<xsl:if test="originInfo/issuance='monographic'">
-					<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-				</xsl:if>
-				<xsl:if test="originInfo/issuance!='monographic'">
-					<xsl:choose>
-						<xsl:when test="genre='book'" >
-							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-						</xsl:when>
-						<xsl:when test="genre='periodical'" >
-							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-						</xsl:when>
-						<xsl:when test="genre='academic journal'" >
-							<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-						</xsl:when>
-						<xsl:when test="genre='conference publication'" >
-							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
-						</xsl:when>
-					</xsl:choose>
-				</xsl:if>
+				<xsl:choose>
+					<xsl:when test="originInfo/issuance='monographic'">
+						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="genre='book'" >
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+							</xsl:when>
+							<xsl:when test="genre='periodical'" >
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+							</xsl:when>
+							<xsl:when test="genre='academic journal'" >
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+							</xsl:when>
+							<xsl:when test="genre='conference publication'" >
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+							</xsl:when>
+							<xsl:otherwise>
+								<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>
 
 				<core:dateTimeValue><xsl:value-of select="originInfo/dateIssued"/></core:dateTimeValue>
 				<core:supplementalInformation><xsl:value-of select="note" /></core:supplementalInformation>
@@ -97,7 +118,7 @@
 				<xsl:apply-templates select="originInfo/place/placeTerm" mode="withinPub">
 					<xsl:with-param name="modsId" select="$modsId" />
 				</xsl:apply-templates>
-				<xsl:apply-templates select="relatedItem[@type='host']/titleInfo/title" mode="withinPub">
+				<xsl:apply-templates select="relatedItem[@type='host']" mode="withinPub">
 					<xsl:with-param name="modsId" select="$modsId" />
 				</xsl:apply-templates>
 			</rdf:description>
@@ -111,16 +132,25 @@
 			<xsl:apply-templates select="originInfo/place/placeTerm" mode="standAlone">
 				<xsl:with-param name="modsId" select="$modsId" />
 			</xsl:apply-templates>
-			<xsl:apply-templates select="relatedItem[@type='host']/titleInfo/title" mode="standAlone">
+			<xsl:apply-templates select="relatedItem[@type='host']" mode="standAlone">
 				<xsl:with-param name="modsId" select="$modsId" />
 			</xsl:apply-templates>
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="relatedItem[@type='host']/titleInfo/title" mode="withinPub">
+	<xsl:template match="relatedItem[@type='host']" mode="withinPub">
 		<xsl:param name='modsId' />
 
-		<xsl:variable name="label" select="." />
+		<xsl:variable name="title">
+			<xsl:if test="normalize-space(titleInfo/title)=''"> 
+				<xsl:value-of select="'(untitled)'" />
+			</xsl:if>
+			<xsl:if test="normalize-space(titleInfo/title)!=''"> 
+				<xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" />
+			</xsl:if>
+		</xsl:variable>
+
+		<xsl:variable name="label" select="$title" />
 		<xsl:variable name="uriLabel" select="replace(replace($label, ':', '_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
 
 		<core:hasPublicationVenue>
@@ -128,10 +158,19 @@
 		</core:hasPublicationVenue>
 	</xsl:template>
 
-	<xsl:template match="relatedItem[@type='host']/titleInfo/title" mode="standAlone">
+	<xsl:template match="relatedItem[@type='host']" mode="standAlone">
 		<xsl:param name='modsId' />
 
-		<xsl:variable name="label" select="." />
+		<xsl:variable name="title">
+			<xsl:if test="normalize-space(titleInfo/title)=''"> 
+				<xsl:value-of select="'(untitled)'" />
+			</xsl:if>
+			<xsl:if test="normalize-space(titleInfo/title)!=''"> 
+				<xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" />
+			</xsl:if>
+		</xsl:variable>
+
+		<xsl:variable name="label" select="$title" />
 		<xsl:variable name="uriLabel" select="replace(replace($label, ':', '_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
 
 		<rdf:description>
@@ -139,13 +178,85 @@
 			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal"></rdf:type>
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
+			<core:dateTimeValue><xsl:value-of select="originInfo/dateIssued"/></core:dateTimeValue>
 			<core:publicationVenueFor>
 				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 			</core:publicationVenueFor>
+			
+			<xsl:apply-templates select="originInfo/publisher" mode="withinJournal">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:apply-templates>
+			<xsl:apply-templates select="originInfo/place/placeTerm" mode="withinJournal">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:apply-templates>
 		</rdf:description>
+
+		<xsl:apply-templates select="originInfo/publisher" mode="standAloneForJournal">
+			<xsl:with-param name="modsId" select="$modsId" />
+			<xsl:with-param name="journalUriLabel" select="$uriLabel" />
+		</xsl:apply-templates>
+		<xsl:apply-templates select="originInfo/place/placeTerm" mode="standAloneForJournal">
+			<xsl:with-param name="modsId" select="$modsId" />
+			<xsl:with-param name="journalUriLabel" select="$uriLabel" />
+		</xsl:apply-templates>
+
 	</xsl:template>
 
 
+	<xsl:template match="originInfo/place/placeTerm" mode="withinJournal">
+		<xsl:param name='modsId' />
+
+		<xsl:variable name="label" select="." />
+
+		<core:hasGeographicLocation>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+		</core:hasGeographicLocation>
+	</xsl:template>
+
+	<xsl:template match="originInfo/place/placeTerm" mode="standAloneForJournal">
+		<xsl:param name='modsId' />
+		<xsl:param name='journalUriLabel' />
+
+		<xsl:variable name="label" select="." />
+
+		<rdf:description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#GeographicLocation"></rdf:type>
+			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
+			<core:geographicLocationOf>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'journal/', $journalUriLabel)" /></xsl:attribute>
+			</core:geographicLocationOf>
+		</rdf:description>
+	</xsl:template>
+
+	<xsl:template match="originInfo/publisher" mode="withinJournal">
+		<xsl:param name='modsId' />
+
+		<xsl:variable name="label" select="." />
+
+		<core:publisher>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+		</core:publisher>
+	</xsl:template>
+
+	<xsl:template match="originInfo/publisher" mode="standAloneForJournal">
+		<xsl:param name='modsId' />
+		<xsl:param name='journalUriLabel' />
+
+		<xsl:variable name="label" select="." />
+
+		<rdf:description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
+			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
+			<core:publisherOf>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'journal/', $journalUriLabel)" /></xsl:attribute>
+			</core:publisherOf>
+		</rdf:description>
+
+	</xsl:template>
 
 
 
