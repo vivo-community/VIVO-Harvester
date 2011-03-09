@@ -42,11 +42,11 @@ import org.xml.sax.SAXException;
  */
 public class SanitizeMODSXML {
 	/**
-	 * The XML file to sanitize.
+	 * The folder containing the XML files to sanitize.
 	 */
 	private final String inputPath;
 	/**
-	 * The sanitized XML file.
+	 * The folder that will contain the sanitized XML files.
 	 */
 	private final String outputPath;
 	/**
