@@ -77,7 +77,7 @@ public class XPathTool {
 	 * @return the value of the selection
 	 * @throws IOException error reading xml file
 	 */
-	public static String getXPathResutl(String xmlFile, String expression) throws IOException {
+	public static String getXPathResult(String xmlFile, String expression) throws IOException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true); // never forget this!
@@ -99,7 +99,7 @@ public class XPathTool {
 	 * @throws IOException error executing
 	 */
 	public void execute() throws IOException {
-		System.out.println(getXPathResutl(this.xml, this.exp));
+		System.out.println(getXPathResult(this.xml, this.exp));
 	}
 	
 	/**

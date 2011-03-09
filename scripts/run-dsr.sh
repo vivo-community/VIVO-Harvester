@@ -120,7 +120,7 @@ rm -rf $SCOREDATADIR
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
 
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
@@ -135,7 +135,7 @@ $Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$U
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
 
 # Find matches using scores and rename nodes to matching uri clearing types and literals
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
 
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
@@ -153,7 +153,7 @@ COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COROLEOF -Pperson=$COPIROLEOF"
 $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data

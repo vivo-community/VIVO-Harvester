@@ -34,6 +34,7 @@ MAX_MEM=2048m
 #-XX:UseSSE=3					Use SSE3 Processor extensions
 #-XX:ParallelGCThreads=3		Maximum number of Parallel garbage collection tasks
 HARVESTER_JAVA_OPTS=""
+#HARVESTER_JAVA_OPTS="-XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
 OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM $HARVESTER_JAVA_OPTS -Dharvester-task=$HARVESTER_TASK_DATE -Dconsole-log-level=$LOG_LEVEL -Dconsole-log-level=$LOG_LEVEL -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/*"
 
 # define shorthand aliases
