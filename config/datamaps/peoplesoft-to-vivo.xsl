@@ -78,7 +78,6 @@
 			<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid"/></ufVivo:ufid>
 			<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-			<ufVivo:businessName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:busName" /></ufVivo:businessName>
 			<core:workEmail><xsl:value-of select="$this/db-people:email" /></core:workEmail>
 			<xsl:if test="normalize-space( $this/db-people:phone_area ) or normalize-space( $this/db-people:phone_num )">
 				<core:workPhone><xsl:value-of select="$this/db-people:phone_area"/><xsl:value-of select="$this/db-people:phone_num"/></core:workPhone>
@@ -103,7 +102,6 @@
 			</xsl:if>
 			<xsl:if test="normalize-space( $this/db-people:fullname )">
 				<rdfs:label><xsl:value-of select="$this/db-people:fullname"/></rdfs:label>
-				<ufVivo:activeDirName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:fullname"/></ufVivo:activeDirName>
 			</xsl:if>
 			<xsl:if test="normalize-space( $this/db-people:gatorlink )">
 				<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:gatorlink"/></ufVivo:gatorlink>

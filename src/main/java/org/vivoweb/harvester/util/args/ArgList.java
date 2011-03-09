@@ -104,6 +104,10 @@ public class ArgList {
 		StringBuilder sb = new StringBuilder();
 		String s;
 		Set<String> filters = new HashSet<String>();
+		filters.add("--inputUsername");
+		filters.add("--inputPassword");
+		filters.add("--outputUsername");
+		filters.add("--outputPassword");
 		filters.add("--username");
 		filters.add("--password");
 		filters.add("-.*dbUser");

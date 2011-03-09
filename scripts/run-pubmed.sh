@@ -52,12 +52,7 @@ FFNAME="http://xmlns.com/foaf/0.1/firstName"
 SFNAME="http://vivoweb.org/ontology/score#foreName"
 FLNAME="http://xmlns.com/foaf/0.1/lastName"
 CMNAME="http://vivoweb.org/ontology/core#middleName"
-BPMID="http://purl.org/ontology/bibo/pmid"
-CTITLE="http://vivoweb.org/ontology/core#title"
-BISSN="http://purl.org/ontology/bibo/ISSN"
-PVENUEFOR="http://vivoweb.org/ontology/core#publicationVenueFor"
 LINKINFORES="http://vivoweb.org/ontology/core#linkedInformationResource"
-AUTHINAUTH="http://vivoweb.org/ontology/core#authorInAuthorship"
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 BASEURI="http://vivoweb.org/harvest/pubmed/"
@@ -138,48 +133,53 @@ backup-path $SCOREDATADIR $BACKSCOREDATA
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
 
-# Clear old H2 temp copy
-rm -rf $TEMPCOPYDIR
+# Clear old H2 temp copy of input
+$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
 
 MATCHEDINPUT="-i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREMODELS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
 # find the originally ingested publication
+BPMID="http://purl.org/ontology/bibo/pmid"
 $Score $SCOREMODELS -Apmid=$EQTEST -Fpmid=$BPMID -Wpmid=1.0 -Ppmid=$BPMID -n ${BASEURI}pub/
 
-# find the originally ingested journal
-TITLE="-Atitle=$EQTEST -Ftitle=$CTITLE -Wtitle=1.0 -Ptitle=$CTITLE"
-ISSN="-Aissn=$EQTEST -Fissn=$BISSN -Wissn=1.0 -Pissn=$BISSN"
-JOURNALPUB="-Ajournalpub=$EQTEST -Fjournalpub=$PVENUEFOR -Wjournalpub=1.0 -Pjournalpub=$PVENUEFOR"
-$Score $SCOREMODELS $TITLE $ISSN $JOURNALPUB -n ${BASEURI}journal/
-
-# Find matches using scores and rename nodes to matching uri and clear literals
-$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
-rm -rf $SCOREDATADIR
-
-RDFSLAB="-Ardfslabel=$EQTEST -Frdfslabel=$RDFSLABEL -Wrdfslabel=0.5 -Prdfslabel=$RDFSLABEL"
-
-# find the originally ingested Authorship
-$Score $SCOREMODELS $RDFSLAB -Aauthpub=$EQTEST -Fauthpub=$LINKINFORES -Wauthpub=0.5 -Pauthpub=$LINKINFORES -n ${BASEURI}authorship/
-
-# Find matches using scores and rename nodes to matching uri and clear literals
-$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
-rm -rf $SCOREDATADIR
+# find the originally ingested journals
+BISSN="http://purl.org/ontology/bibo/ISSN"
+$Score $SCOREMODELS -Aissn=$EQTEST -Fissn=$BISSN -Wissn=1.0 -Pissn=$BISSN -n ${BASEURI}journal/
 
 # find the originally ingested  Author
-$Score $SCOREMODELS $RDFSLAB -Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Wauthtoship=0.5 -Pauthtoship=$AUTHINAUTH -n ${BASEURI}author/
+AUTHINAUTH="http://vivoweb.org/ontology/core#authorInAuthorship"
+RDFSLAB="-Ardfslabel=$EQTEST -Frdfslabel=$RDFSLABEL -Wrdfslabel=0.5 -Prdfslabel=$RDFSLABEL"
+AUTHSHIPLINK="-Aauthtoship=$EQTEST -Fauthtoship=$AUTHINAUTH -Wauthtoship=0.5 -Pauthtoship=$AUTHINAUTH"
+$Score $SCOREMODELS $RDFSLAB $AUTHSHIPLINK -n ${BASEURI}author/
 
-# Find matches using scores and rename nodes to matching uri and clear literals
+# Find matches using scores and rename nodes to matching uri
 $Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
-
-#Dump score
-$Transfer $SCOREINPUT -d score.rdf
-
-#Dump Match
-$Transfer $MATCHEDINPUT -d match.rdf
 
 # clear H2 score data Model
 rm -rf $SCOREDATADIR
+
+# Clear old H2 temp copy of input
+$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
+
+# find the originally ingested Authorship
+LINKINFORES="http://vivoweb.org/ontology/core#linkedInformationResource"
+LINKEDAUTH="http://vivoweb.org/ontology/core#linkedAuthor"
+AUTHLINK="-Aauthlink=$EQTEST -Fauthlink=$LINKEDAUTH -Wauthlink=0.5 -Pauthlink=$LINKEDAUTH"
+PUBLINK="-Apublink=$EQTEST -Fpublink=$LINKINFORES -Wpublink=0.5 -Ppublink=$LINKINFORES"
+$Score $SCOREMODELS $AUTHLINK $PUBLINK -n ${BASEURI}authorship/
+
+# Find matches using scores and rename nodes to matching uri and clear literals
+$Match $MATCHEDINPUT $SCOREDATA -t 1.0 -r
+
+# clear H2 score data Model
+rm -rf $SCOREDATADIR
+
+#Dump score
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d score.rdf
+
+#Dump Match
+$Transfer $MATCHOUTPUT -d match.rdf
 
 #remove score statements
 $Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
@@ -190,8 +190,9 @@ CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
 $ChangeNamespace $CNFLAGS -u ${BASEURI}pub/
 # Execute ChangeNamespace to get unmatched Authorships into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}authorship/
-# Execute ChangeNamespace to get unmatched Authors into current namespace
+# Uncomment to Execute ChangeNamespace to get unmatched Authors into current namespace
 #$ChangeNamespace $CNFLAGS -u ${BASEURI}author/
+# Clear all author stubs (will do nothing if the above author ChangeNamespace is uncommented
 $Qualify $MATCHEDINPUT -n ${BASEURI}author/ -c
 # Execute ChangeNamespace to get unmatched Journals into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
@@ -231,4 +232,4 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 #Dump vivo
-#$Transfer -i $VIVOCONFIG -d vivo_end.rdf
+#$Transfer -o $VIVOCONFIG -d vivo_end.rdf

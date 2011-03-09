@@ -256,241 +256,241 @@
 		<xsl:variable name="lo" select="'abcdefghijklmnopqrstuvwxyz '"/>
 		<xsl:variable name="pbType" select="string(self::PublicationType)" />
 		<xsl:choose>
-					<xsl:when test="translate(string($pbType),$up,$lo)='addresses'">
-						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='atlases'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='bibliography'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='biobibliography'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='biography'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='book reviews'">
-						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='case reports'">
-						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CaseStudy" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='charts'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='classical article'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='clinical conference'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase i'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase ii'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase iii'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase iv'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='collected correspondence'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='collected works'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>					<xsl:when test="translate(string($pbType),$up,$lo)='comment'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='comparative study'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='congresses'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='consensus development conference'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='consensus development conference, nih'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='controlled clinical trial'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='cookbooks'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='corrected and republished article'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='database'">
-						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Database" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='diaries'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='dictionary'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='directory'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='documentaries and factual films'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Film" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='drawings'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='duplicate publication'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='editorial'">
-						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EditorialArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='encyclopedias'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='essays'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>			
-					<xsl:when test="translate(string($pbType),$up,$lo)='evaluation studies'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Academic Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='festschrift'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='fictional work'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='formularies'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<!-- Government Publications -->
-					<xsl:when test="translate(string($pbType),$up,$lo)='guidebooks'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='guideline'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='handbooks'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='historical article'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='incunabula'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='indexes'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='instruction'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
-					</xsl:when>
-					<!-- Interactive Tutorial -->
-					<xsl:when test="translate(string($pbType),$up,$lo)='interview'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='introductory journal article'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate($pbType,$up,$lo)='journal article'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<!-- Lectures -->
-					<xsl:when test="translate(string($pbType),$up,$lo)='legal cases'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/LegalCaseDocument" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='legislation'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Legislation" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='maps'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Map" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='meeting abstracts'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ConferenceProceedings" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='meta-analysis'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='multicenter study'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='news'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='newspaper article'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='patents'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='patient education handout'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='periodical index'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='periodicals'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Periodicals" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='pharmacopoeias'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='pictorial works'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='portraits'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='practice guideline'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='randomized controlled trial'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='review'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-						<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='statistics'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='study characteristics'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='technical report'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Report" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='textbooks'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='twin study'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<xsl:when test="translate(string($pbType),$up,$lo)='validation studies'">
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					</xsl:when>
-					<!--  Webcasts -->
-					<xsl:otherwise>
-						<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
-					</xsl:otherwise>
-				</xsl:choose>
+			<xsl:when test="translate(string($pbType),$up,$lo)='addresses'">
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='atlases'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='bibliography'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='biobibliography'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='biography'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='book reviews'">
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='case reports'">
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CaseStudy" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='charts'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='classical article'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='clinical conference'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase i'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase ii'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase iii'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='clinical trial, phase iv'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='collected correspondence'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='collected works'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>					<xsl:when test="translate(string($pbType),$up,$lo)='comment'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='comparative study'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='congresses'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='consensus development conference'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='consensus development conference, nih'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Proceedings" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='controlled clinical trial'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='cookbooks'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='corrected and republished article'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='database'">
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Database" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='diaries'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='dictionary'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='directory'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='documentaries and factual films'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Film" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='drawings'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='duplicate publication'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='editorial'">
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#EditorialArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='encyclopedias'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='essays'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>			
+			<xsl:when test="translate(string($pbType),$up,$lo)='evaluation studies'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Academic Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='festschrift'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='fictional work'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='formularies'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<!-- Government Publications -->
+			<xsl:when test="translate(string($pbType),$up,$lo)='guidebooks'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='guideline'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='handbooks'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='historical article'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='incunabula'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='indexes'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='instruction'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
+			</xsl:when>
+			<!-- Interactive Tutorial -->
+			<xsl:when test="translate(string($pbType),$up,$lo)='interview'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='introductory journal article'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate($pbType,$up,$lo)='journal article'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<!-- Lectures -->
+			<xsl:when test="translate(string($pbType),$up,$lo)='legal cases'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/LegalCaseDocument" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='legislation'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Legislation" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='maps'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Map" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='meeting abstracts'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ConferenceProceedings" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='meta-analysis'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='multicenter study'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='news'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='newspaper article'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='patents'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='patient education handout'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='periodical index'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='periodicals'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Periodicals" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='pharmacopoeias'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/ReferenceSource" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='pictorial works'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='portraits'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Image" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='practice guideline'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Standard" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='randomized controlled trial'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='review'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='statistics'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='study characteristics'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='technical report'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Report" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='textbooks'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='twin study'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='validation studies'">
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			</xsl:when>
+			<!--  Webcasts -->
+			<xsl:otherwise>
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 </xsl:stylesheet>
