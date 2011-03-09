@@ -11,16 +11,17 @@ package org.vivoweb.harvester.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.repo.RecordHandler;
 
 /**
  * @author Michael Barbieri (mbarbier@ufl.edu)
- * Executes the command-line tool bibutils on all files in the specified folder, converting from a type specified by the name of the subfolder.  For example, files
- * in &lt;inputPath&gt;/bib will be converted from the bib format to the MODS format.
+ * Executes the command-line tool bibutils on all files in the specified folder, converting from a type specified in command line.
  */
 public class RunBibutils {
 	/**
@@ -28,13 +29,17 @@ public class RunBibutils {
 	 */
 	private final String bibutilsBasePath;
 	/**
-	 * The folder for the input files.  This should contain subfolders named for the format to convert from: bib, biblatex, copac, end, endx, isi, med, ris 
+	 * The format of the input files.  This determines which executable is used.  Acceptable values are bib, biblatex, copac, end, endx, isi, med, ris.
 	 */
-	private final String inputPath;
+	private final String inputFormat;
 	/**
-	 * The folder for the converted MODS XML files.  This will be flattened (contain no subfolders), with each file prefixed by its former type to avoid name collisions.
+	 * The record handler for the input files. 
 	 */
-	private final String outputPath;
+	private final RecordHandler inStore;
+	/**
+	 * The record handler for the converted MODS XML files.
+	 */
+	private final RecordHandler outStore;
 	/**
 	 * SLF4J Logger
 	 */
@@ -43,13 +48,15 @@ public class RunBibutils {
 	/**
 	 * Constructor
 	 * @param bibutilsBasePath the folder for the bibutils executables
-	 * @param inputPath the folder for the input files.
-	 * @param outputPath the folder for the converted MODS XML files
+	 * @param inputFormat the format to convert from
+	 * @param inStore the record handler for the input files.
+	 * @param outStore the record handler for the converted MODS XML files
 	 */
-	public RunBibutils(String bibutilsBasePath, String inputPath, String outputPath) {
+	public RunBibutils(String bibutilsBasePath, String inputFormat, RecordHandler inStore, RecordHandler outStore) {
 		this.bibutilsBasePath = stripFinalSlash(bibutilsBasePath);
-		this.inputPath = stripFinalSlash(inputPath);
-		this.outputPath = stripFinalSlash(outputPath);
+		this.inputFormat = inputFormat;
+		this.inStore = inStore;
+		this.outStore = outStore;
 		checkValidInputs();
 	}
 
@@ -65,9 +72,10 @@ public class RunBibutils {
 	/**
 	 * Constructor
 	 * @param argList option set of parsed args
+	 * @throws IOException if an error occurred setting up a record handler
 	 */
-	public RunBibutils(ArgList argList) {
-		this(argList.get("bibutilsBasePath"), argList.get("inputPath"), argList.get("outputPath"));
+	public RunBibutils(ArgList argList) throws IOException {
+		this(argList.get("b"), argList.get("f"), RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
 	}
 
 	/**
@@ -75,10 +83,13 @@ public class RunBibutils {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("SanitizeMODSXML");
+		ArgParser parser = new ArgParser("RunBibutils");
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("bibutilsBasePath").withParameter(true, "BIBUTILS_BASE_PATH").setDescription("Path to folder containing bibutils executables").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputPath").withParameter(true, "INPUT_PATH").setDescription("Path to folder containing input files").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputPath").withParameter(true, "OUTPUT_PATH").setDescription("Path of folder to which to write output files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("inputFormat").withParameter(true, "INPUT_FORMAT").setDescription("Format of the input files.  Acceptable values are bib, biblatex, copac, end, endx, isi, med, ris.").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("Record handler for input files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("Record handler for output files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
 
@@ -97,25 +108,26 @@ public class RunBibutils {
 	}
 
 	/**
-	 * Checks to make sure the input path and the output path are both directories. It not, log errors and explode.
+	 * Checks to make sure the bibutils base path is a directory and the input format is one of the acceptable values.  If
+	 * not, log errors and explode.
 	 * @throws RuntimeException if either input path or output path is not a directory
 	 */
 	private void checkValidInputs() {
-		File inputDir = new File(this.inputPath);
-		File outputDir = new File(this.outputPath);
+		File bibutilsBaseDir = new File(this.bibutilsBasePath);
 		
 		String errorMessage = "";
-		if(!inputDir.isDirectory()) {
-			String oneLineError = "Not a directory: " + this.inputPath;
+		if(!bibutilsBaseDir.isDirectory()) {
+			String oneLineError = "Not a directory: " + this.bibutilsBasePath;
 			log.error(oneLineError);
 			errorMessage += oneLineError + "\n";
 		}
-		if(outputDir.exists() && (!outputDir.isDirectory())) {
-			String oneLineError = "Not a directory: " + this.outputPath;
+
+		if(Arrays.asList("bib", "biblatex", "copac", "end", "endx", "isi", "med", "ris").contains(this.inputFormat)) {
+			String oneLineError = "Not a valid input format: " + this.inputFormat;
 			log.error(oneLineError);
 			errorMessage += oneLineError + "\n";
 		}
-		
+
 		if(!errorMessage.equals("")) {
 			errorMessage = errorMessage.substring(0, errorMessage.length() - 1); //strip last newline
 			throw new RuntimeException(errorMessage); //explode
@@ -129,10 +141,11 @@ public class RunBibutils {
 	 * @throws IOException if an error in reading or writing occurs
 	 */
 	public void execute() throws IOException {
+		
 	}
 
-	
-	
+
+
 	/**
 	 * Main method
 	 * @param args commandline arguments
