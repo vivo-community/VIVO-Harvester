@@ -136,7 +136,7 @@ public class RunBibutils {
 			errorMessage += oneLineError + "\n";
 		}
 
-		if(Arrays.asList("bib", "biblatex", "copac", "end", "endx", "isi", "med", "ris").contains(this.inputFormat)) {
+		if(!Arrays.asList("bib", "biblatex", "copac", "end", "endx", "isi", "med", "ris").contains(this.inputFormat)) {
 			String oneLineError = "Not a valid input format: " + this.inputFormat;
 			log.error(oneLineError);
 			errorMessage += oneLineError + "\n";
@@ -173,7 +173,7 @@ public class RunBibutils {
 		}
 	}
 
-	
+
 	/**
 	 * Translates a single record by using bibutils on it.  Bibutils works only on files, but we already have streams from the record handler, so
 	 * we write the streams out to temp files before calling bibutils on them.
@@ -190,11 +190,11 @@ public class RunBibutils {
 
 		String inputFileName = this.bibutilsBasePath + "/" + tempInputFile.getName();
 		String outputFileName = this.bibutilsBasePath + "/" + tempOutputFile.getName();
-		
+
 		String command = this.bibutilsBasePath + "/" + this.inputFormat + "2xml " + inputFileName + " " + outputFileName;
-		
+
 		runBibutilsCommand(command);
-		
+
 		FileInputStream fis = new FileInputStream(tempOutputFile);
 		for(int currentByte = fis.read(); currentByte != -1; currentByte = fis.read()) {
 			outStream.write(currentByte);
