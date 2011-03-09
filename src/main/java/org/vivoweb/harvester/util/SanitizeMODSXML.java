@@ -293,18 +293,26 @@ public class SanitizeMODSXML {
 		 * made sense only when that character was replaced by "ff", for example
 		 * "no performance di#erence between Gigabit Ethernet", where # represents Unicode 11
 		 */
+
+		/* No longer replacing because the bad characters were not produced by bibutils but by original source.  Different sources could have different
+		 * problems.  Simply removing bad characters instead.
+		 */
 		switch(character) {
 			case 11:
-				replacement = "ff";
+				//replacement = "ff";
+				replacement = "";
 				break;
 			case 12:
-				replacement = "fi";
+				//replacement = "fi";
+				replacement = "";
 				break;
 			case 14:
-				replacement = "ffi";
+				//replacement = "ffi";
+				replacement = "";
 				break;
 			case 6:
-				replacement = "&gt;"; //might be "greater than or equal to"
+				//replacement = "&gt;"; //might be "greater than or equal to"
+				replacement = "";
 				break;
 			default:
 				replacement = String.valueOf(character);
