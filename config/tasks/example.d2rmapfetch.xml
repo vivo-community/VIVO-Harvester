@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<Param name="d2rMapConfigFile">config/datamaps/example-d2rmap.xml</Param>
+</Task>

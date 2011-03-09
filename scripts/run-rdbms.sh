@@ -13,8 +13,8 @@
 set -e
 
 # Set working directory
-DIR=$(cd "$(dirname "$0")"; cd ..; pwd)
-cd $DIR
+HARVESTERDIR=$(cd "$(dirname "$0")"; cd ..; pwd)
+cd $HARVESTERDIR
 
 HARVESTER_TASK=d2rdbmap
 
@@ -27,20 +27,58 @@ echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 BASEDIR=harvested-data/examples/$HARVESTER_TASK
 RDFRHDIR=$BASEDIR/rh-rdf
+RDFRHDBURL=jdbc:h2:$RDFRHDIR/store
+PREVHARVESTMODEL="http://vivoweb.org/ingest/people"
+ADDFILE="$BASEDIR/additions.rdf.xml"
+SUBFILE="$BASEDIR/subtractions.rdf.xml"
+MODELDIR=$BASEDIR/model
+MODELDBURL=jdbc:h2:$MODELDIR/store
+MODELNAME=people
+
+#clear old fetches/translates
+rm -rf $RDFRHDIR
 
 # Execute Fetch/Translate using D2RMap
-$D2RMapFetch -o $TFRH -OfileDir=$RDFRHDIR -u config/datamaps/example-d2rmap.xml -s person.rdf
+$D2RMapFetch -X config/tasks/example.d2rmapfetch.xml -o $H2RH -OdbUrl=$RDFRHDBURL
 
-# Execute Transfer to transfer rdf into "d2rStaging" JENA model
-$Transfer -h $TFRH -HfileDir=$RDFRHDIR -o $VIVOCONFIG -OmodelName=d2rStaging
+# backup fetch
+BACKRDF="rdf"
+backup-path $RDFRHDIR $BACKRDF
+# uncomment to restore previous fetch
+#restore-path $RDFRHDIR $BACKRDF
 
-# Execute Transfer to load "d2rStaging" JENA model into VIVO
-$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -o $VIVOCONFIG
+# Clear old H2 transfer model
+rm -rf $MODELDIR
 
-# Execute Transfer to dump "d2rStaging" JENA model rdf into file
-# Shown as example
-#$Transfer -i $VIVOCONFIG -ImodelName=d2rStaging -d dump.rdf.xml
+# Execute Transfer to import from record handler into local temp model
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
 
-#Update the example on the board
-###@TODO NEEDS TO BE CHANGED TO DIFF/TRANSFER!!
-#$Update -p $VIVOCONFIG -PmodelName=PreviousModelName -i $VIVOCONFIG -ImodelName=d2rStaging -v $VIVOCONFIG
+# backup H2 transfer Model
+BACKMODEL="model"
+backup-path $MODELDIR $BACKMODEL
+# uncomment to restore previous H2 transfer Model
+#restore-path $MODELDIR $BACKMODEL
+
+# Backup pretransfer vivo database, symlink latest to latest.sql
+BACKPREDB="pretransfer"
+backup-mysqldb $BACKPREDB
+# uncomment to restore pretransfer vivo database
+#restore-mysqldb $BACKPREDB
+
+# Find Subtractions
+$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
+# Find Additions
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+
+# Backup adds and subs
+backup-file $ADDFILE adds.rdf.xml
+backup-file $SUBFILE subs.rdf.xml
+
+# Apply Subtractions to Previous model
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
+# Apply Additions to Previous model
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
+# Apply Subtractions to VIVO
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
+# Apply Additions to VIVO
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE

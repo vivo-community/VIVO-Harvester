@@ -1,18 +1,30 @@
 /******************************************************************************************************************************
- * Copyright (c) 2011 Eliza Chan
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
  * All rights reserved.
  * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
  * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
  * Contributors:
- * Eliza Chan
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.SpecialEntities;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -31,7 +43,7 @@ public class D2RMapFetch {
 	/**
 	 * Record Handler to write records to
 	 */
-	private RecordHandler rh;
+	private RecordHandler outStore;
 	/**
 	 * D2RMap config file path
 	 */
@@ -44,17 +56,40 @@ public class D2RMapFetch {
 	 * D2RMap working directory
 	 */
 	private String d2rWDir;
-	
+
 	/**
 	 * Constructor
+	 * @param dbConn connection to the database
 	 * @param output RecordHandler to write data to
+	 * @param uriNameSpace namespace base for rdf records
+	 * @throws SQLException error talking with database
 	 */
-	public D2RMapFetch(RecordHandler output) {
-		this.rh = output;
+	public D2RMapFetch(Connection dbConn, RecordHandler output, String uriNameSpace) throws SQLException {
+		this(dbConn, output, uriNameSpace, null, null, null, null, null, null, null, null, null);
+	}
+
+	/**
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
+	 */
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("D2RMapFetch");
+
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
+		
+		// d2RMap specific arguments
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("d2rMapConfigFile").withParameter(true, "D2RMAP_CONFIG_FILE").setDescription("D2RMap config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("d2rMapOutputFile").withParameter(true, "D2RMAP_OUTPUT_FILE").setDescription("D2RMap output file").setRequired(false));
+		
+		// This option is for CSV data ingest only
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("d2rMapWorkingDirectory").withParameter(true, "D2RMAP_WORKING_DIRECTORY").setDescription("D2RMap working directory").setRequired(false));
+
+		return parser;
 	}
 	
 	/**
-	 * Constructor
+	 * Command line Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
@@ -63,7 +98,7 @@ public class D2RMapFetch {
 	}
 	
 	/**
-	 * Constructor
+	 * Arglist Constructor
 	 * @param opts option set of parsed args
 	 * @throws IOException error creating task
 	 */
@@ -71,13 +106,22 @@ public class D2RMapFetch {
 		this.d2rConfigPath = opts.get("u");
 		this.d2rOutputFile = opts.get("s");
 		this.d2rWDir = opts.get("a");
-		this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
+		this.outStore = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
 	}
 	
 	/**
-	 * Executes the task
+	 * Library style Constructor
+	 * @param rh Record Handler to write records to
 	 */
-	public void execute() {
+	public D2RMapFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) {
+		this.outStore = rh;
+	}
+
+	/**
+	 * Executes the task
+	 * @throws IOException error processing record handler or jdbc connection
+	 */
+	public void execute() throws IOException {
 		log.info("Fetch: Start");
 		D2rProcessor proc = new D2rProcessor();
 		proc.harvesterInit();
@@ -89,31 +133,13 @@ public class D2RMapFetch {
 				} else { // process data from database
 					output = proc.processMap("RDF/XML", this.d2rConfigPath);
 				}
-				this.rh.addRecord(this.d2rOutputFile, output, this.getClass());
+				this.outStore.addRecord("id", output, this.getClass());
 			}
 			
 		} catch(Exception e) {
 			System.err.println("D2RMapFetch errors: " + e);
 		}
 		log.info("Fetch: End");
-	}
-	
-	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("D2RMapFetch");
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		
-		// d2RMap specific arguments
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("d2rMapConfigFile").withParameter(true, "D2RMAP_CONFIG_FILE").setDescription("D2RMap config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("d2rMapOutputFile").withParameter(true, "D2RMAP_OUTPUT_FILE").setDescription("D2RMap output file").setRequired(true));
-		
-		// This option is for CSV data ingest only
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("d2rMapWorkingDirectory").withParameter(true, "D2RMAP_WORKING_DIRECTORY").setDescription("D2RMap working directory").setRequired(false));
-		return parser;
 	}
 	
 	/**
