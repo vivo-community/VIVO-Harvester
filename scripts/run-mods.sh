@@ -30,6 +30,7 @@ fi
 echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 BASEDIR=harvested-data/$HARVESTER_TASK
+RAWRHPRESANDIR=$BASEDIR/rh-raw-pre-san
 RAWRHDIR=$BASEDIR/rh-raw
 RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
 RDFRHDIR=$BASEDIR/rh-rdf
@@ -69,6 +70,14 @@ BASEURI="http://vivoweb.org/harvest/mods/"
 
 
 
+
+
+
+# clear old sanitizes
+rm -rf $RAWRHDIR
+
+# Sanitize data
+$SanitizeMODSXML -i $RAWRHPRESANDIR -o $RAWRHDIR
 
 # clear old translates
 rm -rf $RDFRHDIR
