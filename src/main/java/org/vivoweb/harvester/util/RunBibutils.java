@@ -24,6 +24,10 @@ import org.vivoweb.harvester.util.args.ArgParser;
  */
 public class RunBibutils {
 	/**
+	 * The folder for the bibutils executables. 
+	 */
+	private final String bibutilsBasePath;
+	/**
 	 * The folder for the input files.  This should contain subfolders named for the format to convert from: bib, biblatex, copac, end, endx, isi, med, ris 
 	 */
 	private final String inputPath;
@@ -35,13 +39,15 @@ public class RunBibutils {
 	 * SLF4J Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(SanitizeMODSXML.class);
-	
+
 	/**
 	 * Constructor
+	 * @param bibutilsBasePath the folder for the bibutils executables
 	 * @param inputPath the folder for the input files.
 	 * @param outputPath the folder for the converted MODS XML files
 	 */
-	public RunBibutils(String inputPath, String outputPath) {
+	public RunBibutils(String bibutilsBasePath, String inputPath, String outputPath) {
+		this.bibutilsBasePath = stripFinalSlash(bibutilsBasePath);
 		this.inputPath = stripFinalSlash(inputPath);
 		this.outputPath = stripFinalSlash(outputPath);
 		checkValidInputs();
@@ -55,26 +61,27 @@ public class RunBibutils {
 	public RunBibutils(String[] args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param argList option set of parsed args
 	 */
 	public RunBibutils(ArgList argList) {
-		this(argList.get("inputPath"), argList.get("outputPath"));
+		this(argList.get("bibutilsBasePath"), argList.get("inputPath"), argList.get("outputPath"));
 	}
-	
+
 	/**
 	 * Get the ArgParser for this task
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SanitizeMODSXML");
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("bibutilsBasePath").withParameter(true, "BIBUTILS_BASE_PATH").setDescription("Path to folder containing bibutils executables").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputPath").withParameter(true, "INPUT_PATH").setDescription("Path to folder containing input files").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputPath").withParameter(true, "OUTPUT_PATH").setDescription("Path of folder to which to write output files").setRequired(true));
 		return parser;
 	}
-	
+
 	/**
 	 * Checks to see if the given path has a slash at the end, and if so, removes it
 	 * @param path the path to check
@@ -88,7 +95,7 @@ public class RunBibutils {
 		
 		return returnValue;
 	}
-	
+
 	/**
 	 * Checks to make sure the input path and the output path are both directories. It not, log errors and explode.
 	 * @throws RuntimeException if either input path or output path is not a directory
@@ -114,7 +121,7 @@ public class RunBibutils {
 			throw new RuntimeException(errorMessage); //explode
 		}
 	}
-	
+
 
 
 	/**
@@ -123,8 +130,8 @@ public class RunBibutils {
 	 */
 	public void execute() throws IOException {
 	}
-	
 
+	
 	
 	/**
 	 * Main method
