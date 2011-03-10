@@ -153,7 +153,6 @@ public class RunBibutils {
 	 * Convert all files in inputPath directory to MODS XML according to specified type
 	 * @throws IOException if an error in reading or writing occurs
 	 */
-	@SuppressWarnings("unused")
 	public void execute() throws IOException {
 		File tempInputFile = File.createTempFile("vivo", ".bib");
 		tempInputFile.deleteOnExit();
