@@ -12,7 +12,6 @@ package org.vivoweb.harvester.util;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -154,23 +153,30 @@ public class RunBibutils {
 	 * Convert all files in inputPath directory to MODS XML according to specified type
 	 * @throws IOException if an error in reading or writing occurs
 	 */
+	@SuppressWarnings("unused")
 	public void execute() throws IOException {
-		
-		File tempInputFile = File.createTempFile("vivo", "xml");
-		File tempOutputFile = File.createTempFile("vivo", "xml");
-		
+		File tempInputFile = File.createTempFile("vivo", ".bib");
+		tempInputFile.deleteOnExit();
+
+		int translated = 0;
+		int skipped = 0;
+
 		for(Record r : this.inStore) {
 			if(r.needsProcessed(this.getClass()) || this.force) {
 				log.trace("Running bibutils on record " + r.getID());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				translateRecordWithBibutils(r, baos, tempInputFile, tempOutputFile);
+				translateRecordWithBibutils(r, baos, tempInputFile);
 				this.outStore.addRecord(r.getID(), baos.toString(), this.getClass());
 				r.setProcessed(this.getClass());
 				baos.close();
+				translated++;
 			} else {
 				log.trace("No bibutils run needed: " + r.getID());
+				skipped++;
 			}
 		}
+		log.info(String.valueOf(translated) + " records translated into MODS by Bibutils.");
+		log.info(String.valueOf(skipped) + " records did not need translation into MODS by Bibutils.");
 	}
 
 
@@ -178,53 +184,60 @@ public class RunBibutils {
 	 * Translates a single record by using bibutils on it.  Bibutils works only on files, but we already have streams from the record handler, so
 	 * we write the streams out to temp files before calling bibutils on them.
 	 * @param inputRecord the record pertaining to the input file
-	 * @param outStream the stream to which data from the output file will be written
+	 * @param outStream the stream to which data output by bibutils will be written
 	 * @param tempInputFile the file to which the input stream's data will be written
-	 * @param tempOutputFile the file to which bibutils will write its output
 	 * @throws IOException if an I/O problem occurred in any step of this process
 	 */
-	private void translateRecordWithBibutils(Record inputRecord, OutputStream outStream, File tempInputFile, File tempOutputFile) throws IOException
+	private void translateRecordWithBibutils(Record inputRecord, OutputStream outStream, File tempInputFile) throws IOException
 	{
 		FileOutputStream fos = new FileOutputStream(tempInputFile);
 		fos.write(inputRecord.getData().getBytes());
+		fos.close();
 
-		String inputFileName = this.bibutilsBasePath + "/" + tempInputFile.getName();
-		String outputFileName = this.bibutilsBasePath + "/" + tempOutputFile.getName();
-
-		String command = this.bibutilsBasePath + "/" + this.inputFormat + "2xml " + inputFileName + " " + outputFileName;
-
-		runBibutilsCommand(command);
-
-		FileInputStream fis = new FileInputStream(tempOutputFile);
-		for(int currentByte = fis.read(); currentByte != -1; currentByte = fis.read()) {
-			outStream.write(currentByte);
-		}
+		String command = this.bibutilsBasePath + "/" + this.inputFormat + "2xml " + tempInputFile.getAbsolutePath();
+		
+		runBibutilsCommand(command, outStream);
 	}
+
 
 	/**
 	 * Runs the specified command line.
 	 * @param command the command to execute
+	 * @param outStream the stream to which data output by bibutils will be written
 	 * @throws IOException if an error occurred
 	 */
-	private void runBibutilsCommand(String command) throws IOException
+	private void runBibutilsCommand(String command, OutputStream outStream) throws IOException
 	{
+		log.info("running command: " + command);
 		Process pr = Runtime.getRuntime().exec(command);
-		
-		BufferedReader processInputReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 
-		for(String line = processInputReader.readLine(); line != null; line = processInputReader.readLine()) {
-			log.info("Bibutils output: " + line);
+		BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+		boolean haveWrittenOpeningAngleBracket = false; //used to ignore bogusness
+		for(int currentByte = processOutputReader.read(); currentByte != -1; currentByte = processOutputReader.read()) {
+			
+			if(haveWrittenOpeningAngleBracket) {
+				outStream.write(currentByte);
+			}
+			else if(((char)currentByte) == '<') {
+				outStream.write(currentByte);
+				haveWrittenOpeningAngleBracket = true;
+			}
 		}
-		
+
+		BufferedReader processErrorReader = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+		for(String line = processErrorReader.readLine(); line != null; line = processErrorReader.readLine()) {
+			log.debug("Bibutils output: " + line);
+		}
+
 		int exitVal;
-		
+
 		try {
 			exitVal = pr.waitFor();
 		}
 		catch(InterruptedException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-		log.debug("Bibutils exited with error code " + exitVal);
+		log.info("Bibutils exited with error code " + exitVal);
 	}
 
 

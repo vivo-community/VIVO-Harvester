@@ -294,9 +294,15 @@ public class SanitizeMODSXML {
 		 * "no performance di#erence between Gigabit Ethernet", where # represents Unicode 11
 		 */
 
+		if((character >= 6) && (character <= 31))
+			replacement = "";
+		else
+			replacement = String.valueOf(character);
+		
 		/* No longer replacing because the bad characters were not produced by bibutils but by original source.  Different sources could have different
 		 * problems.  Simply removing bad characters instead.
 		 */
+		/*
 		switch(character) {
 			case 11:
 				//replacement = "ff";
@@ -304,6 +310,9 @@ public class SanitizeMODSXML {
 				break;
 			case 12:
 				//replacement = "fi";
+				replacement = "";
+				break;
+			case 19:
 				replacement = "";
 				break;
 			case 14:
@@ -317,6 +326,7 @@ public class SanitizeMODSXML {
 			default:
 				replacement = String.valueOf(character);
 		}
+		*/
 		return replacement;
 	}
 	
