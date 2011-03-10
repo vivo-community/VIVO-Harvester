@@ -162,7 +162,7 @@ public class RunBibutils {
 		int skipped = 0;
 
 		for(Record r : this.inStore) {
-			if(r.needsProcessed(this.getClass()) || this.force) {
+			if(this.force || r.needsProcessed(this.getClass())) {
 				log.trace("Running bibutils on record " + r.getID());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				translateRecordWithBibutils(r, baos, tempInputFile);

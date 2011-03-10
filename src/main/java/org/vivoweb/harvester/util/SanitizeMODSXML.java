@@ -53,7 +53,7 @@ public class SanitizeMODSXML {
 	 * SLF4J Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(SanitizeMODSXML.class);
-	
+
 	/**
 	 * Constructor
 	 * @param inStore the record handler for the input files.
@@ -65,7 +65,7 @@ public class SanitizeMODSXML {
 		this.outStore = outStore;
 		this.force = force;
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param args commandline arguments
@@ -74,7 +74,7 @@ public class SanitizeMODSXML {
 	public SanitizeMODSXML(String[] args) throws IOException {
 		this(new ArgList(getParser(), args));
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param argList option set of parsed args
@@ -96,9 +96,9 @@ public class SanitizeMODSXML {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Sanitize all files in directory
 	 * @throws IOException if an error in reading or writing occurs
@@ -108,7 +108,7 @@ public class SanitizeMODSXML {
 		int skipped = 0;
 
 		for(Record r : this.inStore) {
-			if(r.needsProcessed(this.getClass()) || this.force) {
+			if(this.force || r.needsProcessed(this.getClass())) {
 				log.trace("Sanitizing record " + r.getID());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				sanitizeRecord(r, baos);
@@ -124,7 +124,7 @@ public class SanitizeMODSXML {
 		log.info(String.valueOf(sanitized) + " records sanitized.");
 		log.info(String.valueOf(skipped) + " records did not need sanitization.");
 	}
-	
+
 	/**
 	 * Sanitize a MODS XML file
 	 * @param inputRecord the record containing data from the input file
@@ -164,8 +164,8 @@ public class SanitizeMODSXML {
 			throw new IOException(e.getMessage(), e);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Takes a Document and turns it into a String
 	 * @param doc the Document to serialize
@@ -221,7 +221,7 @@ public class SanitizeMODSXML {
 		return replacement;
 	}
 
-	
+
 	/**
 	 * Main method
 	 * @param args commandline arguments
