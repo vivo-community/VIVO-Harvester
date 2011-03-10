@@ -53,7 +53,7 @@ public class RunBibutils {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(SanitizeMODSXML.class);
+	private static Logger log = LoggerFactory.getLogger(RunBibutils.class);
 
 	/**
 	 * Constructor
