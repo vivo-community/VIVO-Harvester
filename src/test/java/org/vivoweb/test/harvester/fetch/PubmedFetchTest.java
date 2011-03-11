@@ -82,11 +82,15 @@ public class PubmedFetchTest extends TestCase {
 		new PubmedFetch("test@test.com", "1:8000[dp]", "1", "1", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
 		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		int count = 0;
 		for(Record r : this.rh) {
+			log.debug("record ID: "+r.getID());
 			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
 			Element elem = doc.getDocumentElement();
 			traverseNodes(elem.getChildNodes());
+			count++;
 		}
+		assertEquals(1, count);
 		log.info("END testPubmedFetchOneRecord");
 	}
 	
@@ -101,6 +105,12 @@ public class PubmedFetchTest extends TestCase {
 		//test 1200 records, batch 500
 		new PubmedFetch("test@test.com", "1:8000[dp]", "1200", "500", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
+		int count = 0;
+		for(Record r : this.rh) {
+			log.debug("record ID: "+r.getID());
+			count++;
+		}
+		assertEquals(1200, count);
 		log.info("END testPubmedFetchManyRecords");
 	}
 	

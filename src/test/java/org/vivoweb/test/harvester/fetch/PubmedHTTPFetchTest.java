@@ -72,15 +72,18 @@ public class PubmedHTTPFetchTest extends TestCase {
 		log.info("BEGIN testPubmedHTTPFetchMain");
 		this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
 		
-		//test 1 record
-		new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "5", "-b", "1", "-o", this.configFile.getAbsolutePath()}).execute();
+		//test 10 records
+		new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "10", "-b", "10", "-o", this.configFile.getAbsolutePath()}).execute();
 		assertTrue(this.rh.iterator().hasNext());
 		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		int count = 0;
 		for(Record r : this.rh) {
 			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
 			Element elem = doc.getDocumentElement();
 			traverseNodes(elem.getChildNodes());
+			count++;
 		}
+		assertEquals(10, count);
 		log.info("END testPubmedHTTPFetchMain");
 	}
 	

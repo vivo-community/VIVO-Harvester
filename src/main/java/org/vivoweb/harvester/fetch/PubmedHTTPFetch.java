@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -86,7 +85,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public PubmedHTTPFetch(ArgList argList) throws IOException {
-		super(argList, database, new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<[pP][mM][iI][dD].*?>(.*?)</[pP][mM][iI][dD]>.*?", null, PubmedHTTPFetch.class));
+		super(argList, database, PubmedFetch.baseXMLROS.clone());
 	}
 	
 	@Override
@@ -188,12 +187,18 @@ public class PubmedHTTPFetch extends NIHFetch {
 		String footerRegEx = "</PubmedArticleSet>";
 		log.debug("Sanitizing Output");
 		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
-		//		System.out.println("===============================\n          PRE-SANITIZE         \n===============================\n");
-		//		System.out.println(strInput);
-		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle").replaceAll(headerRegEx, "").replaceAll(footerRegEx, "");
+//		log.debug("====== PRE-SANITIZE ======\n"+strInput);
+		String newS = strInput.replaceAll(" xmlns=\".*?\"", "");
+		newS = newS.replaceAll("</?RemoveMe>", "");
+		//TODO: this seems really hacky here... revise somehow?
+		newS = newS.replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
+		newS = newS.replaceAll("</PubmedBookArticle>.*?<PubmedBookArticle", "</PubmedBookArticle>\n<PubmedBookArticle");
+		newS = newS.replaceAll("</PubmedArticle>.*?<PubmedBookArticle", "</PubmedArticle>\n<PubmedBookArticle");
+		newS = newS.replaceAll("</PubmedBookArticle>.*?<PubmedArticle", "</PubmedBookArticle>\n<PubmedArticle");
+		newS = newS.replaceAll(headerRegEx, "");
+		newS = newS.replaceAll(footerRegEx, "");
 		log.debug("XML File Length - Post Sanitze: " + newS.length());
-		//		System.out.println("===============================\n          POST-SANITIZE        \n===============================\n");
-		//		System.out.println(newS);
+//		log.debug("====== POST-SANITIZE ======\n"+newS);
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
 		getOsWriter().write(newS);

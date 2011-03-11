@@ -81,7 +81,7 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public NLMJournalFetch(ArgList argList) throws IOException {
-		super(argList, database, new XMLRecordOutputStream("Serial", "<?xml version=\"1.0\"?>\n<!DOCTYPE SerialSet PUBLIC \"-//NLM//DTD Serial, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<SerialSet>\n", "\n</SerialSet>", ".*?<NlmUniqueID>(.*?)</NlmUniqueID>.*?", null, NLMJournalFetch.class));
+		super(argList, database, new XMLRecordOutputStream(new String[]{"Serial"}, "<?xml version=\"1.0\"?>\n<!DOCTYPE SerialSet PUBLIC \"-//NLM//DTD Serial, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<SerialSet>\n", "\n</SerialSet>", ".*?<NlmUniqueID>(.*?)</NlmUniqueID>.*?", null, NLMJournalFetch.class));
 	}
 	
 	@Override

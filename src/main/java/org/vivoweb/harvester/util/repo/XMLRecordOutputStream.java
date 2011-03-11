@@ -31,7 +31,7 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	/**
 	 * the byte array that represent a closing record tag
 	 */
-	private byte[] closeTag;
+	private byte[][] closeTags;
 	/**
 	 * Regex to find the identifing data in the record data
 	 */
@@ -51,18 +51,21 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	
 	/**
 	 * Constructor
-	 * @param tagToSplitOn defines the record tag type
+	 * @param tagsToSplitOn defines the record tag types
 	 * @param headerInfo prepended to each record
 	 * @param footerInfo appended to each record
 	 * @param idLocationRegex regex to find the data to be used as ID
 	 * @param recordHandler RecordHandler to write records to
 	 * @param operator the class writing records
 	 */
-	public XMLRecordOutputStream(String tagToSplitOn, String headerInfo, String footerInfo, String idLocationRegex, RecordHandler recordHandler, Class<?> operator) {
+	public XMLRecordOutputStream(String[] tagsToSplitOn, String headerInfo, String footerInfo, String idLocationRegex, RecordHandler recordHandler, Class<?> operator) {
 		this.buf = new ByteArrayOutputStream();
 		this.rh = recordHandler;
 		this.idRegex = Pattern.compile(idLocationRegex);
-		this.closeTag = ("</" + tagToSplitOn + ">").getBytes();
+		this.closeTags = new byte[tagsToSplitOn.length][];
+		for(int x = 0; x < tagsToSplitOn.length; x++) {
+			this.closeTags[x] = ("</" + tagsToSplitOn[x] + ">").getBytes();
+		}
 		this.header = headerInfo;
 		this.footer = footerInfo;
 		this.opClass = operator;
@@ -70,8 +73,8 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	
 	@Override
 	public XMLRecordOutputStream clone() {
-		XMLRecordOutputStream template = new XMLRecordOutputStream("", this.header, this.footer, this.idRegex.pattern(), this.rh, this.opClass);
-		template.closeTag = this.closeTag;
+		XMLRecordOutputStream template = new XMLRecordOutputStream(new String[]{}, this.header, this.footer, this.idRegex.pattern(), this.rh, this.opClass);
+		template.closeTags = this.closeTags;
 		return template;
 	}
 	
@@ -79,13 +82,15 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	public void write(int arg0) throws IOException {
 		this.buf.write(arg0);
 		byte[] a = this.buf.toByteArray();
-		if(compareByteArrays(a, this.closeTag)) {
-			String record = new String(a);
-			Matcher m = this.idRegex.matcher(record);
-			m.find();
-			String id = m.group(1);
-			this.rh.addRecord(id.trim(), this.header + record.trim() + this.footer, this.opClass);
-			this.buf.reset();
+		for(int x = 0; x < this.closeTags.length; x++) {
+			if(compareByteArrays(a, this.closeTags[x])) {
+				String record = new String(a);
+				Matcher m = this.idRegex.matcher(record);
+				m.find();
+				String id = m.group(1);
+				this.rh.addRecord(id.trim(), this.header + record.trim() + this.footer, this.opClass);
+				this.buf.reset();
+			}
 		}
 	}
 	

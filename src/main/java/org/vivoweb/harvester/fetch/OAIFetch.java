@@ -101,7 +101,7 @@ public class OAIFetch {
 		String repositoryConfig = argList.get("o");
 		RecordHandler rhRecordHandler;
 		rhRecordHandler = RecordHandler.parseConfig(repositoryConfig, argList.getValueMap("O"));
-		this.osOutStream = new XMLRecordOutputStream("record", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler, this.getClass());
+		this.osOutStream = new XMLRecordOutputStream(new String[]{"record"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler, this.getClass());
 	}
 	
 	/**

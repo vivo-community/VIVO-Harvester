@@ -48,7 +48,7 @@ public class PubmedFetch extends NIHFetch {
 	/**
 	 * a base xmlrecordoutputstream
 	 */
-	private static XMLRecordOutputStream baseXMLROS = new XMLRecordOutputStream("PubmedArticle", "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2010//EN\" \"http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_100101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<[pP][mM][iI][dD].*?>(.*?)</[pP][mM][iI][dD]>.*?", null, PubmedFetch.class);
+	protected static XMLRecordOutputStream baseXMLROS = new XMLRecordOutputStream(new String[]{"PubmedArticle","PubmedBookArticle"}, "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2011//EN\" \"http://www.ncbi.nlm.nih.gov/entrez/query/DTD/pubmed_110101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<[pP][mM][iI][dD].*?>(.*?)</[pP][mM][iI][dD]>.*?", null, PubmedFetch.class);
 	
 	/**
 	 * Constructor: Primary method for running a PubMed Fetch. The email address of the person responsible for this
@@ -172,10 +172,19 @@ public class PubmedFetch extends NIHFetch {
 	private void sanitizeXML(String strInput) throws IOException {
 		log.debug("Sanitizing Output");
 		log.debug("XML File Length - Pre Sanitize: " + strInput.length());
-		String newS = strInput.replaceAll(" xmlns=\".*?\"", "").replaceAll("</?RemoveMe>", "").replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
+//		log.debug("====== PRE-SANITIZE ======\n"+strInput);
+		String newS = strInput.replaceAll(" xmlns=\".*?\"", "");
+		newS = newS.replaceAll("</?RemoveMe>", "");
+		//TODO: this seems really hacky here... revise somehow?
+		newS = newS.replaceAll("</PubmedArticle>.*?<PubmedArticle", "</PubmedArticle>\n<PubmedArticle");
+		newS = newS.replaceAll("</PubmedBookArticle>.*?<PubmedBookArticle", "</PubmedBookArticle>\n<PubmedBookArticle");
+		newS = newS.replaceAll("</PubmedArticle>.*?<PubmedBookArticle", "</PubmedArticle>\n<PubmedBookArticle");
+		newS = newS.replaceAll("</PubmedBookArticle>.*?<PubmedArticle", "</PubmedBookArticle>\n<PubmedArticle");
 		log.debug("XML File Length - Post Sanitze: " + newS.length());
+//		log.debug("====== POST-SANITIZE ======\n"+newS);
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
+		log.debug("buffer contents:\n"+newS);
 		getOsWriter().write(newS);
 		//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
 		getOsWriter().write("\n");
