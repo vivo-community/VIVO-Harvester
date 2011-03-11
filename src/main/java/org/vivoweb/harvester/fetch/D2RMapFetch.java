@@ -10,21 +10,9 @@
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.SpecialEntities;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -49,24 +37,9 @@ public class D2RMapFetch {
 	 */
 	private String d2rConfigPath;
 	/**
-	 * D2RMap output file
-	 */
-	private String d2rOutputFile;
-	/**
 	 * D2RMap working directory
 	 */
 	private String d2rWDir;
-
-	/**
-	 * Constructor
-	 * @param dbConn connection to the database
-	 * @param output RecordHandler to write data to
-	 * @param uriNameSpace namespace base for rdf records
-	 * @throws SQLException error talking with database
-	 */
-	public D2RMapFetch(Connection dbConn, RecordHandler output, String uriNameSpace) throws SQLException {
-		this(dbConn, output, uriNameSpace, null, null, null, null, null, null, null, null, null);
-	}
 
 	/**
 	 * Get the ArgParser for this task
@@ -80,7 +53,6 @@ public class D2RMapFetch {
 		
 		// d2RMap specific arguments
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("d2rMapConfigFile").withParameter(true, "D2RMAP_CONFIG_FILE").setDescription("D2RMap config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("d2rMapOutputFile").withParameter(true, "D2RMAP_OUTPUT_FILE").setDescription("D2RMap output file").setRequired(false));
 		
 		// This option is for CSV data ingest only
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("d2rMapWorkingDirectory").withParameter(true, "D2RMAP_WORKING_DIRECTORY").setDescription("D2RMap working directory").setRequired(false));
@@ -104,24 +76,26 @@ public class D2RMapFetch {
 	 */
 	public D2RMapFetch(ArgList opts) throws IOException {
 		this.d2rConfigPath = opts.get("u");
-		this.d2rOutputFile = opts.get("s");
 		this.d2rWDir = opts.get("a");
 		this.outStore = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
 	}
 	
 	/**
 	 * Library style Constructor
+	 * @param configPath D2RMap config file path
 	 * @param rh Record Handler to write records to
+	 * @param workingDir D2RMap working directory
 	 */
-	public D2RMapFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) {
+	public D2RMapFetch(String configPath, RecordHandler rh, String workingDir) {
+		this.d2rConfigPath = configPath;
 		this.outStore = rh;
+		this.d2rWDir = workingDir;
 	}
 
 	/**
 	 * Executes the task
-	 * @throws IOException error processing record handler or jdbc connection
 	 */
-	public void execute() throws IOException {
+	public void execute() {
 		log.info("Fetch: Start");
 		D2rProcessor proc = new D2rProcessor();
 		proc.harvesterInit();

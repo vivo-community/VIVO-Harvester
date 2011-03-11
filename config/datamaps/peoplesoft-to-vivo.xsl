@@ -20,12 +20,15 @@
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
-	xmlns:db-people="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/people/"
-	xmlns:db-positions="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/positions/"
+	xmlns:db-people="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/people/"
+	xmlns:db-positions="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/positions/"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'>
-
+<!--
+	xmlns:db-people="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/people/"
+	xmlns:db-positions="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/positions/"
+-->
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/ufl/peoplesoft/</xsl:variable>
@@ -37,8 +40,8 @@
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
 			xmlns:ufl="http://vivo.ufl.edu/ontology/vivo-ufl/"
-			xmlns:db-people="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/people/"
-			xmlns:db-positions="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/positions/"
+			xmlns:db-people="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/people/"
+			xmlns:db-positions="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/positions/"
 			xmlns:foaf="http://xmlns.com/foaf/0.1/"
 			xmlns:owl="http://www.w3.org/2002/07/owl#"
 			xmlns:core="http://vivoweb.org/ontology/core#"
@@ -73,59 +76,59 @@
 	
 	<xsl:template name="people">
 		<xsl:param name='this' />
-		<xsl:variable name="ufid" select="$this/db-people:ufid"/>
+		<xsl:variable name="ufid" select="$this/db-people:UFID"/>
 		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
 			<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid"/></ufVivo:ufid>
 			<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-			<core:workEmail><xsl:value-of select="$this/db-people:email" /></core:workEmail>
-			<xsl:if test="normalize-space( $this/db-people:phone_area ) or normalize-space( $this/db-people:phone_num )">
-				<core:workPhone><xsl:value-of select="$this/db-people:phone_area"/><xsl:value-of select="$this/db-people:phone_num"/></core:workPhone>
+			<core:workEmail><xsl:value-of select="$this/db-people:EMAIL" /></core:workEmail>
+			<xsl:if test="normalize-space( $this/db-people:PHONE_AREA ) or normalize-space( $this/db-people:PHONE_NUM )">
+				<core:workPhone><xsl:value-of select="$this/db-people:PHONE_AREA"/><xsl:value-of select="$this/db-people:PHONE_NUM"/></core:workPhone>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:fax_area ) or normalize-space( $this/db-people:fax_num )">
-				<core:workFax><xsl:value-of select="$this/db-people:fax_area"/><xsl:value-of select="$this/db-people:fax_num"/></core:workFax>
+			<xsl:if test="normalize-space( $this/db-people:FAX_AREA ) or normalize-space( $this/db-people:FAX_NUM )">
+				<core:workFax><xsl:value-of select="$this/db-people:FAX_AREA"/><xsl:value-of select="$this/db-people:FAX_NUM"/></core:workFax>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:fname )">
-				<foaf:firstName><xsl:value-of select="$this/db-people:fname"/></foaf:firstName>
+			<xsl:if test="normalize-space( $this/db-people:FNAME )">
+				<foaf:firstName><xsl:value-of select="$this/db-people:FNAME"/></foaf:firstName>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:lname )">
-				<foaf:lastName><xsl:value-of select="$this/db-people:lname"/></foaf:lastName>
+			<xsl:if test="normalize-space( $this/db-people:LNAME )">
+				<foaf:lastName><xsl:value-of select="$this/db-people:LNAME"/></foaf:lastName>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:mname )">
-				<core:middleName><xsl:value-of select="$this/db-people:mname"/></core:middleName>
+			<xsl:if test="normalize-space( $this/db-people:MNAME )">
+				<core:middleName><xsl:value-of select="$this/db-people:MNAME"/></core:middleName>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:prename )">
-				<bibo:prefixName><xsl:value-of select="$this/db-people:prename"/></bibo:prefixName>
+			<xsl:if test="normalize-space( $this/db-people:PRENAME )">
+				<bibo:prefixName><xsl:value-of select="$this/db-people:PRENAME"/></bibo:prefixName>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:sufname )">
-				<bibo:suffixName><xsl:value-of select="$this/db-people:sufname"/></bibo:suffixName>
+			<xsl:if test="normalize-space( $this/db-people:SUFNAME )">
+				<bibo:suffixName><xsl:value-of select="$this/db-people:SUFNAME"/></bibo:suffixName>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:fullname )">
-				<rdfs:label><xsl:value-of select="$this/db-people:fullname"/></rdfs:label>
+			<xsl:if test="normalize-space( $this/db-people:FULLNAME )">
+				<rdfs:label><xsl:value-of select="$this/db-people:FULLNAME"/></rdfs:label>
 			</xsl:if>
-			<xsl:if test="normalize-space( $this/db-people:gatorlink )">
-				<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:gatorlink"/></ufVivo:gatorlink>
+			<xsl:if test="normalize-space( $this/db-people:GATORLINK )">
+				<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:GATORLINK"/></ufVivo:gatorlink>
 			</xsl:if>
-		    <xsl:if test="normalize-space( $this/db-people:title )">
-				<core:overview><xsl:value-of select="$this/db-people:title"/></core:overview>
+		    <xsl:if test="normalize-space( $this/db-people:TITLE )">
+				<core:overview><xsl:value-of select="$this/db-people:TITLE"/></core:overview>
 			</xsl:if>
 		</rdf:Description>
 	</xsl:template>
 	
 	<xsl:template name="positions">
 		<xsl:param name='this' />
-		<xsl:variable name="ufid" select="$this/db-positions:ufid"/>
-		<xsl:variable name="fullorgnum" select="$this/db-positions:deptId"/>
-		<xsl:variable name="typeCode" select="$this/db-positions:typeCode"/>
+		<xsl:variable name="ufid" select="$this/db-positions:UFID"/>
+		<xsl:variable name="fullorgnum" select="$this/db-positions:DEPTID"/>
+		<xsl:variable name="typeCode" select="$this/db-positions:TYPECODE"/>
 		<xsl:variable name="startYear">
-			<xsl:analyze-string select="$this/db-positions:beginTS" regex="^(....).*?$">
+			<xsl:analyze-string select="$this/db-positions:BEGINTS" regex="^(....).*?$">
 				<xsl:matching-substring>
 					<xsl:value-of select="regex-group(1)"/>
 				</xsl:matching-substring>
 			</xsl:analyze-string>
 		</xsl:variable>
 		<xsl:variable name="startDate">
-			<xsl:analyze-string select="$this/db-positions:beginTS" regex="^(....-..-..).*?$">
+			<xsl:analyze-string select="$this/db-positions:BEGINTS" regex="^(....-..-..).*?$">
 				<xsl:matching-substring>
 					<xsl:value-of select="regex-group(1)"/>
 				</xsl:matching-substring>
@@ -158,7 +161,7 @@
 			<core:personInPosition>
 				<rdf:Description rdf:about="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
 					<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
-					<rdfs:label><xsl:value-of select="$this/db-positions:workTitle"/></rdfs:label>
+					<rdfs:label><xsl:value-of select="$this/db-positions:WORKTITLE"/></rdfs:label>
 					<xsl:choose>
 						<xsl:when test="$typeCode=192">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
