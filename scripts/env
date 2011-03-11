@@ -60,9 +60,9 @@ Update="java $OPTS -Dprocess-task=Update org.vivoweb.harvester.update.Update"
 DatabaseClone="java $OPTS -Dprocess-task=DatabaseClone org.vivoweb.harvester.util.DatabaseClone"
 Merge="java $OPTS -Dprocess-task=Merge org.vivoweb.harvester.util.Merge"
 JenaConnect="java $OPTS -Dprocess-task=JenaConnect org.vivoweb.harvester.util.repo.JenaConnect"
-SanitizeMODSXML="java $OPTS -Dprocess-task=SanitizeMODSXML org.vivoweb.harvester.util.SanitizeMODSXML"
+SanitizeMODSXML="java $OPTS -Dprocess-task=SanitizeMODSXML org.vivoweb.harvester.translate.SanitizeMODSXML"
 XPathTool="java $OPTS -Dprocess-task=XPathTool org.vivoweb.harvester.util.XPathTool"
-RunBibutils="java $OPTS -Dprocess-task=RunBibutils org.vivoweb.harvester.util.RunBibutils"
+RunBibutils="java $OPTS -Dprocess-task=RunBibutils org.vivoweb.harvester.translate.RunBibutils"
 
 #Mysql username, password, and server address for backups in scripts
 #parse VIVO.xml for these values

@@ -30,7 +30,8 @@ fi
 echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 BASEDIR=harvested-data/$HARVESTER_TASK
-RAWRHPRESANDIR=$BASEDIR/rh-raw-pre-san
+BIBINDIR=$BASEDIR/rh-bibutils-in
+BIBOUTDIR=$BASEDIR/rh-bibutils-out
 RAWRHDIR=$BASEDIR/rh-raw
 RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
 RDFRHDIR=$BASEDIR/rh-rdf
@@ -68,16 +69,21 @@ RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 BASEURI="http://vivoweb.org/harvest/mods/"
 
+#BIBUTILSBASE="lib/bibutils/bibutils_4.12_x86_64"
+BIBUTILSBASE="lib/bibutils/bibutils_4.12_i386"
+BIBUTILSINPUTFORMAT="bib"
 
+# clear old bibutils runs
+rm -rf $BIBOUTDIR
 
-
-
+# run bibutils
+$RunBibutils -b $BIBUTILSBASE -m $BIBUTILSINPUTFORMAT -i $TFRH -IfileDir=$BIBINDIR -o $TFRH -OfileDir=$BIBOUTDIR
 
 # clear old sanitizes
 rm -rf $RAWRHDIR
 
 # Sanitize data
-$SanitizeMODSXML -i $RAWRHPRESANDIR -o $RAWRHDIR
+$SanitizeMODSXML -i $TFRH -IfileDir=$BIBOUTDIR -o $TFRH -OfileDir=$RAWRHDIR
 
 # clear old translates
 rm -rf $RDFRHDIR

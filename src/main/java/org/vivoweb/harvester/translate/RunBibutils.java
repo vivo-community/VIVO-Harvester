@@ -7,7 +7,7 @@
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
  *****************************************************************************************************************************/
-package org.vivoweb.harvester.util;
+package org.vivoweb.harvester.translate;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
