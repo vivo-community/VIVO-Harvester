@@ -622,6 +622,29 @@ public class TranslateTest extends TestCase {
 		log.info("END testPubMedXSLTBook");
 	}
 	
+	/**
+	 * Test method for {@link org.vivoweb.harvester.translate.XSLTranslator#main(java.lang.String[]) main(String...
+	 * args)}.
+	 * @throws IOException error
+	 */
+	public void testPubMedXSLTArticleNoAffiliation() throws IOException {
+		log.info("BEGIN testPubMedXSLTArticleNoAffiliation");
+		// add a record to the record handler
+		this.inRH.addRecord("ArticleNoAffiliation", inputDataArticle.replaceAll("<Affiliation.*?/Affiliation>", ""), this.getClass());
+		
+		// call the xlsTranslate
+		new XSLTranslator(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()}).execute();
+		
+		// verify that output record handler has some records
+		assertTrue(this.outRH.iterator().hasNext());
+		
+		// compare the record data with expected output
+		log.debug("Translation Output:\n" + this.outRH.getRecordData("ArticleNoAffiliation"));
+		
+//			assertEquals(outputData, this.outRH.getRecordData("Article"));
+		log.info("END testPubMedXSLTArticleNoAffiliation");
+	}
+	
 	@Override
 	public void tearDown() {
 		this.inFile = null;
