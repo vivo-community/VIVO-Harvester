@@ -184,7 +184,7 @@ public class PubmedFetch extends NIHFetch {
 //		log.debug("====== POST-SANITIZE ======\n"+newS);
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
-		log.debug("buffer contents:\n"+newS);
+//		log.debug("buffer contents:\n"+newS);
 		getOsWriter().write(newS);
 		//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
 		getOsWriter().write("\n");

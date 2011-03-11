@@ -463,7 +463,7 @@ public abstract class JenaConnect {
 		this.jenaModel.begin();
 		this.jenaModel.notifyEvent(GraphEvents.startRead);
 		try {
-			log.debug("query:\n" + queryString);
+//			log.debug("query:\n" + queryString);
 			UpdateAction.execute(UpdateFactory.create(queryString), this.jenaModel);
 		} finally {
 			this.jenaModel.notifyEvent(GraphEvents.finishRead);

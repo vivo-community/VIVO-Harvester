@@ -110,10 +110,11 @@ public class Score {
 	 * @param vivoPredicates the predicates to look for in vivoJena model
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param weights the weightings (0.0 , 1.0) for this score
+	 * @param batchSize number of records to use in batch
 	 * @throws IOException error initializing jena models
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights) throws IOException {
-		init(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights, 500);
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, int batchSize) throws IOException {
+		init(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights, batchSize);
 	}
 	
 	/**
@@ -160,6 +161,10 @@ public class Score {
 	 */
 	public void setBatchSize(int size) {
 		this.batchSize = size;
+		if(this.batchSize <= 1) {
+			log.warn("Batch Size of '"+size+"' invalid, must be greater than or equal to 1.  Using '1' as Batch Size.");
+			this.batchSize = 1;
+		}
 	}
 
 	/**
@@ -250,7 +255,7 @@ public class Score {
 			}
 		}
 		this.equalityOnlyMode = test;
-		this.batchSize = size;
+		setBatchSize(size);
 		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
 	}
 	
@@ -293,7 +298,7 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("inputJena-predicates").withParameterValueMap("RUN_NAME", "PREDICATE").setDescription("for RUN_NAME, match ").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivoJena-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("number of records to process in batch - default 500 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("100").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("approximate number of triples to process in each batch - default 2000 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("2000").setRequired(false));
 		return parser;
 	}
 	
@@ -400,6 +405,7 @@ public class Score {
 		int total = solSet.size();
 		int count = 0;
 		int incrementer = 0;
+		double recordBatchSize = Math.ceil(this.batchSize / (2.0+(this.vivoPredicates.size()*7)));
 		StringBuilder indScore;
 		StringBuilder scoreSparql = new StringBuilder();
 		for(Map<String, String> eval : solSet) {
@@ -426,7 +432,7 @@ public class Score {
 			}
 			log.debug("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
 			scoreSparql.append(indScore);
-			if(incrementer == this.batchSize) {
+			if(incrementer == recordBatchSize) {
 				loadRdfToScoreData(scoreSparql.toString());
 				incrementer = 0;
 				scoreSparql = new StringBuilder();

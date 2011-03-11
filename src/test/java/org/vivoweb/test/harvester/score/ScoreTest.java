@@ -391,7 +391,7 @@ public class ScoreTest extends TestCase {
 		weights.put("deptid", Float.valueOf(1f));
 		String namespace = "http://vivoweb.org/harvester/org/";
 		// run org score
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, 0).execute();
 		// run org match
 		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
 		
@@ -410,7 +410,7 @@ public class ScoreTest extends TestCase {
 		weights.put("uid", Float.valueOf(1f));
 		namespace = "http://vivoweb.org/harvester/people/";
 		// run people score
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, 20).execute();
 		// run people match
 		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
 		
@@ -437,7 +437,7 @@ public class ScoreTest extends TestCase {
 		weights.put("posInOrg", Float.valueOf(1/3f));
 		namespace = "http://vivoweb.org/harvester/position/";
 		// run position score
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, 50).execute();
 		// run position match
 		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
 		
@@ -477,7 +477,7 @@ public class ScoreTest extends TestCase {
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
 		// run score
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, 50).execute();
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		new Match(this.input, this.score, this.output, true, 0.75f, null, true,500).execute();
 		//log.info("Match Dump Post-Match\n" + this.input.exportRdfToString());
