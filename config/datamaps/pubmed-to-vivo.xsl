@@ -45,20 +45,20 @@
 			xmlns:score='http://vivoweb.org/ontology/score#'
 			xmlns:xs='http://www.w3.org/2001/XMLSchema#'
 			xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'>
-			<xsl:apply-templates select="PubmedArticle" />			
+			<xsl:apply-templates select="PubmedArticle" />
+			<xsl:apply-templates select="PubmedBookArticle" />
 		</rdf:RDF>
 	</xsl:template>
 	
 	<!-- The Article -->
 	<xsl:template match="PubmedArticle">
-		<xsl:variable name="elValue" select="MedlineCitation/Article/Affiliation"/>
 		<xsl:variable name="emailAddress">
 			<!--
 			Possible better email match regex.
 			Needs tested. Not sure if &quot will work for "
 			- -Dale
 			-->
-			<xsl:analyze-string select="$elValue" regex="\s*([a-zA-Z\d\.]*@[a-zA-Z\d\.]*)">
+			<xsl:analyze-string select="MedlineCitation/Article/Affiliation" regex="\s*([a-zA-Z\d\.]*@[a-zA-Z\d\.]*)">
 			<!-- <xsl:analyze-string select="$elValue" regex="(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|&quot;(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*&quot;)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])">	-->
 			<!--
 			Here's the old expression
@@ -119,10 +119,65 @@
 			<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
 			<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="journalRef"/>
 		</rdf:Description>
-		<xsl:apply-templates select="MedlineCitation/Article/AuthorList" mode="fullAuthor">
+		<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="fullAuthor">
 			<xsl:with-param name="email" select="$emailAddress" />
 		</xsl:apply-templates>
 		<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="fullJournal" />
+	</xsl:template>
+	
+	<!-- The Book Article -->
+	<xsl:template match="PubmedBookArticle">
+		<rdf:Description rdf:about="{$baseURI}pub/pmid{child::BookDocument/PMID}">
+			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<bibo:pmid><xsl:value-of select="BookDocument/PMID" /></bibo:pmid>
+			<rdfs:label><xsl:value-of select="BookDocument/Book/BookTitle" /></rdfs:label>
+			<core:Title><xsl:value-of select="BookDocument/Book/BookTitle" /></core:Title>
+			<score:Affiliation><xsl:value-of select="BookDocument/Book/CollectionTitle" /></score:Affiliation>
+			<bibo:abstract><xsl:value-of select="BookDocument/Abstract"/></bibo:abstract>
+			<xsl:apply-templates select="BookDocument/KeywordList/Keyword" />
+			<xsl:choose>
+				<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
+					<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test='string(PubmedBookData/ArticleIdList/ArticleId[@IdType="doi"])'>
+					<bibo:doi><xsl:value-of select='PubmedBookData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:variable name="MonthNumber">
+				<xsl:choose>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Jan">01</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Feb">02</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Mar">03</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Apr">04</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=May">05</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Jun">06</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Jul">07</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Aug">08</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Sep">09</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Oct">10</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Nov">11</xsl:when>
+					<xsl:when test="string(BookDocument/Book/PubDate/Month)=Dec">12</xsl:when>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="string(BookDocument/Book/PubDate/Year)">
+					<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="BookDocument/Book/PubDate/Year"/></core:year>
+				</xsl:when>
+				<xsl:when test="string(BookDocument/Book/PubDate/Month) and string(BookDocument/Book/PubDate/Year)">
+					<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth>
+				</xsl:when>
+				<xsl:when test="string(BookDocument/Book/PubDate/Day) and string(BookDocument/Book/PubDate/Month) and string(BookDocument/Book/PubDate/Year)">
+					<core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="BookDocument/Book/PubDate/Day"/></core:date>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:apply-templates select="BookDocument/Book/AuthorList/Author" mode="authorRef" />
+		</rdf:Description>
+		<xsl:apply-templates select="BookDocument/Book/AuthorList/Author" mode="fullAuthor" />
 	</xsl:template>
 
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
@@ -140,23 +195,15 @@
 			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
 			<core:publicationVenueFor rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
-	</xsl:template>	
+	</xsl:template>
 
-	<!-- Links to From the Paper to the Terms and Authors -->
+	<!-- Links to From the Article to the Terms and Authors -->
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef">
 		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 	</xsl:template>
 
-	<!-- Author List Navigation --> 
-	<xsl:template match="MedlineCitation/Article/AuthorList" mode="fullAuthor">
-		<xsl:param name='email' />
-		<xsl:apply-templates select="Author" mode="fullAuthor">
-			<xsl:with-param name="email" select="$email" />
-		</xsl:apply-templates>
-	</xsl:template>
-	
-	<!-- The Authors -->
-	<xsl:template match="Author" mode="fullAuthor">
+	<!-- Article Author List Navigation --> 
+	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="fullAuthor">
 		<xsl:param name='email' />
 		<rdf:Description rdf:about="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
@@ -223,6 +270,78 @@
 			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 		</rdf:Description>
 	</xsl:template>
+
+	<!-- Links to From the Book to the Terms and Authors -->
+	<xsl:template match="BookDocument/Book/AuthorList/Author" mode="authorRef">
+		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+	</xsl:template>
+
+	<!-- Book Author List Navigation --> 
+	<xsl:template match="BookDocument/Book/AuthorList/Author" mode="fullAuthor">
+		<rdf:Description rdf:about="{$baseURI}authorship/pmid{ancestor::BookDocument/PMID}authorship{position()}">
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
+			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource" />
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
+			<core:linkedAuthor rdf:resource="{$baseURI}author/pmid{ancestor::BookDocument/PMID}author{position()}" />
+			<core:linkedInformationResource rdf:resource="{$baseURI}pub/pmid{ancestor::BookDocument/PMID}"/>
+			<xsl:choose>
+				<xsl:when test="string(ForeName)">
+					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+				</xsl:when>
+				<xsl:when test="string(LastName)">
+					<rdfs:label>Authorship for <xsl:value-of select="LastName" /></rdfs:label>
+				</xsl:when>
+				<xsl:when test="string(CollectiveName)">
+					<rdfs:label>Authorship for <xsl:value-of select="CollectiveName" /></rdfs:label>
+				</xsl:when>
+			</xsl:choose>
+			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
+		</rdf:Description>
+		<rdf:Description rdf:about="{$baseURI}author/pmid{ancestor::BookDocument/PMID}author{position()}">
+			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<xsl:choose>
+				<xsl:when test="string(ForeName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+					<rdfs:label><xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
+					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
+					<score:initials><xsl:value-of select="Initials" /></score:initials>
+					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
+					<!-- Parse out possible middle name -->
+					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+						<xsl:matching-substring>
+							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
+							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+						</xsl:matching-substring>
+					</xsl:analyze-string>
+				</xsl:when>
+				<xsl:when test="string(LastName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+					<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
+					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
+					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
+					<score:initials><xsl:value-of select="Initials" /></score:initials>
+					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>	
+					<!-- Parse out possible middle name -->
+					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+					    <xsl:matching-substring>
+							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
+							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+						</xsl:matching-substring>
+					</xsl:analyze-string>			
+				</xsl:when>
+				<xsl:when test="string(CollectiveName)">
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+					<rdfs:label><xsl:value-of select="CollectiveName" /></rdfs:label>
+				</xsl:when>
+			</xsl:choose>
+			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
+			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
+			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::BookDocument/PMID}authorship{position()}" />
+		</rdf:Description>
+	</xsl:template>
 	
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword">
 		<xsl:choose>
@@ -241,11 +360,20 @@
 		</xsl:choose>
 	</xsl:template>
 	
-	<!-- Keyword -->
+	<!-- Article Keyword -->
 	<xsl:template match="MedlineCitation/KeywordList/Keyword">
 		<xsl:choose>
 			<xsl:when test="string(MedlineCitation/KeywordList/Keyword)">
 				<core:freetextKeyword><xsl:value-of select="string(MedlineCitation/KeywordList/Keyword)" /></core:freetextKeyword>  
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+	
+	<!-- Book Keyword -->
+	<xsl:template match="BookDocument/KeywordList/Keyword">
+		<xsl:choose>
+			<xsl:when test="string(BookDocument/KeywordList/Keyword)">
+				<core:freetextKeyword><xsl:value-of select="string(BookDocument/KeywordList/Keyword)" /></core:freetextKeyword>  
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
@@ -308,7 +436,8 @@
 			<xsl:when test="translate(string($pbType),$up,$lo)='collected works'">
 				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-			</xsl:when>					<xsl:when test="translate(string($pbType),$up,$lo)='comment'">
+			</xsl:when>
+			<xsl:when test="translate(string($pbType),$up,$lo)='comment'">
 				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 			</xsl:when>
 			<xsl:when test="translate(string($pbType),$up,$lo)='comparative study'">
