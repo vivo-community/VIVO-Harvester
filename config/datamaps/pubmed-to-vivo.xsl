@@ -496,7 +496,7 @@
 				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 			</xsl:when>			
 			<xsl:when test="translate(string($pbType),$up,$lo)='evaluation studies'">
-				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Academic Article" />
+				<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 			</xsl:when>
 			<xsl:when test="translate(string($pbType),$up,$lo)='festschrift'">
 				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
