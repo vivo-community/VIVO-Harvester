@@ -64,14 +64,14 @@ rm -rf $RAWRHDIR
 #$Transfer -i $VIVOCONFIG -d vivo_start.rdf
 
 # Execute Fetch for Pubmed
-#$PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
+$PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 #$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # backup fetch
 BACKRAW="raw"
-#backup-path $RAWRHDIR $BACKRAW
+backup-path $RAWRHDIR $BACKRAW
 # uncomment to restore previous fetch
-restore-path $RAWRHDIR $BACKRAW
+#restore-path $RAWRHDIR $BACKRAW
 
 # clear old translates
 rm -rf $RDFRHDIR
