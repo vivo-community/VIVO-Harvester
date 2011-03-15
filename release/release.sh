@@ -104,18 +104,18 @@ ar -x harvester-$RELEASENAME.deb
 tar -xvzf data.tar.gz
 cd usr/share/vivo/
 tar -cvzf harvester-$RELEASENAME.tar.gz harvester/
-
+mv harvester-$RELEASENAME.tar.gz ../../../
+cd ../../../
 
 #Upload tarball and deb package to sourceforge
 if [ "$UPLOAD" = "y" ]; then
-	cd ../../..
 	scp harvester-$RELEASENAME.deb $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 	scp harvester-$RELEASENAME.tar.gz $NAME,vivo@frs.sourceforge.net:"/home/frs/project/v/vi/vivo/VIVO\ Harvester"
 fi
 
 #tag
 cd $HARVESTERDIR
-svn cp . svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/tags/$RELEASENAME
+svn cp -rHEAD svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/branches/Development svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/tags/$RELEASENAME
 svn commit -m "Tag Release $RELEASENAME"
 
 
