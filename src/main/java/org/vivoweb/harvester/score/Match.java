@@ -305,7 +305,7 @@ public class Match {
 				Statement stmt = subjectStmts.nextStatement();
 				Resource subj = stmt.getSubject();
 				if(!linkRes.contains(subj)) {
-					log.trace("Submitting to recursive build " + subj.getURI());
+//					log.trace("Submitting to recursive build " + subj.getURI());
 					linkRes.push(subj.getURI());
 					returnModel.getJenaModel().add(recursiveBuild(subj, linkRes));
 				}
@@ -333,7 +333,7 @@ public class Match {
 			//todo change the equals t o
 			if(stmt.getObject().isResource() && !linkRes.contains(stmt.getObject().asResource().getURI()) && !stmt.getObject().asResource().equals(mainRes)) {
 				linkRes.push(mainRes.getURI());
-				log.trace("Submitting to rcb from within rcb " + stmt.getObject().asResource().getURI());
+//				log.trace("Submitting to rcb from within rcb " + stmt.getObject().asResource().getURI());
 				rtnStmtList.addAll(recursiveBuild(stmt.getObject().asResource(), linkRes));
 			}			
 		}

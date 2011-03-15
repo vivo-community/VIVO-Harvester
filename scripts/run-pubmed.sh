@@ -64,14 +64,14 @@ rm -rf $RAWRHDIR
 #$Transfer -i $VIVOCONFIG -d vivo_start.rdf
 
 # Execute Fetch for Pubmed
-$PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
+#$PubmedFetch -X config/tasks/example.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 #$PubmedFetch -X config/tasks/ufl.pubmedfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # backup fetch
 BACKRAW="raw"
-backup-path $RAWRHDIR $BACKRAW
+#backup-path $RAWRHDIR $BACKRAW
 # uncomment to restore previous fetch
-#restore-path $RAWRHDIR $BACKRAW
+restore-path $RAWRHDIR $BACKRAW
 
 # clear old translates
 rm -rf $RDFRHDIR
@@ -111,6 +111,7 @@ rm -rf $MATCHEDDIR
 
 # Clear old H2 temp copy
 rm -rf $TEMPCOPYDIR
+#$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
 
 # Execute Score to disambiguate data in "scoring" JENA model
 WORKEMAIL="-AwEmail=$EQTEST -FwEmail=$CWEMAIL -WwEmail=0.7 -PwEmail=$SWEMAIL"
@@ -182,7 +183,7 @@ $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$M
 $Transfer $MATCHOUTPUT -d match.rdf
 
 #remove score statements
-$Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score -p
+$Qualify $MATCHEDINPUT -n http://vivoweb.org/ontology/score# -p
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
 CNFLAGS="$MATCHEDINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
@@ -205,7 +206,7 @@ backup-path $MATCHEDDIR $BACKMATCHED
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 BACKPREDB="pretransfer"
-backup-mysqldb $BACKPREDB
+#backup-mysqldb $BACKPREDB
 # uncomment to restore pretransfer vivo database
 #restore-mysqldb $BACKPREDB
 
