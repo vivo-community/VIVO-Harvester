@@ -8,9 +8,10 @@ HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
 HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 # define shared variables
-VIVOCONFIG="config/models/vivo.xml"
-LOG_LEVEL=INFO
-VERSION=1.0RC2
+VIVOCONFIG="config/models/local-vivo.xml"
+#VIVOCONFIG="config/models/vivo.xml"
+LOG_LEVEL=ALL
+VERSION=1.0RC3
 SCOREBATCHSIZE=100
 CHECKEMPTY=true
 DATE=`get-date`
@@ -33,8 +34,8 @@ MAX_MEM=2048m
 #-Xnoclassgc					Disable collection of class objects
 #-XX:UseSSE=3					Use SSE3 Processor extensions
 #-XX:ParallelGCThreads=3		Maximum number of Parallel garbage collection tasks
-HARVESTER_JAVA_OPTS=""
-#HARVESTER_JAVA_OPTS="-server -d64 -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
+#HARVESTER_JAVA_OPTS=""
+HARVESTER_JAVA_OPTS="-server -d64 -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:UseSSE=3 -XX:ParallelGCThreads=3"
 OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM $HARVESTER_JAVA_OPTS -Dharvester-task=$HARVESTER_TASK_DATE -Dconsole-log-level=$LOG_LEVEL -Dconsole-log-level=$LOG_LEVEL -cp lib/d2rmap-V03.jar:bin/harvester-$VERSION.jar:bin/dependency/*"
 
 # define shorthand aliases

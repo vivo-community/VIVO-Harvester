@@ -496,7 +496,7 @@ public class ScoreTest extends TestCase {
 		//Resource publicationType = ResourceFactory.createProperty("");
 
 		assertTrue(!this.output.isEmpty());
-		System.out.println(this.output.exportRdfToString());
+//		System.out.println(this.output.exportRdfToString());
 		//assertTrue(this.output.getJenaModel().contains(null, rdfType, publicationType));
 		assertTrue(this.output.getJenaModel().contains(null, rdfType, journalType));
 		assertTrue(this.output.getJenaModel().contains(null, rdfType, authorshipType));

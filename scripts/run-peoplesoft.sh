@@ -98,12 +98,13 @@ rm -rf $TEMPCOPYDIR
 
 # uncomment to restore previous H2 temp copy Model
 BACKPREPEOPLEORGTEMPDATA="prepeopleorg-tempdata"
-#restore-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
+restore-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
 
 # Execute Score for People
 $Score $SCOREMODELS -n ${BASEURI}person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
 
 # backup H2 temp copy Model
+echo test
 backup-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
 
 # Execute Score for Departments
@@ -175,7 +176,7 @@ backup-path $MODELDIR $BACKMATCHED
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 BACKPREDB="pretransfer"
-backup-mysqldb $BACKPREDB
+#backup-mysqldb $BACKPREDB
 # uncomment to restore pretransfer vivo database
 #restore-mysqldb $BACKPREDB
 
@@ -193,17 +194,17 @@ backup-file $ADDFILE adds.rdf.xml
 backup-file $SUBFILE subs.rdf.xml
 
 # Apply Subtractions to Previous model
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
+#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
 # Apply Additions to Previous model
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
+#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
 # Apply Subtractions to VIVO
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
+#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
+#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 BACKPOSTDB="posttransfer"
-backup-mysqldb $BACKPOSTDB
+#backup-mysqldb $BACKPOSTDB
 # uncomment to restore posttransfer vivo database
 #restore-mysqldb $BACKPOSTDB
 
