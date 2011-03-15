@@ -153,6 +153,7 @@ public abstract class NIHFetch {
 	 */
 	public String[] runESearch(String term, boolean logMessage) throws IOException {
 		String[] env = new String[4];
+		log.debug("running pubmed query: "+term);
 		try {
 			// create service connection
 			EUtilsServiceStub service = new EUtilsServiceStub();
@@ -168,16 +169,20 @@ public abstract class NIHFetch {
 			EUtilsServiceStub.ESearchResult res = service.run_eSearch(req);
 			// save the environment data
 			env[0] = res.getWebEnv();
+			log.trace("webenv: "+env[0]);
 			env[1] = res.getQueryKey();
+			log.trace("querykey: "+env[1]);
 			env[2] = "" + res.getCount();//getIdList().getId().length;
+			log.trace("count: "+env[2]);
 			if(env[2] == null) {
-				throw new IllegalArgumentException("Query Has No Results");
+				throw new IllegalArgumentException("Query Has No Results: "+term);
 			}
 			IdListType ids = res.getIdList();
-			if(ids != null) {
+			if(ids != null && ids.getId() != null && ids.getId().length > 0) {
 				env[3] = ids.getId()[0];
+				log.trace("top id: "+env[3]);
 			} else {
-				throw new IllegalArgumentException("Query Has No Results");
+				throw new IllegalArgumentException("Query Has No Results: "+term);
 			}
 			if(logMessage) {
 				log.info("Query resulted in a total of " + env[2] + " records.");

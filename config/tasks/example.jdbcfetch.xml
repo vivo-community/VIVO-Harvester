@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Task>
-	<Param name="driver">com.mysql.jdbc.Driver</Param>
-	<Param name="connection">jdbc:mysql://127.0.0.1:3306/jdbctestharvest</Param>
-	<Param name="username">jdbcTestHarvest</Param>
-	<Param name="password">xKzQVJhBnxYREmYK</Param>
-	<Param name="output">config/recordhandlers/tfrh.xml</Param>
-	<Param name="outputOverride">fileDir=harvested-data/jdbc/raw</Param>
+	<Param name="driver">org.h2.Driver</Param>
+	<Param name="connection">jdbc:h2:files/example-jdbc-fetch/h2db/store</Param>
+	<Param name="username">sa</Param>
+	<Param name="password"></Param>
+	<Param name="tableName">people</Param>
+	<Param name="id">people=UID</Param>
+	<Param name="query">people=
+SELECT 
+	emp.ID AS UID, 
+	emp.OFFICIAL_NAME AS BUSNAME, 
+	emp.EMAIL AS EMAIL, 
+	emp.PHONE AS PHONE,  
+	emp.FAX AS FAX, 
+	emp.FIRST_NAME AS FNAME, 
+	emp.LAST_NAME AS LNAME, 
+	emp.MID_INIT AS MNAME, 
+	emp.PREFIX AS PRENAME, 
+	emp.SUFFIX AS SUFNAME, 
+	emp.FULL_NAME AS FULLNAME, 
+	login.USERID AS NETID, 
+	emp.PREF_TITLE AS TITLE 
+FROM EMPLOYEES AS emp 
+LEFT JOIN NETWORK_IDS AS login ON 
+	emp.ID = login.UID 
+WHERE 
+	emp.PUBLISH_OK='Y'<!-- --> AND 
+	emp.ID LIKE '%1234%'<!-- -->
+	</Param>
+	<Param name="tableName">positions</Param>
+	<Param name="id">positions=UID,TYPE,DEPTID,STARTDATE</Param>
+	<Param name="query">positions=
+SELECT 
+	emp.ID AS UID, 
+	pos.TYPE_CODE AS TYPE, 
+	pos.ASSO_DEPTID AS DEPTID, 
+	pos.START_DATE AS STARTDATE, 
+	pos.WORKING_TITLE AS TITLE 
+FROM POSITIONS AS pos 
+INNER JOIN EMPLOYEES AS emp ON 
+	pos.UID = emp.ID 
+WHERE 
+	pos.TYPE_CODE IN (12,15,63,157,201) AND 
+	emp.PUBLISH_OK='Y'<!-- --> AND 
+	emp.ID LIKE '%1234%'<!-- -->
+	</Param>
 </Task>

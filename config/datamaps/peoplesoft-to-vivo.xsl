@@ -20,8 +20,8 @@
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
-	xmlns:db-people="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/people/"
-	xmlns:db-positions="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/positions/"
+	xmlns:db-people="jdbc:mysql://127.0.0.1:3306/peoplesoftMirror/fields/people/"
+	xmlns:db-positions="jdbc:mysql://127.0.0.1:3306/peoplesoftMirror/fields/positions/"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'>
@@ -40,8 +40,8 @@
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
 			xmlns:ufl="http://vivo.ufl.edu/ontology/vivo-ufl/"
-			xmlns:db-people="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/people/"
-			xmlns:db-positions="jdbc:h2:harvested-data/peopleSoftMirror/store;MODE=MSSQLServer/fields/positions/"
+			xmlns:db-people="jdbc:mysql://127.0.0.1:3306/peoplesoftMirror/fields/people/"
+			xmlns:db-positions="jdbc:mysql://127.0.0.1:3306/peoplesoftMirror/fields/positions/"
 			xmlns:foaf="http://xmlns.com/foaf/0.1/"
 			xmlns:owl="http://www.w3.org/2002/07/owl#"
 			xmlns:core="http://vivoweb.org/ontology/core#"
