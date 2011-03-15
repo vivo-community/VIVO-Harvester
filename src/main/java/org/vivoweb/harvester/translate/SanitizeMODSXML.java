@@ -215,7 +215,7 @@ public class SanitizeMODSXML {
 	private String getReplacement(char character) {
 		String replacement;
 
-		if((character >= 6) && (character <= 31))
+		if((character >= 6) && (character <= 31) && (character != 13) && (character != 10))
 			replacement = "";
 		else
 			replacement = String.valueOf(character);
