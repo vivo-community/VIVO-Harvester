@@ -44,11 +44,11 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="isbn" select="identifier[@type='isbn']" />
 		
 		<xsl:variable name="title">
-			<xsl:if test="normalize-space(titleInfo/title)=''"> 
+			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
 				<xsl:value-of select="'(untitled)'" />
 			</xsl:if>
-			<xsl:if test="normalize-space(titleInfo/title)!=''"> 
-				<xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" />
+			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
+				<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
 			</xsl:if>
 		</xsl:variable>
 
@@ -142,11 +142,11 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:param name='modsId' />
 
 		<xsl:variable name="title">
-			<xsl:if test="normalize-space(titleInfo/title)=''"> 
+			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
 				<xsl:value-of select="'(untitled)'" />
 			</xsl:if>
-			<xsl:if test="normalize-space(titleInfo/title)!=''"> 
-				<xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" />
+			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
+				<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
 			</xsl:if>
 		</xsl:variable>
 
@@ -162,11 +162,11 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:param name='modsId' />
 
 		<xsl:variable name="title">
-			<xsl:if test="normalize-space(titleInfo/title)=''"> 
+			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
 				<xsl:value-of select="'(untitled)'" />
 			</xsl:if>
-			<xsl:if test="normalize-space(titleInfo/title)!=''"> 
-				<xsl:value-of select="concat(titleInfo/title, ' ', titleInfo/subTitle)" />
+			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
+				<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
 			</xsl:if>
 		</xsl:variable>
 
