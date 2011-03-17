@@ -4,21 +4,20 @@
 	<Param name="connection">jdbc:jtds:sqlserver://12.123.12.12/DATA</Param>
 	<Param name="username">USERNAME</Param>
 	<Param name="password">PASSWORD</Param>
-<!--	limit the harvest for testing -->
-<!--	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='',dbo.vwContracts.ContractNumber LIKE '%187%'</Param> -->
+	<!--limit the harvest for testing -->
+	<!--<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential='',dbo.vwContracts.ContractNumber LIKE '%187%'</Param>--> 
 	<Param name="whereClause">dbo.vwContracts=dbo.vwContracts.Confidential=''</Param>
 	<Param name="tableName">dbo.vwContracts</Param>
 	<Param name="id">dbo.vwContracts=ContractNumber</Param>
 	<Param name="fields">dbo.vwContracts=Confidential,ContractPI,Title,ContractDeptID,TotalAwarded,ContractUFID,BEGIN_DT,END_DT,SponsorID,Sponsor,FlowThruSponsorID,FlowThruSponsor</Param>
-<!--	limit the harvest for testing-->
-<!--	<Param name="whereClause">dbo.vwProjectTeam=dbo.vwProjectTeam.ContractNumber LIKE '%187%'</Param>-->
+	<!--limit the harvest for testing-->
+	<!--<Param name="whereClause">dbo.vwProjectTeam=dbo.vwProjectTeam.ContractNumber LIKE '%187%'</Param>-->
 	<Param name="tableName">dbo.vwProjectTeam</Param>
 	<Param name="id">dbo.vwProjectTeam=PS_ProjectNumber</Param>
 	<Param name="fields">dbo.vwProjectTeam=ContractUFID,ContractNumber,ProjectUPN,PrimaryProject,InvestigatorID,Investigator,isPI</Param>
 	<Param name="tableName">dbo.vwVIVO</Param>
-	<Param name="whereClause">"dbo.vwVIVO=dbo.vwVIVO.RecordStatus LIKE 'Active'"</Param>
-	<Param name="id">"dbo.vwVIVO=DSR_ Number"</Param>
-    <Param name="fields">"dbo.vwVIVO=DSR_ Number,PS_ Contract,PS_ Project,Title,RecordStatus,SubcontractType,Award_DT,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_ Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyNumber,Sponsor,SponsorID,FlowThruType,FlowThruSponsor,FlowThruID,PI,Type,Category,Program,ClinicalTrial,PrimeSponsorType,PrimeSponsorSource,PrimeAgency,PrimeCustID"</Param>
+	<Param name="id">"dbo.vwVIVO=DSR_Number"</Param>
+    <Param name="fields">"dbo.vwVIVO=DSR_Number,PS_Contract,PS_Project,Title,RecordStatus,SubcontractType,Award_DT,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyNumber,Sponsor,SponsorID,FlowThruType,FlowThruSponsor,FlowThruID,PI,Type,Category,Program,ClinicalTrial,PrimeSponsorType,PrimeSponsorSource,PrimeAgency,PrimeCustID"</Param>
 	<Param name="delimiterPrefix">[</Param>
 	<Param name="delimiterSuffix">]</Param>
 </Task>
