@@ -65,6 +65,11 @@
 									<xsl:with-param name="this" select="$this" />
 								</xsl:call-template>
 							</xsl:when>
+							<xsl:when test="$table = 'dbo.vwVIVO'">
+								<xsl:call-template name="t_vwVIVO">
+									<xsl:with-param name="this" select="$this" />
+								</xsl:call-template>
+							</xsl:when>
 						</xsl:choose>
 					</xsl:matching-substring>		
 				</xsl:analyze-string>
@@ -96,7 +101,6 @@
 				</rdf:Description>
 			</core:administeredBy>
 			<core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
-			<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
 			
 			<xsl:choose>
 				<xsl:when test="string($this/db-dbo.vwContracts:FlowThruSponsor) = ''">
@@ -107,7 +111,7 @@
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="{$baseURI}grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-							<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
+							<!--<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>-->
 						</rdf:Description>
 					</core:grantAwardedBy>
 				</xsl:when>
@@ -119,7 +123,7 @@
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Sponsor"/></rdfs:label>
 							<core:subcontractsGrant rdf:resource="{$baseURI}grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-							<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
+							<!--<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>-->
 						</rdf:Description>
 					</core:grantSubcontractedThrough>
 					<core:grantAwardedBy>
@@ -129,7 +133,7 @@
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:FlowThruSponsor"/></rdfs:label>
 							<core:awardsGrant rdf:resource="{$baseURI}grant/grant{$grantid}"/>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
-							<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>
+							<!--<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwContracts:SponsorID"/></core:sponsorAwardId>-->
 						</rdf:Description>
 					</core:grantAwardedBy>
 				</xsl:otherwise>
@@ -213,6 +217,18 @@
 				</rdf:Description>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+	
+	
+	<xsl:template name="t_vwVIVO">
+		<xsl:param name='this' />
+		<xsl:variable name='grantid' select='$this/db-dbo.vwVIVO:PS__Contract'/>
+		<rdf:Description rdf:about="{$baseURI}grantview/grant{$grantid}">
+		    <ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
+			<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
+			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
+			<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwVIVO:AgencyNumber"/></core:sponsorAwardId>
+		</rdf:Description>
 	</xsl:template>
 	
 </xsl:stylesheet>

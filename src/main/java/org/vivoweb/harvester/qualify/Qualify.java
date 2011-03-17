@@ -164,7 +164,10 @@ public class Qualify {
 	 * @param newValue new value
 	 */
 	private void regexReplace(String predicate, String regexMatch, String newValue) {
-		String query = "" + "SELECT ?s ?o \n" + "WHERE {\n" + "  ?s <" + predicate + "> ?o .\n" + "  FILTER (regex(str(?o), \"" + regexMatch + "\", \"s\")) .\n" + "}";
+		String query = "" + "SELECT ?s ?o \n" 
+						  + "WHERE {\n" 
+						  + "  ?s <" + predicate + "> ?o .\n" 
+						  + "  FILTER (regex(str(?o), \"" + regexMatch + "\", \"s\")) .\n" + "}";
 		log.debug(query);
 		StringBuilder insertQ = new StringBuilder("INSERT DATA {\n");
 		StringBuilder deleteQ = new StringBuilder("DELETE DATA {\n");
@@ -253,7 +256,7 @@ public class Qualify {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Qualify");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("jenaConfig").setDescription("config file for jena model").withParameter(true, "CONFIG_FILE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("jenaOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("jenaOverride").setDescription("override the JENA_PARAM of jena model config using VALUE").withParameterValueMap("JENA_PARAM", "VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataType").setDescription("data type (rdf predicate)").withParameter(true, "RDF_PREDICATE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regexMatch").setDescription("match this regex expression").withParameter(true, "REGEX").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("textMatch").setDescription("match this exact text string").withParameter(true, "MATCH_STRING").setRequired(false));
