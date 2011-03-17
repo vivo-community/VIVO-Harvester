@@ -44,12 +44,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="isbn" select="identifier[@type='isbn']" />
 		
 		<xsl:variable name="title">
-			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
-				<xsl:value-of select="'(untitled)'" />
-			</xsl:if>
-			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
-				<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
-			</xsl:if>
+			<xsl:call-template name="titleVariable" />
 		</xsl:variable>
 
 		<xsl:if test="typeOfResource='text'">
@@ -138,16 +133,23 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		</xsl:if>
 	</xsl:template>
 
+
+
+	<xsl:template name="titleVariable">
+		<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
+			<xsl:value-of select="'(untitled)'" />
+		</xsl:if>
+		<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
+			<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
+		</xsl:if>
+	</xsl:template>
+
+
 	<xsl:template match="relatedItem[@type='host']" mode="withinPub">
 		<xsl:param name='modsId' />
 
 		<xsl:variable name="title">
-			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
-				<xsl:value-of select="'(untitled)'" />
-			</xsl:if>
-			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
-				<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
-			</xsl:if>
+			<xsl:call-template name="titleVariable" />
 		</xsl:variable>
 
 		<xsl:variable name="label" select="$title" />
@@ -162,12 +164,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:param name='modsId' />
 
 		<xsl:variable name="title">
-			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
-				<xsl:value-of select="'(untitled)'" />
-			</xsl:if>
-			<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
-				<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
-			</xsl:if>
+			<xsl:call-template name="titleVariable" />
 		</xsl:variable>
 
 		<xsl:variable name="label" select="$title" />
