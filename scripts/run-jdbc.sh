@@ -29,6 +29,8 @@ echo "Full Logging in $HARVESTER_TASK_DATE.log"
 BASEDIR=harvested-data/$HARVESTER_TASK
 RAWRHDIR=$BASEDIR/rh-raw
 RDFRHDIR=$BASEDIR/rh-rdf
+CLONEDIR=$BASEDIR/clone
+CLONEDBURL=jdbc:h2:$CLONEDIR/store
 MODELDIR=$BASEDIR/model
 MODELDBURL=jdbc:h2:$MODELDIR/store
 MODELNAME=${HARVESTER_TASK}_temp-transfer
@@ -36,23 +38,30 @@ SCOREDATADIR=$BASEDIR/score-data
 SCOREDATADBURL=jdbc:h2:$SCOREDATADIR/store
 SCOREDATANAME=${HARVESTER_TASK}_score-data
 TEMPCOPYDIR=$BASEDIR/temp-copy
+PREVHARVESTMODEL="http://vivoweb.org/ingest/example/jdbc-fetch"
 
 #scoring algorithms
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 
 #matching properties
-UID="http://vivo.local-insitution.edu/ontology-extension/uId"
-DEPTID="http://vivo.local-institution.edu/ontology-extension/deptId"
+SUID="http://vivo.sample.edu/ontology/uId"
+DEPTID="http://vivo.sample.edu/ontology/deptId"
 POSINORG="http://vivoweb.org/ontology/core#positionInOrganization"
 POSFORPERSON="http://vivoweb.org/ontology/core#positionForPerson"
-POSDEPTID="http://vivo.local-institution.edu/ontology-extension/positionDeptId"
+POSDEPTID="http://vivo.sample.edu/ontology/positionDeptId"
 BASEURI="http://vivoweb.org/harvest/example/jdbc-fetch/"
+
+# clear db clone
+rm -rf $CLONEDIR
+
+# clone db
+$DatabaseClone -X config/tasks/example.databaseclone.xml --outputConnection $CLONEDBURL
 
 #clear old fetches
 rm -rf $RAWRHDIR
 
 # Execute Fetch
-$JDBCFetch -X config/tasks/example.jdbcfetch.xml -o $TFRH -OfileDir=$RAWRHDIR
+$JDBCFetch -X config/tasks/example.jdbcfetch.xml --connection $CLONEDBURL -o $TFRH -OfileDir=$RAWRHDIR
 
 # backup fetch
 BACKRAW="raw"
@@ -64,7 +73,7 @@ backup-path $RAWRHDIR $BACKRAW
 rm -rf $RDFRHDIR
 
 # Execute Translate
-$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/peoplesoft-to-vivo.xsl
+$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/example.jdbcfetch-to-vivo.xsl
 
 # backup translate
 BACKRDF="rdf"
@@ -76,7 +85,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $TFRH -HfileDir=$RDFRHDIR -n $NAMESPACE
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -84,11 +93,9 @@ backup-path $MODELDIR $BACKMODEL
 # uncomment to restore previous H2 transfer Model
 #restore-path $MODELDIR $BACKMODEL
 
-exit
-
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
-SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
+SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VmodelName=$PREVHARVESTMODEL -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
 # Clear old H2 score data
 rm -rf $SCOREDATADIR
@@ -98,17 +105,16 @@ rm -rf $TEMPCOPYDIR
 
 # uncomment to restore previous H2 temp copy Model
 BACKPREPEOPLEORGTEMPDATA="prepeopleorg-tempdata"
-restore-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
+#restore-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
 
 # Execute Score for People
-$Score $SCOREMODELS -n ${BASEURI}person/ -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID
+$Score $SCOREMODELS -n ${BASEURI}person/ -Auid=$EQTEST -Wuid=1.0 -Fuid=$SUID -Puid=$SUID
 
 # backup H2 temp copy Model
-echo test
 backup-path $TEMPCOPYDIR $BACKPREPEOPLEORGTEMPDATA
 
 # Execute Score for Departments
-$Score $SCOREMODELS -n ${BASEURI}org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$UFDEPTID -PdeptId=$UFDEPTID
+$Score $SCOREMODELS -n ${BASEURI}org/ -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$DEPTID -PdeptId=$DEPTID
 
 # backup H2 score data Model
 BACKSCOREDATA="scoredata-prepos"
@@ -138,7 +144,7 @@ BACKPOSTPEOPLEORGTEMPDATA="postpeopleorg-tempdata"
 # Execute Score for Positions
 POSORG="-AposOrg=$EQTEST -WposOrg=0.34 -FposOrg=$POSINORG -PposOrg=$POSINORG"
 POSPER="-AposPer=$EQTEST -WposPer=0.34 -FposPer=$POSFORPERSON -PposPer=$POSFORPERSON"
-DEPTPOS="-AdeptPos=$EQTEST -WdeptPos=0.34 -FdeptPos=$UFPOSDEPTID -PdeptPos=$UFPOSDEPTID"
+DEPTPOS="-AdeptPos=$EQTEST -WdeptPos=0.34 -FdeptPos=$POSDEPTID -PdeptPos=$POSDEPTID"
 $Score $SCOREMODELS -n ${BASEURI}position/ $POSORG $POSPER $DEPTPOS
 
 # backup H2 temp copy Model
@@ -176,11 +182,10 @@ backup-path $MODELDIR $BACKMATCHED
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
 BACKPREDB="pretransfer"
-#backup-mysqldb $BACKPREDB
+backup-mysqldb $BACKPREDB
 # uncomment to restore pretransfer vivo database
 #restore-mysqldb $BACKPREDB
 
-PREVHARVESTMODEL="http://vivoweb.org/ingest/ufl/peoplesoft"
 ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
@@ -194,22 +199,22 @@ backup-file $ADDFILE adds.rdf.xml
 backup-file $SUBFILE subs.rdf.xml
 
 # Apply Subtractions to Previous model
-#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
+$Transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
 # Apply Additions to Previous model
-#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
-# Apply Subtractions to VIVO
-#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
-# Apply Additions to VIVO
-#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
+$Transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
+# Apply Subtractions to VIVO for pre-1.2 versions
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
+# Apply Additions to VIVO for pre-1.2 versions
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 # Backup posttransfer vivo database, symlink latest to latest.sql
 BACKPOSTDB="posttransfer"
-#backup-mysqldb $BACKPOSTDB
+backup-mysqldb $BACKPOSTDB
 # uncomment to restore posttransfer vivo database
 #restore-mysqldb $BACKPOSTDB
 
 # Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
-/etc/init.d/tomcat stop
-/etc/init.d/apache2 reload
-/etc/init.d/tomcat start
+#/etc/init.d/tomcat stop
+#/etc/init.d/apache2 reload
+#/etc/init.d/tomcat start

@@ -1,48 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Task>
 	<Param name="driver">org.h2.Driver</Param>
-	<Param name="connection">jdbc:h2:files/example-jdbc-fetch/h2db/store</Param>
+	<!-- <Param name="connection">Set In Script</Param> -->
 	<Param name="username">sa</Param>
 	<Param name="password"></Param>
 	<Param name="tableName">people</Param>
 	<Param name="id">people=UID</Param>
 	<Param name="query">people=
 SELECT 
-	emp.ID AS UID, 
-	emp.OFFICIAL_NAME AS BUSNAME, 
-	emp.EMAIL AS EMAIL, 
-	emp.PHONE AS PHONE,  
-	emp.FAX AS FAX, 
-	emp.FIRST_NAME AS FNAME, 
-	emp.LAST_NAME AS LNAME, 
-	emp.MID_INIT AS MNAME, 
-	emp.PREFIX AS PRENAME, 
-	emp.SUFFIX AS SUFNAME, 
-	emp.FULL_NAME AS FULLNAME, 
-	login.USERID AS NETID, 
-	emp.PREF_TITLE AS TITLE 
-FROM EMPLOYEES AS emp 
-LEFT JOIN NETWORK_IDS AS login ON 
-	emp.ID = login.UID 
+	emp.person_id AS UID, 
+	emp.first_name AS FNAME, 
+	emp.last_name AS LNAME, 
+	emp.middle_name AS MNAME, 
+	emp.prefix_name AS PRENAME, 
+	emp.suffix_name AS SUFNAME, 
+	emp.full_name AS FULLNAME, 
+	emp.official_name AS BUSNAME, 
+	emp.pref_title AS TITLE, 
+	emp.email_address AS EMAIL, 
+	emp.work_phone AS PHONE, 
+	emp.work_fax AS FAX, 
+	login.login_name AS NETID 
+FROM person AS emp 
+LEFT JOIN user AS login ON 
+	emp.person_id = login.person_id AND login.expired = 0 
 WHERE 
-	emp.PUBLISH_OK='Y'<!-- --> AND 
-	emp.ID LIKE '%1234%'<!-- -->
+	emp.publish_ok = 1<!-- - -> AND 
+	emp.person_id LIKE '%6%'<!- - -->
 	</Param>
 	<Param name="tableName">positions</Param>
 	<Param name="id">positions=UID,TYPE,DEPTID,STARTDATE</Param>
 	<Param name="query">positions=
 SELECT 
-	emp.ID AS UID, 
-	pos.TYPE_CODE AS TYPE, 
-	pos.ASSO_DEPTID AS DEPTID, 
-	pos.START_DATE AS STARTDATE, 
-	pos.WORKING_TITLE AS TITLE 
-FROM POSITIONS AS pos 
-INNER JOIN EMPLOYEES AS emp ON 
-	pos.UID = emp.ID 
+	emp.person_id AS UID, 
+	pos.type_id AS TYPE, 
+	pos.dept_id AS DEPTID, 
+	pos.start_date AS STARTDATE, 
+	code.value AS WORKTITLE 
+FROM job AS pos 
+INNER JOIN person AS emp ON 
+	pos.person_id = emp.person_id 
+INNER JOIN type AS code ON 
+	pos.type_id = code.type_id 
 WHERE 
-	pos.TYPE_CODE IN (12,15,63,157,201) AND 
-	emp.PUBLISH_OK='Y'<!-- --> AND 
-	emp.ID LIKE '%1234%'<!-- -->
+	pos.type_id IN (121,122,254,392,393) AND 
+	emp.publish_ok = 1<!-- - -> AND 
+	emp.person_id LIKE '%6%'<!- - -->
+	</Param>
+	<Param name="tableName">organizations</Param>
+	<Param name="id">organizations=DEPTID</Param>
+	<Param name="query">organizations=
+SELECT 
+	dept.dept_id AS DEPTID, 
+	dept.dept_name AS NAME, 
+	dept.type_id AS TYPE, 
+	dept.super_dept_id AS SUPERDEPTID 
+FROM department AS dept
 	</Param>
 </Task>
