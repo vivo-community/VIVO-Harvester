@@ -97,7 +97,7 @@ public class PubmedFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public PubmedFetch(String[] args) throws IOException {
-		this(new ArgList(getParser("PubmedFetch"), args));
+		this(new ArgList(getParser("PubmedFetch", database), args));
 	}
 	
 	/**
@@ -129,6 +129,16 @@ public class PubmedFetch extends NIHFetch {
 	
 	/**
 	 * Runs, sanitizes, and outputs the results of a EFetch request to the xmlWriter
+	 * <ol>
+	 * <li>create a buffer</li>
+	 * <li>connect to pubmed</li>
+	 * <li>run the efetch request</li>
+	 * <li>get the article set</li>
+	 * <li>create XML writer</li>
+	 * <li>output to buffer</li>
+	 * <li>dump buffer to string</li>
+	 * <li>use sanitizeXML() on string</li>
+	 * </ol>
 	 * @param req the request to run and output results
 	 * @throws IOException Unable to write XML to record
 	 */
@@ -164,8 +174,13 @@ public class PubmedFetch extends NIHFetch {
 	}
 	
 	/**
-	 * Sanitizes XML in preparation for writing to output stream Removes xml namespace attributes, XML wrapper tag, and
-	 * splits each record on a new line
+	 * Sanitizes XML in preparation for writing to output stream
+	 * <ol>
+	 * <li>Removes xml namespace attributes</li>
+	 * <li>Removes XML wrapper tag</li>
+	 * <li>Splits each record on a new line</li>
+	 * <li>Writes to outputstream writer</li>
+	 * </ol>
 	 * @param strInput The XML to Sanitize.
 	 * @throws IOException Unable to write XML to record
 	 */
@@ -204,12 +219,12 @@ public class PubmedFetch extends NIHFetch {
 	public static void main(String... args) {
 		Exception error = null;
 		try {
-			InitLog.initLogger(args, getParser("PubmedFetch"));
+			InitLog.initLogger(args, getParser("PubmedFetch", database));
 			log.info("PubmedFetch: Start");
 			new PubmedFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
-			System.out.println(getParser("PubmedFetch").getUsage());
+			System.out.println(getParser("PubmedFetch", database).getUsage());
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);

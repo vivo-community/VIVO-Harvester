@@ -76,6 +76,8 @@ public abstract class NIHFetch {
 	 */
 	protected NIHFetch(String emailAddress, OutputStream outStream, String database) {
 		this.emailAddress = emailAddress; // NIH Will email this person if there is a problem
+		this.searchTerm = "1:8000[dp]";
+		this.maxRecords = "ALL";
 		this.batchSize = "1000";
 		this.databaseName = database;
 		setOsWriter(outStream);
@@ -153,7 +155,7 @@ public abstract class NIHFetch {
 	 */
 	public String[] runESearch(String term, boolean logMessage) throws IOException {
 		String[] env = new String[4];
-		log.debug("running pubmed query: "+term);
+		log.debug("running "+this.databaseName+" query: "+term);
 		try {
 			// create service connection
 			EUtilsServiceStub service = new EUtilsServiceStub();
@@ -290,14 +292,15 @@ public abstract class NIHFetch {
 	/**
 	 * Get the ArgParser for this task
 	 * @param appName the application name
+	 * @param database the database name
 	 * @return the ArgParser
 	 */
-	protected static ArgParser getParser(String appName) {
+	protected static ArgParser getParser(String appName, String database) {
 		ArgParser parser = new ArgParser(appName);
-		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("contact email address").withParameter(true, "EMAIL_ADDRESS"));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("your contact email address").withParameter(true, "EMAIL_ADDRESS"));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against pubmed").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against "+database+" repository").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("numRecords").setDescription("maximum records to return").withParameter(true, "NUMBER").setDefaultValue("100"));
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batchSize").setDescription("number of records to fetch per batch").withParameter(true, "NUMBER").setDefaultValue("1000"));
 		return parser;

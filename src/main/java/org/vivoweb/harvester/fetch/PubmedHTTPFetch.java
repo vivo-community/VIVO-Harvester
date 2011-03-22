@@ -9,18 +9,16 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.fetch;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.WebHelper;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -76,7 +74,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	public PubmedHTTPFetch(String[] args) throws IOException {
-		this(new ArgList(getParser("PubmedHTTPFetch"), args));
+		this(new ArgList(getParser("PubmedHTTPFetch", database), args));
 	}
 	
 	/**
@@ -110,7 +108,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 			
 			DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
 			docBuildFactory.setIgnoringComments(true);
-			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(getURLContents(urlSb.toString()).getBytes())));
+			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(WebHelper.getURLContents(urlSb.toString()).getBytes())));
 			env[0] = doc.getElementsByTagName("WebEnv").item(0).getTextContent();
 			env[1] = doc.getElementsByTagName("QueryKey").item(0).getTextContent();
 			env[2] = doc.getElementsByTagName("Count").item(0).getTextContent();
@@ -151,32 +149,20 @@ public class PubmedHTTPFetch extends NIHFetch {
 		int retEnd = Integer.parseInt(retStart) + Integer.parseInt(numRecords);
 		log.info("Fetching " + retStart + " to " + retEnd + " records from search");
 		try {
-			sanitizeXML(getURLContents(urlSb.toString()));
+			sanitizeXML(WebHelper.getURLContents(urlSb.toString()));
 		} catch(MalformedURLException e) {
 			throw new IOException("Query URL incorrectly formatted", e);
 		}
 	}
 	
 	/**
-	 * Get the contents of a url
-	 * @param url the url to grab
-	 * @return the contents
-	 * @throws MalformedURLException invalid url
-	 * @throws IOException error reading
-	 */
-	private String getURLContents(String url) throws MalformedURLException, IOException {
-		StringBuilder sb = new StringBuilder();
-		BufferedReader br = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-		String s;
-		while((s = br.readLine()) != null) {
-			sb.append(s);
-		}
-		return sb.toString();
-	}
-	
-	/**
-	 * Sanitizes XML in preparation for writing to output stream Removes xml namespace attributes, XML wrapper tag, and
-	 * splits each record on a new line
+	 * Sanitizes XML in preparation for writing to output stream
+	 * <ol>
+	 * <li>Removes xml namespace attributes</li>
+	 * <li>Removes XML wrapper tag</li>
+	 * <li>Splits each record on a new line</li>
+	 * <li>Writes to outputstream writer</li>
+	 * </ol>
 	 * @param strInput The XML to Sanitize.
 	 * @throws IOException Unable to write XML to record
 	 */
@@ -220,12 +206,12 @@ public class PubmedHTTPFetch extends NIHFetch {
 	public static void main(String... args) {
 		Exception error = null;
 		try {
-			InitLog.initLogger(args, getParser("PubmedHTTPFetch"));
+			InitLog.initLogger(args, getParser("PubmedHTTPFetch", database));
 			log.info("PubmedHTTPFetch: Start");
 			new PubmedHTTPFetch(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
-			System.out.println(getParser("PubmedHTTPFetch").getUsage());
+			System.out.println(getParser("PubmedHTTPFetch", database).getUsage());
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
