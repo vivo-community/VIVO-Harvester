@@ -20,9 +20,9 @@
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:localVivo="http://vivo.sample.edu/ontology/"
-	xmlns:db-people="jdbc:h2:harvested-data/example-jdbc-fetch/clone/store/fields/people/"
-	xmlns:db-positions="jdbc:h2:harvested-data/example-jdbc-fetch/clone/store/fields/positions/"
-	xmlns:db-organizations="jdbc:h2:harvested-data/example-jdbc-fetch/clone/store/fields/organizations/"
+	xmlns:db-people="jdbc:h2:harvested-data/example-jdbc/clone/store/fields/people/"
+	xmlns:db-positions="jdbc:h2:harvested-data/example-jdbc/clone/store/fields/positions/"
+	xmlns:db-organizations="jdbc:h2:harvested-data/example-jdbc/clone/store/fields/organizations/"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'>
@@ -32,7 +32,7 @@
 -->
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
-	<xsl:variable name="baseURI">http://vivoweb.org/harvest/example/jdbc-fetch/</xsl:variable>
+	<xsl:variable name="baseURI">http://vivoweb.org/harvest/example/jdbc/</xsl:variable>
 
 	<!-- The main node of the record loaded 
 		This serves as the header of the RDF file produced
@@ -41,9 +41,9 @@
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
 			xmlns:localVivo="http://vivo.sample.edu/ontology/"
-			xmlns:db-people="jdbc:h2:harvested-data/example-jdbc-fetch/clone/store/fields/people/"
-			xmlns:db-positions="jdbc:h2:harvested-data/example-jdbc-fetch/clone/store/fields/positions/"
-			xmlns:db-organizations="jdbc:h2:harvested-data/example-jdbc-fetch/clone/store/fields/organizations/"
+			xmlns:db-people="jdbc:h2:harvested-data/example-jdbc/clone/store/fields/people/"
+			xmlns:db-positions="jdbc:h2:harvested-data/example-jdbc/clone/store/fields/positions/"
+			xmlns:db-organizations="jdbc:h2:harvested-data/example-jdbc/clone/store/fields/organizations/"
 			xmlns:foaf="http://xmlns.com/foaf/0.1/"
 			xmlns:owl="http://www.w3.org/2002/07/owl#"
 			xmlns:core="http://vivoweb.org/ontology/core#"

@@ -74,7 +74,7 @@ USERNAME=`$XPathTool -e "/Model/Param[@name='dbUser']" -x $VIVOCONFIG`
 PASSWORD=`$XPathTool -e "/Model/Param[@name='dbPass']" -x $VIVOCONFIG`
 NAMESPACE=`$XPathTool -e "/Model/Param[@name='namespace']" -x $VIVOCONFIG`
 H2MODEL="config/models/h2-sdb.xml"
-PREVHARVDBURLBASE="jdbc:h2:harvested-data/previousHarvests/"
+PREVHARVDBURLBASE="jdbc:h2:harvested-data/prevHarvs/"
 H2RH="config/recordhandlers/h2-jdbc.xml"
 TFRH="config/recordhandlers/tfrh.xml"
 BACKUPPATH="$HARVESTERDIR/backups"

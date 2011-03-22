@@ -16,7 +16,7 @@ set -e
 HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
 HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
-HARVESTER_TASK=example-jdbc-fetch
+HARVESTER_TASK=example-jdbc
 
 if [ -f scripts/env ]; then
   . scripts/env
@@ -49,7 +49,7 @@ DEPTID="http://vivo.sample.edu/ontology/deptId"
 POSINORG="http://vivoweb.org/ontology/core#positionInOrganization"
 POSFORPERSON="http://vivoweb.org/ontology/core#positionForPerson"
 POSDEPTID="http://vivo.sample.edu/ontology/positionDeptId"
-BASEURI="http://vivoweb.org/harvest/example/jdbc-fetch/"
+BASEURI="http://vivoweb.org/harvest/example/jdbc/"
 
 # clear db clone
 rm -rf $CLONEDIR
@@ -73,7 +73,7 @@ backup-path $RAWRHDIR $BACKRAW
 rm -rf $RDFRHDIR
 
 # Execute Translate
-$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/example.jdbcfetch-to-vivo.xsl
+$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/example.jdbc-to-vivo.xsl
 
 # backup translate
 BACKRDF="rdf"
@@ -95,7 +95,7 @@ backup-path $MODELDIR $BACKMODEL
 
 SCOREINPUT="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -IcheckEmpty=$CHECKEMPTY"
 SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -ScheckEmpty=$CHECKEMPTY"
-SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VmodelName=$PREVHARVESTMODEL -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
+SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 
 # Clear old H2 score data
 rm -rf $SCOREDATADIR
@@ -190,9 +190,9 @@ ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
+$Diff -m $H2MODEL -MdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -McheckEmpty=$CHECKEMPTY -MmodelName=$PREVHARVESTMODEL -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $H2MODEL -SdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml
