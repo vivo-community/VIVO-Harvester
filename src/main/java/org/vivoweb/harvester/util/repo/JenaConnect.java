@@ -40,6 +40,7 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.ResultSetFormatter;
@@ -536,6 +537,15 @@ public abstract class JenaConnect {
 				}
 				
 				resultModel.write(out, resultFormatParam);
+			}
+		} catch(QueryParseException e) {
+			try {
+				executeUpdateQuery(queryParam);
+				log.info("Update Successfully Applied");
+			} catch(QueryParseException e2) {
+				log.error("Invalid Query:\n"+queryParam);
+				log.debug("Attempted Query Exception:",e);
+				log.debug("Attempted Update Exception:",e2);
 			}
 		} finally {
 			if(qe != null) {
