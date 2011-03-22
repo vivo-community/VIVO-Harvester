@@ -16,7 +16,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
@@ -207,20 +209,25 @@ public class DatabaseClone {
 				log.debug("Setting '"+feature+"' to "+b);
 				config.setProperty(feature, b);
 			}
-			if(this.tables != null) {
+			if(this.tables != null && this.tables.length > 0) {
 				// partial database export
 				log.info("Constructing Dataset Based on Given Tables");
-				QueryDataSet partialDataSet = new QueryDataSet(this.db1);
-				for(String table : this.tables) {
-					log.info("Adding "+table+" to dataset");
-					partialDataSet.addTable(table, "SELECT * FROM "+table);
-				}
-				data = partialDataSet;
 			} else {
 				// full database export
 				log.info("Constructing Full Database Dataset");
-				data = this.db1.createDataSet();
+				Set<String> tableSet = new HashSet<String>();
+				ResultSet tableRS = this.db1.getConnection().getMetaData().getTables(null, null, null, this.tableTypes);
+				while(tableRS.next()) {
+					tableSet.add(tableRS.getString("TABLE_NAME"));
+				}
+				this.tables = tableSet.toArray(this.tables);
 			}
+			QueryDataSet partialDataSet = new QueryDataSet(this.db1);
+			for(String table : this.tables) {
+				log.info("Adding table '"+table+"' to dataset");
+				partialDataSet.addTable(table, "SELECT * FROM "+table);
+			}
+			data = partialDataSet;
 		} else if(this.inFile != null) {
 			for(String feature : this.dbUnitFeatures.keySet()) {
 				log.debug("feature '"+feature+"' not supported for input files");
