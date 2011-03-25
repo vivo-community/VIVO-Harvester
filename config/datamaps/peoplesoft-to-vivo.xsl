@@ -109,8 +109,8 @@
 			<xsl:if test="normalize-space( $this/db-people:GATORLINK )">
 				<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-people:GATORLINK"/></ufVivo:gatorlink>
 			</xsl:if>
-		    <xsl:if test="normalize-space( $this/db-people:TITLE )">
-				<core:overview><xsl:value-of select="$this/db-people:TITLE"/></core:overview>
+			<xsl:if test="normalize-space( $this/db-people:TITLE )">
+				<core:preferredTitle><xsl:value-of select="$this/db-people:TITLE"/></core:preferredTitle>
 			</xsl:if>
 		</rdf:Description>
 	</xsl:template>
@@ -161,7 +161,7 @@
 			<core:personInPosition>
 				<rdf:Description rdf:about="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
 					<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
-					<rdfs:label><xsl:value-of select="$this/db-positions:WORKTITLE"/></rdfs:label>
+					<rdfs:label><xsl:value-of select="$this/db-positions:UFTITLE"/></rdfs:label>
 					<xsl:choose>
 						<xsl:when test="$typeCode=192">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
