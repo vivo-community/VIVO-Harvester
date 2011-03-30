@@ -21,6 +21,7 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -58,6 +59,10 @@ public class Smush {
 	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
 	private String namespace;
+	/**
+	 * Change the input model to match the output model
+	 */
+	private boolean inPlace;
 	
 	/**
 	 * Constructor
@@ -65,9 +70,20 @@ public class Smush {
 	 * @param outputJena model containing only resources about the smushed statements is returned
 	 * @param inputPredicates the predicates to look for in inputJena model
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
+	 * @param inPlace replace the input model with the output model
 	 */
-	public Smush(JenaConnect inputJena, JenaConnect outputJena, List<String> inputPredicates, String namespace) {
-		init(inputJena, outputJena, inputPredicates, namespace);
+	public Smush(JenaConnect inputJena, JenaConnect outputJena, List<String> inputPredicates, String namespace,boolean inPlace) {
+		init(inputJena, outputJena, inputPredicates, namespace, inPlace);
+	}
+	/**
+	 * Constructor
+	 * @param inputJena model containing statements to be smushed
+	 * @param inputPredicates the predicates to look for in inputJena model
+	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
+	 */
+	public Smush(JenaConnect inputJena, List<String> inputPredicates, String namespace) {
+		JenaConnect outputJenaNull = null;
+		init(inputJena, outputJenaNull, inputPredicates, namespace,true);
 	}
 	
 	/**
@@ -87,7 +103,7 @@ public class Smush {
 	public Smush(ArgList opts) throws IOException {
 		JenaConnect i = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		JenaConnect o = JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O"));
-		init(i, o, opts.getAll("P"), opts.get("n"));
+		init(i, o, opts.getAll("P"), opts.get("n") ,opts.has("r"));
 	}
 	
 
@@ -97,15 +113,22 @@ public class Smush {
 	 * @param o model containing only resources about the smushed statements is returned
 	 * @param iPred the predicate to look for in inputJena model
 	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
+	 * @param inPlce replace the input model with the output model
 	 */
-	private void init(JenaConnect i, JenaConnect o, List<String> iPred, String ns) {
+	private void init(JenaConnect i, JenaConnect o, List<String> iPred, String ns,boolean inPlce) {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
 		this.inputJena = i;
 		
 		if(o == null) {
-			throw new IllegalArgumentException("Output model cannot be null");
+			log.info("Output model null generating a memory model");
+			try {
+				o = new SDBJenaConnect("jdbc:h2:mem:tempSmushoutput", "sa", "", "H2", "org.h2.Driver", "layout2", "tempSmushoutput");
+			} catch(IOException e) {
+				log.error("Failed making temp memory model:\n" + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 		this.outputJena = o;
 		
@@ -117,6 +140,7 @@ public class Smush {
 		
 		this.namespace = ns;
 		
+		this.inPlace = inPlce;
 	}
 	
 	/**
@@ -128,12 +152,13 @@ public class Smush {
 		// Models
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
 		
 		// Parameters
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("inputJena-predicates").withParameters(true, "PREDICATE").setDescription("PREDICATE on which, to match").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "NAMESPACE").setDescription("only match rdf nodes in inputJena whose URI begin with NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("replace input model with changed / output model").setRequired(false));
 		return parser;
 	}
 	
@@ -160,7 +185,7 @@ public class Smush {
 						Resource smushToThisResource = null;
 						for (Iterator<Resource> subjIt = closfIt; closfIt.hasNext();) {
 							Resource subj = subjIt.next();
-							if(! subj.getNameSpace().equals(this.namespace)){
+							if(! (subj.getNameSpace().equals(this.namespace) || this.namespace == null ) ){
 								continue;
 							}
 							if (first) {
@@ -213,7 +238,10 @@ public class Smush {
 			Model results = smushResources(this.inputJena.getJenaModel(),prop);
 			outModel.add(results);
 		}
-		
+		if(this.inPlace){
+			this.inputJena.truncate();
+			this.inputJena.loadRdfFromJC(this.outputJena);
+		}
 	}
 
 	/**

@@ -32,7 +32,7 @@ public class SmushTest {
 	/** */
 	private JenaConnect inputModel;
 	/** */
-	private JenaConnect outputModel;
+	//private JenaConnect outputModel;
 	/** */
 	private String namespace;
 	
@@ -43,9 +43,9 @@ public class SmushTest {
 	public void setUp() throws Exception {
 		InitLog.initLogger(null, null);
 		this.namespace = "http://vivo.test.edu/individual/";
-		this.outputModel = new SDBJenaConnect("jdbc:h2:mem:testChNSh2change", "sa", "", "H2", "org.h2.Driver", "layout2", "testChNSchange");
-		this.inputModel = new RDBJenaConnect("jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSvivo");
-		String vivoData = "" +
+//		this.outputModel = new SDBJenaConnect("jdbc:h2:mem:testSmushoutput", "sa", "", "H2", "org.h2.Driver", "layout2", "testSmushoutput");
+		this.inputModel = new RDBJenaConnect("jdbc:h2:mem:testSmushinput;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testSmushinput");
+		String testData = "" +
 			"<rdf:RDF" +
 			"\n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" +
 			"\n xmlns:bibo=\"http://purl.org/ontology/bibo/\"" +
@@ -109,19 +109,19 @@ public class SmushTest {
 			"\n        <rdfs:label xml:lang=\"en-US\">Johnson, Rob</rdfs:label>" +
 			"\n    </rdf:Description>" +
 			"\n</rdf:RDF>";
-		this.inputModel.loadRdfFromStream(new ByteArrayInputStream(vivoData.getBytes()), null, null);
+		this.inputModel.loadRdfFromStream(new ByteArrayInputStream(testData.getBytes()), null, null);
 		Resource test123 = ResourceFactory.createResource(this.namespace + "test123");
-		this.outputModel.getJenaModel().add(test123, ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"), "Johnson, Robert");
-		this.outputModel.getJenaModel().add(test123, ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"), "2345678901");
-		this.outputModel.getJenaModel().add(test123, ResourceFactory.createProperty("http://vivoweb.org/ontology/core#", "workEmail"), "robert.johnson@sci.test.edu");
+		this.inputModel.getJenaModel().add(test123, ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"), "Johnson, Robert");
+		this.inputModel.getJenaModel().add(test123, ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"), "2345678901");
+		this.inputModel.getJenaModel().add(test123, ResourceFactory.createProperty("http://vivoweb.org/ontology/core#", "workEmail"), "robert.johnson@sci.test.edu");
 		Resource test321 = ResourceFactory.createResource(this.namespace + "test321");
-		this.outputModel.getJenaModel().add(test321, ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"), "Laplace, Philip");
-		this.outputModel.getJenaModel().add(test321, ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"), "1234567891");
-		this.outputModel.getJenaModel().add(test321, ResourceFactory.createProperty("http://vivoweb.org/ontology/core#", "workEmail"), "philip.laplace@test.edu");
+		this.inputModel.getJenaModel().add(test321, ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"), "Laplace, Philip");
+		this.inputModel.getJenaModel().add(test321, ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"), "1234567891");
+		this.inputModel.getJenaModel().add(test321, ResourceFactory.createProperty("http://vivoweb.org/ontology/core#", "workEmail"), "philip.laplace@test.edu");
 		Resource testBad = ResourceFactory.createResource("http://norename.blah.com/blah/testBad");
-		this.outputModel.getJenaModel().add(testBad, ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"), "Not Renamed");
-		this.outputModel.getJenaModel().add(testBad, ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"), "1234567892");
-		this.outputModel.getJenaModel().add(testBad, ResourceFactory.createProperty("http://vivoweb.org/ontology/core#", "workEmail"), "bad@blah.com");
+		this.inputModel.getJenaModel().add(testBad, ResourceFactory.createProperty("http://www.w3.org/2000/01/rdf-schema#", "label"), "Not Renamed");
+		this.inputModel.getJenaModel().add(testBad, ResourceFactory.createProperty("http://vivo.test.edu/ontology/vivo-test/", "uniqueId"), "1234567892");
+		this.inputModel.getJenaModel().add(testBad, ResourceFactory.createProperty("http://vivoweb.org/ontology/core#", "workEmail"), "bad@blah.com");
 		log.info("testing Start");
 	}
 	
@@ -132,8 +132,8 @@ public class SmushTest {
 		log.info("testing End");
 		this.inputModel.close();
 		this.inputModel = null;
-		this.outputModel.close();
-		this.outputModel = null;
+//		this.outputModel.close();
+//		this.outputModel = null;
 		this.namespace = null;
 		System.gc();
 	}
@@ -148,11 +148,11 @@ public class SmushTest {
 		List<String> predicates = new ArrayList<String>();
 		predicates.add("http://vivo.test.edu/ontology/vivo-test/uniqueId");
 		
-		Smush testSubject = new Smush(this.inputModel,this.outputModel,predicates,this.namespace);
+		Smush testSubject = new Smush(this.inputModel,predicates,this.namespace);
 
 		testSubject.execute();
 		{
-			log.info("The output model :\n" + this.outputModel.exportRdfToString());
+			log.info("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
 	
 			query.append("PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
@@ -165,7 +165,7 @@ public class SmushTest {
 			query.append("SELECT ?uri WHERE{");
 			query.append("?uri localVivo:uniqueId \"1234567890\" .");
 			query.append("}");
-			ResultSet rs = this.outputModel.executeSelectQuery(query.toString());
+			ResultSet rs = this.inputModel.executeSelectQuery(query.toString());
 			log.info("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
@@ -191,12 +191,12 @@ public class SmushTest {
 		List<String> predicates = new ArrayList<String>();
 		predicates.add("http://vivo.test.edu/ontology/vivo-test/uniqueId");
 		
-		Smush testSubject = new Smush(this.inputModel,this.outputModel,predicates,this.namespace);
+		Smush testSubject = new Smush(this.inputModel,predicates,this.namespace);
 
 		testSubject.execute();
 
 		{
-			log.info("The output model :\n" + this.outputModel.exportRdfToString());
+			System.out.println("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
 	
 			query.append("PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
@@ -207,19 +207,19 @@ public class SmushTest {
 			query.append("PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>");
 			query.append("PREFIX foaf:	<http://xmlns.com/foaf/0.1/>");
 			query.append("SELECT ?uri WHERE{");
-			query.append("?uri localVivo:uniqueId \"2345678901\" .");
+			query.append("?uri localVivo:uniqueId ?lbl .");
 			query.append("}");
-			ResultSet rs = this.outputModel.executeSelectQuery(query.toString());
-			log.info("query result set :\n");
+			ResultSet rs = this.inputModel.executeSelectQuery(query.toString());
+			System.out.println("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					log.info(line);
+					System.out.println(line);
 				}
 			}
-			assertTrue(list.size() == 3);//Node of the improper namespace is not reduced
+			assertTrue(list.size() == 5);//Nodes of the improper namespace is not reduced
 		}
 
 		log.info("END testExecNotSmushResources");

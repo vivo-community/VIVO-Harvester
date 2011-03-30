@@ -227,6 +227,7 @@
 		    <ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 			<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
+			<ufVivo:dsrNumber><xsl:value-of select="$this/db-dbo.vwVIVO:DSR_Number" /></ufVivo:dsrNumber>
 			<core:sponsorAwardId><xsl:value-of select="$this/db-dbo.vwVIVO:AgencyNumber"/></core:sponsorAwardId>
 		</rdf:Description>
 	</xsl:template>

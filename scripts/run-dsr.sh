@@ -112,6 +112,8 @@ backup-path $MODELDIR $BACKMODEL
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
+$Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grant/ -r
+
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
@@ -125,12 +127,31 @@ $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
+
+$Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grantview/ -r
+
+# Scoring of additional Grantdata on ContractNumber
+$Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grantview/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
+
+#clear score model for next batch.
+rm -rf $SCOREDATADIR
+
+
+$Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
+
 # Scoring of people on UFID
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
 
+
+$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
 # Scoring of orgs on DeptID
 $Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
 
+
+$Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
 
@@ -158,6 +179,10 @@ $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}grant/
+
+# Execute ChangeNamespace to get grants into current namespace
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -u ${BASEURI}grantview/
 
 # Execute ChangeNamespace to get orgs into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
