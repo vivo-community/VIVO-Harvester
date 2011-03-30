@@ -33,6 +33,10 @@ public class RenameBlankNodes {
 	 */
 	private final Model inModel;
 	/**
+	 * The model to contain renamed nodes
+	 */
+	private final Model outModel;
+	/**
 	 * The part of the namespace between the base and the ID number
 	 */
 	private final String namespaceEtc;
@@ -66,8 +70,9 @@ public class RenameBlankNodes {
 	 * @param pattern pattern
 	 * @param property property
 	 */
-	public RenameBlankNodes(Model inModel, String namespaceEtc, Model dedupModel, String pattern, String property) {
+	public RenameBlankNodes(Model inModel, Model outModel, String namespaceEtc, Model dedupModel, String pattern, String property) {
 		this.inModel = inModel;
+		this.outModel = outModel;
 		this.namespaceEtc = namespaceEtc;
 		this.dedupModel = dedupModel;
 		this.pattern = pattern;
@@ -82,12 +87,19 @@ public class RenameBlankNodes {
 	public RenameBlankNodes(ArgList argList) throws IOException {
 		this(
 			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")).getJenaModel(),
+			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")).getJenaModel(),
 			argList.get("n"),
 			argList.has("d") ? JenaConnect.parseConfig(argList.get("d"), argList.getValueMap("D")).getJenaModel() : null,
 			argList.get("t"),
 			argList.get("p")
 		);
 	}
+	
+	
+	
+	
+	
+	
 	
 
 	/**
@@ -105,6 +117,8 @@ public class RenameBlankNodes {
 		ArgParser parser = new ArgParser("ChangeNamespace");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dedupModel").withParameter(true, "CONFIG_FILE").setDescription("optional: config file for dedup jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("dedupModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of dedup jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceEtc").withParameter(true, "NAMESPACE_ETC").setDescription("part of the namespace between the base and the ID number").setRequired(true));
