@@ -1,12 +1,10 @@
 package org.vivoweb.test.harvester.qualify;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +16,14 @@ import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
+/**
+ * Testing the Ported and altered Smush Resources
+ * @author jrpence
+ *
+ */
 public class SmushTest {
 	/**
 	 * SLF4J Logger
@@ -36,7 +37,7 @@ public class SmushTest {
 	private String namespace;
 	
 	/**
-	 * @throws Exception
+	 * @throws Exception passing along excpetions
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -125,10 +126,9 @@ public class SmushTest {
 	}
 	
 	/**
-	 * @throws Exception
 	 */
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		log.info("testing End");
 		this.inputModel.close();
 		this.inputModel = null;
@@ -139,7 +139,7 @@ public class SmushTest {
 	}
 	
 	/**
-	 * @throws IOException 
+	 * @throws IOException incase there is an ioerror from exportRdfToString
 	 * 
 	 */
 	@Test
@@ -166,13 +166,13 @@ public class SmushTest {
 			query.append("?uri localVivo:uniqueId \"1234567890\" .");
 			query.append("}");
 			ResultSet rs = this.outputModel.executeSelectQuery(query.toString());
-			System.out.println("query result set :\n");
+			log.info("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					System.out.println(line);
+					log.info(line);
 				}
 			}
 			assertTrue(list.size() == 1);//Node of the proper namespace is reduced
@@ -182,7 +182,7 @@ public class SmushTest {
 	}
 	
 	/**
-	 * @throws IOException 
+	 * @throws IOException incase there is an ioerror from exportRdfToString
 	 * 
 	 */
 	@Test
@@ -210,13 +210,13 @@ public class SmushTest {
 			query.append("?uri localVivo:uniqueId \"2345678901\" .");
 			query.append("}");
 			ResultSet rs = this.outputModel.executeSelectQuery(query.toString());
-			System.out.println("query result set :\n");
+			log.info("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					System.out.println(line);
+					log.info(line);
 				}
 			}
 			assertTrue(list.size() == 3);//Node of the improper namespace is not reduced
