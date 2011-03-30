@@ -13,6 +13,7 @@ package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class Smush {
 	/**
 	 * the predicates to look for in inputJena model
 	 */
-	private Map<String, String> inputPredicates;
+	private List<String> inputPredicates;
 	/**
 	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
@@ -66,7 +67,7 @@ public class Smush {
 	 * @param inputPredicates the predicates to look for in inputJena model
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
-	public Smush(JenaConnect inputJena, JenaConnect outputJena, Map<String, String> inputPredicates, String namespace) {
+	public Smush(JenaConnect inputJena, JenaConnect outputJena, List<String> inputPredicates, String namespace) {
 		init(inputJena, outputJena, inputPredicates, namespace);
 	}
 	
@@ -87,7 +88,7 @@ public class Smush {
 	public Smush(ArgList opts) throws IOException {
 		JenaConnect i = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
 		JenaConnect o = JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O"));
-		init(i, o, opts.getValueMap("P"), opts.get("n"));
+		init(i, o, opts.getAll("P"), opts.get("n"));
 	}
 	
 
@@ -98,7 +99,7 @@ public class Smush {
 	 * @param iPred the predicate to look for in inputJena model
 	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
-	private void init(JenaConnect i, JenaConnect o, Map<String, String> iPred, String ns) {
+	private void init(JenaConnect i, JenaConnect o, List<String> iPred, String ns) {
 		if(i == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -132,7 +133,7 @@ public class Smush {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
 		
 		// Parameters
-		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("inputJena-predicates").withParameterValueMap("RUN_NAME", "PREDICATE").setDescription("for RUN_NAME, match ").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("inputJena-predicates").withParameters(true, "PREDICATE").setDescription("PREDICATE on which, to match").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "NAMESPACE").setDescription("only match rdf nodes in inputJena whose URI begin with NAMESPACE").setRequired(false));
 		return parser;
 	}
@@ -160,6 +161,9 @@ public class Smush {
 						Resource smushToThisResource = null;
 						for (Iterator<Resource> subjIt = closfIt; closfIt.hasNext();) {
 							Resource subj = subjIt.next();
+							if(! subj.getNameSpace().equals(this.namespace)){
+								continue;
+							}
 							if (first) {
 								smushToThisResource = subj;
 								first = false;
@@ -203,10 +207,10 @@ public class Smush {
 	/**
 	 * Execute is that method where the smushResoures method is ran for each predicate.
 	 */
-	private void execute() {
+	public void execute() {
 		Model outModel = this.outputJena.getJenaModel();
-		for(String runName : this.inputPredicates.keySet()) {
-			Property prop = this.inputJena.getJenaModel().createProperty(this.namespace,runName);
+		for(String runName : this.inputPredicates) {
+			Property prop = this.inputJena.getJenaModel().createProperty(runName);
 			Model results = smushResources(this.inputJena.getJenaModel(),prop);
 			outModel.add(results);
 		}
