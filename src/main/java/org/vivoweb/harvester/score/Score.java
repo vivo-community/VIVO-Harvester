@@ -114,90 +114,22 @@ public class Score {
 	 * @throws IOException error initializing jena models
 	 */
 	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, int batchSize) throws IOException {
-		init(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights, batchSize);
-	}
-	
-	/**
-	 * Constructor
-	 * @param args argument list
-	 * @throws IOException error parsing options
-	 */
-	public Score(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
-	}
-	
-	/**
-	 * Constructor Scoring.close();
-	 * @param opts parsed argument list
-	 * @throws IOException error parsing options
-	 */
-	public Score(ArgList opts) throws IOException {
-		JenaConnect i = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
-		JenaConnect v = JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V"));
-		JenaConnect s = JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S"));
-		String t = opts.get("t");
-		Map<String, Class<? extends Algorithm>> a = new HashMap<String, Class<? extends Algorithm>>();
-		Map<String, String> algs = opts.getValueMap("A");
-		for(String runName : algs.keySet()) {
-			try {
-				a.put(runName, Class.forName(algs.get(runName)).asSubclass(Algorithm.class));
-			} catch(ClassNotFoundException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
-			} catch(ClassCastException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
-			}
-		}
-		Map<String, Float> w = new HashMap<String, Float>();
-		Map<String, String> weight = opts.getValueMap("W");
-		for(String runName : weight.keySet()) {
-			w.put(runName, Float.valueOf(weight.get(runName)));
-		}
-		init(i, v, s, t, a, opts.getValueMap("P"), opts.getValueMap("F"), opts.get("n"), w, Integer.parseInt(opts.get("b")));
-	}
-	
-	/**
-	 * Set the processing batch size
-	 * @param size the size to use
-	 */
-	public void setBatchSize(int size) {
-		this.batchSize = size;
-		if(this.batchSize <= 1) {
-			log.warn("Batch Size of '"+size+"' invalid, must be greater than or equal to 1.  Using '1' as Batch Size.");
-			this.batchSize = 1;
-		}
-	}
-
-	/**
-	 * Initialize variables
-	 * @param i model containing statements to be scored
-	 * @param v model containing vivoJena statements
-	 * @param s model containing scoring data statements
-	 * @param t directory to put model in which to store temp copy of input and vivo data statements
-	 * @param a the class of the Algorithm to execute
-	 * @param iPred the predicate to look for in inputJena model
-	 * @param vPred the predicate to look for in vivoJena model
-	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
-	 * @param w the weighting (0.0 , 1.0) for this score
-	 * @param size the processing batch size
-	 * @throws IOException error initializing jena models
-	 */
-	private void init(JenaConnect i, JenaConnect v, JenaConnect s, String t, Map<String, Class<? extends Algorithm>> a, Map<String, String> iPred, Map<String, String> vPred, String ns, Map<String, Float> w, int size) throws IOException {
-		if(i == null) {
+		if(inputJena == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
-		this.inputJena = i;
+		this.inputJena = inputJena;
 		
-		if(v == null) {
+		if(vivoJena == null) {
 			throw new IllegalArgumentException("Vivo model cannot be null");
 		}
-		this.vivoJena = v;
+		this.vivoJena = vivoJena;
 		
-		if(s == null) {
+		if(scoreJena == null) {
 			throw new IllegalArgumentException("Score Data model cannot be null");
 		}
-		this.scoreJena = s;
+		this.scoreJena = scoreJena;
 		
-		String tempDir = t;
+		String tempDir = tempJenaDir;
 		if(tempDir == null) {
 			log.info("temp model directory is not specified, using system temp directory");
 			//			tempDir = File.createTempFile("tempVivoInputCopyJena", "db").getAbsolutePath();
@@ -207,28 +139,28 @@ public class Score {
 			this.tempJena = new TDBJenaConnect(tempDir);
 		}
 		
-		if(a == null) {
+		if(algorithms == null) {
 			throw new IllegalArgumentException("Algorithm cannot be null");
 		}
-		this.algorithms = a;
+		this.algorithms = algorithms;
 		
-		if(iPred == null) {
+		if(inputPredicates == null) {
 			throw new IllegalArgumentException("Input Predicate cannot be null");
 		}
-		this.inputPredicates = iPred;
+		this.inputPredicates = inputPredicates;
 		
-		if(vPred == null) {
+		if(vivoPredicates == null) {
 			throw new IllegalArgumentException("Vivo Predicate cannot be null");
 		}
-		this.vivoPredicates = vPred;
+		this.vivoPredicates = vivoPredicates;
 		
 		if(this.algorithms.size() < 1) {
 			throw new IllegalArgumentException("No runs specified!");
 		}
 		
-		this.namespace = ns;
+		this.namespace = namespace;
 		
-		for(Float weight : w.values()) {
+		for(Float weight : weights.values()) {
 			float d = weight.floatValue();
 			if(d > 1f) {
 				throw new IllegalArgumentException("Weights cannot be greater than 1.0");
@@ -237,7 +169,7 @@ public class Score {
 				throw new IllegalArgumentException("Weights cannot be less than 0.0");
 			}
 		}
-		this.weights = w;
+		this.weights = weights;
 		
 		Map<String, Map<String, ? extends Object>> maps = new HashMap<String, Map<String, ? extends Object>>();
 		maps.put("vivoJena predicates", this.vivoPredicates);
@@ -255,8 +187,81 @@ public class Score {
 			}
 		}
 		this.equalityOnlyMode = test;
-		setBatchSize(size);
+		setBatchSize(batchSize);
 		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
+	}
+	
+	/**
+	 * Constructor
+	 * @param args argument list
+	 * @throws IOException error parsing options
+	 */
+	public Score(String... args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor Scoring.close();
+	 * @param opts parsed argument list
+	 * @throws IOException error parsing options
+	 */
+	public Score(ArgList opts) throws IOException {
+		this(
+			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
+			JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V")), 
+			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
+			opts.get("t"), 
+			initAlgs(opts.getValueMap("A")), 
+			opts.getValueMap("P"), 
+			opts.getValueMap("F"), 
+			opts.get("n"), 
+			initWeights(opts.getValueMap("W")), 
+			Integer.parseInt(opts.get("b"))
+		);
+	}
+	
+	/**
+	 * Initialize the algoritm map from the commandline mapping
+	 * @param algs the commandline mapping
+	 * @return the algorithm map
+	 */
+	private static Map<String, Class<? extends Algorithm>> initAlgs(Map<String,String> algs) {
+		Map<String, Class<? extends Algorithm>> retVal = new HashMap<String, Class<? extends Algorithm>>();
+		for(String runName : algs.keySet()) {
+			try {
+				retVal.put(runName, Class.forName(algs.get(runName)).asSubclass(Algorithm.class));
+			} catch(ClassNotFoundException e) {
+				throw new IllegalArgumentException(e.getMessage(), e);
+			} catch(ClassCastException e) {
+				throw new IllegalArgumentException(e.getMessage(), e);
+			}
+		}
+		return retVal;
+	}
+	
+	/**
+	 * Initialize the weight map from the commandline mapping
+	 * @param weight the commandline mapping
+	 * @return the weight map
+	 */
+	private static Map<String, Float> initWeights(Map<String, String> weight) {
+		Map<String, Float> retVal = new HashMap<String, Float>();
+		for(String runName : weight.keySet()) {
+			retVal.put(runName, Float.valueOf(weight.get(runName)));
+		}
+		return retVal;
+	}
+	
+	/**
+	 * Set the processing batch size
+	 * @param size the size to use
+	 */
+	public void setBatchSize(int size) {
+		this.batchSize = size;
+		if(this.batchSize <= 1) {
+			log.warn("Batch Size of '"+size+"' invalid, must be greater than or equal to 1.  Using '1' as Batch Size.");
+			this.batchSize = 1;
+		}
 	}
 	
 	/**
