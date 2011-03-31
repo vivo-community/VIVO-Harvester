@@ -115,27 +115,18 @@ public class Qualify {
 	 * @throws IOException error creating task
 	 */
 	public Qualify(ArgList argList) throws IOException {
+		this(
+			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			argList.get("d"), 
+			(argList.has("r") ? argList.get("r") : argList.get("t")), 
+			argList.get("v"), 
+			argList.has("r"), 
+			argList.get("n"), 
+			argList.has("p"), 
+			argList.has("c")
+		);
 		if(!((argList.has("r") ^ argList.has("t") ^ (argList.has("n") && (argList.has("p") || argList.has("c")))))) {
 			throw new IllegalArgumentException("Must provide one of --regex, --text, or --remove-namespace, but not more than one");
-		}
-		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
-		this.dataPredicate = argList.get("d");
-		this.regex = argList.has("r");
-		this.matchTerm = (this.regex ? argList.get("r") : argList.get("t"));
-		this.newVal = argList.get("v");
-		this.namespace = argList.get("n");
-		this.cleanPredicates = argList.has("p");
-		this.cleanResources = argList.has("c");
-		if((this.namespace == null) || this.namespace.isEmpty()) {
-			if(this.cleanPredicates && this.cleanResources) {
-				throw new IllegalArgumentException("Cannot specify predicate-clean and clean-resources when remove-namepsace is empty");
-			}
-			if(this.cleanPredicates) {
-				throw new IllegalArgumentException("Cannot specify predicate-clean when remove-namepsace is empty");
-			}
-			if(this.cleanResources) {
-				throw new IllegalArgumentException("Cannot specify clean-resources when remove-namepsace is empty");
-			}
 		}
 	}
 	
