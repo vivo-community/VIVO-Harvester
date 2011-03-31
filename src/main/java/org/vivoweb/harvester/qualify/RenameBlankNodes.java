@@ -17,7 +17,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * Find nodes with no name and give them a name
@@ -31,11 +30,11 @@ public class RenameBlankNodes {
 	/**
 	 * The model to perform rename in
 	 */
-	private final Model inModel;
+	private final JenaConnect inModel;
 	/**
 	 * The model to contain renamed nodes
 	 */
-	private final Model outModel;
+	private final JenaConnect outModel;
 	/**
 	 * The part of the namespace between the base and the ID number
 	 */
@@ -43,7 +42,7 @@ public class RenameBlankNodes {
 	/**
 	 * dedupModel
 	 */
-	private final Model dedupModel;
+	private final JenaConnect dedupModel;
 	/**
 	 * pattern
 	 */
@@ -65,12 +64,13 @@ public class RenameBlankNodes {
 	/**
 	 * Constructor
 	 * @param inModel The model to perform rename in
+	 * @param outModel The model to write output to
 	 * @param namespaceEtc The part of the namespace between the base and the ID number
 	 * @param dedupModel dedupModel
 	 * @param pattern pattern
 	 * @param property property
 	 */
-	public RenameBlankNodes(Model inModel, Model outModel, String namespaceEtc, Model dedupModel, String pattern, String property) {
+	public RenameBlankNodes(JenaConnect inModel, JenaConnect outModel, String namespaceEtc, JenaConnect dedupModel, String pattern, String property) {
 		this.inModel = inModel;
 		this.outModel = outModel;
 		this.namespaceEtc = namespaceEtc;
@@ -86,27 +86,34 @@ public class RenameBlankNodes {
 	 */
 	public RenameBlankNodes(ArgList argList) throws IOException {
 		this(
-			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")).getJenaModel(),
-			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")).getJenaModel(),
+			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")),
+			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")),
 			argList.get("n"),
-			argList.has("d") ? JenaConnect.parseConfig(argList.get("d"), argList.getValueMap("D")).getJenaModel() : null,
+			JenaConnect.parseConfig(argList.get("d"), argList.getValueMap("D")),
 			argList.get("t"),
 			argList.get("p")
 		);
 	}
 	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Rename blank nodes
+	 * @param inModel The model to perform rename in
+	 * @param outModel The model to write output to
+	 * @param namespaceEtc The part of the namespace between the base and the ID number
+	 * @param dedupModel dedupModel
+	 * @param pattern pattern
+	 * @param property property
+	 */
+	@SuppressWarnings("unused")
+	public static void renameBNodes(JenaConnect inModel, JenaConnect outModel, String namespaceEtc, JenaConnect dedupModel, String pattern, String property) {
+		//TODO mbarbieri: complete
+	}
 
 	/**
 	 * Rename blank nodes
 	 */
 	public void execute() {
-		//todo: complete
+		renameBNodes(this.inModel, this.outModel, this.namespaceEtc, this.dedupModel, this.pattern, this.property);
 	}
 	
 	/**
