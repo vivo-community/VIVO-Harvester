@@ -79,8 +79,9 @@ public class QualifyTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
 	 * regex replace.
+	 * @throws IOException error connecting
 	 */
-	public void testMultiRegexReplace() {
+	public void testMultiRegexReplace() throws IOException {
 		log.info("BEGIN testMultiRegexReplace");
 		Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
 		Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
@@ -103,8 +104,9 @@ public class QualifyTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
 	 * string replace.
+	 * @throws IOException error connecting
 	 */
-	public void testStringReplace() {
+	public void testStringReplace() throws IOException {
 		log.info("BEGIN testStringReplace");
 		Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
 		Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");

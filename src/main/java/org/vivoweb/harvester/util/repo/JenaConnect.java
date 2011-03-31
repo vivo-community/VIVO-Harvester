@@ -202,8 +202,9 @@ public abstract class JenaConnect {
 	/**
 	 * Get the size of a jena model
 	 * @return the number of statement in this model
+	 * @throws IOException error connecting
 	 */
-	public int size() {
+	public int size() throws IOException {
 		ResultSet resultSet = executeSelectQuery("SELECT (count(?s) as ?size) WHERE { ?s ?p ?o }");
 		// read first result
 		if(resultSet.hasNext()) {
@@ -394,29 +395,40 @@ public abstract class JenaConnect {
 	/**
 	 * Build a QueryExecution from a queryString
 	 * @param queryString the query to build execution for
+	 * @param datasetMode execute against dataset
 	 * @return the QueryExecution
+	 * @throws IOException error connecting
 	 */
-	private QueryExecution buildQueryExec(String queryString) {
-		return QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getJenaModel());
+	private QueryExecution buildQueryExec(String queryString, boolean datasetMode) throws IOException {
+		QueryExecution qe;
+		if(datasetMode) {
+			qe = QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getDataSet());
+		} else {
+			qe = QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getJenaModel());
+		}
+		return qe;
 	}
 	
 	/**
 	 * Executes a sparql select query against the JENA model and returns the selected result set
 	 * @param queryString the query to execute against the model
 	 * @return the executed query result set
+	 * @throws IOException error connecting
 	 */
-	public ResultSet executeSelectQuery(String queryString) {
-		return executeSelectQuery(queryString, false);
+	public ResultSet executeSelectQuery(String queryString) throws IOException {
+		return executeSelectQuery(queryString, false, false);
 	}
 	
 	/**
 	 * Executes a sparql select query against the JENA model and returns the selected result set
 	 * @param queryString the query to execute against the model
 	 * @param copyResultSet copy the resultset
+	 * @param datasetMode execute against dataset
 	 * @return the executed query result set
+	 * @throws IOException error connecting
 	 */
-	public ResultSet executeSelectQuery(String queryString, boolean copyResultSet) {
-		ResultSet rs = buildQueryExec(queryString).execSelect();
+	public ResultSet executeSelectQuery(String queryString, boolean copyResultSet, boolean datasetMode) throws IOException {
+		ResultSet rs = buildQueryExec(queryString, datasetMode).execSelect();
 		if(copyResultSet) {
 			rs = ResultSetFactory.copyResults(rs);
 		}
@@ -430,8 +442,19 @@ public abstract class JenaConnect {
 	 * @throws IOException error connecting
 	 */
 	public JenaConnect executeConstructQuery(String queryString) throws IOException {
+		return executeConstructQuery(queryString, false);
+	}
+	
+	/**
+	 * Executes a sparql construct query against the JENA model and returns the constructed result model
+	 * @param queryString the query to execute against the model
+	 * @param datasetMode execute against dataset
+	 * @return the executed query result model
+	 * @throws IOException error connecting
+	 */
+	public JenaConnect executeConstructQuery(String queryString, boolean datasetMode) throws IOException {
 		JenaConnect jc = new MemJenaConnect();
-		jc.getJenaModel().add(buildQueryExec(queryString).execConstruct());
+		jc.getJenaModel().add(buildQueryExec(queryString, datasetMode).execConstruct());
 		return jc;
 	}
 	
@@ -442,8 +465,19 @@ public abstract class JenaConnect {
 	 * @throws IOException error connecting
 	 */
 	public JenaConnect executeDescribeQuery(String queryString) throws IOException {
+		return executeDescribeQuery(queryString, false);
+	}
+	
+	/**
+	 * Executes a sparql describe query against the JENA model and returns the description result model
+	 * @param queryString the query to execute against the model
+	 * @param datasetMode execute against dataset
+	 * @return the executed query result model
+	 * @throws IOException error connecting
+	 */
+	public JenaConnect executeDescribeQuery(String queryString, boolean datasetMode) throws IOException {
 		JenaConnect jc = new MemJenaConnect();
-		jc.getJenaModel().add(buildQueryExec(queryString).execDescribe());
+		jc.getJenaModel().add(buildQueryExec(queryString, datasetMode).execDescribe());
 		return jc;
 	}
 	
@@ -451,21 +485,50 @@ public abstract class JenaConnect {
 	 * Executes a sparql describe query against the JENA model and returns the description result model
 	 * @param queryString the query to execute against the model
 	 * @return the executed query result model
+	 * @throws IOException error connecting
 	 */
-	public boolean executeAskQuery(String queryString) {
-		return buildQueryExec(queryString).execAsk();
+	public boolean executeAskQuery(String queryString) throws IOException {
+		return executeAskQuery(queryString, false);
+	}
+	
+	/**
+	 * Executes a sparql describe query against the JENA model and returns the description result model
+	 * @param queryString the query to execute against the model
+	 * @param datasetMode execute against dataset
+	 * @return the executed query result model
+	 * @throws IOException error connecting
+	 */
+	public boolean executeAskQuery(String queryString, boolean datasetMode) throws IOException {
+		return buildQueryExec(queryString, datasetMode).execAsk();
 	}
 	
 	/**
 	 * Executes a sparql update query against the JENA model
 	 * @param queryString the query to execute against the model
+	 * @throws IOException error connecting
 	 */
-	public void executeUpdateQuery(String queryString) {
+	public void executeUpdateQuery(String queryString) throws IOException {
+		executeUpdateQuery(queryString, false);
+	}
+	
+	/**
+	 * Executes a sparql update query against the JENA model
+	 * @param queryString the query to execute against the model
+	 * @param datasetMode execute against dataset
+	 * @throws IOException error connecting
+	 */
+	public void executeUpdateQuery(String queryString, boolean datasetMode) throws IOException {
 		this.jenaModel.begin();
 		this.jenaModel.notifyEvent(GraphEvents.startRead);
 		try {
 //			log.debug("query:\n" + queryString);
-			UpdateAction.execute(UpdateFactory.create(queryString), this.jenaModel);
+			if(datasetMode) {
+				log.debug("Executing query against dataset");
+				UpdateAction.execute(UpdateFactory.create(queryString), getDataSet());
+			} else {
+				log.debug("Executing query against model");
+				UpdateAction.execute(UpdateFactory.create(queryString), getJenaModel());
+			}
 		} finally {
 			this.jenaModel.notifyEvent(GraphEvents.finishRead);
 			this.jenaModel.commit();
@@ -512,7 +575,7 @@ public abstract class JenaConnect {
 		try {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
 			if(datasetMode) {
-				log.debug("executing query against dataset");
+				log.debug("Executing query against dataset");
 				qe = QueryExecutionFactory.create(query, getDataSet());
 			} else {
 				log.debug("Executing query against model");
@@ -525,7 +588,7 @@ public abstract class JenaConnect {
 				}
 				ResultSetFormatter.output(out, qe.execSelect(), rsf);
 			} else if(query.isAskType()) {
-				out.write(Boolean.toString(qe.execAsk()).getBytes());
+				out.write((Boolean.toString(qe.execAsk())+"\n").getBytes());
 			} else {
 				Model resultModel = null;
 				if(query.isConstructType()) {
@@ -540,7 +603,7 @@ public abstract class JenaConnect {
 			}
 		} catch(QueryParseException e) {
 			try {
-				executeUpdateQuery(queryParam);
+				executeUpdateQuery(queryParam, datasetMode);
 				log.info("Update Successfully Applied");
 			} catch(QueryParseException e2) {
 				log.error("Invalid Query:\n"+queryParam);
@@ -574,8 +637,9 @@ public abstract class JenaConnect {
 	 * Checks if the model contains the given uri
 	 * @param uri the uri to check for
 	 * @return true if found, false otherwise
+	 * @throws IOException error connecting
 	 */
-	public boolean containsURI(String uri) {
+	public boolean containsURI(String uri) throws IOException {
 		return executeAskQuery("ASK { <" + uri + "> ?p ?o }");
 	}
 	
@@ -695,8 +759,9 @@ public abstract class JenaConnect {
 	/**
 	 * Is this model empty
 	 * @return true if empty, false otherwise
+	 * @throws IOException error connecting
 	 */
-	public boolean isEmpty() {
+	public boolean isEmpty() throws IOException {
 		return !executeAskQuery("ASK { ?s ?p ?o }");
 	}
 	

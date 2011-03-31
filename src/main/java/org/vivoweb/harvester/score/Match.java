@@ -158,8 +158,9 @@ public class Match {
 	 * Find all nodes in the given namepsace matching on the given predicates
 	 * @param threshold the value to look for in the sparql query
 	 * @return mapping of the found matches
+	 * @throws IOException error connecting
 	 */
-	private Map<String, String> match(float threshold) {
+	private Map<String, String> match(float threshold) throws IOException {
 		//Build query to find all nodes matching on the given predicates
 		String sQuery = "" +
 				"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
@@ -245,8 +246,9 @@ public class Match {
 	/**
 	 * Clear out rdf:type and literal values of matched scoreResources TODO stephen: TEST
 	 * @param resultMap a mapping of matched scoreResources to vivoResources
+	 * @throws IOException error connecting
 	 */
-	private void clearTypesAndLiterals(Map<String, String> resultMap) {
+	private void clearTypesAndLiterals(Map<String, String> resultMap) throws IOException {
 		if(!resultMap.values().isEmpty()) {
 			log.trace("Beginning clear types and literals");
 			Set<String> uriFilters = new HashSet<String>();
@@ -270,8 +272,9 @@ public class Match {
 	/**
 	 * Build the query for matching types and literals
 	 * @param uriFilters uris to match on
+	 * @throws IOException error connecting
 	 */
-	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) {
+	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) throws IOException {
 		String query = "" +
 		"DELETE {\n" +
 		"  ?s ?p ?o\n" +

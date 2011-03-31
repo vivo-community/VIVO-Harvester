@@ -447,8 +447,9 @@ public class Score {
 	/**
 	 * Load a batch of scoring data to the score model
 	 * @param scores the score rdf/xml fragments
+	 * @throws IOException error connecting
 	 */
-	private void loadRdfToScoreData(String scores) {
+	private void loadRdfToScoreData(String scores) throws IOException {
 		String sparql = "" +
 			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
 			"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/> \n" +

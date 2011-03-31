@@ -126,8 +126,9 @@ public class ChangeNamespaceTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.qualify.ChangeNamespace#getUnusedURI(java.lang.String, org.vivoweb.harvester.util.repo.JenaConnect...)
 	 * getUnusedURI(String namespace, JenaConnect... models)}.
+	 * @throws IOException error connecting
 	 */
-	public void testGetUnusedURI() {
+	public void testGetUnusedURI() throws IOException {
 		log.info("BEGIN testGetUnusedURI");
 		String uri = ChangeNamespace.getUnusedURI(this.newNamespace, this.vivo);
 		assertFalse(this.vivo.containsURI(uri));

@@ -206,7 +206,11 @@ public class JenaRecordHandler extends RecordHandler {
 	
 	@Override
 	public Iterator<Record> iterator() {
-		return new JenaRecordIterator();
+		try {
+			return new JenaRecordIterator();
+		} catch(IOException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 	
 	/**
@@ -222,8 +226,9 @@ public class JenaRecordHandler extends RecordHandler {
 		
 		/**
 		 * Default Constructor
+		 * @throws IOException error connecting
 		 */
-		protected JenaRecordIterator() {
+		protected JenaRecordIterator() throws IOException {
 			// create query string
 			String sQuery = "" +
 				"PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + "> \n" +
@@ -236,7 +241,7 @@ public class JenaRecordHandler extends RecordHandler {
 				"  ?record lns:" + JenaRecordHandler.this.dataType.getLocalName() + " ?dataField . \n" +
 				"} ORDER BY ?idField";
 			
-			this.resultSet = JenaRecordHandler.this.model.executeSelectQuery(sQuery, true);
+			this.resultSet = JenaRecordHandler.this.model.executeSelectQuery(sQuery, true, false);
 		}
 		
 		@Override
@@ -344,7 +349,7 @@ public class JenaRecordHandler extends RecordHandler {
 	}
 	
 	@Override
-	public Set<String> find(String idText) {
+	public Set<String> find(String idText) throws IOException {
 		Set<String> retVal = new HashSet<String>();
 		String query = "" +
 			"PREFIX rhns: <" + JenaRecordHandler.rhNameSpace + "> \n" +

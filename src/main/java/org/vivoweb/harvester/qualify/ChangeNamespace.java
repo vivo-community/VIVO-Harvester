@@ -69,11 +69,17 @@ public class ChangeNamespace {
 	 * @param model model to change uris in
 	 * @param vivo model in which to search for previously used uris
 	 * @param oldName old namespace
-	 * @param newName new namespacey
+	 * @param newName new namespace
 	 * @param errorLog log error messages for changed nodes
 	 */
 	public ChangeNamespace(JenaConnect model, JenaConnect vivo, String oldName, String newName, boolean errorLog) {
+		if(model == null) {
+			throw new IllegalArgumentException("No input model provided! Must provide an input model");
+		}
 		this.model = model;
+		if(vivo == null) {
+			throw new IllegalArgumentException("No vivo model provided! Must provide a vivo model");
+		}
 		this.vivo = vivo;
 		this.oldNamespace = oldName;
 		this.newNamespace = newName;
@@ -81,10 +87,6 @@ public class ChangeNamespace {
 		
 		this.model.printParameters();
 		this.vivo.printParameters();
-		//TODO Nicholas REMOVE DEBUG STATEMENTS
-		//log.info("vivo size: " + this.vivo.size());
-		//log.info("input size: " + this.model.size());
-		//log.info("INPUT:\n" + this.model.exportRdfToString());
 	}
 	
 	/**
@@ -93,15 +95,13 @@ public class ChangeNamespace {
 	 * @throws IOException error reading config
 	 */
 	public ChangeNamespace(ArgList argList) throws IOException {
-		this.model = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
-		this.vivo = JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V"));
-		this.oldNamespace = argList.get("u");
-		this.newNamespace = argList.get("n");
-		this.errorLogging = argList.has("e");
-		//TODO Nicholas REMOVE DEBUG STATEMENTS		
-		//log.info("vivo size: " + this.vivo.size());
-		//log.info("input size: " + this.model.size());
-		//log.info("INPUT:\n" + this.model.exportRdfToString());
+		this(
+			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")), 
+			argList.get("u"), 
+			argList.get("n"), 
+			argList.has("e")
+		);
 	}
 	
 	/**
@@ -109,9 +109,9 @@ public class ChangeNamespace {
 	 * @param namespace the namespace
 	 * @param models models to check in
 	 * @return the uri
-	 * @throws IllegalArgumentException empty namespace
+	 * @throws IOException error connecting
 	 */
-	public static String getUnusedURI(String namespace, JenaConnect... models) throws IllegalArgumentException {
+	public static String getUnusedURI(String namespace, JenaConnect... models) throws IOException {
 		if((namespace == null) || namespace.equals("")) {
 			throw new IllegalArgumentException("namespace cannot be empty");
 		}
@@ -140,9 +140,9 @@ public class ChangeNamespace {
 	 * @param oldNamespace the old namespace
 	 * @param newNamespace the new namespace
 	 * @param errorLog log error messages for changed nodes
-	 * @throws IllegalArgumentException empty namespace
+	 * @throws IOException error connecting
 	 */
-	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IllegalArgumentException {
+	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IOException {
 		if((oldNamespace == null) || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
@@ -163,8 +163,9 @@ public class ChangeNamespace {
 	 * @param oldNamespace the old namespace
 	 * @param newNamespace the new namespace
 	 * @param errorLog log error messages for changed nodes
+	 * @throws IOException error connecting
 	 */
-	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) {
+	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IOException {
 		//Grab all resources matching namespaces needing changed
 		String subjectQuery = "" + 
 		"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + 
@@ -214,8 +215,9 @@ public class ChangeNamespace {
 	
 	/**
 	 * Change namespace
+	 * @throws IOException error connecting
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.errorLogging);
 	}
 	
@@ -226,9 +228,9 @@ public class ChangeNamespace {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("ChangeNamespace");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoModel").withParameter(true, "CONFIG_FILE").setDescription("config file for vivo jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoModel").withParameter(true, "CONFIG_FILE").setDescription("config file for vivo jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
 		
 		// Params

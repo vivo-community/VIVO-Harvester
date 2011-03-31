@@ -162,8 +162,9 @@ public class Qualify {
 	 * @param predicate data type to match
 	 * @param regexMatch regular expression to match
 	 * @param newValue new value
+	 * @throws IOException error connecting
 	 */
-	private void regexReplace(String predicate, String regexMatch, String newValue) {
+	private void regexReplace(String predicate, String regexMatch, String newValue) throws IOException {
 		String query = "" + "SELECT ?s ?o \n" 
 						  + "WHERE {\n" 
 						  + "  ?s <" + predicate + "> ?o .\n" 
@@ -206,8 +207,9 @@ public class Qualify {
 	/**
 	 * Remove all subjects and objects in a given namespace
 	 * @param ns the namespace to remove all resources from
+	 * @throws IOException error connecting
 	 */
-	private void cleanResources(String ns) {
+	private void cleanResources(String ns) throws IOException {
 		String query = "" + "DELETE { ?s ?p ?o } " + "WHERE { " + "?s ?p ?o .  " + "FILTER (regex(str(?s), \"^" + ns + "\" ) || regex(str(?o), \"^" + ns + "\" ))" + "}";
 		log.debug(query);
 		this.model.executeUpdateQuery(query);
@@ -216,8 +218,9 @@ public class Qualify {
 	/**
 	 * Remove all predicates in a given namespace
 	 * @param ns the namespace to remove all predicates from
+	 * @throws IOException error connecting
 	 */
-	private void cleanPredicates(String ns) {
+	private void cleanPredicates(String ns) throws IOException {
 		String predicateQuery = "" + "DELETE { ?s ?p ?o } " + "WHERE { " + "?s ?p ?o .  " + "FILTER regex(str(?p), \"^" + ns + "\" ) " + "}";
 		log.debug(predicateQuery);
 		this.model.executeUpdateQuery(predicateQuery);
@@ -225,8 +228,9 @@ public class Qualify {
 	
 	/**
 	 * Executes the task
+	 * @throws IOException error connecting
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		if((this.namespace != null) && !this.namespace.isEmpty()) {
 			if(this.cleanPredicates) {
 				log.info("Running clean predicates for " + this.namespace);
