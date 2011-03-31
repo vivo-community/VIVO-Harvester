@@ -1,15 +1,19 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.translate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -22,7 +26,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-
 import com.hp.gloze.Gloze;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -71,35 +74,41 @@ public class GlozeTranslator {
 	 * Default Constructor
 	 */
 	public GlozeTranslator() {
-		this.setURIBase("http://vivoweb.org/glozeTranslation/noURI/");
+		setURIBase("http://vivoweb.org/glozeTranslation/noURI/");
+	}
+	
+	/**
+	 * Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error parsing options
+	 */
+	public GlozeTranslator(String... args) throws IOException {
+		this(new ArgList(getParser(), args));
 	}
 	
 	/**
 	 * @param argumentList <ul>
-	 * <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
-	 * <li><em>schema</em> the incoming schema for gloze translation</li>
-	 * <li><em>outRecordHandler</em> the out record handler</li>
-	 * <li><em>uriBase</em> required for gloze translation the unset URIBASE used is
-	 * http://vivoweb.org/glozeTranslation/noURI/</li>
-	 * </ul>
+	 *        <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
+	 *        <li><em>schema</em> the incoming schema for gloze translation</li>
+	 *        <li><em>outRecordHandler</em> the out record handler</li>
+	 *        <li><em>uriBase</em> required for gloze translation the unset URIBASE used is
+	 *        http://vivoweb.org/glozeTranslation/noURI/</li>
+	 *        </ul>
+	 * @throws IOException error connecting to record handlers
 	 */
-	public GlozeTranslator(ArgList argumentList) {
+	public GlozeTranslator(ArgList argumentList) throws IOException {
 		// the uri base if not set is http://vivoweb.org/glozeTranslation/noURI/"
 		if(argumentList.has("uriBase")) {
-			this.setURIBase(argumentList.get("uriBase"));
+			setURIBase(argumentList.get("uriBase"));
 		}
 		// pull in the translation xsl
 		if(argumentList.has("xmlSchema")) {
-			this.setIncomingSchema(new File(argumentList.get("xmlSchema")));
+			setIncomingSchema(new File(argumentList.get("xmlSchema")));
 		}
 		
 		// create record handlers
-		try {
-			this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
-			this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
-		} catch(Exception e) {
-			log.error(e.getMessage(),e);
-		}
+		this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
+		this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
 	}
 	
 	/**
@@ -126,7 +135,7 @@ public class GlozeTranslator {
 		try {
 			this.uriBase = new URI(base);
 		} catch(URISyntaxException e) {
-			log.error("", e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 	}
 	
@@ -166,7 +175,7 @@ public class GlozeTranslator {
 	 * 
 	 */
 	public void execute() {
-		if(this.uriBase != null && this.inStream != null) {
+		if((this.uriBase != null) && (this.inStream != null)) {
 			try {
 				// create a output stream for writing to the out store
 				ByteArrayOutputStream buff = new ByteArrayOutputStream();
@@ -175,7 +184,7 @@ public class GlozeTranslator {
 					if(r.needsProcessed(this.getClass())) {
 						this.inStream = new ByteArrayInputStream(r.getData().getBytes());
 						this.outStream = buff;
-						this.translateFile();
+						translateFile();
 						buff.flush();
 						this.outStore.addRecord(r.getID(), buff.toString(), this.getClass());
 						r.setProcessed(this.getClass());
@@ -209,17 +218,25 @@ public class GlozeTranslator {
 	 * Main Method
 	 * @param args list of arguments required to execute glozetranslate
 	 */
-	public static void main(String[] args) {
-		InitLog.initLogger(GlozeTranslator.class);
-		log.info(getParser().getAppName()+": Start");
+	public static void main(String... args) {
+		Exception error = null;
 		try {
-			new GlozeTranslator(new ArgList(getParser(), args)).execute();
+			InitLog.initLogger(args, getParser());
+			log.info(getParser().getAppName() + ": Start");
+			new GlozeTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
+			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			error = e;
+		} finally {
+			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 	
 }

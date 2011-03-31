@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
 import java.util.HashMap;
@@ -47,6 +50,7 @@ public class SpecialEntities {
 	private static Map<String, String> getHtmlEncode() {
 		if(htmlEncode == null) {
 			htmlEncode = new HashMap<String, String>();
+			htmlEncode.put("&#32;", "&nbsp;");
 			htmlEncode.put("&#34;", "&quot;");
 			htmlEncode.put("&#38;", "&amp;");
 			htmlEncode.put("&#39;", "&apos;");
@@ -325,6 +329,7 @@ public class SpecialEntities {
 	private static Map<String, String> getXmlEncode() {
 		if(xmlEncode == null) {
 			xmlEncode = new HashMap<String, String>();
+			xmlEncode.put("&#32;", "&nbsp;");
 			xmlEncode.put("&#34;", "&quot;");
 			xmlEncode.put("&#38;", "&amp;");
 			xmlEncode.put("&#39;", "&apos;");
@@ -442,9 +447,9 @@ public class SpecialEntities {
 			acceptedChars.add(Character.valueOf('*'));
 			acceptedChars.add(Character.valueOf('-'));
 			acceptedChars.add(Character.valueOf('_'));
+			acceptedChars.add(Character.valueOf(' '));
 			acceptedChars.add(Character.valueOf('+'));
 			acceptedChars.add(Character.valueOf('='));
-			acceptedChars.add(Character.valueOf(' '));
 			acceptedChars.add(Character.valueOf('\t'));
 			acceptedChars.add(Character.valueOf('\n'));
 			acceptedChars.add(Character.valueOf('\r'));
@@ -456,10 +461,11 @@ public class SpecialEntities {
 	/**
 	 * Converts all special characters to HTML-entities
 	 * @param s input string
+	 * @param exceptions force these characters to be encoded
 	 * @return html encoded string
 	 */
-	public static String htmlEncode(String s) {
-		return encode(s, "html");
+	public static String htmlEncode(String s, char... exceptions) {
+		return encode(s, "html", exceptions);
 	}
 	
 	/**
@@ -474,10 +480,11 @@ public class SpecialEntities {
 	/**
 	 * Converts all special characters to XML-entities
 	 * @param s input string
+	 * @param exceptions force these characters to be encoded
 	 * @return xml encoded string
 	 */
-	public static String xmlEncode(String s) {
-		return encode(s, "xml");
+	public static String xmlEncode(String s, char... exceptions) {
+		return encode(s, "xml", exceptions);
 	}
 	
 	/**
@@ -493,31 +500,36 @@ public class SpecialEntities {
 	 * Converts all special characters to encoded-entities
 	 * @param s input string
 	 * @param encodeType the type of encoding
+	 * @param exceptions force these characters to be encoded
 	 * @return encoded string
 	 */
-	private static String encode(String s, String encodeType) {
+	private static String encode(String s, String encodeType, char... exceptions) {
 		Map<String, String> encodeMap;
+		List<Character> accept = new LinkedList<Character>(getAcceptedChars());
+		for(char c : exceptions) {
+			accept.remove(Character.valueOf(c));
+		}
 		if(encodeType.equalsIgnoreCase("html")) {
 			encodeMap = getHtmlEncode();
 		} else if(encodeType.equalsIgnoreCase("xml")) {
 			encodeMap = getXmlEncode();
 		} else {
-			throw new IllegalArgumentException("decodeType must be xml or html only");
+			throw new IllegalArgumentException("encodeType must be xml or html only");
 		}
 		StringBuilder b = new StringBuilder(s.length());
 		for(int i = 0; i < s.length(); i++) {
 			char ch = s.charAt(i);
-			if(getAcceptedChars().contains(Character.valueOf(ch))) {
+			if(accept.contains(Character.valueOf(ch))) {
 				b.append(ch);
 			} else {
 				StringBuilder b2 = new StringBuilder();
-				if(Character.isWhitespace(ch)) {
-					b2.append("&#").append((int)ch).append(";");
-				} else if(Character.isISOControl(ch)) {
+				if(Character.isISOControl(ch)) {
 					// ignore
+				} else if(Character.isWhitespace(ch)) {
+					b2.append("&#").append((int)ch).append(";");
 				} else if(Character.isHighSurrogate(ch)) {
 					int codePoint;
-					if(i + 1 < s.length() && Character.isSurrogatePair(ch, s.charAt(i + 1)) && Character.isDefined(codePoint = (Character.toCodePoint(ch, s.charAt(i + 1))))) {
+					if((i + 1 < s.length()) && Character.isSurrogatePair(ch, s.charAt(i + 1)) && Character.isDefined(codePoint = (Character.toCodePoint(ch, s.charAt(i + 1))))) {
 						b2.append("&#").append(codePoint).append(";");
 					}
 					i++;

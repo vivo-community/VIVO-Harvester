@@ -1,19 +1,23 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.args;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -26,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
  * Parsed arguments from commandline and config files
@@ -55,51 +58,75 @@ public class ArgList {
 	 * Constructor
 	 * @param p parser
 	 * @param args commandline args
-	 * @throws IllegalArgumentException missing args
 	 * @throws IOException error parsing args
 	 */
-	public ArgList(ArgParser p, String[] args) throws IllegalArgumentException, IOException {
+	public ArgList(ArgParser p, String[] args) throws IOException {
 		try {
 			this.argParser = p;
 			log.debug("running " + p.getAppName());
-			log.debug("command line args: " + StringUtils.join(" ", args));
+			log.debug("command line args: " + getSanitizedArgString(args));
 			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(), args);
 			if(this.oCmdSet.hasOption("help")) {
-				String usage = this.argParser.getUsage();
-				log.info(usage);
-				System.out.println(usage);
+				throw new IllegalArgumentException("Printing Usage:");
+			}
+			String[] confArgs = {""};
+			if(this.oCmdSet.hasOption("X")) {
+				confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
+				log.debug("config file args: " + getSanitizedArgString(confArgs));
+				this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
 			} else {
-				String[] confArgs = {""};
-				if(this.oCmdSet.hasOption("X")) {
-					confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
-					log.debug("config file args: " + StringUtils.join(" ", confArgs));
-					this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
-				} else {
-					this.oConfSet = null;
-				}
-				for(ArgDef arg : this.argParser.getArgDefs()) {
-					if(arg.isRequired()) {
-						String argName;
-						if(arg.getShortOption() != null) {
-							argName = arg.getShortOption().toString();
-						} else {
-							argName = arg.getLongOption();
-						}
-						if(!has(argName)) {
-							throw new IllegalArgumentException("Missing Argument: " + argName);
-						}
+				this.oConfSet = null;
+			}
+			for(ArgDef arg : this.argParser.getArgDefs()) {
+				if(arg.isRequired()) {
+					String argName;
+					if(arg.getShortOption() != null) {
+						argName = arg.getShortOption().toString();
+					} else {
+						argName = arg.getLongOption();
+					}
+					if(!has(argName)) {
+						throw new IllegalArgumentException("Missing Argument: " + argName);
 					}
 				}
 			}
-		} catch(SecurityException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
 		} catch(ParseException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		}
+	}
+	
+	/**
+	 * Get the sanitized string of args
+	 * @param args the args
+	 * @return the sanitized string
+	 */
+	private String getSanitizedArgString(String[] args) {
+		StringBuilder sb = new StringBuilder();
+		String s;
+		Set<String> filters = new HashSet<String>();
+		filters.add("--inputUsername");
+		filters.add("--inputPassword");
+		filters.add("--outputUsername");
+		filters.add("--outputPassword");
+		filters.add("--username");
+		filters.add("--password");
+		filters.add("-.*dbUser");
+		filters.add("-.*dbPass");
+		for(int x = 0; x < args.length; x++) {
+			if(x != 0) {
+				sb.append(" ");
+			}
+			s = args[x];
+			sb.append(s);
+			for(String regex : filters) {
+				if(s.matches(regex)) {
+					sb.append(" ******");
+					x++;
+					break;
+				}
+			}
+		}
+		return sb.toString();
 	}
 	
 	/**
@@ -114,45 +141,52 @@ public class ArgList {
 		if(this.argParser.getOptMap().get(arg).hasParameters()) {
 			throw new IllegalArgumentException(arg + " potentially has more than one value, use getAll()");
 		}
-		if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
-			throw new IllegalArgumentException(arg + " is a properties parameter, use getProperties()");
+		if(this.argParser.getOptMap().get(arg).isParameterValueMap()) {
+			throw new IllegalArgumentException(arg + " is a value map parameter, use getValueMap()");
 		}
 		String retVal;
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal = this.oCmdSet.getOptionValue(arg);
 		} else {
-			if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
+			if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
 				retVal = this.oConfSet.getOptionValue(arg);
 			} else {
 				retVal = this.argParser.getOptMap().get(arg).getDefaultValue();
 			}
 		}
+		if(retVal != null) {
+			retVal = retVal.trim();
+		}
 		return retVal;
 	}
 	
 	/**
-	 * Gets the properties for the argument
+	 * Gets the value map for the argument
 	 * @param arg argument to get
-	 * @return the values
+	 * @return the value map
 	 */
-	public Properties getProperties(String arg) {
-		Map<String, ArgDef> a =this.argParser.getOptMap();
-		ArgDef b = a.get(arg);
-		if(!b.hasParameter()) {
-		//if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+	public Map<String, String> getValueMap(String arg) {
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
-		if(!this.argParser.getOptMap().get(arg).isParameterProperties()) {
-			if(this.argParser.getOptMap().get(arg).hasParameters()) {
-				throw new IllegalArgumentException(arg + " is not a properties parameter, use getAll()");
+		if(!argdef.isParameterValueMap()) {
+			if(argdef.hasParameters()) {
+				throw new IllegalArgumentException(arg + " is not a value map parameter, use getAll()");
 			}
-			throw new IllegalArgumentException(arg + " is not a properties parameter, use get()");
+			throw new IllegalArgumentException(arg + " is not a value map parameter, use get()");
 		}
-		Properties p = new Properties();
+		Map<String, String> p = new HashMap<String, String>();
 		if(this.oConfSet != null) {
-			p.putAll(this.oConfSet.getOptionProperties(arg));
+			Properties props = this.oConfSet.getOptionProperties(arg);
+			for(String prop : props.stringPropertyNames()) {
+				p.put(prop.trim(), props.getProperty(prop).trim());
+			}
 		}
-		p.putAll(this.oCmdSet.getOptionProperties(arg));
+		Properties props = this.oCmdSet.getOptionProperties(arg);
+		for(String prop : props.stringPropertyNames()) {
+			p.put(prop.trim(), props.getProperty(prop).trim());
+		}
 		return p;
 	}
 	
@@ -172,24 +206,29 @@ public class ArgList {
 	 * @return the values
 	 */
 	public List<String> getAll(String arg, boolean includeDefaultValue) {
-		if(!this.argParser.getOptMap().get(arg).hasParameter()) {
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
-		if(!this.argParser.getOptMap().get(arg).hasParameters()) {
-			if(this.argParser.getOptMap().get(arg).isParameterProperties()) {
-				throw new IllegalArgumentException(arg + " is a properties parameter, use getProperties()");
+		if(!argdef.hasParameters()) {
+			if(argdef.isParameterValueMap()) {
+				throw new IllegalArgumentException(arg + " is a value map parameter, use getValueMap()");
 			}
 			throw new IllegalArgumentException(arg + " has only one parameter, use get()");
 		}
 		List<String> retVal = new LinkedList<String>();
 		if(this.oCmdSet.hasOption(arg)) {
-			retVal.addAll(Arrays.asList(this.oCmdSet.getOptionValues(arg)));
+			for(String value : this.oCmdSet.getOptionValues(arg)) {
+				retVal.add(value.trim());
+			}
 		}
-		if(this.oConfSet != null && this.oConfSet.hasOption(arg)) {
-			retVal.addAll(Arrays.asList(this.oConfSet.getOptionValues(arg)));
+		if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
+			for(String value : this.oConfSet.getOptionValues(arg)) {
+				retVal.add(value.trim());
+			}
 		}
-		if((includeDefaultValue || retVal.isEmpty()) && this.argParser.getOptMap().get(arg).hasDefaultValue()) {
-			retVal.add(this.argParser.getOptMap().get(arg).getDefaultValue());
+		if((includeDefaultValue || retVal.isEmpty()) && argdef.hasDefaultValue()) {
+			retVal.add(argdef.getDefaultValue().trim());
 		}
 		return retVal;
 	}
@@ -200,13 +239,12 @@ public class ArgList {
 	 * @return true if a value has been set (from any of command line, config files, or default value)
 	 */
 	public boolean has(String arg) {
-		ArgDef hasArg = this.argParser.getOptMap().get(arg);
-		
-		if (this.oCmdSet.hasOption(arg)) {
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(this.oCmdSet.hasOption(arg)) {
 			return true;
-		} else if (this.oConfSet != null && this.oConfSet.hasOption(arg)) {
+		} else if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
 			return true;
-		} else if (hasArg != null && hasArg.hasDefaultValue()) {
+		} else if((argdef != null) && argdef.hasDefaultValue()) {
 			return true;
 		}
 		return false;
@@ -242,13 +280,9 @@ public class ArgList {
 		 * Converts the contents of a config file to commandline arguments
 		 * @param filePath path to the config file
 		 * @return equivalent commandline argument array
-		 * @throws SecurityException violates security manager
-		 * @throws IllegalArgumentException illegal arguments for method
 		 * @throws IOException error reading config file
-		 * @throws SAXException xml parse error
-		 * @throws ParserConfigurationException parser config error
 		 */
-		public String[] configToArgs(String filePath) throws SecurityException, IllegalArgumentException, ParserConfigurationException, SAXException, IOException {
+		public String[] configToArgs(String filePath) throws IOException {
 			Map<String, List<String>> parameters = parseConfig(filePath);
 			List<String> paramList = new LinkedList<String>();
 			for(String key : parameters.keySet()) {
@@ -269,23 +303,20 @@ public class ArgList {
 		 * @param filename the name of the file to parse
 		 * @return the Task described by the config file
 		 * @throws IOException xml parsing error
-		 * @throws SAXException xml parsing error
-		 * @throws ParserConfigurationException xml parsing error
 		 */
-		private Map<String, List<String>> parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
-			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
-			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse
-			// the
-			// file
-			// and
-			// also
-			// register
-			// this
-			// class
-			// for
-			// call
-			// backs
+		private Map<String, List<String>> parseConfig(String filename) throws IOException {
+			// get a factory
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			try {
+				// get a new instance of parser
+				SAXParser sp = spf.newSAXParser();
+				// parse the file and also register this class for call backs
+				sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this);
+			} catch(ParserConfigurationException e) {
+				throw new IOException(e.getMessage(), e);
+			} catch(SAXException e) {
+				throw new IOException(e.getMessage(), e);
+			}
 			return this.params;
 		}
 		

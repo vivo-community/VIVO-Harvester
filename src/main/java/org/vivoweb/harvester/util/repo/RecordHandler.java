@@ -1,23 +1,29 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
 import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -31,7 +37,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	/**
 	 * SLF4J Logger
 	 */
-	// private static Log log = LogFactory.getLog(RecordHandler.class);
+	private static Logger log = LoggerFactory.getLogger(RecordHandler.class);
 	/**
 	 * Do we overwrite existing records by default
 	 */
@@ -131,7 +137,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 */
 	protected RecordMetaData getLastMetaData(String recID, RecordMetaData.RecordMetaDataType type, Class<?> operator) throws IOException {
 		for(RecordMetaData rmd : getRecordMetaData(recID)) {
-			if((type == null || rmd.getOperation() == type) && (operator == null || rmd.getOperator().equals(operator))) {
+			if(((type == null) || (rmd.getOperation() == type)) && ((operator == null) || rmd.getOperator().equals(operator))) {
 				return rmd;
 			}
 		}
@@ -210,28 +216,129 @@ public abstract class RecordHandler implements Iterable<Record> {
 	}
 	
 	/**
-	 * Build RecordHandler based on config file
-	 * @param filename filename of config file
-	 * @return RecordHandler described by config file
-	 * @throws IOException xml config parse error
-	 * @throws SAXException xml config parse error
-	 * @throws ParserConfigurationException xml config parse error
+	 * Config Stream Based Factory that overrides parameters
+	 * @param configStream the config input stream
+	 * @param overrideParams the parameters to override the file with
+	 * @return RecordHandler instance
+	 * @throws IOException error configuring
 	 */
-	public static RecordHandler parseConfig(String filename) throws ParserConfigurationException, SAXException, IOException {
-		return parseConfig(filename, null);
+	public static RecordHandler parseConfig(InputStream configStream, Map<String, String> overrideParams) throws IOException {
+		Map<String, String> paramList = new RecordHandlerParser().parseConfig(configStream);
+		if(overrideParams != null) {
+			for(String key : overrideParams.keySet()) {
+				paramList.put(key, overrideParams.get(key));
+			}
+		}
+		for(String param : paramList.keySet()) {
+			if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
+				log.debug("'" + param + "' - '" + paramList.get(param) + "'");
+			}
+		}
+		return build(paramList);
 	}
 	
 	/**
-	 * Build RecordHandler based on config file and overrides using the specified parameters
-	 * @param filename filename of config file
-	 * @param overrideParams the parameters to override the file with
-	 * @return RecordHandler described by config file
-	 * @throws IOException xml config parse error
-	 * @throws SAXException xml config parse error
-	 * @throws ParserConfigurationException xml config parse error
+	 * Config File Based Factory
+	 * @param configFile the vfs config file descriptor
+	 * @return RecordHandler instance
+	 * @throws IOException error configuring
 	 */
-	public static RecordHandler parseConfig(String filename, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-		return new RecordHandlerParser().parseConfig(filename, overrideParams);
+	public static RecordHandler parseConfig(FileObject configFile) throws IOException {
+		return parseConfig(configFile, null);
+	}
+	
+	/**
+	 * Config File Based Factory that overrides parameters
+	 * @param configFile the vfs config file descriptor
+	 * @param overrideParams the parameters to override the file with
+	 * @return RecordHandler instance
+	 * @throws IOException error configuring
+	 */
+	public static RecordHandler parseConfig(FileObject configFile, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFile == null) ? null : configFile.getContent().getInputStream();
+		return parseConfig(confStream, overrideParams);
+	}
+	
+	/**
+	 * Config File Based Factory
+	 * @param configFile the config file descriptor
+	 * @return RecordHandler instance
+	 * @throws IOException error configuring
+	 */
+	public static RecordHandler parseConfig(File configFile) throws IOException {
+		return parseConfig(configFile, null);
+	}
+	
+	/**
+	 * Config File Based Factory
+	 * @param configFile the config file descriptor
+	 * @param overrideParams the parameters to override the file with
+	 * @return RecordHandler instance
+	 * @throws IOException error configuring
+	 */
+	public static RecordHandler parseConfig(File configFile, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFile == null) ? null : VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
+		return parseConfig(confStream, overrideParams);
+	}
+	
+	/**
+	 * Config File Based Factory
+	 * @param configFileName the config file path
+	 * @return RecordHandler instance
+	 * @throws IOException xml parse error
+	 */
+	public static RecordHandler parseConfig(String configFileName) throws IOException {
+		return parseConfig(configFileName, null);
+	}
+	
+	/**
+	 * Config File Based Factory
+	 * @param configFileName the config file path
+	 * @param overrideParams the parameters to override the file with
+	 * @return RecordHandler instance
+	 * @throws IOException xml parse error
+	 */
+	public static RecordHandler parseConfig(String configFileName, Map<String, String> overrideParams) throws IOException {
+		InputStream confStream = (configFileName == null) ? null : VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
+		return parseConfig(confStream, overrideParams);
+	}
+	
+	/**
+	 * Build a RecordHandler based on the given parameter set
+	 * @param params the value map
+	 * @return the RecordHandler
+	 * @throws IOException error configuring
+	 */
+	private static RecordHandler build(Map<String, String> params) throws IOException {
+		// for(String param : params.keySet()) {
+		// log.debug(param+" => "+params.get(param));
+		// }
+		if((params == null) || params.isEmpty()) {
+			return null;
+		}
+		String type = params.get("rhClass");
+		if(type == null) {
+			log.warn("No RecordHandler class specified: using MapRecordHandler");
+			type = MapRecordHandler.class.getCanonicalName();
+		}
+		RecordHandler rh;
+		log.debug("Using class: '" + type + "'");
+		try {
+			Object tempRH = Class.forName(type).newInstance();
+			if(!(tempRH instanceof RecordHandler)) {
+				throw new IOException("Class must extend RecordHandler");
+			}
+			rh = (RecordHandler)tempRH;
+			rh.setParams(params);
+		} catch(ClassNotFoundException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
+		} catch(InstantiationException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
+		} catch(IllegalAccessException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
+		}
+		
+		return rh;
 	}
 	
 	/**
@@ -262,17 +369,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 */
 	private static class RecordHandlerParser extends DefaultHandler {
 		/**
-		 * The RecordHandler we are building
-		 */
-		private RecordHandler rh;
-		/**
 		 * The param list from config file
 		 */
 		private Map<String, String> params;
-		/**
-		 * Class name for the RecordHandler
-		 */
-		private String type;
 		/**
 		 * Temporary container for cdata
 		 */
@@ -288,71 +387,39 @@ public abstract class RecordHandler implements Iterable<Record> {
 		protected RecordHandlerParser() {
 			this.params = new HashMap<String, String>();
 			this.tempVal = "";
-			this.type = "Unset!";
 		}
 		
 		/**
 		 * Parses a configuration file describing a RecordHandler
-		 * @param filename the name of the file to parse
-		 * @param overrideParams parameters that override the params in the config file
+		 * @param configStream the config input stream
 		 * @return the RecordHandler described by the config file
 		 * @throws IOException xml parsing error
-		 * @throws SAXException xml parsing error
-		 * @throws ParserConfigurationException xml parsing error
 		 */
-		protected RecordHandler parseConfig(String filename, Properties overrideParams) throws ParserConfigurationException, SAXException, IOException {
-			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
-			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this); // parse
-			// the
-			// file
-			// and
-			// also
-			// register
-			// this
-			// class
-			// for
-			// call
-			// backs
-			if(overrideParams != null) {
-				for(String key : overrideParams.stringPropertyNames()) {
-					this.params.put(key, overrideParams.getProperty(key));
+		protected Map<String, String> parseConfig(InputStream configStream) throws IOException {
+			if(configStream != null) {
+				try {
+					// get a factory
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					// get a new instance of parser
+					SAXParser sp = spf.newSAXParser();
+					// parse the stream and also register this class for call backs
+					sp.parse(configStream, this);
+				} catch(SAXException e) {
+					throw new IOException(e.getMessage(), e);
+				} catch(ParserConfigurationException e) {
+					throw new IOException(e.getMessage(), e);
 				}
 			}
-			try {
-				Class<?> className = Class.forName(this.type);
-				Object tempRH = className.newInstance();
-				if(!(tempRH instanceof RecordHandler)) {
-					throw new SAXException("Class must extend RecordHandler");
-				}
-				this.rh = (RecordHandler)tempRH;
-				this.rh.setParams(this.params);
-			} catch(ClassNotFoundException e) {
-				throw new SAXException("Unknown Class: " + this.type, e);
-			} catch(SecurityException e) {
-				throw new SAXException(e.getMessage(), e);
-			} catch(IllegalArgumentException e) {
-				throw new SAXException(e.getMessage(), e);
-			} catch(InstantiationException e) {
-				throw new SAXException(e.getMessage(), e);
-			} catch(IllegalAccessException e) {
-				throw new SAXException(e.getMessage(), e);
-			} catch(IOException e) {
-				throw new SAXException(e.getMessage(), e);
-			}
-			this.rh.setOverwriteDefault(true);
-			return this.rh;
+			return this.params;
 		}
 		
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			this.tempVal = "";
 			this.tempParamName = "";
-			if(qName.equalsIgnoreCase("RecordHandler")) {
-				this.type = attributes.getValue("type");
-			} else if(qName.equalsIgnoreCase("Param")) {
+			if(qName.equalsIgnoreCase("Param")) {
 				this.tempParamName = attributes.getValue("name");
-			} else {
+			} else if(!qName.equalsIgnoreCase("RecordHandler")) {
 				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
@@ -364,11 +431,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 		
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if(qName.equalsIgnoreCase("RecordHandler")) {
-				// ignore
-			} else if(qName.equalsIgnoreCase("Param")) {
+			if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
-			} else {
+			} else if(!qName.equalsIgnoreCase("RecordHandler")) {
 				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
@@ -379,19 +444,24 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @param id the record to check fo
 	 * @param operator the class to check for
 	 * @return true if written since last processed by operator or if never been processed by operator
-	 * @throws IOException error getting meta data
 	 */
-	public boolean needsProcessed(String id, Class<?> operator) throws IOException {
-		RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
-		Calendar write = rmdWrite.getDate();
-		RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
-		// log.debug("rmdWrite: "+rmdWrite);
-		// log.debug("rmdProcess: "+rmdProcess);
-		if(rmdProcess == null) {
+	public boolean needsProcessed(String id, Class<?> operator) {
+		try {
+			RecordMetaData rmdWrite = getLastMetaData(id, RecordMetaDataType.written, null);
+			Calendar write = rmdWrite.getDate();
+			RecordMetaData rmdProcess = getLastMetaData(id, RecordMetaDataType.processed, operator);
+			// log.debug("rmdWrite: "+rmdWrite);
+			// log.debug("rmdProcess: "+rmdProcess);
+			if(rmdProcess == null) {
+				return true;
+			}
+			Calendar processed = rmdProcess.getDate();
+			return (processed.compareTo(write) < 0);
+		} catch(IOException e) {
+			// error getting metadata file... assume it does not exist
+			//			log.debug("Record "+id+" has no metadata... need to update.");
 			return true;
 		}
-		Calendar processed = rmdProcess.getDate();
-		return (processed.compareTo(write) < 0);
 	}
 	
 	/**
@@ -421,16 +491,16 @@ public abstract class RecordHandler implements Iterable<Record> {
 			return true;
 		} catch(IOException e) {
 			// error getting metadata file... assume it does not exist
-			// TODO Chris: RC2 - perhaps we can test for that assumption?
-			// log.debug("Record "+rec.getID()+" has no metadata... need to update.");
+			//			log.debug("Record "+rec.getID()+" has no metadata... need to update.");
 			return true;
 		}
 	}
-
+	
 	/**
 	 * Find records with idText in their id
 	 * @param idText the text to find
 	 * @return list of ids that match
+	 * @throws IOException error searching
 	 */
-	public abstract List<String> find(String idText);
+	public abstract Set<String> find(String idText) throws IOException;
 }

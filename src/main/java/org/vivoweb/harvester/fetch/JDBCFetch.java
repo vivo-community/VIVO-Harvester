@@ -1,24 +1,30 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.Set;
+import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -27,11 +33,9 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.xml.sax.SAXException;
-import com.hp.hpl.jena.sparql.util.StringUtils;
 
 /**
- * Fetches rdf data from a JDBC database
+ * Fetches rdf data from a JDBC database placing the data in the supplied record handler.
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class JDBCFetch {
@@ -54,21 +58,21 @@ public class JDBCFetch {
 	/**
 	 * Mapping of tablename to mapping of fieldname to tablename
 	 */
-	private Map<String, Map<String, String>> relations = null;
+	private Map<String, Map<String, String>> fkRelations = null;
 	/**
 	 * Mapping of tablename to list of datafields
 	 */
 	private Map<String, List<String>> dataFields = null;
 	/**
-	 * list of tablenames
+	 * Set of table names
 	 */
-	private List<String> tableNames = null;
+	private Set<String> tableNames = null;
 	/**
-	 * list of conditions
+	 * List of conditions
 	 */
 	private Map<String, List<String>> whereClauses;
 	/**
-	 * mapping of extra tables for the from section
+	 * Mapping of extra tables for the from section
 	 */
 	private Map<String, String> fromClauses;
 	/**
@@ -83,6 +87,10 @@ public class JDBCFetch {
 	 * Suffix each field in query with this
 	 */
 	private String querySuf;
+	/**
+	 * The user defined SQL Query string
+	 */
+	private Map<String, String> queryStrings;
 	
 	/**
 	 * Constructor
@@ -92,9 +100,40 @@ public class JDBCFetch {
 	 * @throws SQLException error talking with database
 	 */
 	public JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace) throws SQLException {
-		this.cursor = dbConn.createStatement();
-		this.rh = output;
-		this.uriNS = uriNameSpace;
+		this(dbConn, output, uriNameSpace, null, null, null, null, null, null, null, null, null);
+	}
+	
+	/**
+	 * Perform post-construction data prep and validation Prevents null pointer exceptions
+	 */
+	private void prep() {
+		if(this.tableNames == null) {
+			this.tableNames = new TreeSet<String>();
+		}
+		
+		if(this.fromClauses != null) {
+			this.tableNames.addAll(this.fromClauses.keySet());
+		}
+		
+		if(this.dataFields != null) {
+			this.tableNames.addAll(this.dataFields.keySet());
+		}
+		
+		if(this.idFields != null) {
+			this.tableNames.addAll(this.idFields.keySet());
+		}
+		
+		if(this.whereClauses != null) {
+			this.tableNames.addAll(this.whereClauses.keySet());
+		}
+		
+		if(this.fkRelations != null) {
+			this.tableNames.addAll(this.fkRelations.keySet());
+		}
+		
+		if(this.queryStrings != null) {
+			this.tableNames.addAll(this.queryStrings.keySet());
+		}
 	}
 	
 	/**
@@ -109,19 +148,29 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterProperties("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterProperties("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterProperties("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterProperties("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tableFromClause").withParameterProperties("TABLE_NAME", "TABLE_LIST").setDescription("add tables to use in from clasuse for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("query").withParameterValueMap("TABLE_NAME", "SQL_QUERY").setDescription("use SQL_QUERY to select from TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterValueMap("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterValueMap("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterValueMap("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterValueMap("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tableFromClause").withParameterValueMap("TABLE_NAME", "TABLE_LIST").setDescription("add tables to use in from clauses for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
 		return parser;
 	}
 	
 	/**
-	 * Constructor
+	 * Command line Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
+	 */
+	public JDBCFetch(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Arglist Constructor
 	 * @param opts option set of parsed args
 	 * @throws IOException error creating task
 	 */
@@ -132,111 +181,114 @@ public class JDBCFetch {
 		} catch(ClassNotFoundException e) {
 			throw new IOException(e.getMessage(), e);
 		}
+		
+		// Setting the database connection parameters
 		String connLine = opts.get("c");
 		String username = opts.get("u");
 		String password = opts.get("p");
 		this.queryPre = opts.get("delimiterPrefix");
 		this.querySuf = opts.get("delimiterSuffix");
 		
-		if(opts.has("t")) {
-			this.tableNames = opts.getAll("t");
-		}
+		this.tableNames = new TreeSet<String>();
+		this.tableNames.addAll(opts.getAll("t"));
 		
 		if(opts.has("T")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify fromClauses without tableName");
-			}
-			this.fromClauses = new HashMap<String, String>();
-			Properties froms = opts.getProperties("T");
-			for(String tableName : froms.stringPropertyNames()) {
-				this.fromClauses.put(tableName.trim(), froms.getProperty(tableName).trim());
-			}
+			this.fromClauses = opts.getValueMap("T");
 		}
 		
+		// Set the data fields map according to the command line -F values
 		if(opts.has("F")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify fields without tableName");
-			}
 			this.dataFields = new HashMap<String, List<String>>();
-			Properties fields = opts.getProperties("F");
-			for(String tableName : fields.stringPropertyNames()) {
-				if(!this.dataFields.containsKey(tableName.trim())) {
-					this.dataFields.put(tableName, new LinkedList<String>());
-				}
-				for(String fieldLine : fields.get(tableName.trim()).toString().split(",")) {
-					this.dataFields.get(tableName).add(fieldLine.trim());
-					// log.debug("field: '"+fieldLine.trim()+"'");
-				}
+			Map<String, String> fields = opts.getValueMap("F");
+			for(String tableName : fields.keySet()) {
+				this.dataFields.put(tableName, Arrays.asList(fields.get(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
+		// Set the ID fields map according to the command line -I values		
 		if(opts.has("I")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify id without tableName");
-			}
 			this.idFields = new HashMap<String, List<String>>();
-			Properties ids = opts.getProperties("I");
-			for(Object table : ids.keySet()) {
-				String tableName = table.toString().trim();
-				this.idFields.put(tableName, Arrays.asList(ids.get(tableName).toString().trim().split(",")));
+			Map<String, String> ids = opts.getValueMap("I");
+			for(String tableName : ids.keySet()) {
+				this.idFields.put(tableName, Arrays.asList(ids.get(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
+		// Sets a map of the SQL Where clauses to be applied
 		if(opts.has("W")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify whereClauses without tableName");
-			}
 			this.whereClauses = new HashMap<String, List<String>>();
-			Properties wheres = opts.getProperties("W");
-			for(Object table : wheres.keySet()) {
-				String tableName = table.toString().trim();
-				if(!this.whereClauses.containsKey(tableName)) {
-					this.whereClauses.put(tableName, new LinkedList<String>());
-				}
-				for(String whereLine : wheres.get(table).toString().split(",")) {
-					this.whereClauses.get(tableName).add(whereLine.trim());
-				}
+			Map<String, String> wheres = opts.getValueMap("W");
+			for(String tableName : wheres.keySet()) {
+				this.whereClauses.put(tableName, Arrays.asList(wheres.get(tableName).split("\\s?,\\s?")));
 			}
 		}
 		
+		// settign manual foriegn key relations
 		if(opts.has("R")) {
-			if(!opts.has("t")) {
-				throw new IllegalArgumentException("Cannot specify relations without tableName");
-			}
-			this.relations = new HashMap<String, Map<String, String>>();
-			Properties rels = opts.getProperties("R");
-			for(Object table : rels.keySet()) {
-				String tableName = table.toString().trim();
-				if(!this.relations.containsKey(tableName)) {
-					this.relations.put(tableName, new HashMap<String, String>());
+			this.fkRelations = new HashMap<String, Map<String, String>>();
+			Map<String, String> rels = opts.getValueMap("R");
+			for(String tableName : rels.keySet()) {
+				if(!this.fkRelations.containsKey(tableName)) {
+					this.fkRelations.put(tableName, new HashMap<String, String>());
 				}
-				for(String relLine : rels.get(table).toString().split(",")) {
-					String[] relPair = relLine.split("~", 2);
+				for(String relLine : rels.get(tableName).split("\\s?,\\s?")) {
+					String[] relPair = relLine.split("\\s?~\\s?", 2);
 					if(relPair.length != 2) {
 						throw new IllegalArgumentException("Bad Relation Line: " + relLine);
 					}
-					this.relations.get(tableName).put(relPair[0].trim(), relPair[1].trim());
+					this.fkRelations.get(tableName).put(relPair[0], relPair[1]);
 				}
 			}
 		}
 		
+		// Set SQl style query string from -Q value
+		if(opts.has("Q")) {
+			this.queryStrings = opts.getValueMap("Q");
+		}
+		
+		// Establishing the database connection with provided parameters.
 		Connection dbConn;
 		try {
-			// System.out.println("dbDriver: '"+jdbcDriverClass+"'");
-			// System.out.println("ConnLine: '"+connLine+"'");
-			// System.out.println("UserName: '"+username+"'");
-			// System.out.println("PassWord: '"+password+"'");
 			dbConn = DriverManager.getConnection(connLine, username, password);
 			this.cursor = dbConn.createStatement();
-			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getProperties("O"));
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
 		this.uriNS = connLine + "/";
+		prep();
+	}
+	
+	/**
+	 * Library style Constructor
+	 * @param dbConn The database Connection
+	 * @param rh Record Handler to write records to
+	 * @param uriNS the uri namespace to use
+	 * @param queryPre Query prefix often "["
+	 * @param querySuf Query suffix often "]"
+	 * @param tableNames set of the table names
+	 * @param fromClauses Mapping of extra tables for the from section
+	 * @param dataFields Mapping of tablename to list of datafields
+	 * @param idFields Mapping of tablename to idField name
+	 * @param whereClauses List of conditions
+	 * @param relations Mapping of tablename to mapping of fieldname to tablename
+	 * @param queryStrings Mapping of tablename to query
+	 * @throws SQLException error accessing database
+	 */
+	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws SQLException {
+		this.cursor = dbConn.createStatement();
+		this.rh = rh;
+		this.tableNames = tableNames;
+		this.fromClauses = fromClauses;
+		this.dataFields = dataFields;
+		this.idFields = idFields;
+		this.whereClauses = whereClauses;
+		this.fkRelations = relations;
+		this.uriNS = uriNS;
+		this.queryPre = queryPre;
+		this.querySuf = querySuf;
+		this.queryStrings = queryStrings;
+		prep();
 	}
 	
 	/**
@@ -245,7 +297,7 @@ public class JDBCFetch {
 	 */
 	private String getFieldPrefix() {
 		if(this.queryPre == null) {
-			this.queryPre = "";
+			this.queryPre = getParser().getOptMap().get("delimiterPrefix").getDefaultValue();
 		}
 		return this.queryPre;
 	}
@@ -264,7 +316,7 @@ public class JDBCFetch {
 	 */
 	private String getFieldSuffix() {
 		if(this.querySuf == null) {
-			this.querySuf = "";
+			this.querySuf = getParser().getOptMap().get("delimiterSuffix").getDefaultValue();
 		}
 		return this.querySuf;
 	}
@@ -284,16 +336,18 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private List<String> getDataFields(String tableName) throws SQLException {
-		if(this.dataFields == null) {
+		if((this.dataFields == null) || ((this.queryStrings != null) && this.queryStrings.containsKey(tableName))) {
 			this.dataFields = new HashMap<String, List<String>>();
 		}
 		if(!this.dataFields.containsKey(tableName)) {
 			this.dataFields.put(tableName, new LinkedList<String>());
-			ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
-			while(columnData.next()) {
-				String colName = columnData.getString("COLUMN_NAME");
-				if((getIDFields(tableName).size() > 1 || !getIDFields(tableName).contains(colName)) && !getRelationFields(tableName).containsKey(colName)) {
-					this.dataFields.get(tableName).add(colName);
+			if((this.queryStrings == null) || !this.queryStrings.containsKey(tableName)) {
+				ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
+				while(columnData.next()) {
+					String colName = columnData.getString("COLUMN_NAME");
+					if(((getIDFields(tableName).size() > 1) || !getIDFields(tableName).contains(colName)) && !getFkRelationFields(tableName).containsKey(colName)) {
+						this.dataFields.get(tableName).add(colName);
+					}
 				}
 			}
 		}
@@ -306,26 +360,20 @@ public class JDBCFetch {
 	 * @return the relation field mapping
 	 * @throws SQLException error connecting to DB
 	 */
-	private Map<String, String> getRelationFields(String tableName) throws SQLException {
-		if(this.relations == null) {
-			this.relations = new HashMap<String, Map<String, String>>();
+	private Map<String, String> getFkRelationFields(String tableName) throws SQLException {
+		if((this.fkRelations == null) || ((this.queryStrings != null) && this.queryStrings.containsKey(tableName))) {
+			this.fkRelations = new HashMap<String, Map<String, String>>();
 		}
-		if(!this.relations.containsKey(tableName)) {
-			this.relations.put(tableName, new HashMap<String, String>());
-			ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
-			while(foreignKeys.next()) {
-				// StringBuilder sb = new StringBuilder();
-				// for(int x = 1; x <= foreignKeys.getMetaData().getColumnCount(); x++) {
-				// sb.append(foreignKeys.getMetaData().getColumnName(x));
-				// sb.append(" - ");
-				// sb.append(foreignKeys.getString(x));
-				// sb.append(" || ");
-				// }
-				// log.debug(sb.toString());
-				this.relations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
+		if(!this.fkRelations.containsKey(tableName)) {
+			this.fkRelations.put(tableName, new HashMap<String, String>());
+			if((this.queryStrings == null) || !this.queryStrings.containsKey(tableName)) {
+				ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
+				while(foreignKeys.next()) {
+					this.fkRelations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
+				}
 			}
 		}
-		return this.relations.get(tableName);
+		return this.fkRelations.get(tableName);
 	}
 	
 	/**
@@ -368,12 +416,11 @@ public class JDBCFetch {
 	
 	/**
 	 * Gets the tablenames in database
-	 * @return list of tablenames
+	 * @return set of tablenames
 	 * @throws SQLException error connecting to DB
 	 */
-	private List<String> getTableNames() throws SQLException {
-		if(this.tableNames == null) {
-			this.tableNames = new LinkedList<String>();
+	private Set<String> getTableNames() throws SQLException {
+		if(this.tableNames.isEmpty()) {
 			String[] tableTypes = {"TABLE"};
 			ResultSet tableData = this.cursor.getConnection().getMetaData().getTables(this.cursor.getConnection().getCatalog(), null, "%", tableTypes);
 			while(tableData.next()) {
@@ -390,12 +437,17 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to db
 	 */
 	private String buildSelect(String tableName) throws SQLException {
-		boolean multiTable = this.fromClauses != null && this.fromClauses.containsKey(tableName);
+		if((this.queryStrings != null) && this.queryStrings.containsKey(tableName)) {
+			String query = this.queryStrings.get(tableName);
+			log.debug("User defined SQL Query:\n" + query);
+			return query;
+		}
+		boolean multiTable = (this.fromClauses != null) && this.fromClauses.containsKey(tableName);
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for(String dataField : getDataFields(tableName)) {
 			sb.append(getFieldPrefix());
-			if(multiTable && dataField.split("\\.").length <= 1) {
+			if(multiTable && (dataField.split("\\.").length <= 1)) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -403,9 +455,9 @@ public class JDBCFetch {
 			sb.append(getFieldSuffix());
 			sb.append(", ");
 		}
-		for(String relField : getRelationFields(tableName).keySet()) {
+		for(String relField : getFkRelationFields(tableName).keySet()) {
 			sb.append(getFieldPrefix());
-			if(multiTable && relField.split("\\.").length <= 1) {
+			if(multiTable && (relField.split("\\.").length <= 1)) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -415,7 +467,7 @@ public class JDBCFetch {
 		}
 		for(String idField : getIDFields(tableName)) {
 			sb.append(getFieldPrefix());
-			if(multiTable && idField.split("\\.").length <= 1) {
+			if(multiTable && (idField.split("\\.").length <= 1)) {
 				sb.append(tableName);
 				sb.append(".");
 			}
@@ -433,9 +485,9 @@ public class JDBCFetch {
 		
 		if(getWhereClauses(tableName).size() > 0) {
 			sb.append(" WHERE ");
-			sb.append(StringUtils.join(" AND ", getWhereClauses(tableName)));
+			sb.append(StringUtils.join(getWhereClauses(tableName), " AND "));
 		}
-		log.debug("SQL Query: " + sb.toString());
+		log.debug("Generated SQL Query:\n" + sb.toString());
 		return sb.toString();
 	}
 	
@@ -468,19 +520,30 @@ public class JDBCFetch {
 	
 	/**
 	 * Executes the task
+	 * @throws IOException error processing record handler or jdbc connection
 	 */
-	public void execute() {
+	public void execute() throws IOException {
+		int count = 0;
 		// For each Table
 		try {
 			for(String tableName : getTableNames()) {
 				StringBuilder sb = new StringBuilder();
 				// For each Record
-				for(ResultSet rs = this.cursor.executeQuery(buildSelect(tableName)); rs.next();) {
+				ResultSet rs = this.cursor.executeQuery(buildSelect(tableName));
+				//				ResultSetMetaData rsmd = rs.getMetaData();
+				//				int ColumnCount = rsmd.getColumnCount();
+				//				Map<String,String> columnData = new HashMap<String,String>();
+				while(rs.next()) {
 					StringBuilder recID = new StringBuilder();
 					recID.append("id");
 					for(String idField : getIDFields(tableName)) {
 						recID.append("_-_");
-						recID.append(SpecialEntities.xmlEncode(rs.getString(idField).trim()));
+						String id = rs.getString(idField);
+						if(id != null) {
+							id = id.trim();
+						}
+						id = SpecialEntities.xmlEncode(id);
+						recID.append(id);
 					}
 					// log.trace("Creating RDF for "+tableName+": "+recID);
 					// Build RDF BEGIN
@@ -509,11 +572,17 @@ public class JDBCFetch {
 					sb.append("\"/>\n");
 					
 					// DataFields
-					for(String dataField : getDataFields(tableName)) {
+					List<String> dataFieldList;
+					if((this.queryStrings != null) && this.queryStrings.containsKey(tableName)) {
+						dataFieldList = getResultSetFields(rs);
+					} else {
+						dataFieldList = getDataFields(tableName);
+					}
+					for(String dataField : dataFieldList) {
 						// Field BEGIN
 						String field = tableNS + ":" + dataField.replaceAll(" ", "_");
 						sb.append("    <");
-						sb.append(field);
+						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(">");
 						
 						// insert field value
@@ -523,22 +592,21 @@ public class JDBCFetch {
 						
 						// Field END
 						sb.append("</");
-						sb.append(field);
+						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(">\n");
 					}
 					
 					// Relation Fields
-					for(String relationField : getRelationFields(tableName).keySet()) {
+					for(String relationField : getFkRelationFields(tableName).keySet()) {
 						// Field BEGIN
+						String field = tableNS + ":" + relationField.replaceAll(" ", "_");
 						sb.append("    <");
-						sb.append(tableNS);
-						sb.append(":");
-						sb.append(relationField.replaceAll(" ", "_"));
+						sb.append(SpecialEntities.xmlEncode(field));
 						sb.append(" rdf:resource=\"");
-						sb.append(this.buildTableRecordNS(getRelationFields(tableName).get(relationField)));
+						sb.append(buildTableRecordNS(getFkRelationFields(tableName).get(relationField)));
 						
 						// insert field value
-						sb.append("#id-" + rs.getString(relationField).trim());
+						sb.append("#id_-_" + rs.getString(relationField).trim());
 						
 						// Field END
 						sb.append("\"/>\n");
@@ -552,15 +620,31 @@ public class JDBCFetch {
 					// Build RDF END
 					
 					// Write RDF to RecordHandler
-					log.trace("Adding record for " + tableName + ": " + recID);
+					log.trace("Adding record: " + tableName + "_" + recID);
 					this.rh.addRecord(tableName + "_" + recID, sb.toString(), this.getClass());
+					count++;
 				}
 			}
 		} catch(SQLException e) {
-			log.error(e.getMessage(), e);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		}
+		log.info("Added " + count + " Records");
+	}
+	
+	/**
+	 * Get the fields from a result set
+	 * @param rs the resultset
+	 * @return the list of fields
+	 * @throws SQLException error reading resultset
+	 */
+	private List<String> getResultSetFields(ResultSet rs) throws SQLException {
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int count = rsmd.getColumnCount();
+		List<String> fields = new ArrayList<String>(count);
+		for(int x = 1; x <= count; x++) {
+			fields.add(rsmd.getColumnLabel(x));
+		}
+		return fields;
 	}
 	
 	/**
@@ -568,16 +652,23 @@ public class JDBCFetch {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(JDBCFetch.class);
-		log.info(getParser().getAppName()+": Start");
+		Exception error = null;
 		try {
-			new JDBCFetch(new ArgList(getParser(), args)).execute();
+			InitLog.initLogger(args, getParser());
+			log.info(getParser().getAppName() + ": Start");
+			new JDBCFetch(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			error = e;
+		} finally {
+			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 }

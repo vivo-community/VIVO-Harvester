@@ -1,0 +1,16 @@
+<rdf:RDF
+    xmlns:j.0="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.1="http://vivo.ufl.edu/ontology/vivo-ufl/"
+    xmlns:j.2="http://xmlns.com/foaf/0.1/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:j.3="http://vivoweb.org/ontology/core#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
+  <rdf:Description rdf:about="http://vivo.ufl.edu/individual/n14560">    
+    <j.2:lastName>Byrne</j.2:lastName>
+    <j.2:firstName>Barry</j.2:firstName>
+    <j.3:middleName>J</j.3:middleName>
+    <j.3:workEmail>bbyrne@ufl.edu</j.3:workEmail>
+    <rdfs:label>Byrne, Barry J.</rdfs:label>    
+  </rdf:Description>
+</rdf:RDF>

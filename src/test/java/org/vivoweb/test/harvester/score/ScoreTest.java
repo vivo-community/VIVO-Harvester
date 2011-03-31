@@ -1,29 +1,30 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.score;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.HashMap;
 import junit.framework.TestCase;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.score.Match;
 import org.vivoweb.harvester.score.Score;
+import org.vivoweb.harvester.score.algorithm.Algorithm;
+import org.vivoweb.harvester.score.algorithm.EqualityTest;
+import org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.xml.sax.SAXException;
-import com.hp.hpl.jena.sparql.util.StringUtils;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * @author Nicholas Skaggs (nskaggs@ctrip.ufl.edu)
@@ -36,556 +37,560 @@ public class ScoreTest extends TestCase {
 	/**
 	 * Score input test file
 	 */
-	private File scoreInput;
-	/**
-	 * vivo test configuration file
-	 */
-	private File vivoXML;
+	protected static final String inputRDF = "" +
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+		"<rdf:RDF xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
+				"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" " +
+				"xmlns:owlPlus=\"http://www.w3.org/2006/12/owl2-xml#\" " +
+				"xmlns:xs=\"http://www.w3.org/2001/XMLSchema#\" " +
+				"xmlns:skos=\"http://www.w3.org/2008/05/skos#\" " +
+				"xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
+				"xmlns:vocab=\"http://purl.org/vocab/vann/\" " +
+				"xmlns:swvocab=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
+				"xmlns:localVIVO=\"http://vivo.mydomain.edu/ontology/vivo-local/\" " +
+				"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+				"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
+				"xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
+				"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
+				"xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
+				"xmlns:score=\"http://vivoweb.org/ontology/score#\">" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776\">" +
+				"<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Document\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<bibo:pmid>12345678</bibo:pmid>" +
+				"<rdfs:label>Batch 5 effects in controlled human testing</rdfs:label>" +
+				"<core:Title>Batch 5 effects in controlled human testing</core:Title>" +
+				"<score:Affiliation>Room 5 Downing Street, London, England. v@mydomain.edu</score:Affiliation>" +
+				"<bibo:volume>40</bibo:volume>" +
+				"<bibo:number>2</bibo:number>" +
+				"<core:Year>2010</core:Year>" +
+				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship1\"/>" +
+				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship2\"/>" +
+				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship3\"/>" +
+				"<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship4\"/>" +
+				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh1\"/>" +
+				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh2\"/>" +
+				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh3\"/>" +
+				"<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh4\"/>" +
+				"<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh5\"/>" +
+				"<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh6\"/>" +
+				"<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh7\"/>" +
+				"<core:hasPublicationVenue rdf:resource=\"http://vivoweb.org/pubmed/journal/j1558-4623\"/>" +
+				"<score:hasCreateDate rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCreated\"/>" +
+				"<score:hasCompleteDate rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCompleted\"/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship1\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
+				"<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author1\"/>" +
+				"<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">1</core:authorRank>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author1\">" +
+				"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+				"<rdfs:label>Fawkes, Guy</rdfs:label>" +
+				"<foaf:lastName>Fawkes</foaf:lastName>" +
+				"<score:workEmail>v@mydomain.edu</score:workEmail>" +
+				"<score:foreName>Guy</score:foreName>" +
+				"<core:middleName>J</core:middleName>" +
+				"<score:initials>GF</score:initials>" +
+				"<score:suffix/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship1\"/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship2\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
+				"<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author2\"/>" +
+				"<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2</core:authorRank>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author2\">" +
+				"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+				"<rdfs:label>Mans, Dude</rdfs:label>" +
+				"<foaf:lastName>Mans</foaf:lastName>" +
+				"<score:workEmail>v@mydomain.edu</score:workEmail>" +
+				"<score:foreName>Dude</score:foreName>" +
+				"<core:middleName>G</core:middleName>" +
+				"<score:initials>DM</score:initials>" +
+				"<score:suffix/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship2\"/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship3\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
+				"<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author3\"/>" +
+				"<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">3</core:authorRank>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author3\">" +
+				"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+				"<rdfs:label>Boogle, Oggle</rdfs:label>" +
+				"<foaf:lastName>Boogle</foaf:lastName>" +
+				"<score:workEmail>v@mydomain.edu</score:workEmail>" +
+				"<score:foreName>Oggle</score:foreName>" +
+				"<core:middleName>D</core:middleName>" +
+				"<score:initials>ODB</score:initials>" +
+				"<score:suffix/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship3\"/>" +
+			"</rdf:Description>" +
+				"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship4\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
+				"<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author4\"/>" +
+				"<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">3</core:authorRank>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author4\">" +
+				"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+				"<rdfs:label>Fox, Ralfe</rdfs:label>" +
+				"<foaf:lastName>Fox</foaf:lastName>" +
+				"<score:workEmail>v@mydomain.edu</score:workEmail>" +
+				"<score:foreName>Ralfe</score:foreName>" +
+				"<core:middleName>B</core:middleName>" +
+				"<score:initials>RBF</score:initials>" +
+				"<score:suffix/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship4\"/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:nodeID=\"pmid23656776mesh1\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+				"<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<rdfs:label>Animals</rdfs:label>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<score:Descriptor>Animals</score:Descriptor>" +
+				"<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+				"<score:Qualifier/>" +
+				"<score:QualifierIsMajorTerm/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:nodeID=\"pmid23656776mesh2\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+				"<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<rdfs:label>Antibodies, Monoclonal</rdfs:label>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<score:Descriptor>Antibodies, Monoclonal</score:Descriptor>" +
+				"<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+				"<score:Qualifier>adverse effects therapeutic use</score:Qualifier>" +
+				"<score:QualifierIsMajorTerm>N Y</score:QualifierIsMajorTerm>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:nodeID=\"pmid23656776mesh3\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+				"<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<rdfs:label>Humans</rdfs:label>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<score:Descriptor>Humans</score:Descriptor>" +
+				"<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+				"<score:Qualifier/>" +
+				"<score:QualifierIsMajorTerm/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:nodeID=\"pmid23656776mesh4\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+				"<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<rdfs:label>Lymphoma</rdfs:label>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<score:Descriptor>Lymphoma</score:Descriptor>" +
+				"<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+				"<score:Qualifier>radiotherapy therapy</score:Qualifier>" +
+				"<score:QualifierIsMajorTerm>Y N</score:QualifierIsMajorTerm>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:nodeID=\"pmid23656776mesh5\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+				"<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<rdfs:label>Nuclear Medicine</rdfs:label>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<score:Descriptor>Nuclear Medicine</score:Descriptor>" +
+				"<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+				"<score:Qualifier/>" +
+				"<score:QualifierIsMajorTerm/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:nodeID=\"pmid23656776mesh6\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+				"<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<rdfs:label>Radioimmunotherapy</rdfs:label>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<score:Descriptor>Radioimmunotherapy</score:Descriptor>" +
+				"<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+				"<score:Qualifier>adverse effects methods</score:Qualifier>" +
+				"<score:QualifierIsMajorTerm>N Y</score:QualifierIsMajorTerm>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:nodeID=\"pmid23656776mesh7\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
+				"<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<rdfs:label>Treatment Outcome</rdfs:label>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+				"<score:Descriptor>Treatment Outcome</score:Descriptor>" +
+				"<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
+				"<score:Qualifier/>" +
+				"<score:QualifierIsMajorTerm/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/journal/j1558-4623\">" +
+				"<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Journal\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
+				"<core:Title>Seminars in nuclear medicine</core:Title>" +
+				"<rdfs:label>Seminars in nuclear medicine</rdfs:label>" +
+				"<bibo:ISSN>1558-4623</bibo:ISSN>" +
+				"<core:publicationVenueFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCreated\">" +
+				"<core:Year>\"2010\"</core:Year>" +
+				"<core:Month>\"02\"</core:Month>" +
+				"<core:Day>\"01\"</core:Day>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCompleted\">" +
+				"<core:Year>2010</core:Year>" +
+				"<core:Month>07</core:Month>" +
+				"<core:Day>08</core:Day>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/harvester/people/uniqueid7821299012\">" +
+				"<rdfs:label>Fawkes, Guy</rdfs:label>" +
+				"<localVIVO:harvestedBy>People-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:uniqueid>7821299012</localVIVO:uniqueid>" +
+				"<foaf:firstName>Guy</foaf:firstName>" +
+				"<foaf:lastName>Fawkes</foaf:lastName>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/harvester/people/uniqueid8572293123\">" +
+				"<rdfs:label>Vendetta, Victoria</rdfs:label>" +
+				"<localVIVO:harvestedBy>People-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:uniqueid>8572293123</localVIVO:uniqueid>" +
+				"<foaf:firstName>Victoria</foaf:firstName>" +
+				"<foaf:lastName>Vendetta</foaf:lastName>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/harvester/org/deptid019283\">" +
+				"<rdfs:label>Department of Medicine</rdfs:label>" +
+				"<localVIVO:harvestedBy>Org-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptid>019283</localVIVO:deptid>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivoweb.org/harvester/position/posFor7821299012in019283start20091203\">" +
+				"<rdfs:label>Head of Nursing</rdfs:label>" +
+				"<localVIVO:harvestedBy>Position-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptidForPosition>019283</localVIVO:deptidForPosition>" +
+				"<core:positionForPerson rdf:resource=\"http://vivoweb.org/harvester/people/uniqueid7821299012\"/>" +
+				"<core:positionInOrganization rdf:resource=\"http://vivoweb.org/harvester/org/deptid019283\"/>" +
+			"</rdf:Description>" +
+		"</rdf:RDF>";
 	/**
 	 * vivo rdf statements to load for test
 	 */
-	private File vivoRDF;
+	protected static final String vivoRDF = "" +
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+		"<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
+				"xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
+				"xmlns:event=\"http://purl.org/NET/c4dm/event.owl#\" " +
+				"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
+				"xmlns:owl2=\"http://www.w3.org/2006/12/owl2-xml#\" " +
+				"xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
+				"xmlns:localVIVO=\"http://vivo.mydomain.edu/ontology/vivo-local/\" " +
+				"xmlns:swrlb=\"http://www.w3.org/2003/11/swrlb#\" " +
+				"xmlns:vann=\"http://purl.org/vocab/vann/\" " +
+				"xmlns:j.1=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
+				"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+				"xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
+				"xmlns:afn=\"http://jena.hpl.hp.com/ARQ/function#\" " +
+				"xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
+				"xmlns:swvs=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
+				"xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
+				"xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
+				"xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
+				"xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
+				"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
+			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3573\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+				"<localVIVO:uniqueid>5845425276</localVIVO:uniqueid>" +
+				"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+				"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+				"<rdfs:label xml:lang=\"en-US\">Fawkes, Girl</rdfs:label>" +
+				"<foaf:firstName>Girl</foaf:firstName>" +
+				"<core:middleName>J</core:middleName>" +
+				"<foaf:lastName>Fawkes</foaf:lastName>" +
+				"<core:workEmail>vgirl@mydomain.edu</core:workEmail>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+				"<localVIVO:uniqueid>7821299012</localVIVO:uniqueid>" +
+				"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+				"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+				"<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
+				"<foaf:firstName>Guy</foaf:firstName>" +
+				"<foaf:lastName>Fawkes</foaf:lastName>" +
+				"<core:workEmail>v@mydomain.edu</core:workEmail>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3576\">" +
+				"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
+				"<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
+				"<localVIVO:uniqueid>1721204153</localVIVO:uniqueid>" +
+				"<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
+				"<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
+				"<rdfs:label xml:lang=\"en-US\">Mans, Dude</rdfs:label>" +
+				"<foaf:firstName>Dude</foaf:firstName>" +
+				"<core:middleName>G</core:middleName>" +
+				"<foaf:lastName>Mans</foaf:lastName>" +
+				"<core:workEmail>dgm@mydomain.edu</core:workEmail>" +
+			"</rdf:Description>" +
+				"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n821173458\">" +
+				"<rdfs:label>Department of Medicine</rdfs:label>" +
+				"<localVIVO:harvestedBy>Org-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptid>019283</localVIVO:deptid>" +
+			"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n675720185\">" +
+				"<rdfs:label>Head of Nursing</rdfs:label>" +
+				"<localVIVO:harvestedBy>Position-Harvester</localVIVO:harvestedBy>" +
+				"<localVIVO:deptidForPosition>019283</localVIVO:deptidForPosition>" +
+				"<core:positionForPerson rdf:resource=\"http://vivo.mydomain.edu/individual/n3574\"/>" +
+				"<core:positionInOrganization rdf:resource=\"http://vivo.mydomain.edu/individual/n821173458\"/>" +
+			"</rdf:Description>" +
+		"</rdf:RDF>";
+	/** */
+	private SDBJenaConnect input;
+	/** */
+	private JenaConnect vivo;
+	/** */
+	private JenaConnect output;
+	/** */
+	private JenaConnect score;
 	
 	/**
-	 * Test Argument parsing for scoring
+	 * Test URI EqualityTest Algorithm
+	 * @throws IOException error
 	 */
-	public void testArguments() {
-		String[] args;
-		Score Test;
+	public void testURIEqualityTest() throws IOException {
+		log.info("BEGIN testURIEqualityTest");
+		// prep org arguments
+		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
+		algorithms.put("deptid", EqualityTest.class);
+		HashMap<String, String> inputPredicates = new HashMap<String, String>();
+		inputPredicates.put("deptid", "http://vivo.mydomain.edu/ontology/vivo-local/deptid");
+		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
+		vivoPredicates.put("deptid", "http://vivo.mydomain.edu/ontology/vivo-local/deptid");
+		HashMap<String, Float> weights = new HashMap<String, Float>();
+		weights.put("deptid", Float.valueOf(1f));
+		String namespace = "http://vivoweb.org/harvester/org/";
+		// run org score
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, 0).execute();
+		// run org match
+		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
 		
-		// inputs
-		String iArg = this.vivoXML.getAbsolutePath();
-		String vArg = this.vivoXML.getAbsolutePath();
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/org/deptid019283> ?p ?o }"));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n821173458> ?p ?o }"));
 		
-		// outputs
-		String oArg = this.vivoXML.getAbsolutePath();
+		// prep people arguments
+		this.score.truncate();
+		algorithms.clear();
+		algorithms.put("uid", EqualityTest.class);
+		inputPredicates.clear();
+		inputPredicates.put("uid", "http://vivo.mydomain.edu/ontology/vivo-local/uniqueid");
+		vivoPredicates.clear();
+		vivoPredicates.put("uid", "http://vivo.mydomain.edu/ontology/vivo-local/uniqueid");
+		weights.clear();
+		weights.put("uid", Float.valueOf(1f));
+		namespace = "http://vivoweb.org/harvester/people/";
+		// run people score
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, 20).execute();
+		// run people match
+		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
 		
-		// model overrides
-		String IArg = "modelName=testInputModel";
-		Properties IArgProp = new Properties();
-		IArgProp.put("modelName", "testInputModel");
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/people/uniqueid7821299012> ?p ?o }"));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> ?p ?o }"));
 		
-		String OArg = "modelName=testOutputModel";
-		Properties OArgProp = new Properties();
-		OArgProp.put("modelName", "testOutputModel");
+		// prep position arguments
+		this.score.truncate();
+		algorithms.clear();
+		algorithms.put("deptForPos", EqualityTest.class);
+		algorithms.put("posForPer", EqualityTest.class);
+		algorithms.put("posInOrg", EqualityTest.class);
+		inputPredicates.clear();
+		inputPredicates.put("deptForPos", "http://vivo.mydomain.edu/ontology/vivo-local/deptidForPosition");
+		inputPredicates.put("posForPer", "http://vivoweb.org/ontology/core#positionForPerson");
+		inputPredicates.put("posInOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
+		vivoPredicates.clear();
+		vivoPredicates.put("deptForPos", "http://vivo.mydomain.edu/ontology/vivo-local/deptidForPosition");
+		vivoPredicates.put("posForPer", "http://vivoweb.org/ontology/core#positionForPerson");
+		vivoPredicates.put("posInOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
+		weights.clear();
+		weights.put("deptForPos", Float.valueOf(1/3f));
+		weights.put("posForPer", Float.valueOf(1/3f));
+		weights.put("posInOrg", Float.valueOf(1/3f));
+		namespace = "http://vivoweb.org/harvester/position/";
+		// run position score
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, 50).execute();
+		// run position match
+		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
 		
-		String VArg = "modelName=testVivoModel";
-		Properties VArgProp = new Properties();
-		VArgProp.put("modelName", "testVivoModel");
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/position/posFor7821299012in019283start20091203> ?p ?o }"));
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n675720185> ?p ?o }"));
 		
-		JenaConnect input;
-		JenaConnect output;
-		JenaConnect vivo;
-		
-		// Load up everything before starting
-		try {
-			input = JenaConnect.parseConfig(iArg, IArgProp);
-			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
-			
-			vivo = JenaConnect.parseConfig(vArg, VArgProp);
-			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
-			
-			output = JenaConnect.parseConfig(oArg, OArgProp);
-			
-			log.info("testArguments Start");
-			log.info("Testing good configs");
-			
-			log.info("Test -i iArg -v vArg -o oArg -a 1 -e workEmail");
-			args = new String[]{"-i", iArg, "-v", vArg, "-o", oArg, "-a", "1", "-e", "workEmail"};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-			
-			log.info("Test -v vArg -a 1");
-			args = new String[]{"-v", vArg, "-a", "1"};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-			
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -a 1 -e workEmail");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-a", "1", "-e", "workEmail"};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-			
-			log.info("Testing bad configs");
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -Q");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-Q"};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-				log.error("Invalid arguement passed -- score object invalid");
-				fail("Invalid arguement passed -- score object invalid");
-			} catch(Exception e) {
-				// we want exception
-			}
-			
-			log.info("Testing keep working model");
-			// keep input model
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-				Test.execute();
-				if(Test.getScoreInput().getJenaModel().isEmpty()) {
-					log.error("Model emptied despite -w arg missing");
-					fail("Model emptied despite -w arg missing");
-				}
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-			
-			// don't keep input model
-			log.info("Testing don't keep working model");
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArgl -w");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg, "-w"};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-				Test.execute();
-				if(!Test.getScoreInput().getJenaModel().isEmpty()) {
-					log.error("Model not empty -w arg violated");
-					fail("Model not empty -w arg violated");
-				}
-				Test.close();
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-			
-			log.info("Testing empty output model");
-			// empty output model
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg -q");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg,"-q"};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-				//get size
-				long modelSize = Test.getScoreOutput().getJenaModel().size();
-				Test.execute();
-				if (modelSize > Test.getScoreOutput().getJenaModel().size()) {
-					log.error("Output model not emptied before run");
-					fail("Output model not emptied before run");
-				}
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-			
-			// don't empty output model
-			log.info("Test -i iArg -I IArg -v vArg -V VArg -o oArg -O OArg");
-			args = new String[]{"-i", iArg, "-I", IArg, "-v", vArg, "-V", VArg, "-o", oArg, "-O", OArg};
-			log.info(StringUtils.join(" ", args));
-			try {
-				Test = new Score(args);
-				//get size
-				long modelSize = Test.getScoreOutput().getJenaModel().size();
-				Test.execute();
-				if (modelSize < Test.getScoreOutput().getJenaModel().size()) {
-					log.error("Output model emptied before run");
-					fail("Output model emptied before run");
-				}
-			} catch(Exception e) {
-				log.error(e.getMessage(), e);
-				fail(e.getMessage());
-			}
-									
-			input.close();
-			vivo.close();
-			output.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
-		
-		log.info("testArguments End");
+		log.info("END testURIEqualityTest");
 	}
 	
 	/**
-	 * Test Scoring Algorithms
+	 * Test EqualityTest Algorithm
+	 * @throws IOException error
 	 */
-	public void testAlgorithims() {
-		Score Test;
-		List<String> workEmail = Arrays.asList("workEmail");
-		List<String> blank = Arrays.asList();
-		JenaConnect input;
-		JenaConnect output;
-		JenaConnect vivo;
+	public void testEmailLastNameEqualityTest() throws IOException {
+		log.info("BEGIN testEmailLastNameEqualityTest");
+		// prep arguments
+		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
+		algorithms.put("wEmail", EqualityTest.class);
+		algorithms.put("lName", NormalizedDoubleMetaphoneDifference.class);
+		algorithms.put("fName", NormalizedDoubleMetaphoneDifference.class);
 		
-		// load input models
-		try {
-			Properties inputProp = new Properties();
-			inputProp.put("modelName", "input");
-			input = JenaConnect.parseConfig(this.vivoXML, inputProp);
-			input.loadRDF(VFS.getManager().toFileObject(this.scoreInput).getContent().getInputStream(), null, null);
-			
-			Properties vivoProp = new Properties();
-			vivoProp.put("modelName", "vivo");
-			vivo = JenaConnect.parseConfig(this.vivoXML, vivoProp);
-			vivo.loadRDF(VFS.getManager().toFileObject(this.vivoRDF).getContent().getInputStream(), null, null);
-			
-			Properties outputProp = new Properties();
-			outputProp.put("modelName", "output");
-			output = JenaConnect.parseConfig(this.vivoXML, outputProp);
-			
-			// run author score
-			Test = new Score(input, vivo, output, false, false, blank, blank, blank, "3", null, null, null);
-			Test.execute();
-			
-			// check output model
-			if(Test.getScoreOutput().getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with author name scoring");
-				fail("Didn't match anything with author name scoring");
-			}
-			
-			// empty output model
-			Test.getScoreOutput().getJenaModel().removeAll();
-			
-			// run exactmatch score
-			Test = new Score(input, vivo, output, false, false, workEmail, blank, blank, null, null, null, null);
-			Test.execute();
-			
-			// check output model
-			if(output.getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with exact match scoring");
-				fail("Didn't match anything with exact match scoring");
-			}
-			
-			// empty output model
-			Test.getScoreOutput().getJenaModel().removeAll();
-			
-			// testing foreign Key Score Method
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			input.getJenaModel().write(baos, "RDF/XML");
-			baos.flush();
-			log.debug(baos.toString());
-			baos.close();
-			
-			Score.main(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-f", "http://vivoweb.org/ontology/score#ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid", "-x", "http://vivoweb.org/ontology/core#worksFor", "-y", "http://vivoweb.org/ontology/core#departmentOf"});
-			
-			// check output model
-			if(output.getJenaModel().isEmpty()) {
-				log.error("Didn't match anything with foreign key scoring");
-				fail("Didn't match anything with foreign key scoring");
-			}
-			
-			// empty output model
-			output.getJenaModel().removeAll();
-									
-			//testing pushing non matches
-			Score.main(new String[]{"-v", this.vivoXML.getAbsolutePath(), "-I", "modelName=input", "-O", "modelName=output", "-V", "modelName=vivo", "-e", "workEmail", "-l"});
-			
-			// check output model
-			if(output.getJenaModel().containsLiteral(null, null, "12345678")) {
-				log.error("Didn't push non matches");
-				fail("Didn't push non matches");
-			}
-			
-			
-			Test.close();
-			input.close();
-			vivo.close();
-			output.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		HashMap<String, String> inputPredicates = new HashMap<String, String>();
+		inputPredicates.put("wEmail", "http://vivoweb.org/ontology/score#workEmail");
+		inputPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
+		inputPredicates.put("fName", "http://vivoweb.org/ontology/score#foreName");
+		
+		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
+		vivoPredicates.put("wEmail", "http://vivoweb.org/ontology/core#workEmail");
+		vivoPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
+		vivoPredicates.put("fName", "http://xmlns.com/foaf/0.1/firstName");
+		
+		HashMap<String, Float> weights = new HashMap<String, Float>();
+		weights.put("wEmail", Float.valueOf(1 / 2f));
+		weights.put("lName", Float.valueOf(1 / 3f));
+		weights.put("fName", Float.valueOf(1 / 6f));
+		
+//		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
+		
+		// run score
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, 50).execute();
+		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
+		new Match(this.input, this.score, this.output, true, 0.75f, null, true,500).execute();
+		//log.info("Match Dump Post-Match\n" + this.input.exportRdfToString());
+		
+		// check score model
+		//Check for matched person authorship
+		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
+		//Check to make sure pub doesn't have matched authorship
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#authorInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
+		//Check to make sure information authorship exists on publication
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship> <http://vivoweb.org/pubmed/article/pmid23656776/authorship1> }"));
+		//check for records in output model records
+		Property rdfType = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+		Resource authorshipType = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#Authorship");
+		Resource journalType = ResourceFactory.createProperty("http://purl.org/ontology/bibo/Journal");
+		//Resource publicationType = ResourceFactory.createProperty("");
+
+		assertTrue(!this.output.isEmpty());
+//		System.out.println(this.output.exportRdfToString());
+		//assertTrue(this.output.getJenaModel().contains(null, rdfType, publicationType));
+		assertTrue(this.output.getJenaModel().contains(null, rdfType, journalType));
+		assertTrue(this.output.getJenaModel().contains(null, rdfType, authorshipType));
+		
+		//assertTrue(this.input.executeAskQuery("ASK { <http://vivoweb.org/pubmed/article/pmid20113680author1> <http://vivoweb.org/ontology/core#informationResourceInAuthorship <http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1> }"));
+		
+		//assertFalse(this.input.containsURI("http://vivoweb.org/pubmed/article/pmid20113680author1"));
+		//assertTrue(this.input.containsURI("http://vivoweb.org/pubmed/pmid201138680/vivoAuthorship/l1"));
+		
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type }"));
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n3574> ?p ?lit . FILTER(isLiteral(?lit)) }"));
+		
+		//pub has 
+		//<j.1:informationResourceInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
+		
+		//person has
+		//<j.3:authorInAuthorship rdf:resource="http://vivoweb.org/harvest/pubmedPub/pmid20374097/vivoAuthorship/l1"/>
+		
+		//http://vivoweb.org/pubmed/article/pmid20113680/authorship1
+		log.info("END testEmailLastNameEqualityTest");
 	}
 	
-	/**
-	 * Called before every test case method.
-	 */
 	@Override
-	protected void setUp() {
-		InitLog.initLogger(ScoreTest.class);
+	protected void setUp() throws Exception {
+		InitLog.initLogger(null, null);
+		// load input models
+		this.input = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "input");
+		this.input.loadRdfFromString(inputRDF, null, null);
 		
-		// create objects under test
-		// Create input rdf file
-		try {
-			this.scoreInput = File.createTempFile("scoretest_input", ".rdf");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.scoreInput));
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + 
-					 "<rdf:RDF xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
-					 "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" " +
-					 "xmlns:owlPlus=\"http://www.w3.org/2006/12/owl2-xml#\" " +
-					 "xmlns:xs=\"http://www.w3.org/2001/XMLSchema#\" " +
-					 "xmlns:skos=\"http://www.w3.org/2008/05/skos#\" " +
-					 "xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
-					 "xmlns:vocab=\"http://purl.org/vocab/vann/\" " +
-					 "xmlns:swvocab=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
-					 "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
-					 "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
-					 "xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
-					 "xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
-					 "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
-					 "xmlns:score=\"http://vivoweb.org/ontology/score#\">" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid20113680\">" +
-					 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Document\"/>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<bibo:pmid>12345678</bibo:pmid>" +
-					 "<rdfs:label>Batch 5 effects in controlled human testing</rdfs:label>" +
-					 "<core:Title>Batch 5 effects in controlled human testing</core:Title>" +
-					 "<score:Affiliation>Room 5 Downing Street, London, England. v@ufl.edu</score:Affiliation>" +
-					 "<bibo:volume>40</bibo:volume>" +
-					 "<bibo:number>2</bibo:number>" +
-					 "<core:Year>2010</core:Year>" +
-					 "<score:workEmail>v@ufl.edu</score:workEmail>" +
-					 "<core:informationResourceInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid20113680/authorship1\"/>" +
-					 "<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh1\"/>" +
-					 "<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh2\"/>" +
-					 "<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh3\"/>" +
-					 "<core:hasSubjectArea rdf:nodeID=\"pmid20113680mesh4\"/>" +
-					 "<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh5\"/>" +
-					 "<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh6\"/>" +
-					 "<core:hasSubjectArea rdf:nodeID=\"pmid23656776mesh7\"/>" +
-					 "<core:hasPublicationVenue rdf:resource=\"http://vivoweb.org/pubmed/journal/j1558-4623\"/>" +
-					 "<score:hasCreateDate rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCreated\"/>" +
-					 "<score:hasCompleteDate rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCompleted\"/>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship1\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Authorship\"/>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#DependentResource\"/>" +
-					 "<core:linkedAuthor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/author1\"/>" +
-					 "<core:linkedInformationResource rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<core:authorRank rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">1</core:authorRank>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/author1\">" +
-					 "<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
-					 "<rdfs:label>Fawkes, Guy</rdfs:label>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "<score:foreName>Guy</score:foreName>" +
-					 "<core:middleName>J</core:middleName>" +
-					 "<score:initials>GF</score:initials>" +
-					 "<score:suffix/>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<core:authorInAuthorship rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776/authorship1\"/>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh1\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Animals</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Animals</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier/>" +
-					 "<score:QualifierIsMajorTerm/>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh2\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Antibodies, Monoclonal</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Antibodies, Monoclonal</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier>adverse effects therapeutic use</score:Qualifier>" +
-					 "<score:QualifierIsMajorTerm>N Y</score:QualifierIsMajorTerm>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh3\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Humans</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Humans</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier/>" +
-					 "<score:QualifierIsMajorTerm/>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh4\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Lymphoma</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Lymphoma</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier>radiotherapy therapy</score:Qualifier>" +
-					 "<score:QualifierIsMajorTerm>Y N</score:QualifierIsMajorTerm>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh5\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Nuclear Medicine</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Nuclear Medicine</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier/>" +
-					 "<score:QualifierIsMajorTerm/>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh6\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Radioimmunotherapy</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Radioimmunotherapy</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier>adverse effects methods</score:Qualifier>" +
-					 "<score:QualifierIsMajorTerm>N Y</score:QualifierIsMajorTerm>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:nodeID=\"pmid23656776mesh7\">" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/score#MeshTerm\"/>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#SubjectArea\"/>" +
-					 "<core:SubjectAreaFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<rdfs:label>Treatment Outcome</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<score:meshTermOf rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "<score:Descriptor>Treatment Outcome</score:Descriptor>" +
-					 "<score:DescriptorIsMajorTerm>N</score:DescriptorIsMajorTerm>" +
-					 "<score:Qualifier/>" +
-					 "<score:QualifierIsMajorTerm/>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/journal/j1558-4623\">" +
-					 "<rdf:type rdf:resource=\"http://purl.org/ontology/bibo/Journal\"/>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing\"/>" +
-					 "<core:Title>Seminars in nuclear medicine</core:Title>" +
-					 "<rdfs:label>Seminars in nuclear medicine</rdfs:label>" +
-					 "<bibo:ISSN>1558-4623</bibo:ISSN>" +
-					 "<core:publicationVenueFor rdf:resource=\"http://vivoweb.org/pubmed/article/pmid23656776\"/>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCreated\">" +
-					 "<core:Year>\"2010\"</core:Year>" +
-					 "<core:Month>\"02\"</core:Month>" +
-					 "<core:Day>\"01\"</core:Day>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivoweb.org/pubmed/article/pmid23656776/dateCompleted\">" +
-					 "<core:Year>2010</core:Year>" +
-					 "<core:Month>07</core:Month>" +
-					 "<core:Day>08</core:Day>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/d78212990\">" +
-					 "<rdfs:label>harvested mans</rdfs:label>" +
-					 "<score:ufid>78212990</score:ufid>" +
-					 "<foaf:firstName>Guy</foaf:firstName>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "</rdf:Description>" +
-					 "</rdf:RDF>");
-			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+		this.vivo = this.input.neighborConnectClone("vivo");
+		this.vivo.loadRdfFromString(vivoRDF, null, null);
 		
-		// Create vivo rdf file
-		try {
-			this.vivoRDF = File.createTempFile("scoretest_vivo", ".rdf");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoRDF));
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-					 "<rdf:RDF xmlns:j.0=\"http://aims.fao.org/aos/geopolitical.owl#\" " +
-					 "xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" " +
-					 "xmlns:event=\"http://purl.org/NET/c4dm/event.owl#\" " +
-					 "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
-					 "xmlns:owl2=\"http://www.w3.org/2006/12/owl2-xml#\" " +
-					 "xmlns:core=\"http://vivoweb.org/ontology/core#\" " +
-					 "xmlns:ufVIVO=\"http://vivo.ufl.edu/ontology/vivo-ufl/\" " +
-					 "xmlns:swrlb=\"http://www.w3.org/2003/11/swrlb#\" " +
-					 "xmlns:vann=\"http://purl.org/vocab/vann/\" " +
-					 "xmlns:j.1=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
-					 "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
-					 "xmlns:bibo=\"http://purl.org/ontology/bibo/\" " +
-					 "xmlns:afn=\"http://jena.hpl.hp.com/ARQ/function#\" " +
-					 "xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" " +
-					 "xmlns:swvs=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
-					 "xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
-					 "xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
-					 "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\" " +
-					 "xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\" " +
-					 "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\">" +
-					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3574\">" +
-					 "<core:workEmail>v@ufl.edu</core:workEmail>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Guy</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
-					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
-					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
-					 "<foaf:firstName>Guy</foaf:firstName>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "<ufVIVO:ufid>78212990</ufVIVO:ufid>" +
-					 "</rdf:Description>" +
-					 "<rdf:Description rdf:about=\"http://vivo.mydomain.edu/individual/n3573\">" +
-					 "<core:workEmail>vgirl@ufl.edu</core:workEmail>" +
-					 "<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#FacultyMember\"/>" +
-					 "<core:middleName>J</core:middleName>" +
-					 "<rdfs:label xml:lang=\"en-US\">Fawkes, Girl</rdfs:label>" +
-					 "<rdf:type rdf:resource=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1ValueThing\"/>" +
-					 "<j.1:moniker rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Faculty Member</j.1:moniker>" +
-					 "<j.1:modTime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2010-08-09T15:46:21</j.1:modTime>" +
-					 "<foaf:firstName>Girl</foaf:firstName>" +
-					 "<foaf:lastName>Fawkes</foaf:lastName>" +
-					 "<ufVIVO:ufid>58454252</ufVIVO:ufid>" +
-					 "</rdf:Description>" +
-					 "</rdf:RDF>");
-			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+		this.output = this.input.neighborConnectClone("output");
 		
-		// create VIVO.xml
-		try {
-			this.vivoXML = File.createTempFile("scoretest_vivo", ".xml");
-			BufferedWriter out = new BufferedWriter(new FileWriter(this.vivoXML));
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-					 "<Model>" +
-					 "<Param name=\"dbClass\">org.h2.Driver</Param>" +
-					 "<Param name=\"dbType\">HSQLDB</Param>" +
-					 "<Param name=\"dbUrl\">jdbc:h2:mem:test</Param>" +
-					 "<Param name=\"modelName\">testVivoModel</Param>" +
-					 "<Param name=\"dbUser\">sa</Param>" +
-					 "<Param name=\"dbPass\"></Param>" +
-					 "</Model>");
-			out.close();
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+		this.score = this.input.neighborConnectClone("score");
 	}
 	
-	/**
-	 * Called after every test case method.
-	 */
 	@Override
 	protected void tearDown() {
-		// remove temp files
-		this.scoreInput.delete();
-		this.vivoXML.delete();
-		this.vivoRDF.delete();
+		if(this.input != null) {
+			try {
+				this.input.truncate();
+			} catch(Exception e) {
+				//Ignore
+			} finally {
+				try {
+					this.input.close();
+				} catch(Exception e) {
+					//Ignore
+				}
+			}
+			this.input = null;
+		}
+		if(this.vivo != null) {
+			try {
+				this.vivo.truncate();
+			} catch(Exception e) {
+				//Ignore
+			} finally {
+				try {
+					this.vivo.close();
+				} catch(Exception e) {
+					//Ignore
+				}
+			}
+			this.vivo = null;
+		}
+		if(this.output != null) {
+			try {
+				this.output.truncate();
+			} catch(Exception e) {
+				//Ignore
+			} finally {
+				try {
+					this.output.close();
+				} catch(Exception e) {
+					//Ignore
+				}
+			}
+			this.output = null;
+		}
+		if(this.score != null) {
+			try {
+				this.score.truncate();
+			} catch(Exception e) {
+				//Ignore
+			} finally {
+				try {
+					this.score.close();
+				} catch(Exception e) {
+					//Ignore
+				}
+			}
+			this.score = null;
+		}
 	}
 }

@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util.args;
 
 import java.util.List;
@@ -28,7 +31,7 @@ public class ArgListTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(ArgListTest.class);
+		InitLog.initLogger(null, null);
 		parser = new ArgParser("ArgListTest");
 	}
 	
@@ -53,19 +56,23 @@ public class ArgListTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#get(java.lang.String) get(String arg)}.
 	 */
 	public final void testGet() {
+		log.info("BEGIN testGet");
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUT_FILE").setDescription("output file").setRequired(true));
 		try {
 			ArgList a = new ArgList(parser, new String[]{"-o", "Testing"});
 			assertEquals(a.get("o"), "Testing");
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
+		log.info("END testGet");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String) getAll(String arg)}.
 	 */
 	public final void testGetAllString() {
+		log.info("BEGIN testGetAllString");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
 			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
@@ -76,14 +83,18 @@ public class ArgListTest extends TestCase {
 			assertFalse(l.contains("test"));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
+		log.info("END testGetAllString");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String arg,
+	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String
+	 * arg,
 	 * boolean includeDefaultValue)}.
 	 */
 	public final void testGetAllStringBoolean() {
+		log.info("BEGIN testGetAllStringBoolean");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
 			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
@@ -99,13 +110,16 @@ public class ArgListTest extends TestCase {
 			assertTrue(l.contains("test"));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
+		log.info("END testGetAllStringBoolean");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#has(java.lang.String) has(String arg)}.
 	 */
 	public final void testHas() {
+		log.info("BEGIN testHas");
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("flag").setDescription("test flag"));
 		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("zig").setDescription("test missing flag"));
 		try {
@@ -114,7 +128,9 @@ public class ArgListTest extends TestCase {
 			assertFalse(a.has("z"));
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			fail(e.getMessage());
 		}
+		log.info("END testHas");
 	}
 	
 }

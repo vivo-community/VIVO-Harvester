@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<Param name="email">swilliams@ichp.ufl.edu</Param>
+	<Param name="termSearch">ufl AND edu[ad]</Param>
+	<Param name="numRecords">100</Param>
+	<Param name="batchSize">1000</Param>
+</Task>

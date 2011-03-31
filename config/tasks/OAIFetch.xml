@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Task type="org.vivoweb.harvester.fetch.OAIHarvest">
-	<Param name="address">digital.library.upenn.edu/webbin/OAI-celebration</Param>
-	<Param name="startDate">1000-01-01</Param>
-	<Param name="endDate">2010-01-01</Param>
-	<Param name="repositoryConfig">config/recordHandlers/OAIXMLRecordHandler.xml</Param>
-</Task>

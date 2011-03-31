@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.BufferedReader;
@@ -15,11 +18,10 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -52,6 +54,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * Record Handler that stores each record as a file in a directory
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 public class TextFileRecordHandler extends RecordHandler {
@@ -95,7 +98,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		FileSystemManager fsMan = VFS.getManager();
 		this.fileDirObj = fsMan.resolveFile(new File("."), fileDir);
 		if(!this.fileDirObj.exists()) {
-			log.info("Directory '" + fileDir + "' Does Not Exist, attempting to create");
+			log.debug("Directory '" + fileDir + "' Does Not Exist, attempting to create");
 			this.fileDirObj.createFolder();
 		}
 		this.metaDirObj = fsMan.resolveFile(this.fileDirObj, ".metadata");
@@ -457,11 +460,11 @@ public class TextFileRecordHandler extends RecordHandler {
 		 * Default Constructor
 		 */
 		protected TextFileRecordIterator() {
-			LinkedList<String> allFileListing = new LinkedList<String>();
+			Set<String> allFileListing = new TreeSet<String>();
 			log.debug("Compiling list of records");
 			try {
 				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(Selectors.SELECT_CHILDREN)) {
-					if(!file.isHidden() && file.getType() == FileType.FILE) {
+					if(!file.isHidden() && (file.getType() == FileType.FILE)) {
 						allFileListing.add(file.getName().getBaseName());
 						// log.debug("Found file "+file.getName().getBaseName());
 					}
@@ -613,10 +616,10 @@ public class TextFileRecordHandler extends RecordHandler {
 		this.fileDirObj.close();
 		this.metaDirObj.close();
 	}
-
+	
 	@Override
-	public List<String> find(String idText) {
-		List<String> retVal = new LinkedList<String>();
+	public Set<String> find(String idText) {
+		Set<String> retVal = new TreeSet<String>();
 		for(Record r : this) {
 			if(r.getID().contains(idText)) {
 				retVal.add(r.getID());

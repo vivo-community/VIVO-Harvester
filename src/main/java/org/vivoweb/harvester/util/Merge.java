@@ -1,26 +1,29 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.xml.sax.SAXException;
 
 /**
  * Merge multiple rdf files into one
@@ -58,20 +61,22 @@ public class Merge {
 	
 	/**
 	 * Constructor
-	 * @param argList arguments
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
 	 */
-	public Merge(ArgList argList) {
-		try {
-			this.input = RecordHandler.parseConfig(argList.get("i"), argList.getProperties("I"));
-			this.output = RecordHandler.parseConfig(argList.get("o"), argList.getProperties("O"));
-			this.regex = Pattern.compile(argList.get("b"));
-		} catch(ParserConfigurationException e) {
-			log.error(e.getMessage(), e);
-		} catch(SAXException e) {
-			log.error(e.getMessage(), e);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-		}
+	public Merge(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Constructor
+	 * @param argList arguments
+	 * @throws IOException error connecting to record handler
+	 */
+	public Merge(ArgList argList) throws IOException {
+		this.input = RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I"));
+		this.output = RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"));
+		this.regex = Pattern.compile(argList.get("b"));
 	}
 	
 	/**
@@ -79,34 +84,42 @@ public class Merge {
 	 * @param input input recordhandler
 	 * @param output output recordhandler
 	 * @param regex regex for finding primary records (with a grouping for the subsection to use to find sub-records)
+	 * @throws IOException error in record handling
 	 */
-	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) {
-		try {
-			for(Record r : input) {
-				JenaConnect jc = new JenaConnect();
-				Matcher m = regex.matcher(r.getID());
-				if(m.matches()) {
-					for(String id : input.find(m.group(1))) {
-						jc.loadRDF(new ByteArrayInputStream(input.getRecord(id).getData().getBytes()), null, null);
-					}
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					jc.exportRDF(baos);
-					baos.flush();
-					output.addRecord(m.group(1), baos.toString("UTF-8"), Merge.class);
-				}
+	public static void merge(RecordHandler input, RecordHandler output, Pattern regex) throws IOException {
+		Map<String, String> matchedIDs = new HashMap<String, String>();
+		log.info("Building List of Primary Records");
+		for(Record r : input) {
+			Matcher m = regex.matcher(r.getID());
+			if(m.matches()) {
+				log.debug("Matched record '" + r.getID() + "' => '" + m.group(1) + "'");
+				matchedIDs.put(r.getID(), m.group(1));
 			}
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
 		}
+		int count = matchedIDs.size();
+		log.debug("Matched " + count + " records");
+		int cur = 0;
+		JenaConnect jc = new MemJenaConnect();
+		for(String rid : new TreeSet<String>(matchedIDs.keySet())) {
+			cur++;
+			String matchTerm = matchedIDs.get(rid);
+			log.debug("(" + cur + "/" + count + ": " + Math.round(10000f * cur / count) / 100f + "%): merging '" + matchTerm + "'");
+			jc.truncate();
+			for(String id : input.find(matchTerm)) {
+				log.trace("Merging record '" + id + "' into '" + matchTerm + "'");
+				jc.loadRdfFromString(input.getRecord(id).getData(), null, null);
+			}
+			output.addRecord(matchTerm, jc.exportRdfToString(), Merge.class);
+		}
+		jc.close();
 	}
 	
 	/**
 	 * Runs the merge
+	 * @throws IOException error executing
 	 */
-	private void execute() {
-		merge(this.input,this.output,this.regex);
+	public void execute() throws IOException {
+		merge(this.input, this.output, this.regex);
 	}
 	
 	/**
@@ -114,13 +127,13 @@ public class Merge {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("Transfer");
+		ArgParser parser = new ArgParser("Merge");
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));		
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterProperties("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		// Params
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("baseRegex").withParameter(true, "REGEX").setDescription("match records using REGEX and use the first Group to find sub-records").setRequired(true));
 		return parser;
@@ -131,19 +144,23 @@ public class Merge {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		InitLog.initLogger(Merge.class);
-		log.info(getParser().getAppName()+": Start");
+		Exception error = null;
 		try {
-			new Merge(new ArgList(getParser(), args)).execute();
+			InitLog.initLogger(args, getParser());
+			log.info(getParser().getAppName() + ": Start");
+			new Merge(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			// System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
+			error = e;
+		} finally {
+			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
-		log.info(getParser().getAppName()+": End");
 	}
 }

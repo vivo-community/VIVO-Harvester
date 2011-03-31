@@ -1,20 +1,21 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
 
 /**
@@ -85,7 +86,7 @@ public class MapRecordHandler extends RecordHandler {
 		 * Default Constructor
 		 */
 		protected MapRecordIterator() {
-			this.keyIter = MapRecordHandler.this.map.keySet().iterator();
+			this.keyIter = new TreeSet<String>(MapRecordHandler.this.map.keySet()).iterator();
 		}
 		
 		@Override
@@ -127,7 +128,7 @@ public class MapRecordHandler extends RecordHandler {
 	@Override
 	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
 		SortedSet<RecordMetaData> x = this.metaDataMap.get(recID);
-		if(x == null || x.isEmpty()) {
+		if((x == null) || x.isEmpty()) {
 			throw new IOException("No Matching MetaData Found");
 		}
 		return x;
@@ -138,10 +139,10 @@ public class MapRecordHandler extends RecordHandler {
 		this.map.clear();
 		this.metaDataMap.clear();
 	}
-
+	
 	@Override
-	public List<String> find(String idText) {
-		List<String> retVal = new LinkedList<String>();
+	public Set<String> find(String idText) {
+		Set<String> retVal = new TreeSet<String>();
 		for(String id : this.map.keySet()) {
 			if(id.contains(idText)) {
 				retVal.add(id);

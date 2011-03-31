@@ -1,3 +1,60 @@
+1.0
+	Updated scripts
+		env file no longer requires configuration
+		more variables are used for readability
+		env file contains optional performance enhancements for the JVM -- these are on by default
+	Config files no longer required to run any tool
+	Command line arguments have changed for several tools
+	Logging now logs to single file
+	
+	Match
+		Create methods for renaming nodes and linking nodes, based on a match meeting a threshold
+	D2RMap
+		now supports csv files
+	MODS
+		new xsl file to convert from MODS to vivo
+	Pubmed
+		Fix for mesh term striping errors
+		Regex function for pulling out firstname and middlename/initial
+	Score
+		Added new algorithim framework
+			Availible algorithims to score against:
+				Levenshtein Difference
+				Damerau-Levenshtein Difference
+				Typo Difference (Damerau-Levenshtein w/ Typo evaluation weighting)
+				SoundExDifference
+				DoubleMetaphone Difference
+				EqualityTest (simple 100% match)
+		Removed exact match, foriegnkey match, and name match
+		Removed output model for scoring
+		Combined previous functions along with cmw python code to create weighted search
+		now uses TDB as the backend for inprocess temporary jena models
+	Node Renaming
+		Moved to Qualify Package
+		Removed matching algorithms (use score ahead of node renaming)
+		Refactored to use sparql queries for determing nodes that need renamed
+	Qualify
+		In-line string replace
+		Moved Sanitize portion of scoring into qualify for removing ontologies/namespaces
+	Update
+		Wrapper class removed in favor of direct diff and transfer tool calls	
+	Merge
+		Merge tool created to assist with merging RF; specifically during JDBC harvests
+	VIVO.xml
+		namespace added
+		type added (supported types are sdb, rdb, or mem)
+
+0.7.1
+	XSL
+		Pubmed
+			fix for publication types
+	Score
+		fix authorname match selecting incorrectly
+		fix lang datatype issue not matching 
+		
+	changenamespace
+		small logic fixes and debugging info added
+
 0.7.0
 	Update -- new command
 		added Diff to run a diff between models

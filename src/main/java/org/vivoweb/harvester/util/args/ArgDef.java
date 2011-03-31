@@ -1,9 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.args;
 
 /**
@@ -44,9 +47,9 @@ public class ArgDef {
 	 */
 	private String parameterDescription;
 	/**
-	 * Is this argument a parameter map
+	 * Is this argument a value map
 	 */
-	private boolean parameterPropertiesType;
+	private boolean parameterValueMapType;
 	
 	/**
 	 * Default Constructor
@@ -60,7 +63,7 @@ public class ArgDef {
 		this.numParameters = 0;
 		this.parameterRequired = false;
 		this.parameterDescription = null;
-		this.parameterPropertiesType = false;
+		this.parameterValueMapType = false;
 	}
 	
 	/**
@@ -76,7 +79,7 @@ public class ArgDef {
 	 * @return true if this argument has many paramters
 	 */
 	public boolean hasParameters() {
-		return (numParameters() > 1 || numParameters() == -1);
+		return ((numParameters() > 1) || (numParameters() == -1));
 	}
 	
 	/**
@@ -104,11 +107,11 @@ public class ArgDef {
 	}
 	
 	/**
-	 * Is this argument a parameter map
-	 * @return true if parameter map
+	 * Is this argument a value map
+	 * @return true if value map
 	 */
-	public boolean isParameterProperties() {
-		return this.parameterPropertiesType;
+	public boolean isParameterValueMap() {
+		return this.parameterValueMapType;
 	}
 	
 	/**
@@ -250,13 +253,13 @@ public class ArgDef {
 	}
 	
 	/**
-	 * Sets thsi argument to have a parameter map
+	 * Sets this argument to have a value map
 	 * @param propertyName name of property
 	 * @param valueName name of value
 	 * @return this ArgDef
 	 */
-	public ArgDef withParameterProperties(String propertyName, String valueName) {
-		this.parameterPropertiesType = true;
+	public ArgDef withParameterValueMap(String propertyName, String valueName) {
+		this.parameterValueMapType = true;
 		return withParameters(false, propertyName + "=" + valueName, -1);
 	}
 }

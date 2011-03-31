@@ -2,10 +2,16 @@ VIVO Harvester
 VIVO: Enabling National Networking of Scientists
 
 Quick start
-To harvest all of your institution data from pubmed into your vivo instance, you need to minimally do the following things:
+See this wiki page for a user guide to the harvester
+https://sourceforge.net/apps/mediawiki/vivo/index.php?title=VIVO_Harvester_User_Guide
 
-Edit config/jenaModels/VIVO.xml and set it to point to your vivo database
-Edit config/tasks/PubmedFetch.xml and change the options as follows:
+1. Harvesting data from PubMed
+
+For example, 
+	to harvest all of your institution data from pubmed into your vivo instance, you need to minimally do the following things:
+
+Edit config/models/vivo.xml and set it to point to your vivo database
+Edit config/tasks/example.pubmedfetch.xml and change the options as follows:
 
 	<Param id="email">YOUREMAIL</Param>
 	<Param id="output">config/recordHandlers/PubmedXMLRecordHandler.xml</Param>
@@ -13,16 +19,68 @@ Edit config/tasks/PubmedFetch.xml and change the options as follows:
 	<Param id="numRecords">ALL</Param>
 	<Param id="batchSize">1000</Param>
 	
-run scripts/runPubMedHarvest.sh
+run scripts/run-pubmed.sh
 
 The termSearch is the same search string you would use on pubmed. 
 
 Project Documentation
 For more information about the project, visit http://sourceforge/projects/vivo/.  
-Documentation can be found on the source forge wiki at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Documentation
+Documentation can be found on the sourceforge wiki at https://sourceforge.net/apps/mediawiki/vivo/index.php?title=Documentation
 
 Execution Scripts
 Several example scripts are provided in the scripts folder.
+
+Java Library Demo
+A demo of using the tools as a java library is included in the examples folder also
+
+2. Harvesting data from a CSV file or relational database
+
+a) CSV file example:
+
+To try out the example, do the following:
+
+- Edit config/models/vivo.xml and set it to point to your vivo database
+
+sdb mode:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Model>
+	<Param name="type">sdb</Param>
+	<Param name="dbLayout">layout2</Param>
+	<Param name="dbType">MySQL</Param>
+	<Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vitrodb</Param>
+	<Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
+	<Param name="dbUser">USERNAME</Param>
+	<Param name="dbPass">PASSWORD</Param>
+	<Param name="namespace">NAMESPACE</Param>
+</Model>
+
+rdb mode:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Model>
+	<Param name="type">rdb</Param>
+	<Param name="dbClass">com.mysql.jdbc.Driver</Param>
+	<Param name="dbType">MySQL</Param>
+	<Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vitrodb</Param>
+	<Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
+	<Param name="dbUser">USERNAME</Param>
+	<Param name="dbPass">PASSWORD</Param>
+	<Param name="namespace">NAMESPACE</Param>
+</Model>
+
+- Run scripts/run-csv.sh
+
+Files associated with this example are config/datamaps/example.csv-map.xml and files/person.csv
+Edit the associated files and run-csv.sh for customization.
+
+b) Relational database example:
+
+To try out the example, do the following:
+
+- Edit config/models/vivo.xml and set it to point to your vivo database (see above)
+- Edit config/datamaps/example-d2rmap.xml to point to your database source and modify the query
+- Run scripts/run-rdbms.sh
 
 Contacting Us
 We would love to hear from you and answer any questions, take patches, or bugs. Join us on IRC and/or our mailing lists:

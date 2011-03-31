@@ -1,12 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams. All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which
- * accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation
- ******************************************************************************/
+/******************************************************************************************************************************
+ * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
+ * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ * Contributors:
+ * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * - initial API and implementation
+ *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.args;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -48,7 +53,8 @@ public class ArgParser {
 		this.optMap = new HashMap<String, ArgDef>();
 		this.parser = new Options();
 		this.options.add(new ArgDef().setShortOption('X').setLongOpt("config").withParameter(true, "CONFIG_FILE").setDescription("XML Configuration File"));
-		this.options.add(new ArgDef().setShortOption('?').setLongOpt("help").setDescription("Help Message"));
+		this.options.add(new ArgDef().setShortOption('h').setLongOpt("help").setDescription("Help Message"));
+		this.options.add(new ArgDef().setShortOption('w').setLongOpt("wordiness").setDescription("Set the console log level").withParameter(true, "LOG_LEVEL"));
 	}
 	
 	/**
@@ -91,7 +97,7 @@ public class ArgParser {
 	 * @param arg the argument to add
 	 */
 	public void addArgument(ArgDef arg) {
-		if(arg.getLongOption() == null && arg.getShortOption() == null) {
+		if((arg.getLongOption() == null) && (arg.getShortOption() == null)) {
 			throw new IllegalArgumentException("must define at least a short or long option");
 		}
 		this.options.add(arg);
@@ -133,7 +139,7 @@ public class ArgParser {
 					if(arg.isParameterRequired()) {
 						ob = ob.hasArgs();
 					} else {
-						if(arg.isParameterProperties()) {
+						if(arg.isParameterValueMap()) {
 							ob = ob.hasOptionalArgs(2).withValueSeparator();
 						} else {
 							ob = ob.hasOptionalArgs();
@@ -164,7 +170,10 @@ public class ArgParser {
 	 */
 	public String getUsage() {
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp(this.app, getOptions());
-		return "";
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintWriter pw = new PrintWriter(baos);
+		formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, this.app, null, getOptions(), HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null, false);
+		pw.flush();
+		return baos.toString();
 	}
 }
