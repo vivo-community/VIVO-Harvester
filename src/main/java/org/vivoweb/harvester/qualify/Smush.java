@@ -1,13 +1,37 @@
 /******************************************************************************************************************************
- * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+ * Harvester Tool Copyright (c) 2011 Christopher Haines, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
  * All rights reserved.
  * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
  * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
  * Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
+ * Christopher Haines, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
- * Narayan Raum, Yang Li, Christopher Barnes, Chris Westling
- * - scoring algorithm ideas
+ ******************************************************************************************************************************
+ * Algorithm Copyright (c) 2011, Cornell University
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ *     * Redistributions of source code must retain the above copyright notice,
+ *       this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright notice,
+ *       this list of conditions and the following disclaimer in the documentation
+ *       and/or other materials provided with the distribution.
+ *     * Neither the name of Cornell University nor the names of its contributors
+ *       may be used to endorse or promote products derived from this software 
+ *       without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.qualify;
 
@@ -21,7 +45,7 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -32,11 +56,9 @@ import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 /**
- * VIVO Smush
- * @author Nicholas Skaggs nskaggs@ctrip.ufl.edu
- * @author Stephen Williams svwilliams@ctrip.ufl.edu
- * @author Christopher Haines hainesc@ctrip.ufl.edu
- * @thanks Chris Westling cmw48@cornell.edu
+ * Smush
+ * @author Cornell University VIVO Team (Algorithm)
+ * @author James Pence (jrpence@ufl.edu) (Harvester Tool)
  */
 public class Smush {
 	/**
@@ -72,8 +94,28 @@ public class Smush {
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param inPlace replace the input model with the output model
 	 */
-	public Smush(JenaConnect inputJena, JenaConnect outputJena, List<String> inputPredicates, String namespace,boolean inPlace) {
-		init(inputJena, outputJena, inputPredicates, namespace, inPlace);
+	public Smush(JenaConnect inputJena, JenaConnect outputJena, List<String> inputPredicates, String namespace, boolean inPlace) {
+		if(inputJena == null) {
+			throw new IllegalArgumentException("Input model cannot be null");
+		}
+		this.inputJena = inputJena;
+		
+		this.outputJena = outputJena;
+		if(this.outputJena == null) {
+			log.info("Output model null generating a memory model");
+			try {
+				this.outputJena = new MemJenaConnect();
+			} catch(IOException e) {
+				log.error("Failed making temp memory model:\n" + e.getMessage(), e);
+			}
+		}
+		
+		if(inputPredicates == null) {
+			throw new IllegalArgumentException("Input Predicate cannot be null");
+		}
+		this.inputPredicates = inputPredicates;
+		this.namespace = namespace;
+		this.inPlace = inPlace;
 	}
 	/**
 	 * Constructor
@@ -82,8 +124,7 @@ public class Smush {
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
 	public Smush(JenaConnect inputJena, List<String> inputPredicates, String namespace) {
-		JenaConnect outputJenaNull = null;
-		init(inputJena, outputJenaNull, inputPredicates, namespace,true);
+		this(inputJena, null, inputPredicates, namespace, true);
 	}
 	
 	/**
@@ -101,46 +142,13 @@ public class Smush {
 	 * @throws IOException error parsing options
 	 */
 	public Smush(ArgList opts) throws IOException {
-		JenaConnect i = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
-		JenaConnect o = JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O"));
-		init(i, o, opts.getAll("P"), opts.get("n") ,opts.has("r"));
-	}
-	
-
-	/**
-	 * Initialize variables
-	 * @param i model containing statements to be scored
-	 * @param o model containing only resources about the smushed statements is returned
-	 * @param iPred the predicate to look for in inputJena model
-	 * @param ns limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
-	 * @param inPlce replace the input model with the output model
-	 */
-	private void init(JenaConnect i, JenaConnect o, List<String> iPred, String ns,boolean inPlce) {
-		if(i == null) {
-			throw new IllegalArgumentException("Input model cannot be null");
-		}
-		this.inputJena = i;
-		
-		if(o == null) {
-			log.info("Output model null generating a memory model");
-			try {
-				o = new SDBJenaConnect("jdbc:h2:mem:tempSmushoutput", "sa", "", "H2", "org.h2.Driver", "layout2", "tempSmushoutput");
-			} catch(IOException e) {
-				log.error("Failed making temp memory model:\n" + e.getMessage());
-				e.printStackTrace();
-			}
-		}
-		this.outputJena = o;
-		
-		
-		if(iPred == null) {
-			throw new IllegalArgumentException("Input Predicate cannot be null");
-		}
-		this.inputPredicates = iPred;
-		
-		this.namespace = ns;
-		
-		this.inPlace = inPlce;
+		this(
+			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
+			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
+			opts.getAll("P"), 
+			opts.get("n"), 
+			opts.has("r")
+		);
 	}
 	
 	/**
