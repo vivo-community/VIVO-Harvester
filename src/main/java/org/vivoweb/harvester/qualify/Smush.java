@@ -168,9 +168,10 @@ public class Smush {
 	 * A simple resource smusher based on a supplied inverse-functional property.
 	 * @param inModel - model to operate on
 	 * @param prop - property for smush
+	 * @param namespace - filter on resources addressed (if null then applied to whole model)
 	 * @return a new model containing only resources about the smushed statements.
 	 */
-	public Model smushResources(Model inModel, Property prop) { 
+	public static Model smushResources(Model inModel, Property prop, String namespace) { 
 		Model outModel = ModelFactory.createDefaultModel();
 		outModel.add(inModel);
 		inModel.enterCriticalSection(Lock.READ);
@@ -185,7 +186,7 @@ public class Smush {
 						Resource smushToThisResource = null;
 						for (Iterator<Resource> subjIt = closfIt; closfIt.hasNext();) {
 							Resource subj = subjIt.next();
-							if(! (subj.getNameSpace().equals(this.namespace) || this.namespace == null ) ){
+							if(! (subj.getNameSpace().equals(namespace) || namespace == null ) ){
 								continue;
 							}
 							if (first) {
@@ -235,7 +236,7 @@ public class Smush {
 		Model outModel = this.outputJena.getJenaModel();
 		for(String runName : this.inputPredicates) {
 			Property prop = this.inputJena.getJenaModel().createProperty(runName);
-			Model results = smushResources(this.inputJena.getJenaModel(),prop);
+			Model results = smushResources(this.inputJena.getJenaModel(),prop,this.namespace);
 			outModel.add(results);
 		}
 		if(this.inPlace){

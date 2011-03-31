@@ -196,7 +196,7 @@ public class SmushTest {
 		testSubject.execute();
 
 		{
-			System.out.println("The output model :\n" + this.inputModel.exportRdfToString());
+			log.info("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
 	
 			query.append("PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
@@ -210,13 +210,13 @@ public class SmushTest {
 			query.append("?uri localVivo:uniqueId ?lbl .");
 			query.append("}");
 			ResultSet rs = this.inputModel.executeSelectQuery(query.toString());
-			System.out.println("query result set :\n");
+			log.info("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					System.out.println(line);
+					log.info(line);
 				}
 			}
 			assertTrue(list.size() == 5);//Nodes of the improper namespace is not reduced
