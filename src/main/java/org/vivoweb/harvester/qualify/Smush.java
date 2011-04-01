@@ -47,7 +47,6 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -174,13 +173,17 @@ public class Smush {
 	
 	/**
 	 * A simple resource smusher based on a supplied inverse-functional property.
-	 * @param inModel - model to operate on
-	 * @param prop - property for smush
+	 * @param inJC - model to operate on
+	 * @param property - property for smush
 	 * @param namespace - filter on resources addressed (if null then applied to whole model)
 	 * @return a new model containing only resources about the smushed statements.
+	 * @throws IOException error connecting
 	 */
-	public static Model smushResources(Model inModel, Property prop, String namespace) { 
-		Model outModel = ModelFactory.createDefaultModel();
+	public static JenaConnect smushResources(JenaConnect inJC, String property, String namespace) throws IOException { 
+		JenaConnect outJC = new MemJenaConnect();
+		Model inModel = inJC.getJenaModel();
+		Property prop = inModel.createProperty(property);
+		Model outModel = outJC.getJenaModel();
 		outModel.add(inModel);
 		inModel.enterCriticalSection(Lock.READ);
 		try {
@@ -234,18 +237,18 @@ public class Smush {
 		} finally {
 			inModel.leaveCriticalSection();
 		}
-		return outModel;
+		return outJC;
 	}
 	
 	/**
 	 * Execute is that method where the smushResoures method is ran for each predicate.
+	 * @throws IOException error connecting
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		Model outModel = this.outputJena.getJenaModel();
 		for(String runName : this.inputPredicates) {
-			Property prop = this.inputJena.getJenaModel().createProperty(runName);
-			Model results = smushResources(this.inputJena.getJenaModel(),prop,this.namespace);
-			outModel.add(results);
+			JenaConnect results = smushResources(this.inputJena, runName, this.namespace);
+			outModel.add(results.getJenaModel());
 		}
 		if(this.inPlace){
 			this.inputJena.truncate();
