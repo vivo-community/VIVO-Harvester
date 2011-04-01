@@ -14,7 +14,6 @@ import org.vivoweb.harvester.qualify.Smush;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.RDBJenaConnect;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -28,7 +27,7 @@ public class SmushTest {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(ChangeNamespaceTest.class);
+	private static Logger log = LoggerFactory.getLogger(SmushTest.class);
 	/** */
 	private JenaConnect inputModel;
 	/** */
