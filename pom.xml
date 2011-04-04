@@ -95,6 +95,16 @@
                                     </mapper>
                                 </data>
                                 <data>
+                                    <src>${project.basedir}/files</src>
+                                    <type>directory</type>
+                                    <!-- <includes/> -->
+                                    <excludes>**/*.svn*/**</excludes>
+                                    <mapper>
+                                      <type>perm</type>
+                                      <prefix>/usr/share/vivo/harvester/files</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
                                     <src>${project.basedir}/src/main/java/org/vivoweb/harvester/demo</src>
                                     <type>directory</type>
                                     <!-- <includes/> -->
