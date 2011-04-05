@@ -317,9 +317,8 @@ public abstract class JenaConnect {
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
 	 *        "RDF/XML"
-	 * @throws IOException error connecting
 	 */
-	public void removeRdfFromStream(InputStream in, String namespace, String language) throws IOException {
+	public void removeRdfFromStream(InputStream in, String namespace, String language) {
 		removeRdfFromJC(new MemJenaConnect(in, namespace, language));
 	}
 	
@@ -341,9 +340,8 @@ public abstract class JenaConnect {
 	 * @param rh the RecordHandler to pull records from
 	 * @param namespace the base uri to use for imported uris
 	 * @return number of records removed
-	 * @throws IOException error connecting
 	 */
-	public int removeRdfFromRH(RecordHandler rh, String namespace) throws IOException {
+	public int removeRdfFromRH(RecordHandler rh, String namespace) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("removing record: " + r.getID());

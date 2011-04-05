@@ -147,9 +147,8 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.io.InputStream, java.lang.String, java.lang.String)
 	 * JenaConnect(InputStream in, String namespace)}.
-	 * @throws IOException error
 	 */
-	public void testJenaConnectConstInputStream() throws IOException {
+	public void testJenaConnectConstInputStream() {
 		log.info("BEGIN testJenaConnectConstInputStream");
 		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		runWriteTest();
@@ -158,9 +157,8 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect() MemJenaConnect()}.
-	 * @throws IOException error
 	 */
-	public void testJenaConnectMemConstNoModelName() throws IOException {
+	public void testJenaConnectMemConstNoModelName() {
 		log.info("BEGIN testJenaConnectMemConstNoModelName");
 		this.jc = new MemJenaConnect();
 		runWriteTest();
@@ -171,9 +169,8 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.lang.String)
 	 * MemJenaConnect(String
 	 * modelName)}.
-	 * @throws IOException error
 	 */
-	public void testJenaConnectMemConstWithModelName() throws IOException {
+	public void testJenaConnectMemConstWithModelName() {
 		log.info("BEGIN testJenaConnectMemConstWithModelName");
 		this.jc = new MemJenaConnect(modelName2);
 		runWriteTest();
@@ -184,9 +181,8 @@ public class JenaConnectTest extends TestCase {
 	 * Test method for
 	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRdfFromStream(java.io.InputStream, java.lang.String, java.lang.String)
 	 * loadRDF(InputStream in, String namespace)}.
-	 * @throws IOException error
 	 */
-	public void testLoadRDF() throws IOException {
+	public void testLoadRDF() {
 		log.info("BEGIN testLoadRDF");
 		this.jc = new MemJenaConnect();
 		this.jc.loadRdfFromStream(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
