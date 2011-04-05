@@ -70,11 +70,11 @@ public class TDBJenaConnect extends JenaConnect {
 		} else {
 			setModelName("urn:x-arq:DefaultGraph");
 		}
-		setJenaModel(getDataSet().getNamedModel(getModelName()));
+		setJenaModel(getDataset().getNamedModel(getModelName()));
 	}
 	
 	@Override
-	public Dataset getDataSet() {
+	public Dataset getDataset() {
 		log.debug("dbDir: " + this.dbDir);
 		if(!dirDatasets.containsKey(this.dbDir)) {
 			dirDatasets.put(this.dbDir, TDBFactory.createDataset(this.dbDir));

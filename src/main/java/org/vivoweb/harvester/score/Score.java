@@ -111,9 +111,8 @@ public class Score {
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param weights the weightings (0.0 , 1.0) for this score
 	 * @param batchSize number of records to use in batch
-	 * @throws IOException error initializing jena models
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, int batchSize) throws IOException {
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, int batchSize) {
 		if(inputJena == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -318,6 +317,7 @@ public class Score {
 		if(vivoClone.isEmpty()) {
 			log.trace("Loading VIVO model into temp copy model");
 			vivoClone.loadRdfFromJC(this.vivoJena);
+			log.debug("vivo clone contents:\n"+vivoClone.exportRdfToString());
 		} else {
 			log.trace("VIVO model already in temp copy model");
 		}
@@ -325,10 +325,15 @@ public class Score {
 		if(inputClone.isEmpty()) {
 			log.trace("Loading Input model into temp copy model");
 			inputClone.loadRdfFromJC(this.inputJena);
+			log.debug("input clone contents:\n"+inputClone.exportRdfToString());
 		} else {
 			log.trace("Input model already in temp copy model");
 		}
-		Dataset ds = this.tempJena.getDataSet();
+		Dataset ds = this.tempJena.getDataset();
+		log.debug("testing Dataset");
+		if(!this.tempJena.executeAskQuery("ASK { ?s ?p ?o }", true)) {
+			log.debug("Empty Dataset");
+		}
 		return ds;
 	}
 	

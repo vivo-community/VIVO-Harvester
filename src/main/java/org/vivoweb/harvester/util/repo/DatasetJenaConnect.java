@@ -17,7 +17,7 @@ public class DatasetJenaConnect extends JenaConnect {
 	/**
 	 * Constructor
 	 * @param jenaDataset the dataset to use
-	 * @param modelName the modelname to connect to
+	 * @param modelName the model name to connect to
 	 */
 	public DatasetJenaConnect(Dataset jenaDataset, String modelName) {
 		this.ds = jenaDataset;
@@ -31,7 +31,7 @@ public class DatasetJenaConnect extends JenaConnect {
 	}
 	
 	@Override
-	public Dataset getDataSet() {
+	public Dataset getDataset() {
 		return this.ds;
 	}
 	

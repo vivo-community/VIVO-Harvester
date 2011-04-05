@@ -138,9 +138,8 @@ public class SplitProperty {
 	 * @param newPropertyURI new property uri (to store split values in)
 	 * @param trim trim() the new values
 	 * @return outModel
-	 * @throws IOException error creating temp model
 	 */
-	public static JenaConnect splitPropertyValues(JenaConnect model, String oldPropertyURI, String splitRegex, String newPropertyURI, boolean trim) throws IOException {
+	public static JenaConnect splitPropertyValues(JenaConnect model, String oldPropertyURI, String splitRegex, String newPropertyURI, boolean trim) {
 		JenaConnect outModel = new MemJenaConnect();
 		Pattern delimiterPattern = Pattern.compile(splitRegex);
 		Property theProp = ResourceFactory.createProperty(oldPropertyURI);
@@ -189,9 +188,8 @@ public class SplitProperty {
 	
 	/**
 	 * Split Property Values
-	 * @throws IOException error creating temp model
 	 */
-	public void execute() throws IOException {
+	public void execute() {
 		this.model.getJenaModel().add(splitPropertyValues(this.model, this.splitRegex, this.oldPropertyURI, this.newPropertyURI, this.trim).getJenaModel());
 	}
 	

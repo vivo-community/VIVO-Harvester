@@ -219,7 +219,7 @@ public abstract class JenaConnect {
 	 * @return the database connection's dataset
 	 * @throws IOException error connecting
 	 */
-	public abstract Dataset getDataSet() throws IOException;
+	public abstract Dataset getDataset() throws IOException;
 	
 	/**
 	 * Load in RDF
@@ -402,7 +402,7 @@ public abstract class JenaConnect {
 	private QueryExecution buildQueryExec(String queryString, boolean datasetMode) throws IOException {
 		QueryExecution qe;
 		if(datasetMode) {
-			qe = QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getDataSet());
+			qe = QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getDataset());
 		} else {
 			qe = QueryExecutionFactory.create(QueryFactory.create(queryString, Syntax.syntaxARQ), getJenaModel());
 		}
@@ -524,7 +524,7 @@ public abstract class JenaConnect {
 //			log.debug("query:\n" + queryString);
 			if(datasetMode) {
 				log.debug("Executing query against dataset");
-				UpdateAction.execute(UpdateFactory.create(queryString), getDataSet());
+				UpdateAction.execute(UpdateFactory.create(queryString), getDataset());
 			} else {
 				log.debug("Executing query against model");
 				UpdateAction.execute(UpdateFactory.create(queryString), getJenaModel());
@@ -576,7 +576,7 @@ public abstract class JenaConnect {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
 			if(datasetMode) {
 				log.debug("Executing query against dataset");
-				qe = QueryExecutionFactory.create(query, getDataSet());
+				qe = QueryExecutionFactory.create(query, getDataset());
 			} else {
 				log.debug("Executing query against model");
 				qe = QueryExecutionFactory.create(query, getJenaModel());

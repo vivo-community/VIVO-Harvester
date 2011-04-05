@@ -34,18 +34,16 @@ public class MemJenaConnect extends TDBJenaConnect {
 	
 	/**
 	 * Constructor (Memory Default Model)
-	 * @throws IOException error connecting
 	 */
-	public MemJenaConnect() throws IOException {
+	public MemJenaConnect() {
 		this(null);
 	}
 	
 	/**
 	 * Constructor (Memory Named Model)
 	 * @param modelName the model name to use
-	 * @throws IOException error connecting
 	 */
-	public MemJenaConnect(String modelName) throws IOException {
+	public MemJenaConnect(String modelName) {
 		super(getDir(modelName), modelName);
 	}
 	
@@ -56,9 +54,8 @@ public class MemJenaConnect extends TDBJenaConnect {
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
 	 *        "RDF/XML"
-	 * @throws IOException error connecting
 	 */
-	public MemJenaConnect(InputStream in, String namespace, String language) throws IOException {
+	public MemJenaConnect(InputStream in, String namespace, String language) {
 		this(null);
 		loadRdfFromStream(in, namespace, language);
 	}
@@ -67,14 +64,18 @@ public class MemJenaConnect extends TDBJenaConnect {
 	 * Get the directory in which the model named is held
 	 * @param modelName the model name
 	 * @return the directory path
-	 * @throws IOException error creating temp path
 	 */
-	private static String getDir(String modelName) throws IOException {
+	private static String getDir(String modelName) {
 		String mod = (modelName != null) ? modelName : generateUnusedModelName();
 		mod = SpecialEntities.xmlEncode(mod, '/', ':');
 		if(!usedModelNames.containsKey(modelName)) {
 			log.debug("attempting to create temp file for: " + mod);
-			File f = File.createTempFile(mod, ".tdb");
+			File f;
+			try {
+				f = File.createTempFile(mod, ".tdb");
+			} catch(IOException e) {
+				throw new IllegalArgumentException(e);
+			}
 			log.debug("created: " + f.getAbsolutePath());
 			f.delete();
 			f.mkdir();

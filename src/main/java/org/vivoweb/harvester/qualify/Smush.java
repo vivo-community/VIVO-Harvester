@@ -102,11 +102,7 @@ public class Smush {
 		this.outputJena = outputJena;
 		if(this.outputJena == null) {
 			log.info("Output model null generating a memory model");
-			try {
-				this.outputJena = new MemJenaConnect();
-			} catch(IOException e) {
-				log.error("Failed making temp memory model:\n" + e.getMessage(), e);
-			}
+			this.outputJena = new MemJenaConnect();
 		}
 		
 		if(inputPredicates == null) {
@@ -177,9 +173,8 @@ public class Smush {
 	 * @param property - property for smush
 	 * @param namespace - filter on resources addressed (if null then applied to whole model)
 	 * @return a new model containing only resources about the smushed statements.
-	 * @throws IOException error connecting
 	 */
-	public static JenaConnect smushResources(JenaConnect inJC, String property, String namespace) throws IOException { 
+	public static JenaConnect smushResources(JenaConnect inJC, String property, String namespace) { 
 		JenaConnect outJC = new MemJenaConnect();
 		Model inModel = inJC.getJenaModel();
 		Property prop = inModel.createProperty(property);
@@ -242,9 +237,8 @@ public class Smush {
 	
 	/**
 	 * Execute is that method where the smushResoures method is ran for each predicate.
-	 * @throws IOException error connecting
 	 */
-	public void execute() throws IOException {
+	public void execute() {
 		Model outModel = this.outputJena.getJenaModel();
 		for(String runName : this.inputPredicates) {
 			JenaConnect results = smushResources(this.inputJena, runName, this.namespace);
