@@ -48,7 +48,7 @@ public class D2RMapFetch {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("D2RMapFetch");
 
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		
 		// d2RMap specific arguments
@@ -75,9 +75,11 @@ public class D2RMapFetch {
 	 * @throws IOException error creating task
 	 */
 	public D2RMapFetch(ArgList opts) throws IOException {
-		this.d2rConfigPath = opts.get("u");
-		this.d2rWDir = opts.get("a");
-		this.outStore = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
+		this(
+			opts.get("u"), 
+			RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O")), 
+			opts.get("a")
+		);
 	}
 	
 	/**
@@ -90,6 +92,9 @@ public class D2RMapFetch {
 		this.d2rConfigPath = configPath;
 		this.outStore = rh;
 		this.d2rWDir = workingDir;
+		if(this.outStore == null) {
+			throw new IllegalArgumentException("Must provide an output RecordHandler");
+		}
 	}
 
 	/**

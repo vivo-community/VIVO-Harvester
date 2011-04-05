@@ -223,7 +223,7 @@ public class JDBCFetch {
 			}
 		}
 		
-		// settign manual foriegn key relations
+		// setting manual foriegn key relations
 		if(opts.has("R")) {
 			this.fkRelations = new HashMap<String, Map<String, String>>();
 			Map<String, String> rels = opts.getValueMap("R");

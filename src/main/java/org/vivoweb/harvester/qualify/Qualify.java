@@ -10,6 +10,7 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -138,9 +139,11 @@ public class Qualify {
 	 */
 	private void strReplace(String dataType, String oldValue, String newValue) {
 		StmtIterator stmtItr = this.model.getJenaModel().listStatements(null, this.model.getJenaModel().createProperty(dataType), oldValue);
-		
+		ArrayList<Statement> statements = new ArrayList<Statement>();
 		while(stmtItr.hasNext()) {
-			Statement stmt = stmtItr.next();
+			statements.add(stmtItr.next());
+		}
+		for(Statement stmt : statements) {
 			log.trace("Replacing record");
 			log.debug("oldValue: " + oldValue);
 			log.debug("newValue: " + newValue);
