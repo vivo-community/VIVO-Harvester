@@ -11,6 +11,7 @@ package org.vivoweb.harvester.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +19,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.h2.tools.Csv;
@@ -40,7 +40,7 @@ public class CSVtoJDBC {
 	/**
 	 * CSV to read from
 	 */
-	private FileObject csvFile;
+	private InputStream csvStream;
 	/**
 	 * DBconnection into which to output
 	 */
@@ -51,6 +51,16 @@ public class CSVtoJDBC {
 	private String tableName;
 	
 	/**
+	 * Library style initialyzer 
+	 * @param fileStream CSV inputStream to read from
+	 * @param output The database connection for the output
+	 * @param tableName table name into which to output
+	 */
+	public CSVtoJDBC(InputStream fileStream, Connection output, String tableName) {
+		this.init(fileStream, output, tableName);
+	}
+	
+	/**
 	 * Library style Constructor
 	 * @param filename CSV to read from
 	 * @param output The database connection for the output
@@ -58,9 +68,8 @@ public class CSVtoJDBC {
 	 * @throws FileSystemException error establishing connection to file
 	 */
 	public CSVtoJDBC(String filename, Connection output, String tableName) throws FileSystemException {
-		this.csvFile = VFS.getManager().resolveFile(new File("."), filename);
-		this.output = output;
-		this.tableName = tableName;
+		InputStream is = VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream();
+		this.init(is, output, tableName);
 	}
 	
 	/**
@@ -74,17 +83,19 @@ public class CSVtoJDBC {
 	 * @throws IOException error establishing connection to database or file
 	 */
 	public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
-		this.csvFile = VFS.getManager().resolveFile(new File("."), filename);
+		InputStream  is = VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream();
+		Connection conn = null;
 		try {
 			Class.forName(jdbcDriverClass);
-			this.output = DriverManager.getConnection(connLine, username, password);
+			conn = DriverManager.getConnection(connLine, username, password);
 		} catch(ClassNotFoundException e) {
 			throw new IOException(e.getMessage(), e);
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-		this.tableName = tableName;
+		this.init(is,conn,tableName);
 	}
+
 	
 	/**
 	 * Command line Constructor
@@ -105,12 +116,24 @@ public class CSVtoJDBC {
 	}
 	
 	/**
+	 * Library style initialyzer 
+	 * @param fileStream CSV inputStream to read from
+	 * @param outConn The database connection for the output
+	 * @param tablename table name into which to output
+	 */
+	public void  init(InputStream fileStream, Connection outConn, String tablename) {
+		this.csvStream = fileStream;
+		this.output = outConn;
+		this.tableName = tablename;
+	}
+	
+	/**
 	 * Move CSV data into a recordHandler
 	 * @throws IOException error reading from database or file
 	 */
 	public void execute() throws IOException {
 		try {
-			ResultSet rs = Csv.getInstance().read(new InputStreamReader(this.csvFile.getContent().getInputStream()), null);
+			ResultSet rs = Csv.getInstance().read(new InputStreamReader(this.csvStream), null);
 			ResultSetMetaData meta = rs.getMetaData();
 			Statement cursor = this.output.createStatement();
 			int rowID = 0;

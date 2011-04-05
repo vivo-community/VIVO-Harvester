@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.diff.Diff;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -198,6 +199,7 @@ public class Smush {
 							if (first) {
 								smushToThisResource = subj;
 								first = false;
+								log.debug("Smush running for <"+subj+">");
 								continue;
 							}
 							
@@ -205,6 +207,7 @@ public class Smush {
 							try {
 								for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
 									Statement stmt = stmtIt.next();
+									log.trace("Smushing subject <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
 									outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
 									outModel.add(smushToThisResource, stmt.getPredicate(), stmt.getObject());
 								}
@@ -215,6 +218,7 @@ public class Smush {
 							try {
 								for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
 									Statement stmt = stmtIt.next();
+									log.trace("Smushing object <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
 									outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
 									outModel.add(stmt.getSubject(), stmt.getPredicate(), smushToThisResource);
 								}
@@ -245,8 +249,12 @@ public class Smush {
 			outModel.add(results.getJenaModel());
 		}
 		if(this.inPlace){
-			this.inputJena.truncate();
-			this.inputJena.loadRdfFromJC(this.outputJena);
+			JenaConnect additions = new MemJenaConnect();
+			JenaConnect subtractions = new MemJenaConnect();
+			Diff.diff(this.inputJena, this.outputJena, subtractions, null);
+			Diff.diff(this.outputJena, this.inputJena, additions, null);
+			this.inputJena.removeRdfFromJC(subtractions);
+			this.inputJena.loadRdfFromJC(additions);
 		}
 	}
 

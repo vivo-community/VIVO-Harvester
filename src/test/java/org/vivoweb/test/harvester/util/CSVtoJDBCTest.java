@@ -9,7 +9,9 @@
  *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -32,11 +34,15 @@ public class CSVtoJDBCTest extends TestCase {
 	 */
 	private static Logger log = LoggerFactory.getLogger(JDBCFetchTest.class);
 	/** */
+	private InputStream sourceStream;
+	/** */
 	private Connection conn;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		String sourcefile ="\"NAME\",\"ID\"\n\"Burton, Joe D\",\"1\"\n\"Smith, Jane W\",\"2\"\n\"Schwarz, Elizabeth R\",\"3\"\n\"Silverstein, Steven\",\"4\"";
+		this.sourceStream = new ByteArrayInputStream(sourcefile.getBytes());
 		InitLog.initLogger(null, null);
 		Class.forName("org.h2.Driver");
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TestJDBCFetchDB", "sa", "");
@@ -53,21 +59,11 @@ public class CSVtoJDBCTest extends TestCase {
 	}
 	
 	/**
-	 * @throws IOException if the file is missing or not read properly
 	 */
-	public void testCSVtoJDBCStringConnectionString() throws IOException {
+	public void testCSVtoJDBCStreamConnectionString() {
 		log.info("BEGIN testCSVtoJDBCStringConnectionString");
-		new CSVtoJDBC("files/person.csv", this.conn, "Person");
+		new CSVtoJDBC(this.sourceStream, this.conn, "Person");
 		log.info("END testCSVtoJDBCStringConnectionString");
-	}
-	
-	/**
-	 * @throws IOException if the file is missing or not read properly
-	 */
-	public void testCSVtoJDBCStringStringStringStringStringString() throws IOException {
-		log.info("BEGIN testCSVtoJDBCStringStringStringStringStringString");
-		new CSVtoJDBC("files/person.csv", "org.h2.Driver", "jdbc:h2:mem:TestJDBCFetchDB", "sa", "", "Person");
-		log.info("END testCSVtoJDBCStringStringStringStringStringString");
 	}
 	
 	/**
@@ -75,7 +71,7 @@ public class CSVtoJDBCTest extends TestCase {
 	 */
 	public void testExecute() throws IOException {
 		log.info("BEGIN testExecute");
-		CSVtoJDBC subject = new CSVtoJDBC("files/person.csv", this.conn, "Person");
+		CSVtoJDBC subject = new CSVtoJDBC(this.sourceStream, this.conn, "Person");
 		subject.execute();
 		try {
 			Statement cursor = this.conn.createStatement();
@@ -101,7 +97,7 @@ public class CSVtoJDBCTest extends TestCase {
 					line.append(results.getString(x));
 					line.append("|");
 				}
-				String expected = "|" + rowid++ + "||" + name[rowid - 1] + "||" + rowid + "|";
+				String expected = "|" + rowid + "||" + name[rowid] + "||" + ++rowid + "|";
 				assertEquals(expected, line.toString());
 				log.info(line.toString());
 			}
