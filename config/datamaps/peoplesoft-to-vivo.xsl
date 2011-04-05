@@ -139,12 +139,6 @@
 				<xsl:when test="$typeCode=192">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
 				</xsl:when>
-				<xsl:when test="$typeCode=193">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
-				<xsl:when test="$typeCode=194">
-					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
-				</xsl:when>
 				<xsl:when test="$typeCode=195">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
 				</xsl:when>
@@ -157,6 +151,9 @@
 				<xsl:when test="$typeCode=219">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
 				</xsl:when>
+				<xsl:when test="$typeCode=221">
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Consultant"/>
+				</xsl:when>
 			</xsl:choose>
 			<core:personInPosition>
 				<rdf:Description rdf:about="{$baseURI}position/positionFor{$ufid}in{$fullorgnum}as{$typeCode}from{$startDate}">
@@ -165,12 +162,6 @@
 					<xsl:choose>
 						<xsl:when test="$typeCode=192">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=193">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
-						</xsl:when>
-						<xsl:when test="$typeCode=194">
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
 						</xsl:when>
 						<xsl:when test="$typeCode=195">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademicPosition"/>
@@ -183,6 +174,9 @@
 						</xsl:when>
 						<xsl:when test="$typeCode=219">
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyPosition"/>
+						</xsl:when>
+						<xsl:when test="$typeCode=221">
+							<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/ConsultantPos"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
