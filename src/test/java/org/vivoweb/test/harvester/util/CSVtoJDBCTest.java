@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.CSVtoJDBC;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.test.harvester.fetch.JDBCFetchTest;
 
 /**
  * @author jrpence
@@ -32,7 +31,7 @@ public class CSVtoJDBCTest extends TestCase {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(JDBCFetchTest.class);
+	private static Logger log = LoggerFactory.getLogger(CSVtoJDBCTest.class);
 	/** */
 	private InputStream sourceStream;
 	/** */
