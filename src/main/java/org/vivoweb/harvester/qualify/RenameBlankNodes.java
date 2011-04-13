@@ -36,6 +36,9 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -43,6 +46,18 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.shared.Lock;
+import com.hp.hpl.jena.util.ResourceUtils;
+import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 /**
  * Find nodes with no name and give them a name
@@ -56,11 +71,11 @@ public class RenameBlankNodes {
 	/**
 	 * The model to perform rename in
 	 */
-	private final JenaConnect inModel;
+	private final Model inModel;
 	/**
 	 * The model to contain renamed nodes
 	 */
-	private final JenaConnect outModel;
+	private final Model outModel;
 	/**
 	 * The part of the namespace between the base and the ID number
 	 */
@@ -68,7 +83,7 @@ public class RenameBlankNodes {
 	/**
 	 * dedupModel
 	 */
-	private final JenaConnect dedupModel;
+	private final Model dedupModel;
 	/**
 	 * pattern
 	 */
@@ -97,10 +112,10 @@ public class RenameBlankNodes {
 	 * @param property property
 	 */
 	public RenameBlankNodes(JenaConnect inModel, JenaConnect outModel, String namespaceEtc, JenaConnect dedupModel, String pattern, String property) {
-		this.inModel = inModel;
-		this.outModel = outModel;
+		this.inModel = inModel != null ? inModel.getJenaModel() : null;
+		this.outModel = outModel != null ? outModel.getJenaModel() : null;
 		this.namespaceEtc = namespaceEtc;
-		this.dedupModel = dedupModel;
+		this.dedupModel = dedupModel != null ? dedupModel.getJenaModel() : null;
 		this.pattern = pattern;
 		this.property = property;
 	}
@@ -131,8 +146,50 @@ public class RenameBlankNodes {
 	 * @param property property
 	 */
 	@SuppressWarnings("unused")
-	public static void renameBNodes(JenaConnect inModel, JenaConnect outModel, String namespaceEtc, JenaConnect dedupModel, String pattern, String property) {
-		//TODO mbarbieri: complete
+	public static void renameBNodes(Model inModel, Model outModel, String namespaceEtc, Model dedupModel, String pattern, String property) {
+		Property propertyRes = ResourceFactory.createProperty(property);
+		OntModel dedupUnionModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM); // we're not using OWL here, just the OntModel submodel infrastructure
+		dedupUnionModel.addSubModel(outModel);
+		if (dedupModel != null) {
+			dedupUnionModel.addSubModel(dedupModel);
+		}
+		// the dedupUnionModel is so we can guard against reusing a URI in an 
+		// existing model, as well as in the course of running this process
+		inModel.enterCriticalSection(Lock.READ);
+		Set<String> doneSet = new HashSet<String>();
+		
+		try {
+			outModel.add(inModel);
+			ClosableIterator closeIt = inModel.listSubjects();
+			try {
+				for (Iterator it = closeIt; it.hasNext();) {
+					Resource res = (Resource) it.next();
+					if (res.isAnon() && !(doneSet.contains(res.getId()))) {
+						// now we do something hacky to get the same resource in the outModel, since there's no getResourceById();
+						ClosableIterator closfIt = outModel.listStatements(res,propertyRes,(RDFNode)null);
+						Statement stmt = null;
+						try {
+							if (closfIt.hasNext()) {
+								stmt = (Statement) closfIt.next();
+							}
+						} finally {
+							closfIt.close();
+						}
+						if (stmt != null) {
+							Resource outRes = stmt.getSubject();
+							if(stmt.getObject().isLiteral()){
+								ResourceUtils.renameResource(outRes,namespaceEtc+pattern+"_"+stmt.getObject().toString());
+							}
+							doneSet.add(res.getId().toString());
+						}
+					}
+				}
+			} finally {
+				closeIt.close();
+			}
+		} finally {
+			inModel.leaveCriticalSection();
+		}
 	}
 
 	/**
