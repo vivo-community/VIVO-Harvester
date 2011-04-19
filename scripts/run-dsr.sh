@@ -112,7 +112,7 @@ backup-path $MODELDIR $BACKMODEL
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
-$Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grant/ -r
+$Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
 
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
@@ -247,6 +247,6 @@ backup-mysqldb $BACKPOSTDB
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
-/etc/init.d/tomcat stop
-/etc/init.d/apache2 reload
-/etc/init.d/tomcat start
+/etc/init.d/tomcat6 stop
+/etc/init.d/apache2 restart
+/etc/init.d/tomcat6 start
