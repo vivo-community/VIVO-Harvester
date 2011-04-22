@@ -536,6 +536,7 @@ public class ScoreTest extends TestCase {
 	
 	@Override
 	protected void tearDown() {
+		log.debug("Tear Down");
 		if(this.input != null) {
 			try {
 				this.input.truncate();

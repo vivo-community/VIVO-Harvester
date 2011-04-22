@@ -145,7 +145,6 @@ public class RenameBlankNodes {
 	 * @param pattern pattern
 	 * @param property property
 	 */
-	@SuppressWarnings("unused")
 	public static void renameBNodes(Model inModel, Model outModel, String namespaceEtc, Model dedupModel, String pattern, String property) {
 		Property propertyRes = ResourceFactory.createProperty(property);
 		OntModel dedupUnionModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM); // we're not using OWL here, just the OntModel submodel infrastructure
@@ -160,17 +159,17 @@ public class RenameBlankNodes {
 		
 		try {
 			outModel.add(inModel);
-			ClosableIterator closeIt = inModel.listSubjects();
+			ClosableIterator<Resource> closeIt = inModel.listSubjects();
 			try {
-				for (Iterator it = closeIt; it.hasNext();) {
-					Resource res = (Resource) it.next();
+				for (Iterator<Resource> it = closeIt; it.hasNext();) {
+					Resource res = it.next();
 					if (res.isAnon() && !(doneSet.contains(res.getId()))) {
 						// now we do something hacky to get the same resource in the outModel, since there's no getResourceById();
-						ClosableIterator closfIt = outModel.listStatements(res,propertyRes,(RDFNode)null);
+						ClosableIterator<Statement> closfIt = outModel.listStatements(res,propertyRes,(RDFNode)null);
 						Statement stmt = null;
 						try {
 							if (closfIt.hasNext()) {
-								stmt = (Statement) closfIt.next();
+								stmt = closfIt.next();
 							}
 						} finally {
 							closfIt.close();

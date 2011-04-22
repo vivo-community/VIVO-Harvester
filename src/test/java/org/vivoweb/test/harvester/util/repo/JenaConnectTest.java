@@ -36,8 +36,6 @@ public class JenaConnectTest extends TestCase {
 	 */
 	private static Logger log = LoggerFactory.getLogger(JenaConnectTest.class);
 	/** */
-	private static final String nl = System.getProperty("line.separator");
-	/** */
 	private static final String type = "sdb";
 	/** */
 	private static final String dbLayout = "layout2";
@@ -59,8 +57,6 @@ public class JenaConnectTest extends TestCase {
 	private static final String namespace = "http://harvester.vivoweb.org/test/repo/JenaConnect#";
 	/** */
 	private static final String rdfIn = "" + "<?xml version=\"1.0\"?>\n" + "<rdf:RDF\n" + "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" + "    xmlns:si=\"http://www.w3schools.com/rdf/\" > \n" + "  <rdf:Description rdf:about=\"http://www.w3schools.com\">\n" + "    <si:author>Jan Egil Refsnes</si:author>\n" + "    <si:title>W3Schools</si:title>\n" + "  </rdf:Description>\n" + "</rdf:RDF>\n";
-	/** */
-	private static final String rdfOut = "" + "<?xml version=\"1.0\"?>" + nl + "<rdf:RDF" + nl + "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" + nl + "    xmlns:si=\"http://www.w3schools.com/rdf/\" > " + nl + "  <rdf:Description rdf:about=\"http://www.w3schools.com\">" + nl + "    <si:author>Jan Egil Refsnes</si:author>" + nl + "    <si:title>W3Schools</si:title>" + nl + "  </rdf:Description>" + nl + "</rdf:RDF>" + nl;
 	/** */
 	private JenaConnect jc;
 	/** */
@@ -199,7 +195,11 @@ public class JenaConnectTest extends TestCase {
 	public final void testExportRDF() throws IOException {
 		log.info("BEGIN testExportRDF");
 		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
-		assertEquals(rdfOut, this.jc.exportRdfToString());
+		String out = this.jc.exportRdfToString();
+		assertTrue(out.contains("xmlns:si=\"http://www.w3schools.com/rdf/\""));
+		assertTrue(out.contains("<rdf:Description rdf:about=\"http://www.w3schools.com\">"));
+		assertTrue(out.contains("<si:title>W3Schools</si:title>"));
+		assertTrue(out.contains("<si:author>Jan Egil Refsnes</si:author>"));
 		log.info("END testExportRDF");
 	}
 	
