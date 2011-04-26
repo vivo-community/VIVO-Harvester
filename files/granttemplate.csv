@@ -1,0 +1,2 @@
+"GrantID","GrantName","AdminDepartmentID","Amount","SponAwardID","AwardingOrg","AwardingOrgID","FlowThruOrg","FlowThruOrgID","StartDate","EndDate","PIID","CoPIID"
+"ufVivo:psContractNumber","rdfs:label","ufVivo:deptID","core:totalAwardAmount","core:sponsorAwardId","rdfs:label","orgID","rdfs:label","orgID","####-##-##","####-##-##","ufVivo:ufid","ufVivo:ufid"
