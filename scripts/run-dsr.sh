@@ -121,26 +121,7 @@ $Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
 # Scoring of Grants on ContractNumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
-
-#clear score model for next batch.
-rm -rf $SCOREDATADIR
-
-
-$Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grantview/ -r
-
-# Scoring of additional Grantdata on ContractNumber
-$Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grantview/
-
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
-
-#clear score model for next batch.
-rm -rf $SCOREDATADIR
-
-
-$Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
+#$Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
 
 # Scoring of people on UFID
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
@@ -155,15 +136,6 @@ $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
 
-# Find matches using scores and rename nodes to matching uri clearing types and literals
-$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
-
-#clear score model for next batch.
-rm -rf $SCOREDATADIR
-
-# Clear old H2 temp copy of input
-$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
-
 # Scoring of PI Roles
 PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$ROLEOF -Pperson=$PIROLEOF"
 GRANTURI="-Agrant=$EQTEST -Wgrant=0.5 -Fgrant=$ROLEIN -Pgrant=$ROLEIN"
@@ -174,15 +146,11 @@ COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COROLEOF -Pperson=$COPIROLEOF"
 $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}grant/
-
-# Execute ChangeNamespace to get grants into current namespace
-# the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -u ${BASEURI}grantview/
 
 # Execute ChangeNamespace to get orgs into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
@@ -221,13 +189,15 @@ ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
 # Find Subtractions
-$Diff -m $VIVOCONFIG -MmodelName=$PREVHARVESTMODEL -McheckEmpty=$CHECKEMPTY -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
+$Diff -m $H2MODEL -MdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -McheckEmpty=$CHECKEMPTY -MmodelName=$PREVHARVESTMODEL -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $VIVOCONFIG -ScheckEmpty=$CHECKEMPTY -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -SmodelName=$PREVHARVESTMODEL  -d $ADDFILE
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml
 backup-file $SUBFILE subs.rdf.xml
+#restore-file $ADDFILE adds.rdf.xml
+#restore-file $SUBFILE subs.rdf.xml
 
 # Apply Subtractions to Previous model
 $Transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m

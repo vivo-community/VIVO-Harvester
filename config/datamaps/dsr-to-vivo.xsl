@@ -223,7 +223,7 @@
 	<xsl:template name="t_vwVIVO">
 		<xsl:param name='this' />
 		<xsl:variable name='grantid' select='$this/db-dbo.vwVIVO:PS_Contract'/>
-		<rdf:Description rdf:about="{$baseURI}grantview/grant{$grantid}">
+		<rdf:Description rdf:about="{$baseURI}grant/grant{$grantid}">
 		    <ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
 			<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
