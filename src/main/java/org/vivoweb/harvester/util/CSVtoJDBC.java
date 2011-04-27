@@ -19,6 +19,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.h2.tools.Csv;
@@ -49,6 +51,10 @@ public class CSVtoJDBC {
 	 * Table name into which to output
 	 */
 	private String tableName;
+	/**
+	 * Field names into which to output
+	 */
+	private List<String> fieldNames;
 	
 	/**
 	 * Library style initialyzer 
@@ -125,6 +131,7 @@ public class CSVtoJDBC {
 		this.csvStream = fileStream;
 		this.output = outConn;
 		this.tableName = tablename;
+		this.fieldNames = new ArrayList<String>();
 	}
 	
 	/**
@@ -140,13 +147,16 @@ public class CSVtoJDBC {
 			StringBuilder createTable = new StringBuilder("CREATE TABLE ");
 			createTable.append(this.tableName);
 			createTable.append("( ROWID int, ");
+			this.fieldNames.add("ROWID");
 			StringBuilder columnNames = new StringBuilder("( ROWID, ");
 			for(int i = 0; i < meta.getColumnCount(); i++) {
+				String colLbl = meta.getColumnLabel(i + 1);
 				createTable.append("\n");
-				createTable.append(meta.getColumnLabel(i + 1));
+				createTable.append( colLbl);
+				this.fieldNames.add( colLbl);
 				createTable.append((i == (meta.getColumnCount() - 1)) ? " TEXT )" : " TEXT ,");
 				
-				columnNames.append(meta.getColumnLabel(i + 1));
+				columnNames.append(colLbl);
 				columnNames.append((i == (meta.getColumnCount() - 1)) ? " )" : ", ");
 			}
 			log.info("Create table command: \n" + createTable.toString());
@@ -173,6 +183,15 @@ public class CSVtoJDBC {
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
+	}
+	
+	/**
+	 * Returns the list of fields from the recent CSV
+	 * @return
+	 */
+	public List<String> getFields(){
+		return this.fieldNames;
+		
 	}
 	
 	/**

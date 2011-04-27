@@ -204,7 +204,9 @@ public class Qualify {
 	 * @throws IOException error connecting
 	 */
 	private void cleanResources(String ns) throws IOException {
-		String query = "" + "DELETE { ?s ?p ?o } " + "WHERE { " + "?s ?p ?o .  " + "FILTER (regex(str(?s), \"^" + ns + "\" ) || regex(str(?o), \"^" + ns + "\" ))" + "}";
+		String query = "" + "DELETE { ?s ?p ?o } " 
+		+ "WHERE { " + "?s ?p ?o .  " 
+		+ "FILTER (regex(str(?s), \"^" + ns + "\" ) || regex(str(?o), \"^" + ns + "\" ))" + "}";
 		log.debug(query);
 		this.model.executeUpdateQuery(query);
 	}
@@ -215,7 +217,9 @@ public class Qualify {
 	 * @throws IOException error connecting
 	 */
 	private void cleanPredicates(String ns) throws IOException {
-		String predicateQuery = "" + "DELETE { ?s ?p ?o } " + "WHERE { " + "?s ?p ?o .  " + "FILTER regex(str(?p), \"^" + ns + "\" ) " + "}";
+		String predicateQuery = "" + "DELETE { ?s ?p ?o } " 
+		+ "WHERE { " + "?s ?p ?o .  " 
+		+ "FILTER regex(str(?p), \"^" + ns + "\" ) " + "}";
 		log.debug(predicateQuery);
 		this.model.executeUpdateQuery(predicateQuery);
 	}

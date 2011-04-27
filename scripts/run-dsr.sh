@@ -112,6 +112,7 @@ backup-path $MODELDIR $BACKMODEL
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
+#smushes in-place(-r) on the contract number THEN on the UFID
 $Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
 
 # Execute score to match with existing VIVO

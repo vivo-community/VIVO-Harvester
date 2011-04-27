@@ -67,7 +67,7 @@ public class RenameBlankNodes {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(ChangeNamespace.class);
+	private static Logger log = LoggerFactory.getLogger(RenameBlankNodes.class);
 	/**
 	 * The model to perform rename in
 	 */

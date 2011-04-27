@@ -90,6 +90,7 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Agreement"/>
 			<ufVivo:psContractNumber><xsl:value-of select="$grantid" /></ufVivo:psContractNumber>
 			<rdfs:label><xsl:value-of select="$this/db-dbo.vwContracts:Title"/></rdfs:label>
+            <core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
 			<core:administeredBy>
 <!--			Creating a department to match with or a stub if no match-->
 				<rdf:Description rdf:about="{$baseURI}org/org{$this/db-dbo.vwContracts:ContractDeptID}">
@@ -100,7 +101,6 @@
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 				</rdf:Description>
 			</core:administeredBy>
-			<core:totalAwardAmount><xsl:value-of select="$this/db-dbo.vwContracts:TotalAwarded"/></core:totalAwardAmount>
 			
 			<xsl:choose>
 				<xsl:when test="string($this/db-dbo.vwContracts:FlowThruSponsor) = ''">
