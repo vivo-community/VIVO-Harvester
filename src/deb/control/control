@@ -1,7 +1,7 @@
 Package: vivo-harvester
 Version: 1.0
 Section: misc
-Priority: misc
+Priority: optional
 Architecture: all
 Depends: sun-java6-jre
 Maintainer: VIVO sourceforge team <vivo-dev-all@sourceforge.net>
