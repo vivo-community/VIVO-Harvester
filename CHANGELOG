@@ -1,3 +1,7 @@
+1.1
+	Modified README to point users at mediawiki @ sourceforge
+	Removed INSTALL
+
 1.0
 	Updated scripts
 		env file no longer requires configuration
