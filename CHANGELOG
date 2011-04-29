@@ -9,6 +9,7 @@
     
     MODS
         Fixed issue with improper excludeEntity allocation
+        Fixed issue with backslashes in URIs
         
     CSVtoRDF
         Alpha version for future integration into a simple harvest UI
