@@ -1,4 +1,21 @@
+
 1.1
+    Updated scripts
+        dsr example now incorporates smush
+        dsr and people soft have corrected previous harvest reference.
+    
+    Smush
+        allows compressing on predicates and filtered on namespace.
+    
+    MODS
+        Fixed issue with improper excludeEntity allocation
+        
+    CSVtoRDF
+        Alpha version for future integration into a simple harvest UI
+    
+    VIVO.xml
+        updated to use sdb by default
+
 	Modified README to point users at mediawiki @ sourceforge
 	Removed INSTALL
 
