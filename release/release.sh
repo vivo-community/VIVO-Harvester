@@ -45,6 +45,9 @@ read COMMIT
 echo -n "Upload files to sourceforge?: "
 read UPLOAD
 
+echo -n "Tag release?: "
+read TAG
+
 #get code
 if [ "$CODELOC" = "dev" ]; then
 	svn co svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/branches/Development
@@ -55,9 +58,6 @@ if [ "$CODELOC" = "dev" ]; then
 elif [ "$CODELOC" = "trunk" ]; then
 	svn co svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/vivo/Harvester/trunk
 	cd trunk
-else
-	echo -n "Merge to trunk?: "
-	read MERGETRUNK
 fi
 
 #update pom.xml,deb control, and env file with new version
@@ -114,15 +114,8 @@ if [ "$UPLOAD" = "y" ]; then
 fi
 
 #tag
-cd $HARVESTERDIR
-svn cp -rHEAD svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/branches/Development svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/tags/$RELEASENAME
-svn commit -m "Tag Release $RELEASENAME"
-
-
-if [ "$MERGETRUNK" = "y" ]; then
-	#merge down to trunk
-	svn co svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/trunk
-	cd trunk
-	svn merge --depth=infinity svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/trunk@HEAD svn+ssh://${NAME}@svn.code.sf.net/p/vivo/code/Harvester/branches/Development@HEAD
-	svn commit -m "Commit Release $RELEASENAME"
+if [ "$UPLOAD" = "y" ]; then
+	cd $HARVESTERDIR
+	svn cp -rHEAD svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/trunk svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/tags/$RELEASENAME
+	svn commit -m "Tag Release $RELEASENAME"
 fi
