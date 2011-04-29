@@ -40,7 +40,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 	</xsl:template>
 
 	<xsl:template match="mods">
-		<xsl:variable name="modsId" select="replace(replace(@ID,':','_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
+		<xsl:variable name="modsId" select="encode-for-uri(@ID)" />
 		<xsl:variable name="isbn" select="identifier[@type='isbn']" />
 		
 		<xsl:variable name="title">
@@ -94,13 +94,6 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 				<bibo:pageEnd><xsl:value-of select="extent[@unit='page']/end" /></bibo:pageEnd>
 				<bibo:abstract><xsl:value-of select="abstract"></xsl:value-of></bibo:abstract>
 
-				<!-- 
-				*foaf:organization linked via core:publisher = publisher
-				  if publisher has placeTerm, use to match core:hasGeographicLocation on core:publisher
-
-				core:hasPublicationVenue linked to bibo:journal = relatedItem w/ type=host -> titleInfo->title
-				-->
-
 				<core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher>
 				<core:placeOfPublication><xsl:value-of select="originInfo/place/placeTerm" /></core:placeOfPublication>
 
@@ -153,7 +146,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		</xsl:variable>
 
 		<xsl:variable name="label" select="$title" />
-		<xsl:variable name="uriLabel" select="replace(replace($label, ':', '_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
+		<xsl:variable name="uriLabel" select="encode-for-uri($label)" />
 
 		<core:hasPublicationVenue>
 			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'journal/', $uriLabel)" /></xsl:attribute>
@@ -168,7 +161,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		</xsl:variable>
 
 		<xsl:variable name="label" select="$title" />
-		<xsl:variable name="uriLabel" select="replace(replace($label, ':', '_-_COLON_-_'), ' ', '_-_SPACE_-_')" />
+		<xsl:variable name="uriLabel" select="encode-for-uri($label)" />
 
 		<rdf:description>
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'journal/', $uriLabel)" /></xsl:attribute>
@@ -206,7 +199,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<core:hasGeographicLocation>
-			<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'geo/', encode-for-uri($label))" /></xsl:attribute>
 		</core:hasGeographicLocation>
 	</xsl:template>
 
@@ -217,7 +210,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'geo/', encode-for-uri($label))" /></xsl:attribute>
 			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#GeographicLocation"></rdf:type>
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
@@ -233,7 +226,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<core:publisher>
-			<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri($label))" /></xsl:attribute>
 		</core:publisher>
 	</xsl:template>
 
@@ -244,7 +237,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri($label))" /></xsl:attribute>
 			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
@@ -264,7 +257,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<core:hasGeographicLocation>
-			<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'geo/', encode-for-uri($label))" /></xsl:attribute>
 		</core:hasGeographicLocation>
 	</xsl:template>
 
@@ -274,7 +267,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'geo/', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'geo/', encode-for-uri($label))" /></xsl:attribute>
 			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#GeographicLocation"></rdf:type>
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
@@ -290,7 +283,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<core:publisher>
-			<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri($label))" /></xsl:attribute>
 		</core:publisher>
 	</xsl:template>
 
@@ -300,7 +293,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="label" select="." />
 
 		<rdf:description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri($label))" /></xsl:attribute>
 			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
@@ -325,18 +318,18 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:if test="$role='author'">
 			<xsl:if test="$type='personal'">
 				<core:informationResourceInAuthorship>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', encode-for-uri(concat($allFirstNames, '_', $lastName)))" /></xsl:attribute>
 				</core:informationResourceInAuthorship>
 			</xsl:if>
 			<xsl:if test="$type='corporate'">
 				<core:informationResourceInAuthorship>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', namePart), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri(namePart))" /></xsl:attribute>
 				</core:informationResourceInAuthorship>
 			</xsl:if>
 		</xsl:if>
 		<xsl:if test="$role='editor'">
 			<bibo:editor>
-				<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+				<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', encode-for-uri(concat($allFirstNames, '_', $lastName)))" /></xsl:attribute>
 			</bibo:editor>
 		</xsl:if>
 	</xsl:template>
@@ -364,10 +357,10 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:if test="$role='author'">
 	 		<rdf:description>
 				<xsl:if test="$type='personal'">
-					<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', encode-for-uri(concat($allFirstNames, '_', $lastName)))" /></xsl:attribute>
 				</xsl:if>
 				<xsl:if test="$type='corporate'">
-					<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'authorship/modsId_', $modsId, '_', namePart), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', encode-for-uri(namePart))" /></xsl:attribute>
 				</xsl:if>
 				<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
@@ -378,10 +371,10 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 				</core:linkedInformationResource>
 				<core:linkedAuthor>
 					<xsl:if test="$type='personal'">
-						<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+						<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', encode-for-uri(concat($allFirstNames, '_', $lastName)))" /></xsl:attribute>
 					</xsl:if>
 					<xsl:if test="$type='corporate'">
-						<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', namePart), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+						<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri(namePart))" /></xsl:attribute>
 					</xsl:if>
 				</core:linkedAuthor>
 			</rdf:description>
@@ -390,7 +383,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:if test="$role='author' or $role='editor'">
 			<rdf:description>
 				<xsl:if test="$type='personal'">
-					<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'author/modsId_', $modsId, '_', $allFirstNames, '_', $lastName), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', encode-for-uri(concat($allFirstNames, '_', $lastName)))" /></xsl:attribute>
 					<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 					<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
@@ -398,7 +391,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 					<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
 				</xsl:if>
 				<xsl:if test="$type='corporate'">
-					<xsl:attribute name="rdf:about"><xsl:value-of select="replace(concat($baseURI, 'org/modsId_', $modsId, '_', $label), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri($label))" /></xsl:attribute>
 					<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 				</xsl:if>
@@ -407,10 +400,10 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 				<xsl:if test="$role='author'">
 		 			<core:authorInAuthorship>
 						<xsl:if test="$type='personal'">
-							<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'authorship/modsId_', $modsId, '_', $allFirstNames, '_', $lastName), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+							<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', encode-for-uri(concat($allFirstNames, '_', $lastName)))" /></xsl:attribute>
 						</xsl:if>
 						<xsl:if test="$type='corporate'">
-							<xsl:attribute name="rdf:resource"><xsl:value-of select="replace(concat($baseURI, 'authorship/modsId_', $modsId, '_', namePart), ' ', '_-_SPACE_-_')" /></xsl:attribute>
+							<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', encode-for-uri(namePart))" /></xsl:attribute>
 						</xsl:if>
 		 			</core:authorInAuthorship>
 				</xsl:if>
