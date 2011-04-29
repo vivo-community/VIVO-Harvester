@@ -72,6 +72,10 @@ BASEURI="http://vivoweb.org/harvest/mods/"
 BIBUTILSBASE="/usr/bin"
 BIBUTILSINPUTFORMAT="bib"
 
+
+# clear old excludeEntity storage
+rm $NONEXCLUDEDIR/rdfxml.rdf 
+
 # store users who are in VIVO and do not have excludeEntity specified for them
 NONEXCLUDEDIR=$BASEDIR/non-exclude
 SPARQLQUERY="PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> CONSTRUCT { ?a rdf:type <http://vivoweb.org/harvester/excludeEntity> } WHERE { ?a rdf:type foaf:Person . FILTER NOT EXISTS { ?a rdf:type <http://vivoweb.org/harvester/excludeEntity> } }"
