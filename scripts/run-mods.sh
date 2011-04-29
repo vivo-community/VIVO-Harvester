@@ -69,9 +69,15 @@ RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 BASEURI="http://vivoweb.org/harvest/mods/"
 
-#BIBUTILSBASE="lib/bibutils/bibutils_4.12_x86_64"
-BIBUTILSBASE="lib/bibutils/bibutils_4.12_i386"
+BIBUTILSBASE="/usr/bin"
 BIBUTILSINPUTFORMAT="bib"
+
+# store users who are in VIVO and do not have excludeEntity specified for them
+NONEXCLUDEDIR=$BASEDIR/non-exclude
+SPARQLQUERY="PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> CONSTRUCT { ?a rdf:type <http://vivoweb.org/harvester/excludeEntity> } WHERE { ?a rdf:type foaf:Person . FILTER NOT EXISTS { ?a rdf:type <http://vivoweb.org/harvester/excludeEntity> } }"
+$JenaConnect -j $VIVOCONFIG -JmodelName=urn:x-arq:UnionGraph -q "${SPARQLQUERY}" -Q RDF/XML > $NONEXCLUDEDIR/rdfxml.rdf
+
+
 
 # clear old bibutils runs
 rm -rf $BIBOUTDIR
@@ -230,10 +236,9 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
+# Subtract excludeEntity from people who were in VIVO prior to harvest and did not have it
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $NONEXCLUDEDIR/rdfxml.rdf -m
 
-#Restart Tomcat
-#Tomcat must be restarted in order for the harvested data to appear in VIVO
+
+
 echo $HARVESTER_TASK ' completed successfully'
-/etc/init.d/tomcat stop
-/etc/init.d/apache2 reload
-/etc/init.d/tomcat start
