@@ -1,6 +1,7 @@
 With the class files uncompressed / unpackaged a large part of the installation is complete. 
 
 The first step is to ensure that you have all the necessary tools for execution.
+IF you plan on using the scripts there are configuration files that need to be configured under the config directory.
  
 Necessary Tools for Execution
 To execute the VIVO harvester, you need the following things:
@@ -19,7 +20,7 @@ Command-Line
 All the Harvester tools, when used via the command-line share some common parameters and parameter formats. General information about the Harvester tools on the command-line can be found at Harvester Tools.
 
 Bash Scripts
-The first thing you should do is open your Environment Config File and make sure everything is in order. Next you should look at your vivo configuration file to make sure this points to your VIVO installation. You can check out our example scripts or our walk throughs for how to create a bash file using the environment file. 
+The first thing you should do is open your Environment Config File ( scripts/env ) and make sure everything is in order. Next you should look at your vivo configuration file (config/model/vivo.xml) to make sure this points to your VIVO installation. You can check out our example scripts or our walk throughs for how to create a bash file using the environment file. 
 
 
 To ensure up to date information please visit < http://sourceforge.net/apps/mediawiki/vivo/index.php?title=Harvester_User_Guide >
