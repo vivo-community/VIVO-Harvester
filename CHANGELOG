@@ -16,6 +16,11 @@
     
     VIVO.xml
         updated to use sdb by default
+        
+    Qualify
+        fix concurrent modification issue
+    
+    
 
 	Modified README to point users at mediawiki @ sourceforge
 	Removed INSTALL
