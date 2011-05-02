@@ -391,7 +391,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'author/modsId_', $modsId, '_', encode-for-uri(concat($allFirstNames, '_', $lastName)))" /></xsl:attribute>
 					<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-					<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/excludeEntity" />
 					<foaf:firstName><xsl:value-of select="$firstName" /></foaf:firstName>
 					<foaf:lastName><xsl:value-of select="$lastName" /></foaf:lastName>
 				</xsl:if>
