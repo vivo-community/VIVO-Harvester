@@ -42,7 +42,8 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 	<xsl:template match="mods">
 		<xsl:variable name="modsId" select="encode-for-uri(@ID)" />
 		<xsl:variable name="isbn" select="identifier[@type='isbn']" />
-		
+		<xsl:variable name="tokenizedTopics" select="tokenize(subject/topic, ',')" />
+
 		<xsl:variable name="title">
 			<xsl:call-template name="titleVariable" />
 		</xsl:variable>
@@ -87,7 +88,11 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 					<bibo:isbn13><xsl:value-of select="$isbn" /></bibo:isbn13>
 				</xsl:if>
 				<ufVivo:language><xsl:value-of select="language" /></ufVivo:language>
-				<core:freetextKeyword><xsl:value-of select="subject/topic" /></core:freetextKeyword>
+
+				<xsl:for-each select="$tokenizedTopics">
+					<core:freetextKeyword><xsl:value-of select="normalize-space(.)" /></core:freetextKeyword>
+				</xsl:for-each>
+
 				<bibo:volume><xsl:value-of select="part/detail[@type='volume']/number" /></bibo:volume>
 				<bibo:issue><xsl:value-of select="part/detail[@type='number']/number" /></bibo:issue>
 				<bibo:pageStart><xsl:value-of select="extent[@unit='page']/start" /></bibo:pageStart>
