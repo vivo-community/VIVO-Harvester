@@ -92,41 +92,25 @@ public class Diff {
 	 */
 	public Diff(ArgList argList) throws IOException {
 		// Require inputs args
-		if(!argList.has("s") || !argList.has("m")) {
-			throw new IllegalArgumentException("Must provide input via -s and -m");
+		if(!(argList.has("s") || argList.has("S")) || !(argList.has("m")|| argList.has("M"))) {
+			throw new IllegalArgumentException("Must provide input via -s/-S and -m/-M");
 		}
 		// Require output args
-		if(!argList.has("o") && !argList.has("d")) {
-			throw new IllegalArgumentException("Must provide one of -o or -d");
+		if(!(argList.has("o") || argList.has("O")) && !argList.has("d")) {
+			throw new IllegalArgumentException("Must provide one of -o/-O or -d");
 		}
 		
 		// setup input model
-		if(argList.has("s")) {
-			this.subtrahendJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("s")), argList.getValueMap("S"));
-		} else {
-			this.subtrahendJC = null;
-		}
+		this.subtrahendJC = JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S"));
 		
 		// setup subtrahend Model (b)
-		if(argList.has("m")) {
-			this.minuendJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("m")), argList.getValueMap("M"));
-		} else {
-			this.minuendJC = null;
-		}
+		this.minuendJC = JenaConnect.parseConfig(argList.get("m"), argList.getValueMap("M"));
 		
 		// setup output
-		if(argList.has("o")) {
-			this.output = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argList.get("o")), argList.getValueMap("O"));
-		} else {
-			this.output = null;
-		}
+		this.output = JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O"));
 		
 		// output to file, if requested
-		if(argList.has("d")) {
-			this.dumpFile = argList.get("d");
-		} else {
-			this.dumpFile = null;
-		}
+		this.dumpFile = argList.get("d");
 	}
 	
 	/**
