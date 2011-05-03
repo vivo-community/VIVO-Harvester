@@ -97,16 +97,81 @@ public class JDBCFetch {
 	 * @param dbConn connection to the database
 	 * @param output RecordHandler to write data to
 	 * @param uriNameSpace namespace base for rdf records
-	 * @throws SQLException error talking with database
+	 * @throws IOException error talking with database
 	 */
-	public JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace) throws SQLException {
+	public JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace) throws IOException {
 		this(dbConn, output, uriNameSpace, null, null, null, null, null, null, null, null, null);
 	}
 	
 	/**
-	 * Perform post-construction data prep and validation Prevents null pointer exceptions
+	 * Command line Constructor
+	 * @param args commandline arguments
+	 * @throws IOException error creating task
 	 */
-	private void prep() {
+	public JDBCFetch(String[] args) throws IOException {
+		this(new ArgList(getParser(), args));
+	}
+	
+	/**
+	 * Arglist Constructor
+	 * @param args option set of parsed args
+	 * @throws IOException error creating task
+	 */
+	public JDBCFetch(ArgList args) throws IOException {
+		this(
+			createConnection(args.get("d"), args.get("c"), args.get("u"), args.get("p")), 
+			RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")), 
+			args.get("c")+"/", 
+			args.get("delimiterPrefix"), 
+			args.get("delimiterSuffix"), 
+			new TreeSet<String>(args.getAll("t")), 
+			(args.has("T")?args.getValueMap("T"):null), 
+			(args.has("F")?splitCommaList(args.getValueMap("F")):null), 
+			(args.has("I")?splitCommaList(args.getValueMap("I")):null), 
+			(args.has("W")?splitCommaList(args.getValueMap("W")):null), 
+			(args.has("R")?splitTildeMap(args.getValueMap("R")):null), 
+			(args.has("Q")?args.getValueMap("Q"):null)
+		);
+	}
+	
+	/**
+	 * Library style Constructor
+	 * @param dbConn The database Connection
+	 * @param rh Record Handler to write records to
+	 * @param uriNS the uri namespace to use
+	 * @param queryPre Query prefix often "["
+	 * @param querySuf Query suffix often "]"
+	 * @param tableNames set of the table names
+	 * @param fromClauses Mapping of extra tables for the from section
+	 * @param dataFields Mapping of tablename to list of datafields
+	 * @param idFields Mapping of tablename to idField name
+	 * @param whereClauses List of conditions
+	 * @param relations Mapping of tablename to mapping of fieldname to tablename
+	 * @param queryStrings Mapping of tablename to query
+	 * @throws IOException error accessing database
+	 */
+	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws IOException {
+		try {
+			this.cursor = dbConn.createStatement();
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		this.rh = rh;
+		this.tableNames = tableNames;
+		this.fromClauses = fromClauses;
+		this.dataFields = dataFields;
+		this.idFields = idFields;
+		this.whereClauses = whereClauses;
+		this.fkRelations = relations;
+		this.uriNS = uriNS;
+		this.queryPre = queryPre;
+		this.querySuf = querySuf;
+		this.queryStrings = queryStrings;
+		
+		if(this.rh == null) {
+			throw new IllegalArgumentException("Must provide output recordhandler!");
+		}
+		
 		if(this.tableNames == null) {
 			this.tableNames = new TreeSet<String>();
 		}
@@ -137,158 +202,63 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
+	 * Split the values of a comma separated list mapping
+	 * @param list the original mapping
+	 * @return the split mapping
 	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("JDBCFetch");
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("query").withParameterValueMap("TABLE_NAME", "SQL_QUERY").setDescription("use SQL_QUERY to select from TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterValueMap("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterValueMap("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterValueMap("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterValueMap("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tableFromClause").withParameterValueMap("TABLE_NAME", "TABLE_LIST").setDescription("add tables to use in from clauses for TABLE_NAME").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
-		return parser;
+	private static Map<String, List<String>> splitCommaList(Map<String, String> list) {
+		Map<String, List<String>> splitList = new HashMap<String, List<String>>();
+		for(String tableName : list.keySet()) {
+			splitList.put(tableName, Arrays.asList(list.get(tableName).split("\\s?,\\s?")));
+		}
+		return splitList;
 	}
 	
 	/**
-	 * Command line Constructor
-	 * @param args commandline arguments
-	 * @throws IOException error creating task
+	 * Split the values of comma separated ~ maps mapping
+	 * @param list the original mapping
+	 * @return the split mappings
 	 */
-	public JDBCFetch(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private static Map<String, Map<String, String>> splitTildeMap(Map<String, String> list) {
+		Map<String, List<String>> splitList = splitCommaList(list);
+		Map<String, Map<String, String>> splitMaps = new HashMap<String, Map<String, String>>();
+		for(String tableName : splitList.keySet()) {
+			if(!splitMaps.containsKey(tableName)) {
+				splitMaps.put(tableName, new HashMap<String, String>());
+			}
+			for(String relLine : splitList.get(tableName)) {
+				String[] relPair = relLine.split("\\s?~\\s?", 2);
+				if(relPair.length != 2) {
+					throw new IllegalArgumentException("Bad Relation Line: " + relLine);
+				}
+				splitMaps.get(tableName).put(relPair[0], relPair[1]);
+			}
+		}
+		return splitMaps;
 	}
 	
 	/**
-	 * Arglist Constructor
-	 * @param opts option set of parsed args
-	 * @throws IOException error creating task
+	 * Create a connection
+	 * @param driverClass the jdbc driver
+	 * @param connLine the jdbc connection line
+	 * @param username the username
+	 * @param password the password
+	 * @return the connection
+	 * @throws IOException error connecting or loading driver
 	 */
-	public JDBCFetch(ArgList opts) throws IOException {
-		String jdbcDriverClass = opts.get("d");
+	private static Connection createConnection(String driverClass, String connLine, String username, String password) throws IOException {
 		try {
-			Class.forName(jdbcDriverClass);
+			Class.forName(driverClass);
 		} catch(ClassNotFoundException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-		
-		// Setting the database connection parameters
-		String connLine = opts.get("c");
-		String username = opts.get("u");
-		String password = opts.get("p");
-		this.queryPre = opts.get("delimiterPrefix");
-		this.querySuf = opts.get("delimiterSuffix");
-		
-		this.tableNames = new TreeSet<String>();
-		this.tableNames.addAll(opts.getAll("t"));
-		
-		if(opts.has("T")) {
-			this.fromClauses = opts.getValueMap("T");
-		}
-		
-		// Set the data fields map according to the command line -F values
-		if(opts.has("F")) {
-			this.dataFields = new HashMap<String, List<String>>();
-			Map<String, String> fields = opts.getValueMap("F");
-			for(String tableName : fields.keySet()) {
-				this.dataFields.put(tableName, Arrays.asList(fields.get(tableName).split("\\s?,\\s?")));
-			}
-		}
-		
-		// Set the ID fields map according to the command line -I values		
-		if(opts.has("I")) {
-			this.idFields = new HashMap<String, List<String>>();
-			Map<String, String> ids = opts.getValueMap("I");
-			for(String tableName : ids.keySet()) {
-				this.idFields.put(tableName, Arrays.asList(ids.get(tableName).split("\\s?,\\s?")));
-			}
-		}
-		
-		// Sets a map of the SQL Where clauses to be applied
-		if(opts.has("W")) {
-			this.whereClauses = new HashMap<String, List<String>>();
-			Map<String, String> wheres = opts.getValueMap("W");
-			for(String tableName : wheres.keySet()) {
-				this.whereClauses.put(tableName, Arrays.asList(wheres.get(tableName).split("\\s?,\\s?")));
-			}
-		}
-		
-		// setting manual foriegn key relations
-		if(opts.has("R")) {
-			this.fkRelations = new HashMap<String, Map<String, String>>();
-			Map<String, String> rels = opts.getValueMap("R");
-			for(String tableName : rels.keySet()) {
-				if(!this.fkRelations.containsKey(tableName)) {
-					this.fkRelations.put(tableName, new HashMap<String, String>());
-				}
-				for(String relLine : rels.get(tableName).split("\\s?,\\s?")) {
-					String[] relPair = relLine.split("\\s?~\\s?", 2);
-					if(relPair.length != 2) {
-						throw new IllegalArgumentException("Bad Relation Line: " + relLine);
-					}
-					this.fkRelations.get(tableName).put(relPair[0], relPair[1]);
-				}
-			}
-		}
-		
-		// Set SQl style query string from -Q value
-		if(opts.has("Q")) {
-			this.queryStrings = opts.getValueMap("Q");
-		}
-		
-		// Establishing the database connection with provided parameters.
 		Connection dbConn;
 		try {
 			dbConn = DriverManager.getConnection(connLine, username, password);
-			this.cursor = dbConn.createStatement();
-			this.rh = RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O"));
 		} catch(SQLException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-		this.uriNS = connLine + "/";
-		prep();
-	}
-	
-	/**
-	 * Library style Constructor
-	 * @param dbConn The database Connection
-	 * @param rh Record Handler to write records to
-	 * @param uriNS the uri namespace to use
-	 * @param queryPre Query prefix often "["
-	 * @param querySuf Query suffix often "]"
-	 * @param tableNames set of the table names
-	 * @param fromClauses Mapping of extra tables for the from section
-	 * @param dataFields Mapping of tablename to list of datafields
-	 * @param idFields Mapping of tablename to idField name
-	 * @param whereClauses List of conditions
-	 * @param relations Mapping of tablename to mapping of fieldname to tablename
-	 * @param queryStrings Mapping of tablename to query
-	 * @throws SQLException error accessing database
-	 */
-	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws SQLException {
-		this.cursor = dbConn.createStatement();
-		this.rh = rh;
-		this.tableNames = tableNames;
-		this.fromClauses = fromClauses;
-		this.dataFields = dataFields;
-		this.idFields = idFields;
-		this.whereClauses = whereClauses;
-		this.fkRelations = relations;
-		this.uriNS = uriNS;
-		this.queryPre = queryPre;
-		this.querySuf = querySuf;
-		this.queryStrings = queryStrings;
-		prep();
+		return dbConn;
 	}
 	
 	/**
@@ -519,6 +489,22 @@ public class JDBCFetch {
 	}
 	
 	/**
+	 * Get the fields from a result set
+	 * @param rs the resultset
+	 * @return the list of fields
+	 * @throws SQLException error reading resultset
+	 */
+	private List<String> getResultSetFields(ResultSet rs) throws SQLException {
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int count = rsmd.getColumnCount();
+		List<String> fields = new ArrayList<String>(count);
+		for(int x = 1; x <= count; x++) {
+			fields.add(rsmd.getColumnLabel(x));
+		}
+		return fields;
+	}
+	
+	/**
 	 * Executes the task
 	 * @throws IOException error processing record handler or jdbc connection
 	 */
@@ -632,19 +618,27 @@ public class JDBCFetch {
 	}
 	
 	/**
-	 * Get the fields from a result set
-	 * @param rs the resultset
-	 * @return the list of fields
-	 * @throws SQLException error reading resultset
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
 	 */
-	private List<String> getResultSetFields(ResultSet rs) throws SQLException {
-		ResultSetMetaData rsmd = rs.getMetaData();
-		int count = rsmd.getColumnCount();
-		List<String> fields = new ArrayList<String>(count);
-		for(int x = 1; x <= count; x++) {
-			fields.add(rsmd.getColumnLabel(x));
-		}
-		return fields;
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("JDBCFetch");
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("query").withParameterValueMap("TABLE_NAME", "SQL_QUERY").setDescription("use SQL_QUERY to select from TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterValueMap("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterValueMap("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("relations").withParameterValueMap("TABLE_NAME", "RELATION_PAIR_LIST").setDescription("fetch columns in RELATION_PAIR_LIST[comma separated] for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("whereClause").withParameterValueMap("TABLE_NAME", "CLAUSE_LIST").setDescription("filter TABLE_NAME records based on conditions in CLAUSE_LIST[comma separated]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('T').setLongOpt("tableFromClause").withParameterValueMap("TABLE_NAME", "TABLE_LIST").setDescription("add tables to use in from clauses for TABLE_NAME").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setLongOpt("delimiterPrefix").withParameter(true, "DELIMITER").setDescription("Prefix each field in the query with this character").setDefaultValue("").setRequired(false));
+		parser.addArgument(new ArgDef().setLongOpt("delimiterSuffix").withParameter(true, "DELIMITER").setDescription("Suffix each field in the query with this character").setDefaultValue("").setRequired(false));
+		return parser;
 	}
 	
 	/**
