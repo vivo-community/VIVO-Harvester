@@ -103,7 +103,7 @@ public class Smush {
 		
 		this.outputJena = outputJena;
 		if(this.outputJena == null) {
-			log.info("Output model null generating a memory model");
+			log.warn("Output model null generating a memory model");
 			this.outputJena = new MemJenaConnect();
 		}
 		

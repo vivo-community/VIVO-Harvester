@@ -139,7 +139,9 @@
 				</xsl:otherwise>
 			</xsl:choose>
 			
-			<core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
+            <core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/inGrant{$grantid}" />
+			
+			<!-- <core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
 				<xsl:analyze-string select="$this/db-dbo.vwContracts:BEGIN_DT" regex="^(....-..-..).*?$">
 					<xsl:matching-substring>
 						<xsl:value-of select="regex-group(1)"/>
@@ -152,8 +154,41 @@
 						<xsl:value-of select="regex-group(1)"/>
 					</xsl:matching-substring>
 				</xsl:analyze-string>
-			</core:endDate>
+			</core:endDate> -->
 		</rdf:Description>
+		
+         <rdf:Description rdf:about="{$baseURI}timeInterval/inGrant{$grantid}">
+             <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeInterval"/>
+             <core:start rdf:resource="{$baseURI}timeInterval/StartinGrant{$grantid}"/>
+             <core:end rdf:resource="{$baseURI}timeInterval/EndinGrant{$grantid}"/>
+         </rdf:Description>
+         
+         <rdf:Description rdf:about="{$baseURI}timeInterval/StartinGrant{$grantid}">
+             <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+             <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
+             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
+                 <xsl:analyze-string select="$this/db-dbo.vwContracts:BEGIN_DT" regex="^(....-..-..).*?$">
+                     <xsl:matching-substring>
+                         <xsl:value-of select="regex-group(1)"/>T00:00:00
+                     </xsl:matching-substring>
+                 </xsl:analyze-string>
+             </core:dateTime>
+         </rdf:Description>
+                  
+         <rdf:Description rdf:about="{$baseURI}timeInterval/EndinGrant{$grantid}">
+             <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+             <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
+             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
+                 <xsl:analyze-string select="$this/db-dbo.vwContracts:END_DT" regex="^(....-..-..).*?$">
+                     <xsl:matching-substring>
+                         <xsl:value-of select="regex-group(1)"/>T00:00:00
+                     </xsl:matching-substring>
+                 </xsl:analyze-string>
+             </core:dateTime>
+         </rdf:Description>
 	</xsl:template>
 		
 	<xsl:template name="t_vwProjectTeam">

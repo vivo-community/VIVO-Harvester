@@ -45,51 +45,51 @@ public class CSVtoRDF {
 	private String tablename;
 	
 	/**
-	 * @param opts
-	 * @throws IOException
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @param opts ArgList of command line arguments
+	 * @throws IOException exception thrown if there is a problem with parsing the configs
+	 * @throws SQLException if there is a problem during the database usage
+	 * @throws ClassNotFoundException lets the program know if there is a desired class missing
 	 */
 	public CSVtoRDF(ArgList opts) throws IOException, SQLException, ClassNotFoundException{
 		this(opts.get("i"),RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O")),opts.get("n"));
 	}
 
 	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @param args array of command line arguments
+	 * @throws IOException exception thrown if there is a problem with parsing the configs
+	 * @throws SQLException if there is a problem during the database usage
+	 * @throws ClassNotFoundException lets the program know if there is a desired class missing
 	 */
 	public CSVtoRDF(String... args) throws IOException, SQLException, ClassNotFoundException {
 		this(new ArgList(getParser(), args));
 	}
 
 	/**
-	 * @param CSVfilename
-	 * @param output
-	 * @param uriNameSpace
-	 * @throws SQLException 
-	 * @throws FileSystemException 
-	 * @throws ClassNotFoundException 
+	 * @param CSVfilename Path and filename of the CSVfile
+	 * @param output destination recordHandler
+	 * @param uriNameSpace Name space to be used for the rdf elements 
+	 * @throws SQLException if there is a problem during the database usage
+	 * @throws FileSystemException Exception for file access problems
+	 * @throws ClassNotFoundException lets the program know if there is a desired class missing
 	 */
 	public CSVtoRDF(String CSVfilename, RecordHandler output, String uriNameSpace) throws SQLException, FileSystemException, ClassNotFoundException{
-		this.tablename = "csvtordf";
+		this.tablename = "csv";
 		Class.forName("org.h2.Driver");
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TempCSVtoRDF", "sa", "");
 		this.conn.setAutoCommit(false);
-		this.toDatabase = new CSVtoJDBC(CSVfilename, this.conn, "csvtordf");
+		this.toDatabase = new CSVtoJDBC(CSVfilename, this.conn, "csv");
 		this.namespace = uriNameSpace;
 		this.outputRH = output;
 	}
 
 	/**
-	 * @param CSVfilestream 
-	 * @param output
-	 * @param uriNameSpace
-	 * @throws SQLException 
+	 * @param CSVfilestream An input stream of CSV data
+	 * @param output destination recordHandler
+	 * @param uriNameSpace Name space to be used for the rdf elements
+	 * @throws SQLException if there is a problem during the database usage
 	 */
 	public CSVtoRDF(InputStream CSVfilestream, RecordHandler output, String uriNameSpace) throws SQLException{
-		this.tablename = "csvtordf";
+		this.tablename = "csv";
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TempCSVtoRDF", "sa", "");
 		this.conn.setAutoCommit(false);
 		this.toDatabase = new CSVtoJDBC(CSVfilestream, this.conn, this.tablename);
@@ -98,8 +98,8 @@ public class CSVtoRDF {
 	}
 	
 	/**
-	 * @throws IOException 
-	 * @throws SQLException 
+	 * @throws IOException If there is an I/O problem during either execute
+	 * @throws SQLException if there is a problem during the database usage
 	 * 
 	 */
 	public void execute() throws IOException, SQLException {
@@ -115,7 +115,7 @@ public class CSVtoRDF {
 			List<String> dFields = this.toDatabase.getFields();
 			dataFields.put(this.tablename,dFields);
 			
-			this.fromDatabase = new JDBCFetch(this.conn,this.outputRH,this.namespace,null, null, null, null, dataFields, idFields,null,null, null);
+			this.fromDatabase = new JDBCFetch(this.conn,this.outputRH,this.namespace,null, null, tblnm, null, dataFields, idFields,null,null, null);
 			this.fromDatabase.execute();
 	}
 	
@@ -126,7 +126,7 @@ public class CSVtoRDF {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("CSVtoRDF");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputFile").withParameter(true, "FILENAME").setDescription("csv file to be read into the Recordhandler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "FILENAME").setDescription("csv file to be read into the Recordhandler").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "NAMESPACE").setDescription("").setRequired(false));
@@ -134,7 +134,7 @@ public class CSVtoRDF {
 	}
 	
 	/**
-	 * @param args
+	 * @param args array of command line arguments
 	 */
 	public static void main(String[] args) {
 		Exception error = null;

@@ -18,12 +18,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
-import org.h2.java.lang.System;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.CSVtoRDF;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.MapRecordHandler;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
@@ -72,9 +70,9 @@ public class CSVtoRDFTest extends TestCase {
 	
 	/**
 	 * @throws IOException if the file is missing or not read properly
-	 * @throws SQLException 
-	 * @throws ParserConfigurationException 
-	 * @throws SAXException 
+	 * @throws SQLException if there are problems with accessing the database
+	 * @throws ParserConfigurationException  issues with parsing the the config
+	 * @throws SAXException If there is an issue with the xml or xsl
 	 */
 	public void testExecute() throws IOException, SQLException, ParserConfigurationException, SAXException {
 		log.info("BEGIN testExecute");
