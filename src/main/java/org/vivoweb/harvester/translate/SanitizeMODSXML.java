@@ -14,6 +14,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
@@ -28,6 +31,8 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -135,35 +140,225 @@ public class SanitizeMODSXML {
 	 */
 	private void sanitizeRecord(Record inputRecord, OutputStream outStream) throws IOException
 	{
+		// remove bad characters from input
 		String xmlData = readRecord(inputRecord);
-		xmlData = removeBadAttribute(xmlData);
-		outStream.write(xmlData.getBytes());
-	}
-
-
-
-	/**
-	 * Removes the unprefixed "xmlns" attribute from the root node.
-	 * @param inputXml the input XML
-	 * @return the XML with the bad attribute removed
-	 * @throws IOException error reading XML
-	 */
-	private String removeBadAttribute(String inputXml) throws IOException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			Document doc = factory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(inputXml.getBytes("utf-8"))));
-			Element documentElement = doc.getDocumentElement();
-			if(documentElement.hasAttribute("xmlns")) {
-				log.debug("Removing xmlns element");
-				documentElement.removeAttribute("xmlns");
-			}
-			return xmlToString(doc);
-		}
+			Document doc = factory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(xmlData.getBytes("utf-8"))));
+			//remove xmlns attribute
+			removeBadAttribute(doc);
+
+			//do other sanitization to doc, such as normalize dates
+			normalizeIssuedDates(doc);
+			
+			
+			xmlData = xmlToString(doc);
+		}			
 		catch(SAXException e) {
 			throw new IOException(e.getMessage(), e);
 		}
 		catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
+		}
+			
+		outStream.write(xmlData.getBytes());
+	}
+
+	/**
+	 * Normalizes date values in IssuedDate elements.
+	 * @param doc is the dom object to work on
+	 */
+	private void normalizeIssuedDates(Document doc) {
+		  NodeList issuedEles = doc.getElementsByTagName("dateIssued");
+		  Hashtable<String,String> months = new Hashtable<String,String>(12,1);
+		  months.put("jan","01");
+		  months.put("feb","02");
+		  months.put("mar","03");
+		  months.put("apr","04");
+		  months.put("may","05");
+		  months.put("jun","06");
+		  months.put("jul","07");
+		  months.put("aug","08");
+		  months.put("sep","09");
+		  months.put("oct","10");
+		  months.put("nov","11");
+		  months.put("dec","12");
+		  months.put("spr","03");
+		  months.put("sum","06");
+		  months.put("fal","09");
+		  months.put("win","12");
+			  
+		  for(int i = 0; i < issuedEles.getLength(); i++) {
+			  Node ele = issuedEles.item(i);
+			  Node parent = ele.getParentNode().getParentNode();
+			  String date = ele.getFirstChild().getNodeValue();
+			  String startyear = "";
+			  String startmonth = "";
+			  String endyear = "";
+			  String endmonth = "";
+			  String startday = "";
+			  String endday = "";
+			  //normalize date here
+			  //if it doesn't start with a 4-digit year, try to find a four digit sequence and make that the year
+			  if (! date.matches("^\\d{4}.*")) {
+				  Pattern p = Pattern.compile("(\\d{4})");
+				  Matcher m = p.matcher(date);
+				  while (m.find()){
+					  startyear = m.group();
+				  }
+			  } else if (date.matches("^\\d{4}")){				// for pattern yyyy
+				  Pattern p = Pattern.compile("^(\\d{4})");
+				  Matcher m = p.matcher(date);
+				  while (m.find()){
+					  startyear = m.group(1);
+				  }
+			  } else if (date.matches("^\\d{4}-\\d{4}.*")){     // for pattern yyyy-yyyy
+				  Pattern p = Pattern.compile("^(\\d{4})-(\\d{4}).*");
+				  Matcher m = p.matcher(date);
+				  while (m.find()){
+					  startyear = m.group(1);
+					  endyear = m.group(2);
+				  }
+			  } else if (date.matches("^\\d{4}-\\d{1,2}(/\\d{1,2}|/)?")){		// for pattern yyyy-mm(/dd)
+				  Pattern p = Pattern.compile("^(\\d{4})-(\\d{1,2})(/(\\d{1,2})|/)?");
+				  Matcher m = p.matcher(date);
+				  while (m.find()){
+					  startyear = m.group(1);
+					  startmonth = m.group(2);
+					  if (m.group(4)!=null){
+						  startday = m.group(4);
+					  }
+				  }
+			  } else if (date.matches("^\\d{4}-\\d{1,2}/\\d{4}")){ 		        // for pattern yyyy-mm/yyyy
+		    	  Pattern p = Pattern.compile("^(\\d{4})-(\\d{1,2})/\\d{4}.*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		    		  startyear = m.group(1);
+		    		  startmonth = m.group(2);
+		    	  }
+		      } else if (date.matches("^\\d{4}-\\d{1,2}/\\d{1,2}/(?:\\d{4}|\\d{2})")){ 	// for pattern yyyy-mm/dd/yy(yy)
+		    	  Pattern p = Pattern.compile("^(\\d{4})-(\\d{1,2})/(\\d{1,2})/(?:\\d{4}|\\d{2}).*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		   			  startyear = m.group(1);
+		   			  startmonth = m.group(2);
+		   			  startday = m.group(3);
+		    	  }
+		      } else if (date.matches("^\\d{4}-\\d{1,2}/\\d{1,2}/\\d{4}")){		// for pattern yyyy-mm/dd/yyyy
+		    	  Pattern p = Pattern.compile("^(\\d{4})-(\\d{1,2})/(\\d{1,2})/\\d{4}.*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		    		  startyear = m.group(1);
+		    		  startmonth = m.group(2);
+		    		  startday = m.group(3);
+				  }
+		      } else if (date.matches("^\\d{4}-\\d{1,2}/\\d{1,2}-\\d{1,2}/\\d{4}")){	// for pattern yyyy-mm/dd-dd/yyyy
+		    	  Pattern p = Pattern.compile("^(\\d{4})-(\\d{1,2})/(\\d{1,2})-(\\d{1,2})/\\d{4}.*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		    		  startyear = m.group(1);
+		    		  startmonth = m.group(2);
+		    		  startday = m.group(3);
+		    		  endyear = startyear;
+		    		  endmonth = startmonth;
+		    		  endday = m.group(4);	    		  
+				  }
+		      } else if (date.matches("^\\d{4}-[a-zA-Z]{3,} \\d{1,2}-\\d{1,2}.*")){	// for pattern yyyy-Month day-day
+		    	  Pattern p = Pattern.compile("^(\\d{4})-([a-zA-z]{3,}) (\\d{1,2})-(\\d{1,2}).*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		    		  startyear = m.group(1);
+		    		  startmonth = m.group(2).toLowerCase().substring(0,3);
+		    		  if (months.containsKey(startmonth)){
+		    			  startmonth = months.get(startmonth);
+		    		  } else {
+		    			  startmonth = "";
+		    		  }
+		    		  startday = m.group(3);
+		    		  endyear = startyear;
+		    		  endmonth = startmonth;
+		    		  endday = m.group(4);
+				  }
+		      } else if (date.matches("^\\d{4}-[a-zA-Z]{3,} \\d{4}.*")){	// for pattern yyyy-Month year
+		    	  Pattern p = Pattern.compile("^(\\d{4})-([a-zA-z]{3,}) (\\d{4}).*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		    		  startyear = m.group(1);
+		    		  startmonth = m.group(2);
+		    		  startmonth = m.group(2).toLowerCase().substring(0,3);
+		    		  if (months.containsKey(startmonth)){
+		    			  startmonth = months.get(startmonth);
+		    		  } else {
+		    			  startmonth = "";
+		    		  }
+		    	  }
+		      } else if (date.matches("^\\d{4}-[a-zA-Z]{3,} \\d{1,2}.*")){	// for pattern yyyy-Month day
+		    	  Pattern p = Pattern.compile("^(\\d{4})-([a-zA-z]{3,}) (\\d{1,2}).*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		    		  startyear = m.group(1);
+		    		  startmonth = m.group(2).toLowerCase().substring(0,3);
+		    		  if (months.containsKey(startmonth)){
+		    			  startmonth = months.get(startmonth);
+		    		  } else {
+		    			  startmonth = "";
+		    		  }
+		    		  startday = m.group(3);
+		    	  }
+		      } else if (date.matches("^\\d{4}-[a-zA-Z]+.*")){	// for pattern yyyy-Month
+		    	  Pattern p = Pattern.compile("^(\\d{4})-([a-zA-z]{3,}).*");
+		    	  Matcher m = p.matcher(date);
+		    	  while (m.find()){
+		    		  startyear = m.group(1);
+		    		  startmonth = m.group(2).toLowerCase().substring(0,3);
+		    		  if (months.containsKey(startmonth)){
+		    			  startmonth = months.get(startmonth);
+		    		  } else {
+		    			  startmonth = "";
+		    		  }
+		    	  }
+		      } else {
+				  log.debug("Couldn't parse dateIssued value: "+date);
+		    	  continue;
+		      }
+			  String newdate = startyear;
+			  if (startmonth!=""){
+				  if (startmonth.length()==1) startmonth = "0"+startmonth;
+				  newdate+="-"+startmonth;
+				  if (startday!="") {
+					  if (startday.length()==1) startday = "0"+startday;
+					  newdate+="-"+startday;
+				  }
+			  }
+			  if (endyear!="" && (!endyear.equals(startyear) || !endmonth.equals(startmonth) || !endday.equals(startday))){
+				  newdate+=":"+endyear;
+				  if (endmonth!=""){
+					  if (endmonth.length()==1) endmonth = "0"+endmonth;
+					  newdate+="-"+endmonth;
+					  if (endday!=""){
+						  if (endday.length()==1) endday = "0"+endday;
+						  newdate+="-"+endday;
+					  }
+				  }
+			  }
+			  if (!newdate.equals(date)){
+				  Node noteEle = doc.createElement("note");
+				  noteEle.appendChild(doc.createTextNode("dateIssued text: "+date));
+				  ele.getFirstChild().setNodeValue(newdate);
+				  parent.appendChild(noteEle);
+			  }
+		  }
+	}
+
+	/**
+	 * Removes the unprefixed "xmlns" attribute from the root node.
+	 * @param doc is the dom object to work on
+	 */
+	private void removeBadAttribute(Document doc) {
+		Element documentElement = doc.getDocumentElement();
+		if(documentElement.hasAttribute("xmlns")) {
+			log.debug("Removing xmlns element");
+			documentElement.removeAttribute("xmlns");
 		}
 	}
 
