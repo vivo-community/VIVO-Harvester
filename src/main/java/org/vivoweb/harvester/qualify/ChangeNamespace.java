@@ -66,6 +66,21 @@ public class ChangeNamespace {
 	
 	/**
 	 * Constructor
+	 * @param argList parsed argument list
+	 * @throws IOException error reading config
+	 */
+	public ChangeNamespace(ArgList argList) throws IOException {
+		this(
+			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")), 
+			argList.get("u"), 
+			argList.get("n"), 
+			argList.has("e")
+		);
+	}
+	
+	/**
+	 * Constructor
 	 * @param model model to change uris in
 	 * @param vivo model in which to search for previously used uris
 	 * @param oldName old namespace
@@ -87,21 +102,6 @@ public class ChangeNamespace {
 		
 		this.model.printParameters();
 		this.vivo.printParameters();
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @throws IOException error reading config
-	 */
-	public ChangeNamespace(ArgList argList) throws IOException {
-		this(
-			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
-			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")), 
-			argList.get("u"), 
-			argList.get("n"), 
-			argList.has("e")
-		);
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class ChangeNamespace {
 			log.trace("(" + count + "/" + total + ": " + percent + "%): Finding unused URI for resource <" + res + ">");
 			String uri = getUnusedURI(newNamespace, vivo, model);
 			if(errorLog) {
-				log.error("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
+				log.warn("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
 			}
 			ResourceUtils.renameResource(res, uri);
 		}

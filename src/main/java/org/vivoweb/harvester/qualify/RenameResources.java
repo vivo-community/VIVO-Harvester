@@ -69,6 +69,9 @@ public class RenameResources {
 		this.jena = jena;
 		this.newUri = newUri;
 		this.oldUris = oldUris;
+		if(this.jena == null) {
+			throw new IllegalArgumentException("Must provide a jena model");
+		}
 	}
 	
 	/**
@@ -87,7 +90,7 @@ public class RenameResources {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("RenameResources");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
 		
 		// Params

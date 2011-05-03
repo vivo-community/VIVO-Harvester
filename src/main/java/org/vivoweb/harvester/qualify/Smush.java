@@ -103,7 +103,7 @@ public class Smush {
 		
 		this.outputJena = outputJena;
 		if(this.outputJena == null) {
-			log.warn("Output model null generating a memory model");
+			log.debug("Output model null generating a memory model");
 			this.outputJena = new MemJenaConnect();
 		}
 		
@@ -155,7 +155,7 @@ public class Smush {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Smush");
 		// Models
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of outputJena jena model config using VALUE").setRequired(false));

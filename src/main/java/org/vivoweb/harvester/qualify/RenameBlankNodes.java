@@ -71,19 +71,19 @@ public class RenameBlankNodes {
 	/**
 	 * The model to perform rename in
 	 */
-	private final Model inModel;
+	private final JenaConnect inJC;
 	/**
 	 * The model to contain renamed nodes
 	 */
-	private final Model outModel;
+	private final JenaConnect outJC;
 	/**
 	 * The part of the namespace between the base and the ID number
 	 */
 	private final String namespaceEtc;
 	/**
-	 * dedupModel
+	 * deduplication test model
 	 */
-	private final Model dedupModel;
+	private final JenaConnect dedupJC;
 	/**
 	 * pattern
 	 */
@@ -104,20 +104,26 @@ public class RenameBlankNodes {
 	
 	/**
 	 * Constructor
-	 * @param inModel The model to perform rename in
-	 * @param outModel The model to write output to
+	 * @param inJC The model to perform rename in
+	 * @param outJC The model to write output to
 	 * @param namespaceEtc The part of the namespace between the base and the ID number
-	 * @param dedupModel dedupModel
+	 * @param dedupJC deduplication test model
 	 * @param pattern pattern
 	 * @param property property
 	 */
-	public RenameBlankNodes(JenaConnect inModel, JenaConnect outModel, String namespaceEtc, JenaConnect dedupModel, String pattern, String property) {
-		this.inModel = inModel != null ? inModel.getJenaModel() : null;
-		this.outModel = outModel != null ? outModel.getJenaModel() : null;
+	public RenameBlankNodes(JenaConnect inJC, JenaConnect outJC, String namespaceEtc, JenaConnect dedupJC, String pattern, String property) {
+		this.inJC = inJC;
+		this.outJC = outJC;
 		this.namespaceEtc = namespaceEtc;
-		this.dedupModel = dedupModel != null ? dedupModel.getJenaModel() : null;
+		this.dedupJC = dedupJC;
 		this.pattern = pattern;
 		this.property = property;
+		if(this.inJC == null) {
+			throw new IllegalArgumentException("Must provide an input jena model");
+		}
+		if(this.outJC == null) {
+			throw new IllegalArgumentException("Must provide an output jena model");
+		}
 	}
 	
 	/**
@@ -138,14 +144,17 @@ public class RenameBlankNodes {
 	
 	/**
 	 * Rename blank nodes
-	 * @param inModel The model to perform rename in
-	 * @param outModel The model to write output to
+	 * @param inJC The model to perform rename in
+	 * @param outJC The model to write output to
 	 * @param namespaceEtc The part of the namespace between the base and the ID number
-	 * @param dedupModel dedupModel
+	 * @param dedupJC deduplication test model
 	 * @param pattern pattern
 	 * @param property property
 	 */
-	public static void renameBNodes(Model inModel, Model outModel, String namespaceEtc, Model dedupModel, String pattern, String property) {
+	public static void renameBNodes(JenaConnect inJC, JenaConnect outJC, String namespaceEtc, JenaConnect dedupJC, String pattern, String property) {
+		Model inModel = inJC.getJenaModel();
+		Model outModel = outJC.getJenaModel();
+		Model dedupModel = dedupJC.getJenaModel();
 		Property propertyRes = ResourceFactory.createProperty(property);
 		OntModel dedupUnionModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM); // we're not using OWL here, just the OntModel submodel infrastructure
 		dedupUnionModel.addSubModel(outModel);
@@ -158,7 +167,7 @@ public class RenameBlankNodes {
 		Set<String> doneSet = new HashSet<String>();
 		
 		try {
-			outModel.add(inModel);
+			outJC.loadRdfFromJC(inJC);
 			ClosableIterator<Resource> closeIt = inModel.listSubjects();
 			try {
 				for (Iterator<Resource> it = closeIt; it.hasNext();) {
@@ -195,7 +204,7 @@ public class RenameBlankNodes {
 	 * Rename blank nodes
 	 */
 	public void execute() {
-		renameBNodes(this.inModel, this.outModel, this.namespaceEtc, this.dedupModel, this.pattern, this.property);
+		renameBNodes(this.inJC, this.outJC, this.namespaceEtc, this.dedupJC, this.pattern, this.property);
 	}
 	
 	/**
@@ -204,12 +213,12 @@ public class RenameBlankNodes {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("RenameBlankNodes");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dedupModel").withParameter(true, "CONFIG_FILE").setDescription("optional: config file for dedup jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("dedupModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of dedup jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dedupModel").withParameter(true, "CONFIG_FILE").setDescription("optional: config file for deduplication test jena model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("dedupModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of deduplication test jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceEtc").withParameter(true, "NAMESPACE_ETC").setDescription("part of the namespace between the base and the ID number").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("pattern").withParameter(true, "PATTERN").setDescription("pattern").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("property").withParameter(true, "PROPERTY").setDescription("property").setRequired(false));

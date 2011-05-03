@@ -70,39 +70,6 @@ public class Qualify {
 	
 	/**
 	 * Constructor
-	 * @param jenaModel the JENA model to run qualifications on
-	 * @param dataType the data predicate
-	 * @param matchString the string to match
-	 * @param newValue the value to replace it with
-	 * @param isRegex is this to use Regex to match the string
-	 * @param removeNameSpace remove statements with predicates in this namespace
-	 * @param cleanPredicates remove all statements where the predicate is from the given namespace
-	 * @param cleanResources remove all statements where the subject or object is from the given namespace
-	 */
-	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, boolean isRegex, String removeNameSpace, boolean cleanPredicates, boolean cleanResources) {
-		this.model = jenaModel;
-		this.dataPredicate = dataType;
-		this.matchTerm = matchString;
-		this.newVal = newValue;
-		this.regex = isRegex;
-		this.namespace = removeNameSpace;
-		this.cleanPredicates = cleanPredicates;
-		this.cleanResources = cleanResources;
-		if((this.namespace == null) || this.namespace.isEmpty()) {
-			if(this.cleanPredicates && this.cleanResources) {
-				throw new IllegalArgumentException("Cannot specify cleanPredicates and cleanResources when removeNamepsace is empty");
-			}
-			if(this.cleanPredicates) {
-				throw new IllegalArgumentException("Cannot specify cleanPredicates when removeNamepsace is empty");
-			}
-			if(this.cleanResources) {
-				throw new IllegalArgumentException("Cannot specify cleanResources when removeNamepsace is empty");
-			}
-		}
-	}
-	
-	/**
-	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
@@ -128,6 +95,42 @@ public class Qualify {
 		);
 		if(!((argList.has("r") ^ argList.has("t") ^ (argList.has("n") && (argList.has("p") || argList.has("c")))))) {
 			throw new IllegalArgumentException("Must provide one of --regex, --text, or --remove-namespace, but not more than one");
+		}
+	}
+	
+	/**
+	 * Constructor
+	 * @param jenaModel the JENA model to run qualifications on
+	 * @param dataType the data predicate
+	 * @param matchString the string to match
+	 * @param newValue the value to replace it with
+	 * @param isRegex is this to use Regex to match the string
+	 * @param removeNameSpace remove statements with predicates in this namespace
+	 * @param cleanPredicates remove all statements where the predicate is from the given namespace
+	 * @param cleanResources remove all statements where the subject or object is from the given namespace
+	 */
+	public Qualify(JenaConnect jenaModel, String dataType, String matchString, String newValue, boolean isRegex, String removeNameSpace, boolean cleanPredicates, boolean cleanResources) {
+		this.model = jenaModel;
+		if(this.model == null) {
+			throw new IllegalArgumentException("Must provide a jena model");
+		}
+		this.dataPredicate = dataType;
+		this.matchTerm = matchString;
+		this.newVal = newValue;
+		this.regex = isRegex;
+		this.namespace = removeNameSpace;
+		this.cleanPredicates = cleanPredicates;
+		this.cleanResources = cleanResources;
+		if((this.namespace == null) || this.namespace.isEmpty()) {
+			if(this.cleanPredicates && this.cleanResources) {
+				throw new IllegalArgumentException("Cannot specify cleanPredicates and cleanResources when removeNamepsace is empty");
+			}
+			if(this.cleanPredicates) {
+				throw new IllegalArgumentException("Cannot specify cleanPredicates when removeNamepsace is empty");
+			}
+			if(this.cleanResources) {
+				throw new IllegalArgumentException("Cannot specify cleanResources when removeNamepsace is empty");
+			}
 		}
 	}
 	
