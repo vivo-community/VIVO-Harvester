@@ -187,7 +187,7 @@ public class CSVtoJDBC {
 	
 	/**
 	 * Returns the list of fields from the recent CSV
-	 * @return
+	 * @return the fields
 	 */
 	public List<String> getFields(){
 		return this.fieldNames;
