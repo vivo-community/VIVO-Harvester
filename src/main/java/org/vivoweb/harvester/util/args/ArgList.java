@@ -130,7 +130,7 @@ public class ArgList {
 	}
 	
 	/**
-	 * Gets the value of the argument or default value if not set
+	 * Gets the value of the argument or default value if not set, null if no default value
 	 * @param arg argument to get
 	 * @return the value
 	 */

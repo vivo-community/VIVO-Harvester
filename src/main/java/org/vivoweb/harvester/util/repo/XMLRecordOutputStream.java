@@ -88,6 +88,9 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 				Matcher m = this.idRegex.matcher(record);
 				m.find();
 				String id = m.group(1);
+				if(this.rh == null) {
+					throw new IllegalArgumentException("Must provide a valid recordhander before writing!");
+				}
 				this.rh.addRecord(id.trim(), this.header + record.trim() + this.footer, this.opClass);
 				this.buf.reset();
 			}
@@ -119,6 +122,9 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	 * @return self reference
 	 */
 	public XMLRecordOutputStream setRecordHandler(RecordHandler rh) {
+		if(rh == null) {
+			throw new IllegalArgumentException("Must provide a valid recordhander");
+		}
 		this.rh = rh;
 		return this;
 	}
