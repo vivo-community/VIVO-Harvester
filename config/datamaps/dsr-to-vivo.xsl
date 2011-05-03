@@ -181,7 +181,7 @@
 							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwProjectTeam:Investigator"/></rdfs:label>
 							<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
-							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 							<core:hasPrincipalInvestigatorRole rdf:resource="{$baseURI}piRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
@@ -209,7 +209,7 @@
 							<ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
 							<rdfs:label><xsl:value-of select="$this/db-dbo.vwProjectTeam:Investigator"/></rdfs:label>
 							<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
-							<ufVivo:ufid><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
+							<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$this/db-dbo.vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 							<core:hasCo-PrincipalInvestigatorRole rdf:resource="{$baseURI}coPiRole/inGrant{$grantid}For{$this/db-dbo.vwProjectTeam:InvestigatorID}"/>
 						</rdf:Description>
