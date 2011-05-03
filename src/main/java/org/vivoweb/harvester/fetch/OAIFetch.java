@@ -68,20 +68,6 @@ public class OAIFetch {
 	
 	/**
 	 * Constructor
-	 * @param address The website address of the repository, without http://
-	 * @param startDate The date at which to begin fetching records, format and time resolution depends on repository.
-	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
-	 * @param outStream The output stream to write to
-	 */
-	public OAIFetch(String address, String startDate, String endDate, OutputStream outStream) {
-		this.strAddress = address;
-		this.strStartDate = startDate;
-		this.strEndDate = endDate;
-		this.osOutStream = outStream;
-	}
-	
-	/**
-	 * Constructor
 	 * @param args command line arguments
 	 * @throws IOException error connecting to record handler
 	 */
@@ -95,13 +81,32 @@ public class OAIFetch {
 	 * @throws IOException error connecting to record handler
 	 */
 	public OAIFetch(ArgList argList) throws IOException {
-		this.strAddress = argList.get("u");
-		this.strStartDate = argList.get("s");
-		this.strEndDate = argList.get("e");
-		String repositoryConfig = argList.get("o");
-		RecordHandler rhRecordHandler;
-		rhRecordHandler = RecordHandler.parseConfig(repositoryConfig, argList.getValueMap("O"));
-		this.osOutStream = new XMLRecordOutputStream(new String[]{"record"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhRecordHandler, this.getClass());
+		this(argList.get("u"), argList.get("s"), argList.get("e"), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
+	}
+	
+	/**
+	 * Constructor
+	 * @param address The website address of the repository, without http://
+	 * @param startDate The date at which to begin fetching records, format and time resolution depends on repository.
+	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
+	 * @param rhOutput The recordhandler to write to
+	 */
+	public OAIFetch(String address, String startDate, String endDate, RecordHandler rhOutput) {
+		this(address, startDate, endDate, new XMLRecordOutputStream(new String[]{"record"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhOutput, OAIFetch.class));
+	}
+	
+	/**
+	 * Constructor
+	 * @param address The website address of the repository, without http://
+	 * @param startDate The date at which to begin fetching records, format and time resolution depends on repository.
+	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
+	 * @param outStream The output stream to write to
+	 */
+	public OAIFetch(String address, String startDate, String endDate, OutputStream outStream) {
+		this.strAddress = address;
+		this.strStartDate = startDate;
+		this.strEndDate = endDate;
+		this.osOutStream = outStream;
 	}
 	
 	/**
