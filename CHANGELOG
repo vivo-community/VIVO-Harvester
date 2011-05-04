@@ -1,4 +1,7 @@
 1.1.1
+	MODS
+		Fix XSLT and script to handle relatedItem recursion better, and add hyperlinks into VIVO
+
 	ChangeNamespace
 		Now logs WARN messages rather than ERROR
 	
