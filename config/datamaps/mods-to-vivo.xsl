@@ -28,7 +28,8 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:bibo="http://purl.org/ontology/bibo/"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/">
+	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
+	xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#">
 
 	<xsl:output method="xml" indent="yes" />
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/mods/</xsl:variable>
@@ -114,6 +115,9 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 				<xsl:apply-templates select="relatedItem[@type='host']" mode="withinPub">
 					<xsl:with-param name="modsId" select="$modsId" />
 				</xsl:apply-templates>
+				<xsl:apply-templates select="location/url" mode="withinPub">
+					<xsl:with-param name="modsId" select="$modsId" />
+				</xsl:apply-templates>
 			</rdf:description>
 
 			<xsl:apply-templates select="name" mode="standAlone">
@@ -128,7 +132,33 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 			<xsl:apply-templates select="relatedItem[@type='host']" mode="standAlone">
 				<xsl:with-param name="modsId" select="$modsId" />
 			</xsl:apply-templates>
+			<xsl:apply-templates select="location/url" mode="standAlone">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:apply-templates>
 		</xsl:if>
+	</xsl:template>
+
+
+	<xsl:template match="location/url" mode="withinPub">
+		<xsl:param name='modsId' />
+
+		<vitro:primaryLink>
+			<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'hyperlink/', $modsId)" /></xsl:attribute>
+		</vitro:primaryLink>
+	</xsl:template>
+	
+	
+	<xsl:template match="location/url" mode="standAlone">
+		<xsl:param name='modsId' />
+
+		<rdf:description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'hyperlink/', $modsId)" /></xsl:attribute>
+			<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
+			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Link"></rdf:type>
+			<rdfs:label><xsl:value-of select="." /></rdfs:label>
+			<vitro:linkAnchor>Link</vitro:linkAnchor>
+			<vitro:linkURL><xsl:value-of select="." /></vitro:linkURL>
+		</rdf:description>
 	</xsl:template>
 
 

@@ -30,6 +30,7 @@ fi
 echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 BASEDIR=harvested-data/$HARVESTER_TASK
+NONEXCLUDEDIR=$BASEDIR/non-exclude
 BIBINDIR=$BASEDIR/rh-bibutils-in
 BIBOUTDIR=$BASEDIR/rh-bibutils-out
 RAWRHDIR=$BASEDIR/rh-raw
@@ -73,11 +74,11 @@ BIBUTILSBASE="/usr/bin"
 BIBUTILSINPUTFORMAT="bib"
 
 
+
 # clear old excludeEntity storage
-rm $NONEXCLUDEDIR/rdfxml.rdf 
+rm -f $NONEXCLUDEDIR/rdfxml.rdf 
 
 # store users who are in VIVO and do not have excludeEntity specified for them
-NONEXCLUDEDIR=$BASEDIR/non-exclude
 SPARQLQUERY="PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> CONSTRUCT { ?a rdf:type <http://vivoweb.org/harvester/excludeEntity> } WHERE { ?a rdf:type foaf:Person . FILTER NOT EXISTS { ?a rdf:type <http://vivoweb.org/harvester/excludeEntity> } }"
 $JenaConnect -j $VIVOCONFIG -JmodelName=urn:x-arq:UnionGraph -q "${SPARQLQUERY}" -Q RDF/XML > $NONEXCLUDEDIR/rdfxml.rdf
 
@@ -145,7 +146,7 @@ $Match $SCOREINPUT $SCOREDATA -t 0.7 -r
 rm -rf $SCOREDATADIR
 
 
-#Author, Organization, Geographic Location, Journal match
+#Author, Organization, Geographic Location, Journal, Hyperlink match
 LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
 FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$FFNAME"
 RDFSLABELSCORE="-ArdfsLabel=$LEVDIFF -FrdfsLabel=$RDFSLABEL -WrdfsLabel=1.0 -PrdfsLabel=$RDFSLABEL"
@@ -154,6 +155,7 @@ $Score $SCOREMODELS $FNAME $LNAME -n ${BASEURI}author/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}org/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}geo/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}journal/
+$Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}hyperlink/
 $Match $SCOREINPUT $SCOREDATA -t 0.7 -r
 
 
@@ -207,6 +209,8 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}org/
 $ChangeNamespace $CNFLAGS -u ${BASEURI}geo/
 # Execute ChangeNamespace to get unmatched Journals into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
+# Execute ChangeNamespace to get unmatched Hyperlinks into current namespace
+$ChangeNamespace $CNFLAGS -u ${BASEURI}hyperlink/
 
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
