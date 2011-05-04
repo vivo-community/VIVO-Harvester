@@ -85,14 +85,14 @@ public class CSVtoRDFTest extends TestCase {
 		while(recIT.hasNext()){
 			Record r = recIT.next();
 			if(r.getData() == null) continue;
-			java.lang.System.out.println("Record '" 
+			log.info("Record '" 
 				+ r.getID() + "':\n\n" 
 				+ r.getData());
 			Document doc = docC.parse(new ByteArrayInputStream(r.getData().getBytes()));
 			Element elem = doc.getDocumentElement();
-			java.lang.System.out.println("\n");
+			log.info("\n");
 			traverseNodes(elem.getChildNodes());
-			java.lang.System.out.println("\n");
+			log.info("\n");
 		}
 
 		log.info("END testExecute");
@@ -107,7 +107,7 @@ public class CSVtoRDFTest extends TestCase {
 			Node child = nodeList.item(x);
 			String name = child.getNodeName();
 			if(!name.contains("#text")) {
-				java.lang.System.out.println(name);
+				log.info(name);
 				traverseNodes(child.getChildNodes());
 			}
 		}

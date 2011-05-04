@@ -7,6 +7,9 @@
 	
 	Fixed Diff lines in all scripts to use Previous Harvest directory h2 models
 	All tools should no longer require config files, allowing all parameters to be specified as overrides
+	
+	Updated xsl of dsr to create dateTimeInterval resources.
+	
 
 1.1
     Updated scripts
