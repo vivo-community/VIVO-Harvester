@@ -141,22 +141,8 @@
 			
             <core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/inGrant{$grantid}" />
 			
-			<!-- <core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
-				<xsl:analyze-string select="$this/db-dbo.vwContracts:BEGIN_DT" regex="^(....-..-..).*?$">
-					<xsl:matching-substring>
-						<xsl:value-of select="regex-group(1)"/>
-					</xsl:matching-substring>
-				</xsl:analyze-string>
-			</core:startDate>
-			<core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
-				<xsl:analyze-string select="$this/db-dbo.vwContracts:END_DT" regex="^(....-..-..).*?$">
-					<xsl:matching-substring>
-						<xsl:value-of select="regex-group(1)"/>
-					</xsl:matching-substring>
-				</xsl:analyze-string>
-			</core:endDate> -->
 		</rdf:Description>
-		
+		<!-- The beginning of the dateTimeInterval subgroup -->
          <rdf:Description rdf:about="{$baseURI}timeInterval/inGrant{$grantid}">
              <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
              <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeInterval"/>
@@ -189,6 +175,7 @@
                  </xsl:analyze-string>
              </core:dateTime>
          </rdf:Description>
+         <!-- The end of the dateTimeInterval subgroup -->
 	</xsl:template>
 		
 	<xsl:template name="t_vwProjectTeam">

@@ -122,16 +122,12 @@ $Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
 # Scoring of Grants on ContractNumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
-#$Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
-
 # Scoring of people on UFID
 $Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
-
 
 $Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
 # Scoring of orgs on DeptID
 $Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
-
 
 $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
@@ -172,6 +168,11 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}piRole/
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}coPiRole/
+
+
+# Execute ChangeNamespace to get co-PI roles into current namespace
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -u ${BASEURI}timeInterval/
 
 # backup H2 matched Model
 BACKMATCHED="matched"
