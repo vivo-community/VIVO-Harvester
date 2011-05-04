@@ -18,7 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.WebHelper;
+import org.vivoweb.harvester.util.WebAide;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -108,7 +108,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 			
 			DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
 			docBuildFactory.setIgnoringComments(true);
-			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(WebHelper.getURLContents(urlSb.toString()).getBytes())));
+			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(WebAide.getURLContents(urlSb.toString()).getBytes())));
 			env[0] = doc.getElementsByTagName("WebEnv").item(0).getTextContent();
 			env[1] = doc.getElementsByTagName("QueryKey").item(0).getTextContent();
 			env[2] = doc.getElementsByTagName("Count").item(0).getTextContent();
@@ -149,7 +149,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 		int retEnd = Integer.parseInt(retStart) + Integer.parseInt(numRecords);
 		log.info("Fetching " + retStart + " to " + retEnd + " records from search");
 		try {
-			sanitizeXML(WebHelper.getURLContents(urlSb.toString()));
+			sanitizeXML(WebAide.getURLContents(urlSb.toString()));
 		} catch(MalformedURLException e) {
 			throw new IOException("Query URL incorrectly formatted", e);
 		}

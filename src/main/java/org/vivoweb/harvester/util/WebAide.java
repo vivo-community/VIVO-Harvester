@@ -18,7 +18,7 @@ import java.net.URL;
 /**
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class WebHelper {
+public class WebAide {
 
 	/**
 	 * Get the contents of a url

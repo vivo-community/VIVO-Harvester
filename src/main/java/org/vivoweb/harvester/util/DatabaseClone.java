@@ -9,8 +9,9 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -19,9 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
@@ -68,11 +66,11 @@ public class DatabaseClone {
 	/**
 	 * use this database state file as the input database
 	 */
-	private FileObject inFile;
+	private InputStream inFile;
 	/**
 	 * output the state of the input database in this file
 	 */
-	private FileObject outFile;
+	private OutputStream outFile;
 	
 	/**
 	 * Constructor
@@ -83,30 +81,22 @@ public class DatabaseClone {
 	 * @param tableNames list of tables to export (null exports all)
 	 * @param tableTypes list of table types to export (null exports 'TABLE' type only)
 	 * @param dbUnitFeatures map of DBUnit features to boolean strings "true"/"false"
-	 * @throws FileSystemException error resolving file
+	 * @throws IOException error resolving file
 	 * @throws DatabaseUnitException error connecting to database
 	 */
-	public DatabaseClone(Connection inputConn, String inputFile, Connection outputConn, String outputFile, String[] tableNames, String[] tableTypes, Map<String, String> dbUnitFeatures) throws FileSystemException, DatabaseUnitException {
+	public DatabaseClone(Connection inputConn, String inputFile, Connection outputConn, String outputFile, String[] tableNames, String[] tableTypes, Map<String, String> dbUnitFeatures) throws IOException, DatabaseUnitException {
 		if(inputConn != null) {
 			this.db1 = new DatabaseConnection(inputConn);
 		} else {
 			this.db1 = null;
 		}
-		if(inputFile != null) {
-			this.inFile = VFS.getManager().resolveFile(new File("."), inputFile);
-		} else {
-			this.inFile = null;
-		}
+		this.inFile = FileAide.getInputStream(inputFile);
 		if(outputConn != null) {
 			this.db2 = new DatabaseConnection(outputConn);
 		} else {
 			this.db2 = null;
 		}
-		if(outputFile != null) {
-			this.outFile = VFS.getManager().resolveFile(new File("."), outputFile);
-		} else {
-			this.outFile = null;
-		}
+		this.outFile = FileAide.getOutputStream(outputFile, true);
 		this.tables = tableNames;
 		this.tableTypes = tableTypes;
 		this.dbUnitFeatures = dbUnitFeatures;
@@ -143,10 +133,10 @@ public class DatabaseClone {
 	 * @param argList option set of parsed args
 	 * @throws ClassNotFoundException error loading driver
 	 * @throws SQLException error connecting to database
-	 * @throws FileSystemException error resolving file
+	 * @throws IOException error resolving file
 	 * @throws DatabaseUnitException error connecting to database
 	 */
-	public DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException, FileSystemException, DatabaseUnitException {
+	public DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException, IOException, DatabaseUnitException {
 		this(
 			initDBConn("input", argList.get("inputDriver"), argList.get("inputConnection"), argList.get("inputUsername"), argList.get("inputPassword")),
 			argList.get("inputFile"),
@@ -232,7 +222,7 @@ public class DatabaseClone {
 			for(String feature : this.dbUnitFeatures.keySet()) {
 				log.debug("feature '"+feature+"' not supported for input files");
 			}
-			data = new FlatDtdDataSet(this.inFile.getContent().getInputStream());
+			data = new FlatDtdDataSet(this.inFile);
 		} else {
 			throw new IllegalStateException("inputFile or input database should be initialized!");
 		}
@@ -282,7 +272,7 @@ public class DatabaseClone {
 			DatabaseOperation.INSERT.execute(this.db2, data);
 		}
 		if(this.outFile != null) {
-			FlatDtdDataSet.write(data, this.outFile.getContent().getOutputStream(true));
+			FlatDtdDataSet.write(data, this.outFile);
 		}
 	}
 	

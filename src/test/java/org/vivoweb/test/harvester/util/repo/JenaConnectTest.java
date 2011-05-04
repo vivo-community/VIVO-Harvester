@@ -87,7 +87,7 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#parseConfig(org.apache.commons.vfs.FileObject)
+	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#parseConfig(java.lang.String)
 	 * JenaConnect.parseConfig(FileObject configFile)}.
 	 * @throws IOException error
 	 */
@@ -96,7 +96,7 @@ public class JenaConnectTest extends TestCase {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + dbLayout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
 		bw.close();
-		this.jc = JenaConnect.parseConfig(this.configFile);
+		this.jc = JenaConnect.parseConfig(this.configFile.getAbsolutePath());
 		runWriteTest();
 		log.info("END testParseConfigFile");
 	}

@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -31,6 +30,7 @@ import com.hp.hpl.jena.query.ResultSet;
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
+ * @FIXME svw: this tool seems inopperative
  */
 public class SPARQLTranslator {
 	/**
@@ -61,14 +61,6 @@ public class SPARQLTranslator {
 	protected RecordHandler outputRC;
 	
 	/**
-	 * Default constructor
-	 */
-	@SuppressWarnings("unused")
-	private SPARQLTranslator() {
-		// empty constructor
-	}
-	
-	/**
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
@@ -89,25 +81,13 @@ public class SPARQLTranslator {
 	public SPARQLTranslator(ArgList argumentList) throws IOException {
 		
 		// setup input model
-		if(argumentList.has("i")) {
-			this.inputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("i")), argumentList.getValueMap("I"));
-		} else {
-			this.inputJC = null;
-		}
+		this.inputJC = JenaConnect.parseConfig(argumentList.get("i"), argumentList.getValueMap("I"));
 		
 		// setup output
-		if(argumentList.has("o")) {
-			this.outputJC = JenaConnect.parseConfig(VFS.getManager().resolveFile(new File("."), argumentList.get("o")), argumentList.getValueMap("O"));
-		} else {
-			this.outputJC = null;
-		}
+		this.outputJC = JenaConnect.parseConfig(argumentList.get("o"), argumentList.getValueMap("O"));
 		
 		// load data from recordhandler
-		if(argumentList.has("h")) {
-			this.outputRC = RecordHandler.parseConfig(argumentList.get("h"), argumentList.getValueMap("H"));
-		} else {
-			this.outputRC = null;
-		}
+		this.outputRC = RecordHandler.parseConfig(argumentList.get("h"), argumentList.getValueMap("H"));
 		
 		if(argumentList.has("s")) {
 			this.sparqlFile = new File(argumentList.get("s"));
@@ -116,8 +96,8 @@ public class SPARQLTranslator {
 		}
 	}
 	
-	/***
-	 * checks again for the necessary file and makes sure that they exist
+	/**
+	 * Checks again for the necessary file and makes sure that they exist
 	 * @throws IOException error accessing file stream
 	 */
 	public void execute() throws IOException {
@@ -165,7 +145,7 @@ public class SPARQLTranslator {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SPARQLTranslator");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
@@ -176,9 +156,7 @@ public class SPARQLTranslator {
 	}
 	
 	/**
-	 * Currently the main method accepts two methods of execution, file translation and record handler translation The
-	 * main method actually passes its arg string to another method so that Translator can use this same method of
-	 * execution
+	 * Main Method
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {

@@ -79,11 +79,6 @@ public class Transfer {
 	 * @throws IOException error creating task
 	 */
 	public Transfer(ArgList argList) throws IOException {
-		// Require output args
-		if(!argList.has("o") && !argList.has("O") && !argList.has("d")) {
-			throw new IllegalArgumentException("Must provide an output {-o, -O, or -d}");
-		}
-		
 		// setup input model
 		this.input = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		
@@ -105,6 +100,16 @@ public class Transfer {
 		
 		// remove mode
 		this.removeMode = argList.has("m");
+		
+		// Require output args
+		if(this.output == null && this.dumpFile == null) {
+			throw new IllegalArgumentException("Must provide an output {-o, -O, or -d}");
+		}
+		
+		// Check for weird flag combinations
+		if(this.removeMode && this.output == null) {
+			throw new IllegalArgumentException("Removing from nothing (no output model) is pointless");
+		}
 	}
 	
 	/**
@@ -114,7 +119,7 @@ public class Transfer {
 	private void execute() throws IOException {
 		if(this.output == null) {
 			this.output = new MemJenaConnect();
-			log.warn("No Output Specified, Using In-Memory Jena Model As Temporary Model");
+			log.debug("No Output Specified, Using In-Memory Jena Model As Temporary Model");
 		}
 		if(this.removeMode) {
 			if(this.input != null) {

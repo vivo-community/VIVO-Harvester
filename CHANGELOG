@@ -1,3 +1,9 @@
+1.1.1
+	ChangeNamespace
+		Now logs WARN messages rather than ERROR
+	
+	Fixed Diff lines in all scripts to use Previous Harvest directory h2 models
+	All tools should no longer require config files, allowing all parameters to be specified as overrides
 
 1.1
     Updated scripts

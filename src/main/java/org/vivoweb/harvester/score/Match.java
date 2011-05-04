@@ -134,24 +134,16 @@ public class Match {
 	 * @throws IOException error parsing options
 	 */
 	public Match(ArgList opts) throws IOException {
-		// Connect to score data model
-		this.scoreJena = JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S"));
-		
-		// Connect to input model
-		this.inputJena = JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I"));
-		
-		// Connect to output model
-		if(opts.has("o")) {
-			this.outputJena = JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O"));
-		} else {
-			this.outputJena = null;
-		}
-		
-		this.renameRes = opts.has("r");
-		this.linkProps = opts.getValueMap("l");
-		this.matchThreshold = Float.parseFloat(opts.get("t"));
-		this.clearLiterals = opts.has("c");
-		this.batchSize = Integer.parseInt(opts.get("b"));
+		this(
+			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
+			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
+			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
+			opts.has("r"), 
+			Float.parseFloat(opts.get("t")), 
+			opts.getValueMap("l"), 
+			opts.has("c"), 
+			Integer.parseInt(opts.get("b"))
+		);
 	}
 	
 	/**
@@ -351,8 +343,8 @@ public class Match {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Match");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("scoreConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("scoreConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
 		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, when set nodes that meet the threshold are pushed to the output model").withParameter(true, "CONFIG_FILE").setRequired(false));

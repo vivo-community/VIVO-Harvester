@@ -9,17 +9,15 @@
  *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util.repo;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
-import org.apache.commons.vfs.AllFileSelector;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.JenaRecordHandler;
 import org.vivoweb.harvester.util.repo.MapRecordHandler;
@@ -176,7 +174,7 @@ public class RecordHandlerTest extends TestCase {
 		this.rh.addRecord("test456", "data test on record 'test456'", RecordHandlerTest.class);
 		this.rh.addRecord("funABC", "data in record 'funABC'", RecordHandlerTest.class);
 		this.rh.addRecord("wooDEF", "blah data of record 'wooDEF'", RecordHandlerTest.class);
-		VFS.getManager().resolveFile(new File("."), tfrhDir + "/.metadata").delete(new AllFileSelector());
+		FileAide.delete(tfrhDir+"/.metadata");
 		for(Record r : this.rh) {
 			log.debug("Record '" + r.getID() + "': " + r.getData());
 		}

@@ -71,13 +71,6 @@ public class GlozeTranslator {
 	protected RecordHandler outStore;
 	
 	/**
-	 * Default Constructor
-	 */
-	public GlozeTranslator() {
-		setURIBase("http://vivoweb.org/glozeTranslation/noURI/");
-	}
-	
-	/**
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
@@ -87,7 +80,7 @@ public class GlozeTranslator {
 	}
 	
 	/**
-	 * @param argumentList <ul>
+	 * @param argList <ul>
 	 *        <li><em>inRecordHandler</em> the incoming record handler when record handlers are due</li>
 	 *        <li><em>schema</em> the incoming schema for gloze translation</li>
 	 *        <li><em>outRecordHandler</em> the out record handler</li>
@@ -96,19 +89,25 @@ public class GlozeTranslator {
 	 *        </ul>
 	 * @throws IOException error connecting to record handlers
 	 */
-	public GlozeTranslator(ArgList argumentList) throws IOException {
+	public GlozeTranslator(ArgList argList) throws IOException {
 		// the uri base if not set is http://vivoweb.org/glozeTranslation/noURI/"
-		if(argumentList.has("uriBase")) {
-			setURIBase(argumentList.get("uriBase"));
+		if(argList.has("uriBase")) {
+			setURIBase(argList.get("uriBase"));
 		}
 		// pull in the translation xsl
-		if(argumentList.has("xmlSchema")) {
-			setIncomingSchema(new File(argumentList.get("xmlSchema")));
+		if(argList.has("xmlSchema")) {
+			setIncomingSchema(new File(argList.get("xmlSchema")));
 		}
 		
 		// create record handlers
-		this.inStore = RecordHandler.parseConfig(argumentList.get("input"));
-		this.outStore = RecordHandler.parseConfig(argumentList.get("output"));
+		this.inStore = RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I"));
+		if(this.inStore == null) {
+			throw new IllegalArgumentException("Must provide an input recordhandler");
+		}
+		this.outStore = RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"));
+		if(this.outStore == null) {
+			throw new IllegalArgumentException("Must provide an output recordhandler");
+		}
 	}
 	
 	/**
@@ -207,8 +206,10 @@ public class GlozeTranslator {
 	 */
 	protected static ArgParser getParser() {
 		ArgParser parser = new ArgParser("GlozeTranslator");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input record handler config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output record handler config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("xmlSchema").withParameter(false, "XML_SCHEMA").setDescription("xsl file").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("uriBase").withParameter(false, "URI_BASE").setDescription("uri base").setRequired(true));
 		return parser;

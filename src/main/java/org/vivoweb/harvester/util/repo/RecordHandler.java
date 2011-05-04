@@ -9,7 +9,6 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -20,10 +19,9 @@ import java.util.SortedSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -239,50 +237,6 @@ public abstract class RecordHandler implements Iterable<Record> {
 	
 	/**
 	 * Config File Based Factory
-	 * @param configFile the vfs config file descriptor
-	 * @return RecordHandler instance
-	 * @throws IOException error configuring
-	 */
-	public static RecordHandler parseConfig(FileObject configFile) throws IOException {
-		return parseConfig(configFile, null);
-	}
-	
-	/**
-	 * Config File Based Factory that overrides parameters
-	 * @param configFile the vfs config file descriptor
-	 * @param overrideParams the parameters to override the file with
-	 * @return RecordHandler instance
-	 * @throws IOException error configuring
-	 */
-	public static RecordHandler parseConfig(FileObject configFile, Map<String, String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null) ? null : configFile.getContent().getInputStream();
-		return parseConfig(confStream, overrideParams);
-	}
-	
-	/**
-	 * Config File Based Factory
-	 * @param configFile the config file descriptor
-	 * @return RecordHandler instance
-	 * @throws IOException error configuring
-	 */
-	public static RecordHandler parseConfig(File configFile) throws IOException {
-		return parseConfig(configFile, null);
-	}
-	
-	/**
-	 * Config File Based Factory
-	 * @param configFile the config file descriptor
-	 * @param overrideParams the parameters to override the file with
-	 * @return RecordHandler instance
-	 * @throws IOException error configuring
-	 */
-	public static RecordHandler parseConfig(File configFile, Map<String, String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null) ? null : VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
-		return parseConfig(confStream, overrideParams);
-	}
-	
-	/**
-	 * Config File Based Factory
 	 * @param configFileName the config file path
 	 * @return RecordHandler instance
 	 * @throws IOException xml parse error
@@ -299,7 +253,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException xml parse error
 	 */
 	public static RecordHandler parseConfig(String configFileName, Map<String, String> overrideParams) throws IOException {
-		InputStream confStream = (configFileName == null) ? null : VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
+		InputStream confStream = (configFileName == null) ? null : FileAide.getInputStream(configFileName);
 		return parseConfig(confStream, overrideParams);
 	}
 	

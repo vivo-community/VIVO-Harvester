@@ -9,7 +9,6 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,7 +21,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
 import org.h2.tools.Csv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,10 +69,10 @@ public class CSVtoJDBC {
 	 * @param filename CSV to read from
 	 * @param output The database connection for the output
 	 * @param tableName table name into which to output
-	 * @throws FileSystemException error establishing connection to file
+	 * @throws IOException error establishing connection to file
 	 */
-	public CSVtoJDBC(String filename, Connection output, String tableName) throws FileSystemException {
-		InputStream is = VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream();
+	public CSVtoJDBC(String filename, Connection output, String tableName) throws IOException {
+		InputStream is = FileAide.getInputStream(filename);
 		this.init(is, output, tableName);
 	}
 	
@@ -89,7 +87,7 @@ public class CSVtoJDBC {
 	 * @throws IOException error establishing connection to database or file
 	 */
 	public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
-		InputStream  is = VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream();
+		InputStream  is = FileAide.getInputStream(filename);
 		Connection conn = null;
 		try {
 			Class.forName(jdbcDriverClass);

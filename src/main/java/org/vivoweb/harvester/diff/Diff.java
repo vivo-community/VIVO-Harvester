@@ -9,15 +9,13 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.diff;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -140,9 +138,9 @@ public class Diff {
 	 * @param sJC subtrahend jenaconnect
 	 * @param oJC output jenaconnect
 	 * @param dF dump file path
-	 * @throws FileSystemException error accessing file
+	 * @throws IOException error accessing file
 	 */
-	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) throws FileSystemException {
+	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) throws IOException {
 		/*
 		 * c - b = a minuend - subtrahend = difference minuend.diff(subtrahend) = differenece c.diff(b) = a
 		 */
@@ -157,7 +155,7 @@ public class Diff {
 			fasterWriter.setProperty("showXmlDeclaration", "true");
 			fasterWriter.setProperty("allowBadURIs", "true");
 			fasterWriter.setProperty("relativeURIs", "");
-			OutputStreamWriter osw = new OutputStreamWriter(VFS.getManager().resolveFile(new File("."), dF).getContent().getOutputStream(false), Charset.availableCharsets().get("UTF-8"));
+			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(dF), Charset.availableCharsets().get("UTF-8"));
 			fasterWriter.write(diffModel, osw, "");
 			log.debug("RDF/XML Data was exported");
 		}
@@ -168,9 +166,9 @@ public class Diff {
 	
 	/**
 	 * Execute the diff
-	 * @throws FileSystemException error accessing file
+	 * @throws IOException error accessing file
 	 */
-	public void execute() throws FileSystemException {
+	public void execute() throws IOException {
 		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile);
 	}
 	

@@ -9,14 +9,12 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
-import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -81,7 +79,7 @@ public class XPathTool {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true); // never forget this!
-			Document doc = factory.newDocumentBuilder().parse(VFS.getManager().resolveFile(new File("."), xmlFile).getContent().getInputStream());
+			Document doc = factory.newDocumentBuilder().parse(FileAide.getInputStream(xmlFile));
 			String value = XPathFactory.newInstance().newXPath().compile(expression).evaluate(doc, XPathConstants.STRING).toString();
 //			log.debug("xpath result for '" + expression + "' on file '" + xmlFile + "': '" + value + "'");
 			return value;

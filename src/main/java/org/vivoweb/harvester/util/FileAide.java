@@ -1,0 +1,188 @@
+package org.vivoweb.harvester.util;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.commons.vfs.AllFileSelector;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileType;
+import org.apache.commons.vfs.Selectors;
+import org.apache.commons.vfs.VFS;
+
+/**
+ * Assists in common tasks using Files
+ * @author Christopher Haines hainesc@ufl.edu
+ */
+public class FileAide {
+	/**
+	 * Resolves a FileObject relative to the execution directory
+	 * @param path the path to resolve
+	 * @return the FileObject
+	 * @throws IOException error resolving
+	 */
+	private static FileObject getFileObject(String path) throws IOException {
+		if(path == null) {
+			return null;
+		}
+		return VFS.getManager().resolveFile(new File("."), path);
+	}
+	
+	/**
+	 * Checks if the path exists
+	 * @param path the path to resolve
+	 * @return true if exists, false otherwise
+	 * @throws IOException error resolving path
+	 */
+	public static boolean exists(String path) throws IOException {
+		return getFileObject(path).exists();
+	}
+	
+	/**
+	 * Deletes the file at the given path
+	 * @param path the path to delete
+	 * @return true if deleted, false otherwise
+	 * @throws IOException error resolving path
+	 */
+	public static boolean delete(String path) throws IOException {
+		FileObject file = getFileObject(path);
+		if(isFolder(path)) {
+			file.delete(new AllFileSelector());
+		}
+		return file.delete();
+	}
+	
+	/**
+	 * Creates a file at the given path
+	 * @param path the path to the file to create
+	 * @throws IOException error resolving path
+	 */
+	public static void createFile(String path) throws IOException {
+		getFileObject(path).createFile();
+	}
+	
+	/**
+	 * Creates a folder at the given path
+	 * @param path the path to the folder to create
+	 * @throws IOException error resolving path
+	 */
+	public static void createFolder(String path) throws IOException {
+		getFileObject(path).createFolder();
+	}
+	
+	/**
+	 * Determines if a folder is at the given path
+	 * @param path the path to determine if it is a folder
+	 * @return true if a folder, false otherwise
+	 * @throws IOException error resolving path
+	 */
+	public static boolean isFolder(String path) throws IOException {
+		FileType type = getFileObject(path).getType();
+		return (type == FileType.FOLDER || type == FileType.FILE_OR_FOLDER);
+	}
+	
+	/**
+	 * Determines if a file is at the given path
+	 * @param path the path to determine if it is a file
+	 * @return true if a file, false otherwise
+	 * @throws IOException error resolving path
+	 */
+	public static boolean isFile(String path) throws IOException {
+		FileType type = getFileObject(path).getType();
+		return (type == FileType.FILE || type == FileType.FILE_OR_FOLDER);
+	}
+	
+	/**
+	 * Determines if the given path is Readable
+	 * @param path the path to determine if it is a readable
+	 * @return true if readable, false otherwise
+	 * @throws IOException error resolving path
+	 */
+	public static boolean isReadable(String path) throws IOException {
+		return getFileObject(path).isReadable();
+	}
+	
+	/**
+	 * Determines if the given path is Writeable
+	 * @param path the path to determine if it is a writeable
+	 * @return true if writeable, false otherwise
+	 * @throws IOException error resolving path
+	 */
+	public static boolean isWriteable(String path) throws IOException {
+		return getFileObject(path).isWriteable();
+	}
+	
+	/**
+	 * Resolves the path and gets an input stream for this file
+	 * @param path the path to resolve
+	 * @return the InputStream
+	 * @throws IOException error resolving
+	 */
+	public static InputStream getInputStream(String path) throws IOException {
+		if(path == null) {
+			return null;
+		}
+		return getFileObject(path).getContent().getInputStream();
+	}
+	
+	/**
+	 * Resolves the path and gets an output stream for this file
+	 * @param path the path to resolve
+	 * @return the OutputStream
+	 * @throws IOException error resolving
+	 */
+	public static OutputStream getOutputStream(String path) throws IOException {
+		if(path == null) {
+			return null;
+		}
+		return getFileObject(path).getContent().getOutputStream();
+	}
+	
+	/**
+	 * Resolves the path and gets an output stream for this file
+	 * @param path the path to resolve
+	 * @param append append to the file
+	 * @return the OutputStream
+	 * @throws IOException error resolving
+	 */
+	public static OutputStream getOutputStream(String path, boolean append) throws IOException {
+		if(path == null) {
+			return null;
+		}
+		return getFileObject(path).getContent().getOutputStream(append);
+	}
+	
+	/**
+	 * Get a set of non-hidden direct children of the given path
+	 * @param path the path to search under
+	 * @return a set of non-hidden direct children
+	 * @throws IOException error resolving path
+	 */
+	public static Set<String> getNonHiddenChildren(String path) throws IOException {
+		Set<String> allFileListing = new HashSet<String>();
+		for(FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
+			if(!file.isHidden() && (file.getType() == FileType.FILE)) {
+				allFileListing.add(file.getName().getBaseName());
+			}
+		}
+		return allFileListing;
+	}
+	
+	/**
+	 * Get an inputstream from the first file under the given path with a matching fileName
+	 * @param path the path to search under
+	 * @param fileName the file name to match
+	 * @return an input stream to the matched file, null if none found
+	 * @throws IOException error resolving path
+	 */
+	public static InputStream getFirstFileNameChildInputStream(String path, String fileName) throws IOException {
+		for(FileObject file : FileAide.getFileObject(path).findFiles(new AllFileSelector())) {
+			if(file.getName().getBaseName().equals(fileName)) {
+				return file.getContent().getInputStream();
+			}
+		}
+		return null;
+	}
+}

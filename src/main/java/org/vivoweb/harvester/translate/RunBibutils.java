@@ -70,7 +70,39 @@ public class RunBibutils {
 		this.inStore = inStore;
 		this.outStore = outStore;
 		this.force = force;
-		checkValidInputs();
+		
+		// Check to make sure the recordhandlers exist, bibutils base path is a directory, and the input format is one of the acceptable values
+		String errorMessage = "";
+		
+		if(this.inStore == null) {
+			String oneLineError = "Must supply an input recordhandler";
+			log.error(oneLineError);
+			errorMessage += oneLineError + "\n";
+		}
+		
+		if(this.outStore == null) {
+			String oneLineError = "Must supply an output recordhandler";
+			log.error(oneLineError);
+			errorMessage += oneLineError + "\n";
+		}
+		
+		File bibutilsBaseDir = new File(this.bibutilsBasePath);
+		if(!bibutilsBaseDir.isDirectory()) {
+			String oneLineError = "Not a directory: " + this.bibutilsBasePath;
+			log.error(oneLineError);
+			errorMessage += oneLineError + "\n";
+		}
+		
+		if(!Arrays.asList("bib", "biblatex", "copac", "end", "endx", "isi", "med", "ris").contains(this.inputFormat)) {
+			String oneLineError = "Not a valid input format: " + this.inputFormat;
+			log.error(oneLineError);
+			errorMessage += oneLineError + "\n";
+		}
+		
+		if(!errorMessage.equals("")) {
+			errorMessage = errorMessage.substring(0, errorMessage.length() - 1); //strip last newline
+			throw new IllegalArgumentException(errorMessage); //explode
+		}
 	}
 
 	/**
@@ -99,9 +131,9 @@ public class RunBibutils {
 		ArgParser parser = new ArgParser("RunBibutils");
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("bibutilsBasePath").withParameter(true, "BIBUTILS_BASE_PATH").setDescription("Path to folder containing bibutils executables").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("inputFormat").withParameter(true, "INPUT_FORMAT").setDescription("Format of the input files.  Acceptable values are bib, biblatex, copac, end, endx, isi, med, ris.").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("Record handler for input files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("Record handler for input files").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("Record handler for output files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("Record handler for output files").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force").setDescription("force translation of all input records, even if previously processed").setRequired(false));
 		return parser;
@@ -120,36 +152,7 @@ public class RunBibutils {
 		
 		return returnValue;
 	}
-
-	/**
-	 * Checks to make sure the bibutils base path is a directory and the input format is one of the acceptable values.  If
-	 * not, log errors and explode.
-	 * @throws RuntimeException if either input path or output path is not a directory
-	 */
-	private void checkValidInputs() {
-		File bibutilsBaseDir = new File(this.bibutilsBasePath);
-
-		String errorMessage = "";
-		if(!bibutilsBaseDir.isDirectory()) {
-			String oneLineError = "Not a directory: " + this.bibutilsBasePath;
-			log.error(oneLineError);
-			errorMessage += oneLineError + "\n";
-		}
-
-		if(!Arrays.asList("bib", "biblatex", "copac", "end", "endx", "isi", "med", "ris").contains(this.inputFormat)) {
-			String oneLineError = "Not a valid input format: " + this.inputFormat;
-			log.error(oneLineError);
-			errorMessage += oneLineError + "\n";
-		}
-
-		if(!errorMessage.equals("")) {
-			errorMessage = errorMessage.substring(0, errorMessage.length() - 1); //strip last newline
-			throw new RuntimeException(errorMessage); //explode
-		}
-	}
-
-
-
+	
 	/**
 	 * Convert all files in inputPath directory to MODS XML according to specified type
 	 * @throws IOException if an error in reading or writing occurs

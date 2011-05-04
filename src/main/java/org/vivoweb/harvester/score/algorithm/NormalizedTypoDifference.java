@@ -11,7 +11,7 @@ package org.vivoweb.harvester.score.algorithm;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.vivoweb.harvester.util.MathHelper;
+import org.vivoweb.harvester.util.MathAide;
 
 /**
  * Calculates the difference of two strings and accounts for typos
@@ -306,7 +306,7 @@ public class NormalizedTypoDifference implements Algorithm {
 				editCosts[0] = dist[i - 1] + 1; // deletion
 				editCosts[1] = prev[i] + 1; // addition
 				editCosts[2] = prev[i - 1] + sameChar; //substitution
-				editTypeIndex = MathHelper.minIntIndex(editCosts);
+				editTypeIndex = MathAide.minIntIndex(editCosts);
 				if(editTypeIndex == 2) {
 					try {
 						System.out.println(small.charAt(i) + " => " + big.charAt(j));
@@ -317,7 +317,7 @@ public class NormalizedTypoDifference implements Algorithm {
 				}
 				dist[i] = editCosts[editTypeIndex];
 				if((i > 1) && (j > 1) && (small.charAt(i) == big.charAt(j - 1)) && (small.charAt(i - 1) == big.charAt(j))) {
-					dist[i] = MathHelper.minIntIndex(dist[i], prevprev[i - 2] + sameChar); // transposition
+					dist[i] = MathAide.minIntIndex(dist[i], prevprev[i - 2] + sameChar); // transposition
 				}
 			}
 			tmp = prevprev; // hold existing memory

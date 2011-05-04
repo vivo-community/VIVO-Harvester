@@ -9,13 +9,9 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.vfs.AllFileSelector;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -90,13 +86,11 @@ public class InitLog {
 		jc.setContext(context);
 		context.reset();
 		try {
-			for(FileObject file : VFS.getManager().toFileObject(new File(".")).findFiles(new AllFileSelector())) {
-				if(file.getName().getBaseName().equals("logback.xml")) {
-					jc.doConfigure(file.getContent().getInputStream());
-					break;
-				}
+			InputStream is = FileAide.getFirstFileNameChildInputStream(".", "logback.xml");
+			if(is != null) {
+				jc.doConfigure(is);
 			}
-		} catch(FileSystemException e) {
+		} catch(IOException e) {
 			throw new IllegalArgumentException(e);
 		} catch(JoranException e) {
 			throw new IllegalArgumentException(e);

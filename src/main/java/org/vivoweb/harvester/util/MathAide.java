@@ -13,7 +13,7 @@ package org.vivoweb.harvester.util;
  * Set of math helper methods
  * @author Christopher Haines hainesc@ctrip.ufl.edu
  */
-public class MathHelper {
+public class MathAide {
 	/**
 	 * Find minimum of a set of ints
 	 * @param d set of ints

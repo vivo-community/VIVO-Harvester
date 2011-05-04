@@ -9,7 +9,6 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.args;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,9 +23,9 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -311,7 +310,7 @@ public class ArgList {
 				// get a new instance of parser
 				SAXParser sp = spf.newSAXParser();
 				// parse the file and also register this class for call backs
-				sp.parse(VFS.getManager().resolveFile(new File("."), filename).getContent().getInputStream(), this);
+				sp.parse(FileAide.getInputStream(filename), this);
 			} catch(ParserConfigurationException e) {
 				throw new IOException(e.getMessage(), e);
 			} catch(SAXException e) {

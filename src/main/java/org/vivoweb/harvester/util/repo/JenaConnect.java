@@ -11,7 +11,6 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,12 +21,10 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -101,50 +98,6 @@ public abstract class JenaConnect {
 	
 	/**
 	 * Config File Based Factory
-	 * @param configFile the vfs config file descriptor
-	 * @return JenaConnect instance
-	 * @throws IOException error connecting
-	 */
-	public static JenaConnect parseConfig(FileObject configFile) throws IOException {
-		return parseConfig(configFile, null);
-	}
-	
-	/**
-	 * Config File Based Factory that overrides parameters
-	 * @param configFile the vfs config file descriptor
-	 * @param overrideParams the parameters to override the file with
-	 * @return JenaConnect instance
-	 * @throws IOException error connecting
-	 */
-	public static JenaConnect parseConfig(FileObject configFile, Map<String, String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null) ? null : configFile.getContent().getInputStream();
-		return parseConfig(confStream, overrideParams);
-	}
-	
-	/**
-	 * Config File Based Factory
-	 * @param configFile the config file descriptor
-	 * @return JenaConnect instance
-	 * @throws IOException error connecting
-	 */
-	public static JenaConnect parseConfig(File configFile) throws IOException {
-		return parseConfig(configFile, null);
-	}
-	
-	/**
-	 * Config File Based Factory
-	 * @param configFile the config file descriptor
-	 * @param overrideParams the parameters to override the file with
-	 * @return JenaConnect instance
-	 * @throws IOException error connecting
-	 */
-	public static JenaConnect parseConfig(File configFile, Map<String, String> overrideParams) throws IOException {
-		InputStream confStream = (configFile == null) ? null : VFS.getManager().resolveFile(new File("."), configFile.getAbsolutePath()).getContent().getInputStream();
-		return parseConfig(confStream, overrideParams);
-	}
-	
-	/**
-	 * Config File Based Factory
 	 * @param configFileName the config file path
 	 * @return JenaConnect instance
 	 * @throws IOException xml parse error
@@ -161,7 +114,7 @@ public abstract class JenaConnect {
 	 * @throws IOException xml parse error
 	 */
 	public static JenaConnect parseConfig(String configFileName, Map<String, String> overrideParams) throws IOException {
-		InputStream confStream = (configFileName == null) ? null : VFS.getManager().resolveFile(new File("."), configFileName).getContent().getInputStream();
+		InputStream confStream = (configFileName == null) ? null : FileAide.getInputStream(configFileName);
 		return parseConfig(confStream, overrideParams);
 	}
 	
@@ -240,10 +193,10 @@ public abstract class JenaConnect {
 	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
 	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
 	 *        "RDF/XML"
-	 * @throws FileSystemException error accessing file
+	 * @throws IOException error accessing file
 	 */
-	public void loadRdfFromFile(String fileName, String namespace, String language) throws FileSystemException {
-		loadRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+	public void loadRdfFromFile(String fileName, String namespace, String language) throws IOException {
+		loadRdfFromStream(FileAide.getInputStream(fileName), namespace, language);
 	}
 	
 	/**
@@ -299,7 +252,7 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to file
 	 */
 	public void exportRdfToFile(String fileName) throws IOException {
-		exportRdfToStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getOutputStream(false));
+		exportRdfToStream(FileAide.getOutputStream(fileName));
 	}
 	
 	/**
@@ -332,7 +285,7 @@ public abstract class JenaConnect {
 	 * @throws IOException error connecting
 	 */
 	public void removeRdfFromFile(String fileName, String namespace, String language) throws IOException {
-		removeRdfFromStream(VFS.getManager().resolveFile(new File("."), fileName).getContent().getInputStream(), namespace, language);
+		removeRdfFromStream(FileAide.getInputStream(fileName), namespace, language);
 	}
 	
 	/**
@@ -780,6 +733,9 @@ public abstract class JenaConnect {
 			InitLog.initLogger(args, getParser());
 			ArgList argList = new ArgList(getParser(), args);
 			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
+			if(jc == null) {
+				throw new IllegalArgumentException("Must specify a jena model");
+			}
 			if(argList.has("t")) {
 				if(argList.has("q") || argList.has("Q")) {
 					throw new IllegalArgumentException("Cannot Execute Query and Truncate");

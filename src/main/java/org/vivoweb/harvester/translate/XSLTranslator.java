@@ -23,10 +23,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -70,7 +70,7 @@ public class XSLTranslator {
 	
 	/**
 	 * Constructor
-	 * @param argumentList <ul>
+	 * @param argList <ul>
 	 *        <li>translationStream the file that details the translation from the original xml to the target format</li>
 	 *        <li>inRecordHandler the files/records that require translation</li>
 	 *        <li>outRecordHandler the output record for the translated files</li>
@@ -78,14 +78,13 @@ public class XSLTranslator {
 	 *        </ul>
 	 * @throws IOException error reading files
 	 */
-	public XSLTranslator(ArgList argumentList) throws IOException {
-		// set Translation file
-		setTranslation(VFS.getManager().resolveFile(new File("."), argumentList.get("x")).getContent().getInputStream());
-		
-		// create record handlers
-		this.inStore = RecordHandler.parseConfig(argumentList.get("i"), argumentList.getValueMap("I"));
-		this.outStore = RecordHandler.parseConfig(argumentList.get("o"), argumentList.getValueMap("O"));
-		this.force = argumentList.has("f");
+	public XSLTranslator(ArgList argList) throws IOException {
+		this(
+			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),  
+			FileAide.getInputStream(argList.get("x")), 
+			argList.has("f")
+		);
 	}
 	
 	/**
@@ -104,6 +103,12 @@ public class XSLTranslator {
 		this.inStore = inRecordHandler;
 		this.outStore = outRecordHandler;
 		this.force = force;
+		if(this.inStore == null) {
+			throw new IllegalArgumentException("Must provide an input record handler");
+		}
+		if(this.outStore == null) {
+			throw new IllegalArgumentException("Must provide an output record handler");
+		}
 	}
 	
 	/**
@@ -185,9 +190,9 @@ public class XSLTranslator {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("XSLTranslator");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force").setDescription("force translation of all input records, even if previously processed").setRequired(false));

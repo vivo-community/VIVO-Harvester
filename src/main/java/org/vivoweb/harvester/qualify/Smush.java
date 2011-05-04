@@ -38,7 +38,6 @@ package org.vivoweb.harvester.qualify;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.vfs.FileSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.diff.Diff;
@@ -255,7 +254,7 @@ public class Smush {
 			try {
 				Diff.diff(this.inputJena, this.outputJena, subtractions, null);
 				Diff.diff(this.outputJena, this.inputJena, additions, null);
-			} catch(FileSystemException e) {
+			} catch(IOException e) {
 				// should never happen
 				log.debug(e.getMessage(), e);
 			}

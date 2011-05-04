@@ -15,7 +15,7 @@ import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.WebHelper;
+import org.vivoweb.harvester.util.WebAide;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
@@ -117,7 +117,7 @@ public class NLMJournalFetch extends NIHFetch {
 		int retEnd = Integer.parseInt(retStart) + Integer.parseInt(numRecords);
 		log.info("Fetching " + retStart + " to " + retEnd + " records from search");
 		try {
-			sanitizeXML(WebHelper.getURLContents(urlSb.toString()));
+			sanitizeXML(WebAide.getURLContents(urlSb.toString()));
 		} catch(MalformedURLException e) {
 			throw new IOException("Query URL incorrectly formatted", e);
 		}

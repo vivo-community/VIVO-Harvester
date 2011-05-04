@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.vfs.FileSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.CSVtoJDBC;
@@ -20,7 +19,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.fetch.JDBCFetch;
 
 /**
  * @author jrpence
@@ -69,10 +67,10 @@ public class CSVtoRDF {
 	 * @param output destination recordHandler
 	 * @param uriNameSpace Name space to be used for the rdf elements 
 	 * @throws SQLException if there is a problem during the database usage
-	 * @throws FileSystemException Exception for file access problems
+	 * @throws IOException Exception for file access problems
 	 * @throws ClassNotFoundException lets the program know if there is a desired class missing
 	 */
-	public CSVtoRDF(String CSVfilename, RecordHandler output, String uriNameSpace) throws SQLException, FileSystemException, ClassNotFoundException{
+	public CSVtoRDF(String CSVfilename, RecordHandler output, String uriNameSpace) throws SQLException, IOException, ClassNotFoundException{
 		this.tablename = "csv";
 		Class.forName("org.h2.Driver");
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TempCSVtoRDF", "sa", "");
@@ -99,10 +97,9 @@ public class CSVtoRDF {
 	
 	/**
 	 * @throws IOException If there is an I/O problem during either execute
-	 * @throws SQLException if there is a problem during the database usage
 	 * 
 	 */
-	public void execute() throws IOException, SQLException {
+	public void execute() throws IOException {
 			this.toDatabase.execute();
 
 			Set<String> tblnm = new TreeSet<String>();

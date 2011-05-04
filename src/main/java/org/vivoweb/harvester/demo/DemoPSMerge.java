@@ -9,7 +9,6 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.demo;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.diff.Diff;
@@ -35,6 +33,7 @@ import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.translate.XSLTranslator;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.Merge;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
@@ -176,7 +175,7 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Translate");
 		InitLog.initLogger(null, null);
 		// Execute Translate
-		InputStream xsl = VFS.getManager().resolveFile(new File("."), "config/datamaps/PeopleSoftToVivo.xsl").getContent().getInputStream();
+		InputStream xsl = FileAide.getInputStream("config/datamaps/PeopleSoftToVivo.xsl");
 		RecordHandler transRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoTransPS/store", "sa", "", "transData", "transID");
 		log.trace("Translating Merged Records");
 		XSLTranslator psTranslate = new XSLTranslator(mergedRH, transRH, xsl, true);

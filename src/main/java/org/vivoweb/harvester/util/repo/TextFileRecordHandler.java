@@ -11,9 +11,10 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,20 +33,12 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.FileType;
-import org.apache.commons.vfs.Selectors;
-import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,11 +58,11 @@ public class TextFileRecordHandler extends RecordHandler {
 	/**
 	 * The directory to store record files in
 	 */
-	protected FileObject fileDirObj;
+	protected String fileDir;
 	/**
 	 * The directory to store record metadata files in
 	 */
-	private FileObject metaDirObj;
+	private String metaDir;
 	
 	/**
 	 * Default Constructor
@@ -90,21 +83,20 @@ public class TextFileRecordHandler extends RecordHandler {
 	}
 	
 	/**
-	 * Setter for fileDirObj
+	 * Setter for fileDir
 	 * @param fileDir the directory path String
 	 * @throws IOException unable to connect
 	 */
 	private void setFileDirObj(String fileDir) throws IOException {
-		FileSystemManager fsMan = VFS.getManager();
-		this.fileDirObj = fsMan.resolveFile(new File("."), fileDir);
-		if(!this.fileDirObj.exists()) {
+		if(!FileAide.exists(fileDir)) {
 			log.debug("Directory '" + fileDir + "' Does Not Exist, attempting to create");
-			this.fileDirObj.createFolder();
+			FileAide.createFolder(fileDir);
 		}
-		this.metaDirObj = fsMan.resolveFile(this.fileDirObj, ".metadata");
-		if(!this.metaDirObj.exists()) {
+		this.fileDir = fileDir;
+		this.metaDir = fileDir+"/.metadata";
+		if(!FileAide.exists(this.metaDir)) {
 			log.debug("Directory '" + fileDir + "/.metadata' Does Not Exist, attempting to create");
-			this.metaDirObj.createFolder();
+			FileAide.createFolder(this.metaDir);
 		}
 	}
 	
@@ -140,35 +132,36 @@ public class TextFileRecordHandler extends RecordHandler {
 			return false;
 		}
 		// log.debug("Resolving file for record: " + cleanRec.getID());
-		FileObject fo = null;
+		String fo = null;
+		BufferedWriter bw = null;
 		try {
-			fo = this.fileDirObj.resolveFile(cleanRec.getID());
-			if(!overwrite && fo.exists()) {
-				throw new IOException("Failed to add record " + cleanRec.getID() + " because file " + fo.getName().getFriendlyURI() + " already exists.");
+			fo = this.fileDir+"/"+cleanRec.getID();
+			if(!overwrite && FileAide.exists(fo)) {
+				throw new IOException("Failed to add record " + cleanRec.getID() + " because file " + fo + " already exists.");
 			}
-			fo.createFile();
-			if(!fo.isWriteable()) {
-				throw new IOException("Insufficient file system privileges to add record " + cleanRec.getID() + " to file " + fo.getName().getFriendlyURI());
+			FileAide.createFile(fo);
+			if(!FileAide.isWriteable(fo)) {
+				throw new IOException("Insufficient file system privileges to add record " + cleanRec.getID() + " to file " + fo);
 			}
 			// log.debug("Writting data for record: "+cleanRec.getID());
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo.getContent().getOutputStream(false)));
+			bw = new BufferedWriter(new OutputStreamWriter(FileAide.getOutputStream(fo)));
 			bw.append(cleanRec.getData());
 			bw.close();
 			createMetaDataFile(cleanRec.getID());
 			setWritten(cleanRec, operator);
 		} catch(IOException e) {
-			if(fo != null) {
+			if(bw != null) {
 				try {
-					fo.close();
+					bw.close();
 				} catch(Exception ignore) {
 					// Ignore
 				}
 			}
 			throw e;
 		} finally {
-			if(fo != null) {
+			if(bw != null) {
 				try {
-					fo.close();
+					bw.close();
 				} catch(Exception ignore) {
 					// Ignore
 				}
@@ -183,12 +176,13 @@ public class TextFileRecordHandler extends RecordHandler {
 	 * @throws IOException error writing metadata file
 	 */
 	private void createMetaDataFile(String recID) throws IOException {
-		FileObject fmo = null;
+		String fmo = null;
+		BufferedWriter bw = null;
 		try {
-			fmo = this.metaDirObj.resolveFile(recID);
-			fmo.createFile();
+			fmo = this.metaDir+"/"+recID;
+			FileAide.createFile(fmo);
 			
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(false)));
+			bw = new BufferedWriter(new OutputStreamWriter(FileAide.getOutputStream(fmo)));
 			bw.append("<MetaDataRecordList>\n");
 			// bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
 			// bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
@@ -196,21 +190,20 @@ public class TextFileRecordHandler extends RecordHandler {
 			// bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
 			bw.append("</MetaDataRecordList>\n");
 			bw.close();
-		} catch(FileSystemException e) {
-			String error = "Error creating metadata for record " + recID;
-			if(fmo != null) {
-				error += " at file " + fmo.getName().getFriendlyURI();
+		} catch(IOException e) {
+			String error = "Error creating metadata for record " + recID + " at file " + fmo;
+			if(bw != null) {
 				try {
-					fmo.close();
+					bw.close();
 				} catch(Exception ignore) {
 					// Ignore
 				}
 			}
 			throw new IOException(error, e);
 		} finally {
-			if(fmo != null) {
+			if(bw != null) {
 				try {
-					fmo.close();
+					bw.close();
 				} catch(Exception ignore) {
 					// Ignore
 				}
@@ -220,47 +213,29 @@ public class TextFileRecordHandler extends RecordHandler {
 	
 	@Override
 	public void delRecord(String recID) throws IOException {
-		FileObject fo = null;
-		try {
-			fo = this.fileDirObj.resolveFile(recID);
-			if(!fo.exists()) {
-				log.warn("Attempted to delete record " + recID + ", but file " + fo.getName().getFriendlyURI() + " did not exist.");
-			} else if(!fo.isWriteable()) {
-				throw new IOException("Insufficient file system privileges to delete record " + recID + " from file " + fo.getName().getFriendlyURI());
-			} else if(!fo.delete()) {
-				throw new IOException("Failed to delete record " + recID + " from file " + fo.getName().getFriendlyURI());
-			}
-		} catch(IOException e) {
-			if(fo != null) {
-				try {
-					fo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
-			throw e;
-		} finally {
-			if(fo != null) {
-				try {
-					fo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
+		String fo = null;
+		fo = this.fileDir+"/"+recID;
+		if(!FileAide.exists(fo)) {
+			log.warn("Attempted to delete record " + recID + ", but file " + fo + " did not exist.");
+		} else if(!FileAide.isWriteable(fo)) {
+			throw new IOException("Insufficient file system privileges to delete record " + recID + " from file " + fo);
+		} else if(!FileAide.delete(fo)) {
+			throw new IOException("Failed to delete record " + recID + " from file " + fo);
 		}
 		delMetaData(recID);
 	}
 	
 	@Override
 	public String getRecordData(String recID) throws IllegalArgumentException, IOException {
-		FileObject fo = null;
+		String fo = null;
+		BufferedReader br = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			fo = this.fileDirObj.resolveFile(recID);
-			if(!fo.exists()) {
+			fo = this.fileDir+"/"+recID;
+			if(!FileAide.exists(fo)) {
 				throw new IllegalArgumentException("Record " + recID + " does not exist!");
 			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(fo.getContent().getInputStream()));
+			br = new BufferedReader(new InputStreamReader(FileAide.getInputStream(fo)));
 			String line;
 			while((line = br.readLine()) != null) {
 				sb.append(line);
@@ -269,18 +244,18 @@ public class TextFileRecordHandler extends RecordHandler {
 			br.close();
 			return sb.toString().trim();
 		} catch(IOException e) {
-			if(fo != null) {
+			if(br != null) {
 				try {
-					fo.close();
+					br.close();
 				} catch(Exception ignore) {
 					// Ignore
 				}
 			}
 			throw e;
 		} finally {
-			if(fo != null) {
+			if(br != null) {
 				try {
-					fo.close();
+					br.close();
 				} catch(Exception ignore) {
 					// Ignore
 				}
@@ -290,154 +265,109 @@ public class TextFileRecordHandler extends RecordHandler {
 	
 	@Override
 	protected void delMetaData(String recID) throws IOException {
-		FileObject fmo = null;
-		try {
-			fmo = this.metaDirObj.resolveFile(recID);
-			if(!fmo.exists()) {
-				log.warn("Attempted to delete record " + recID + " metadata, but file " + fmo.getName().getFriendlyURI() + " did not exist.");
-			} else if(!fmo.isWriteable()) {
-				throw new IOException("Insufficient file system privileges to delete record " + recID + " metadata from file " + fmo.getName().getFriendlyURI());
-			} else if(!fmo.delete()) {
-				throw new IOException("Failed to delete record " + recID + " metadata from file " + fmo.getName().getFriendlyURI());
-			}
-		} catch(IOException e) {
-			if(fmo != null) {
-				try {
-					fmo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
-			throw e;
-		} finally {
-			if(fmo != null) {
-				try {
-					fmo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
+		String fmo = this.metaDir+"/"+recID;
+		if(!FileAide.exists(fmo)) {
+			log.warn("Attempted to delete record " + recID + " metadata, but file " + fmo + " did not exist.");
+		} else if(!FileAide.isWriteable(fmo)) {
+			throw new IOException("Insufficient file system privileges to delete record " + recID + " metadata from file " + fmo);
+		} else if(!FileAide.delete(fmo)) {
+			throw new IOException("Failed to delete record " + recID + " metadata from file " + fmo);
 		}
 	}
 	
 	@Override
 	protected void addMetaData(Record rec, RecordMetaData rmd) throws IOException {
-		FileObject fmo = null;
+		String fmo = this.metaDir+"/"+rec.getID();
+		if(!FileAide.exists(fmo)) {
+			log.debug("Attempted to add record " + rec.getID() + " metadata, but file " + fmo + " did not exist. Initializing record metadata.");
+			createMetaDataFile(rec.getID());
+		} else if(!FileAide.isWriteable(fmo)) {
+			throw new IOException("Insufficient file system privileges to modify record " + rec.getID() + " metadata from file " + fmo);
+		}
+		
+		DocumentBuilder db;
+		Document doc;
+		InputStream is = null;
 		try {
-			fmo = this.metaDirObj.resolveFile(rec.getID());
-			if(!fmo.exists()) {
-				log.debug("Attempted to add record " + rec.getID() + " metadata, but file " + fmo.getName().getFriendlyURI() + " did not exist. Initializing record metadata.");
-				createMetaDataFile(rec.getID());
-			} else if(!fmo.isWriteable()) {
-				throw new IOException("Insufficient file system privileges to modify record " + rec.getID() + " metadata from file " + fmo.getName().getFriendlyURI());
+			db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			is = FileAide.getInputStream(fmo);
+			doc = db.parse(is);
+			is.close();
+		} catch(Exception e) {
+			if(is != null) {
+				is.close();
 			}
-			
-			DocumentBuilder db;
-			Document doc;
-			try {
-				db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				doc = db.parse(fmo.getContent().getInputStream());
-			} catch(ParserConfigurationException e) {
-				throw new IOException(e.getMessage(), e);
-			} catch(SAXException e) {
-				throw new IOException(e.getMessage(), e);
-			}
-			Element rootNode = doc.getDocumentElement();
-			Element newNode = doc.createElement("MetaDataRecord");
-			Element dateNode = doc.createElement("Date");
-			dateNode.appendChild(doc.createTextNode(rmd.getDate().getTimeInMillis() + ""));
-			newNode.appendChild(dateNode);
-			// Start Remove Here
-			Element dateNodeReadable = doc.createElement("DateReadable");
-			dateNodeReadable.appendChild(doc.createTextNode(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(rmd.getDate().getTime())));
-			newNode.appendChild(dateNodeReadable);
-			// Stop Remove Here
-			Element operationNode = doc.createElement("Operation");
-			operationNode.appendChild(doc.createTextNode(rmd.getOperation().toString()));
-			newNode.appendChild(operationNode);
-			Element operatorNode = doc.createElement("Operator");
-			operatorNode.appendChild(doc.createTextNode(rmd.getOperator().getName()));
-			newNode.appendChild(operatorNode);
-			Element md5Node = doc.createElement("MD5");
-			md5Node.appendChild(doc.createTextNode(rmd.getMD5()));
-			newNode.appendChild(md5Node);
-			rootNode.appendChild(newNode);
-			
-			try {
-				Transformer trans = TransformerFactory.newInstance().newTransformer();
-				trans.setOutputProperty(OutputKeys.INDENT, "yes");
-				trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-				trans.transform(new DOMSource(doc), new StreamResult(fmo.getContent().getOutputStream(false)));
-			} catch(TransformerConfigurationException e) {
-				throw new IOException(e.getMessage(), e);
-			} catch(TransformerFactoryConfigurationError e) {
-				throw new IOException(e.getMessage(), e);
-			} catch(TransformerException e) {
-				throw new IOException(e.getMessage(), e);
-			}
-			
-			// BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fmo.getContent().getOutputStream(true)));
-			// bw.append("<MetaDataRecord>\n");
-			// bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
-			// bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
-			// bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
-			// bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
-			// bw.append("</MetaDataRecord>\n");
-			// bw.close();
-		} catch(IOException e) {
-			if(fmo != null) {
-				try {
-					fmo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
-			throw e;
+			throw new IOException(e.getMessage(), e);
 		} finally {
-			if(fmo != null) {
-				try {
-					fmo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
+			if(is != null) {
+				is.close();
 			}
 		}
+		Element rootNode = doc.getDocumentElement();
+		Element newNode = doc.createElement("MetaDataRecord");
+		Element dateNode = doc.createElement("Date");
+		dateNode.appendChild(doc.createTextNode(rmd.getDate().getTimeInMillis() + ""));
+		newNode.appendChild(dateNode);
+		// Start Remove Here
+		Element dateNodeReadable = doc.createElement("DateReadable");
+		dateNodeReadable.appendChild(doc.createTextNode(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(rmd.getDate().getTime())));
+		newNode.appendChild(dateNodeReadable);
+		// Stop Remove Here
+		Element operationNode = doc.createElement("Operation");
+		operationNode.appendChild(doc.createTextNode(rmd.getOperation().toString()));
+		newNode.appendChild(operationNode);
+		Element operatorNode = doc.createElement("Operator");
+		operatorNode.appendChild(doc.createTextNode(rmd.getOperator().getName()));
+		newNode.appendChild(operatorNode);
+		Element md5Node = doc.createElement("MD5");
+		md5Node.appendChild(doc.createTextNode(rmd.getMD5()));
+		newNode.appendChild(md5Node);
+		rootNode.appendChild(newNode);
+		
+		OutputStream os = null;
+		try {
+			Transformer trans = TransformerFactory.newInstance().newTransformer();
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
+			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			os = FileAide.getOutputStream(fmo);
+			trans.transform(new DOMSource(doc), new StreamResult(os));
+		} catch(Exception e) {
+			if(os != null) {
+				os.close();
+			}
+			throw new IOException(e.getMessage(), e);
+		} finally {
+			if(os != null) {
+				os.close();
+			}
+		}
+		
+		// OutputStream os = FileAide.getOutputStream(fmo);
+		// BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
+		// bw.append("<MetaDataRecord>\n");
+		// bw.append("  <Date>"+rmd.getDate().getTimeInMillis()+"</Date>\n");
+		// bw.append("  <Operation>"+rmd.getOperation()+"</Operation>\n");
+		// bw.append("  <Operator>"+rmd.getOperator().getName()+"</Operator>\n");
+		// bw.append("  <MD5>"+rmd.getMD5()+"</MD5>\n");
+		// bw.append("</MetaDataRecord>\n");
+		// bw.close();
+		// os.close();
 	}
 	
 	@Override
 	protected SortedSet<RecordMetaData> getRecordMetaData(String recID) throws IOException {
-		FileObject fmo = null;
 		try {
-			try {
-				fmo = this.metaDirObj.resolveFile(recID);
-				if(!fmo.exists()) {
-					throw new IOException("Attempted to retrieve record " + recID + " metadata, but file " + fmo.getName().getFriendlyURI() + " does not exist");
-				} else if(!fmo.isReadable()) {
-					throw new IOException("Insufficient file system privileges to read record " + recID + " metadata from file " + fmo.getName().getFriendlyURI());
-				}
-				return new TextFileMetaDataParser().parseMetaData(fmo);
-			} catch(ParserConfigurationException e) {
-				throw new IOException(e.getMessage(), e);
-			} catch(SAXException e) {
-				throw new IOException(e.getMessage(), e);
+			String fmo = this.metaDir+"/"+recID;
+			if(!FileAide.exists(fmo)) {
+				throw new IOException("Attempted to retrieve record " + recID + " metadata, but file " + fmo + " does not exist");
+			} else if(!FileAide.isReadable(fmo)) {
+				throw new IOException("Insufficient file system privileges to read record " + recID + " metadata from file " + fmo);
 			}
-		} catch(IOException e) {
-			if(fmo != null) {
-				try {
-					fmo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
-			throw e;
-		} finally {
-			if(fmo != null) {
-				try {
-					fmo.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
+			return new TextFileMetaDataParser().parseMetaData(fmo);
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e.getMessage(), e);
+		} catch(SAXException e) {
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 	
@@ -463,17 +393,11 @@ public class TextFileRecordHandler extends RecordHandler {
 			Set<String> allFileListing = new TreeSet<String>();
 			log.debug("Compiling list of records");
 			try {
-				for(FileObject file : TextFileRecordHandler.this.fileDirObj.findFiles(Selectors.SELECT_CHILDREN)) {
-					if(!file.isHidden() && (file.getType() == FileType.FILE)) {
-						allFileListing.add(file.getName().getBaseName());
-						// log.debug("Found file "+file.getName().getBaseName());
-					}
-				}
-			} catch(FileSystemException e) {
+				allFileListing.addAll(FileAide.getNonHiddenChildren(TextFileRecordHandler.this.fileDir));
+			} catch(IOException e) {
 				log.error(e.getMessage(), e);
 			}
 			this.fileNameIter = allFileListing.iterator();
-			System.gc();
 			log.debug("List compiled");
 		}
 		
@@ -546,10 +470,10 @@ public class TextFileRecordHandler extends RecordHandler {
 		 * @throws SAXException error parsing xml
 		 * @throws IOException error reading xml
 		 */
-		protected SortedSet<RecordMetaData> parseMetaData(FileObject fmo) throws ParserConfigurationException, SAXException, IOException {
+		protected SortedSet<RecordMetaData> parseMetaData(String fmo) throws ParserConfigurationException, SAXException, IOException {
 			SAXParserFactory spf = SAXParserFactory.newInstance(); // get a factory
 			SAXParser sp = spf.newSAXParser(); // get a new instance of parser
-			sp.parse(fmo.getContent().getInputStream(), this); // parse the file and also register this class for call
+			sp.parse(FileAide.getInputStream(fmo), this); // parse the file and also register this class for call
 			// backs
 			return this.rmdSet;
 		}
@@ -613,8 +537,7 @@ public class TextFileRecordHandler extends RecordHandler {
 	
 	@Override
 	public void close() throws IOException {
-		this.fileDirObj.close();
-		this.metaDirObj.close();
+		// Do nothing
 	}
 	
 	@Override
