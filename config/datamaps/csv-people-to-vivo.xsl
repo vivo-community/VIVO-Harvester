@@ -21,7 +21,8 @@
 	xmlns:core = 'http://vivoweb.org/ontology/core#'
 	xmlns:score = 'http://vivoweb.org/ontology/score#'
     xmlns:foaf = 'http://xmlns.com/foaf/0.1/'
-    xmlns:bibo = 'http://purl.org/ontology/bibo/'>
+    xmlns:bibo = 'http://purl.org/ontology/bibo/'
+    xmlns:db-csv='nullfields/csv/'>
 	
 	<xsl:output method = "xml" indent = "yes"/>
 	<xsl:variable name = "baseURI">http://vivoweb.org/harvest/csvfile/</xsl:variable>
@@ -41,7 +42,7 @@
 		<xsl:variable name = "this" select = "." />
 		<xsl:call-template name = "t_People">
 		  <xsl:with-param name = "this" select = "$this" />
-          <xsl:with-param name = "personid" select = "$this/PeopleCSVFile:PersonID" />
+          <xsl:with-param name = "personid" select = "$this/db-csv:PERSONID" />
 		</xsl:call-template>
 	</xsl:template>
 		
@@ -52,59 +53,85 @@
 		<rdf:Description rdf:about = "{$baseURI}person/person{$personid}">
             <rdf:type rdf:resource = "http://xmlns.com/foaf/0.1/Person"/>
 			<score:personID><xsl:value-of select = "$personid" /></score:personID>
-            <core:workEmail><xsl:value-of select = "$this/PeopleCSVFile:Email" /></core:workEmail>
-            <core:workPhone><xsl:value-of select = "$this/PeopleCSVFile:Phone"/></core:workPhone>
-            <core:workFax><xsl:value-of select = "$this/PeopleCSVFile:Fax"/></core:workFax>
-            <foaf:firstName><xsl:value-of select = "$this/PeopleCSVFile:FirstName"/></foaf:firstName>
-            <foaf:lastName><xsl:value-of select = "$this/PeopleCSVFile:LastName"/></foaf:lastName>
-            <core:middleName><xsl:value-of select = "$this/PeopleCSVFile:MidName"/></core:middleName>
-            <bibo:prefixName><xsl:value-of select = "$this/PeopleCSVFile:NamePrefix"/></bibo:prefixName>
-            <bibo:suffixName><xsl:value-of select = "$this/PeopleCSVFile:NameSuffix"/></bibo:suffixName>
-            <rdfs:label><xsl:value-of select = "$this/PeopleCSVFile:FullName"/></rdfs:label>
-            <core:preferredTitle><xsl:value-of select = "$this/PeopleCSVFile:Title"/></core:preferredTitle>
-            <xsl:variable name = "startDate" select = "$this/PeopleCSVFile:StartDate" />
-            <xsl:variable name = "endDate" select = "$this/PeopleCSVFile:EndDate" />
+            <xsl:if test="not( $this/db-csv:EMAIL = '' or $this/db-csv:EMAIL = 'null' )">
+                <core:workEmail><xsl:value-of select = "$this/db-csv:EMAIL" /></core:workEmail>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:PHONE = '' or $this/db-csv:PHONE = 'null' )">
+                <core:workPhone><xsl:value-of select = "$this/db-csv:PHONE"/></core:workPhone>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:FAX = '' or $this/db-csv:FAX = 'null' )">
+                <core:workFax><xsl:value-of select = "$this/db-csv:FAX"/></core:workFax>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:FIRSTNAME = '' or $this/db-csv:FIRSTNAME = 'null' )">
+                <foaf:firstName><xsl:value-of select = "$this/db-csv:FIRSTNAME"/></foaf:firstName>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:LASTNAME = '' or $this/db-csv:LASTNAME = 'null' )">
+                <foaf:lastName><xsl:value-of select = "$this/db-csv:LASTNAME"/></foaf:lastName>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:MIDNAME = '' or $this/db-csv:MIDNAME = 'null' )">
+                <core:middleName><xsl:value-of select = "$this/db-csv:MIDNAME"/></core:middleName>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:NAMEPREFIX = '' or $this/db-csv:NAMEPREFIX = 'null' )">
+                <bibo:prefixName><xsl:value-of select = "$this/db-csv:NAMEPREFIX"/></bibo:prefixName>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:NAMESUFFIX = '' or $this/db-csv:NAMESUFFIX = 'null' )">
+                <bibo:suffixName><xsl:value-of select = "$this/db-csv:NAMESUFFIX"/></bibo:suffixName>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:FULLNAME = '' or $this/db-csv:FULLNAME = 'null' )">
+                <rdfs:label><xsl:value-of select = "$this/db-csv:FULLNAME"/></rdfs:label>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:TITLE = '' or $this/db-csv:TITLE = 'null' )">
+                <core:preferredTitle><xsl:value-of select = "$this/db-csv:TITLE"/></core:preferredTitle>
+            </xsl:if>
+            
+            <xsl:if test="not( $this/db-csv:STARTDATE = '' or $this/db-csv:STARTDATE = 'null' )">
     		<core:startDate rdf:datatype = "http://www.w3.org/2001/XMLSchema#date">
-				<xsl:analyze-string select = "$this/PeopleCSVFile:StartDate" regex = "^(....-..-..).*?$">
+				<xsl:analyze-string select = "$this/db-csv:STARTDATE" regex = "^(....-..-..).*?$">
 					<xsl:matching-substring>
 						<xsl:value-of select = "regex-group(1)"/>
 					</xsl:matching-substring>
 				</xsl:analyze-string>
 			</core:startDate>
+			</xsl:if>
+			
+            <xsl:if test="not( $this/db-csv:ENDDATE = '' or $this/db-csv:ENDDATE = 'null' )">
 			<core:endDate rdf:datatype = "http://www.w3.org/2001/XMLSchema#date">
-				<xsl:analyze-string select = "$this/PeopleCSVFile:EndDate" regex = "^(....-..-..).*?$">
+				<xsl:analyze-string select = "$this/db-csv:ENDDATE" regex = "^(....-..-..).*?$">
 					<xsl:matching-substring>
 						<xsl:value-of select = "regex-group(1)"/>
 					</xsl:matching-substring>
 				</xsl:analyze-string>
 			</core:endDate>
+			</xsl:if>
 			
-            <xsl:variable name = "type" select = "$this/PeopleCSVFile:PositionType" />
+            <xsl:if test="not( $this/db-csv:POSITIONTYPE = '' or $this/db-csv:POSITIONTYPE = 'null' )">
+            <xsl:variable name = "type" select = "$this/db-csv:POSITIONTYPE" />
             <xsl:choose>
                 <xsl:when test = "$type = 'faculty'">
                     <rdf:type rdf:resource = "http://vivoweb.org/ontology/core#FacultyMember"/>
                 </xsl:when>
-                <xsl:when test = "$type = 'non academic">
+                <xsl:when test = "$type = 'non academic'">
                     <rdf:type rdf:resource = "http://vivoweb.org/ontology/core#NonAcademic"/>
                 </xsl:when>
-                <xsl:when test = "$type = 'emeritus professor">
+                <xsl:when test = "$type = 'emeritus professor'">
                     <rdf:type rdf:resource = "http://vivoweb.org/ontology/core#EmeritusProfessor"/>
                 </xsl:when>
             </xsl:choose>
             
-            <xsl:variable name = "orgID" select = "$this/PeopleCSVFile:DepartmentID" />
+            <xsl:if test="not( $this/db-csv:DEPARTMENTID = '' or $this/db-csv:DEPARTMENTID = 'null' )">
+            <xsl:variable name = "orgID" select = "$this/db-csv:DEPARTMENTID" />
             <core:personInPosition>
-                <rdf:Description rdf:about="{$baseURI}position/positionFor{$personid}in{$fullorgnum}as{$type}from{$startDate}">
+                <rdf:Description rdf:about="{$baseURI}position/positionFor{$personid}as{$type}from{$this/db-csv:STARTDATE}">
                     <core:positionInOrganization>
                         <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
                         <xsl:choose>
 			                <xsl:when test = "$type = 'faculty'">
 			                    <rdf:type rdf:resource = "http://vivoweb.org/ontology/core#FacultyPosition"/>
 			                </xsl:when>
-			                <xsl:when test = "$type = 'non academic">
+			                <xsl:when test = "$type = 'non academic'">
 			                    <rdf:type rdf:resource = "http://vivoweb.org/ontology/core#NonAcademicPosition"/>
 			                </xsl:when>
-			                <xsl:when test = "$type = 'emeritus professor">
+			                <xsl:when test = "$type = 'emeritus professor'">
 			                    <rdf:type rdf:resource = "http://vivoweb.org/ontology/core#FacultyPosition"/>
 			                </xsl:when>
 			            </xsl:choose>
@@ -112,6 +139,8 @@
                 
                 </rdf:Description>
             </core:personInPosition>
+            </xsl:if>
+            </xsl:if>
 		</rdf:Description>
-	
+	</xsl:template>
 </xsl:stylesheet>

@@ -176,6 +176,8 @@ public class Smush {
 	 * @return a new model containing only resources about the smushed statements.
 	 */
 	public static JenaConnect smushResources(JenaConnect inJC, String property, String namespace) { 
+		log.debug("Smushing on property:\"" + property + "\"");
+		log.debug((namespace != null )? " within namespace:\""+ namespace + "\"" : " any namespace" );
 		JenaConnect outJC = new MemJenaConnect();
 		Model inModel = inJC.getJenaModel();
 		Property prop = inModel.createProperty(property);

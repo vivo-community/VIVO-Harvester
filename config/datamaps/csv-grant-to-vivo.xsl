@@ -50,8 +50,11 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Agreement"/>
-			<score:GrantID><xsl:value-of select="$grantid" /></score:GrantID>
-			<rdfs:label><xsl:value-of select="$this/db-csv:GRANTNAME"/></rdfs:label>
+			<score:grantID><xsl:value-of select="$grantid" /></score:grantID>
+            <xsl:if test="not( $this/db-csv:GRANTNAME = '' or $this/db-csv:GRANTNAME = 'null' )">
+            <rdfs:label><xsl:value-of select="$this/db-csv:GRANTNAME"/></rdfs:label>
+            </xsl:if>
+            <xsl:if test="not( $this/db-csv:ADMINDEPARTMENTID = '' or $this/db-csv:ADMINDEPARTMENTID = 'null' )">
 			<core:administeredBy>
 <!--			Creating a department to match with or a stub if no match-->
 				<rdf:Description rdf:about="{$baseURI}org/org{$this/db-csv:ADMINDEPARTMENTID}">
@@ -60,11 +63,18 @@
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 				</rdf:Description>
 			</core:administeredBy>
+			</xsl:if>
+            <xsl:if test="not( $this/db-csv:AMOUNT = '' or $this/db-csv:AMOUNT = 'null' )">
 			<core:totalAwardAmount><xsl:value-of select="$this/db-csv:AMOUNT"/></core:totalAwardAmount>
+			</xsl:if>
+			
+            <xsl:if test="not( $this/db-csv:SPONAWARDID = '' or $this/db-csv:SPONAWARDID = 'null' )">
             <core:sponsorAwardId><xsl:value-of select="$this/db-csv:SPONAWARDID"/></core:sponsorAwardId>
+            </xsl:if>
 			
 			<xsl:choose>
-				<xsl:when test="string($this/db-csv:FLOWTHRUORG) = ''">
+				<xsl:when test="string($this/db-csv:FLOWTHRUORG) = '' or string($this/db-csv:FLOWTHRUORG) = 'null' "> 
+                    <xsl:if test="not( $this/db-csv:AWARDINGORG = '' or $this/db-csv:AWARDINGORG = 'null' )">             
 					<core:grantAwardedBy>
 						<rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-csv:AwardingOrgID}For{$grantid}">
 							<rdfs:label><xsl:value-of select="$this/db-csv:AWARDINGORG"/></rdfs:label>
@@ -73,8 +83,10 @@
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 						</rdf:Description>
 					</core:grantAwardedBy>
+					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
+				    <xsl:if test="not( $this/db-csv:AWARDINGORG = '' or $this/db-csv:AWARDINGORG = 'null' )">
 					<core:grantSubcontractedThrough>
 						<rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-csv:AWARDINGORGID}For{$grantid}">
 							<rdfs:label><xsl:value-of select="$this/db-csv:AWARDINGORG"/></rdfs:label>
@@ -91,6 +103,7 @@
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 						</rdf:Description>
 					</core:grantAwardedBy>
+					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
             <core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/inGrant{$grantid}" />
@@ -103,6 +116,7 @@
              <core:end rdf:resource="{$baseURI}timeInterval/EndinGrant{$grantid}"/>
          </rdf:Description>
          
+         <xsl:if test="not( $this/db-csv:STARTDATE = '' or $this/db-csv:STARTDATE = 'null' )">
          <rdf:Description rdf:about="{$baseURI}timeInterval/StartinGrant{$grantid}">
              <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
              <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
@@ -115,7 +129,9 @@
                  </xsl:analyze-string>
              </core:dateTime>
          </rdf:Description>
+         </xsl:if>
                   
+         <xsl:if test="not( $this/db-csv:ENDDATE = '' or $this/db-csv:ENDDATE = 'null' )">
          <rdf:Description rdf:about="{$baseURI}timeInterval/EndinGrant{$grantid}">
              <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
              <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
@@ -128,6 +144,7 @@
                  </xsl:analyze-string>
              </core:dateTime>
          </rdf:Description>
+         </xsl:if>
          
 		<xsl:if test="not( $this/db-csv:PIID = '' or $this/db-csv:PIID = 'null' )">
 		<!--            Creating the PI-->
@@ -144,6 +161,9 @@
 		              <rdf:Description rdf:about="{$baseURI}person/person{$this/db-csv:PIID}">
 							<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 							<score:personID><xsl:value-of select="$this/db-csv:PIID"/></score:personID>
+							<xsl:if test="not( $this/db-csv:NAMEPI = '' or $this/db-csv:NAMEPI = 'null' )">
+                                <rdfs:label><xsl:value-of select="$this/db-csv:NAMEPI"/></rdfs:label>
+                            </xsl:if>
 							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 							<core:hasPrincipalInvestigatorRole rdf:resource="{$baseURI}piRole/inGrant{$grantid}For{$this/db-csv:PIID}"/>
 		              </rdf:Description>
@@ -165,6 +185,9 @@
 				<rdf:Description rdf:about="{$baseURI}person/person{$this/db-csv:COPIID}">
 					<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 					<score:personID><xsl:value-of select="$this/db-csv:COPIID"/></score:personID>
+                       <xsl:if test="not( $this/db-csv:NAMECOPI = '' or $this/db-csv:NAMECOPI = 'null' )">
+                           <rdfs:label><xsl:value-of select="$this/db-csv:NAMECOPI"/></rdfs:label>
+                       </xsl:if>
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 					<core:hasCo-PrincipalInvestigatorRole rdf:resource="{$baseURI}piRole/inGrant{$grantid}For{$this/db-csv:COPIID}"/>
 				</rdf:Description>

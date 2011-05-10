@@ -63,15 +63,19 @@ CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n $NAMESPACE"
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 
 #matching properties
-CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
+GRANTIDNUM="http://vivoweb.org/ontology/score#grantID"
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
-UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
-UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
+PERSONIDNUM="http://vivoweb.org/ontology/score#personID"
+DEPTIDNUM="http://vivoweb.org/ontology/score#deptID"
 ROLEIN="http://vivoweb.org/ontology/core#roleIn"
 PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
 COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
-BASEURI="http://vivoweb.org/harvest/ufl/csv/"
+DATETIME="http://vivoweb.org/ontology/core#dateTime"
+BASEURI="http://vivoweb.org/harvest/csvfile/"
+
+ADMINNAME="USERNAME"
+ADMINPASS="PASSWORD"
 
 #clear old fetches
 rm -rf $RAWRHDIR
@@ -104,7 +108,7 @@ rm -rf $MODELDIR
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -h $TFRH -HfileDir=$RDFRHDIR -n $NAMESPACE
 
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.rdf.xml
-exit
+
 # backup H2 transfer Model
 BACKMODEL="model"
 backup-path $MODELDIR $BACKMODEL
@@ -114,25 +118,25 @@ backup-path $MODELDIR $BACKMODEL
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
-#smushes in-place(-r) on the contract number THEN on the UFID
-$Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
+#smushes in-place(-r) on the Grant id THEN on the person ID  then deptID
+$Smush $SCOREINPUT -P $GRANTIDNUM -P $PERSONIDNUM -P $DEPTIDNUM -P $DATETIME -n ${BASEURI} -r
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.rdf.xml
 
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
 
-# Scoring of Grants on ContractNumber
-$Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
+# Scoring of Grants on GrantNumber
+$Score $SCOREMODELS -AGrantNumber=$EQTEST -WGrantNumber=1.0 -FGrantNumber=$GRANTIDNUM -PGrantNumber=$GRANTIDNUM -n ${BASEURI}grant/
 
-#$Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
-
-# Scoring of people on UFID
-$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
+# Scoring of people on PERSONIDNUM
+$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$PERSONIDNUM -Pufid=$PERSONIDNUM -n ${BASEURI}person/
 
 
-$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
+$Smush $SCOREINPUT -P $DEPTIDNUM -n ${BASEURI}org/ -r
 # Scoring of orgs on DeptID
-$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
+$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$DEPTIDNUM -PdeptID=$DEPTIDNUM -n ${BASEURI}org/
 
 
 $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
@@ -151,6 +155,7 @@ $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
 
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched.rdf.xml
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}grant/
@@ -174,6 +179,13 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}piRole/
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}coPiRole/
+
+# Execute ChangeNamespace to get co-PI roles into current namespace
+# the -o flag value is determined by the XSLT used to translate the data
+$ChangeNamespace $CNFLAGS -u ${BASEURI}timeInterval/
+
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.rdf.xml
 
 # backup H2 matched Model
 BACKMATCHED="matched"
@@ -220,6 +232,15 @@ backup-mysqldb $BACKPOSTDB
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
-/etc/init.d/tomcat6 stop
-/etc/init.d/apache2 restart
-/etc/init.d/tomcat6 start
+
+
+rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+rm -f cookie.txt
+wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+
+rm -f "SearchIndex"
+wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
+
+#/etc/init.d/tomcat6 stop
+#/etc/init.d/apache2 restart
+#/etc/init.d/tomcat6 start

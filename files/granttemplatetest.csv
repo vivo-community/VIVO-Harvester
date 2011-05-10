@@ -1,5 +1,7 @@
-"GrantID","GrantName","AdminDepartmentID","Amount","SponAwardID","AwardingOrg","AwardingOrgID","FlowThruOrg","FlowThruOrgID","StartDate","EndDate","PIID","CoPIID"
-49507,"(Acosog) Z9001: Phase III Rndmzd Double-Blind Study of Adjuvant St1571 (Gleever Tm) vs Placebo",29300500,33412,"Z9001","NATL INST OF HLTH NIAID","GM03064",,,"2002-05-12","2011-09-07",90740520,
-70282,"A Simple Test of Quasar Outflow",16060100,43625,"GO8-9102X","SMITHSONIAN INST ASTRO OBSERV","GM02529",,,"2008-22-06","2010-21-06",64343320,
-12345,"testing",21202504,10000,"goldblob","knoxblox","gm12345","jello",24323,"2009-01-01","2011-01-01",12245783,45872690
-23456,"test",44852674,12300,"whop","noob","Gmjump","blam",53253,"2009-01-01","2011-01-01",32653236,78745985
+"GrantID","GrantName","AdminDepartmentID","Amount","SponAwardID","AwardingOrg","AwardingOrgID","FlowThruOrg","FlowThruOrgID","StartDate","EndDate","PIID","NamePI","CoPIID","NameCoPI"
+49507,"(Acosog) Z9001: Phase III Rndmzd Double-Blind Study of Adjuvant St1571 (Gleever Tm) vs Placebo",29300500,33412,"Z9001","NATL INST OF HLTH NIAID","GM03064",,,"2002-05-12","2011-09-07",90740520,"Joe Peak",,
+70282,"A Simple Test of Quasar Outflow",16060100,43625,"GO8-9102X","SMITHSONIAN INST ASTRO OBSERV","GM02529",,,"2008-22-06","2010-21-06",64343320,"Susan Dee",,
+12345,"testing",21202504,10000,"goldblob","knoxblox","gm12345","jello",24323,"2009-01-01","2011-01-01",12245783,"Bill Cosby",45872690,"Kool Aid"
+23456,"test",44852674,12300,"whop","noob","Gmjump","blam",53253,"2009-01-01","2011-01-01",32653236,"Powner Man",78745985,"Home Console"
+12345,,,,,,,,,,,90740520,,,
+23456,,,,,,,,,,,64343320,,,
