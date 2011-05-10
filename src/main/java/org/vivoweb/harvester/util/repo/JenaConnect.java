@@ -90,7 +90,7 @@ public abstract class JenaConnect {
 		}
 		for(String param : paramList.keySet()) {
 			if(!param.equalsIgnoreCase("dbUser") && !param.equalsIgnoreCase("dbPass")) {
-				log.debug("'" + param + "' - '" + paramList.get(param) + "'");
+				log.trace("'" + param + "' - '" + paramList.get(param) + "'");
 			}
 		}
 		return build(paramList);
@@ -474,10 +474,10 @@ public abstract class JenaConnect {
 		try {
 //			log.debug("query:\n" + queryString);
 			if(datasetMode) {
-				log.debug("Executing query against dataset");
+//				log.trace("Executing query against dataset");
 				UpdateAction.execute(UpdateFactory.create(queryString), getDataset());
 			} else {
-				log.debug("Executing query against model");
+//				log.trace("Executing query against model");
 				UpdateAction.execute(UpdateFactory.create(queryString), getJenaModel());
 			}
 		} finally {
@@ -526,10 +526,10 @@ public abstract class JenaConnect {
 		try {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
 			if(datasetMode) {
-				log.debug("Executing query against dataset");
+//				log.trace("Executing query against dataset");
 				qe = QueryExecutionFactory.create(query, getDataset());
 			} else {
-				log.debug("Executing query against model");
+//				log.trace("Executing query against model");
 				qe = QueryExecutionFactory.create(query, getJenaModel());
 			}
 			if(query.isSelectType()) {
@@ -552,14 +552,14 @@ public abstract class JenaConnect {
 				
 				resultModel.write(out, resultFormatParam);
 			}
-		} catch(QueryParseException e) {
+		} catch(QueryParseException e1) {
 			try {
 				executeUpdateQuery(queryParam, datasetMode);
 				log.info("Update Successfully Applied");
 			} catch(QueryParseException e2) {
 				log.error("Invalid Query:\n"+queryParam);
-				log.debug("Attempted Query Exception:",e);
-				log.debug("Attempted Update Exception:",e2);
+				log.trace("Attempted Query Exception:",e1);
+				log.trace("Attempted Update Exception:",e2);
 			}
 		} finally {
 			if(qe != null) {
@@ -720,7 +720,7 @@ public abstract class JenaConnect {
 	 * Output the jena model information
 	 */
 	public void printParameters() {
-		log.debug("modelName: '" + getModelName() + "'");
+		log.trace("modelName: '" + getModelName() + "'");
 	}
 	
 	/**

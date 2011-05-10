@@ -13,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -81,11 +80,10 @@ public class JDBCFetchTest extends TestCase {
 	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
 	 * JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
 	 * @throws IOException error
-	 * @throws SQLException error
 	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
 	 */
-	public final void testJDBCFetchConstRunDBALL() throws IOException, SQLException, ParserConfigurationException, SAXException {
+	public final void testJDBCFetchConstRunDBALL() throws IOException, ParserConfigurationException, SAXException {
 		log.info("BEGIN testJDBCFetchConstRunDBALL");
 		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJDBCFetchRHDB", "sa", "", "recordTable", "dataField");
 		runConstTest(new JDBCFetch(this.conn, this.rh, "jdbc:h2:mem:TestJDBCFetchDB/"));
@@ -99,9 +97,8 @@ public class JDBCFetchTest extends TestCase {
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
-	 * @throws SQLException error
 	 */
-	public final void testJDBCFetchConstRunQuery() throws IOException, ParserConfigurationException, SAXException, SQLException {
+	public final void testJDBCFetchConstRunQuery() throws IOException, ParserConfigurationException, SAXException {
 		log.info("BEGIN testJDBCFetchConstRunQuery");
 		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJDBCFetchRHQuery", "sa", "", "recordTable", "dataField");
 		HashMap<String, String> queryStrings = new HashMap<String, String>();

@@ -228,7 +228,7 @@ public class DemoPSMerge {
 		inputPredicates.put("ufid", "http://vivo.ufl.edu/ontology/vivo-ufl/ufid");
 		vivoPredicates.put("ufid", "http://vivo.ufl.edu/ontology/vivo-ufl/ufid");
 		log.trace("Running People Score");
-		Score psScorePeople = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/person/", weights, 100);
+		Score psScorePeople = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/person/", weights, null, 100);
 		psScorePeople.execute();
 		
 		System.setProperty("process-task", "Score.Departments");
@@ -245,7 +245,7 @@ public class DemoPSMerge {
 		inputPredicates.put("deptId", "http://vivo.ufl.edu/ontology/vivo-ufl/deptID");
 		vivoPredicates.put("deptId", "http://vivo.ufl.edu/ontology/vivo-ufl/deptID");
 		log.trace("Running Departments Score");
-		Score psScoreDepts = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/org/", weights, 100);
+		Score psScoreDepts = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/org/", weights, null, 100);
 		psScoreDepts.execute();
 		
 		System.setProperty("process-task", "Match.PeopleDepartments");
@@ -277,7 +277,7 @@ public class DemoPSMerge {
 		inputPredicates.put("deptPos", "http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition");
 		vivoPredicates.put("deptPos", "hhttp://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition");
 		log.trace("Running Position Score");
-		Score psScorePos = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/position/", weights, 100);
+		Score psScorePos = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/position/", weights, null, 100);
 		psScorePos.execute();
 		
 		System.setProperty("process-task", "Match.Positions");

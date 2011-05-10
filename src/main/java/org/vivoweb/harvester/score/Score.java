@@ -40,7 +40,9 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  * VIVO Score
@@ -95,6 +97,10 @@ public class Score {
 	 */
 	private boolean equalityOnlyMode;
 	/**
+	 * Match threshold
+	 */
+	private final Float matchThreshold;
+	/**
 	 * number of records to use in batch
 	 */
 	private int batchSize;
@@ -110,9 +116,10 @@ public class Score {
 	 * @param vivoPredicates the predicates to look for in vivoJena model
 	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 * @param weights the weightings (0.0 , 1.0) for this score
+	 * @param matchThreshold score things with a total current score greater than or equal to this threshold
 	 * @param batchSize number of records to use in batch
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, int batchSize) {
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, Float matchThreshold, int batchSize) {
 		if(inputJena == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -130,7 +137,7 @@ public class Score {
 		
 		String tempDir = tempJenaDir;
 		if(tempDir == null) {
-			log.debug("temp model directory is not specified, using system temp directory");
+			log.trace("temp model directory is not specified, using system temp directory");
 			//			tempDir = File.createTempFile("tempVivoInputCopyJena", "db").getAbsolutePath();
 			//			log.debug("temp model is not specifiedhi , using memory jena model");
 			this.tempJena = new MemJenaConnect();
@@ -186,6 +193,7 @@ public class Score {
 			}
 		}
 		this.equalityOnlyMode = test;
+		this.matchThreshold = matchThreshold;
 		setBatchSize(batchSize);
 		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
 	}
@@ -215,6 +223,7 @@ public class Score {
 			opts.getValueMap("F"), 
 			opts.get("n"), 
 			initWeights(opts.getValueMap("W")), 
+			(opts.has("m")?Float.valueOf(opts.get("m")):null), 
 			Integer.parseInt(opts.get("b"))
 		);
 	}
@@ -303,6 +312,7 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivoJena-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("approximate number of triples to process in each batch - default 2000 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("2000").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("matchThreshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(false));
 		return parser;
 	}
 	
@@ -315,24 +325,24 @@ public class Score {
 		// Bring all models into a single Dataset
 		JenaConnect vivoClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
 		if(vivoClone.isEmpty()) {
-			log.trace("Loading VIVO model into temp copy model");
+			log.debug("Loading VIVO model into temp copy model");
 			vivoClone.loadRdfFromJC(this.vivoJena);
-			log.debug("vivo clone contents:\n"+vivoClone.exportRdfToString());
+//			log.debug("vivo clone contents:\n"+vivoClone.exportRdfToString());
 		} else {
-			log.trace("VIVO model already in temp copy model");
+			log.debug("VIVO model already in temp copy model");
 		}
 		JenaConnect inputClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
 		if(inputClone.isEmpty()) {
-			log.trace("Loading Input model into temp copy model");
+			log.debug("Loading Input model into temp copy model");
 			inputClone.loadRdfFromJC(this.inputJena);
-			log.debug("input clone contents:\n"+inputClone.exportRdfToString());
+//			log.debug("input clone contents:\n"+inputClone.exportRdfToString());
 		} else {
-			log.trace("Input model already in temp copy model");
+			log.debug("Input model already in temp copy model");
 		}
 		Dataset ds = this.tempJena.getDataset();
-		log.debug("testing Dataset");
+		log.trace("testing Dataset");
 		if(!this.tempJena.executeAskQuery("ASK { ?s ?p ?o }", true)) {
-			log.debug("Empty Dataset");
+			log.trace("Empty Dataset");
 		}
 		return ds;
 	}
@@ -346,12 +356,12 @@ public class Score {
 		Dataset ds = prepDataset();
 		log.trace("Building Query");
 		String sQuery = buildSelectQuery();
-		log.debug("Score Query:\n" + sQuery);
+		log.trace("Score Query:\n" + sQuery);
 		// Execute query
 		log.trace("Building Query Execution");
 		Query query = QueryFactory.create(sQuery, Syntax.syntaxARQ);
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
-		log.trace("Executing Query");
+		log.debug("Executing Query");
 		ResultSet rs = queryExec.execSelect();
 		return rs;
 	}
@@ -362,13 +372,95 @@ public class Score {
 	 * @throws IOException error connecting to the models
 	 */
 	private Set<Map<String, String>> buildSolutionSet() throws IOException {
+		if(this.matchThreshold != null) {
+			return buildFilterSolutionSet();
+		}
 		ResultSet rs = getResultSet();
+		Set<Map<String, String>> solSet = getNewSolSet();
 		if(!rs.hasNext()) {
 			log.info("No Results Found");
 		} else {
 			log.info("Building Record Set");
+			Map<String, String> tempMap;
+			for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
+				String sinputuri = solution.getResource("sInput").getURI();
+				String svivouri = solution.getResource("sVivo").getURI();
+				log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
+				tempMap = new HashMap<String, String>();
+				tempMap.put("sInput", sinputuri);
+				tempMap.put("sVivo", svivouri);
+				for(String runName : this.vivoPredicates.keySet()) {
+					RDFNode os = solution.get("os_" + runName);
+					RDFNode op = solution.get("op_" + runName);
+					addRunName(tempMap, runName, os, op);
+				}
+				solSet.add(tempMap);
+			}
 		}
-		Set<Map<String, String>> solSet = new TreeSet<Map<String, String>>(new Comparator<Map<String, String>>() {
+		return solSet;
+	}
+	
+	/**
+	 * Build the solution set for a filtered score
+	 * @return the solution set
+	 * @throws IOException error connecting to the models
+	 */
+	private Set<Map<String, String>> buildFilterSolutionSet() throws IOException {
+		Set<Map<String, String>> matchSet = Match.match(this.matchThreshold.floatValue(), this.scoreJena);
+		Set<Map<String, String>> solSet = getNewSolSet();
+		if(matchSet.isEmpty()) {
+			log.info("No Results Found");
+		} else {
+			log.info("Building Record Set");
+			Map<String, String> tempMap;
+			for(Map<String, String> entry : matchSet) {
+				String sinputuri = entry.get("sInputURI");
+				String svivouri = entry.get("sVivoURI");
+				log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
+				tempMap = new HashMap<String, String>();
+				tempMap.put("sInput", sinputuri);
+				Resource sInput = this.inputJena.getJenaModel().getResource(sinputuri);
+				tempMap.put("sVivo", svivouri);
+				Resource sVivo = this.vivoJena.getJenaModel().getResource(svivouri);
+				for(String runName : this.vivoPredicates.keySet()) {
+					Property os_runName = this.inputJena.getJenaModel().getProperty(this.inputPredicates.get(runName));
+					RDFNode os = sInput.getProperty(os_runName).getObject();
+					Property op_runName = this.vivoJena.getJenaModel().getProperty(this.vivoPredicates.get(runName));
+					RDFNode op = sVivo.getProperty(op_runName).getObject();
+					addRunName(tempMap, runName, os, op);
+				}
+				solSet.add(tempMap);
+			}
+		}
+		return solSet;
+	}
+	
+	/**
+	 * Add the os and op nodes to tempMap for runName
+	 * @param tempMap the map to add to
+	 * @param runName the runName
+	 * @param os the os
+	 * @param op the op
+	 */
+	private static void addRunName(Map<String,String> tempMap, String runName, RDFNode os, RDFNode op) {
+		if((os != null) && os.isResource()) {
+			tempMap.put("URI_os_" + runName, os.asResource().getURI());
+		} else if((os != null) && os.isLiteral()) {
+			tempMap.put("LIT_os_" + runName, os.asLiteral().getValue().toString());
+		}
+		if((op != null) && op.isResource()) {
+			tempMap.put("URI_op_" + runName, op.asResource().getURI());
+		} else if((op != null) && op.isLiteral()) {
+			tempMap.put("LIT_op_" + runName, op.asLiteral().getValue().toString());
+		}
+	}
+	
+	/**
+	 * Get an empty solution set
+	 * @return the new empty solution set
+	 */
+	private static Set<Map<String, String>> getNewSolSet() {
+		return new TreeSet<Map<String, String>>(new Comparator<Map<String, String>>() {
 			@Override
 			public int compare(Map<String, String> o1, Map<String, String> o2) {
 				String o1key = o1.get("sInput") + o1.get("sVivo");
@@ -376,33 +468,8 @@ public class Score {
 				return o1key.compareTo(o2key);
 			}
 		});
-		Map<String, String> tempMap;
-		for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
-			String sinputuri = solution.getResource("sInput").getURI();
-			String svivouri = solution.getResource("sVivo").getURI();
-			log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
-			tempMap = new HashMap<String, String>();
-			tempMap.put("sInput", sinputuri);
-			tempMap.put("sVivo", svivouri);
-			for(String runName : this.vivoPredicates.keySet()) {
-				RDFNode os = solution.get("os_" + runName);
-				if((os != null) && os.isResource()) {
-					tempMap.put("URI_os_" + runName, os.asResource().getURI());
-				} else if((os != null) && os.isLiteral()) {
-					tempMap.put("LIT_os_" + runName, os.asLiteral().getValue().toString());
-				}
-				RDFNode op = solution.get("op_" + runName);
-				if((op != null) && op.isResource()) {
-					tempMap.put("URI_op_" + runName, op.asResource().getURI());
-				} else if((op != null) && op.isLiteral()) {
-					tempMap.put("LIT_op_" + runName, op.asLiteral().getValue().toString());
-				}
-			}
-			solSet.add(tempMap);
-		}
-		return solSet;
 	}
-	
+
 	/**
 	 * Execute score object algorithms
 	 * @throws IOException error connecting
@@ -411,47 +478,49 @@ public class Score {
 		Set<Map<String, String>> solSet = buildSolutionSet();
 		if(!solSet.isEmpty()) {
 			log.info("Processing Results");
-		}
-		int total = solSet.size();
-		int count = 0;
-		int incrementer = 0;
-		double recordBatchSize = Math.ceil(this.batchSize / (2.0+(this.vivoPredicates.size()*7)));
-		StringBuilder indScore;
-		StringBuilder scoreSparql = new StringBuilder();
-		for(Map<String, String> eval : solSet) {
-			count++;
-			incrementer++;
-			indScore = new StringBuilder();
-			String sInputURI = eval.get("sInput");
-			String sVivoURI = eval.get("sVivo");
-			float percent = Math.round(10000f * count / total) / 100f;
-			log.debug("(" + count + "/" + total + ": " + percent + "%): Evaluating <" + sInputURI + "> from inputJena as match for <" + sVivoURI + "> from vivoJena");
-			// Build Score Record
-			indScore.append("" +
-				"  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" +
-				"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
-			);
-			for(String runName : this.vivoPredicates.keySet()) {
-				String osUri = eval.get("URI_os_" + runName);
-				String osLit = eval.get("LIT_os_" + runName);
-				String opUri = eval.get("URI_op_" + runName);
-				String opLit = eval.get("LIT_op_" + runName);
-				log.trace("os_" + runName + ": '" + ((osUri != null) ? osUri : osLit) + "'");
-				log.trace("op_" + runName + ": '" + ((opUri != null) ? opUri : opLit) + "'");
-				indScore.append(buildScoreSparqlFragment(incrementer, opUri, opLit, osUri, osLit, runName));
+			int total = solSet.size();
+			int count = 0;
+			int incrementer = 0;
+			double recordBatchSize = Math.ceil(this.batchSize / (2.0+(this.vivoPredicates.size()*7)));
+			StringBuilder indScore;
+			StringBuilder scoreSparql = new StringBuilder();
+			for(Map<String, String> eval : solSet) {
+				count++;
+				incrementer++;
+				indScore = new StringBuilder();
+				String sInputURI = eval.get("sInput");
+				String sVivoURI = eval.get("sVivo");
+				float percent = Math.round(10000f * count / total) / 100f;
+				log.debug("(" + count + "/" + total + ": " + percent + "%): Evaluating <" + sInputURI + "> from inputJena as match for <" + sVivoURI + "> from vivoJena");
+				// Build Score Record
+				indScore.append("" +
+					"  _:node" + incrementer + " scoreValue:VivoRes <" + sVivoURI + "> .\n" +
+					"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
+				);
+				double sum_total = 0;
+				for(String runName : this.vivoPredicates.keySet()) {
+					String osUri = eval.get("URI_os_" + runName);
+					String osLit = eval.get("LIT_os_" + runName);
+					String opUri = eval.get("URI_op_" + runName);
+					String opLit = eval.get("LIT_op_" + runName);
+					log.debug("os_" + runName + ": '" + ((osUri != null) ? osUri : osLit) + "'");
+					log.debug("op_" + runName + ": '" + ((opUri != null) ? opUri : opLit) + "'");
+					sum_total += appendScoreSparqlFragment(indScore, incrementer, opUri, opLit, osUri, osLit, runName);
+				}
+				log.debug("sum_total: "+sum_total);
+				log.trace("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
+				scoreSparql.append(indScore);
+				if(incrementer == recordBatchSize) {
+					loadRdfToScoreData(scoreSparql.toString());
+					incrementer = 0;
+					scoreSparql = new StringBuilder();
+				}
 			}
-			log.debug("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
-			scoreSparql.append(indScore);
-			if(incrementer == recordBatchSize) {
+			if(incrementer > 0) {
 				loadRdfToScoreData(scoreSparql.toString());
-				incrementer = 0;
-				scoreSparql = new StringBuilder();
 			}
+			log.info("Result Processing Complete");
 		}
-		if(incrementer > 0) {
-			loadRdfToScoreData(scoreSparql.toString());
-		}
-		log.trace("Result Processing Complete");
 	}
 	
 	/**
@@ -466,7 +535,7 @@ public class Score {
 			"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" +
 			"INSERT DATA {\n" +
 				scores +
-			"}\n";
+			"}";
 		// Push Score Data into score model
 		log.trace("Loading Score Data into Score Model:\n" + sparql);
 		this.scoreJena.executeUpdateQuery(sparql);
@@ -564,16 +633,17 @@ public class Score {
 	}
 	
 	/**
-	 * Build the sparql fragment for two rdf nodes
+	 * Append the sparql fragment for two rdf nodes to the given stringbuilder
+	 * @param sb the stringbuilder to append fragment to
 	 * @param nodenum the node number
 	 * @param opUri vivoJena node as a URI
 	 * @param opLit vivoJena node as a Literal string
 	 * @param osUri inputJena node as a URI
 	 * @param osLit inputJena node as a Literal string
 	 * @param runName the run identifier
-	 * @return the sparql fragment
+	 * @return the score
 	 */
-	private String buildScoreSparqlFragment(int nodenum, String opUri, String opLit, String osUri, String osLit, String runName) {
+	private double appendScoreSparqlFragment(StringBuilder sb, int nodenum, String opUri, String opLit, String osUri, String osLit, String runName) {
 		float score = 0f;
 		// if a resource and same uris
 		if(this.equalityOnlyMode || ((osUri != null) && (opUri != null) && osUri.equals(opUri))) {
@@ -587,7 +657,9 @@ public class Score {
 				throw new IllegalArgumentException(e.getMessage(), e);
 			}
 		}
-		log.trace("score: " + score);
+		double weightedscore = this.weights.get(runName).doubleValue() * score;
+		log.debug("score: " + score);
+		log.debug("weighted_score: " + weightedscore);
 		String fragment = "" +
 			"  _:node" + nodenum + " scoreValue:hasScoreValue _:nodeScoreValue" + runName + nodenum + " .\n" +
 			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:VivoProp <" + this.vivoPredicates.get(runName) + "> .\n" +
@@ -595,8 +667,9 @@ public class Score {
 			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Algorithm \"" + this.algorithms.get(runName).getName() + "\" .\n" +
 			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Score \"" + score + "\"^^xsd:float .\n" +
 			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Weight \"" + this.weights.get(runName) + "\"^^xsd:float .\n" +
-			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:WeightedScore \"" + (this.weights.get(runName).doubleValue() * score) + "\"^^xsd:float .\n";
-		return fragment;
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:WeightedScore \"" + weightedscore + "\"^^xsd:float .\n";
+		sb.append(fragment);
+		return weightedscore;
 	}
 	
 	/**

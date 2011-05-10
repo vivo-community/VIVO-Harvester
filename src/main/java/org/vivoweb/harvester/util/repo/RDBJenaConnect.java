@@ -143,6 +143,6 @@ public class RDBJenaConnect extends DBJenaConnect {
 	@Override
 	public void printParameters() {
 		super.printParameters();
-		log.debug("type: 'rdb'");
+		log.trace("type: 'rdb'");
 	}
 }

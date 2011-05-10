@@ -101,8 +101,8 @@ public abstract class DBJenaConnect extends JenaConnect {
 	@Override
 	public void printParameters() {
 		super.printParameters();
-		log.debug("dbUrl: '" + this.dbUrl + "'");
-		log.debug("dbType: '" + this.dbType + "'");
-		log.debug("dbClass: '" + this.dbClass + "'");
+		log.trace("dbUrl: '" + this.dbUrl + "'");
+		log.trace("dbType: '" + this.dbType + "'");
+		log.trace("dbClass: '" + this.dbClass + "'");
 	}
 }

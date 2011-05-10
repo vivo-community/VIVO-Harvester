@@ -76,6 +76,11 @@ public class InitLog {
 				System.setProperty("console-info", "DENY");
 				System.setProperty("console-warnerror", "OFF");
 			}
+		} else {
+			System.clearProperty("console-trace");
+			System.clearProperty("console-debug");
+			System.clearProperty("console-info");
+			System.clearProperty("console-warnerror");
 		}
 		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
 		String task = getFirstValidString(System.getenv("HARVESTER_TASK_DATE"), System.getProperty("harvester-task"), "harvester." + DateFormatUtils.ISO_DATETIME_FORMAT.format(System.currentTimeMillis()));

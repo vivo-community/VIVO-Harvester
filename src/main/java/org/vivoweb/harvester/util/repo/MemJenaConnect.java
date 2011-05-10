@@ -68,15 +68,15 @@ public class MemJenaConnect extends TDBJenaConnect {
 	private static String getDir(String modelName) {
 		String mod = (modelName != null) ? modelName : generateUnusedModelName();
 		mod = SpecialEntities.xmlEncode(mod, '/', ':');
-		if(!usedModelNames.containsKey(modelName)) {
-			log.debug("attempting to create temp file for: " + mod);
+		if(!usedModelNames.containsKey(mod)) {
+			log.trace("attempting to create temp file for: " + mod);
 			File f;
 			try {
 				f = File.createTempFile(mod, ".tdb");
 			} catch(IOException e) {
 				throw new IllegalArgumentException(e);
 			}
-			log.debug("created: " + f.getAbsolutePath());
+			log.trace("created: " + f.getAbsolutePath());
 			f.delete();
 			f.mkdir();
 			usedModelNames.put(mod, f.getAbsolutePath());

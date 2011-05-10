@@ -151,7 +151,7 @@ public class SDBJenaConnect extends DBJenaConnect {
 	@Override
 	public void printParameters() {
 		super.printParameters();
-		log.info("type: 'sdb'");
-		log.info("dbLayout: '" + this.dbLayout + "'");
+		log.trace("type: 'sdb'");
+		log.trace("dbLayout: '" + this.dbLayout + "'");
 	}
 }

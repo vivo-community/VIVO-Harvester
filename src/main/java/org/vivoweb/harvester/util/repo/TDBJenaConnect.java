@@ -75,7 +75,6 @@ public class TDBJenaConnect extends JenaConnect {
 	
 	@Override
 	public Dataset getDataset() {
-		log.debug("dbDir: " + this.dbDir);
 		if(!dirDatasets.containsKey(this.dbDir)) {
 			dirDatasets.put(this.dbDir, TDBFactory.createDataset(this.dbDir));
 		}
@@ -100,7 +99,7 @@ public class TDBJenaConnect extends JenaConnect {
 	@Override
 	public void printParameters() {
 		super.printParameters();
-		log.debug("type: 'tdb'");
-		log.debug("dbDir: '" + this.dbDir + "'");
+		log.trace("type: 'tdb'");
+		log.trace("dbDir: '" + this.dbDir + "'");
 	}
 }
