@@ -29,7 +29,8 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 	xmlns:bibo="http://purl.org/ontology/bibo/"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
-	xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#">
+	xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#"
+	xmlns:score="http://vivoweb.org/ontology/score#">
 
 	<xsl:output method="xml" indent="yes" />
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/mods/</xsl:variable>
@@ -46,10 +47,27 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:variable name="tokenizedTopics" select="tokenize(subject/topic, ',')" />
 
 		<xsl:variable name="title">
-			<xsl:call-template name="titleVariable" />
+			<xsl:call-template name="titleVariable">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:call-template>
 		</xsl:variable>
 
 		<xsl:if test="typeOfResource='text'">
+
+			<xsl:variable name="dateIssued" select="originInfo/dateIssued" />
+			<xsl:variable name="startdate"> 
+				<xsl:choose>
+					<xsl:when test="$dateIssued and substring-before($dateIssued,':')">
+						<xsl:value-of select ="substring-before($dateIssued,':')"/>
+					</xsl:when>
+					<xsl:when test="$dateIssued and not(substring-before($dateIssued,':'))">
+						<xsl:value-of select ="$dateIssued"/>
+					</xsl:when>
+					<xsl:otherwise />
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="enddate" select="substring-after(originInfo/dateIssued,':')" />    <!-- needs to be parsed out of dateIssued -->
+
 			<rdf:description>
 				<xsl:attribute name="rdf:about"><xsl:value-of select="concat($baseURI, 'pub/modsId_', $modsId)" /></xsl:attribute>
 				<ufVivo:harvestedBy>MODS RefWorks harvest</ufVivo:harvestedBy>
@@ -80,7 +98,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 					</xsl:otherwise>
 				</xsl:choose>
 
-				<core:dateTimeValue><xsl:value-of select="originInfo/dateIssued"/></core:dateTimeValue>
+
 				<core:supplementalInformation><xsl:value-of select="note" /></core:supplementalInformation>
 				<xsl:if test="string-length(replace($isbn, '-', '')) = 10">
 					<bibo:isbn10><xsl:value-of select="$isbn" /></bibo:isbn10>
@@ -118,7 +136,82 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 				<xsl:apply-templates select="location/url" mode="withinPub">
 					<xsl:with-param name="modsId" select="$modsId" />
 				</xsl:apply-templates>
+
+
+				<!-- <core:dateTimeValue><xsl:value-of select="originInfo/dateIssued"/></core:dateTimeValue> -->
+
+				<xsl:if test="$dateIssued">
+					<core:dateTimeInterval rdf:resource="{$baseURI}interval/{encode-for-uri($dateIssued)}" />
+				</xsl:if>
+
 			</rdf:description>
+
+			<!-- The beginning of the dateTimeInterval subgroup -->
+			<xsl:if test="$dateIssued">
+				<rdf:Description rdf:about="{$baseURI}interval/{encode-for-uri($dateIssued)}">
+					<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeInterval"/>
+					<core:start rdf:resource="{$baseURI}datetime/{$startdate}"/>
+					<xsl:choose>
+						<xsl:when test="$enddate">
+							<core:end rdf:resource="{$baseURI}datetime/{$enddate}"/>
+							<score:label><xsl:value-of select="concat, 'start_', $startdate, '_end_', $enddate" /></score:label>
+						</xsl:when>
+						<xsl:otherwise>
+							<score:label><xsl:value-of select="concat, 'start_', $startdate" /></score:label>
+						</xsl:otherwise>
+					</xsl:choose>
+				</rdf:Description>
+			</xsl:if>
+
+			<xsl:if test="$startdate">
+				<rdf:Description rdf:about="{$baseURI}datetime/{$startdate}">
+					<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+					<xsl:choose>
+						<xsl:when test="matches($startdate,'^\d{4}-\d{2}-\d{2}$')">
+							<core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/> <!-- precision needs to be parsed -->              
+						</xsl:when>
+						<xsl:when test="matches($startdate,'^\d{4}-\d{2}$')">
+							<core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision"/> <!-- precision needs to be parsed -->              
+						</xsl:when>            
+						<xsl:when test="matches($startdate,'^\d{4}$')">
+							<core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision"/> <!-- precision needs to be parsed -->              
+						</xsl:when>            
+					</xsl:choose>
+					<core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
+						<xsl:value-of select="$startdate" />
+					</core:dateTime>
+					<score:label><xsl:value-of select="$enddate" /></score:label>
+				</rdf:Description>
+			</xsl:if>
+
+			<xsl:if test="$enddate">
+				<rdf:Description rdf:about="{$baseURI}datetime/{$enddate}">
+					<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+					<xsl:choose>
+						<xsl:when test="matches($enddate,'^\d{4}-\d{2}-\d{2}$')">
+							<core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/> <!-- precision needs to be parsed -->              
+						</xsl:when>
+						<xsl:when test="matches($enddate,'^\d{4}-\d{2}$')">
+							<core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision"/> <!-- precision needs to be parsed -->              
+						</xsl:when>            
+						<xsl:when test="matches($enddate,'^\d{4}$')">
+							<core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision"/> <!-- precision needs to be parsed -->              
+						</xsl:when>            
+					</xsl:choose>
+					<core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
+						<xsl:value-of select="$enddate" />
+					</core:dateTime>
+					<score:label><xsl:value-of select="$enddate" /></score:label>
+				</rdf:Description>
+			</xsl:if>
+			<!-- The end of the dateTimeInterval subgroup -->
+				
+				
+				
+			
 
 			<xsl:apply-templates select="name" mode="standAlone">
 				<xsl:with-param name="modsId" select="$modsId" />
@@ -164,8 +257,9 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 
 
 	<xsl:template name="titleVariable">
+		<xsl:param name='modsId' />
 		<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)=''"> 
-			<xsl:value-of select="'(untitled)'" />
+			<xsl:value-of select="$modsId" />
 		</xsl:if>
 		<xsl:if test="normalize-space(titleInfo[not(@type='abbreviated')]/title)!=''"> 
 			<xsl:value-of select="concat(titleInfo[not(@type='abbreviated')]/title, ' ', titleInfo/subTitle)" />
@@ -177,7 +271,9 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:param name='modsId' />
 
 		<xsl:variable name="title">
-			<xsl:call-template name="titleVariable" />
+			<xsl:call-template name="titleVariable">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:call-template>
 		</xsl:variable>
 
 		<xsl:variable name="label" select="$title" />
@@ -192,7 +288,9 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 		<xsl:param name='modsId' />
 
 		<xsl:variable name="title">
-			<xsl:call-template name="titleVariable" />
+			<xsl:call-template name="titleVariable">
+				<xsl:with-param name="modsId" select="$modsId" />
+			</xsl:call-template>
 		</xsl:variable>
 
 		<xsl:variable name="label" select="$title" />

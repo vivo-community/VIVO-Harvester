@@ -68,6 +68,7 @@ LINKINFORES="http://vivoweb.org/ontology/core#linkedInformationResource"
 AUTHINAUTH="http://vivoweb.org/ontology/core#authorInAuthorship"
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
+SCORELABEL="http://vivoweb.org/ontology/score#label"
 BASEURI="http://vivoweb.org/harvest/mods/"
 
 BIBUTILSBASE="/usr/bin"
@@ -150,12 +151,15 @@ rm -rf $SCOREDATADIR
 LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
 FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$FFNAME"
 RDFSLABELSCORE="-ArdfsLabel=$LEVDIFF -FrdfsLabel=$RDFSLABEL -WrdfsLabel=1.0 -PrdfsLabel=$RDFSLABEL"
+SCORELABELSCORE="-AscoreLabel=$EQTEST -FscoreLabel=$SCORELABEL -WscoreLabel=1.0 -PscoreLabel=$SCORELABEL"
 
 $Score $SCOREMODELS $FNAME $LNAME -n ${BASEURI}author/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}org/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}geo/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}journal/
 $Score $SCOREMODELS $RDFSLABELSCORE -n ${BASEURI}hyperlink/
+$Score $SCOREMODELS $SCORELABELSCORE -n ${BASEURI}interval/
+$Score $SCOREMODELS $SCORELABELSCORE -n ${BASEURI}datetime/
 $Match $SCOREINPUT $SCOREDATA -t 0.7 -r
 
 
@@ -193,7 +197,8 @@ rm -rf $TEMPCOPYDIR
 
 
 
-
+#remove score statements
+$Qualify $SCOREINPUT -n http://vivoweb.org/ontology/score# -p
 
 # Execute ChangeNamespace lines: the -o flag value is determined by the XSLT used to translate the data
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY -n $NAMESPACE"
@@ -211,6 +216,10 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}geo/
 $ChangeNamespace $CNFLAGS -u ${BASEURI}journal/
 # Execute ChangeNamespace to get unmatched Hyperlinks into current namespace
 $ChangeNamespace $CNFLAGS -u ${BASEURI}hyperlink/
+# Execute ChangeNamespace to get unmatched Intervals into current namespace
+$ChangeNamespace $CNFLAGS -u ${BASEURI}interval/
+# Execute ChangeNamespace to get unmatched Datetimes into current namespace
+$ChangeNamespace $CNFLAGS -u ${BASEURI}datetime/
 
 
 # Backup pretransfer vivo database, symlink latest to latest.sql
