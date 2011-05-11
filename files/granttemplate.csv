@@ -1,2 +1,2 @@
 "GrantID","GrantName","AdminDepartmentID","Amount","SponAwardID","AwardingOrg","AwardingOrgID","FlowThruOrg","FlowThruOrgID","StartDate","EndDate","PIID","NamePI","CoPIID","NameCoPI"
-"ufVivo:psContractNumber","rdfs:label","ufVivo:deptID","core:totalAwardAmount","core:sponsorAwardId","rdfs:label","orgID","rdfs:label","orgID","####-##-##","####-##-##","ufVivo:ufid","rdfs:label","ufVivo:ufid","rdfs:label"
+"ufVivo:psContractNumber","rdfs:label","ufVivo:deptID","core:totalAwardAmount","core:sponsorAwardId","rdfs:label","orgID","rdfs:label","orgID","YYYY-MM-DD","YYYY-MM-DD","ufVivo:ufid","rdfs:label","ufVivo:ufid","rdfs:label"

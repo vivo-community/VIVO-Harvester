@@ -1,2 +1,2 @@
-"PersonID","Email","Phone","Fax","FirstName","LastName","MidName","NamePrefix","NameSuffix","FullName","Title","PositionType","StartDate","EndDate","DepartmentID"
-"ufVivo:ufid","core:workEmail","core:workPhone","core:workFax","foaf:firstName","foaf:lastName","core:middleName","bibo:prefixName","bibo:suffixName","rdfs:label","core:preferredTitle",,"####-##-##","####-##-##","score:deptID"
+"PersonID","Email","Phone","Fax","FirstName","MidName","LastName","NamePrefix","NameSuffix","FullName","Title","PositionType","StartDate","EndDate","DepartmentID","DepartmentName"
+"ufVivo:ufid","core:email","core:phoneNumber","core:faxNumber","foaf:firstName","core:middleName","foaf:lastName","bibo:prefixName","bibo:suffixName","rdfs:label","core:preferredTitle","faculty","YYYY-MM-DD","YYYY-MM-DD","score:deptID","rdfs:label"

@@ -71,7 +71,13 @@ UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
 ROLEIN="http://vivoweb.org/ontology/core#roleIn"
 PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
 COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
+DATETIME="http://www.w3.org/2001/XMLSchema#dateTime"
+
 BASEURI="http://vivoweb.org/harvest/ufl/dsr/"
+
+#connection info for reindex of lucene
+ADMINNAME="USERNAME"
+ADMINPASS="vitro123"
 
 #clear old fetches
 rm -rf $RAWRHDIR
@@ -103,6 +109,8 @@ rm -rf $MODELDIR
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
 
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.dsr.rdf.xml
+
 # backup H2 transfer Model
 BACKMODEL="model"
 backup-path $MODELDIR $BACKMODEL
@@ -115,6 +123,8 @@ rm -rf $SCOREDATADIR
 #smushes in-place(-r) on the contract number THEN on the UFID
 $Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
 
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.dsr.rdf.xml
+
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
@@ -122,28 +132,67 @@ $Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
 # Scoring of Grants on ContractNumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
-# Scoring of people on UFID
-$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
-
-$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
-# Scoring of orgs on DeptID
-$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
 
 $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
 
+# Find matches using scores and rename nodes to matching uri
+#$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-1.dsr.rdf.xml
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-1.dsr.rdf.xml
+
+#clear score model for next batch.
+#rm -rf $SCOREDATADIR
+
+# Clear old H2 temp copy of input
+#$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
+
+# Scoring of people on UFID
+$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
+
+
+$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
+# Scoring of orgs on DeptID
+$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
+
 # Scoring of PI Roles
-PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$ROLEOF -Pperson=$PIROLEOF"
+PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$PIROLEOF -Pperson=$PIROLEOF"
 GRANTURI="-Agrant=$EQTEST -Wgrant=0.5 -Fgrant=$ROLEIN -Pgrant=$ROLEIN"
 $Score $SCOREMODELS $PIURI $GRANTURI -n ${BASEURI}piRole/
 
 # Scoring of coPI Roles
-COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COROLEOF -Pperson=$COPIROLEOF"
+COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COPIROLEOF -Pperson=$COPIROLEOF"
 $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+
+# Scoring of DateTime Starts and ends
+$Score $SCOREMODELS -Adate=$EQTEST -Wdate=1.0 -Fdate=$DATETIME -Pdate=$DATETIME -n ${BASEURI}timeInterval/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
+
+STARTTIME="http://vivoweb.org/ontology/core#start"
+ENDTIME="http://vivoweb.org/ontology/core#end"
+
+# Scoring of DateTimeInterval
+$Score $SCOREMODELS -Asdate=$EQTEST -Wsdate=0.5 -Fsdate=$STARTTIME -Psdate=$STARTTIME -Aedate=$EQTEST -Wedate=0.5 -Fedate=$ENDTIME -Pedate=$ENDTIME -n ${BASEURI}timeInterval/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-2.dsr.rdf.xml
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-2.dsr.rdf.xml
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
@@ -169,11 +218,12 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}piRole/
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}coPiRole/
 
-
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}timeInterval/
 
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.dsr.rdf.xml
 # backup H2 matched Model
 BACKMATCHED="matched"
 backup-path $MODELDIR $BACKMATCHED
@@ -219,6 +269,17 @@ backup-mysqldb $BACKPOSTDB
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
-/etc/init.d/tomcat6 stop
-/etc/init.d/apache2 restart
-/etc/init.d/tomcat6 start
+
+if [$ADMINNAME = "USERNAME"]; then
+	/etc/init.d/tomcat6 stop
+	/etc/init.d/apache2 restart
+	/etc/init.d/tomcat6 start
+else
+	rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+	rm -f cookie.txt
+	wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+
+	rm -f "SearchIndex"
+	wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
+fi
+

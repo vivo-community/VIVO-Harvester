@@ -45,6 +45,20 @@
 	<xsl:template name="t_Grant">
 		<xsl:param name='grantid' />
 		<xsl:param name='this' />
+		
+		<!-- Setting dates for Grant -->
+	        <xsl:variable name="startDate">           
+	            <xsl:analyze-string select="$this/db-csv:STARTDATE" regex="^(....-..-..).*?$">
+	                <xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring>
+	            </xsl:analyze-string>
+	        </xsl:variable>
+
+	        <xsl:variable name="endDate">           
+	            <xsl:analyze-string select="$this/db-csv:ENDDATE" regex="^(....-..-..).*?$">
+	                <xsl:matching-substring><xsl:value-of select="regex-group(1)"/></xsl:matching-substring>
+	            </xsl:analyze-string>
+	        </xsl:variable>
+        
 <!--	Creating a Grant-->
 		<rdf:Description rdf:about="{$baseURI}grant/grant{$grantid}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Grant"/>
@@ -106,43 +120,31 @@
 					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
-            <core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/inGrant{$grantid}" />
+            <core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/start{$startDate}ToEnd{$endDate}" />
         </rdf:Description>
         
-         <rdf:Description rdf:about="{$baseURI}timeInterval/inGrant{$grantid}">
+         <rdf:Description rdf:about="{$baseURI}timeInterval/start{$startDate}ToEnd{$endDate}">
              <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
              <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeInterval"/>
-             <core:start rdf:resource="{$baseURI}timeInterval/StartinGrant{$grantid}"/>
-             <core:end rdf:resource="{$baseURI}timeInterval/EndinGrant{$grantid}"/>
+             <core:start rdf:resource="{$baseURI}timeInterval/date{$startDate}"/>
+             <core:end rdf:resource="{$baseURI}timeInterval/date{$endDate}"/>
          </rdf:Description>
          
          <xsl:if test="not( $this/db-csv:STARTDATE = '' or $this/db-csv:STARTDATE = 'null' )">
-         <rdf:Description rdf:about="{$baseURI}timeInterval/StartinGrant{$grantid}">
+         <rdf:Description rdf:about="{$baseURI}timeInterval/date{$startDate}">
              <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
              <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
              <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
-             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
-                 <xsl:analyze-string select="$this/db-csv:STARTDATE" regex="^(....-..-..).*?$">
-                     <xsl:matching-substring>
-                         <xsl:value-of select="regex-group(1)"/>T00:00:00
-                     </xsl:matching-substring>
-                 </xsl:analyze-string>
-             </core:dateTime>
+             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="$this/db-csv:STARTDATE"/>T00:00:00</core:dateTime>
          </rdf:Description>
          </xsl:if>
                   
          <xsl:if test="not( $this/db-csv:ENDDATE = '' or $this/db-csv:ENDDATE = 'null' )">
-         <rdf:Description rdf:about="{$baseURI}timeInterval/EndinGrant{$grantid}">
+         <rdf:Description rdf:about="{$baseURI}timeInterval/date{$endDate}">
              <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
              <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
              <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
-             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
-                 <xsl:analyze-string select="$this/db-csv:ENDDATE" regex="^(....-..-..).*?$">
-                     <xsl:matching-substring>
-                         <xsl:value-of select="regex-group(1)"/>T00:00:00
-                     </xsl:matching-substring>
-                 </xsl:analyze-string>
-             </core:dateTime>
+             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="$this/db-csv:ENDDATE"/>T00:00:00</core:dateTime>
          </rdf:Description>
          </xsl:if>
          
