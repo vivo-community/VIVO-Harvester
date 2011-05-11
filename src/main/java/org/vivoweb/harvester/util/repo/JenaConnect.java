@@ -43,7 +43,10 @@ import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateFactory;
@@ -689,7 +692,9 @@ public abstract class JenaConnect {
 	/**
 	 * Remove all statements from model
 	 */
-	public abstract void truncate();
+	public void truncate() {
+		getJenaModel().removeAll((Resource)null,(Property)null,(RDFNode)null);
+	}
 	
 	/**
 	 * Set the modelName

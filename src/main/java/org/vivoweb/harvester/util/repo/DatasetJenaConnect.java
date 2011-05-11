@@ -40,9 +40,4 @@ public class DatasetJenaConnect extends JenaConnect {
 		getJenaModel().close();
 	}
 	
-	@Override
-	public void truncate() {
-		getJenaModel().removeAll();
-	}
-	
 }

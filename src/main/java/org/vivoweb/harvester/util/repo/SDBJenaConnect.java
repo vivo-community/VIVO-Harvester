@@ -144,11 +144,6 @@ public class SDBJenaConnect extends DBJenaConnect {
 	}
 	
 	@Override
-	public void truncate() {
-		getJenaModel().removeAll();
-	}
-	
-	@Override
 	public void printParameters() {
 		super.printParameters();
 		log.trace("type: 'sdb'");

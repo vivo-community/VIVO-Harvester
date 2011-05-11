@@ -92,11 +92,6 @@ public class TDBJenaConnect extends JenaConnect {
 	}
 	
 	@Override
-	public void truncate() {
-		getJenaModel().removeAll();
-	}
-	
-	@Override
 	public void printParameters() {
 		super.printParameters();
 		log.trace("type: 'tdb'");

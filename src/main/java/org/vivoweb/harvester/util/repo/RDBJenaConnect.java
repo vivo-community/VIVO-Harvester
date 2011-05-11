@@ -127,11 +127,6 @@ public class RDBJenaConnect extends DBJenaConnect {
 	}
 	
 	@Override
-	public void truncate() {
-		getJenaModel().removeAll();
-	}
-	
-	@Override
 	public Dataset getDataset() throws IOException {
 		DataSourceImpl ds = new DataSourceImpl(getJenaModel());
 		for(String name : IterableAdaptor.adapt(this.conn.getAllModelNames())) {
