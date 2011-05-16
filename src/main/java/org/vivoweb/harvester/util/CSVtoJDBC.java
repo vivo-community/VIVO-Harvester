@@ -172,6 +172,7 @@ public class CSVtoJDBC {
 			}
 			log.info("Create table command: \n" + createTable.toString());
 			cursor.execute(createTable.toString());
+			cursor.execute("ALTER TABLE "+this.tableName+" ADD PRIMARY KEY (ROWID)");
 			while(rs.next()) {
 				
 				StringBuilder insertCommand = new StringBuilder("INSERT INTO ");
