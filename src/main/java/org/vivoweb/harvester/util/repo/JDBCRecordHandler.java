@@ -155,9 +155,15 @@ public class JDBCRecordHandler extends RecordHandler {
 			Class.forName(jdbcDriverClass);
 			this.db = DriverManager.getConnection(connLine, username, password);
 			this.cursor = this.db.createStatement();
-			checkTableExists();
+			if(!checkTableExists(this.table)) {
+				log.trace("Database Does Not Contain Table: " + this.table + ". Attempting to create.");
+				createTable();
+			}
 			checkTableConfigured();
-			checkMetaTableExists();
+			if(!checkTableExists(this.table+"_rmd")) {
+				log.trace("Database Does Not Contain Table: " + this.table + "_rmd. Attempting to create.");
+				createMetaTable();
+			}
 			checkMetaTableConfigured();
 		} catch(ClassNotFoundException e) {
 			throw new IOException("Unable to initialize DB Driver Class", e);
@@ -192,27 +198,25 @@ public class JDBCRecordHandler extends RecordHandler {
 	
 	/**
 	 * Checks if the record table exists, attempts to create if table does not exist
-	 * @throws IOException error creating table
+	 * @param tableName the table name to check
+	 * @return if it exists
 	 */
-	private void checkTableExists() throws IOException {
+	private boolean checkTableExists(String tableName) {
 		boolean a;
 		try {
 			// ANSI SQL way. Works in PostgreSQL, MSSQL, MySQL
-			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '" + this.table + "')) then 1 else 0 end");
+			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '" + tableName + "')) then 1 else 0 end");
 			a = this.cursor.getResultSet().getBoolean(1);
 		} catch(SQLException e) {
 			try {
 				// Other RDBMS. Graceful degradation
 				a = true;
-				this.cursor.execute("select 1 from " + this.table + " where 1 = 0");
+				this.cursor.execute("select 1 from " + tableName + " where 1 = 0");
 			} catch(SQLException e1) {
 				a = false;
 			}
 		}
-		if(!a) {
-			log.debug("Database Does Not Contain Table: " + this.table + ". Attempting to create.");
-			createTable();
-		}
+		return a;
 	}
 	
 	/**
@@ -239,31 +243,6 @@ public class JDBCRecordHandler extends RecordHandler {
 			this.cursor.execute("select " + rmdCalField + ", " + rmdMD5Field + ", " + rmdOperationField + ", " + rmdOperatorField + ", " + rmdRelField + " from " + this.table + "_rmd");
 		} catch(SQLException e) {
 			throw new IOException("Table '" + this.table + "_rmd' Is Not Structured Correctly", e);
-		}
-	}
-	
-	/**
-	 * Checks if the record metadata table exists, attempts to create if table does not exist
-	 * @throws IOException error creating table
-	 */
-	private void checkMetaTableExists() throws IOException {
-		boolean a;
-		try {
-			// ANSI SQL way. Works in PostgreSQL, MSSQL, MySQL
-			this.cursor.execute("select case when exists((select * from information_schema.tables where table_name = '" + this.table + "_rmd')) then 1 else 0 end");
-			a = this.cursor.getResultSet().getBoolean(1);
-		} catch(SQLException e) {
-			try {
-				// Other RDBMS. Graceful degradation
-				a = true;
-				this.cursor.execute("select 1 from " + this.table + "_rmd where 1 = 0");
-			} catch(SQLException e1) {
-				a = false;
-			}
-		}
-		if(!a) {
-			log.debug("Database Does Not Contain Table: `" + this.table + "_rmd`. Attempting to create.");
-			createMetaTable();
 		}
 	}
 	

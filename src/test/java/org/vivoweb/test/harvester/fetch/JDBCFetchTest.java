@@ -98,6 +98,23 @@ public class JDBCFetchTest extends TestCase {
 	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
 	 */
+	public final void testJDBCFetchConstRunDBSpecifyID() throws IOException, ParserConfigurationException, SAXException {
+		log.info("BEGIN testJDBCFetchConstRunDBSpecifyID");
+		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJDBCFetchRHSpecifyID", "sa", "", "recordTable", "dataField");
+		HashMap<String, List<String>> idFields = new HashMap<String, List<String>>();
+		idFields.put("faculty", Arrays.asList("fac_id"));
+		runConstTest(new JDBCFetch(this.conn, this.rh, "jdbc:h2:mem:TestJDBCFetchDB/", null, null, null, null, null, idFields, null, null, null));
+		log.info("END testJDBCFetchConstRunDBSpecifyID");
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
+	 * JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
+	 * @throws IOException error
+	 * @throws ParserConfigurationException error
+	 * @throws SAXException error
+	 */
 	public final void testJDBCFetchConstRunQuery() throws IOException, ParserConfigurationException, SAXException {
 		log.info("BEGIN testJDBCFetchConstRunQuery");
 		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestJDBCFetchRHQuery", "sa", "", "recordTable", "dataField");
@@ -121,24 +138,32 @@ public class JDBCFetchTest extends TestCase {
 		assertTrue(this.rh.iterator().hasNext());
 		DocumentBuilder docC = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		for(Record r : this.rh) {
-			log.debug("Record '" + r.getID() + "':\n" + r.getData());
+			log.trace("Record '" + r.getID() + "':\n" + r.getData());
 			Document doc = docC.parse(new ByteArrayInputStream(r.getData().getBytes()));
 			Element elem = doc.getDocumentElement();
-			traverseNodes(elem.getChildNodes());
+			if(!traverseNodes(elem.getChildNodes())) {
+				fail("Never encountered a non-rdf tag in record '"+r.getID()+"'");
+			}
 		}
 	}
 	
 	/**
 	 * @param nodeList the nodes
+	 * @return whether we hit a non-rdf tag
 	 */
-	private void traverseNodes(NodeList nodeList) {
+	private boolean traverseNodes(NodeList nodeList) {
+		boolean hitNonRDFtag = false;
 		for(int x = 0; x < nodeList.getLength(); x++) {
 			Node child = nodeList.item(x);
-			String name = child.getNodeName();
+			String name = child.getNodeName().trim();
 			if(!name.contains("#text")) {
+				if(!name.startsWith("rdf:")) {
+					hitNonRDFtag = true;
+				}
 				log.trace(name);
-				traverseNodes(child.getChildNodes());
+				hitNonRDFtag |= traverseNodes(child.getChildNodes());
 			}
 		}
+		return hitNonRDFtag;
 	}
 }

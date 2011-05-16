@@ -174,7 +174,7 @@ public class JDBCFetch {
 			throw new IOException(e.getMessage(), e);
 		}
 		this.rh = rh;
-		this.tableNames = tableNames;
+		Set<String> argTables = tableNames;
 		this.fromClauses = fromClauses;
 		this.dataFields = dataFields;
 		this.idFields = idFields;
@@ -189,28 +189,55 @@ public class JDBCFetch {
 			throw new IllegalArgumentException("Must provide output recordhandler!");
 		}
 		
-		if(this.tableNames == null) {
-			this.tableNames = new TreeSet<String>();
+		if(argTables == null) {
+			argTables = new TreeSet<String>();
 		}
 		
 		if(this.fromClauses != null) {
-			this.tableNames.addAll(this.fromClauses.keySet());
+			argTables.addAll(this.fromClauses.keySet());
 		}
 		
 		if(this.dataFields != null) {
-			this.tableNames.addAll(this.dataFields.keySet());
+			argTables.addAll(this.dataFields.keySet());
 		}
 		
 		if(this.idFields != null) {
-			this.tableNames.addAll(this.idFields.keySet());
+			argTables.addAll(this.idFields.keySet());
 		}
 		
 		if(this.whereClauses != null) {
-			this.tableNames.addAll(this.whereClauses.keySet());
+			argTables.addAll(this.whereClauses.keySet());
 		}
 		
 		if(this.fkRelations != null) {
-			this.tableNames.addAll(this.fkRelations.keySet());
+			argTables.addAll(this.fkRelations.keySet());
+		}
+		
+		if(this.queryStrings != null) {
+			argTables.removeAll(this.queryStrings.keySet());
+		}
+		
+		this.tableNames = new TreeSet<String>();
+		Set<String> realDBTables;
+		try {
+			realDBTables = getTableNames();
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		
+		this.tableNames = new TreeSet<String>();
+		for(String argTable : argTables) {
+			boolean found = false;
+			for(String realTableName : realDBTables) {
+				if(argTable.equalsIgnoreCase(realTableName)) {
+					this.tableNames.add(realTableName);
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				throw new IllegalArgumentException("Database Does Not Contain A Table Named '"+argTable+"'");
+			}
 		}
 		
 		if(this.queryStrings != null) {
@@ -445,7 +472,7 @@ public class JDBCFetch {
 	private String buildSelect(String tableName) throws SQLException {
 		if((this.queryStrings != null) && this.queryStrings.containsKey(tableName)) {
 			String query = this.queryStrings.get(tableName);
-			log.debug("User defined SQL Query:\n" + query);
+			log.trace("User defined SQL Query:\n" + query);
 			return query;
 		}
 		boolean multiTable = (this.fromClauses != null) && this.fromClauses.containsKey(tableName);
@@ -493,7 +520,7 @@ public class JDBCFetch {
 			sb.append(" WHERE ");
 			sb.append(StringUtils.join(getWhereClauses(tableName), " AND "));
 		}
-		log.debug("Generated SQL Query:\n" + sb.toString());
+		log.trace("Generated SQL Query:\n" + sb.toString());
 		return sb.toString();
 	}
 	

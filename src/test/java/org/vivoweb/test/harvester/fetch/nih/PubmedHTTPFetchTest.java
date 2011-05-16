@@ -7,7 +7,7 @@
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
  *****************************************************************************************************************************/
-package org.vivoweb.test.harvester.fetch;
+package org.vivoweb.test.harvester.fetch.nih;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

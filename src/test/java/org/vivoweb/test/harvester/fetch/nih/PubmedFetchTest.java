@@ -7,7 +7,7 @@
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
  *****************************************************************************************************************************/
-package org.vivoweb.test.harvester.fetch;
+package org.vivoweb.test.harvester.fetch.nih;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.fetch.nih.NLMJournalFetch;
+import org.vivoweb.harvester.fetch.nih.PubmedFetch;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaRecordHandler;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
@@ -30,13 +30,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * @author Dale Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class NLMJournalFetchTest extends TestCase {
+public class PubmedFetchTest extends TestCase {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(NLMJournalFetchTest.class);
+	private static Logger log = LoggerFactory.getLogger(PubmedFetchTest.class);
 	/** */
 	private RecordHandler rh;
 	
@@ -55,30 +56,30 @@ public class NLMJournalFetchTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
-	 * NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
+	 * {@link org.vivoweb.harvester.fetch.nih.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 */
-	public final void testNLMJournalFetchNoRecordQuery() throws IOException {
-		log.info("BEGIN testNLMJournalFetchNoRecordQuery");
+	public final void testPubmedFetchNoRecordQuery() throws IOException {
+		log.info("BEGIN testPubmedFetchNoRecordQuery");
 		//test 1 record
-		new NLMJournalFetch("test@test.com", "", "100", "100", this.rh).execute();
+		new PubmedFetch("test@test.com", "", "100", "100", this.rh).execute();
 		assertFalse(this.rh.iterator().hasNext());
-		log.info("END testNLMJournalFetchNoRecordQuery");
+		log.info("END testPubmedFetchNoRecordQuery");
 	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
-	 * NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
+	 * {@link org.vivoweb.harvester.fetch.nih.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
 	 * @throws SAXException error
 	 */
-	public final void testNLMJournalFetchOneRecord() throws IOException, ParserConfigurationException, SAXException {
-		log.info("BEGIN testNLMJournalFetchOneRecord");
+	public final void testPubmedFetchOneRecord() throws IOException, ParserConfigurationException, SAXException {
+		log.info("BEGIN testPubmedFetchOneRecord");
 		//test 1 record
-		new NLMJournalFetch("test@test.com", "1:8000[dp]", "1", "1", this.rh).execute();
+		new PubmedFetch("test@test.com", "1:8000[dp]", "1", "1", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
 		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		int count = 0;
@@ -90,19 +91,19 @@ public class NLMJournalFetchTest extends TestCase {
 			count++;
 		}
 		assertEquals(1, count);
-		log.info("END testNLMJournalFetchOneRecord");
+		log.info("END testPubmedFetchOneRecord");
 	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
-	 * NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
+	 * {@link org.vivoweb.harvester.fetch.nih.PubmedFetch#PubmedFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 */
-	public final void testNLMJournalFetchManyRecords() throws IOException {
-		log.info("BEGIN testNLMJournalFetchManyRecords");
+	public final void testPubmedFetchManyRecords() throws IOException {
+		log.info("BEGIN testPubmedFetchManyRecords");
 		//test 1200 records, batch 500
-		new NLMJournalFetch("test@test.com", "1:8000[dp]", "1200", "500", this.rh).execute();
+		new PubmedFetch("test@test.com", "1:8000[dp]", "1200", "500", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
 		int count = 0;
 		for(Record r : this.rh) {
@@ -110,7 +111,7 @@ public class NLMJournalFetchTest extends TestCase {
 			count++;
 		}
 		assertEquals(1200, count);
-		log.info("END testNLMJournalFetchManyRecords");
+		log.info("END testPubmedFetchManyRecords");
 	}
 	
 	/**
