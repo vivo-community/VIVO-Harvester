@@ -81,8 +81,11 @@ ADMINPASS="vitro123"
 #clear old fetches
 rm -rf $RAWRHDIR
 
+CSVFILE="files/granttemplatetest.csv"
+XSLFILE="config/datamaps/csv-grant-to-vivo.xsl"
+
 # Execute Fetch
-$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i files/granttemplatetest.csv
+$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE
 
 # backup fetch
 BACKRAW="raw"
@@ -94,7 +97,7 @@ backup-path $RAWRHDIR $BACKRAW
 rm -rf $RDFRHDIR
 
 # Execute Translate
-$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/csv-grant-to-vivo.xsl
+$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x $XSLFILE
 
 # backup translate
 BACKRDF="rdf"

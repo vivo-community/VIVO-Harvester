@@ -9,6 +9,8 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence- initial API and implementation
 
+# For more information about this file there is a wiki entry at http://sourceforge.net/apps/mediawiki/vivo/index.php?title=Division_of_Sponsored_Research
+
 # Exit on first error
 set -e
 
@@ -59,19 +61,9 @@ MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckE
 #Changenamespace settings
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n $NAMESPACE"
 
-#The equality test algorithm
-EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 
 #matching properties
-CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
-UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
-UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
-ROLEIN="http://vivoweb.org/ontology/core#roleIn"
-PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
-COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
-DATETIME="http://www.w3.org/2001/XMLSchema#dateTime"
 
 BASEURI="http://vivoweb.org/harvest/ufl/dsr/"
 
@@ -120,6 +112,10 @@ backup-path $MODELDIR $BACKMODEL
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
+
+CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
+UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
+
 #smushes in-place(-r) on the contract number THEN on the UFID
 $Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
 
@@ -129,40 +125,41 @@ $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smu
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
 
+#The equality test algorithm
+EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+
 # Scoring of Grants on ContractNumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
+RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 
 $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
-$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
-
-# Find matches using scores and rename nodes to matching uri
-#$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+$Score $SCOREMODELS -A label=$EQTEST -W label=1.0 -F label=$RDFSLABEL -P label=$RDFSLABEL -n ${BASEURI}sponsor/
 
 $Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-1.dsr.rdf.xml
 
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-1.dsr.rdf.xml
 
-#clear score model for next batch.
-#rm -rf $SCOREDATADIR
-
-# Clear old H2 temp copy of input
-#$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
-
 # Scoring of people on UFID
-$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
+$Score $SCOREMODELS -A ufid=$EQTEST -W ufid=1.0 -F ufid=$UFID -P ufid=$UFID -n ${BASEURI}person/
 
+UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
 
 $Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
 # Scoring of orgs on DeptID
-$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
+$Score $SCOREMODELS -A deptID=$EQTEST -W deptID=1.0 -F deptID=$UFDEPTID -P deptID=$UFDEPTID -n ${BASEURI}org/
+
+ROLEIN="http://vivoweb.org/ontology/core#roleIn"
+PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
 
 # Scoring of PI Roles
 PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$PIROLEOF -Pperson=$PIROLEOF"
 GRANTURI="-Agrant=$EQTEST -Wgrant=0.5 -Fgrant=$ROLEIN -Pgrant=$ROLEIN"
 $Score $SCOREMODELS $PIURI $GRANTURI -n ${BASEURI}piRole/
 
+
+COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
 # Scoring of coPI Roles
 COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COPIROLEOF -Pperson=$COPIROLEOF"
 $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
@@ -170,9 +167,10 @@ $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
 
+DATETIME="http://www.w3.org/2001/XMLSchema#dateTime"
 
 # Scoring of DateTime Starts and ends
-$Score $SCOREMODELS -Adate=$EQTEST -Wdate=1.0 -Fdate=$DATETIME -Pdate=$DATETIME -n ${BASEURI}timeInterval/
+$Score $SCOREMODELS -A date=$EQTEST -W date=1.0 -F date=$DATETIME -P date=$DATETIME -n ${BASEURI}timeInterval/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
@@ -270,16 +268,16 @@ backup-mysqldb $BACKPOSTDB
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
 
-if [$ADMINNAME = "USERNAME"]; then
+#if [$ADMINNAME = "USERNAME"]; then
 	/etc/init.d/tomcat6 stop
 	/etc/init.d/apache2 restart
 	/etc/init.d/tomcat6 start
-else
-	rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
-	rm -f cookie.txt
-	wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
-
-	rm -f "SearchIndex"
-	wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
-fi
+#else
+#	rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+#	rm -f cookie.txt
+#	wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+#
+#	rm -f "SearchIndex"
+#	wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
+#fi
 

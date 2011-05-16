@@ -12,6 +12,8 @@
 <!-- Header information for the Style Sheet
 	The style sheet requires xmlns for each prefix you use in constructing
 	the new elements
+	
+	For more information about this file there is a wiki entry at http://sourceforge.net/apps/mediawiki/vivo/index.php?title=DSR_to_VIVO_XSLT_example
 -->
 
 <xsl:stylesheet version="2.0"

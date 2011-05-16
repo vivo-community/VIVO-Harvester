@@ -30,12 +30,14 @@ echo "Full Logging in $HARVESTER_TASK_DATE.log"
 BASEDIR=harvested-data/$HARVESTER_TASK
 
 #data directories
+RAWCSVDIR=$BASEDIR/csv
 RAWRHDIR=$BASEDIR/rh-raw
 RDFRHDIR=$BASEDIR/rh-rdf
 MODELDIR=$BASEDIR/model
 SCOREDATADIR=$BASEDIR/score-data
 
 #model database urls
+RAWCSVDBURL=jdbc:h2:$RAWCSVDIR/store
 RAWRHDBURL=jdbc:h2:$RAWRHDIR/store
 RDFRHDBURL=jdbc:h2:$RDFRHDIR/store
 MODELDBURL=jdbc:h2:$MODELDIR/store
@@ -43,6 +45,7 @@ SCOREDATADBURL=jdbc:h2:$SCOREDATADIR/store
 MATCHEDDBURL=jdbc:h2:$SCOREDATADIR/match
 
 #model names
+CSVMODELNAME=csvRawData
 MODELNAME=csvTempTransfer
 SCOREDATANAME=csvScoreData
 MATCHEDNAME=csvTempMatch
@@ -73,9 +76,20 @@ BASEURI="http://vivoweb.org/harvest/csvfile/"
 
 #clear old fetches
 rm -rf $RAWRHDIR
+rm -rf $RAWCSVDIR
+
+CSVFILE="files/persontemplatetest.csv"
+XSLFILE="config/datamaps/csv-people-to-vivo.xsl"
 
 # Execute Fetch
-$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i files/persontemplatetest.csv
+$CSVtoJDBC -i $CSVFILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
+
+FIELDS="CSV=ROWID,PERSONID,EMAIL,PHONE,FAX,FIRSTNAME,MIDNAME,LASTNAME,NAMEPREFIX,NAMESUFFIX,FULLNAME,TITLE,POSITIONTYPE,STARTDATE,ENDDATE,DEPARTMENTID,DEPARTMENTNAME"
+#$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV" -I "CSV=ROWID" -F $FIELDS  -o $TFRH -O fileDir=$RAWRHDIR
+
+$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
+
+#$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE
 
 # backup fetch
 BACKRAW="raw"
@@ -87,8 +101,8 @@ backup-path $RAWRHDIR $BACKRAW
 rm -rf $RDFRHDIR
 
 # Execute Translate
-$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/csv-people-to-vivo.xsl
-
+$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x $XSLFILE
+exit
 # backup translate
 BACKRDF="rdf"
 backup-path $RDFRHDIR $BACKRDF
@@ -208,13 +222,13 @@ backup-mysqldb $BACKPOSTDB
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
 
-rm cookie.txt
-rm "authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"
-wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"
+#rm cookie.txt
+#rm "authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"
+#wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"
 
-rm SearchIndex
-wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
+#rm SearchIndex
+#wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
 
-#/etc/init.d/tomcat6 stop
-#/etc/init.d/apache2 restart
-#/etc/init.d/tomcat6 start
+/etc/init.d/tomcat6 stop
+/etc/init.d/apache2 restart
+/etc/init.d/tomcat6 start

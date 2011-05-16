@@ -73,6 +73,7 @@
 <!--			Creating a department to match with or a stub if no match-->
 				<rdf:Description rdf:about="{$baseURI}org/org{$this/db-csv:ADMINDEPARTMENTID}">
 					<score:deptID><xsl:value-of select="$this/db-csv:ADMINDEPARTMENTID"/></score:deptID>
+					<rdfs:label><xsl:value-of select="$this/db-csv:ADMINDEPTNAME"/></rdfs:label>
 					<core:administers rdf:resource="{$baseURI}grant/grant{$grantid}" />
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
 				</rdf:Description>

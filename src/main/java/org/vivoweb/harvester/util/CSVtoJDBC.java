@@ -170,7 +170,7 @@ public class CSVtoJDBC {
 				columnNames.append(colLbl);
 				columnNames.append((i == (meta.getColumnCount() - 1)) ? " )" : ", ");
 			}
-			log.info("Create table command: \n" + createTable.toString());
+			log.debug("Create table command: \n" + createTable.toString());
 			cursor.execute(createTable.toString());
 			cursor.execute("ALTER TABLE "+this.tableName+" ADD PRIMARY KEY (ROWID)");
 			while(rs.next()) {
@@ -186,7 +186,7 @@ public class CSVtoJDBC {
 					insertCommand.append(rs.getString(i + 1));
 					insertCommand.append((i == (meta.getColumnCount() - 1)) ? "')" : "', '");
 				}
-				log.info("Insert command: \n" + insertCommand.toString());
+				log.debug("Insert command: \n" + insertCommand.toString());
 				cursor.executeUpdate(insertCommand.toString());
 				rowID++;
 			}
