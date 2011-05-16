@@ -157,7 +157,7 @@ public class CSVtoJDBC {
 			int rowID = 0;
 			StringBuilder createTable = new StringBuilder("CREATE TABLE ");
 			createTable.append(this.tableName);
-			createTable.append("( ROWID int, ");
+			createTable.append("( ROWID int NOT NULL, ");
 			this.fieldNames.add("ROWID");
 			StringBuilder columnNames = new StringBuilder("( ROWID, ");
 			for(int i = 0; i < meta.getColumnCount(); i++) {
