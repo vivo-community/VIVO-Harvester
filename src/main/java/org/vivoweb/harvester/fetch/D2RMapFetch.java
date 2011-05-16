@@ -65,8 +65,8 @@ public class D2RMapFetch {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public D2RMapFetch(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private D2RMapFetch(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class D2RMapFetch {
 	 * @param opts option set of parsed args
 	 * @throws IOException error creating task
 	 */
-	public D2RMapFetch(ArgList opts) throws IOException {
+	private D2RMapFetch(ArgList opts) throws IOException {
 		this(
 			opts.get("u"), 
 			RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O")), 

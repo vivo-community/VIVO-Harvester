@@ -7,7 +7,7 @@
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
  *****************************************************************************************************************************/
-package org.vivoweb.harvester.fetch;
+package org.vivoweb.harvester.fetch.nih;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -81,8 +81,8 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public NLMJournalFetch(String[] args) throws IOException {
-		this(new ArgList(getParser("NLMJournalFetch", database), args));
+	private NLMJournalFetch(String[] args) throws IOException {
+		this(getParser("NLMJournalFetch", database).parse(args));
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
-	public NLMJournalFetch(ArgList argList) throws IOException {
+	private NLMJournalFetch(ArgList argList) throws IOException {
 		super(argList, database, baseXMLROS.clone());
 	}
 	

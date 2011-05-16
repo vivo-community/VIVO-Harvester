@@ -117,8 +117,8 @@ public class Match {
 	 * @param args argument list
 	 * @throws IOException error parsing options
 	 */
-	public Match(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private Match(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class Match {
 	 * @param opts parsed argument list
 	 * @throws IOException error parsing options
 	 */
-	public Match(ArgList opts) throws IOException {
+	private Match(ArgList opts) throws IOException {
 		this(
 			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
 			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
@@ -364,8 +364,8 @@ public class Match {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Match");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("inputConfig JENA configuration filename, by default the same as the vivo JENA configuration file").withParameter(true, "CONFIG_FILE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").setDescription("scoreConfig JENA configuration filename").withParameter(true, "CONFIG_FILE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").withParameter(true, "CONFIG_FILE").setDescription("inputConfig JENA configuration filename").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").withParameter(true, "CONFIG_FILE").setDescription("scoreConfig JENA configuration filename").setRequired(false));
 		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, when set nodes that meet the threshold are pushed to the output model").withParameter(true, "CONFIG_FILE").setRequired(false));

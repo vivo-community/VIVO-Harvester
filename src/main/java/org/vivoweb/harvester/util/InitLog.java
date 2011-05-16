@@ -114,7 +114,7 @@ public class InitLog {
 		System.setProperty("harvester-level", "OFF");
 		setLogLevel("OFF");
 		if((args != null) && (parser != null)) {
-			ArgList argList = new ArgList(parser, args);
+			ArgList argList = parser.parse(args);
 			if(argList.has("w")) {
 				logLevel = argList.get("w");
 			}

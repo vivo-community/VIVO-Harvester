@@ -7,7 +7,7 @@
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
  *****************************************************************************************************************************/
-package org.vivoweb.harvester.fetch;
+package org.vivoweb.harvester.fetch.nih;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.IdListType;
@@ -75,12 +75,7 @@ public abstract class NIHFetch {
 	 * @param database database name
 	 */
 	protected NIHFetch(String emailAddress, OutputStream outStream, String database) {
-		this.emailAddress = emailAddress; // NIH Will email this person if there is a problem
-		this.searchTerm = "1:8000[dp]";
-		this.maxRecords = "ALL";
-		this.batchSize = "1000";
-		this.databaseName = database;
-		setOsWriter(outStream);
+		this(emailAddress, "1:8000[dp]", "ALL", "1000", outStream, database);
 	}
 	
 	/**
@@ -101,6 +96,7 @@ public abstract class NIHFetch {
 		this.batchSize = batchSize;
 		this.databaseName = database;
 		setOsWriter(outStream);
+		//TODO Erroroneous input checking
 	}
 	
 	/**
@@ -111,13 +107,7 @@ public abstract class NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	protected NIHFetch(ArgList argList, String database, XMLRecordOutputStream os) throws IOException {
-		this.emailAddress = argList.get("m");
-		this.searchTerm = argList.get("t");
-		this.maxRecords = argList.get("n");
-		this.batchSize = argList.get("b");
-		this.databaseName = database;
-		os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
-		setOsWriter(os);
+		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"))), database);
 	}
 	
 	/**
@@ -128,12 +118,7 @@ public abstract class NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	protected NIHFetch(ArgList argList, String database, String outputFile) throws IOException {
-		this.emailAddress = argList.get("m");
-		this.searchTerm = argList.get("t");
-		this.maxRecords = argList.get("n");
-		this.batchSize = argList.get("b");
-		this.databaseName = database;
-		setOsWriter(new FileOutputStream(outputFile, true));
+		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), new FileOutputStream(outputFile, true), database);
 	}
 	
 	/**

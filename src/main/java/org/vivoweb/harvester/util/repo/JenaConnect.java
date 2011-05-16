@@ -47,6 +47,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateFactory;
@@ -693,7 +694,14 @@ public abstract class JenaConnect {
 	 * Remove all statements from model
 	 */
 	public void truncate() {
-		getJenaModel().removeAll((Resource)null,(Property)null,(RDFNode)null);
+		Model sourceModel = getJenaModel();
+		sourceModel.enterCriticalSection(Lock.WRITE);
+		try{
+			// this method is used so that any listeners can see each statement removed
+			sourceModel.removeAll((Resource)null,(Property)null,(RDFNode)null);
+		} finally {
+			sourceModel.leaveCriticalSection();
+		}
 	}
 	
 	/**
@@ -736,7 +744,7 @@ public abstract class JenaConnect {
 		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());
-			ArgList argList = new ArgList(getParser(), args);
+			ArgList argList = getParser().parse(args);
 			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
 			if(jc == null) {
 				throw new IllegalArgumentException("Must specify a jena model");

@@ -60,8 +60,8 @@ public class ChangeNamespace {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public ChangeNamespace(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private ChangeNamespace(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class ChangeNamespace {
 	 * @param argList parsed argument list
 	 * @throws IOException error reading config
 	 */
-	public ChangeNamespace(ArgList argList) throws IOException {
+	private ChangeNamespace(ArgList argList) throws IOException {
 		this(
 			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
 			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")), 

@@ -83,8 +83,8 @@ public class SanitizeMODSXML {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public SanitizeMODSXML(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private SanitizeMODSXML(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 
 	/**
@@ -92,8 +92,12 @@ public class SanitizeMODSXML {
 	 * @param argList option set of parsed args
 	 * @throws IOException error creating task
 	 */
-	public SanitizeMODSXML(ArgList argList) throws IOException {
-		this(RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")), argList.has("f"));
+	private SanitizeMODSXML(ArgList argList) throws IOException {
+		this(
+			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")), 
+			argList.has("f")
+		);
 	}
 
 	/**
@@ -433,7 +437,7 @@ public class SanitizeMODSXML {
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
-			new SanitizeMODSXML(new ArgList(getParser(), args)).execute();
+			new SanitizeMODSXML(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());

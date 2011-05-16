@@ -203,8 +203,8 @@ public class Score {
 	 * @param args argument list
 	 * @throws IOException error parsing options
 	 */
-	public Score(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private Score(String... args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -212,7 +212,7 @@ public class Score {
 	 * @param opts parsed argument list
 	 * @throws IOException error parsing options
 	 */
-	public Score(ArgList opts) throws IOException {
+	private Score(ArgList opts) throws IOException {
 		this(
 			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
 			JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V")), 

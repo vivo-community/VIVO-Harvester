@@ -1,8 +1,10 @@
 package org.vivoweb.harvester.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -125,6 +127,59 @@ public class FileAide {
 			return null;
 		}
 		return getFileObject(path).getContent().getInputStream();
+	}
+	
+//	/**
+//	 * Resolves the path and gets the contents of the file as a byte array
+//	 * @param path the path to resolve
+//	 * @return the byte array
+//	 * @throws IOException error resolving
+//	 */
+//	public static byte[] getContent(String path) throws IOException {
+//		if(path == null) {
+//			return null;
+//		}
+//		FileContent content = getFileObject(path).getContent();
+//		byte[] retVal = new byte[(int)content.getSize()];
+//		InputStream is = content.getInputStream();
+//		is.read(retVal);
+//		return retVal;
+//	}
+	
+	/**
+	 * Resolves the path and gets the contents of the file as a text string
+	 * @param path the path to resolve
+	 * @return the string
+	 * @throws IOException error resolving
+	 */
+	public static String getTextContent(String path) throws IOException {
+		return getTextContent(path, null);
+	}
+	
+	/**
+	 * Resolves the path and gets the contents of the file as a text string
+	 * @param path the path to resolve
+	 * @param charsetName the characterset to use
+	 * @return the string
+	 * @throws IOException error resolving
+	 */
+	public static String getTextContent(String path, String charsetName) throws IOException {
+		if(path == null) {
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		InputStreamReader isr;
+		if(charsetName == null) {
+			isr = new InputStreamReader(getInputStream(path));
+		} else {
+			isr = new InputStreamReader(getInputStream(path), charsetName);
+		}
+		BufferedReader br = new BufferedReader(isr);
+		String temp = null;
+		while((temp = br.readLine()) != null) {
+			sb.append(temp);
+		}
+		return sb.toString();
 	}
 	
 	/**

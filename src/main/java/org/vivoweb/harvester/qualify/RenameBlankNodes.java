@@ -98,8 +98,8 @@ public class RenameBlankNodes {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public RenameBlankNodes(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private RenameBlankNodes(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class RenameBlankNodes {
 	 * @param argList parsed argument list
 	 * @throws IOException error reading config
 	 */
-	public RenameBlankNodes(ArgList argList) throws IOException {
+	private RenameBlankNodes(ArgList argList) throws IOException {
 		this(
 			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")),
 			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")),

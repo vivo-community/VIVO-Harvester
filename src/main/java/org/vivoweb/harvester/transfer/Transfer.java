@@ -69,8 +69,8 @@ public class Transfer {
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
 	 */
-	public Transfer(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private Transfer(String... args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class Transfer {
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
-	public Transfer(ArgList argList) throws IOException {
+	private Transfer(ArgList argList) throws IOException {
 		// setup input model
 		this.input = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		

@@ -59,7 +59,7 @@ public class ArgListTest extends TestCase {
 		log.info("BEGIN testGet");
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUT_FILE").setDescription("output file").setRequired(true));
 		try {
-			ArgList a = new ArgList(parser, new String[]{"-o", "Testing"});
+			ArgList a = parser.parse(new String[]{"-o", "Testing"});
 			assertEquals(a.get("o"), "Testing");
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
@@ -75,7 +75,7 @@ public class ArgListTest extends TestCase {
 		log.info("BEGIN testGetAllString");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
-			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
+			ArgList a = parser.parse(new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
 			List<String> l = a.getAll("e");
 			assertTrue(l.contains("Testing1"));
 			assertTrue(l.contains("Testing2"));
@@ -97,7 +97,7 @@ public class ArgListTest extends TestCase {
 		log.info("BEGIN testGetAllStringBoolean");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
 		try {
-			ArgList a = new ArgList(parser, new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
+			ArgList a = parser.parse(new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
 			List<String> l = a.getAll("e", false);
 			assertTrue(l.contains("Testing1"));
 			assertTrue(l.contains("Testing2"));
@@ -123,7 +123,7 @@ public class ArgListTest extends TestCase {
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("flag").setDescription("test flag"));
 		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("zig").setDescription("test missing flag"));
 		try {
-			ArgList a = new ArgList(parser, new String[]{"-f"});
+			ArgList a = parser.parse(new String[]{"-f"});
 			assertTrue(a.has("f"));
 			assertFalse(a.has("z"));
 		} catch(Exception e) {

@@ -128,8 +128,8 @@ public class Smush {
 	 * @param args argument list
 	 * @throws IOException error parsing options
 	 */
-	public Smush(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private Smush(String... args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class Smush {
 	 * @param opts parsed argument list
 	 * @throws IOException error parsing options
 	 */
-	public Smush(ArgList opts) throws IOException {
+	private Smush(ArgList opts) throws IOException {
 		this(
 			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
 			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 

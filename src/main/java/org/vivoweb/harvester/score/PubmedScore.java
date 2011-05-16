@@ -137,8 +137,8 @@ public class PubmedScore {
 	 * @throws IOException error parsing options
 	 * @throws IllegalArgumentException arguments invalid
 	 */
-	public PubmedScore(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private PubmedScore(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class PubmedScore {
 	 * @param opts argument list
 	 * @throws IOException error parsing options
 	 */
-	public PubmedScore(ArgList opts) throws IOException {
+	private PubmedScore(ArgList opts) throws IOException {
 		// Get optional inputs / set defaults
 		// Check for config files, before parsing name options
 		String jenaVIVO = opts.get("v");
@@ -185,6 +185,7 @@ public class PubmedScore {
 		this.wipeInputModel = opts.has("w");
 		this.wipeOutputModel = opts.has("q");
 		this.pushAll = opts.has("l");
+		//TODO use library constructor
 	}
 	
 	/**

@@ -42,11 +42,11 @@ RenameResources="java $OPTS -Dprocess-task=RenameResources org.vivoweb.harvester
 Diff="java $OPTS -Dprocess-task=Diff org.vivoweb.harvester.diff.Diff"
 D2RMapFetch="java $OPTS -Dprocess-task=D2RMapFetch org.vivoweb.harvester.fetch.D2RMapFetch"
 JDBCFetch="java $OPTS -Dprocess-task=JDBCFetch org.vivoweb.harvester.fetch.JDBCFetch"
-NIHFetch="java $OPTS -Dprocess-task=NIHFetch org.vivoweb.harvester.fetch.NIHFetch"
-NLMJournalFetch="java $OPTS -Dprocess-task=NLMJournalFetch org.vivoweb.harvester.fetch.NLMJournalFetch"
+NIHFetch="java $OPTS -Dprocess-task=NIHFetch org.vivoweb.harvester.fetch.nih.NIHFetch"
+NLMJournalFetch="java $OPTS -Dprocess-task=NLMJournalFetch org.vivoweb.harvester.fetch.nih.NLMJournalFetch"
 OAIFetch="java $OPTS -Dprocess-task=OAIFetch org.vivoweb.harvester.fetch.OAIFetch"
-PubmedFetch="java $OPTS -Dprocess-task=PubmedFetch org.vivoweb.harvester.fetch.PubmedFetch"
-PubmedHTTPFetch="java $OPTS -Dprocess-task=PubmedHTTPFetch org.vivoweb.harvester.fetch.PubmedHTTPFetch"
+PubmedFetch="java $OPTS -Dprocess-task=PubmedFetch org.vivoweb.harvester.fetch.nih.PubmedFetch"
+PubmedHTTPFetch="java $OPTS -Dprocess-task=PubmedHTTPFetch org.vivoweb.harvester.fetch.nih.PubmedHTTPFetch"
 Qualify="java $OPTS -Dprocess-task=Qualify org.vivoweb.harvester.qualify.Qualify"
 Smush="java $OPTS -Dprocess-task=Smush org.vivoweb.harvester.qualify.Smush"
 Score="java -server $OPTS -Dprocess-task=Score org.vivoweb.harvester.score.Score"
@@ -64,9 +64,10 @@ JenaConnect="java $OPTS -Dprocess-task=JenaConnect org.vivoweb.harvester.util.re
 SanitizeMODSXML="java $OPTS -Dprocess-task=SanitizeMODSXML org.vivoweb.harvester.translate.SanitizeMODSXML"
 XPathTool="java $OPTS -Dprocess-task=XPathTool org.vivoweb.harvester.util.XPathTool"
 CSVtoJDBC="java $OPTS -Dprocess-task=CSVtoJDBC org.vivoweb.harvester.util.CSVtoJDBC"
-CSVtoRDF="java $OPTS -Dprocess-task=CSVtoRDF org.vivoweb.harvester.fetch.CSVtoRDF"
+CSVtoRDF="java $OPTS -Dprocess-task=CSVtoRDF org.vivoweb.harvester.demo.CSVtoRDF"
 H2Console="java $OPTS -Dprocess-task=H2Console org.h2.tools.Server"
 RunBibutils="java $OPTS -Dprocess-task=RunBibutils org.vivoweb.harvester.translate.RunBibutils"
+RecordHandler="java $OPTS -Dprocess-task=RecordHandler org.vivoweb.harvester.util.repo.RecordHandler"
 
 #Mysql username, password, and server address for backups in scripts
 #parse VIVO.xml for these values
