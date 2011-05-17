@@ -195,37 +195,36 @@ public class Smush {
 						Resource smushToThisResource = null;
 						for (Iterator<Resource> subjIt = closfIt; closfIt.hasNext();) {
 							Resource subj = subjIt.next();
-							if(! (subj.getNameSpace().equals(namespace) || namespace == null ) ){
-								continue;
-							}
-							if (first) {
-								smushToThisResource = subj;
-								first = false;
-								log.debug("Smush running for <"+subj+">");
-								continue;
-							}
-							
-							ClosableIterator<Statement> closgIt = inModel.listStatements(subj,(Property)null,(RDFNode)null);
-							try {
-								for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
-									Statement stmt = stmtIt.next();
-									log.trace("Smushing subject <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
-									outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
-									outModel.add(smushToThisResource, stmt.getPredicate(), stmt.getObject());
+							if(subj.getNameSpace().equals(namespace) || namespace == null){
+								if (first) {
+									smushToThisResource = subj;
+									first = false;
+									log.debug("Smush running for <"+subj+">");
+									continue;
 								}
-							} finally {
-								closgIt.close();
-							}
-							closgIt = inModel.listStatements((Resource) null, (Property)null, subj);
-							try {
-								for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
-									Statement stmt = stmtIt.next();
-									log.trace("Smushing object <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
-									outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
-									outModel.add(stmt.getSubject(), stmt.getPredicate(), smushToThisResource);
+								
+								ClosableIterator<Statement> closgIt = inModel.listStatements(subj,(Property)null,(RDFNode)null);
+								try {
+									for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
+										Statement stmt = stmtIt.next();
+										log.trace("Smushing subject <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
+										outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
+										outModel.add(smushToThisResource, stmt.getPredicate(), stmt.getObject());
+									}
+								} finally {
+									closgIt.close();
 								}
-							} finally {
-								closgIt.close();
+								closgIt = inModel.listStatements((Resource) null, (Property)null, subj);
+								try {
+									for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
+										Statement stmt = stmtIt.next();
+										log.trace("Smushing object <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
+										outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
+										outModel.add(stmt.getSubject(), stmt.getPredicate(), smushToThisResource);
+									}
+								} finally {
+									closgIt.close();
+								}
 							}
 						}
 					} finally {

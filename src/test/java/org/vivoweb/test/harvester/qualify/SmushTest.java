@@ -1,13 +1,10 @@
 package org.vivoweb.test.harvester.qualify;
 
-import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Smush;
@@ -23,7 +20,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  * @author jrpence
  *
  */
-public class SmushTest {
+public class SmushTest extends TestCase {
 	/**
 	 * SLF4J Logger
 	 */
@@ -38,7 +35,7 @@ public class SmushTest {
 	/**
 	 * @throws Exception passing along excpetions
 	 */
-	@Before
+	@Override
 	public void setUp() throws Exception {
 		InitLog.initLogger(null, null);
 		this.namespace = "http://vivo.test.edu/individual/";
@@ -125,8 +122,9 @@ public class SmushTest {
 	}
 	
 	/**
+	 * 
 	 */
-	@After
+	@Override
 	public void tearDown() {
 		log.info("testing End");
 		this.inputModel.close();
@@ -134,14 +132,12 @@ public class SmushTest {
 //		this.outputModel.close();
 //		this.outputModel = null;
 		this.namespace = null;
-		System.gc();
 	}
 	
 	/**
 	 * @throws IOException incase there is an ioerror from exportRdfToString
 	 * 
 	 */
-	@Test
 	public void testExecSmushResources() throws IOException {
 		log.info("BEGIN testExecSmushResources");
 		List<String> predicates = new ArrayList<String>();
@@ -151,7 +147,7 @@ public class SmushTest {
 
 		testSubject.execute();
 		{
-			log.info("The output model :\n" + this.inputModel.exportRdfToString());
+			log.trace("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
 	
 			query.append("PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
@@ -184,7 +180,6 @@ public class SmushTest {
 	 * @throws IOException incase there is an ioerror from exportRdfToString
 	 * 
 	 */
-	@Test
 	public void tesExectNotSmushResources() throws IOException {
 		log.info("BEGIN testExecNotSmushResources");
 		List<String> predicates = new ArrayList<String>();
