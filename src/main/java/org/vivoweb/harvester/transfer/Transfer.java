@@ -129,7 +129,7 @@ public class Transfer {
 				this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 			}
 			if(this.inRH != null) {
-				this.output.removeRdfFromRH(this.inRH, this.namespace);
+				this.output.removeRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
 			}
 		} else {
 			if(this.input != null) {
@@ -139,7 +139,7 @@ public class Transfer {
 				this.output.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 			}
 			if(this.inRH != null) {
-				this.output.loadRdfFromRH(this.inRH, this.namespace);
+				this.output.loadRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
 			}
 		}
 		if(this.dumpFile != null) {

@@ -127,7 +127,10 @@ public class Diff {
 	 */
 	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) throws IOException {
 		/*
-		 * c - b = a minuend - subtrahend = difference minuend.diff(subtrahend) = differenece c.diff(b) = a
+		 * c - b = a
+		 * minuend - subtrahend = difference
+		 * minuend.diff(subtrahend) = differenece
+		 * c.diff(b) = a
 		 */
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();

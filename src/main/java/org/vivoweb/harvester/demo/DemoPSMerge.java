@@ -190,7 +190,7 @@ public class DemoPSMerge {
 		psInput.truncate();
 		// import from record handler into input model
 		log.trace("Loading Translated Data into Input Model");
-		psInput.loadRdfFromRH(transRH, "http://vivo.ufl.edu/individual/");
+		psInput.loadRdfFromRH(transRH, "http://vivo.ufl.edu/individual/", null);
 		
 		System.setProperty("process-task", "Score.Setup");
 		InitLog.initLogger(null, null);

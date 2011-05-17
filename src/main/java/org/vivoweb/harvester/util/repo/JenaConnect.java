@@ -296,9 +296,10 @@ public abstract class JenaConnect {
 	 * Removes all records in a RecordHandler from the model
 	 * @param rh the RecordHandler to pull records from
 	 * @param namespace the base uri to use for imported uris
+	 * @param language the rdf syntax language (RDF/XML, N3, TTL, etc). null = RDF/XML
 	 * @return number of records removed
 	 */
-	public int removeRdfFromRH(RecordHandler rh, String namespace) {
+	public int removeRdfFromRH(RecordHandler rh, String namespace, String language) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("removing record: " + r.getID());
@@ -306,7 +307,7 @@ public abstract class JenaConnect {
 				// log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
-			getJenaModel().remove(new MemJenaConnect(bais, namespace, null).getJenaModel());
+			getJenaModel().remove(new MemJenaConnect(bais, namespace, language).getJenaModel());
 			try {
 				bais.close();
 			} catch(IOException e) {
@@ -321,9 +322,10 @@ public abstract class JenaConnect {
 	 * Adds all records in a RecordHandler to the model
 	 * @param rh the RecordHandler to pull records from
 	 * @param namespace the base uri to use for imported uris
+	 * @param language the rdf syntax language (RDF/XML, N3, TTL, etc).  null = RDF/XML
 	 * @return number of records added
 	 */
-	public int loadRdfFromRH(RecordHandler rh, String namespace) {
+	public int loadRdfFromRH(RecordHandler rh, String namespace, String language) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("loading record: " + r.getID());
@@ -331,7 +333,7 @@ public abstract class JenaConnect {
 				// log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
-			getJenaModel().read(bais, namespace);
+			getJenaModel().read(bais, namespace, language);
 			try {
 				bais.close();
 			} catch(IOException e) {
