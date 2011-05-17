@@ -89,8 +89,8 @@ public class Diff {
 	 */
 	private Diff(ArgList argList) throws IOException {
 		this(
-			JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S")), 
 			JenaConnect.parseConfig(argList.get("m"), argList.getValueMap("M")), 
+			JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S")), 
 			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")), 
 			argList.get("d")
 		);
