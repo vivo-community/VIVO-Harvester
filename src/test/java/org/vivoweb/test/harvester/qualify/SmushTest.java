@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Smush;
@@ -161,13 +164,13 @@ public class SmushTest extends TestCase {
 			query.append("?uri localVivo:uniqueId \"1234567890\" .");
 			query.append("}");
 			ResultSet rs = this.inputModel.executeSelectQuery(query.toString());
-			log.info("query result set :\n");
+			log.debug("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					log.info(line);
+					log.debug(line);
 				}
 			}
 			assertTrue(list.size() == 1);//Node of the proper namespace is reduced
@@ -190,7 +193,7 @@ public class SmushTest extends TestCase {
 		testSubject.execute();
 
 		{
-			log.info("The output model :\n" + this.inputModel.exportRdfToString());
+			log.debug("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
 	
 			query.append("PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
@@ -204,13 +207,13 @@ public class SmushTest extends TestCase {
 			query.append("?uri localVivo:uniqueId ?lbl .");
 			query.append("}");
 			ResultSet rs = this.inputModel.executeSelectQuery(query.toString());
-			log.info("query result set :\n");
+			log.debug("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					log.info(line);
+					log.debug(line);
 				}
 			}
 			assertTrue(list.size() == 5);//Nodes of the improper namespace is not reduced
