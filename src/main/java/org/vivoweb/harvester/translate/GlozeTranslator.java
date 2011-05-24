@@ -75,8 +75,8 @@ public class GlozeTranslator {
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
 	 */
-	public GlozeTranslator(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private GlozeTranslator(String... args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -89,25 +89,39 @@ public class GlozeTranslator {
 	 *        </ul>
 	 * @throws IOException error connecting to record handlers
 	 */
-	public GlozeTranslator(ArgList argList) throws IOException {
-		// the uri base if not set is http://vivoweb.org/glozeTranslation/noURI/"
-		if(argList.has("uriBase")) {
-			setURIBase(argList.get("uriBase"));
+	private GlozeTranslator(ArgList argList) throws IOException {
+		this(
+			argList.get("u"), 
+			argList.get("z"), 
+			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"))
+		);
+	}
+	
+	/**
+	 * Constructor
+	 * @param uriBase the base for all URIs generated
+	 * @param xmlSchema the xml schema for gloze to use while translating
+	 * @param inStore the input recordhandler
+	 * @param outStore the output recordhandler
+	 */
+	public GlozeTranslator(String uriBase, String xmlSchema, RecordHandler inStore, RecordHandler outStore) {
+		if(uriBase == null) {
+			throw new IllegalArgumentException("Must provide a uri base");
 		}
-		// pull in the translation xsl
-		if(argList.has("xmlSchema")) {
-			setIncomingSchema(new File(argList.get("xmlSchema")));
+		setURIBase(uriBase);
+		if(xmlSchema == null) {
+			throw new IllegalArgumentException("Must provide a xml schema");
 		}
-		
-		// create record handlers
-		this.inStore = RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I"));
-		if(this.inStore == null) {
+		setIncomingSchema(new File(xmlSchema));//FIXME: use FileAide and Streams!
+		if(inStore == null) {
 			throw new IllegalArgumentException("Must provide an input recordhandler");
 		}
-		this.outStore = RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"));
-		if(this.outStore == null) {
+		this.inStore = inStore;
+		if(outStore == null) {
 			throw new IllegalArgumentException("Must provide an output recordhandler");
 		}
+		this.outStore = outStore;
 	}
 	
 	/**
@@ -161,7 +175,7 @@ public class GlozeTranslator {
 			this.inStream.close();
 			tempWrite.close();
 			
-			gl.xml_to_rdf(tempFile, new File("test"), this.uriBase, outputModel);
+			gl.xml_to_rdf(tempFile, this.incomingSchema, this.uriBase, outputModel);
 			tempFile.delete();
 		} catch(Exception e) {
 			log.error("", e);

@@ -9,6 +9,8 @@
 # Contributors:
 #     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence- initial API and implementation
 
+# For more information about this file there is a wiki entry at http://sourceforge.net/apps/mediawiki/vivo/index.php?title=Division_of_Sponsored_Research
+
 # Exit on first error
 set -e
 
@@ -59,19 +61,15 @@ MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckE
 #Changenamespace settings
 CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n $NAMESPACE"
 
-#The equality test algorithm
-EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 
 #matching properties
-CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
-UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
-UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
-ROLEIN="http://vivoweb.org/ontology/core#roleIn"
-PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
-COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
+
 BASEURI="http://vivoweb.org/harvest/ufl/dsr/"
+
+#connection info for reindex of lucene
+ADMINNAME="USERNAME"
+ADMINPASS="vitro123"
 
 #clear old fetches
 rm -rf $RAWRHDIR
@@ -103,6 +101,8 @@ rm -rf $MODELDIR
 # Execute Transfer to import from record handler into local temp model
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
 
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.dsr.rdf.xml
+
 # backup H2 transfer Model
 BACKMODEL="model"
 backup-path $MODELDIR $BACKMODEL
@@ -112,38 +112,85 @@ backup-path $MODELDIR $BACKMODEL
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
+
+CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
+UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
+
 #smushes in-place(-r) on the contract number THEN on the UFID
 $Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.dsr.rdf.xml
 
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
 
+#The equality test algorithm
+EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+
 # Scoring of Grants on ContractNumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
-# Scoring of people on UFID
-$Score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$UFID -Pufid=$UFID -n ${BASEURI}person/
-
-$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
-# Scoring of orgs on DeptID
-$Score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$UFDEPTID -PdeptID=$UFDEPTID -n ${BASEURI}org/
+RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 
 $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
-$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
+$Score $SCOREMODELS -A label=$EQTEST -W label=1.0 -F label=$RDFSLABEL -P label=$RDFSLABEL -n ${BASEURI}sponsor/
+
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-1.dsr.rdf.xml
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-1.dsr.rdf.xml
+
+# Scoring of people on UFID
+$Score $SCOREMODELS -A ufid=$EQTEST -W ufid=1.0 -F ufid=$UFID -P ufid=$UFID -n ${BASEURI}person/
+
+UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
+
+$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
+# Scoring of orgs on DeptID
+$Score $SCOREMODELS -A deptID=$EQTEST -W deptID=1.0 -F deptID=$UFDEPTID -P deptID=$UFDEPTID -n ${BASEURI}org/
+
+ROLEIN="http://vivoweb.org/ontology/core#roleIn"
+PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
 
 # Scoring of PI Roles
-PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$ROLEOF -Pperson=$PIROLEOF"
+PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$PIROLEOF -Pperson=$PIROLEOF"
 GRANTURI="-Agrant=$EQTEST -Wgrant=0.5 -Fgrant=$ROLEIN -Pgrant=$ROLEIN"
 $Score $SCOREMODELS $PIURI $GRANTURI -n ${BASEURI}piRole/
 
+
+COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
 # Scoring of coPI Roles
-COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COROLEOF -Pperson=$COPIROLEOF"
+COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COPIROLEOF -Pperson=$COPIROLEOF"
 $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+DATETIME="http://www.w3.org/2001/XMLSchema#dateTime"
+
+# Scoring of DateTime Starts and ends
+$Score $SCOREMODELS -A date=$EQTEST -W date=1.0 -F date=$DATETIME -P date=$DATETIME -n ${BASEURI}timeInterval/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
+
+STARTTIME="http://vivoweb.org/ontology/core#start"
+ENDTIME="http://vivoweb.org/ontology/core#end"
+
+# Scoring of DateTimeInterval
+$Score $SCOREMODELS -Asdate=$EQTEST -Wsdate=0.5 -Fsdate=$STARTTIME -Psdate=$STARTTIME -Aedate=$EQTEST -Wedate=0.5 -Fedate=$ENDTIME -Pedate=$ENDTIME -n ${BASEURI}timeInterval/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-2.dsr.rdf.xml
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-2.dsr.rdf.xml
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
@@ -169,11 +216,12 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}piRole/
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}coPiRole/
 
-
 # Execute ChangeNamespace to get co-PI roles into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}timeInterval/
 
+
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.dsr.rdf.xml
 # backup H2 matched Model
 BACKMATCHED="matched"
 backup-path $MODELDIR $BACKMATCHED
@@ -219,6 +267,17 @@ backup-mysqldb $BACKPOSTDB
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
-/etc/init.d/tomcat6 stop
-/etc/init.d/apache2 restart
-/etc/init.d/tomcat6 start
+
+#if [$ADMINNAME = "USERNAME"]; then
+	/etc/init.d/tomcat6 stop
+	/etc/init.d/apache2 restart
+	/etc/init.d/tomcat6 start
+#else
+#	rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+#	rm -f cookie.txt
+#	wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+#
+#	rm -f "SearchIndex"
+#	wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
+#fi
+

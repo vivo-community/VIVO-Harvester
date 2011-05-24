@@ -64,8 +64,8 @@ public class XSLTranslator {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public XSLTranslator(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private XSLTranslator(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class XSLTranslator {
 	 *        </ul>
 	 * @throws IOException error reading files
 	 */
-	public XSLTranslator(ArgList argList) throws IOException {
+	private XSLTranslator(ArgList argList) throws IOException {
 		this(
 			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
 			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),  

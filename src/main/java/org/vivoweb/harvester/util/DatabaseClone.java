@@ -125,7 +125,7 @@ public class DatabaseClone {
 	 * @throws DatabaseUnitException error connecting to database
 	 */
 	public DatabaseClone(String[] args) throws IOException, ClassNotFoundException, SQLException, DatabaseUnitException {
-		this(new ArgList(getParser(), args));
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class DatabaseClone {
 	 * @throws IOException error resolving file
 	 * @throws DatabaseUnitException error connecting to database
 	 */
-	public DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException, IOException, DatabaseUnitException {
+	private DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException, IOException, DatabaseUnitException {
 		this(
 			initDBConn("input", argList.get("inputDriver"), argList.get("inputConnection"), argList.get("inputUsername"), argList.get("inputPassword")),
 			argList.get("inputFile"),
@@ -307,7 +307,7 @@ public class DatabaseClone {
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
-			new DatabaseClone(new ArgList(getParser(), args)).execute();
+			new DatabaseClone(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.out.println(getParser().getUsage());

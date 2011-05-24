@@ -59,7 +59,7 @@ public class ArgList {
 	 * @param args commandline args
 	 * @throws IOException error parsing args
 	 */
-	public ArgList(ArgParser p, String[] args) throws IOException {
+	protected ArgList(ArgParser p, String[] args) throws IOException {
 		try {
 			this.argParser = p;
 			log.debug("running " + p.getAppName());

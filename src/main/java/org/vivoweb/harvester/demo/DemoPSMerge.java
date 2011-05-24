@@ -190,7 +190,7 @@ public class DemoPSMerge {
 		psInput.truncate();
 		// import from record handler into input model
 		log.trace("Loading Translated Data into Input Model");
-		psInput.loadRdfFromRH(transRH, "http://vivo.ufl.edu/individual/");
+		psInput.loadRdfFromRH(transRH, "http://vivo.ufl.edu/individual/", null);
 		
 		System.setProperty("process-task", "Score.Setup");
 		InitLog.initLogger(null, null);
@@ -325,14 +325,14 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Diff.Subs");
 		InitLog.initLogger(null, null);
 		// Find Subtractions
-		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel);
+		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel, null);
 		log.trace("Finding subtractions");
 		psDiffSubs.execute();
 		
 		System.setProperty("process-task", "Diff.Adds");
 		InitLog.initLogger(null, null);
 		// Find Additions
-		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel);
+		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel, null);
 		log.trace("Finding additions");
 		psDiffAdds.execute();
 		

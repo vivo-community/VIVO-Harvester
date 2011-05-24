@@ -71,15 +71,15 @@ public class JenaIngestWorkflowProcessor {
 	 */
 	static Logger log = LoggerFactory.getLogger(JenaIngestWorkflowProcessor.class);
 	/**
+	 * 
+	 */
+	private ModelMaker vitroJenaModelMaker;
+	/**
 	 * the individual that defines the workflow
 	 */
 	private Individual workflowInd;
 	/**
-	 * the modelmaker
-	 */
-	private ModelMaker vitroJenaModelMaker;
-	/**
-	 * 
+	 * local variable value map
 	 */
 	private Map<String,Literal> varMap;
 	/**
@@ -90,13 +90,11 @@ public class JenaIngestWorkflowProcessor {
 	/**
 	 * Constructor
 	 * @param workflowInd the individual that defines the workflow
-	 * @param vitroJenaModelMaker the modelmaker
 	 */
 	@SuppressWarnings("synthetic-access")
-	public JenaIngestWorkflowProcessor(Individual workflowInd, ModelMaker vitroJenaModelMaker) {
+	public JenaIngestWorkflowProcessor(Individual workflowInd) {
 		this.varMap = new HashMap<String,Literal>();
 		this.workflowInd = workflowInd;
-		this.vitroJenaModelMaker = vitroJenaModelMaker;
 		this.actionHandlerList = new LinkedList<ActionHandler>();
 		this.actionHandlerList.add(new ClearModelAction());
 		this.actionHandlerList.add(new AddModelsAction());
@@ -224,12 +222,12 @@ public class JenaIngestWorkflowProcessor {
 	 * @param modelNode the node reoresentign a model
 	 * @return the model represented by the given Node, which is expected to be an Individual of type Model
 	 */
-	Model getModel(RDFNode modelNode) {
-	    if (modelNode == null) {
+	Model getJenaConnect(RDFNode modelNode) {
+	    if (modelNode == null) {// || modelNode.canAs(WorkflowOntology.Model)) {
 	        return null;
 	    }
 		Individual modelInd = modelNode.as(Individual.class);
-		String modelNameStr = (modelInd.getPropertyValue(WorkflowOntology.modelName).as(Literal.class)).getLexicalForm();
+		String modelNameStr = (modelInd.getPropertyValue(WorkflowOntology.jenaConnectConfig).as(Literal.class)).getLexicalForm();
 		// false = strict mode off, i.e., 
 		// if a model already exists of the given name, return it.  Otherwise, create a new one.
 		return this.vitroJenaModelMaker.createModel(modelNameStr,false);
@@ -276,7 +274,7 @@ public class JenaIngestWorkflowProcessor {
 		@Override
 		public ActionResult handleAction(Individual actionInd) {
 			if (instanceOf(actionInd,WorkflowOntology.ClearModelAction)) {
-				Model sourceModel = getModel(actionInd.getPropertyValue(WorkflowOntology.sourceModel)); 
+				Model sourceModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.sourceModel)); 
 				sourceModel.enterCriticalSection(Lock.WRITE);
 				try{
 					// this method is used so that any listeners can see each statement removed
@@ -297,9 +295,9 @@ public class JenaIngestWorkflowProcessor {
 		@Override
 		public ActionResult handleAction(Individual actionInd) {
 			if (instanceOf(actionInd,WorkflowOntology.AddModelAction)) {
-				Model sourceModel = getModel(actionInd.getPropertyValue(WorkflowOntology.sourceModel)); 
-				Model modelToAdd = getModel(actionInd.getPropertyValue(WorkflowOntology.modelToAdd));
-				Model destinationModel = getModel(actionInd.getPropertyValue(WorkflowOntology.destinationModel)); 
+				Model sourceModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.sourceModel)); 
+				Model modelToAdd = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.modelToAdd));
+				Model destinationModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.destinationModel)); 
 				Boolean applyChangesDirectlyToSource = Boolean.FALSE;
 				RDFNode valueNode = actionInd.getPropertyValue(WorkflowOntology.applyChangesDirectlyToSource);
 				if ((valueNode != null) && (valueNode.isLiteral())) {
@@ -340,9 +338,9 @@ public class JenaIngestWorkflowProcessor {
 		@Override
 		public ActionResult handleAction(Individual actionInd) {
 			if (instanceOf(actionInd,WorkflowOntology.SubtractModelAction)) {
-				Model sourceModel = getModel(actionInd.getPropertyValue(WorkflowOntology.sourceModel)); 
-				Model modelToSubtract = getModel(actionInd.getPropertyValue(WorkflowOntology.modelToSubtract));
-				Model destinationModel = getModel(actionInd.getPropertyValue(WorkflowOntology.destinationModel)); 
+				Model sourceModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.sourceModel)); 
+				Model modelToSubtract = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.modelToSubtract));
+				Model destinationModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.destinationModel)); 
 				Boolean applyChangesDirectlyToSource = Boolean.FALSE;
 				RDFNode valueNode = actionInd.getPropertyValue(WorkflowOntology.applyChangesDirectlyToSource);
 				if ((valueNode != null) && (valueNode.isLiteral())) {
@@ -391,13 +389,13 @@ public class JenaIngestWorkflowProcessor {
 				OntModel sourceModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 				for (RDFNode node : actionInd.listPropertyValues(WorkflowOntology.sourceModel).toList()) {
 					log.debug("SPARQL: adding submodel ");
-					sourceModel.addSubModel(getModel(node));
+					sourceModel.addSubModel(getJenaConnect(node));
 				}
 				if (actionInd.getPropertyValue(WorkflowOntology.destinationModel) == null) {
 				    log.debug("Error: destination model for SPARQL Construct action not specified for this action");
 				    return null;
 				}
-				Model destinationModel = getModel(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
+				Model destinationModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
 				Model tempModel = ModelFactory.createDefaultModel();
 				OntResource sparqlQuery = (OntResource) actionInd.getPropertyValue(WorkflowOntology.sparqlQuery);
 				String queryStr = ((Literal)sparqlQuery.getPropertyValue(ResourceFactory.createProperty(QUERY_STR_PROPERTY))).getLexicalForm();
@@ -421,9 +419,9 @@ public class JenaIngestWorkflowProcessor {
 			if (instanceOf(actionInd,WorkflowOntology.SmushResourcesAction)) {
 				OntModel sourceModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 				for (RDFNode node : actionInd.listPropertyValues(WorkflowOntology.sourceModel).toList()) {
-					sourceModel.addSubModel(getModel(node));
+					sourceModel.addSubModel(getJenaConnect(node));
 				}
-				Model destinationModel = getModel(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
+				Model destinationModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
 				@SuppressWarnings("unused")
 				String smushPropertyURI = getValue(actionInd.getPropertyValue(WorkflowOntology.smushOnProperty)).getLexicalForm();
 				destinationModel.enterCriticalSection(Lock.WRITE);
@@ -448,10 +446,10 @@ public class JenaIngestWorkflowProcessor {
 			if (instanceOf(actionInd,WorkflowOntology.NameBlankNodesAction)) {
 				OntModel sourceModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 				for (RDFNode node : actionInd.listPropertyValues(WorkflowOntology.sourceModel).toList()) {
-					sourceModel.addSubModel(getModel(node));
+					sourceModel.addSubModel(getJenaConnect(node));
 				}
 				@SuppressWarnings("unused")
-				Model destinationModel = getModel(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
+				Model destinationModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
 				@SuppressWarnings("unused")
 				String uriPrefix = getValue(actionInd.getPropertyValue(WorkflowOntology.uriPrefix)).getLexicalForm();
 //				destinationModel.add(RenameBlankNodes.renameBNodes(sourceModel, uriPrefix));
@@ -472,9 +470,9 @@ public class JenaIngestWorkflowProcessor {
 				// We use an OntModel here because this API supports submodels
 				OntModel sourceModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 				for (RDFNode node : actionInd.listPropertyValues(WorkflowOntology.sourceModel).toList()) {
-					sourceModel.addSubModel(getModel(node));
+					sourceModel.addSubModel(getJenaConnect(node));
 				}
-				Model destinationModel = getModel(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
+				Model destinationModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
 				@SuppressWarnings("unused")
 				String propertyURI = getValue(actionInd.getPropertyValue(WorkflowOntology.originalProperty)).getLexicalForm();
 				@SuppressWarnings("unused")
@@ -511,20 +509,20 @@ public class JenaIngestWorkflowProcessor {
 				// We use an OntModel here because this API supports submodels
 				OntModel sourceModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 				for (RDFNode node : actionInd.listPropertyValues(WorkflowOntology.sourceModel).toList()) {
-					sourceModel.addSubModel(getModel(node));
+					sourceModel.addSubModel(getJenaConnect(node));
 				}
-				Model destinationModel = getModel(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
+				Model destinationModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.destinationModel));
 				@SuppressWarnings("unused")
 				Model additionsModel = null;
 				try {
-					additionsModel = getModel(actionInd.getPropertyValue(WorkflowOntology.additionsModel));
+					additionsModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.additionsModel));
 				} catch (Exception e) {
 					//ignore
 				}
 				@SuppressWarnings("unused")
 				Model retractionsModel = null;
 				try {
-					retractionsModel = getModel(actionInd.getPropertyValue(WorkflowOntology.retractionsModel));
+					retractionsModel = getJenaConnect(actionInd.getPropertyValue(WorkflowOntology.retractionsModel));
 				} catch (Exception e) {
 					//ignore
 				}

@@ -9,17 +9,16 @@
  *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.translate;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.translate.XSLTranslator;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.repo.TextFileRecordHandler;
 
 /**
  * @author Stephen Williams (swilliams@ctrip.ufl.edu)
@@ -548,10 +547,6 @@ public class TranslateTest extends TestCase {
 	/** */
 	private static final String mapFilePath = "config/datamaps/pubmed-to-vivo.xsl";
 	/** */
-	private File inFile;
-	/** */
-	private File outFile;
-	/** */
 	private RecordHandler inRH;
 	/** */
 	private RecordHandler outRH;
@@ -559,21 +554,8 @@ public class TranslateTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
-		// create config file for input record handler
-		this.inFile = File.createTempFile("inputRHConfig", "xml");
-		Writer output = new BufferedWriter(new FileWriter(this.inFile));
-		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler>\n  <Param name=\"rhClass\">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>\n  <Param name=\"fileDir\">tmp://TranslateTestXML</Param>\n</RecordHandler>");
-		output.close();
-		// get the input record handler
-		this.inRH = RecordHandler.parseConfig(this.inFile.getAbsolutePath());
-		
-		// create config file for output record handler
-		this.outFile = File.createTempFile("outRHConfig", "xml");
-		output = new BufferedWriter(new FileWriter(this.outFile));
-		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler>\n  <Param name=\"rhClass\">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>\n  <Param name=\"fileDir\">tmp://TranslateTestRDF</Param>\n</RecordHandler>");
-		output.close();
-		// get the output record handler
-		this.outRH = RecordHandler.parseConfig(this.outFile.getAbsolutePath());
+		this.inRH = new TextFileRecordHandler("tmp://TranslateTestXML");
+		this.outRH = new TextFileRecordHandler("tmp://TranslateTestRDF");
 	}
 	
 	/**
@@ -587,7 +569,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("Article", inputDataArticle, this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()}).execute();
+		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());
@@ -610,7 +592,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("Book", inputDataBook, this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()}).execute();
+		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());
@@ -633,7 +615,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("ArticleNoAffiliation", inputDataArticle.replaceAll("<Affiliation.*?/Affiliation>", ""), this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(new String[]{"-x", mapFilePath, "-i", this.inFile.getAbsolutePath(), "-o", this.outFile.getAbsolutePath()}).execute();
+		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());
@@ -647,15 +629,19 @@ public class TranslateTest extends TestCase {
 	
 	@Override
 	public void tearDown() {
-		this.inFile = null;
-		this.outFile = null;
 		try {
+			for(Record r : this.inRH) {
+				this.inRH.delRecord(r.getID());
+			}
 			this.inRH.close();
 		} catch(IOException e) {
 			log.debug(e.getMessage(), e);
 		}
 		this.inRH = null;
 		try {
+			for(Record r : this.outRH) {
+				this.outRH.delRecord(r.getID());
+			}
 			this.outRH.close();
 		} catch(IOException e) {
 			log.debug(e.getMessage(), e);

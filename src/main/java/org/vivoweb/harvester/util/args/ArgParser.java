@@ -52,9 +52,9 @@ public class ArgParser {
 		this.options = new LinkedList<ArgDef>();
 		this.optMap = new HashMap<String, ArgDef>();
 		this.parser = new Options();
-		this.options.add(new ArgDef().setShortOption('X').setLongOpt("config").withParameter(true, "CONFIG_FILE").setDescription("XML Configuration File"));
-		this.options.add(new ArgDef().setShortOption('h').setLongOpt("help").setDescription("Help Message"));
-		this.options.add(new ArgDef().setShortOption('w').setLongOpt("wordiness").setDescription("Set the console log level").withParameter(true, "LOG_LEVEL"));
+		addArgument(new ArgDef().setShortOption('X').setLongOpt("config").withParameter(true, "CONFIG_FILE").setDescription("XML Configuration File"));
+		addArgument(new ArgDef().setShortOption('h').setLongOpt("help").setDescription("Help Message"));
+		addArgument(new ArgDef().setShortOption('w').setLongOpt("wordiness").setDescription("Set the console log level").withParameter(true, "LOG_LEVEL"));
 	}
 	
 	/**

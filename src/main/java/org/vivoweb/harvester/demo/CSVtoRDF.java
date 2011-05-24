@@ -1,19 +1,12 @@
-package org.vivoweb.harvester.fetch;
+package org.vivoweb.harvester.demo;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.fetch.JDBCFetch;
 import org.vivoweb.harvester.util.CSVtoJDBC;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -33,66 +26,47 @@ public class CSVtoRDF {
 	private CSVtoJDBC toDatabase;
 	/** */
 	private JDBCFetch fromDatabase;
-	/** */
-	private RecordHandler outputRH;
-	/** */
-	private Connection conn;
-	/** */
-	private String namespace;
-	/** */
-	private String tablename;
 	
 	/**
-	 * @param opts ArgList of command line arguments
+	 * @param argList ArgList of command line arguments
 	 * @throws IOException exception thrown if there is a problem with parsing the configs
-	 * @throws SQLException if there is a problem during the database usage
-	 * @throws ClassNotFoundException lets the program know if there is a desired class missing
 	 */
-	public CSVtoRDF(ArgList opts) throws IOException, SQLException, ClassNotFoundException{
-		this(opts.get("i"),RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O")),opts.get("n"));
+	private CSVtoRDF(ArgList argList) throws IOException {
+		this(argList.get("i"),RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),argList.get("n"));
 	}
 
 	/**
 	 * @param args array of command line arguments
 	 * @throws IOException exception thrown if there is a problem with parsing the configs
-	 * @throws SQLException if there is a problem during the database usage
-	 * @throws ClassNotFoundException lets the program know if there is a desired class missing
 	 */
-	public CSVtoRDF(String... args) throws IOException, SQLException, ClassNotFoundException {
-		this(new ArgList(getParser(), args));
+	private CSVtoRDF(String... args) throws IOException {
+		this(getParser().parse(args));
 	}
 
 	/**
 	 * @param CSVfilename Path and filename of the CSVfile
 	 * @param output destination recordHandler
 	 * @param uriNameSpace Name space to be used for the rdf elements 
-	 * @throws SQLException if there is a problem during the database usage
 	 * @throws IOException Exception for file access problems
-	 * @throws ClassNotFoundException lets the program know if there is a desired class missing
 	 */
-	public CSVtoRDF(String CSVfilename, RecordHandler output, String uriNameSpace) throws SQLException, IOException, ClassNotFoundException{
-		this.tablename = "csv";
-		Class.forName("org.h2.Driver");
-		this.conn = DriverManager.getConnection("jdbc:h2:mem:TempCSVtoRDF", "sa", "");
-		this.conn.setAutoCommit(false);
-		this.toDatabase = new CSVtoJDBC(CSVfilename, this.conn, "csv");
-		this.namespace = uriNameSpace;
-		this.outputRH = output;
+	public CSVtoRDF(String CSVfilename, RecordHandler output, String uriNameSpace) throws IOException {
+		this(FileAide.getInputStream(CSVfilename),output,uriNameSpace);
 	}
 
 	/**
 	 * @param CSVfilestream An input stream of CSV data
 	 * @param output destination recordHandler
 	 * @param uriNameSpace Name space to be used for the rdf elements
-	 * @throws SQLException if there is a problem during the database usage
+	 * @throws IOException error
 	 */
-	public CSVtoRDF(InputStream CSVfilestream, RecordHandler output, String uriNameSpace) throws SQLException{
-		this.tablename = "csv";
-		this.conn = DriverManager.getConnection("jdbc:h2:mem:TempCSVtoRDF", "sa", "");
-		this.conn.setAutoCommit(false);
-		this.toDatabase = new CSVtoJDBC(CSVfilestream, this.conn, this.tablename);
-		this.namespace = uriNameSpace;
-		this.outputRH = output;
+	public CSVtoRDF(InputStream CSVfilestream, RecordHandler output, String uriNameSpace) throws IOException {
+		String driver = "org.h2.Driver";
+		String connLine = "jdbc:h2:mem:TempCSVtoRDF";
+		String user = "sa";
+		String pass = "";
+		String tablename = "csv";
+		this.toDatabase = new CSVtoJDBC(CSVfilestream, driver, connLine, user, pass, tablename);
+		this.fromDatabase = new JDBCFetch(driver, connLine, user, pass, output, uriNameSpace);
 	}
 	
 	/**
@@ -101,18 +75,6 @@ public class CSVtoRDF {
 	 */
 	public void execute() throws IOException {
 			this.toDatabase.execute();
-
-			Set<String> tblnm = new TreeSet<String>();
-			tblnm.add(this.tablename);
-			Map<String, List<String>> idFields = new HashMap<String, List<String>>();
-			Map<String, List<String>> dataFields = new HashMap<String, List<String>>();
-			List<String> idfield = new ArrayList<String>();
-			idfield.add("ROWID");
-			idFields.put(this.tablename,idfield);
-			List<String> dFields = this.toDatabase.getFields();
-			dataFields.put(this.tablename,dFields);
-			
-			this.fromDatabase = new JDBCFetch(this.conn,this.outputRH,this.namespace,null, null, tblnm, null, dataFields, idFields,null,null, null);
 			this.fromDatabase.execute();
 	}
 	

@@ -1,10 +1,10 @@
 package org.vivoweb.test.harvester.qualify;
 
-import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  * @author jrpence
  *
  */
-public class SmushTest {
+public class SmushTest extends TestCase {
 	/**
 	 * SLF4J Logger
 	 */
@@ -38,7 +38,7 @@ public class SmushTest {
 	/**
 	 * @throws Exception passing along excpetions
 	 */
-	@Before
+	@Override
 	public void setUp() throws Exception {
 		InitLog.initLogger(null, null);
 		this.namespace = "http://vivo.test.edu/individual/";
@@ -125,8 +125,9 @@ public class SmushTest {
 	}
 	
 	/**
+	 * 
 	 */
-	@After
+	@Override
 	public void tearDown() {
 		log.info("testing End");
 		this.inputModel.close();
@@ -134,14 +135,12 @@ public class SmushTest {
 //		this.outputModel.close();
 //		this.outputModel = null;
 		this.namespace = null;
-		System.gc();
 	}
 	
 	/**
 	 * @throws IOException incase there is an ioerror from exportRdfToString
 	 * 
 	 */
-	@Test
 	public void testExecSmushResources() throws IOException {
 		log.info("BEGIN testExecSmushResources");
 		List<String> predicates = new ArrayList<String>();
@@ -151,7 +150,7 @@ public class SmushTest {
 
 		testSubject.execute();
 		{
-			log.info("The output model :\n" + this.inputModel.exportRdfToString());
+			log.trace("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
 	
 			query.append("PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
@@ -165,13 +164,13 @@ public class SmushTest {
 			query.append("?uri localVivo:uniqueId \"1234567890\" .");
 			query.append("}");
 			ResultSet rs = this.inputModel.executeSelectQuery(query.toString());
-			log.info("query result set :\n");
+			log.debug("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					log.info(line);
+					log.debug(line);
 				}
 			}
 			assertTrue(list.size() == 1);//Node of the proper namespace is reduced
@@ -184,7 +183,6 @@ public class SmushTest {
 	 * @throws IOException incase there is an ioerror from exportRdfToString
 	 * 
 	 */
-	@Test
 	public void tesExectNotSmushResources() throws IOException {
 		log.info("BEGIN testExecNotSmushResources");
 		List<String> predicates = new ArrayList<String>();
@@ -195,7 +193,7 @@ public class SmushTest {
 		testSubject.execute();
 
 		{
-			log.info("The output model :\n" + this.inputModel.exportRdfToString());
+			log.debug("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
 	
 			query.append("PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
@@ -209,13 +207,13 @@ public class SmushTest {
 			query.append("?uri localVivo:uniqueId ?lbl .");
 			query.append("}");
 			ResultSet rs = this.inputModel.executeSelectQuery(query.toString());
-			log.info("query result set :\n");
+			log.debug("query result set :\n");
 			ArrayList<String> list = new ArrayList<String>();
 			for(String var : rs.getResultVars()){
 				while(rs.hasNext()){
 					String line = rs.next().get(var).toString();
 					list.add(line);
-					log.info(line);
+					log.debug(line);
 				}
 			}
 			assertTrue(list.size() == 5);//Nodes of the improper namespace is not reduced

@@ -9,15 +9,10 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.translate;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -32,6 +27,7 @@ import com.hp.hpl.jena.query.ResultSet;
  * @author Stephen V. Williams swilliams@ctrip.ufl.edu
  * @FIXME svw: this tool seems inopperative
  */
+@Deprecated
 public class SPARQLTranslator {
 	/**
 	 * the log property for logging errors, information, debugging
@@ -54,19 +50,19 @@ public class SPARQLTranslator {
 	/**
 	 * 
 	 */
-	protected File sparqlFile;
+	protected String sparqlQuery;
 	/**
 	 * 
 	 */
-	protected RecordHandler outputRC;
+	protected RecordHandler outputRH;
 	
 	/**
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public SPARQLTranslator(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private SPARQLTranslator(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -78,22 +74,27 @@ public class SPARQLTranslator {
 	 *        </ul>
 	 * @throws IOException error reading files
 	 */
-	public SPARQLTranslator(ArgList argumentList) throws IOException {
-		
-		// setup input model
-		this.inputJC = JenaConnect.parseConfig(argumentList.get("i"), argumentList.getValueMap("I"));
-		
-		// setup output
-		this.outputJC = JenaConnect.parseConfig(argumentList.get("o"), argumentList.getValueMap("O"));
-		
-		// load data from recordhandler
-		this.outputRC = RecordHandler.parseConfig(argumentList.get("h"), argumentList.getValueMap("H"));
-		
-		if(argumentList.has("s")) {
-			this.sparqlFile = new File(argumentList.get("s"));
-		} else {
-			this.sparqlFile = null;
-		}
+	private SPARQLTranslator(ArgList argumentList) throws IOException {
+		this(
+			JenaConnect.parseConfig(argumentList.get("i"), argumentList.getValueMap("I")), 
+			JenaConnect.parseConfig(argumentList.get("o"), argumentList.getValueMap("O")), 
+			RecordHandler.parseConfig(argumentList.get("h"), argumentList.getValueMap("H")), 
+			FileAide.getTextContent(argumentList.get("s"))
+		);
+	}
+	
+	/**
+	 * Constructor
+	 * @param inputJC the input model
+	 * @param outputJC the output model
+	 * @param outputRH the output recordhandler
+	 * @param sparqlQuery the sparql query
+	 */
+	public SPARQLTranslator(JenaConnect inputJC, JenaConnect outputJC, RecordHandler outputRH, String sparqlQuery) {
+		this.inputJC = inputJC;
+		this.outputJC = outputJC;
+		this.outputRH = outputRH;
+		this.sparqlQuery = sparqlQuery;
 	}
 	
 	/**
@@ -102,33 +103,13 @@ public class SPARQLTranslator {
 	 */
 	public void execute() throws IOException {
 		// checking for valid input parameters
-		log.info("Translation: Start");
-		
-		//build Sparl Query
-		StringBuilder strQuery = new StringBuilder();
-		FileInputStream fstream;
-		try {
-			fstream = new FileInputStream(this.sparqlFile);
-		} catch(FileNotFoundException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-		// Get the object of DataInputStream
-		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		String strLine;
-		//Read File Line By Line
-		while((strLine = br.readLine()) != null) {
-			// Print the content on the console
-			strQuery.append(strLine);
-		}
-		//Close the input stream
-		in.close();
-		
-		log.info(strQuery.toString());
-		ResultSet rs = this.inputJC.executeSelectQuery(strQuery.toString());
+		log.trace(this.sparqlQuery);
+		ResultSet rs = this.inputJC.executeSelectQuery(this.sparqlQuery);
 		
 		if(!rs.hasNext()) {
-			log.info("Failed to find");
+			log.info("No Results");
+		} else {
+			log.info("Processing Results");
 		}
 		
 		while(rs.hasNext()) {

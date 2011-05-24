@@ -69,8 +69,8 @@ public class Transfer {
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
 	 */
-	public Transfer(String... args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private Transfer(String... args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class Transfer {
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
-	public Transfer(ArgList argList) throws IOException {
+	private Transfer(ArgList argList) throws IOException {
 		// setup input model
 		this.input = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		
@@ -129,7 +129,7 @@ public class Transfer {
 				this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 			}
 			if(this.inRH != null) {
-				this.output.removeRdfFromRH(this.inRH, this.namespace);
+				this.output.removeRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
 			}
 		} else {
 			if(this.input != null) {
@@ -139,7 +139,7 @@ public class Transfer {
 				this.output.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 			}
 			if(this.inRH != null) {
-				this.output.loadRdfFromRH(this.inRH, this.namespace);
+				this.output.loadRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
 			}
 		}
 		if(this.dumpFile != null) {

@@ -47,6 +47,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateFactory;
@@ -295,9 +296,10 @@ public abstract class JenaConnect {
 	 * Removes all records in a RecordHandler from the model
 	 * @param rh the RecordHandler to pull records from
 	 * @param namespace the base uri to use for imported uris
+	 * @param language the rdf syntax language (RDF/XML, N3, TTL, etc). null = RDF/XML
 	 * @return number of records removed
 	 */
-	public int removeRdfFromRH(RecordHandler rh, String namespace) {
+	public int removeRdfFromRH(RecordHandler rh, String namespace, String language) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("removing record: " + r.getID());
@@ -305,7 +307,7 @@ public abstract class JenaConnect {
 				// log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
-			getJenaModel().remove(new MemJenaConnect(bais, namespace, null).getJenaModel());
+			getJenaModel().remove(new MemJenaConnect(bais, namespace, language).getJenaModel());
 			try {
 				bais.close();
 			} catch(IOException e) {
@@ -320,9 +322,10 @@ public abstract class JenaConnect {
 	 * Adds all records in a RecordHandler to the model
 	 * @param rh the RecordHandler to pull records from
 	 * @param namespace the base uri to use for imported uris
+	 * @param language the rdf syntax language (RDF/XML, N3, TTL, etc).  null = RDF/XML
 	 * @return number of records added
 	 */
-	public int loadRdfFromRH(RecordHandler rh, String namespace) {
+	public int loadRdfFromRH(RecordHandler rh, String namespace, String language) {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("loading record: " + r.getID());
@@ -330,7 +333,7 @@ public abstract class JenaConnect {
 				// log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
-			getJenaModel().read(bais, namespace);
+			getJenaModel().read(bais, namespace, language);
 			try {
 				bais.close();
 			} catch(IOException e) {
@@ -693,7 +696,14 @@ public abstract class JenaConnect {
 	 * Remove all statements from model
 	 */
 	public void truncate() {
-		getJenaModel().removeAll((Resource)null,(Property)null,(RDFNode)null);
+		Model sourceModel = getJenaModel();
+		sourceModel.enterCriticalSection(Lock.WRITE);
+		try{
+			// this method is used so that any listeners can see each statement removed
+			sourceModel.removeAll((Resource)null,(Property)null,(RDFNode)null);
+		} finally {
+			sourceModel.leaveCriticalSection();
+		}
 	}
 	
 	/**
@@ -736,7 +746,7 @@ public abstract class JenaConnect {
 		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());
-			ArgList argList = new ArgList(getParser(), args);
+			ArgList argList = getParser().parse(args);
 			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
 			if(jc == null) {
 				throw new IllegalArgumentException("Must specify a jena model");

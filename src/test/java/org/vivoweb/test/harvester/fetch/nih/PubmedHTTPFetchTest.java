@@ -7,12 +7,9 @@
  * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
  * - initial API and implementation
  *****************************************************************************************************************************/
-package org.vivoweb.test.harvester.fetch;
+package org.vivoweb.test.harvester.fetch.nih;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,8 +17,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.fetch.PubmedHTTPFetch;
+import org.vivoweb.harvester.fetch.nih.PubmedHTTPFetch;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.w3c.dom.Document;
@@ -40,18 +38,12 @@ public class PubmedHTTPFetchTest extends TestCase {
 	 */
 	private static Logger log = LoggerFactory.getLogger(PubmedHTTPFetchTest.class);
 	/** */
-	private File configFile;
-	/** */
 	private RecordHandler rh;
 	
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
-		this.configFile = File.createTempFile("rhConfig", "xml");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler>\n	<Param name=\"rhClass\">org.vivoweb.harvester.util.repo.JDBCRecordHandler</Param>\n	<Param name=\"dbClass\">org.h2.Driver</Param>\n	<Param name=\"dbUrl\">jdbc:h2:mem:TestPMSFetchRH</Param>\n	<Param name=\"dbUser\">sa</Param>\n	<Param name=\"dbPass\"></Param>\n	<Param name=\"dbTable\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
-		bw.close();
-		this.rh = null;
+		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestPMSFetchRH", "sa", "", "recordTable", "dataField");
 	}
 	
 	@Override
@@ -62,7 +54,7 @@ public class PubmedHTTPFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.PubmedHTTPFetch#main(java.lang.String[]) main(String... args)}
+	 * Test method for {@link org.vivoweb.harvester.fetch.nih.PubmedHTTPFetch#main(java.lang.String[]) main(String... args)}
 	 * .
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
@@ -70,10 +62,9 @@ public class PubmedHTTPFetchTest extends TestCase {
 	 */
 	public final void testPubmedHTTPFetchMain() throws IOException, ParserConfigurationException, SAXException {
 		log.info("BEGIN testPubmedHTTPFetchMain");
-		this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
 		
 		//test 10 records
-		new PubmedHTTPFetch(new String[]{"-m", "test@test.com", "-t", "1:8000[dp]", "-n", "10", "-b", "10", "-o", this.configFile.getAbsolutePath()}).execute();
+		new PubmedHTTPFetch("test@test.com", "1:8000[dp]", "10", "10", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
 		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		int count = 0;

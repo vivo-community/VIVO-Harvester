@@ -71,8 +71,8 @@ public class OAIFetch {
 	 * @param args command line arguments
 	 * @throws IOException error connecting to record handler
 	 */
-	public OAIFetch(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private OAIFetch(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class OAIFetch {
 	 * @param argList parsed argument list
 	 * @throws IOException error connecting to record handler
 	 */
-	public OAIFetch(ArgList argList) throws IOException {
+	private OAIFetch(ArgList argList) throws IOException {
 		this(argList.get("u"), argList.get("s"), argList.get("e"), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
 	}
 	

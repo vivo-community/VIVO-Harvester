@@ -46,8 +46,8 @@ public class RenameResources {
 	 * @param args commandline arguments
 	 * @throws IOException error parsing args
 	 */
-	public RenameResources(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private RenameResources(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class RenameResources {
 	 * @param argList parsed commandling arguments
 	 * @throws IOException error connecting to jena model
 	 */
-	public RenameResources(ArgList argList) throws IOException {
+	private RenameResources(ArgList argList) throws IOException {
 		this(JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), argList.get("n"), argList.getAll("u").toArray(new String[]{}));
 	}
 	

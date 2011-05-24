@@ -11,6 +11,7 @@ package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -73,8 +74,8 @@ public class Qualify {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public Qualify(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private Qualify(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -82,7 +83,7 @@ public class Qualify {
 	 * @param argList parsed argument list
 	 * @throws IOException error creating task
 	 */
-	public Qualify(ArgList argList) throws IOException {
+	private Qualify(ArgList argList) throws IOException {
 		this(
 			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
 			argList.get("d"), 
@@ -93,8 +94,8 @@ public class Qualify {
 			argList.has("p"), 
 			argList.has("c")
 		);
-		if(!((argList.has("r") ^ argList.has("t") ^ (argList.has("n") && (argList.has("p") || argList.has("c")))))) {
-			throw new IllegalArgumentException("Must provide one of --regex, --text, or --remove-namespace, but not more than one");
+		if(argList.has("r") && argList.has("t")) {
+			log.warn("Both text and regex matchTerm's provided, using only regex");
 		}
 	}
 	
@@ -121,7 +122,10 @@ public class Qualify {
 		this.namespace = removeNameSpace;
 		this.cleanPredicates = cleanPredicates;
 		this.cleanResources = cleanResources;
-		if((this.namespace == null) || this.namespace.isEmpty()) {
+		if(this.namespace == null || this.namespace.trim().isEmpty()) {
+			if(this.matchTerm == null || this.matchTerm.trim().isEmpty()) {
+				throw new IllegalArgumentException("Must specify either a match term (regex or text) or a removeNamespace");
+			}
 			if(this.cleanPredicates && this.cleanResources) {
 				throw new IllegalArgumentException("Cannot specify cleanPredicates and cleanResources when removeNamepsace is empty");
 			}
@@ -174,20 +178,10 @@ public class Qualify {
 			RDFDatatype datatype = obj.getDatatype();
 			String lang = obj.getLanguage();
 			String objStr = obj.getValue().toString();
-			String oldStr = "\"" + objStr + "\"";
-			if(datatype != null) {
-				oldStr += "^^<" + datatype.getURI() + ">";
-			} else if(!lang.trim().equals("")) {
-				oldStr += "@" + lang.trim();
-			}
+			String oldStr = encodeString(objStr, datatype, lang);
 			log.trace("Replacing record");
 			log.debug("oldValue: " + oldStr);
-			String newStr = "\"" + objStr.replaceAll(regexMatch, newValue) + "\"";
-			if(datatype != null) {
-				newStr += "^^<" + datatype.getURI() + ">";
-			} else if(!lang.trim().equals("")) {
-				newStr += "@" + lang.trim();
-			}
+			String newStr = encodeString(objStr.replaceAll(regexMatch, newValue), datatype, lang);
 			String sUri = s.getResource("s").getURI();
 			log.debug("newValue: " + newStr);
 			deleteQ.append("  <" + sUri + "> <" + predicate + "> " + oldStr + " .\n");
@@ -199,6 +193,23 @@ public class Qualify {
 		this.model.executeUpdateQuery(deleteQ.toString());
 		log.debug("Inserting updated data:\n" + insertQ);
 		this.model.executeUpdateQuery(insertQ.toString());
+	}
+	
+	/**
+	 * Encode a string with its rdfdatatype or lang
+	 * @param str the string
+	 * @param datatype the datatype
+	 * @param lang the language
+	 * @return the encoded string
+	 */
+	private String encodeString(String str, RDFDatatype datatype, String lang) {
+		String encStr = "\"" + str + "\"";
+		if(datatype != null) {
+			encStr += "^^<" + datatype.getURI().trim() + ">";
+		} else if(StringUtils.isNotBlank(lang)) {
+			encStr += "@" + lang.trim();
+		}
+		return encStr;
 	}
 	
 	/**
@@ -232,7 +243,7 @@ public class Qualify {
 	 * @throws IOException error connecting
 	 */
 	public void execute() throws IOException {
-		if((this.namespace != null) && !this.namespace.isEmpty()) {
+		if(StringUtils.isNotBlank(this.namespace)) {
 			if(this.cleanPredicates) {
 				log.info("Running clean predicates for " + this.namespace);
 				cleanPredicates(this.namespace);
@@ -242,8 +253,7 @@ public class Qualify {
 				cleanResources(this.namespace);
 			}
 		}
-		
-		if((this.matchTerm != null) && (this.dataPredicate != null) && (this.newVal != null) && !this.matchTerm.isEmpty() && !this.dataPredicate.isEmpty() && !this.newVal.isEmpty()) {
+		if(StringUtils.isNotBlank(this.matchTerm) && StringUtils.isNotBlank(this.dataPredicate) && StringUtils.isNotBlank(this.newVal)) {
 			if(this.regex) {
 				log.info("Running Regex replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
 				regexReplace(this.dataPredicate, this.matchTerm, this.newVal);

@@ -71,7 +71,7 @@ public class Merge {
 	 * @throws IOException error creating task
 	 */
 	public Merge(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+		this(getParser().parse(args));
 	}
 	
 	/**

@@ -111,7 +111,7 @@ public class RunBibutils {
 	 * @throws IOException error creating task
 	 */
 	public RunBibutils(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+		this(getParser().parse(args));
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class RunBibutils {
 	 * @param argList option set of parsed args
 	 * @throws IOException if an error occurred setting up a record handler
 	 */
-	public RunBibutils(ArgList argList) throws IOException {
+	private RunBibutils(ArgList argList) throws IOException {
 		this(argList.get("b"), argList.get("m"), RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")), argList.has("f"));
 	}
 
@@ -254,7 +254,7 @@ public class RunBibutils {
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
-			new RunBibutils(new ArgList(getParser(), args)).execute();
+			new RunBibutils(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());

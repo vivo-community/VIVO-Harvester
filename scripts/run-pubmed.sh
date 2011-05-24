@@ -43,6 +43,8 @@ MATCHEDNAME=matchedData
 
 #scoring algorithms
 EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
+CASEFIRST="org.vivoweb.harvester.score.algorithm.CaseInsensitiveInitialTest"
+NAMECOMP="org.vivoweb.harvester.score.algorithm.NameCompare"
 LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
 
 #matching properties
@@ -114,14 +116,18 @@ rm -rf $TEMPCOPYDIR
 #$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
 
 # Execute Score to disambiguate data in "scoring" JENA model
-WORKEMAIL="-AwEmail=$EQTEST -FwEmail=$CWEMAIL -WwEmail=0.7 -PwEmail=$SWEMAIL"
-FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$SFNAME"
-LNAME="-AlName=$EQTEST -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
-MNAME="-AmName=$LEVDIFF -FmName=$CMNAME -WmName=0.1 -PmName=$CMNAME"
-$Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/
+FNAME="-AfName=$NAMECOMP -FfName=$FFNAME -WfName=0.20 -PfName=$SFNAME"
+#we want 75% FNAME match
+LNAME="-AlName=$EQTEST -FlName=$FLNAME -WlName=0.35 -PlName=$FLNAME"
+#we want 100% LNAME match
+$Score $SCOREMODELS $LNAME $FNAME -n ${BASEURI}author/
+
+MNAME="-AmName=$NAMECOMP -FmName=$CMNAME -WmName=0.15 -PmName=$CMNAME"
+WORKEMAIL="-AwEmail=$EQTEST -FwEmail=$CWEMAIL -WwEmail=0.30 -PwEmail=$SWEMAIL"
+$Score $SCOREMODELS $FNAME $MNAME $WORKEMAIL -n ${BASEURI}author/ -m 0.5
 
 # Find matches using scores and rename nodes to matching uri and clear literals
-$Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 0.7 -r -c
+$Match $SCOREINPUT $SCOREDATA $MATCHOUTPUT -t 0.55 -r -c
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../scoreddumpfile.xml
 $Transfer $MATCHOUTPUT -d ../matcheddumpfile.xml
 

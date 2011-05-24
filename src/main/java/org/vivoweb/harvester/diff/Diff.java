@@ -55,23 +55,22 @@ public class Diff {
 	 * @param mJC minuend jenaconnect
 	 * @param sJC subtrahend jenaconnect
 	 * @param oJC output jenaconnect
+	 * @param dF dump file path
 	 */
-	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC) {
+	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) {
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
 		this.output = oJC;
-	}
-	
-	/**
-	 * Constructor
-	 * @param mJC minuend jenaconnect
-	 * @param sJC subtrahend jenaconnect
-	 * @param dF dump file path
-	 */
-	public Diff(JenaConnect mJC, JenaConnect sJC, String dF) {
-		this.minuendJC = mJC;
-		this.subtrahendJC = sJC;
 		this.dumpFile = dF;
+		if(this.minuendJC == null) {
+			throw new IllegalArgumentException("Must provide a minuend jena model");
+		}
+		if(this.subtrahendJC == null) {
+			throw new IllegalArgumentException("Must provide a subtrahend jena model");
+		}
+		if(this.output == null && (this.dumpFile == null || this.dumpFile.trim().isEmpty())) {
+			throw new IllegalArgumentException("Must provide at least one of an output jena model or a dump file");
+		}
 	}
 	
 	/**
@@ -79,8 +78,8 @@ public class Diff {
 	 * @param args commandline arguments
 	 * @throws IOException error reading config files
 	 */
-	public Diff(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private Diff(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -88,27 +87,13 @@ public class Diff {
 	 * @param argList parsed commandline arguments
 	 * @throws IOException error reading config files
 	 */
-	public Diff(ArgList argList) throws IOException {
-		// Require inputs args
-		if(!(argList.has("s") || argList.has("S")) || !(argList.has("m")|| argList.has("M"))) {
-			throw new IllegalArgumentException("Must provide input via -s/-S and -m/-M");
-		}
-		// Require output args
-		if(!(argList.has("o") || argList.has("O")) && !argList.has("d")) {
-			throw new IllegalArgumentException("Must provide one of -o/-O or -d");
-		}
-		
-		// setup input model
-		this.subtrahendJC = JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S"));
-		
-		// setup subtrahend Model (b)
-		this.minuendJC = JenaConnect.parseConfig(argList.get("m"), argList.getValueMap("M"));
-		
-		// setup output
-		this.output = JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O"));
-		
-		// output to file, if requested
-		this.dumpFile = argList.get("d");
+	private Diff(ArgList argList) throws IOException {
+		this(
+			JenaConnect.parseConfig(argList.get("m"), argList.getValueMap("M")), 
+			JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S")), 
+			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")), 
+			argList.get("d")
+		);
 	}
 	
 	/**
@@ -118,16 +103,15 @@ public class Diff {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Diff");
 		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("minuend").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('M').setLongOpt("minuendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("subtrahend").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("subtrahendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("minuend").withParameter(true, "CONFIG_FILE").setDescription("config file for source jena model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('M').setLongOpt("minuendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of source jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("subtrahend").withParameter(true, "CONFIG_FILE").setDescription("config file for removemode jena model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("subtrahendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of remove jena model config using VALUE").setRequired(false));
 		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
-		//TOOD:  Apply to minuend Model
 		
 		return parser;
 	}
@@ -142,7 +126,10 @@ public class Diff {
 	 */
 	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) throws IOException {
 		/*
-		 * c - b = a minuend - subtrahend = difference minuend.diff(subtrahend) = differenece c.diff(b) = a
+		 * c - b = a
+		 * minuend - subtrahend = difference
+		 * minuend.diff(subtrahend) = differenece
+		 * c.diff(b) = a
 		 */
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();

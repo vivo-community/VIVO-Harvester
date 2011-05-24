@@ -56,12 +56,15 @@ public class CSVtoJDBC {
 	
 	/**
 	 * Library style initialyzer 
-	 * @param fileStream CSV inputStream to read from
+	 * @param input CSV inputStream to read from
 	 * @param output The database connection for the output
 	 * @param tableName table name into which to output
 	 */
-	public CSVtoJDBC(InputStream fileStream, Connection output, String tableName) {
-		this.init(fileStream, output, tableName);
+	public CSVtoJDBC(InputStream input, Connection output, String tableName) {
+		this.csvStream = input;
+		this.output = output;
+		this.tableName = tableName;
+		this.fieldNames = new ArrayList<String>();
 	}
 	
 	/**
@@ -72,8 +75,7 @@ public class CSVtoJDBC {
 	 * @throws IOException error establishing connection to file
 	 */
 	public CSVtoJDBC(String filename, Connection output, String tableName) throws IOException {
-		InputStream is = FileAide.getInputStream(filename);
-		this.init(is, output, tableName);
+		this(FileAide.getInputStream(filename), output, tableName);
 	}
 	
 	/**
@@ -87,17 +89,21 @@ public class CSVtoJDBC {
 	 * @throws IOException error establishing connection to database or file
 	 */
 	public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
-		InputStream  is = FileAide.getInputStream(filename);
-		Connection conn = null;
-		try {
-			Class.forName(jdbcDriverClass);
-			conn = DriverManager.getConnection(connLine, username, password);
-		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(), e);
-		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-		this.init(is,conn,tableName);
+		this(filename,getConnection(jdbcDriverClass, connLine, username, password),tableName);
+	}
+	
+	/**
+	 * Library style Constructor
+	 * @param input CSV inputStream to read from
+	 * @param jdbcDriverClass jdbc driver class
+	 * @param connLine the jdbc connection line
+	 * @param username username with which to connect
+	 * @param password password with which to connect
+	 * @param tableName table name into which to output
+	 * @throws IOException error establishing connection to database or file
+	 */
+	public CSVtoJDBC(InputStream input, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
+		this(input,getConnection(jdbcDriverClass, connLine, username, password),tableName);
 	}
 
 	
@@ -106,8 +112,8 @@ public class CSVtoJDBC {
 	 * @param args command line arguments
 	 * @throws IOException error establishing connection to database or file
 	 */
-	public CSVtoJDBC(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private CSVtoJDBC(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -115,21 +121,28 @@ public class CSVtoJDBC {
 	 * @param argList option set of parsed args
 	 * @throws IOException error establishing connection to database or file
 	 */
-	public CSVtoJDBC(ArgList argList) throws IOException {
+	private CSVtoJDBC(ArgList argList) throws IOException {
 		this(argList.get("i"), argList.get("d"), argList.get("c"), argList.get("u"), argList.get("p"), argList.get("t"));
 	}
 	
 	/**
-	 * Library style initialyzer 
-	 * @param fileStream CSV inputStream to read from
-	 * @param outConn The database connection for the output
-	 * @param tablename table name into which to output
+	 * Get a connection
+	 * @param jdbcDriverClass the driver
+	 * @param connLine the connection string
+	 * @param username the username
+	 * @param password the password
+	 * @return the connection
+	 * @throws IOException error connecting
 	 */
-	public void  init(InputStream fileStream, Connection outConn, String tablename) {
-		this.csvStream = fileStream;
-		this.output = outConn;
-		this.tableName = tablename;
-		this.fieldNames = new ArrayList<String>();
+	private static Connection getConnection(String jdbcDriverClass, String connLine, String username, String password) throws IOException {
+		try {
+			Class.forName(jdbcDriverClass);
+			return DriverManager.getConnection(connLine, username, password);
+		} catch(ClassNotFoundException e) {
+			throw new IOException(e.getMessage(), e);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
 	}
 	
 	/**
@@ -144,7 +157,7 @@ public class CSVtoJDBC {
 			int rowID = 0;
 			StringBuilder createTable = new StringBuilder("CREATE TABLE ");
 			createTable.append(this.tableName);
-			createTable.append("( ROWID int, ");
+			createTable.append("( ROWID int NOT NULL, ");
 			this.fieldNames.add("ROWID");
 			StringBuilder columnNames = new StringBuilder("( ROWID, ");
 			for(int i = 0; i < meta.getColumnCount(); i++) {
@@ -157,8 +170,9 @@ public class CSVtoJDBC {
 				columnNames.append(colLbl);
 				columnNames.append((i == (meta.getColumnCount() - 1)) ? " )" : ", ");
 			}
-			log.info("Create table command: \n" + createTable.toString());
+			log.debug("Create table command: \n" + createTable.toString());
 			cursor.execute(createTable.toString());
+			cursor.execute("ALTER TABLE "+this.tableName+" ADD PRIMARY KEY (ROWID)");
 			while(rs.next()) {
 				
 				StringBuilder insertCommand = new StringBuilder("INSERT INTO ");
@@ -172,7 +186,7 @@ public class CSVtoJDBC {
 					insertCommand.append(rs.getString(i + 1));
 					insertCommand.append((i == (meta.getColumnCount() - 1)) ? "')" : "', '");
 				}
-				log.info("Insert command: \n" + insertCommand.toString());
+				log.debug("Insert command: \n" + insertCommand.toString());
 				cursor.executeUpdate(insertCommand.toString());
 				rowID++;
 			}

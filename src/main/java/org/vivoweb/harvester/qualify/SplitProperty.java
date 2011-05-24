@@ -90,8 +90,8 @@ public class SplitProperty {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public SplitProperty(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private SplitProperty(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -118,7 +118,7 @@ public class SplitProperty {
 	 * @param argList parsed argument list
 	 * @throws IOException error reading config
 	 */
-	public SplitProperty(ArgList argList) throws IOException {
+	private SplitProperty(ArgList argList) throws IOException {
 		this(
 			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
 			argList.get("r"), 
@@ -220,7 +220,7 @@ public class SplitProperty {
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
-			new ChangeNamespace(args).execute();
+			new SplitProperty(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			System.out.println(getParser().getUsage());

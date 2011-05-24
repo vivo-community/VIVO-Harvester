@@ -72,16 +72,20 @@ ROLEIN="http://vivoweb.org/ontology/core#roleIn"
 PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
 COPIROLEOF="http://vivoweb.org/ontology/core#co-PrincipalInvestigatorRoleOf"
 DATETIME="http://vivoweb.org/ontology/core#dateTime"
+
 BASEURI="http://vivoweb.org/harvest/csvfile/"
 
-ADMINNAME="USERNAME"
-ADMINPASS="PASSWORD"
+ADMINNAME="defaultAdmin"
+ADMINPASS="vitro123"
 
 #clear old fetches
 rm -rf $RAWRHDIR
 
+CSVFILE="files/granttemplatetest.csv"
+XSLFILE="config/datamaps/csv-grant-to-vivo.xsl"
+
 # Execute Fetch
-$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i files/granttemplatetest.csv
+$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE
 
 # backup fetch
 BACKRAW="raw"
@@ -93,7 +97,7 @@ backup-path $RAWRHDIR $BACKRAW
 rm -rf $RDFRHDIR
 
 # Execute Translate
-$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/csv-grant-to-vivo.xsl
+$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x $XSLFILE
 
 # backup translate
 BACKRDF="rdf"
@@ -143,14 +147,35 @@ $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}sponsor/
 
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
+
 # Scoring of PI Roles
-PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$ROLEOF -Pperson=$PIROLEOF"
+PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$PIROLEOF -Pperson=$PIROLEOF"
 GRANTURI="-Agrant=$EQTEST -Wgrant=0.5 -Fgrant=$ROLEIN -Pgrant=$ROLEIN"
 $Score $SCOREMODELS $PIURI $GRANTURI -n ${BASEURI}piRole/
 
 # Scoring of coPI Roles
-COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COROLEOF -Pperson=$COPIROLEOF"
+COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COPIROLEOF -Pperson=$COPIROLEOF"
 $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
+
+# Scoring of DateTime Starts and ends
+$Score $SCOREMODELS -Adate=$EQTEST -Wdate=1.0 -Fdate=$DATETIME -Pdate=$DATETIME -n ${BASEURI}timeInterval/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
+
+STARTTIME="http://vivoweb.org/ontology/core#start"
+ENDTIME="http://vivoweb.org/ontology/core#end"
+
+# Scoring of DateTimeInterval
+$Score $SCOREMODELS -Asdate=$EQTEST -Wsdate=0.5 -Fsdate=$STARTTIME -Psdate=$STARTTIME -Aedate=$EQTEST -Wedate=0.5 -Fedate=$ENDTIME -Pedate=$ENDTIME -n ${BASEURI}timeInterval/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r

@@ -104,12 +104,26 @@ public class JDBCFetch {
 	}
 	
 	/**
+	 * Constructor
+	 * @param driverClass the jdbc driver
+	 * @param connLine the jdbc connection line
+	 * @param username the username
+	 * @param password the password
+	 * @param output RecordHandler to write data to
+	 * @param uriNameSpace namespace base for rdf records
+	 * @throws IOException error talking with database
+	 */
+	public JDBCFetch(String driverClass, String connLine, String username, String password, RecordHandler output, String uriNameSpace) throws IOException {
+		this(driverClass, connLine, username, password, output, uriNameSpace, null, null, null, null, null, null, null, null, null);
+	}
+	
+	/**
 	 * Command line Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public JDBCFetch(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private JDBCFetch(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
@@ -117,9 +131,12 @@ public class JDBCFetch {
 	 * @param args option set of parsed args
 	 * @throws IOException error creating task
 	 */
-	public JDBCFetch(ArgList args) throws IOException {
+	private JDBCFetch(ArgList args) throws IOException {
 		this(
-			createConnection(args.get("d"), args.get("c"), args.get("u"), args.get("p")), 
+			args.get("d"),
+			args.get("c"),
+			args.get("u"),
+			args.get("p"), 
 			RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")), 
 			args.get("c")+"/", 
 			args.get("delimiterPrefix"), 
@@ -157,7 +174,7 @@ public class JDBCFetch {
 			throw new IOException(e.getMessage(), e);
 		}
 		this.rh = rh;
-		this.tableNames = tableNames;
+		Set<String> argTables = tableNames;
 		this.fromClauses = fromClauses;
 		this.dataFields = dataFields;
 		this.idFields = idFields;
@@ -172,33 +189,83 @@ public class JDBCFetch {
 			throw new IllegalArgumentException("Must provide output recordhandler!");
 		}
 		
-		if(this.tableNames == null) {
-			this.tableNames = new TreeSet<String>();
+		if(argTables == null) {
+			argTables = new TreeSet<String>();
 		}
 		
 		if(this.fromClauses != null) {
-			this.tableNames.addAll(this.fromClauses.keySet());
+			argTables.addAll(this.fromClauses.keySet());
 		}
 		
 		if(this.dataFields != null) {
-			this.tableNames.addAll(this.dataFields.keySet());
+			argTables.addAll(this.dataFields.keySet());
 		}
 		
 		if(this.idFields != null) {
-			this.tableNames.addAll(this.idFields.keySet());
+			argTables.addAll(this.idFields.keySet());
 		}
 		
 		if(this.whereClauses != null) {
-			this.tableNames.addAll(this.whereClauses.keySet());
+			argTables.addAll(this.whereClauses.keySet());
 		}
 		
 		if(this.fkRelations != null) {
-			this.tableNames.addAll(this.fkRelations.keySet());
+			argTables.addAll(this.fkRelations.keySet());
+		}
+		
+		if(this.queryStrings != null) {
+			argTables.removeAll(this.queryStrings.keySet());
+		}
+		
+		this.tableNames = new TreeSet<String>();
+		Set<String> realDBTables;
+		try {
+			realDBTables = getTableNames();
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+		
+		this.tableNames = new TreeSet<String>();
+		for(String argTable : argTables) {
+			boolean found = false;
+			for(String realTableName : realDBTables) {
+				if(argTable.equalsIgnoreCase(realTableName)) {
+					this.tableNames.add(realTableName);
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				throw new IllegalArgumentException("Database Does Not Contain A Table Named '"+argTable+"'");
+			}
 		}
 		
 		if(this.queryStrings != null) {
 			this.tableNames.addAll(this.queryStrings.keySet());
 		}
+	}
+	
+	/**
+	 * Library style Constructor
+	 * @param driverClass the jdbc driver
+	 * @param connLine the jdbc connection line
+	 * @param username the username
+	 * @param password the password
+	 * @param rh Record Handler to write records to
+	 * @param uriNS the uri namespace to use
+	 * @param queryPre Query prefix often "["
+	 * @param querySuf Query suffix often "]"
+	 * @param tableNames set of the table names
+	 * @param fromClauses Mapping of extra tables for the from section
+	 * @param dataFields Mapping of tablename to list of datafields
+	 * @param idFields Mapping of tablename to idField name
+	 * @param whereClauses List of conditions
+	 * @param relations Mapping of tablename to mapping of fieldname to tablename
+	 * @param queryStrings Mapping of tablename to query
+	 * @throws IOException error accessing database
+	 */
+	public JDBCFetch(String driverClass, String connLine, String username, String password, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws IOException {
+		this(createConnection(driverClass, connLine, username, password), rh, uriNS, queryPre, querySuf, tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings);
 	}
 	
 	/**
@@ -249,16 +316,12 @@ public class JDBCFetch {
 	private static Connection createConnection(String driverClass, String connLine, String username, String password) throws IOException {
 		try {
 			Class.forName(driverClass);
+			return DriverManager.getConnection(connLine, username, password);
+		} catch(SQLException e) {
+			throw new IOException(e.getMessage(), e);
 		} catch(ClassNotFoundException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-		Connection dbConn;
-		try {
-			dbConn = DriverManager.getConnection(connLine, username, password);
-		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-		return dbConn;
 	}
 	
 	/**
@@ -409,7 +472,7 @@ public class JDBCFetch {
 	private String buildSelect(String tableName) throws SQLException {
 		if((this.queryStrings != null) && this.queryStrings.containsKey(tableName)) {
 			String query = this.queryStrings.get(tableName);
-			log.debug("User defined SQL Query:\n" + query);
+			log.trace("User defined SQL Query:\n" + query);
 			return query;
 		}
 		boolean multiTable = (this.fromClauses != null) && this.fromClauses.containsKey(tableName);
@@ -457,7 +520,7 @@ public class JDBCFetch {
 			sb.append(" WHERE ");
 			sb.append(StringUtils.join(getWhereClauses(tableName), " AND "));
 		}
-		log.debug("Generated SQL Query:\n" + sb.toString());
+		log.trace("Generated SQL Query:\n" + sb.toString());
 		return sb.toString();
 	}
 	

@@ -56,15 +56,15 @@ public class XPathTool {
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
 	 */
-	public XPathTool(String[] args) throws IOException {
-		this(new ArgList(getParser(), args));
+	private XPathTool(String[] args) throws IOException {
+		this(getParser().parse(args));
 	}
 	
 	/**
 	 * Constructor
 	 * @param argList arguments
 	 */
-	public XPathTool(ArgList argList) {
+	private XPathTool(ArgList argList) {
 		this(argList.get("x"), argList.get("e"));
 	}
 	
