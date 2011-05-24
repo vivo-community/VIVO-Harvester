@@ -468,9 +468,33 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * @throws IOException error parsing args
 	 */
 	public static void run(String... args) throws IOException {
-		@SuppressWarnings("unused")
 		ArgList argList = getParser().parse(args);
-		//TODO cah: finish this
+		RecordHandler rh = RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I"));
+		boolean list = argList.has("l");
+		String recordId = argList.get("r");
+		String value = argList.get("v");
+		if(rh == null) {
+			throw new IllegalArgumentException("Must provide a source record handler");
+		}
+		if(value != null && recordId == null) {
+			throw new IllegalArgumentException("Cannot set a value when no record id specified");
+		}
+		if(list && recordId != null) {
+			throw new IllegalArgumentException("Cannot list contents when specifying a record id");
+		}
+		if(list) {
+			for(Record r : rh) {
+				System.out.println(r.getID());
+			}
+		}
+		if(recordId != null) {
+			Record r = rh.getRecord(recordId);
+			if(value != null) {
+				r.setData(value, RecordHandler.class);
+			} else {
+				System.out.println(r.getData());
+			}
+		}
 	}
 	
 	/**
@@ -481,15 +505,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 		ArgParser parser = new ArgParser("RecordHandler");
 		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").setDescription("CONFIG_FILE configuration filename for input recordhandler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhanlder config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("CONFIG_FILE configuration filename for output recordhandler").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhanlder config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("id").withParameter(true, "RECORD_ID").setDescription("the record id to use").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("recordId").withParameter(true, "RECORD_ID").setDescription("the record id to use").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").withParameter(true, "RECORD_VALUE").setDescription("set the value of RECORD_ID to be RECORD_VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("list").setDescription("list the ids contained in this recordhandler").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("sub-config").withParameter(true, "CONFIG_FILE").setDescription("CONFIG_FILE configuration file for recordhandler containing records to be removed").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("subOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of subraction recordhanlder config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("add-config").withParameter(true, "CONFIG_FILE").setDescription("CONFIG_FILE configuration file for recordhandler containing records to be added").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("addOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of addition recordhanlder config using VALUE").setRequired(false));
 		return parser;
 	}
 	
