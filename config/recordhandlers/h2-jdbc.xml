@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RecordHandler>
-	<Param name="rhClass">org.vivoweb.harvester.util.repo.JDBCRecordHandler</Param>
+	<Param name="rhClass">org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler</Param>
 	<Param name="dbClass">org.h2.Driver</Param>
 	<Param name="dbUrl">jdbc:h2:harvested-data/default/h2/store</Param>
 	<Param name="dbUser">sa</Param>

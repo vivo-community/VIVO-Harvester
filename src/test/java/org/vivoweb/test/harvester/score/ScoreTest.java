@@ -10,19 +10,20 @@
 package org.vivoweb.test.harvester.score;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.score.FieldComparison;
 import org.vivoweb.harvester.score.Match;
 import org.vivoweb.harvester.score.Score;
-import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.CaseInsensitiveInitialTest;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.SDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -387,23 +388,24 @@ public class ScoreTest extends TestCase {
 	 */
 	public void testURIEqualityTest() throws IOException {
 		log.info("BEGIN testURIEqualityTest");
+		Score s = new Score(this.input, this.vivo, this.score, null);
+		Match m = new Match(this.score);
 		// prep org arguments
-		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
-		algorithms.put("deptid", EqualityTest.class);
-		HashMap<String, String> inputPredicates = new HashMap<String, String>();
-		inputPredicates.put("deptid", "http://vivo.mydomain.edu/ontology/vivo-local/deptid");
-		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
-		vivoPredicates.put("deptid", "http://vivo.mydomain.edu/ontology/vivo-local/deptid");
-		HashMap<String, Float> weights = new HashMap<String, Float>();
-		weights.put("deptid", Float.valueOf(1f));
+		Set<FieldComparison> comparisons = new HashSet<FieldComparison>();
+		Property deptid = ResourceFactory.createProperty("http://vivo.mydomain.edu/ontology/vivo-local/deptid");
+		comparisons.add(new FieldComparison("deptid", EqualityTest.class, deptid, deptid, 1f));
 		String namespace = "http://vivoweb.org/harvester/org/";
 		// run org score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 0).execute();
+		s.setBatchSize(0);
+		s.execute(comparisons, namespace);
 		log.info("Score: End");
 		// run org match
 		log.info("Match: Start");
-		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
+		m.setBatchSize(500);
+		m.match(1f);
+		m.rename(this.input);
+		m.clearMatchResults();
 		log.info("Match: End");
 		
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/org/deptid019283> ?p ?o }"));
@@ -411,22 +413,20 @@ public class ScoreTest extends TestCase {
 		
 		// prep people arguments
 		this.score.truncate();
-		algorithms.clear();
-		algorithms.put("uid", EqualityTest.class);
-		inputPredicates.clear();
-		inputPredicates.put("uid", "http://vivo.mydomain.edu/ontology/vivo-local/uniqueid");
-		vivoPredicates.clear();
-		vivoPredicates.put("uid", "http://vivo.mydomain.edu/ontology/vivo-local/uniqueid");
-		weights.clear();
-		weights.put("uid", Float.valueOf(1f));
+		comparisons.clear();
+		Property uid = ResourceFactory.createProperty("http://vivo.mydomain.edu/ontology/vivo-local/uniqueid");
+		comparisons.add(new FieldComparison("uid", EqualityTest.class, uid, uid, 1f));
 		namespace = "http://vivoweb.org/harvester/people/";
 		// run people score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 20).execute();
+		s.setBatchSize(20);
+		s.execute(comparisons, namespace);
 		log.info("Score: End");
 		// run people match
 		log.info("Match: Start");
-		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
+		m.match(1f);
+		m.rename(this.input);
+		m.clearMatchResults();
 		log.info("Match: End");
 		
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/people/uniqueid7821299012> ?p ?o }"));
@@ -434,30 +434,23 @@ public class ScoreTest extends TestCase {
 		
 		// prep position arguments
 		this.score.truncate();
-		algorithms.clear();
-		algorithms.put("deptForPos", EqualityTest.class);
-		algorithms.put("posForPer", EqualityTest.class);
-		algorithms.put("posInOrg", EqualityTest.class);
-		inputPredicates.clear();
-		inputPredicates.put("deptForPos", "http://vivo.mydomain.edu/ontology/vivo-local/deptidForPosition");
-		inputPredicates.put("posForPer", "http://vivoweb.org/ontology/core#positionForPerson");
-		inputPredicates.put("posInOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
-		vivoPredicates.clear();
-		vivoPredicates.put("deptForPos", "http://vivo.mydomain.edu/ontology/vivo-local/deptidForPosition");
-		vivoPredicates.put("posForPer", "http://vivoweb.org/ontology/core#positionForPerson");
-		vivoPredicates.put("posInOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
-		weights.clear();
-		weights.put("deptForPos", Float.valueOf(1/3f));
-		weights.put("posForPer", Float.valueOf(1/3f));
-		weights.put("posInOrg", Float.valueOf(1/3f));
+		Property deptForPos = ResourceFactory.createProperty("http://vivo.mydomain.edu/ontology/vivo-local/deptidForPosition");
+		comparisons.add(new FieldComparison("deptForPos", EqualityTest.class, deptForPos, deptForPos, 1/3f));
+		Property posForPer = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#positionForPerson");
+		comparisons.add(new FieldComparison("posForPer", EqualityTest.class, posForPer, posForPer, 1/3f));
+		Property posInOrg = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#positionInOrganization");
+		comparisons.add(new FieldComparison("posInOrg", EqualityTest.class, posInOrg, posInOrg, 1/3f));
 		namespace = "http://vivoweb.org/harvester/position/";
 		// run position score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 50).execute();
+		s.setBatchSize(50);
+		s.execute(comparisons, namespace);
 		log.info("Score: End");
 		// run position match
 		log.info("Match: Start");
-		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
+		m.match(1f);
+		m.rename(this.input);
+		m.clearMatchResults();
 		log.info("Match: End");
 		
 		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/position/posFor7821299012in019283start20091203> ?p ?o }"));
@@ -473,35 +466,34 @@ public class ScoreTest extends TestCase {
 	public void testEmailLastNameEqualityTest() throws IOException {
 		log.info("BEGIN testEmailLastNameEqualityTest");
 		// prep arguments
-		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
-		algorithms.put("wEmail", EqualityTest.class);
-		algorithms.put("lName", NormalizedDoubleMetaphoneDifference.class);
-		algorithms.put("fName", NormalizedDoubleMetaphoneDifference.class);
+		Set<FieldComparison> comparisons = new HashSet<FieldComparison>();
+		Property swEmail = ResourceFactory.createProperty("http://vivoweb.org/ontology/score#workEmail");
+		Property cwEmail = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#workEmail");
+		comparisons.add(new FieldComparison("wEmail", EqualityTest.class, cwEmail, swEmail, 1/2f));
 		
-		HashMap<String, String> inputPredicates = new HashMap<String, String>();
-		inputPredicates.put("wEmail", "http://vivoweb.org/ontology/score#workEmail");
-		inputPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
-		inputPredicates.put("fName", "http://vivoweb.org/ontology/score#foreName");
+		Property lName = ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName");
+		comparisons.add(new FieldComparison("lName", NormalizedDoubleMetaphoneDifference.class, lName, lName, 1/3f));
 		
-		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
-		vivoPredicates.put("wEmail", "http://vivoweb.org/ontology/core#workEmail");
-		vivoPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
-		vivoPredicates.put("fName", "http://xmlns.com/foaf/0.1/firstName");
-		
-		HashMap<String, Float> weights = new HashMap<String, Float>();
-		weights.put("wEmail", Float.valueOf(1 / 2f));
-		weights.put("lName", Float.valueOf(1 / 3f));
-		weights.put("fName", Float.valueOf(1 / 6f));
+		Property ffName = ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/firstName");
+		Property sfName = ResourceFactory.createProperty("http://vivoweb.org/ontology/score#foreName");
+		comparisons.add(new FieldComparison("fName", NormalizedDoubleMetaphoneDifference.class, ffName, sfName, 1/6f));
 		
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
 		// run score
+		Score s = new Score(this.input, this.vivo, this.score, null);
+		Match m = new Match(this.score);
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, null, 50).execute();
+		s.setBatchSize(50);
+		s.execute(comparisons, "http://vivoweb.org/pubmed/article/");
 		log.info("Score: End");
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		log.info("Match: Start");
-		new Match(this.input, this.score, this.output, true, 0.75f, null, true, 500).execute();
+		m.setBatchSize(500);
+		m.match(0.75f);
+		m.rename(this.input);
+		m.clearTypesAndLiterals(this.input);
+		m.clearMatchResults();
 		log.info("Match: End");
 		//log.info("Match Dump Post-Match\n" + this.input.exportRdfToString());
 		
@@ -549,53 +541,43 @@ public class ScoreTest extends TestCase {
 	public void testTieredScore() throws IOException {
 		log.info("BEGIN testTieredScore");
 		// prep arguments
-		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
-		algorithms.put("lName", NormalizedDoubleMetaphoneDifference.class);
-		algorithms.put("type", EqualityTest.class);
+		Set<FieldComparison> comparisons = new HashSet<FieldComparison>();
+		Property lName = ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/lastName");
+		comparisons.add(new FieldComparison("lName", NormalizedDoubleMetaphoneDifference.class, lName, lName, 8/16f));
 		
-		HashMap<String, String> inputPredicates = new HashMap<String, String>();
-		inputPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
-		inputPredicates.put("type", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-		
-		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
-		vivoPredicates.put("lName", "http://xmlns.com/foaf/0.1/lastName");
-		vivoPredicates.put("type", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-		
-		HashMap<String, Float> weights = new HashMap<String, Float>();
-		weights.put("lName", Float.valueOf(8 / 16f));
-		weights.put("type", Float.valueOf(0 / 16f));
+		Property type = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+		comparisons.add(new FieldComparison("fName", EqualityTest.class, type, type, 0/16f));
 		
 //		log.debug("Input Dump Pre-Score\n" + this.input.exportRdfToString());
 		
 		// run score
+		Score s = new Score(this.input, this.vivo, this.score, null);
+		Match m = new Match(this.score);
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, null, 250).execute();
+		s.setBatchSize(250);
+		s.execute(comparisons, "http://vivoweb.org/pubmed/article/");
 		log.info("Score: End");
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		
-		algorithms.clear();
-		algorithms.put("fName", NormalizedDoubleMetaphoneDifference.class);
-		algorithms.put("mName", CaseInsensitiveInitialTest.class);
+		comparisons.clear();
+		Property ffName = ResourceFactory.createProperty("http://xmlns.com/foaf/0.1/firstName");
+		Property sfName = ResourceFactory.createProperty("http://vivoweb.org/ontology/score#foreName");
+		comparisons.add(new FieldComparison("fName", NormalizedDoubleMetaphoneDifference.class, ffName, sfName, 7/16f));
 		
-		inputPredicates.clear();
-		inputPredicates.put("fName", "http://vivoweb.org/ontology/score#foreName");
-		inputPredicates.put("mName", "http://vivoweb.org/ontology/core#middleName");
-		
-		vivoPredicates.clear();
-		vivoPredicates.put("fName", "http://xmlns.com/foaf/0.1/firstName");
-		vivoPredicates.put("mName", "http://vivoweb.org/ontology/core#middleName");
-		
-		weights.clear();
-		weights.put("fName", Float.valueOf(7 / 16f));
-		weights.put("mName", Float.valueOf(1 / 16f));
+		Property mName = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#middleName");
+		comparisons.add(new FieldComparison("mName", CaseInsensitiveInitialTest.class, mName, mName, 1/16f));
 		
 		// run filter score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, Float.valueOf(7/16f), 250).execute();
+		s.execute(comparisons, "http://vivoweb.org/pubmed/article/", 7/16f);
 		log.info("Score: End");
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		log.info("Match: Start");
-		new Match(this.input, this.score, this.output, true, 13/16f, null, true, 500).execute();
+		m.setBatchSize(500);
+		m.match(13/16f);
+		m.rename(this.input);
+		m.clearTypesAndLiterals(this.input);
+		m.clearMatchResults();
 		log.info("Match: End");
 		//log.info("Match Dump Post-Match\n" + this.input.exportRdfToString());
 		

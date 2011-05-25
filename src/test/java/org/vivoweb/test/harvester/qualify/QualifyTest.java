@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Qualify;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
@@ -53,8 +53,7 @@ public class QualifyTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
-	 * regex replace.
+	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#regexReplace(java.lang.String, java.lang.String, java.lang.String) regexReplace(String, String, String)}
 	 * @throws IOException error
 	 */
 	public void testRegexReplace() throws IOException {
@@ -69,7 +68,7 @@ public class QualifyTest extends TestCase {
 		String replaceValue = "I Am Testing Regex Replace";
 		log.debug("Pre-Qualify:\n" + this.jena.exportRdfToString());
 		// call qualify
-		new Qualify(this.jena, this.label.getURI(), searchValue, replaceValue, true, null, false, false).execute();
+		new Qualify(this.jena).regexReplace(this.label.getURI(), searchValue, replaceValue);
 		log.debug("Post-Qualify:\n" + this.jena.exportRdfToString());
 		assertEquals(replaceValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 		assertEquals("woo" + replaceValue + "blah", this.jena.getJenaModel().getProperty(res2, this.label).getString());
@@ -77,8 +76,7 @@ public class QualifyTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
-	 * regex replace.
+	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#regexReplace(java.lang.String, java.lang.String, java.lang.String) regexReplace(String, String, String)}
 	 * @throws IOException error connecting
 	 */
 	public void testMultiRegexReplace() throws IOException {
@@ -94,7 +92,7 @@ public class QualifyTest extends TestCase {
 		String expectedValue2 = "wooI Am Testing Multi Regex ReplaceblahI Am Testing Multi Regex Replacequak";
 		String expectedValue3 = "I A T M R R and I A T M R R";
 		// call qualify
-		new Qualify(this.jena, this.label.getURI(), "IATMRR", replaceWithValue, true, null, false, false).execute();
+		new Qualify(this.jena).regexReplace(this.label.getURI(), "IATMRR", replaceWithValue);
 		assertEquals(expectedValue1, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 		assertEquals(expectedValue2, this.jena.getJenaModel().getProperty(res2, this.label).getString());
 		assertEquals(expectedValue3, this.jena.getJenaModel().getProperty(res3, this.label).getString());
@@ -102,11 +100,9 @@ public class QualifyTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
-	 * string replace.
-	 * @throws IOException error connecting
+	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#strReplace(java.lang.String, java.lang.String, java.lang.String) strReplace(String, String, String)}
 	 */
-	public void testStringReplace() throws IOException {
+	public void testStringReplace() {
 		log.info("BEGIN testStringReplace");
 		Resource res1 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#1");
 		Resource res2 = this.jena.getJenaModel().createResource("http://harvester.vivoweb.org/testSPARQLQualify/item#2");
@@ -116,7 +112,7 @@ public class QualifyTest extends TestCase {
 		this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 		String expectedValue = "I Am Testing Test Replace";
 		// call qualify
-		new Qualify(this.jena, this.label.getURI(), "IATTR", expectedValue, false, null, false, false).execute();
+		new Qualify(this.jena).strReplace(this.label.getURI(), "IATTR", expectedValue);
 		assertEquals(expectedValue, this.jena.getJenaModel().getProperty(res1, this.label).getString());
 		assertFalse(this.jena.getJenaModel().getProperty(res2, this.label).getString().equals(expectedValue));
 		assertFalse(this.jena.getJenaModel().getProperty(res3, this.label).getString().equals(expectedValue));
@@ -124,8 +120,7 @@ public class QualifyTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
-	 * string replace.
+	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#cleanPredicates(java.lang.String) cleanPredicates(String)}
 	 * @throws IOException error
 	 */
 	public void testRemoveNamespacePredicates() throws IOException {
@@ -137,8 +132,7 @@ public class QualifyTest extends TestCase {
 		this.jena.getJenaModel().add(res2, this.scoreAffilitation, "wooIATTRblah");
 		this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 		String namespace = "http://vivoweb.org/harvester/score#";
-		// call qualify
-		new Qualify(this.jena, this.label.getURI(), null, null, false, namespace, true, false).execute();
+		new Qualify(this.jena).cleanPredicates(namespace);
 		log.debug("Jena Dump Post-Qualify\n" + this.jena.exportRdfToString());
 		assertTrue(this.jena.getJenaModel().containsResource(res1));
 		assertFalse(this.jena.getJenaModel().containsResource(res2));
@@ -147,8 +141,7 @@ public class QualifyTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#main(java.lang.String[]) main(String... args)} using
-	 * string replace.
+	 * Test method for {@link org.vivoweb.harvester.qualify.Qualify#cleanResources(java.lang.String) cleanResources(String)}
 	 * @throws IOException error
 	 */
 	public void testRemoveNamespaceObjRes() throws IOException {
@@ -163,7 +156,7 @@ public class QualifyTest extends TestCase {
 		this.jena.getJenaModel().add(res3, this.label, "I A T T R");
 		String namespace = "http://harvester.vivoweb.org/testSPARQLQualifyA/item#";
 		// call qualify
-		new Qualify(this.jena, this.label.getURI(), null, null, false, namespace, false, true).execute();
+		new Qualify(this.jena).cleanResources(namespace);
 		log.debug("Jena Dump Post-Qualify\n" + this.jena.exportRdfToString());
 		assertFalse(this.jena.getJenaModel().containsResource(res1));
 		assertTrue(this.jena.getJenaModel().containsResource(res2));

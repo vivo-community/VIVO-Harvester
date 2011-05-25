@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.D2RMapFetch;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
-import org.vivoweb.harvester.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
 
 /**
  * @author Eliza Chan (elc2013@med.cornell.edu)

@@ -9,20 +9,17 @@
  *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util.repo;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.SDBJenaConnect;
+import org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -35,8 +32,8 @@ public class JenaConnectTest extends TestCase {
 	 * SLF4J Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(JenaConnectTest.class);
-	/** */
-	private static final String type = "sdb";
+//	/** */
+//	private static final String type = "sdb";
 	/** */
 	private static final String dbLayout = "layout2";
 	/** */
@@ -59,13 +56,13 @@ public class JenaConnectTest extends TestCase {
 	private static final String rdfIn = "" + "<?xml version=\"1.0\"?>\n" + "<rdf:RDF\n" + "    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" + "    xmlns:si=\"http://www.w3schools.com/rdf/\" > \n" + "  <rdf:Description rdf:about=\"http://www.w3schools.com\">\n" + "    <si:author>Jan Egil Refsnes</si:author>\n" + "    <si:title>W3Schools</si:title>\n" + "  </rdf:Description>\n" + "</rdf:RDF>\n";
 	/** */
 	private JenaConnect jc;
-	/** */
-	private File configFile;
+//	/** */
+//	private File configFile;
 	
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
-		this.configFile = File.createTempFile("jcConfig", "xml");
+//		this.configFile = File.createTempFile("jcConfig", "xml");
 		this.jc = null;
 	}
 	
@@ -74,6 +71,9 @@ public class JenaConnectTest extends TestCase {
 		if(this.jc != null) {
 			this.jc.close();
 		}
+//		if(this.configFile != null) {
+//			this.configFile.delete();
+//		}
 	}
 	
 	/**
@@ -85,25 +85,25 @@ public class JenaConnectTest extends TestCase {
 		this.jc.getJenaModel().add(res, prop, "testValue");
 	}
 	
-	/**
-	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#parseConfig(java.lang.String)
-	 * JenaConnect.parseConfig(FileObject configFile)}.
-	 * @throws IOException error
-	 */
-	public void testParseConfigFile() throws IOException {
-		log.info("BEGIN testParseConfigFile");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + dbLayout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
-		bw.close();
-		this.jc = JenaConnect.parseConfig(this.configFile.getAbsolutePath());
-		runWriteTest();
-		log.info("END testParseConfigFile");
-	}
+//	/**
+//	 * Test method for
+//	 * {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#parseConfig(java.lang.String)
+//	 * JenaConnect.parseConfig(FileObject configFile)}.
+//	 * @throws IOException error
+//	 */
+//	public void testParseConfigFile() throws IOException {
+//		log.info("BEGIN testParseConfigFile");
+//		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
+//		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Model>\n  <Param name=\"type\">" + type + "</Param>\n  <Param name=\"dbLayout\">" + dbLayout + "</Param>\n  <Param name=\"dbClass\">" + dbClass + "</Param>\n  <Param name=\"dbType\">" + dbType + "</Param>\n  <Param name=\"dbUrl\">" + dbUrl + "</Param>\n  <Param name=\"modelName\">" + modelName + "</Param>\n  <Param name=\"dbUser\">" + dbUser + "</Param>\n  <Param name=\"dbPass\">" + dbPass + "</Param>\n</Model>");
+//		bw.close();
+//		this.jc = JenaConnect.parseConfig(this.configFile.getAbsolutePath());
+//		runWriteTest();
+//		log.info("END testParseConfigFile");
+//	}
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * {@link org.vivoweb.harvester.util.jenaconnect.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass)}.
 	 * @throws IOException error
 	 */
@@ -116,7 +116,7 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * {@link org.vivoweb.harvester.util.jenaconnect.RDBJenaConnect#RDBJenaConnect(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * RDBJenaConnect(String dbUrl, String dbUser, String dbPass, String dbType, String dbClass, String modelName)}.
 	 * @throws IOException error
 	 */
@@ -128,7 +128,7 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#neighborConnectClone(java.lang.String)
+	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#neighborConnectClone(java.lang.String)
 	 * connect(String modelName)}.
 	 * @throws IOException error
 	 */
@@ -141,7 +141,7 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.io.InputStream, java.lang.String, java.lang.String)
+	 * {@link org.vivoweb.harvester.util.jenaconnect.MemJenaConnect#MemJenaConnect(java.io.InputStream, java.lang.String, java.lang.String)
 	 * JenaConnect(InputStream in, String namespace)}.
 	 */
 	public void testJenaConnectConstInputStream() {
@@ -152,7 +152,7 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect() MemJenaConnect()}.
+	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.MemJenaConnect#MemJenaConnect() MemJenaConnect()}.
 	 */
 	public void testJenaConnectMemConstNoModelName() {
 		log.info("BEGIN testJenaConnectMemConstNoModelName");
@@ -162,7 +162,7 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.MemJenaConnect#MemJenaConnect(java.lang.String)
+	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.MemJenaConnect#MemJenaConnect(java.lang.String)
 	 * MemJenaConnect(String
 	 * modelName)}.
 	 */
@@ -175,7 +175,7 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRdfFromStream(java.io.InputStream, java.lang.String, java.lang.String)
+	 * {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#loadRdfFromStream(java.io.InputStream, java.lang.String, java.lang.String)
 	 * loadRDF(InputStream in, String namespace)}.
 	 */
 	public void testLoadRDF() {
@@ -188,7 +188,7 @@ public class JenaConnectTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.repo.JenaConnect#exportRdfToStream(java.io.OutputStream)
+	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#exportRdfToStream(java.io.OutputStream)
 	 * exportRDF(OutputStream out)}.
 	 * @throws IOException error
 	 */
@@ -205,7 +205,7 @@ public class JenaConnectTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.util.repo.JenaConnect#loadRdfFromRH(org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String, java.lang.String)
+	 * {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#loadRdfFromRH(org.vivoweb.harvester.util.recordhandler.RecordHandler, java.lang.String, java.lang.String)
 	 * importRDF(RecordHandler rh, String namespace)}.
 	 * @throws IOException error
 	 */

@@ -60,14 +60,14 @@ ChangeNamespace="java $OPTS -Dprocess-task=ChangeNamespace org.vivoweb.harvester
 Update="java $OPTS -Dprocess-task=Update org.vivoweb.harvester.update.Update"
 DatabaseClone="java $OPTS -Dprocess-task=DatabaseClone org.vivoweb.harvester.util.DatabaseClone"
 Merge="java $OPTS -Dprocess-task=Merge org.vivoweb.harvester.util.Merge"
-JenaConnect="java $OPTS -Dprocess-task=JenaConnect org.vivoweb.harvester.util.repo.JenaConnect"
+JenaConnect="java $OPTS -Dprocess-task=JenaConnect org.vivoweb.harvester.util.jenaconnect.JenaConnect"
 SanitizeMODSXML="java $OPTS -Dprocess-task=SanitizeMODSXML org.vivoweb.harvester.translate.SanitizeMODSXML"
-XPathTool="java $OPTS -Dprocess-task=XPathTool org.vivoweb.harvester.util.XPathTool"
+XPathTool="java $OPTS -Dprocess-task=XPathTool org.vivoweb.harvester.util.XPathAide"
 CSVtoJDBC="java $OPTS -Dprocess-task=CSVtoJDBC org.vivoweb.harvester.util.CSVtoJDBC"
-CSVtoRDF="java $OPTS -Dprocess-task=CSVtoRDF org.vivoweb.harvester.demo.CSVtoRDF"
+CSVtoRDF="java $OPTS -Dprocess-task=CSVtoRDF org.vivoweb.harvester.cli.demo.CSVtoRDF"
 H2Console="java $OPTS -Dprocess-task=H2Console org.h2.tools.Server"
 RunBibutils="java $OPTS -Dprocess-task=RunBibutils org.vivoweb.harvester.translate.RunBibutils"
-RecordHandler="java $OPTS -Dprocess-task=RecordHandler org.vivoweb.harvester.util.repo.RecordHandler"
+RecordHandler="java $OPTS -Dprocess-task=RecordHandler org.vivoweb.harvester.util.recordhandler.RecordHandler"
 
 #Mysql username, password, and server address for backups in scripts
 #parse VIVO.xml for these values

@@ -21,13 +21,9 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.IterableAdaptor;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.IterableAide;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -48,113 +44,82 @@ public class Match {
 	 */
 	private static Logger log = LoggerFactory.getLogger(Match.class);
 	/**
-	 * Model for VIVO instance
+	 * Model for score data
 	 */
 	private final JenaConnect scoreJena;
 	/**
-	 * Model where input is stored
+	 * The most recent result set
 	 */
-	private final JenaConnect inputJena;
+	private Set<Map<String, String>> resultSet;
 	/**
-	 * Model where output goes
+	 * the approximate number of lines per query
 	 */
-	private final JenaConnect outputJena;
-	/**
-	 * Link the resources found by match Algorithm
-	 */
-	private final Map<String, String> linkProps;
-	/**
-	 * Rename resources found by match Algorithm
-	 */
-	private final boolean renameRes;
-	/**
-	 * Match threshold
-	 */
-	private final float matchThreshold;
-	/**
-	 * Clear all literal values out of matched sets
-	 */
-	private final boolean clearLiterals;
-	/**
-	 * number of records to use in batch
-	 */
-	private int batchSize;
+	private int batchSize = 100;
 	
 	/**
 	 * Constructor
-	 * @param inputJena model containing statements to be scored
 	 * @param scoreJena the model that contains the score values
-	 * @param outputJena the model to which matched structures are written
-	 * @param threshold match things with a total score greater than or equal to this threshold
-	 * @param renameRes should I just rename the args?
-	 * @param linkProps bidirectional link
-	 * @param clearLiterals clear all the literal values out of matches
-	 * @param size the size of each batch
 	 */
-	public Match(JenaConnect inputJena, JenaConnect scoreJena, JenaConnect outputJena, boolean renameRes, float threshold, Map<String, String> linkProps, boolean clearLiterals, int size) {
+	public Match(JenaConnect scoreJena) {
 		if(scoreJena == null) {
 			throw new IllegalArgumentException("Score Model cannot be null");
 		}
 		this.scoreJena = scoreJena;
 		
-		if(inputJena == null) {
-			throw new IllegalArgumentException("Match Input cannot be null");
+		this.resultSet = null;
+	}
+	
+	/**
+	 * Get the approximate number of lines per query
+	 * @return the batchSize
+	 */
+	public int getBatchSize() {
+		return this.batchSize;
+	}
+	
+	/**
+	 * Set the approximate number of lines per query
+	 * @param batchSize the new batchSize
+	 */
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
+		if(this.batchSize <= 1) {
+			log.warn("Batch Size of '"+batchSize+"' invalid, must be greater than or equal to 1.  Using '1' as Batch Size.");
+			this.batchSize = 1;
 		}
-		this.inputJena = inputJena;
-		
-		this.outputJena = outputJena;
-		
-		this.matchThreshold = threshold;
-		this.renameRes = renameRes;
-		this.linkProps = linkProps;
-		this.clearLiterals = clearLiterals;
-		
-		this.batchSize = size;
 	}
 	
 	/**
-	 * Constructor
-	 * @param args argument list
-	 * @throws IOException error parsing options
+	 * Clear the results from match
 	 */
-	private Match(String[] args) throws IOException {
-		this(getParser().parse(args));
+	public void clearMatchResults() {
+		this.resultSet = null;
 	}
 	
 	/**
-	 * Set the processing batch size
-	 * @param size the size to use
+	 * Get the result set from last match
+	 * @return the result set
 	 */
-	public void setBatchSize(int size) {
-		this.batchSize = size;
+	protected Set<Map<String, String>> getResultSet() {
+		return this.resultSet;
 	}
 	
 	/**
-	 * Constructor
-	 * @param opts parsed argument list
-	 * @throws IOException error parsing options
+	 * Check that the results are ready
+	 * @throws IllegalStateException resultset is not initialized
 	 */
-	private Match(ArgList opts) throws IOException {
-		this(
-			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
-			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
-			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
-			opts.has("r"), 
-			Float.parseFloat(opts.get("t")), 
-			opts.getValueMap("l"), 
-			opts.has("c"), 
-			Integer.parseInt(opts.get("b"))
-		);
+	private void checkResultsReady() throws IllegalStateException {
+		if(this.resultSet == null) {
+			throw new IllegalStateException("");
+		}
 	}
 	
 	/**
 	 * Find all nodes in the given namepsace matching on the given predicates
 	 * @param threshold the value to look for in the sparql query
-	 * @param scoreJena the jena model containing score data
-	 * @return mapping of the found matches
 	 * @throws IOException error connecting
 	 */
-	protected static Set<Map<String, String>> match(float threshold, JenaConnect scoreJena) throws IOException {
+	public void match(float threshold) throws IOException {
 		//Build query to find all nodes matching above the given threshold
 		String sQuery = "" +
 				"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
@@ -186,7 +151,7 @@ public class Match {
 		//log trace
 		log.trace("Query Start");
 		log.trace("Query:\n" + sQuery);
-		Iterable<QuerySolution> matchQuery = IterableAdaptor.adapt(scoreJena.executeSelectQuery(sQuery));
+		Iterable<QuerySolution> matchQuery = IterableAide.adapt(this.scoreJena.executeSelectQuery(sQuery));
 		log.trace("Query Complete");
 		Map<String, String> tempMap = null;
 		for(QuerySolution solution : matchQuery) {
@@ -200,23 +165,24 @@ public class Match {
 			uriMatchEntrySet.add(tempMap);
 		}
 		
-		return uriMatchEntrySet;
+		this.resultSet = uriMatchEntrySet;
 	}
 	
 	/**
 	 * Rename the resource set as the key to the value matched
-	 * @param matchSet a result set of scoreResources, vivoResources
+	 * @param model model to apply renames to
 	 */
-	private void rename(Set<Map<String, String>> matchSet) {
+	public void rename(JenaConnect model) {
+		checkResultsReady();
 		log.trace("Beginning rename loop");
-		int total = matchSet.size();
+		int total = this.resultSet.size();
 		int count = 0;
-		for(Map<String,String> entry : matchSet) {
+		for(Map<String,String> entry : this.resultSet) {
 			String oldUri = entry.get("sInputURI");
 			String newUri = entry.get("sVivoURI");
 			count++;
 			//get resource in input model and perform rename
-			Resource res = this.inputJena.getJenaModel().getResource(oldUri);
+			Resource res = model.getJenaModel().getResource(oldUri);
 			float percent = Math.round(10000f * count / total) / 100f;
 			log.trace("(" + count + "/" + total + ": " + percent + "%): Renaming match <" + oldUri + "> to <" + newUri + ">");
 			ResourceUtils.renameResource(res, newUri);
@@ -225,47 +191,49 @@ public class Match {
 	
 	/**
 	 * Link matched scoreResources to vivoResources using given linking predicates
-	 * @param matchSet a mapping of matched scoreResources to vivoResources
+	 * @param model model to add link statements to
 	 * @param vivoToInput vivo to input property
 	 * @param inputToVivo input to vivo property
 	 */
-	private void link(Set<Map<String, String>> matchSet, String vivoToInput, String inputToVivo) {
+	public void link(JenaConnect model, String vivoToInput, String inputToVivo) {
+		checkResultsReady();
 		Property vivoToInputProperty = ResourceFactory.createProperty(vivoToInput);
 		Property inputToVivoProperty = ResourceFactory.createProperty(inputToVivo);
 		
 		log.trace("Beginning link method loop");
-		int total = matchSet.size();
+		int total = this.resultSet.size();
 		int count = 0;
-		for(Map<String, String> entry : matchSet) {
+		for(Map<String, String> entry : this.resultSet) {
 			// get resources and add linking triples
 			String inputUri = entry.get("sInputURI");
 			String vivoUri = entry.get("sVivoURI");
-			Resource inputRes = this.inputJena.getJenaModel().getResource(inputUri);
+			Resource inputRes = model.getJenaModel().getResource(inputUri);
 			Resource vivoRes = this.scoreJena.getJenaModel().getResource(vivoUri);
 			float percent = Math.round(10000f * count / total) / 100f;
 			log.trace("(" + count + "/" + total + ": " + percent + "%): Linking match <" + inputUri + "> to <" + vivoUri + ">");
 			log.trace("Adding input to vivo match link [ <" + inputUri + "> <" + inputToVivo + "> <" + vivoUri + "> ]");
-			this.inputJena.getJenaModel().add(inputRes, inputToVivoProperty, vivoRes);
+			model.getJenaModel().add(inputRes, inputToVivoProperty, vivoRes);
 			log.trace("Adding vivo to input match link [ <" + vivoUri + "> <" + vivoToInput + "> <" + inputUri + "> ]");
-			this.inputJena.getJenaModel().add(vivoRes, vivoToInputProperty, inputRes);
+			model.getJenaModel().add(vivoRes, vivoToInputProperty, inputRes);
 		}
 	}
 	
 	/**
-	 * Clear out rdf:type and literal values of matched scoreResources TODO stephen: TEST
-	 * @param resultSet a mapping of matched scoreResources to vivoResources
+	 * Clear out rdf:type and literal values of matched scoreResources
+	 * @param model model to clear types and literals from
 	 * @throws IOException error connecting
 	 */
-	private void clearTypesAndLiterals(Set<Map<String, String>> resultSet) throws IOException {
-		if(!resultSet.isEmpty()) {
+	public void clearTypesAndLiterals(JenaConnect model) throws IOException {
+		checkResultsReady();
+		if(!this.resultSet.isEmpty()) {
 			log.trace("Beginning clear types and literals");
 			Set<String> uriFilters = new HashSet<String>();
 			int count = 0;
 			int inc = 0;
-			for(Map<String, String> entry : resultSet) {
+			for(Map<String, String> entry : this.resultSet) {
 				String uri = entry.get("sInputURI");
 				if(inc == this.batchSize){
-					buildTypesAndLiteralsQuery(uriFilters);
+					buildTypesAndLiteralsQuery(model, uriFilters);
 					count += inc;
 					inc = 0;
 					uriFilters.clear();
@@ -273,7 +241,7 @@ public class Match {
 				uriFilters.add("(str(?s) = \"" + uri + "\")");
 				inc++;
 			}
-			buildTypesAndLiteralsQuery(uriFilters);
+			buildTypesAndLiteralsQuery(model, uriFilters);
 			count += inc;
 			log.trace("Cleared " + count + " types and literals");
 			log.trace("Ending clear types and literals");
@@ -282,10 +250,11 @@ public class Match {
 	
 	/**
 	 * Build the query for matching types and literals
+	 * @param model model to run query on
 	 * @param uriFilters uris to match on
 	 * @throws IOException error connecting
 	 */
-	private void buildTypesAndLiteralsQuery(Set<String> uriFilters) throws IOException {
+	private void buildTypesAndLiteralsQuery(JenaConnect model, Set<String> uriFilters) throws IOException {
 		String query = "" +
 		"DELETE {\n" +
 		"  ?s ?p ?o\n" +
@@ -297,25 +266,27 @@ public class Match {
 //		log.debug("Construct Query:\n" + conQuery);
 //		log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).exportRdfToString());
 		log.trace("Clear Literal Query:\n" + query);
-		this.inputJena.executeUpdateQuery(query);		
+		model.executeUpdateQuery(query);		
 	}
 	
 	/**
-	 * @param matchSet the set of matches to run against
+	 * Output the nodes (and all related nodes) in the result set
+	 * @param model Model from which to get the original statements from
 	 * @return the completed model of matches
 	 * @throws IOException no idea why it throws this
 	 */
-	private JenaConnect outputMatches(Set<Map<String, String>> matchSet) throws IOException {
+	public JenaConnect outputMatches(JenaConnect model) throws IOException {
+		checkResultsReady();
 		log.trace("Beginning separate output of matches");
 		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
 		int i = 0;
-		for(Map<String, String> entry : matchSet) {
+		for(Map<String, String> entry : this.resultSet) {
 			String oldUri = entry.get("sInputURI");
 			String newUri = entry.get("sVivoURI");
 			i++;
 			log.trace("Getting statements for matchSet " + oldUri);
-			StmtIterator subjectStmts = this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(newUri));
+			StmtIterator subjectStmts = model.getJenaModel().listStatements(null, null, model.getJenaModel().getResource(newUri));
 			
 			while(subjectStmts.hasNext()) {
 				Statement stmt = subjectStmts.nextStatement();
@@ -327,7 +298,7 @@ public class Match {
 				}
 			}
 			
-			returnModel.getJenaModel().add(this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(newUri)));
+			returnModel.getJenaModel().add(model.getJenaModel().listStatements(null, null, model.getJenaModel().getResource(newUri)));
 		}
 		log.debug("Outputted " + i + " matches");
 		return returnModel;
@@ -356,99 +327,4 @@ public class Match {
 		
 		return rtnStmtList;
 	}
-	
-	/**
-	 * Get the OptionParser
-	 * @return the OptionParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("Match");
-		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input-config").withParameter(true, "CONFIG_FILE").setDescription("inputConfig JENA configuration filename").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").withParameter(true, "CONFIG_FILE").setDescription("scoreConfig JENA configuration filename").setRequired(false));
-		
-		// Outputs
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-config").setDescription("outputConfig JENA configuration filename, when set nodes that meet the threshold are pushed to the output model").withParameter(true, "CONFIG_FILE").setRequired(false));
-		
-		// Model name overrides
-		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
-		
-		// Matching Algorithms
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("threshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(true));
-		
-		// Linking Methods
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").withParameterValueMap("VIVO_TO_INPUT_PREDICATE", "INPUT_TO_VIVO_PREDICATE").setDescription("link the two matched entities together using INPUT_TO_VIVO_PREDICATE and INPUT_TO_VIVO_PREDICATE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").setRequired(false));
-		
-		// options
-		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-type-and-literals").setDescription("clear all rdf:type and literal values out of the nodes matched").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("number of records to process in batch - default 150 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("150").setRequired(false));
-		return parser;
-	}
-	
-	/**
-	 * Execute scoreJena object algorithms
-	 * @throws IOException error connecting
-	 */
-	public void execute() throws IOException {
-		log.info("Finding matches");
-		
-		Set<Map<String, String>> resultSet = match(this.matchThreshold, this.scoreJena);
-		for(Map<String, String> entry : resultSet) {
-			String sInputURI = entry.get("sInputURI");
-			log.trace("input: " + sInputURI);
-			String sVivoURI = entry.get("sVivoURI");
-			log.trace("vivo: " + sVivoURI);
-			String score = entry.get("score");
-			log.trace("score: " + score);
-			log.debug("Match found: <" + sInputURI + "> in Input matched with <" + sVivoURI + "> in Vivo");
-		}
-		log.info("Found " + resultSet.size() + " links between Vivo and the Input model");
-		
-		if(this.clearLiterals) {
-			clearTypesAndLiterals(resultSet);
-		}
-		
-		if(this.renameRes) {
-			rename(resultSet);
-		}
-		
-		if(this.linkProps != null) {
-			for(String vivoToInput : this.linkProps.keySet()) {
-				link(resultSet, vivoToInput, this.linkProps.get(vivoToInput));
-			}
-		}
-		
-		if(this.outputJena != null) {
-			this.outputJena.getJenaModel().add(outputMatches(resultSet).getJenaModel());
-		}
-	}
-	
-	/**
-	 * Main method
-	 * @param args command line arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser());
-			log.info(getParser().getAppName() + ": Start");
-			new Match(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser().getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info(getParser().getAppName() + ": End");
-			if(error != null) {
-				System.exit(1);
-			}
-		}
-	}
-	
 }

@@ -11,7 +11,6 @@ package org.vivoweb.harvester.fetch.nih;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.IdListType;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -19,11 +18,6 @@ import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
 
 /**
  * Shared code for modules for fetching NIH data using the SOAP or HTML Interface Based on the example code available at
@@ -97,28 +91,6 @@ public abstract class NIHFetch {
 		this.databaseName = database;
 		setOsWriter(outStream);
 		//TODO Erroroneous input checking
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @param database database name
-	 * @param os xml record output stream
-	 * @throws IOException error creating task
-	 */
-	protected NIHFetch(ArgList argList, String database, XMLRecordOutputStream os) throws IOException {
-		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"))), database);
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @param database database name
-	 * @param outputFile output file path
-	 * @throws IOException error creating task
-	 */
-	protected NIHFetch(ArgList argList, String database, String outputFile) throws IOException {
-		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), new FileOutputStream(outputFile, true), database);
 	}
 	
 	/**
@@ -272,23 +244,6 @@ public abstract class NIHFetch {
 	 */
 	protected void setOsWriter(OutputStream os) {
 		this.osWriter = new OutputStreamWriter(os, Charset.availableCharsets().get("UTF-8"));
-	}
-	
-	/**
-	 * Get the ArgParser for this task
-	 * @param appName the application name
-	 * @param database the database name
-	 * @return the ArgParser
-	 */
-	protected static ArgParser getParser(String appName, String database) {
-		ArgParser parser = new ArgParser(appName);
-		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("email").setDescription("your contact email address").withParameter(true, "EMAIL_ADDRESS"));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("termSearch").setDescription("term to search against "+database+" repository").withParameter(true, "SEARCH_STRING").setDefaultValue("1:8000[dp]"));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("numRecords").setDescription("maximum records to return").withParameter(true, "NUMBER").setDefaultValue("100"));
-		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batchSize").setDescription("number of records to fetch per batch").withParameter(true, "NUMBER").setDefaultValue("1000"));
-		return parser;
 	}
 	
 	/**

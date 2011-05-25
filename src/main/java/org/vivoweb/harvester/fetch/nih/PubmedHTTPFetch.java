@@ -17,10 +17,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.WebAide;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -81,24 +79,6 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 */
 	public PubmedHTTPFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh) {
 		super(emailAddress, searchTerm, maxRecords, batchSize,  PubmedFetch.baseXMLROS.clone().setRecordHandler(rh), database);
-	}
-	
-	/**
-	 * Constructor
-	 * @param args commandline arguments
-	 * @throws IOException error creating task
-	 */
-	private PubmedHTTPFetch(String[] args) throws IOException {
-		this(getParser("PubmedHTTPFetch", database).parse(args));
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @throws IOException error creating task
-	 */
-	private PubmedHTTPFetch(ArgList argList) throws IOException {
-		super(argList, database, PubmedFetch.baseXMLROS.clone());
 	}
 	
 	@Override
@@ -212,30 +192,5 @@ public class PubmedHTTPFetch extends NIHFetch {
 	@Override
 	protected int getLatestRecord() throws IOException {
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
-	}
-	
-	/**
-	 * Main method
-	 * @param args commandline arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser("PubmedHTTPFetch", database));
-			log.info("PubmedHTTPFetch: Start");
-			new PubmedHTTPFetch(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser("PubmedHTTPFetch", database).getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info("PubmedHTTPFetch: End");
-			if(error != null) {
-				System.exit(1);
-			}
-		}
 	}
 }

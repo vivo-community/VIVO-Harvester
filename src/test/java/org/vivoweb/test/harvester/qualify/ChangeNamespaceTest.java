@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.ChangeNamespace;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.RDBJenaConnect;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.RDBJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.SDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -124,7 +124,7 @@ public class ChangeNamespaceTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.qualify.ChangeNamespace#getUnusedURI(java.lang.String, org.vivoweb.harvester.util.repo.JenaConnect...)
+	 * {@link org.vivoweb.harvester.qualify.ChangeNamespace#getUnusedURI(java.lang.String, org.vivoweb.harvester.util.jenaconnect.JenaConnect...)
 	 * getUnusedURI(String namespace, JenaConnect... models)}.
 	 * @throws IOException error connecting
 	 */
@@ -145,7 +145,7 @@ public class ChangeNamespaceTest extends TestCase {
 		this.model.exportRdfToStream(baos);
 		log.debug("VIVO");
 		log.debug(baos.toString());
-		new ChangeNamespace(this.model, this.vivo, this.namespace, this.newNamespace, false).execute();
+		ChangeNamespace.changeNS(this.model, this.vivo, this.namespace, this.newNamespace, false);
 		baos = new ByteArrayOutputStream();
 		this.model.exportRdfToStream(baos);
 		log.debug("Changed VIVO");

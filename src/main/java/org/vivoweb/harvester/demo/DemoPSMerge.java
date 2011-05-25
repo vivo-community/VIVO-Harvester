@@ -17,27 +17,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.diff.Diff;
 import org.vivoweb.harvester.fetch.JDBCFetch;
 import org.vivoweb.harvester.qualify.ChangeNamespace;
+import org.vivoweb.harvester.score.FieldComparison;
 import org.vivoweb.harvester.score.Match;
 import org.vivoweb.harvester.score.Score;
-import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.translate.XSLTranslator;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.Merge;
 import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.SDBJenaConnect;
+import org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * 	
@@ -169,8 +171,7 @@ public class DemoPSMerge {
 		// Merge related records
 		RecordHandler mergedRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoMergedPS/store", "sa", "", "mergedData", "mergedID");
 		log.trace("Merging Related Raw Records");
-		Merge psMerge = new Merge(rawRH, mergedRH, "t_UF_DIR_EMP_STU_1_(id_-_.*?)");
-		psMerge.execute();
+		rawRH.merge(mergedRH, Pattern.compile("t_UF_DIR_EMP_STU_1_(id_-_.*?)"));
 		
 		System.setProperty("process-task", "Translate");
 		InitLog.initLogger(null, null);
@@ -178,8 +179,8 @@ public class DemoPSMerge {
 		InputStream xsl = FileAide.getInputStream("config/datamaps/PeopleSoftToVivo.xsl");
 		RecordHandler transRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoTransPS/store", "sa", "", "transData", "transID");
 		log.trace("Translating Merged Records");
-		XSLTranslator psTranslate = new XSLTranslator(mergedRH, transRH, xsl, true);
-		psTranslate.execute();
+		XSLTranslator psTranslate = new XSLTranslator(xsl);
+		psTranslate.translateRecordHandler(mergedRH, transRH, true);
 		
 		System.setProperty("process-task", "Transfer");
 		InitLog.initLogger(null, null);
@@ -209,104 +210,77 @@ public class DemoPSMerge {
 		String tempJena = "harvested-data/tempModel";
 		
 		// setup parameter variables
-		HashMap<String, Class<? extends Algorithm>> algorithms = new HashMap<String, Class<? extends Algorithm>>();
-		HashMap<String, String> inputPredicates = new HashMap<String, String>();
-		HashMap<String, String> vivoPredicates = new HashMap<String, String>();
-		HashMap<String, Float> weights = new HashMap<String, Float>();
+		Score psScore = new Score(psInput, vivoJena, scoreJena, tempJena);
+		Match psMatch = new Match(scoreJena);
+		Set<FieldComparison> comparisons = new HashSet<FieldComparison>();
 		
 		System.setProperty("process-task", "Score.People");
 		InitLog.initLogger(null, null);
-		// clear parameters and temp model
-		log.trace("Truncating Temp Model");
-		algorithms.clear();
-		weights.clear();
-		inputPredicates.clear();
-		vivoPredicates.clear();
+		// clear parameters
+		comparisons.clear();
 		// Execute Score for People
-		algorithms.put("ufid", EqualityTest.class);
-		weights.put("ufid", Float.valueOf(1f));
-		inputPredicates.put("ufid", "http://vivo.ufl.edu/ontology/vivo-ufl/ufid");
-		vivoPredicates.put("ufid", "http://vivo.ufl.edu/ontology/vivo-ufl/ufid");
+		Property ufid = ResourceFactory.createProperty("http://vivo.ufl.edu/ontology/vivo-ufl/ufid");
+		comparisons.add(new FieldComparison("ufid", EqualityTest.class, ufid, ufid, 1f));
 		log.trace("Running People Score");
-		Score psScorePeople = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/person/", weights, null, 100);
-		psScorePeople.execute();
+		psScore.execute(comparisons, "http://vivoweb.org/harvest/ufl/peoplesoft/person/");
 		
 		System.setProperty("process-task", "Score.Departments");
 		InitLog.initLogger(null, null);
-		// clear parameters and temp model
-		log.trace("Truncating Temp Model");
-		algorithms.clear();
-		weights.clear();
-		inputPredicates.clear();
-		vivoPredicates.clear();
+		// clear parameters
+		comparisons.clear();
 		// Execute Score for Departments
-		algorithms.put("deptId", EqualityTest.class);
-		weights.put("deptId", Float.valueOf(1f));
-		inputPredicates.put("deptId", "http://vivo.ufl.edu/ontology/vivo-ufl/deptID");
-		vivoPredicates.put("deptId", "http://vivo.ufl.edu/ontology/vivo-ufl/deptID");
+		Property deptid = ResourceFactory.createProperty("http://vivo.ufl.edu/ontology/vivo-ufl/deptID");
+		comparisons.add(new FieldComparison("deptId", EqualityTest.class, deptid, deptid, 1f));
 		log.trace("Running Departments Score");
-		Score psScoreDepts = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/org/", weights, null, 100);
-		psScoreDepts.execute();
+		psScore.execute(comparisons, "http://vivoweb.org/harvest/ufl/peoplesoft/org/");
 		
 		System.setProperty("process-task", "Match.PeopleDepartments");
 		InitLog.initLogger(null, null);
 		// Find matches for people and departments using scores and rename nodes to matching uri
 		log.trace("Running Match for People and Departments");
-		Match psPeopleOrgMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false,200);
-		psPeopleOrgMatch.execute();
+		psMatch.match(1.0f);
+		psMatch.rename(psInput);
+		psMatch.clearMatchResults();
 		
 		System.setProperty("process-task", "Score.Positions");
 		InitLog.initLogger(null, null);
-		// clear parameters and temp model
-		log.trace("Truncating Temp Model");
-		algorithms.clear();
-		weights.clear();
-		inputPredicates.clear();
-		vivoPredicates.clear();
+		// clear parameters
+		comparisons.clear();
 		// Execute Score for Positions
-		algorithms.put("posOrg", EqualityTest.class);
-		weights.put("posOrg", Float.valueOf(1f));
-		inputPredicates.put("posOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
-		vivoPredicates.put("posOrg", "http://vivoweb.org/ontology/core#positionInOrganization");
-		algorithms.put("posPer", EqualityTest.class);
-		weights.put("posPer", Float.valueOf(1f));
-		inputPredicates.put("posPer", "http://vivoweb.org/ontology/core#positionForPerson");
-		vivoPredicates.put("posPer", "http://vivoweb.org/ontology/core#positionForPerson");
-		algorithms.put("deptPos", EqualityTest.class);
-		weights.put("deptPos", Float.valueOf(1f));
-		inputPredicates.put("deptPos", "http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition");
-		vivoPredicates.put("deptPos", "hhttp://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition");
+		Property posOrg = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#positionInOrganization");
+		comparisons.add(new FieldComparison("posOrg", EqualityTest.class, posOrg, posOrg, 1f));
+		Property posPer = ResourceFactory.createProperty("http://vivoweb.org/ontology/core#positionForPerson");
+		comparisons.add(new FieldComparison("posPer", EqualityTest.class, posPer, posPer, 1f));
+		Property deptPos = ResourceFactory.createProperty("http://vivo.ufl.edu/ontology/vivo-ufl/deptIDofPosition");
+		comparisons.add(new FieldComparison("deptPos", EqualityTest.class, deptPos, deptPos, 1f));
 		log.trace("Running Position Score");
-		Score psScorePos = new Score(psInput, vivoJena, scoreJena, tempJena, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/harvest/ufl/peoplesoft/position/", weights, null, 100);
-		psScorePos.execute();
+		psScore.execute(comparisons, "http://vivoweb.org/harvest/ufl/peoplesoft/position/");
 		
 		System.setProperty("process-task", "Match.Positions");
 		InitLog.initLogger(null, null);
 		// Find matches for positions using scores and rename nodes to matching uri
 		log.trace("Running Match for Positions");
-		Match psPosMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false,200);
-		psPosMatch.execute();
+		psMatch.match(1.0f);
+		psMatch.rename(psInput);
+		psMatch.clearMatchResults();
 		
 		System.setProperty("process-task", "ChangeNamespace.People");
 		InitLog.initLogger(null, null);
 		// Execute ChangeNamespace to get unmatched People into current namespace
 		log.trace("Running People Change Namespace");
-		ChangeNamespace psCNpeople = new ChangeNamespace(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/person/", "http://vivo.ufl.edu/individual/", false);
-		psCNpeople.execute();
+		ChangeNamespace.changeNS(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/person/", "http://vivo.ufl.edu/individual/", false);
 		
 		System.setProperty("process-task", "ChangeNamespace.Departments");
 		InitLog.initLogger(null, null);
 		// Execute ChangeNamespace to get unmatched Departments into current namespace
 		log.trace("Running Departments Change Namespace");
-		ChangeNamespace psCNdepts = new ChangeNamespace(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/org/", "http://vivo.ufl.edu/individual/", true);
-		psCNdepts.execute();
+		ChangeNamespace.changeNS(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/org/", "http://vivo.ufl.edu/individual/", true);
 		
 		System.setProperty("process-task", "ChangeNamespace.Positions");
 		InitLog.initLogger(null, null);
 		// Execute ChangeNamespace to get unmatched Positions into current namespace
 		log.trace("Running Positions Change Namespace");
-		ChangeNamespace psCNpos = new ChangeNamespace(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/position/", "http://vivo.ufl.edu/individual/", false);
-		psCNpos.execute();
+		ChangeNamespace.changeNS(psInput, vivoJena, "http://vivoweb.org/harvest/ufl/peoplesoft/position/", "http://vivo.ufl.edu/individual/", false);
 		
 		System.setProperty("process-task", "DiffSetup");
 		InitLog.initLogger(null, null);
@@ -325,16 +299,14 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Diff.Subs");
 		InitLog.initLogger(null, null);
 		// Find Subtractions
-		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel, null);
 		log.trace("Finding subtractions");
-		psDiffSubs.execute();
+		psSubsModel.loadRdfFromJC(psPrevHarvest.difference(psInput));
 		
 		System.setProperty("process-task", "Diff.Adds");
 		InitLog.initLogger(null, null);
 		// Find Additions
-		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel, null);
 		log.trace("Finding additions");
-		psDiffAdds.execute();
+		psAddsModel.loadRdfFromJC(psInput.difference(psPrevHarvest));
 		
 		System.setProperty("process-task", "Diff.ApplyPrev");
 		InitLog.initLogger(null, null);

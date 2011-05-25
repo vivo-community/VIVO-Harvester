@@ -35,25 +35,19 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.qualify;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.diff.Diff;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 /**
  * Smush
@@ -68,225 +62,110 @@ public class Smush {
 	/**
 	 * model containing statements to be scored
 	 */
-	private JenaConnect inputJena;
+	private final JenaConnect inputJC;
 	/**
-	 * model in which to store temp copy of input and vivo data statements
+	 * model to hold subtractions
 	 */
-	private JenaConnect outputJena;
+	private final JenaConnect subsJC;
 	/**
-	 * the predicates to look for in inputJena model
+	 * model to hold additions
 	 */
-	private List<String> inputPredicates;
-	/**
-	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
-	 */
-	private String namespace;
-	/**
-	 * Change the input model to match the output model
-	 */
-	private boolean inPlace;
+	private final JenaConnect addsJC;
 	
 	/**
 	 * Constructor
-	 * @param inputJena model containing statements to be smushed
-	 * @param outputJena model containing only resources about the smushed statements is returned
-	 * @param inputPredicates the predicates to look for in inputJena model
-	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
-	 * @param inPlace replace the input model with the output model
+	 * @param inputJC model containing statements to be smushed
 	 */
-	public Smush(JenaConnect inputJena, JenaConnect outputJena, List<String> inputPredicates, String namespace, boolean inPlace) {
-		if(inputJena == null) {
+	public Smush(JenaConnect inputJC) {
+		if(inputJC == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
-		this.inputJena = inputJena;
+		this.inputJC = inputJC;
 		
-		this.outputJena = outputJena;
-		if(this.outputJena == null) {
-			log.debug("Output model null generating a memory model");
-			this.outputJena = new MemJenaConnect();
-		}
-		
-		if(inputPredicates == null) {
-			throw new IllegalArgumentException("Input Predicate cannot be null");
-		}
-		this.inputPredicates = inputPredicates;
-		this.namespace = namespace;
-		this.inPlace = inPlace;
-	}
-	/**
-	 * Constructor
-	 * @param inputJena model containing statements to be smushed
-	 * @param inputPredicates the predicates to look for in inputJena model
-	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
-	 */
-	public Smush(JenaConnect inputJena, List<String> inputPredicates, String namespace) {
-		this(inputJena, null, inputPredicates, namespace, true);
+		this.addsJC = new MemJenaConnect();
+		this.subsJC = new MemJenaConnect();
 	}
 	
 	/**
-	 * Constructor
-	 * @param args argument list
-	 * @throws IOException error parsing options
+	 * Get the additions JenaConnect
+	 * @return the additions JenaConnect
 	 */
-	private Smush(String... args) throws IOException {
-		this(getParser().parse(args));
+	public JenaConnect getAdditionsJC() {
+		return this.addsJC;
 	}
 	
 	/**
-	 * Constructor Scoring.close();
-	 * @param opts parsed argument list
-	 * @throws IOException error parsing options
+	 * Get the subtractions JenaConnect
+	 * @return the subtractions JenaConnect
 	 */
-	private Smush(ArgList opts) throws IOException {
-		this(
-			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
-			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
-			opts.getAll("P"), 
-			opts.get("n"), 
-			opts.has("r")
-		);
+	public JenaConnect getSubtractionsJC() {
+		return this.subsJC;
 	}
-	
-	/**
-	 * Get the ArgParser
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("Smush");
-		// Models
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of outputJena jena model config using VALUE").setRequired(false));
-		
-		// Parameters
-		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("inputJena-predicates").withParameters(true, "PREDICATE").setDescription("PREDICATE(s) on which, to match. Multiples are done in series not simultaineously.").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "NAMESPACE").setDescription("only match rdf nodes in inputJena whose URI begin with NAMESPACE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("replace").setDescription("replace input model with changed / output model").setRequired(false));
-		return parser;
-	}
-	
-
 	
 	/**
 	 * A simple resource smusher based on a supplied inverse-functional property.
-	 * @param inJC - model to operate on
 	 * @param property - property for smush
 	 * @param namespace - filter on resources addressed (if null then applied to whole model)
-	 * @return a new model containing only resources about the smushed statements.
 	 */
-	public static JenaConnect smushResources(JenaConnect inJC, String property, String namespace) { 
-		log.debug("Smushing on property:\"" + property + "\"");
-		log.debug((namespace != null )? " within namespace:\""+ namespace + "\"" : " any namespace" );
-		JenaConnect outJC = new MemJenaConnect();
-		Model inModel = inJC.getJenaModel();
+	public void findSmushResourceChanges(String property, String namespace) {
+		log.debug("Smushing on property <" + property + "> within "+((namespace != null )?"namespace <"+ namespace + ">":"any namespace"));
+		Model inModel = this.inputJC.getJenaModel();
+		Model subsModel = this.subsJC.getJenaModel();
+		Model addsModel = this.addsJC.getJenaModel();
 		Property prop = inModel.createProperty(property);
-		Model outModel = outJC.getJenaModel();
-		outModel.add(inModel);
 		inModel.enterCriticalSection(Lock.READ);
 		try {
-			ClosableIterator<RDFNode> closeIt = inModel.listObjectsOfProperty(prop);
+			NodeIterator objIt = inModel.listObjectsOfProperty(prop);
 			try {
-				for (Iterator<RDFNode> objIt = closeIt; objIt.hasNext();) {
-					RDFNode rdfn = objIt.next();
-					ClosableIterator<Resource> closfIt = inModel.listSubjectsWithProperty(prop, rdfn);
+				while(objIt.hasNext()) {
+					RDFNode obj = objIt.next();
+					ResIterator subjIt = inModel.listSubjectsWithProperty(prop, obj);
 					try {
 						boolean first = true;
 						Resource smushToThisResource = null;
-						for (Iterator<Resource> subjIt = closfIt; closfIt.hasNext();) {
+						while (subjIt.hasNext()) {
 							Resource subj = subjIt.next();
 							if(subj.getNameSpace().equals(namespace) || namespace == null){
 								if (first) {
 									smushToThisResource = subj;
 									first = false;
 									log.debug("Smush running for <"+subj+">");
-									continue;
-								}
-								
-								ClosableIterator<Statement> closgIt = inModel.listStatements(subj,(Property)null,(RDFNode)null);
-								try {
-									for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
-										Statement stmt = stmtIt.next();
-										log.trace("Smushing subject <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
-										outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
-										outModel.add(smushToThisResource, stmt.getPredicate(), stmt.getObject());
+								} else {
+									log.trace("Smushing <"+subj+"> into <"+smushToThisResource+">");
+									StmtIterator stmtIt = inModel.listStatements(subj,(Property)null,(RDFNode)null);
+									try {
+										while(stmtIt.hasNext()) {
+											Statement stmt = stmtIt.next();
+											log.trace("Changing <"+stmt.getPredicate()+"> <"+stmt.getObject()+"> from <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
+											subsModel.add(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
+											addsModel.add(smushToThisResource, stmt.getPredicate(), stmt.getObject());
+										}
+									} finally {
+										stmtIt.close();
 									}
-								} finally {
-									closgIt.close();
-								}
-								closgIt = inModel.listStatements((Resource) null, (Property)null, subj);
-								try {
-									for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
-										Statement stmt = stmtIt.next();
-										log.trace("Smushing object <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
-										outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
-										outModel.add(stmt.getSubject(), stmt.getPredicate(), smushToThisResource);
+									stmtIt = inModel.listStatements((Resource) null, (Property)null, subj);
+									try {
+										while(stmtIt.hasNext()) {
+											Statement stmt = stmtIt.next();
+											log.trace("Changing <"+stmt.getSubject()+"> <"+stmt.getPredicate()+"> from <"+stmt.getObject()+"> to <"+smushToThisResource+">");
+											subsModel.add(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
+											addsModel.add(stmt.getSubject(), stmt.getPredicate(), smushToThisResource);
+										}
+									} finally {
+										stmtIt.close();
 									}
-								} finally {
-									closgIt.close();
 								}
 							}
 						}
 					} finally {
-						closfIt.close();
+						subjIt.close();
 					}
 				}
 			} finally {
-				closeIt.close();
+				objIt.close();
 			}
 		} finally {
 			inModel.leaveCriticalSection();
 		}
-		return outJC;
 	}
-	
-	/**
-	 * Execute is that method where the smushResoures method is ran for each predicate.
-	 */
-	public void execute() {
-		Model outModel = this.outputJena.getJenaModel();
-		for(String runName : this.inputPredicates) {
-			JenaConnect results = smushResources(this.inputJena, runName, this.namespace);
-			outModel.add(results.getJenaModel());
-		}
-		if(this.inPlace){
-			JenaConnect additions = new MemJenaConnect();
-			JenaConnect subtractions = new MemJenaConnect();
-			try {
-				Diff.diff(this.inputJena, this.outputJena, subtractions, null);
-				Diff.diff(this.outputJena, this.inputJena, additions, null);
-			} catch(IOException e) {
-				// should never happen
-				log.debug(e.getMessage(), e);
-			}
-			this.inputJena.removeRdfFromJC(subtractions);
-			this.inputJena.loadRdfFromJC(additions);
-		}
-	}
-
-	/**
-	 * Main method
-	 * @param args command line arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser());
-			log.info(getParser().getAppName() + ": Start");
-			new Smush(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser().getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info(getParser().getAppName() + ": End");
-			if(error != null) {
-				System.exit(1);
-			}
-		}
-	}
-	
 }

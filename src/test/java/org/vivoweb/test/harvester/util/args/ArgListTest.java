@@ -13,10 +13,10 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.cli.util.args.ArgDef;
+import org.vivoweb.harvester.cli.util.args.ArgList;
+import org.vivoweb.harvester.cli.util.args.ArgParser;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
 
 /**
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
@@ -53,7 +53,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#get(java.lang.String) get(String arg)}.
+	 * Test method for {@link org.vivoweb.harvester.cli.util.args.ArgList#get(java.lang.String) get(String arg)}.
 	 */
 	public final void testGet() {
 		log.info("BEGIN testGet");
@@ -69,7 +69,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String) getAll(String arg)}.
+	 * Test method for {@link org.vivoweb.harvester.cli.util.args.ArgList#getAll(java.lang.String) getAll(String arg)}.
 	 */
 	public final void testGetAllString() {
 		log.info("BEGIN testGetAllString");
@@ -89,7 +89,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String
+	 * Test method for {@link org.vivoweb.harvester.cli.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String
 	 * arg,
 	 * boolean includeDefaultValue)}.
 	 */
@@ -116,7 +116,7 @@ public class ArgListTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#has(java.lang.String) has(String arg)}.
+	 * Test method for {@link org.vivoweb.harvester.cli.util.args.ArgList#has(java.lang.String) has(String arg)}.
 	 */
 	public final void testHas() {
 		log.info("BEGIN testHas");

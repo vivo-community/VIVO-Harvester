@@ -25,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.JDBCFetch;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
-import org.vivoweb.harvester.util.repo.Record;
-import org.vivoweb.harvester.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler;
+import org.vivoweb.harvester.util.recordhandler.Record;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,7 +77,7 @@ public class JDBCFetchTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
+	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.recordhandler.RecordHandler, java.lang.String)
 	 * JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
@@ -92,7 +92,7 @@ public class JDBCFetchTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
+	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.recordhandler.RecordHandler, java.lang.String)
 	 * JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
@@ -109,7 +109,7 @@ public class JDBCFetchTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.repo.RecordHandler, java.lang.String)
+	 * {@link org.vivoweb.harvester.fetch.JDBCFetch#JDBCFetch(java.sql.Connection, org.vivoweb.harvester.util.recordhandler.RecordHandler, java.lang.String)
 	 * JDBCFetch(Connection dbConn, RecordHandler output, String uriNameSpace)}.
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error

@@ -15,12 +15,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 import ORG.oclc.oai.harvester2.app.RawWrite;
 
@@ -68,24 +64,6 @@ public class OAIFetch {
 	
 	/**
 	 * Constructor
-	 * @param args command line arguments
-	 * @throws IOException error connecting to record handler
-	 */
-	private OAIFetch(String[] args) throws IOException {
-		this(getParser().parse(args));
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @throws IOException error connecting to record handler
-	 */
-	private OAIFetch(ArgList argList) throws IOException {
-		this(argList.get("u"), argList.get("s"), argList.get("e"), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
-	}
-	
-	/**
-	 * Constructor
 	 * @param address The website address of the repository, without http://
 	 * @param startDate The date at which to begin fetching records, format and time resolution depends on repository.
 	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
@@ -115,6 +93,7 @@ public class OAIFetch {
 	 */
 	public void execute() throws IOException {
 		try {
+			log.info("Fetching records from OAI Repository");
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e.getMessage(), e);
@@ -124,45 +103,6 @@ public class OAIFetch {
 			throw new IOException(e.getMessage(), e);
 		} catch(NoSuchFieldException e) {
 			throw new IOException(e.getMessage(), e);
-		}
-	}
-	
-	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("OAIFetch");
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("repository url without http://").withParameter(true, "URL"));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
-		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		return parser;
-	}
-	
-	/**
-	 * Main method
-	 * @param args command line arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser());
-			log.info(getParser().getAppName() + ": Start");
-			new OAIFetch(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser().getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info(getParser().getAppName() + ": End");
-			if(error != null) {
-				System.exit(1);
-			}
 		}
 	}
 }

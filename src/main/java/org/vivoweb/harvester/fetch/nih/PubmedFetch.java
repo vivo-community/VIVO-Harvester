@@ -24,10 +24,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.XMLRecordOutputStream;
 
 /**
  * Module for fetching PubMed Citations using the PubMed SOAP Interface Based on the example code available at the
@@ -89,24 +87,6 @@ public class PubmedFetch extends NIHFetch {
 	 */
 	public PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh) {
 		super(emailAddress, searchTerm, maxRecords, batchSize, baseXMLROS.clone().setRecordHandler(rh), database);
-	}
-	
-	/**
-	 * Constructor
-	 * @param args commandline argument
-	 * @throws IOException error creating task
-	 */
-	private PubmedFetch(String[] args) throws IOException {
-		this(getParser("PubmedFetch", database).parse(args));
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @throws IOException error creating task
-	 */
-	private PubmedFetch(ArgList argList) throws IOException {
-		super(argList, database, baseXMLROS.clone());
 	}
 	
 	@Override
@@ -210,30 +190,5 @@ public class PubmedFetch extends NIHFetch {
 	@Override
 	protected int getLatestRecord() throws IOException {
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
-	}
-	
-	/**
-	 * Main method
-	 * @param args commandline arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser("PubmedFetch", database));
-			log.info("PubmedFetch: Start");
-			new PubmedFetch(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser("PubmedFetch", database).getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info("PubmedFetch: End");
-			if(error != null) {
-				System.exit(1);
-			}
-		}
 	}
 }

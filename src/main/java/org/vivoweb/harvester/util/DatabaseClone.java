@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -30,9 +29,6 @@ import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
 
 /**
  * Clone a database from one jdbc connection to another
@@ -114,70 +110,6 @@ public class DatabaseClone {
 			log.warn("This tool should not be used to copy a database state file, ignoring outputFile");
 			this.outFile = null;
 		}
-	}
-	
-	/**
-	 * Constructor
-	 * @param args commandline arguments
-	 * @throws IOException error creating task
-	 * @throws ClassNotFoundException error loading driver
-	 * @throws SQLException error connecting to database
-	 * @throws DatabaseUnitException error connecting to database
-	 */
-	public DatabaseClone(String[] args) throws IOException, ClassNotFoundException, SQLException, DatabaseUnitException {
-		this(getParser().parse(args));
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList option set of parsed args
-	 * @throws ClassNotFoundException error loading driver
-	 * @throws SQLException error connecting to database
-	 * @throws IOException error resolving file
-	 * @throws DatabaseUnitException error connecting to database
-	 */
-	private DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException, IOException, DatabaseUnitException {
-		this(
-			initDBConn("input", argList.get("inputDriver"), argList.get("inputConnection"), argList.get("inputUsername"), argList.get("inputPassword")),
-			argList.get("inputFile"),
-			initDBConn("output", argList.get("outputDriver"), argList.get("outputConnection"), argList.get("outputUsername"), argList.get("outputPassword")),
-			argList.get("outputFile"),
-			argList.getAll("tableName").toArray(new String[]{}),
-			argList.getAll("validTableType").toArray(new String[]{}),
-			argList.getValueMap("DBUnitFeature")
-		);
-	}
-	
-	/**
-	 * Initialize a Database Connection
-	 * @param dbname the name for this database
-	 * @param driver the jdbc driver
-	 * @param connLine the jdbc connection line
-	 * @param user the username
-	 * @param pass the password
-	 * @return the database connection
-	 * @throws ClassNotFoundException error loading driver
-	 * @throws SQLException error connecting to database
-	 */
-	private static Connection initDBConn(String dbname, String driver, String connLine, String user, String pass) throws ClassNotFoundException, SQLException {
-		if(driver == null) {
-			log.debug("No "+dbname+"Driver provided, not using "+dbname+" database");
-			return null;
-		}
-		if(connLine == null) {
-			log.debug("No "+dbname+"Connection provided, not using "+dbname+" database");
-			return null;
-		}
-		if(user == null) {
-			log.debug("No "+dbname+"Username provided, not using "+dbname+" database");
-			return null;
-		}
-		if(pass == null) {
-			log.debug("No "+dbname+"Password provided, not using "+dbname+" database");
-			return null;
-		}
-		Class.forName(driver);
-		return DriverManager.getConnection(connLine, user, pass);
 	}
 	
 	/**
@@ -273,53 +205,6 @@ public class DatabaseClone {
 		}
 		if(this.outFile != null) {
 			FlatDtdDataSet.write(data, this.outFile);
-		}
-	}
-	
-	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("DatabaseClone");
-		parser.addArgument(new ArgDef().setLongOpt("inputDriver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class for input database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("inputConnection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string for input database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("inputUsername").withParameter(true, "USERNAME").setDescription("database username for input database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("inputPassword").withParameter(true, "PASSWORD").setDescription("database password for input database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("inputFile").withParameter(true, "FILE_PATH").setDescription("use this database state file as the input database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("outputDriver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class for output database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("outputConnection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string for output database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("outputUsername").withParameter(true, "USERNAME").setDescription("database username for output database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("outputPassword").withParameter(true, "PASSWORD").setDescription("database password for output database").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("outputFile").withParameter(true, "FILE_PATH").setDescription("output the state of the input database in this file").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t flags, one for each table names]").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("validTableType").withParameters(true, "TABLE_TYPE").setDescription("a single table type ('TABLE', 'VIEW', etc) Defaults to just 'TABLE' [have multiple --validTableType flags, one for each table type]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("DBUnitFeature").withParameterValueMap("FEATURE", "VALUE").setDescription("Use VALUE for the DBUnit FEATURE (should be 'true'/'false')").setRequired(false));
-		return parser;
-	}
-	
-	/**
-	 * Main method
-	 * @param args commandline arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser());
-			log.info(getParser().getAppName() + ": Start");
-			new DatabaseClone(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser().getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info(getParser().getAppName() + ": End");
-			if(error != null) {
-				System.exit(1);
-			}
 		}
 	}
 }

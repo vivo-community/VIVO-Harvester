@@ -24,14 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.IterableAdaptor;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.TDBJenaConnect;
+import org.vivoweb.harvester.util.IterableAide;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.TDBJenaConnect;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -73,37 +69,9 @@ public class Score {
 	 */
 	private JenaConnect tempJena;
 	/**
-	 * the class of the Algorithm to execute
-	 */
-	private Map<String, Class<? extends Algorithm>> algorithms;
-	/**
-	 * the predicates to look for in inputJena model
-	 */
-	private Map<String, String> inputPredicates;
-	/**
-	 * the predicates to look for in vivoJena model
-	 */
-	private Map<String, String> vivoPredicates;
-	/**
-	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
-	 */
-	private String namespace;
-	/**
-	 * the weighting (0.0 , 1.0) for this score
-	 */
-	private Map<String, Float> weights;
-	/**
-	 * are all algorithms org.vivoweb.harvester.score.algorithm.EqualityTest
-	 */
-	private boolean equalityOnlyMode;
-	/**
-	 * Match threshold
-	 */
-	private final Float matchThreshold;
-	/**
 	 * number of records to use in batch
 	 */
-	private int batchSize;
+	private int batchSize = 100;
 	
 	/**
 	 * Constructor
@@ -111,15 +79,8 @@ public class Score {
 	 * @param vivoJena model containing vivoJena statements
 	 * @param scoreJena model containing scoring data statements
 	 * @param tempJenaDir model in which to store temp copy of input and vivo data statements
-	 * @param algorithms the classes of the algorithms to execute
-	 * @param inputPredicates the predicates to look for in inputJena model
-	 * @param vivoPredicates the predicates to look for in vivoJena model
-	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
-	 * @param weights the weightings (0.0 , 1.0) for this score
-	 * @param matchThreshold score things with a total current score greater than or equal to this threshold
-	 * @param batchSize number of records to use in batch
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, Float matchThreshold, int batchSize) {
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir) {
 		if(inputJena == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -144,120 +105,6 @@ public class Score {
 		} else {
 			this.tempJena = new TDBJenaConnect(tempDir);
 		}
-		
-		if(algorithms == null) {
-			throw new IllegalArgumentException("Algorithm cannot be null");
-		}
-		this.algorithms = algorithms;
-		
-		if(inputPredicates == null) {
-			throw new IllegalArgumentException("Input Predicate cannot be null");
-		}
-		this.inputPredicates = inputPredicates;
-		
-		if(vivoPredicates == null) {
-			throw new IllegalArgumentException("Vivo Predicate cannot be null");
-		}
-		this.vivoPredicates = vivoPredicates;
-		
-		if(this.algorithms.size() < 1) {
-			throw new IllegalArgumentException("No runs specified!");
-		}
-		
-		this.namespace = namespace;
-		
-		for(Float weight : weights.values()) {
-			float d = weight.floatValue();
-			if(d > 1f) {
-				throw new IllegalArgumentException("Weights cannot be greater than 1.0");
-			}
-			if(d < 0f) {
-				throw new IllegalArgumentException("Weights cannot be less than 0.0");
-			}
-		}
-		this.weights = weights;
-		
-		Map<String, Map<String, ? extends Object>> maps = new HashMap<String, Map<String, ? extends Object>>();
-		maps.put("vivoJena predicates", this.vivoPredicates);
-		maps.put("inputJena predicates", this.inputPredicates);
-		maps.put("algorithms", this.algorithms);
-		maps.put("weights", this.weights);
-		verifyRunNames(maps);
-		boolean test = true;
-		for(Class<?> algClass : this.algorithms.values()) {
-			try {
-				algClass.asSubclass(EqualityTest.class);
-			} catch(ClassCastException e) {
-				test = false;
-				break;
-			}
-		}
-		this.equalityOnlyMode = test;
-		this.matchThreshold = matchThreshold;
-		setBatchSize(batchSize);
-		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
-	}
-	
-	/**
-	 * Constructor
-	 * @param args argument list
-	 * @throws IOException error parsing options
-	 */
-	private Score(String... args) throws IOException {
-		this(getParser().parse(args));
-	}
-	
-	/**
-	 * Constructor Scoring.close();
-	 * @param opts parsed argument list
-	 * @throws IOException error parsing options
-	 */
-	private Score(ArgList opts) throws IOException {
-		this(
-			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
-			JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V")), 
-			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
-			opts.get("t"), 
-			initAlgs(opts.getValueMap("A")), 
-			opts.getValueMap("P"), 
-			opts.getValueMap("F"), 
-			opts.get("n"), 
-			initWeights(opts.getValueMap("W")), 
-			(opts.has("m")?Float.valueOf(opts.get("m")):null), 
-			Integer.parseInt(opts.get("b"))
-		);
-	}
-	
-	/**
-	 * Initialize the algoritm map from the commandline mapping
-	 * @param algs the commandline mapping
-	 * @return the algorithm map
-	 */
-	private static Map<String, Class<? extends Algorithm>> initAlgs(Map<String,String> algs) {
-		Map<String, Class<? extends Algorithm>> retVal = new HashMap<String, Class<? extends Algorithm>>();
-		for(String runName : algs.keySet()) {
-			try {
-				retVal.put(runName, Class.forName(algs.get(runName)).asSubclass(Algorithm.class));
-			} catch(ClassNotFoundException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
-			} catch(ClassCastException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
-			}
-		}
-		return retVal;
-	}
-	
-	/**
-	 * Initialize the weight map from the commandline mapping
-	 * @param weight the commandline mapping
-	 * @return the weight map
-	 */
-	private static Map<String, Float> initWeights(Map<String, String> weight) {
-		Map<String, Float> retVal = new HashMap<String, Float>();
-		for(String runName : weight.keySet()) {
-			retVal.put(runName, Float.valueOf(weight.get(runName)));
-		}
-		return retVal;
 	}
 	
 	/**
@@ -273,47 +120,11 @@ public class Score {
 	}
 	
 	/**
-	 * Verify that each map contains the same keys
-	 * @param maps mapping of map name to map
+	 * Get the processing batch size
+	 * @return the batch size
 	 */
-	private void verifyRunNames(Map<String, Map<String, ? extends Object>> maps) {
-		for(String x : maps.keySet()) {
-			for(String y : maps.keySet()) {
-				if((x != y) && !maps.get(y).keySet().containsAll(maps.get(x).keySet())) {
-					for(String runName : maps.get(x).keySet()) {
-						if((x != y) && !maps.get(y).containsKey(runName)) {
-							throw new IllegalArgumentException("run name '" + runName + "' found in " + x + ", but not in " + y);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Get the ArgParser
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("Score");
-		// Models
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoJena-config").withParameter(true, "CONFIG_FILE").setDescription("vivoJena JENA configuration filename").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivoJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("score-config").withParameter(true, "CONFIG_FILE").setDescription("score data JENA configuration filename").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("scoreOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of score jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tempJenaDir").withParameter(true, "DIRECTORY_PATH").setDescription("directory to store temp jena model").setRequired(false));
-		
-		// Parameters
-		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("algorithms").withParameterValueMap("RUN_NAME", "CLASS_NAME").setDescription("for RUN_NAME, use this CLASS_NAME (must implement Algorithm) to evaluate matches").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('W').setLongOpt("weights").withParameterValueMap("RUN_NAME", "WEIGHT").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("inputJena-predicates").withParameterValueMap("RUN_NAME", "PREDICATE").setDescription("for RUN_NAME, match ").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("vivoJena-predicates").withParameterValueMap("RUN_NAME", "PREDICAATE").setDescription("for RUN_NAME, assign this weight (0,1) to the scores").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("approximate number of triples to process in each batch - default 2000 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("2000").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("matchThreshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(false));
-		return parser;
+	public int getBatchSize() {
+		return this.batchSize;
 	}
 	
 	/**
@@ -349,13 +160,16 @@ public class Score {
 	
 	/**
 	 * Get the result set
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param namespace namespace to filter on
+	 * @param equalityOnlyMode query only returns perfect matches
 	 * @return the resultset
 	 * @throws IOException error connecting to the models
 	 */
-	private ResultSet getResultSet() throws IOException {
+	private ResultSet getResultSet(Set<FieldComparison> comparisons, String namespace, boolean equalityOnlyMode) throws IOException {
 		Dataset ds = prepDataset();
 		log.trace("Building Query");
-		String sQuery = buildSelectQuery();
+		String sQuery = buildSelectQuery(comparisons, namespace, equalityOnlyMode);
 		log.trace("Score Query:\n" + sQuery);
 		// Execute query
 		log.trace("Building Query Execution");
@@ -368,28 +182,29 @@ public class Score {
 	
 	/**
 	 * Build the solution set
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param namespace namespace to filter on
+	 * @param equalityOnlyMode query only returns perfect matches
 	 * @return the solution set
 	 * @throws IOException error connecting to the models
 	 */
-	private Set<Map<String, String>> buildSolutionSet() throws IOException {
-		if(this.matchThreshold != null) {
-			return buildFilterSolutionSet();
-		}
-		ResultSet rs = getResultSet();
+	private Set<Map<String, String>> buildSolutionSet(Set<FieldComparison> comparisons, String namespace, boolean equalityOnlyMode) throws IOException {
+		ResultSet rs = getResultSet(comparisons, namespace, equalityOnlyMode);
 		Set<Map<String, String>> solSet = getNewSolSet();
 		if(!rs.hasNext()) {
 			log.info("No Results Found");
 		} else {
 			log.info("Building Record Set");
 			Map<String, String> tempMap;
-			for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
+			for(QuerySolution solution : IterableAide.adapt(rs)) {
 				String sinputuri = solution.getResource("sInput").getURI();
 				String svivouri = solution.getResource("sVivo").getURI();
 				log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
 				tempMap = new HashMap<String, String>();
 				tempMap.put("sInput", sinputuri);
 				tempMap.put("sVivo", svivouri);
-				for(String runName : this.vivoPredicates.keySet()) {
+				for(FieldComparison comparison : comparisons) {
+					String runName = comparison.getName();
 					RDFNode os = solution.get("os_" + runName);
 					RDFNode op = solution.get("op_" + runName);
 					addRunName(tempMap, runName, os, op);
@@ -402,11 +217,16 @@ public class Score {
 	
 	/**
 	 * Build the solution set for a filtered score
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param namespace namespace to filter on
+	 * @param matchThreshold the threshold for finding matches
 	 * @return the solution set
 	 * @throws IOException error connecting to the models
 	 */
-	private Set<Map<String, String>> buildFilterSolutionSet() throws IOException {
-		Set<Map<String, String>> matchSet = Match.match(this.matchThreshold.floatValue(), this.scoreJena);
+	private Set<Map<String, String>> buildFilterSolutionSet(Set<FieldComparison> comparisons, String namespace, float matchThreshold) throws IOException {
+		Match matcher = new Match(this.scoreJena);
+		matcher.match(matchThreshold);
+		Set<Map<String, String>> matchSet = matcher.getResultSet();
 		Set<Map<String, String>> solSet = getNewSolSet();
 		if(matchSet.isEmpty()) {
 			log.info("No Results Found");
@@ -415,21 +235,24 @@ public class Score {
 			Map<String, String> tempMap;
 			for(Map<String, String> entry : matchSet) {
 				String sinputuri = entry.get("sInputURI");
-				String svivouri = entry.get("sVivoURI");
-				log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
-				tempMap = new HashMap<String, String>();
-				tempMap.put("sInput", sinputuri);
 				Resource sInput = this.inputJena.getJenaModel().getResource(sinputuri);
-				tempMap.put("sVivo", svivouri);
-				Resource sVivo = this.vivoJena.getJenaModel().getResource(svivouri);
-				for(String runName : this.vivoPredicates.keySet()) {
-					Property os_runName = this.inputJena.getJenaModel().getProperty(this.inputPredicates.get(runName));
-					RDFNode os = sInput.getProperty(os_runName).getObject();
-					Property op_runName = this.vivoJena.getJenaModel().getProperty(this.vivoPredicates.get(runName));
-					RDFNode op = sVivo.getProperty(op_runName).getObject();
-					addRunName(tempMap, runName, os, op);
+				if(StringUtils.isBlank(namespace) || sInput.getNameSpace().startsWith(namespace)) {
+					String svivouri = entry.get("sVivoURI");
+					Resource sVivo = this.vivoJena.getJenaModel().getResource(svivouri);
+					log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
+					tempMap = new HashMap<String, String>();
+					tempMap.put("sInput", sinputuri);
+					tempMap.put("sVivo", svivouri);
+					for(FieldComparison comparison : comparisons) {
+						String runName = comparison.getName();
+						Property os_runName = comparison.getInputProperty();
+						RDFNode os = sInput.getProperty(os_runName).getObject();
+						Property op_runName = comparison.getReferenceProperty();
+						RDFNode op = sVivo.getProperty(op_runName).getObject();
+						addRunName(tempMap, runName, os, op);
+					}
+					solSet.add(tempMap);
 				}
-				solSet.add(tempMap);
 			}
 		}
 		return solSet;
@@ -469,22 +292,66 @@ public class Score {
 			}
 		});
 	}
+	
+	/**
+	 * Determine if the comparison set contains only instances of EqualityTest
+	 * @param comparisons Set of FieldComparisons to evaluate
+	 * @return true if all instances of EqualityTest, false otherwise
+	 */
+	private boolean isEqualityOnly(Set<FieldComparison> comparisons) {
+		for(FieldComparison comparison : comparisons) {
+			Class<? extends Algorithm> algClass = comparison.getAlgorithm();
+			try {
+				algClass.asSubclass(EqualityTest.class);
+			} catch(ClassCastException e) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Execute score object algorithms
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param namespace namespace to filter on
+	 * @param matchThreshold the threshold for finding matches
+	 * @throws IOException error connecting
+	 */
+	public void execute(Set<FieldComparison> comparisons, String namespace, float matchThreshold) throws IOException {
+		boolean equalityOnlyMode = isEqualityOnly(comparisons);
+		Set<Map<String, String>> solSet = buildFilterSolutionSet(comparisons, namespace, matchThreshold);
+		evaluate(comparisons, solSet, equalityOnlyMode);
+	}
 
 	/**
 	 * Execute score object algorithms
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param namespace namespace to filter on
 	 * @throws IOException error connecting
 	 */
-	public void execute() throws IOException {
-		Set<Map<String, String>> solSet = buildSolutionSet();
-		if(!solSet.isEmpty()) {
+	public void execute(Set<FieldComparison> comparisons, String namespace) throws IOException {
+		boolean equalityOnlyMode = isEqualityOnly(comparisons);
+		Set<Map<String, String>> solSet = buildSolutionSet(comparisons, namespace, equalityOnlyMode);
+		evaluate(comparisons, solSet, equalityOnlyMode);
+	}
+	
+	/**
+	 * Evaluate the given solution set for the set of comparisons
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param matchSet the set of possible matches
+	 * @param equalityOnlyMode query only returns perfect matches
+	 * @throws IOException error connecting
+	 */
+	private void evaluate(Set<FieldComparison> comparisons, Set<Map<String, String>> matchSet, boolean equalityOnlyMode) throws IOException {
+		if(!matchSet.isEmpty()) {
 			log.info("Processing Results");
-			int total = solSet.size();
+			int total = matchSet.size();
 			int count = 0;
 			int incrementer = 0;
-			double recordBatchSize = Math.ceil(this.batchSize / (2.0+(this.vivoPredicates.size()*7)));
+			double recordBatchSize = Math.ceil(this.batchSize / (2.0+(comparisons.size()*7)));
 			StringBuilder indScore;
 			StringBuilder scoreSparql = new StringBuilder();
-			for(Map<String, String> eval : solSet) {
+			for(Map<String, String> eval : matchSet) {
 				count++;
 				incrementer++;
 				indScore = new StringBuilder();
@@ -498,14 +365,15 @@ public class Score {
 					"  _:node" + incrementer + " scoreValue:InputRes <" + sInputURI + "> .\n"
 				);
 				double sum_total = 0;
-				for(String runName : this.vivoPredicates.keySet()) {
+				for(FieldComparison comparison : comparisons) {
+					String runName = comparison.getName();
 					String osUri = eval.get("URI_os_" + runName);
 					String osLit = eval.get("LIT_os_" + runName);
 					String opUri = eval.get("URI_op_" + runName);
 					String opLit = eval.get("LIT_op_" + runName);
 					log.debug("os_" + runName + ": '" + ((osUri != null) ? osUri : osLit) + "'");
 					log.debug("op_" + runName + ": '" + ((opUri != null) ? opUri : opLit) + "'");
-					sum_total += appendScoreSparqlFragment(indScore, incrementer, opUri, opLit, osUri, osLit, runName);
+					sum_total += appendScoreSparqlFragment(comparison, indScore, incrementer, opUri, opLit, osUri, osLit, equalityOnlyMode);
 				}
 				log.debug("sum_total: "+sum_total);
 				log.trace("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
@@ -543,9 +411,11 @@ public class Score {
 	
 	/**
 	 * Builds the select query for equality only mode
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param namespace namespace to filter on
 	 * @return the equality only mode query
 	 */
-	private String buildEqualitySelectQuery() {
+	private String buildEqualitySelectQuery(Set<FieldComparison> comparisons, String namespace) {
 		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery = new StringBuilder("PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" + "SELECT DISTINCT ?sVivo ?sInput");
 		
@@ -553,9 +423,10 @@ public class Score {
 		List<String> vivoSelects = new ArrayList<String>();
 		List<String> inputSelects = new ArrayList<String>();
 		
-		for(String runName : this.inputPredicates.keySet()) {
-			String vivoProperty = this.vivoPredicates.get(runName);
-			String inputProperty = this.inputPredicates.get(runName);
+		for(FieldComparison comparison : comparisons) {
+			String runName = comparison.getName();
+			Property vivoProperty = comparison.getReferenceProperty();
+			Property inputProperty = comparison.getInputProperty();
 			sQuery.append(" ?os_" + runName);
 			sQuery.append(" ?op_" + runName);
 			vivoSelects.add("?sVivo <" + vivoProperty + "> ?op_" + runName + " .");
@@ -571,8 +442,8 @@ public class Score {
 		sQuery.append("\n  } . \n  FILTER( (");
 		sQuery.append(StringUtils.join(filters, " && "));
 		sQuery.append(") && (str(?sVivo) != str(?sInput))");
-		if(this.namespace != null) {
-			sQuery.append(" && regex(str(?sInput), \"^" + this.namespace + "\")");
+		if(namespace != null) {
+			sQuery.append(" && regex(str(?sInput), \"^" + namespace + "\")");
 		}
 		sQuery.append(" ) .\n");
 		sQuery.append("}");
@@ -581,11 +452,14 @@ public class Score {
 	
 	/**
 	 * Build the select query
+	 * @param comparisons Set of FieldComparisons to run
+	 * @param namespace namespace to filter on
+	 * @param equalityOnlyMode query only returns perfect matches
 	 * @return the query
 	 */
-	private String buildSelectQuery() {
-		if(this.equalityOnlyMode) {
-			return buildEqualitySelectQuery();
+	private String buildSelectQuery(Set<FieldComparison> comparisons, String namespace, boolean equalityOnlyMode) {
+		if(equalityOnlyMode) {
+			return buildEqualitySelectQuery(comparisons, namespace);
 		}
 		//Build query to find all nodes matching on the given predicates
 		StringBuilder sQuery = new StringBuilder("PREFIX scoring: <http://vivoweb.org/harvester/model/scoring#>\n" + "SELECT DISTINCT ?sVivo ?sInput");
@@ -596,9 +470,10 @@ public class Score {
 		List<String> vivoUnions = new ArrayList<String>();
 		List<String> inputUnions = new ArrayList<String>();
 		
-		for(String runName : this.inputPredicates.keySet()) {
-			String vivoProperty = this.vivoPredicates.get(runName);
-			String inputProperty = this.inputPredicates.get(runName);
+		for(FieldComparison comparison : comparisons) {
+			String runName = comparison.getName(); 
+			Property vivoProperty = comparison.getReferenceProperty();
+			Property inputProperty = comparison.getInputProperty();
 			sQuery.append(" ?os_" + runName);
 //			sQuery.append(" ?ov_" + runName);
 			sQuery.append(" ?op_" + runName);
@@ -624,8 +499,8 @@ public class Score {
 		sQuery.append("  FILTER( (");
 		sQuery.append(StringUtils.join(filters, " || "));
 		sQuery.append(") && (str(?sVivo) != str(?sInput))");
-		if(this.namespace != null) {
-			sQuery.append(" && regex(str(?sInput), \"^" + this.namespace + "\")");
+		if(namespace != null) {
+			sQuery.append(" && regex(str(?sInput), \"^" + namespace + "\")");
 		}
 		sQuery.append(" ) .\n");
 		sQuery.append("}");
@@ -634,67 +509,47 @@ public class Score {
 	
 	/**
 	 * Append the sparql fragment for two rdf nodes to the given stringbuilder
+	 * @param comparison current FieldComparisons
 	 * @param sb the stringbuilder to append fragment to
 	 * @param nodenum the node number
 	 * @param opUri vivoJena node as a URI
 	 * @param opLit vivoJena node as a Literal string
 	 * @param osUri inputJena node as a URI
 	 * @param osLit inputJena node as a Literal string
-	 * @param runName the run identifier
+	 * @param equalityOnlyMode query only returns perfect matches
 	 * @return the score
 	 */
-	private double appendScoreSparqlFragment(StringBuilder sb, int nodenum, String opUri, String opLit, String osUri, String osLit, String runName) {
+	private double appendScoreSparqlFragment(FieldComparison comparison, StringBuilder sb, int nodenum, String opUri, String opLit, String osUri, String osLit, boolean equalityOnlyMode) {
 		float score = 0f;
+		Class<? extends Algorithm> algorithm = comparison.getAlgorithm();
+		Property refProperty = comparison.getReferenceProperty();
+		Property inputProperty = comparison.getInputProperty();
+		Float weight = Float.valueOf(comparison.getWeight());
 		// if a resource and same uris
-		if(this.equalityOnlyMode || ((osUri != null) && (opUri != null) && osUri.equals(opUri))) {
+		if(equalityOnlyMode || ((osUri != null) && (opUri != null) && osUri.equals(opUri))) {
 			score = 1 / 1f;
 		} else if((osLit != null) && (opLit != null)) {
 			try {
-				score = this.algorithms.get(runName).newInstance().calculate(osLit, opLit);
+				score = algorithm.newInstance().calculate(osLit, opLit);
 			} catch(IllegalAccessException e) {
 				throw new IllegalArgumentException(e.getMessage(), e);
 			} catch(InstantiationException e) {
 				throw new IllegalArgumentException(e.getMessage(), e);
 			}
 		}
-		double weightedscore = this.weights.get(runName).doubleValue() * score;
+		double weightedscore = weight.doubleValue() * score;
 		log.debug("score: " + score);
 		log.debug("weighted_score: " + weightedscore);
+		String runName = comparison.getName();
 		String fragment = "" +
 			"  _:node" + nodenum + " scoreValue:hasScoreValue _:nodeScoreValue" + runName + nodenum + " .\n" +
-			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:VivoProp <" + this.vivoPredicates.get(runName) + "> .\n" +
-			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:InputProp <" + this.inputPredicates.get(runName) + "> .\n" +
-			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Algorithm \"" + this.algorithms.get(runName).getName() + "\" .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:VivoProp <" + refProperty + "> .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:InputProp <" + inputProperty + "> .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Algorithm \"" + algorithm.getName() + "\" .\n" +
 			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Score \"" + score + "\"^^xsd:float .\n" +
-			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Weight \"" + this.weights.get(runName) + "\"^^xsd:float .\n" +
+			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:Weight \"" + weight + "\"^^xsd:float .\n" +
 			"  _:nodeScoreValue" + runName + nodenum + " scoreValue:WeightedScore \"" + weightedscore + "\"^^xsd:float .\n";
 		sb.append(fragment);
 		return weightedscore;
 	}
-	
-	/**
-	 * Main method
-	 * @param args command line arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser());
-			log.info(getParser().getAppName() + ": Start");
-			new Score(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser().getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info(getParser().getAppName() + ": End");
-			if(error != null) {
-				System.exit(1);
-			}
-		}
-	}
-	
 }

@@ -19,10 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.nih.NLMJournalFetch;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JenaRecordHandler;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.Record;
-import org.vivoweb.harvester.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
+import org.vivoweb.harvester.util.recordhandler.JenaRecordHandler;
+import org.vivoweb.harvester.util.recordhandler.Record;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,7 +55,7 @@ public class NLMJournalFetchTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.recordhandler.RecordHandler)
 	 * NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 */
@@ -69,7 +69,7 @@ public class NLMJournalFetchTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.recordhandler.RecordHandler)
 	 * NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 * @throws ParserConfigurationException error
@@ -95,7 +95,7 @@ public class NLMJournalFetchTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.repo.RecordHandler)
+	 * {@link org.vivoweb.harvester.fetch.nih.NLMJournalFetch#NLMJournalFetch(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.vivoweb.harvester.util.recordhandler.RecordHandler)
 	 * NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh)}.
 	 * @throws IOException error
 	 */

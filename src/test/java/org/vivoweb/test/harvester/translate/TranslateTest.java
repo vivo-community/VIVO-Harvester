@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.translate.XSLTranslator;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.Record;
-import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.TextFileRecordHandler;
+import org.vivoweb.harvester.util.recordhandler.Record;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.TextFileRecordHandler;
 
 /**
  * @author Stephen Williams (swilliams@ctrip.ufl.edu)
@@ -559,8 +559,7 @@ public class TranslateTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.translate.XSLTranslator#main(java.lang.String[]) main(String...
-	 * args)}.
+	 * Test method for {@link XSLTranslator#translateRecordHandler(RecordHandler, RecordHandler)}.
 	 * @throws IOException error
 	 */
 	public void testPubMedXSLTArticle() throws IOException {
@@ -569,7 +568,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("Article", inputDataArticle, this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
+		new XSLTranslator(FileAide.getInputStream(mapFilePath)).translateRecordHandler(this.inRH, this.outRH);
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());
@@ -582,8 +581,7 @@ public class TranslateTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.translate.XSLTranslator#main(java.lang.String[]) main(String...
-	 * args)}.
+	 * Test method for {@link XSLTranslator#translateRecordHandler(RecordHandler, RecordHandler)}.
 	 * @throws IOException error
 	 */
 	public void testPubMedXSLTBook() throws IOException {
@@ -592,7 +590,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("Book", inputDataBook, this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
+		new XSLTranslator(FileAide.getInputStream(mapFilePath)).translateRecordHandler(this.inRH, this.outRH);
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());
@@ -605,8 +603,7 @@ public class TranslateTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.translate.XSLTranslator#main(java.lang.String[]) main(String...
-	 * args)}.
+	 * Test method for {@link XSLTranslator#translateRecordHandler(RecordHandler, RecordHandler)}.
 	 * @throws IOException error
 	 */
 	public void testPubMedXSLTArticleNoAffiliation() throws IOException {
@@ -615,7 +612,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("ArticleNoAffiliation", inputDataArticle.replaceAll("<Affiliation.*?/Affiliation>", ""), this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
+		new XSLTranslator(FileAide.getInputStream(mapFilePath)).translateRecordHandler(this.inRH, this.outRH);
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());

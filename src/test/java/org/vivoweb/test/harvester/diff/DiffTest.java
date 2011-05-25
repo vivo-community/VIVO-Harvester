@@ -14,10 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.diff.Diff;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -37,8 +36,6 @@ public class DiffTest extends TestCase {
 	private JenaConnect original;
 	/** */
 	private JenaConnect incomming;
-	/** */
-	private JenaConnect output;
 	/** */
 	private List<Statement> shareStatements;
 	/** */
@@ -82,7 +79,6 @@ public class DiffTest extends TestCase {
 		this.incomming = new MemJenaConnect("incomming");
 		this.incomming.getJenaModel().add(this.shareStatements);
 		this.incomming.getJenaModel().add(this.addStatements);
-		this.output = new MemJenaConnect("output");
 	}
 	
 	@Override
@@ -91,69 +87,67 @@ public class DiffTest extends TestCase {
 		this.original.close();
 		this.incomming.truncate();
 		this.incomming.close();
-		this.output.truncate();
-		this.output.close();
 		this.shareStatements.clear();
 		this.addStatements.clear();
 		this.subStatements.clear();
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
+	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#difference(org.vivoweb.harvester.util.jenaconnect.JenaConnect)}.
 	 * @throws IOException error
 	 */
 	public final void testDiffAdds() throws IOException {
 		log.info("BEGIN testDiffAdds");
-		Diff.diff(this.incomming, this.original, this.output, null);
-		assertFalse(this.output.isEmpty());
+		JenaConnect output = this.incomming.difference(this.original);
+		assertFalse(output.isEmpty());
 		for(Statement sub : this.subStatements) {
-			assertFalse(this.output.getJenaModel().contains(sub));
+			assertFalse(output.getJenaModel().contains(sub));
 		}
 		for(Statement add : this.addStatements) {
-			assertTrue(this.output.getJenaModel().contains(add));
+			assertTrue(output.getJenaModel().contains(add));
 		}
 		for(Statement shared : this.shareStatements) {
-			assertFalse(this.output.getJenaModel().contains(shared));
+			assertFalse(output.getJenaModel().contains(shared));
 		}
 		log.info("END testDiffAdds");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
+	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#difference(org.vivoweb.harvester.util.jenaconnect.JenaConnect)}.
 	 * @throws IOException error
 	 */
 	public final void testDiffSubs() throws IOException {
 		log.info("BEGIN testDiffSubs");
-		Diff.diff(this.original, this.incomming, this.output, null);
-		assertFalse(this.output.isEmpty());
+		JenaConnect output = this.original.difference(this.incomming);
+		assertFalse(output.isEmpty());
 		for(Statement sub : this.subStatements) {
-			assertTrue(this.output.getJenaModel().contains(sub));
+			assertTrue(output.getJenaModel().contains(sub));
 		}
 		for(Statement add : this.addStatements) {
-			assertFalse(this.output.getJenaModel().contains(add));
+			assertFalse(output.getJenaModel().contains(add));
 		}
 		for(Statement shared : this.shareStatements) {
-			assertFalse(this.output.getJenaModel().contains(shared));
+			assertFalse(output.getJenaModel().contains(shared));
 		}
 		log.info("END testDiffSubs");
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
+	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#difference(org.vivoweb.harvester.util.jenaconnect.JenaConnect)}.
 	 * @throws IOException error
 	 */
 	public final void testDiffSame() throws IOException {
 		log.info("BEGIN testDiffSame");
-		Diff.diff(this.original, this.original, this.output, null);
-		assertTrue(this.output.isEmpty());
+		JenaConnect output = this.original.difference(this.original);
+		assertTrue(output.isEmpty());
 		for(Statement sub : this.subStatements) {
-			assertFalse(this.output.getJenaModel().contains(sub));
+			assertFalse(output.getJenaModel().contains(sub));
 		}
 		for(Statement add : this.addStatements) {
-			assertFalse(this.output.getJenaModel().contains(add));
+			assertFalse(output.getJenaModel().contains(add));
 		}
 		for(Statement shared : this.shareStatements) {
-			assertFalse(this.output.getJenaModel().contains(shared));
+			assertFalse(output.getJenaModel().contains(shared));
 		}
 		log.info("END testDiffSame");
 	}

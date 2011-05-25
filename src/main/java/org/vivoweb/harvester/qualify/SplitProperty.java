@@ -35,16 +35,11 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.qualify;
 
-import java.io.IOException;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -69,110 +64,74 @@ public class SplitProperty {
 	 */
 	private JenaConnect model;
 	/**
-	 * regex to split oldPropertyURI value on
+	 * model to store new property statements in
 	 */
-	private String splitRegex;
-	/**
-	 * old property uri (to be split)
-	 */
-	private String oldPropertyURI;
-	/**
-	 * new property uri (to store split values in)
-	 */
-	private String newPropertyURI;
-	/**
-	 * trim() the new values
-	 */
-	private boolean trim;
-	
-	/**
-	 * Constructor
-	 * @param args commandline arguments
-	 * @throws IOException error creating task
-	 */
-	private SplitProperty(String[] args) throws IOException {
-		this(getParser().parse(args));
-	}
+	private JenaConnect outModel;
 	
 	/**
 	 * Constructor
 	 * @param model model to split property values in
-	 * @param splitRegex regex to split oldPropertyURI value on
-	 * @param oldPropertyURI old property uri (to be split)
-	 * @param newPropertyURI new property uri (to store split values in)
-	 * @param trim trim() the new values
 	 */
-	public SplitProperty(JenaConnect model, String splitRegex, String oldPropertyURI, String newPropertyURI, boolean trim) {
+	public SplitProperty(JenaConnect model) {
 		if(model == null) {
 			throw new IllegalArgumentException("No model provided! Must provide a model");
 		}
 		this.model = model;
-		this.splitRegex = splitRegex;
-		this.oldPropertyURI = oldPropertyURI;
-		this.newPropertyURI = newPropertyURI;
-		this.trim = trim;
+		this.outModel = new MemJenaConnect();
 	}
 	
 	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @throws IOException error reading config
+	 * Get a JenaConnect containing the new property statements
+	 * @return the new property statements in a JenaConnect
 	 */
-	private SplitProperty(ArgList argList) throws IOException {
-		this(
-			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
-			argList.get("r"), 
-			argList.get("u"), 
-			argList.get("n"), 
-			argList.has("t")
-		);
+	public JenaConnect getNewPropertyStatements() {
+		return this.outModel;
 	}
 	
 	/**
 	 * Splits values for a given data property URI on a supplied regex and 
 	 * asserts each value using newPropertyURI.  New statements returned in
-	 * a Jena Model.  Split values may be optionally trim()ed.
-	 * @param model model to split property values in
+	 * a Jena Model.  Split values may be optionally trim()'ed.
 	 * @param splitRegex regex to split oldPropertyURI value on
 	 * @param oldPropertyURI old property uri (to be split)
 	 * @param newPropertyURI new property uri (to store split values in)
 	 * @param trim trim() the new values
-	 * @return outModel
 	 */
-	public static JenaConnect splitPropertyValues(JenaConnect model, String oldPropertyURI, String splitRegex, String newPropertyURI, boolean trim) {
-		JenaConnect outModel = new MemJenaConnect();
+	public void splitPropertyValues(String oldPropertyURI, String splitRegex, String newPropertyURI, boolean trim) {
 		Pattern delimiterPattern = Pattern.compile(splitRegex);
 		Property theProp = ResourceFactory.createProperty(oldPropertyURI);
 		Property newProp = ResourceFactory.createProperty(newPropertyURI);
-		model.getJenaModel().enterCriticalSection(Lock.READ);
+		log.info("Spliting <"+theProp+"> on '"+splitRegex+"' into <"+newProp+"> properties");
+		this.model.getJenaModel().enterCriticalSection(Lock.READ);
 		try {
-			StmtIterator stmtIt = model.getJenaModel().listStatements( (Resource)null, theProp, (RDFNode)null );
+			StmtIterator stmtIt = this.model.getJenaModel().listStatements((Resource)null, theProp, (RDFNode)null);
 			try {
 				while(stmtIt.hasNext()) {
 					Statement stmt = stmtIt.nextStatement();
 					Resource subj = stmt.getSubject();
 					RDFNode obj = stmt.getObject();
-					if (obj.isLiteral()) {
-						Literal lit = (Literal) obj;
+					if(obj.isLiteral()) {
+						Literal lit = obj.asLiteral();
 						String unsplitStr = lit.getLexicalForm();
+						log.trace("found: "+unsplitStr);
 						String[] splitPieces = delimiterPattern.split(unsplitStr);
-						for (int i=0; i<splitPieces.length; i++) {
-							String newLexicalForm = splitPieces[i];
-							if (trim) {
+						for(String newLexicalForm : splitPieces) {
+							if(trim) {
 								newLexicalForm = newLexicalForm.trim();
 							}
-							if (newLexicalForm.length() > 0) {
+							if(newLexicalForm.length() > 0) {
+								log.trace("adding: "+newLexicalForm);
 								Literal newLiteral = null;
-								if (lit.getDatatype() != null) {
-									newLiteral = outModel.getJenaModel().createTypedLiteral(newLexicalForm, lit.getDatatype());
+								if(lit.getDatatype() != null) {
+									newLiteral = this.outModel.getJenaModel().createTypedLiteral(newLexicalForm, lit.getDatatype());
 								} else {
 									if (lit.getLanguage() != null) {
-										newLiteral = outModel.getJenaModel().createLiteral(newLexicalForm, lit.getLanguage());
+										newLiteral = this.outModel.getJenaModel().createLiteral(newLexicalForm, lit.getLanguage());
 									} else {
-										newLiteral = outModel.getJenaModel().createLiteral(newLexicalForm);
+										newLiteral = this.outModel.getJenaModel().createLiteral(newLexicalForm);
 									}
 								}
-								outModel.getJenaModel().add(subj,newProp,newLiteral);
+								this.outModel.getJenaModel().add(subj,newProp,newLiteral);
 							}
 						}
 					}
@@ -181,58 +140,7 @@ public class SplitProperty {
 				stmtIt.close();
 			}
 		} finally {
-			model.getJenaModel().leaveCriticalSection();
-		}	
-		return outModel;
-	}
-	
-	/**
-	 * Split Property Values
-	 */
-	public void execute() {
-		this.model.getJenaModel().add(splitPropertyValues(this.model, this.splitRegex, this.oldPropertyURI, this.newPropertyURI, this.trim).getJenaModel());
-	}
-	
-	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("SplitProperty");
-		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
-		
-		// Params
-		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("regex").withParameter(true, "SPLIT_REGEX").setDescription("regex to split oldPropertyURI value on").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("oldPropertyURI").withParameter(true, "OLD_PREDICATE").setDescription("old property uri (to be split)").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("newPropertyURI").withParameter(true, "NEW_PREDICATE").setDescription("new property uri (to store split values in)").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("trim").setDescription("trim() the new values").setRequired(false));
-		return parser;
-	}
-	
-	/**
-	 * Main method
-	 * @param args commandline arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser());
-			log.info(getParser().getAppName() + ": Start");
-			new SplitProperty(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage());
-			System.out.println(getParser().getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info(getParser().getAppName() + ": End");
-			if(error != null) {
-				System.exit(1);
-			}
+			this.model.getJenaModel().leaveCriticalSection();
 		}
 	}
 }

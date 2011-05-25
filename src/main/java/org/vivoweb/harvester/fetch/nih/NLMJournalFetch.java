@@ -14,11 +14,9 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.WebAide;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.XMLRecordOutputStream;
 
 /**
  * NLMJournalFetch
@@ -74,24 +72,6 @@ public class NLMJournalFetch extends NIHFetch {
 	 */
 	public NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh) {
 		super(emailAddress, searchTerm, maxRecords, batchSize, baseXMLROS.clone().setRecordHandler(rh), database);
-	}
-	
-	/**
-	 * Constructor
-	 * @param args commandline arguments
-	 * @throws IOException error creating task
-	 */
-	private NLMJournalFetch(String[] args) throws IOException {
-		this(getParser("NLMJournalFetch", database).parse(args));
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @throws IOException error creating task
-	 */
-	private NLMJournalFetch(ArgList argList) throws IOException {
-		super(argList, database, baseXMLROS.clone());
 	}
 	
 	@Override
@@ -248,30 +228,4 @@ public class NLMJournalFetch extends NIHFetch {
 		//FIXME: make this work for NLM Journal Fetch? Is relevant? if not, try to move out of NIHFetch
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
 	}
-	
-	/**
-	 * Main method
-	 * @param args commandline arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser("NLMJournalFetch", database));
-			log.info("NLMJournalFetch: Start");
-			new NLMJournalFetch(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
-			System.out.println(getParser("NLMJournalFetch", database).getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info("NLMJournalFetch: End");
-			if(error != null) {
-				System.exit(1);
-			}
-		}
-	}
-	
 }

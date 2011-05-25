@@ -83,7 +83,7 @@
     <appender-ref ref="AllAppender"/>
     <!-- - -><appender-ref ref="ClassAppender"/><!- - -->
   </logger>
-  <logger name="org.vivoweb.harvester.util.XPathTool" level="WARN" additivity="false">
+  <logger name="org.vivoweb.harvester.util.XPathAide" level="WARN" additivity="false">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>

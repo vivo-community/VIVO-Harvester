@@ -15,12 +15,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.IterableAdaptor;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.IterableAide;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.ResourceUtils;
@@ -34,75 +30,6 @@ public class ChangeNamespace {
 	 * SLF4J Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(ChangeNamespace.class);
-	/**
-	 * The model to change uris in
-	 */
-	private final JenaConnect model;
-	/**
-	 * The old namespace
-	 */
-	private final String oldNamespace;
-	/**
-	 * The new namespace
-	 */
-	private final String newNamespace;
-	/**
-	 * The model in which to search for previously used uris
-	 */
-	private final JenaConnect vivo;
-	/**
-	 * Log error messages for changed nodes
-	 */
-	private final boolean errorLogging;
-	
-	/**
-	 * Constructor
-	 * @param args commandline arguments
-	 * @throws IOException error creating task
-	 */
-	private ChangeNamespace(String[] args) throws IOException {
-		this(getParser().parse(args));
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @throws IOException error reading config
-	 */
-	private ChangeNamespace(ArgList argList) throws IOException {
-		this(
-			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
-			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")), 
-			argList.get("u"), 
-			argList.get("n"), 
-			argList.has("e")
-		);
-	}
-	
-	/**
-	 * Constructor
-	 * @param model model to change uris in
-	 * @param vivo model in which to search for previously used uris
-	 * @param oldName old namespace
-	 * @param newName new namespace
-	 * @param errorLog log error messages for changed nodes
-	 */
-	public ChangeNamespace(JenaConnect model, JenaConnect vivo, String oldName, String newName, boolean errorLog) {
-		if(model == null) {
-			throw new IllegalArgumentException("No input model provided! Must provide an input model");
-		}
-		this.model = model;
-		if(vivo == null) {
-			throw new IllegalArgumentException("No vivo model provided! Must provide a vivo model");
-		}
-		this.vivo = vivo;
-		this.oldNamespace = oldName;
-		this.newNamespace = newName;
-		this.errorLogging = errorLog;
-		
-		this.model.printParameters();
-		this.vivo.printParameters();
-	}
 	
 	/**
 	 * Gets an unused URI in the the given namespace for the given models
@@ -143,6 +70,12 @@ public class ChangeNamespace {
 	 * @throws IOException error connecting
 	 */
 	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IOException {
+		if(model == null) {
+			throw new IllegalArgumentException("No input model provided! Must provide an input model");
+		}
+		if(vivo == null) {
+			throw new IllegalArgumentException("No vivo model provided! Must provide a vivo model");
+		}
 		if((oldNamespace == null) || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
@@ -192,7 +125,7 @@ public class ChangeNamespace {
 		log.debug("Change Query:\n" + subjectQuery);
 		
 		Set<String> changeArray = new TreeSet<String>();
-		for(QuerySolution solution : IterableAdaptor.adapt(model.executeSelectQuery(subjectQuery))) {
+		for(QuerySolution solution : IterableAide.adapt(model.executeSelectQuery(subjectQuery))) {
 			String renameURI = solution.getResource("sub").getURI();
 			changeArray.add(renameURI);
 		}
@@ -211,57 +144,5 @@ public class ChangeNamespace {
 			ResourceUtils.renameResource(res, uri);
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
-	}
-	
-	/**
-	 * Change namespace
-	 * @throws IOException error connecting
-	 */
-	public void execute() throws IOException {
-		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.errorLogging);
-	}
-	
-	/**
-	 * Get the ArgParser for this task
-	 * @return the ArgParser
-	 */
-	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("ChangeNamespace");
-		// Inputs
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vivoModel").withParameter(true, "CONFIG_FILE").setDescription("config file for vivo jena model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivo jena model config using VALUE").setRequired(false));
-		
-		// Params
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("oldNamespace").withParameter(true, "OLD_NAMESPACE").setDescription("The old namespace").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("newNamespace").withParameter(true, "NEW_NAMESPACE").setDescription("The new namespace").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("errorLogging").setDescription("Log error messages for each record changed").setRequired(false));
-		return parser;
-	}
-	
-	/**
-	 * Main method
-	 * @param args commandline arguments
-	 */
-	public static void main(String... args) {
-		Exception error = null;
-		try {
-			InitLog.initLogger(args, getParser());
-			log.info(getParser().getAppName() + ": Start");
-			new ChangeNamespace(args).execute();
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage());
-			System.out.println(getParser().getUsage());
-			error = e;
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			error = e;
-		} finally {
-			log.info(getParser().getAppName() + ": End");
-			if(error != null) {
-				System.exit(1);
-			}
-		}
 	}
 }

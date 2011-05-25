@@ -3,14 +3,13 @@ package org.vivoweb.test.harvester.qualify;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Smush;
 import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.RDBJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.RDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -28,8 +27,6 @@ public class SmushTest extends TestCase {
 	/** */
 	private JenaConnect inputModel;
 	/** */
-	//private JenaConnect outputModel;
-	/** */
 	private String namespace;
 	
 	/**
@@ -39,7 +36,6 @@ public class SmushTest extends TestCase {
 	public void setUp() throws Exception {
 		InitLog.initLogger(null, null);
 		this.namespace = "http://vivo.test.edu/individual/";
-//		this.outputModel = new SDBJenaConnect("jdbc:h2:mem:testSmushoutput", "sa", "", "H2", "org.h2.Driver", "layout2", "testSmushoutput");
 		this.inputModel = new RDBJenaConnect("jdbc:h2:mem:testSmushinput;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testSmushinput");
 		String testData = "" +
 			"<rdf:RDF" +
@@ -129,8 +125,6 @@ public class SmushTest extends TestCase {
 		log.info("testing End");
 		this.inputModel.close();
 		this.inputModel = null;
-//		this.outputModel.close();
-//		this.outputModel = null;
 		this.namespace = null;
 	}
 	
@@ -140,12 +134,10 @@ public class SmushTest extends TestCase {
 	 */
 	public void testExecSmushResources() throws IOException {
 		log.info("BEGIN testExecSmushResources");
-		List<String> predicates = new ArrayList<String>();
-		predicates.add("http://vivo.test.edu/ontology/vivo-test/uniqueId");
-		
-		Smush testSubject = new Smush(this.inputModel,predicates,this.namespace);
-
-		testSubject.execute();
+		Smush testSubject = new Smush(this.inputModel);
+		testSubject.findSmushResourceChanges("http://vivo.test.edu/ontology/vivo-test/uniqueId", this.namespace);
+		this.inputModel.removeRdfFromJC(testSubject.getSubtractionsJC());
+		this.inputModel.loadRdfFromJC(testSubject.getAdditionsJC());
 		{
 			log.trace("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
@@ -182,13 +174,10 @@ public class SmushTest extends TestCase {
 	 */
 	public void tesExectNotSmushResources() throws IOException {
 		log.info("BEGIN testExecNotSmushResources");
-		List<String> predicates = new ArrayList<String>();
-		predicates.add("http://vivo.test.edu/ontology/vivo-test/uniqueId");
-		
-		Smush testSubject = new Smush(this.inputModel,predicates,this.namespace);
-
-		testSubject.execute();
-
+		Smush testSubject = new Smush(this.inputModel);
+		testSubject.findSmushResourceChanges("http://vivo.test.edu/ontology/vivo-test/uniqueId", this.namespace);
+		this.inputModel.removeRdfFromJC(testSubject.getSubtractionsJC());
+		this.inputModel.loadRdfFromJC(testSubject.getAdditionsJC());
 		{
 			log.debug("The output model :\n" + this.inputModel.exportRdfToString());
 			StringBuilder query = new StringBuilder();
