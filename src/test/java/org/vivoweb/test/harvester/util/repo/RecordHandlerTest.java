@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.jenaconnect.SDBJenaConnect;
 import org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler;
 import org.vivoweb.harvester.util.recordhandler.JenaRecordHandler;
@@ -38,7 +38,7 @@ public class RecordHandlerTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 		this.rh = null;
 	}
 	

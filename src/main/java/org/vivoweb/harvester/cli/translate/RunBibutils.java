@@ -23,8 +23,9 @@ import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
 import org.vivoweb.harvester.cli.util.InitLog;
-import org.vivoweb.harvester.cli.util.repo.Record;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.Record;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
 
 /**
  * @author Michael Barbieri (mbarbier@ufl.edu)
@@ -120,7 +121,7 @@ public class RunBibutils {
 	 * @throws IOException if an error occurred setting up a record handler
 	 */
 	private RunBibutils(ArgList argList) throws IOException {
-		this(argList.get("b"), argList.get("m"), RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")), argList.has("f"));
+		this(argList.get("b"), argList.get("m"), RecordHandlerFactory.parseConfig(argList.get("i"), argList.getValueMap("I")), RecordHandlerFactory.parseConfig(argList.get("o"), argList.getValueMap("O")), argList.has("f"));
 	}
 
 	/**

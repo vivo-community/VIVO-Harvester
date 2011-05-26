@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.IterableAide;
@@ -93,13 +94,25 @@ public class JenaRecordHandler extends RecordHandler {
 	/**
 	 * Constructor (w/ Given Model)
 	 * @param jena the model to use
+	 */
+	public JenaRecordHandler(JenaConnect jena) {
+		this(jena, null);
+	}
+		
+	/**
+	 * Constructor (w/ Given Model)
+	 * @param jena the model to use
 	 * @param dataFieldType rdf Predicate (including namespace) that describes data type
 	 */
 	public JenaRecordHandler(JenaConnect jena, String dataFieldType) {
 		this.model = jena;
 		this.recType = this.model.getJenaModel().createProperty(rhNameSpace, "record");
 		this.idType = this.model.getJenaModel().createProperty(rhNameSpace, "idField");
-		this.dataType = this.model.getJenaModel().createProperty(dataFieldType);
+		if(StringUtils.isNotBlank(dataFieldType)) {
+			this.dataType = this.model.getJenaModel().createProperty(dataFieldType);
+		} else {
+			this.dataType = this.model.getJenaModel().createProperty(rhNameSpace, "dataField");
+		}
 		this.isA = this.model.getJenaModel().createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "type");
 		this.metaType = this.model.getJenaModel().createProperty(rhNameSpace, "metaData");
 		this.metaRel = this.model.getJenaModel().createProperty(rhNameSpace, "metaRel");

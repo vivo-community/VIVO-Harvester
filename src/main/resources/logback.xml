@@ -36,7 +36,7 @@
   </appender> <!- - -->
   
   <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-    <Target>System.out</Target>
+    <Target>System.err</Target>
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
     </encoder>
@@ -83,7 +83,7 @@
     <appender-ref ref="AllAppender"/>
     <!-- - -><appender-ref ref="ClassAppender"/><!- - -->
   </logger>
-  <logger name="org.vivoweb.harvester.util.XPathAide" level="WARN" additivity="false">
+  <logger name="org.vivoweb.harvester.util.XMLAide" level="WARN" additivity="false">
     <appender-ref ref="Console"/>
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>

@@ -40,13 +40,13 @@ import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.cli.diff.Diff;
+import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
-import org.vivoweb.harvester.cli.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnectFactory;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -139,8 +139,8 @@ public class Smush {
 	 */
 	private Smush(ArgList opts) throws IOException {
 		this(
-			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
-			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
+			JenaConnectFactory.parseConfig(opts.get("i"), opts.getValueMap("I")), 
+			JenaConnectFactory.parseConfig(opts.get("o"), opts.getValueMap("O")), 
 			opts.getAll("P"), 
 			opts.get("n"), 
 			opts.has("r")
@@ -250,15 +250,8 @@ public class Smush {
 			outModel.add(results.getJenaModel());
 		}
 		if(this.inPlace){
-			JenaConnect additions = new MemJenaConnect();
-			JenaConnect subtractions = new MemJenaConnect();
-			try {
-				Diff.diff(this.inputJena, this.outputJena, subtractions, null);
-				Diff.diff(this.outputJena, this.inputJena, additions, null);
-			} catch(IOException e) {
-				// should never happen
-				log.debug(e.getMessage(), e);
-			}
+			JenaConnect additions = this.outputJena.difference(this.inputJena);
+			JenaConnect subtractions = this.inputJena.difference(this.outputJena);
 			this.inputJena.removeRdfFromJC(subtractions);
 			this.inputJena.loadRdfFromJC(additions);
 		}

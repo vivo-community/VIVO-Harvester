@@ -14,7 +14,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
 import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import org.vivoweb.harvester.util.jenaconnect.SDBJenaConnect;
@@ -61,7 +61,7 @@ public class JenaConnectTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 //		this.configFile = File.createTempFile("jcConfig", "xml");
 		this.jc = null;
 	}
@@ -190,9 +190,8 @@ public class JenaConnectTest extends TestCase {
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.jenaconnect.JenaConnect#exportRdfToStream(java.io.OutputStream)
 	 * exportRDF(OutputStream out)}.
-	 * @throws IOException error
 	 */
-	public final void testExportRDF() throws IOException {
+	public final void testExportRDF() {
 		log.info("BEGIN testExportRDF");
 		this.jc = new MemJenaConnect(new ByteArrayInputStream(rdfIn.getBytes()), null, null);
 		String out = this.jc.exportRdfToString();

@@ -21,7 +21,7 @@ import org.vivoweb.harvester.score.Score;
 import org.vivoweb.harvester.score.algorithm.CaseInsensitiveInitialTest;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
 import org.vivoweb.harvester.util.jenaconnect.SDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -620,7 +620,7 @@ public class ScoreTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 		// load input models
 		this.input = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "input");
 		this.input.loadRdfFromString(inputRDF, null, null);

@@ -20,10 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
-import org.vivoweb.harvester.cli.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.cli.util.repo.Record;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
+import org.vivoweb.harvester.util.recordhandler.Record;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
 
 /**
  * Merge multiple rdf files into one
@@ -81,8 +82,8 @@ public class Merge {
 	 */
 	public Merge(ArgList argList) throws IOException {
 		this(
-			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
-			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")), 
+			RecordHandlerFactory.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			RecordHandlerFactory.parseConfig(argList.get("o"), argList.getValueMap("O")), 
 			argList.get("b")
 		);
 	}

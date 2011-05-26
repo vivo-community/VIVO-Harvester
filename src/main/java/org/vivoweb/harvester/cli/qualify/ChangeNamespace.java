@@ -18,9 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.util.IterableAide;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnectFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.ResourceUtils;
@@ -71,8 +72,8 @@ public class ChangeNamespace {
 	 */
 	private ChangeNamespace(ArgList argList) throws IOException {
 		this(
-			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
-			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")), 
+			JenaConnectFactory.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			JenaConnectFactory.parseConfig(argList.get("v"), argList.getValueMap("V")), 
 			argList.get("u"), 
 			argList.get("n"), 
 			argList.has("e")

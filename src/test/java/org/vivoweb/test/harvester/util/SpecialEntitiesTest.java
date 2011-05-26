@@ -12,7 +12,7 @@ package org.vivoweb.test.harvester.util;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.SpecialEntities;
 
 /**
@@ -34,7 +34,7 @@ public class SpecialEntitiesTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 	}
 	
 	/**

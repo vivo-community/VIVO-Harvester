@@ -24,8 +24,9 @@ import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
 import org.vivoweb.harvester.cli.util.InitLog;
-import org.vivoweb.harvester.cli.util.repo.Record;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.Record;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
 import com.hp.gloze.Gloze;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -93,8 +94,8 @@ public class GlozeTranslator {
 		this(
 			argList.get("u"), 
 			argList.get("z"), 
-			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
-			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"))
+			RecordHandlerFactory.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			RecordHandlerFactory.parseConfig(argList.get("o"), argList.getValueMap("O"))
 		);
 	}
 	

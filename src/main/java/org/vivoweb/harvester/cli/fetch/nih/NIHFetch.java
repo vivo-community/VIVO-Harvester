@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.XMLRecordOutputStream;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
+import org.vivoweb.harvester.util.recordhandler.XMLRecordOutputStream;
 
 /**
  * Shared code for modules for fetching NIH data using the SOAP or HTML Interface Based on the example code available at
@@ -107,7 +107,7 @@ public abstract class NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	protected NIHFetch(ArgList argList, String database, XMLRecordOutputStream os) throws IOException {
-		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"))), database);
+		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), os.setRecordHandler(RecordHandlerFactory.parseConfig(argList.get("o"), argList.getValueMap("O"))), database);
 	}
 	
 	/**

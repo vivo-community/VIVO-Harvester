@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.CSVtoJDBC;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 
 /**
  * @author jrpence
@@ -42,7 +42,7 @@ public class CSVtoJDBCTest extends TestCase {
 		super.setUp();
 		String sourcefile ="\"NAME\",\"ID\"\n\"Burton, Joe D\",\"1\"\n\"Smith, Jane W\",\"2\"\n\"Schwarz, Elizabeth R\",\"3\"\n\"Silverstein, Steven\",\"4\"";
 		this.sourceStream = new ByteArrayInputStream(sourcefile.getBytes());
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 		Class.forName("org.h2.Driver");
 		this.conn = DriverManager.getConnection("jdbc:h2:mem:TestJDBCFetchDB", "sa", "");
 		this.conn.setAutoCommit(false);

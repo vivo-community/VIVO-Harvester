@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.D2RMapFetch;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler;
 import org.vivoweb.harvester.util.recordhandler.RecordHandler;
 
@@ -33,7 +33,7 @@ public class D2RMapFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 	}
 	
 	@Override

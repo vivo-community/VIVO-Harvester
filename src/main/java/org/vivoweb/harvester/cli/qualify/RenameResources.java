@@ -15,8 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnectFactory;
+import org.vivoweb.harvester.cli.util.InitLog;
 import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
@@ -56,7 +57,7 @@ public class RenameResources {
 	 * @throws IOException error connecting to jena model
 	 */
 	private RenameResources(ArgList argList) throws IOException {
-		this(JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), argList.get("n"), argList.getAll("u").toArray(new String[]{}));
+		this(JenaConnectFactory.parseConfig(argList.get("i"), argList.getValueMap("I")), argList.get("n"), argList.getAll("u").toArray(new String[]{}));
 	}
 	
 	/**

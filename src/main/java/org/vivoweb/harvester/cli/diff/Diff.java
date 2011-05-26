@@ -14,14 +14,13 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.InitLog;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnectFactory;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 
 /**
@@ -89,9 +88,9 @@ public class Diff {
 	 */
 	private Diff(ArgList argList) throws IOException {
 		this(
-			JenaConnect.parseConfig(argList.get("m"), argList.getValueMap("M")), 
-			JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S")), 
-			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")), 
+			JenaConnectFactory.parseConfig(argList.get("m"), argList.getValueMap("M")), 
+			JenaConnectFactory.parseConfig(argList.get("s"), argList.getValueMap("S")), 
+			JenaConnectFactory.parseConfig(argList.get("o"), argList.getValueMap("O")), 
 			argList.get("d")
 		);
 	}
@@ -131,23 +130,20 @@ public class Diff {
 		 * minuend.diff(subtrahend) = differenece
 		 * c.diff(b) = a
 		 */
-		Model diffModel = ModelFactory.createDefaultModel();
-		Model minuendModel = mJC.getJenaModel();
-		Model subtrahendModel = sJC.getJenaModel();
 		
-		diffModel = minuendModel.difference(subtrahendModel);
+		JenaConnect diffModel = mJC.difference(sJC);
 		
 		if(dF != null) {
-			RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
+			RDFWriter fasterWriter = diffModel.getJenaModel().getWriter("RDF/XML");
 			fasterWriter.setProperty("showXmlDeclaration", "true");
 			fasterWriter.setProperty("allowBadURIs", "true");
 			fasterWriter.setProperty("relativeURIs", "");
 			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(dF), Charset.availableCharsets().get("UTF-8"));
-			fasterWriter.write(diffModel, osw, "");
+			fasterWriter.write(diffModel.getJenaModel(), osw, "");
 			log.debug("RDF/XML Data was exported");
 		}
 		if(oJC != null) {
-			oJC.getJenaModel().add(diffModel);
+			oJC.loadRdfFromJC(diffModel);
 		}
 	}
 	

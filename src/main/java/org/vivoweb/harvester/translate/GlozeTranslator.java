@@ -20,7 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.cli.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import org.vivoweb.harvester.util.FileAide;
 import org.w3c.dom.Document;
 import com.hp.gloze.Gloze;

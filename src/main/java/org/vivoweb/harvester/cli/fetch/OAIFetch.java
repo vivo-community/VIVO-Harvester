@@ -18,9 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
-import org.vivoweb.harvester.cli.util.repo.XMLRecordOutputStream;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
+import org.vivoweb.harvester.util.recordhandler.XMLRecordOutputStream;
+import org.vivoweb.harvester.cli.util.InitLog;
 import org.xml.sax.SAXException;
 import ORG.oclc.oai.harvester2.app.RawWrite;
 
@@ -81,7 +82,7 @@ public class OAIFetch {
 	 * @throws IOException error connecting to record handler
 	 */
 	private OAIFetch(ArgList argList) throws IOException {
-		this(argList.get("u"), argList.get("s"), argList.get("e"), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
+		this(argList.get("u"), argList.get("s"), argList.get("e"), RecordHandlerFactory.parseConfig(argList.get("o"), argList.getValueMap("O")));
 	}
 	
 	/**

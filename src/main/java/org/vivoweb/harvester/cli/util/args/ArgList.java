@@ -17,12 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.xml.transform.TransformerException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.xpath.XPathAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.XPathAide;
+import org.vivoweb.harvester.util.XMLAide;
 import org.w3c.dom.Node;
 
 /**
@@ -68,7 +70,7 @@ public class ArgList {
 			this.oConfSet = null;
 //			this.oConfSet = null;
 			if(this.oCmdSet.hasOption("X")) {
-				this.oConfSet = XPathAide.getDocumentNode(this.oCmdSet.getOptionValue("X"));
+				this.oConfSet = XMLAide.getDocumentNode(this.oCmdSet.getOptionValue("X"));
 //				confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
 //				log.debug("config file args: " + getSanitizedArgString(confArgs));
 //				this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
@@ -146,10 +148,14 @@ public class ArgList {
 			retVal = this.oCmdSet.getOptionValue(arg);
 		} else {
 			String confVal;
-			if((this.oConfSet != null) && (confVal = XPathAide.getXPathString(this.oConfSet, argDef.getXPath())) != null) {
-				retVal = confVal;
-			} else {
-				retVal = argDef.getDefaultValue();
+			try {
+				if((this.oConfSet != null) && (confVal = XPathAPI.eval(this.oConfSet, argDef.getXPath()).str()) != null) {
+					retVal = confVal;
+				} else {
+					retVal = argDef.getDefaultValue();
+				}
+			} catch(TransformerException e) {
+				throw new Error(e);
 			}
 		}
 		if(retVal != null) {

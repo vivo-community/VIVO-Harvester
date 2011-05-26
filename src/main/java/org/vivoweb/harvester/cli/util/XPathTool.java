@@ -194,7 +194,7 @@ public class XPathTool {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("XPathAide");
+		ArgParser parser = new ArgParser("XMLAide");
 		// Inputs
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xml-file").withParameter(true, "XML_FILE").setDescription("path to xml file to read data from").setRequired(true));
 		// Params

@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.fetch.nih.NLMJournalFetch;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import org.vivoweb.harvester.util.recordhandler.JenaRecordHandler;
 import org.vivoweb.harvester.util.recordhandler.Record;
@@ -42,7 +42,7 @@ public class NLMJournalFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 		this.rh = new JenaRecordHandler(new MemJenaConnect(), "http://vivoweb.org/harvester/test/datatype");
 	}
 	

@@ -15,8 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.fetch.OAIFetch;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.fetch.oai.OAIFetch;
 import org.vivoweb.harvester.util.recordhandler.JDBCRecordHandler;
 import org.vivoweb.harvester.util.recordhandler.Record;
 import org.vivoweb.harvester.util.recordhandler.RecordHandler;
@@ -40,7 +39,7 @@ public class OAIFetchTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 		this.rh = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:mem:TestOAIFetchRH", "sa", "", "recordTable", "dataField");
 	}
 	
@@ -52,39 +51,36 @@ public class OAIFetchTest extends TestCase {
 	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.OAIFetch#execute() execute()}.
+	 * Test method for {@link org.vivoweb.harvester.fetch.oai.OAIFetch#execute() execute()}.
+	 * @throws Exception boom
 	 */
-	public final void testOAIFetchMain() {
+	public final void testOAIFetchMain() throws Exception {
 		log.info("BEGIN testOAIFetchMain");
-		try {
-			new OAIFetch("archivesic.ccsd.cnrs.fr/oai/oai.php", "2000-01-01", "2002-12-12", this.rh).execute();
-			assertTrue(this.rh.iterator().hasNext());
-			DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			for(Record r : this.rh) {
-				log.info("=====================================");
-				log.info(r.getData());
-				log.info("=====================================");
-				Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-				Element elem = doc.getDocumentElement();
-				traverseNodes(elem.getChildNodes());
-			}
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
+		new OAIFetch("archivesic.ccsd.cnrs.fr/oai/oai.php", "2000-01-01", "2002-12-12", this.rh).execute();
+		assertTrue(this.rh.iterator().hasNext());
+		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		for(Record r : this.rh) {
+//			log.info("=====================================");
+//			log.info(r.getData());
+//			log.info("=====================================");
+			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
+			Element elem = doc.getDocumentElement();
+			traverseNodes(elem.getChildNodes(), "");
 		}
 		log.info("END testOAIFetchMain");
 	}
 	
 	/**
 	 * @param nodeList the nodes
+	 * @param indent ammount to indent
 	 */
-	private void traverseNodes(NodeList nodeList) {
+	private void traverseNodes(NodeList nodeList, String indent) {
 		for(int x = 0; x < nodeList.getLength(); x++) {
 			Node child = nodeList.item(x);
 			String name = child.getNodeName();
 			if(!name.contains("#text")) {
-				log.info(name);
-				traverseNodes(child.getChildNodes());
+				log.info(indent+name);
+				traverseNodes(child.getChildNodes(), indent+"  ");
 			}
 		}
 	}

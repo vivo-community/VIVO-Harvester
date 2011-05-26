@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
+import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.util.SpecialEntities;
 
 /**
@@ -137,7 +138,7 @@ public class JDBCFetch {
 			args.get("c"),
 			args.get("u"),
 			args.get("p"), 
-			RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")), 
+			RecordHandlerFactory.parseConfig(args.get("o"), args.getValueMap("O")), 
 			args.get("c")+"/", 
 			args.get("delimiterPrefix"), 
 			args.get("delimiterSuffix"), 

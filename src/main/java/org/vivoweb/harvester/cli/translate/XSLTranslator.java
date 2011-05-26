@@ -30,8 +30,9 @@ import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
 import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.cli.util.repo.Record;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.Record;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
 
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology
@@ -80,8 +81,8 @@ public class XSLTranslator {
 	 */
 	private XSLTranslator(ArgList argList) throws IOException {
 		this(
-			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
-			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),  
+			RecordHandlerFactory.parseConfig(argList.get("i"), argList.getValueMap("I")), 
+			RecordHandlerFactory.parseConfig(argList.get("o"), argList.getValueMap("O")),  
 			FileAide.getInputStream(argList.get("x")), 
 			argList.has("f")
 		);

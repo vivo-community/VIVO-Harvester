@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Score - Fetches rdf data from a relational database
+-----
+Fetches data from a relational database placing the data into
+an rdf/xml format in an ontology derived from the schema
+ -->
+<config>
+    <!-- 
+    source - the relational database
+    -----
+    This section defines the relational database that
+    JDBCFetch will access and retrieve data from
+     -->
+    <source>
+    	<jena-type>sdb</jena-type>
+    	<sdb-layout>layout2</sdb-layout>
+    	<database-type>H2</database-type>
+    	<!--
+    	driver - the JDBC driver class to use
+    	-----
+    	mysql -> org.blah.mysql.Driver
+    	h2 -> org.h2.Driver
+    	blah -> boab.ajb.aga.Driver 
+    	 -->
+		<driver-class>org.h2.Driver</driver-class>
+		<dburl>jdbc:h2:harvested-data/default/h2/store</dburl>
+		<username>sa</username>
+		<password></password>
+    </source>
+</config>

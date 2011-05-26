@@ -20,89 +20,13 @@ package org.vivoweb.harvester.util;
 
 import java.util.Enumeration;
 import java.util.Iterator;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Adapts Enumerations and Iterators to be Iterable
- * @param <T> type
  */
-public class IterableAide<T> implements Iterable<T> {
-	/**
-	 * enumeration
-	 */
-	private final Enumeration<T> en;
-	/**
-	 * iterator
-	 */
-	private final Iterator<T> it;
-	
-	/**
-	 * sometimes you have an Enumeration and you want an Iterable
-	 * @param en enumeration to adapt
-	 */
-	private IterableAide(Enumeration<T> en) {
-		this.en = en;
-		this.it = null;
-	}
-	
-	/**
-	 * Accessor for en
-	 * @return en
-	 */
-	final Enumeration<T> getEn() {
-		return this.en;
-	}
-	
-	/**
-	 * sometimes you have an Iterator but you want to use a for
-	 * @param it iterator to adapt
-	 */
-	private IterableAide(Iterator<T> it) {
-		this.it = it;
-		this.en = null;
-	}
-	
-	// return an adaptor for the Enumeration
-	@Override
-	public Iterator<T> iterator() {
-		if(this.en != null) {
-			return new Iterator<T>() {
-				@Override
-				public boolean hasNext() {
-					return getEn().hasMoreElements();
-				}
-				
-				@Override
-				public T next() {
-					return getEn().nextElement();
-				}
-				
-				@Override
-				public void remove() {
-					throw new UnsupportedOperationException();
-				}
-			};
-		} else if(this.it != null) {
-			return this.it;
-		} else {
-			return new Iterator<T>() {
-				@Override
-				public boolean hasNext() {
-					return false;
-				}
-				
-				@Override
-				public T next() {
-					return null;
-				}
-				
-				@Override
-				public void remove() {
-					throw new UnsupportedOperationException();
-				}
-			};
-		}
-		
-	}
+public class IterableAide {
 	
 	/**
 	 * sometimes you have an Enumeration and you want an Iterable
@@ -110,8 +34,28 @@ public class IterableAide<T> implements Iterable<T> {
 	 * @param enin enumeration to adapt
 	 * @return an iterable adapter for the enumeration
 	 */
-	public static <T> Iterable<T> adapt(Enumeration<T> enin) {
-		return new IterableAide<T>(enin);
+	public static <T> Iterable<T> adapt(final Enumeration<T> enin) {
+		return new Iterable<T>() {
+			@Override
+			public Iterator<T> iterator() {
+				return new Iterator<T>() {
+					@Override
+					public boolean hasNext() {
+						return enin.hasMoreElements();
+					}
+					
+					@Override
+					public T next() {
+						return enin.nextElement();
+					}
+					
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+		};
 	}
 	
 	/**
@@ -120,7 +64,43 @@ public class IterableAide<T> implements Iterable<T> {
 	 * @param itin iterator to adapt
 	 * @return an iterable adapter for the iterator
 	 */
-	public static <T> Iterable<T> adapt(Iterator<T> itin) {
-		return new IterableAide<T>(itin);
+	public static <T> Iterable<T> adapt(final Iterator<T> itin) {
+		return new Iterable<T>() {
+			@Override
+			public Iterator<T> iterator() {
+				return itin;
+			}
+		};
+	}
+	
+	/**
+	 * sometimes you have a NodeList but you want to use a for
+	 * @param nodeList nodelist to adapt
+	 * @return an iterable adapter for the nodelist
+	 */
+	public static Iterable<Node> adapt(final NodeList nodeList) {
+		return new Iterable<Node>() {
+			@Override
+			public Iterator<Node> iterator() {
+				return new Iterator<Node>() {
+					private int length = nodeList.getLength();
+					private int currentIndex = 0;
+					@Override
+					public boolean hasNext() {
+						return (this.currentIndex < this.length);
+					}
+					
+					@Override
+					public Node next() {
+						return nodeList.item(this.currentIndex++);
+					}
+					
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+		};
 	}
 }

@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Smush;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
 import org.vivoweb.harvester.util.jenaconnect.RDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
@@ -34,7 +34,7 @@ public class SmushTest extends TestCase {
 	 */
 	@Override
 	public void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 		this.namespace = "http://vivo.test.edu/individual/";
 		this.inputModel = new RDBJenaConnect("jdbc:h2:mem:testSmushinput;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testSmushinput");
 		String testData = "" +

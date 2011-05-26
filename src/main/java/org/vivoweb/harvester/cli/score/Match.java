@@ -26,8 +26,9 @@ import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
 import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.util.IterableAide;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
-import org.vivoweb.harvester.cli.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnectFactory;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -136,9 +137,9 @@ public class Match {
 	 */
 	private Match(ArgList opts) throws IOException {
 		this(
-			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
-			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
-			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
+			JenaConnectFactory.parseConfig(opts.get("i"), opts.getValueMap("I")), 
+			JenaConnectFactory.parseConfig(opts.get("s"), opts.getValueMap("S")), 
+			JenaConnectFactory.parseConfig(opts.get("o"), opts.getValueMap("O")), 
 			opts.has("r"), 
 			Float.parseFloat(opts.get("t")), 
 			opts.getValueMap("l"), 

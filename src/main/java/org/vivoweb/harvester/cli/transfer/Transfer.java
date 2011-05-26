@@ -16,9 +16,11 @@ import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
 import org.vivoweb.harvester.cli.util.InitLog;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
-import org.vivoweb.harvester.cli.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnectFactory;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
 
 /**
  * Transfer data from one Jena model to another
@@ -80,17 +82,17 @@ public class Transfer {
 	 */
 	private Transfer(ArgList argList) throws IOException {
 		// setup input model
-		this.input = JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I"));
+		this.input = JenaConnectFactory.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		
 		// setup output
-		this.output = JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O"));
+		this.output = JenaConnectFactory.parseConfig(argList.get("o"), argList.getValueMap("O"));
 		
 		// load any specified rdf file data
 		this.inRDF = argList.get("r");
 		this.inRDFlang = argList.get("R");
 		
 		// load data from recordhandler
-		this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getValueMap("H"));
+		this.inRH = RecordHandlerFactory.parseConfig(argList.get("h"), argList.getValueMap("H"));
 		
 		// output to file, if requested
 		this.dumpFile = argList.get("d");

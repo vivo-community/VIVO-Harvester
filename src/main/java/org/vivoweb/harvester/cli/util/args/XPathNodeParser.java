@@ -2,7 +2,8 @@ package org.vivoweb.harvester.cli.util.args;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.vivoweb.harvester.util.XPathAide;
+import javax.xml.transform.TransformerException;
+import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Node;
 
 /**
@@ -16,7 +17,12 @@ public class XPathNodeParser implements ConfigParser {
 		Map<String, String> map = new HashMap<String, String>();
 		for(String param : args.keySet()) {
 			String expression = args.get(param);
-			String value = XPathAide.getXPathString(node, expression);
+			String value;
+			try {
+				value = XPathAPI.eval(node, expression).str();
+			} catch(TransformerException e) {
+				throw new Error(e);
+			}
 			map.put(param, value);
 		}
 		return map;

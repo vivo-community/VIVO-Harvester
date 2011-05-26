@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
+//import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
 import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -45,7 +45,7 @@ public class DiffTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
+//		InitLog.initLogger(null, null);
 		Resource resA = ResourceFactory.createResource("http://test.vivoweb.org/harvester/test/diff/resA");
 		Resource resB = ResourceFactory.createResource("http://test.vivoweb.org/harvester/test/diff/resB");
 		Resource resC = ResourceFactory.createResource("http://test.vivoweb.org/harvester/test/diff/resC");

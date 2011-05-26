@@ -15,10 +15,10 @@ import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgList;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.util.WebAide;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
-import org.vivoweb.harvester.cli.util.repo.XMLRecordOutputStream;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.XMLRecordOutputStream;
 
 /**
  * NLMJournalFetch

@@ -27,11 +27,12 @@ import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.cli.util.InitLog;
 import org.vivoweb.harvester.util.IterableAide;
-import org.vivoweb.harvester.cli.util.repo.JenaConnect;
-import org.vivoweb.harvester.cli.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.cli.util.repo.TDBJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.JenaConnectFactory;
+import org.vivoweb.harvester.util.jenaconnect.MemJenaConnect;
+import org.vivoweb.harvester.util.jenaconnect.TDBJenaConnect;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -214,9 +215,9 @@ public class Score {
 	 */
 	private Score(ArgList opts) throws IOException {
 		this(
-			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
-			JenaConnect.parseConfig(opts.get("v"), opts.getValueMap("V")), 
-			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
+			JenaConnectFactory.parseConfig(opts.get("i"), opts.getValueMap("I")), 
+			JenaConnectFactory.parseConfig(opts.get("v"), opts.getValueMap("V")), 
+			JenaConnectFactory.parseConfig(opts.get("s"), opts.getValueMap("S")), 
 			opts.get("t"), 
 			initAlgs(opts.getValueMap("A")), 
 			opts.getValueMap("P"), 

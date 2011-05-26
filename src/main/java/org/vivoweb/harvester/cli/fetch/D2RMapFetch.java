@@ -15,8 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
+import org.vivoweb.harvester.cli.util.InitLog;
 import de.fuberlin.wiwiss.d2r.D2rProcessor;
 
 /**
@@ -77,7 +78,7 @@ public class D2RMapFetch {
 	private D2RMapFetch(ArgList opts) throws IOException {
 		this(
 			opts.get("u"), 
-			RecordHandler.parseConfig(opts.get("o"), opts.getValueMap("O")), 
+			RecordHandlerFactory.parseConfig(opts.get("o"), opts.getValueMap("O")), 
 			opts.get("a")
 		);
 	}

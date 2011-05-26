@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.cli.fetch.JDBCFetch;
+import org.vivoweb.harvester.fetch.JDBCFetch;
 import org.vivoweb.harvester.cli.util.args.ArgDef;
 import org.vivoweb.harvester.cli.util.args.ArgList;
 import org.vivoweb.harvester.cli.util.args.ArgParser;
-import org.vivoweb.harvester.cli.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandler;
+import org.vivoweb.harvester.util.recordhandler.RecordHandlerFactory;
 import org.vivoweb.harvester.util.CSVtoJDBC;
 import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.cli.util.InitLog;
 
 /**
  * @author jrpence
- *
  */
 public class CSVtoRDF {
 	/**
@@ -32,7 +32,7 @@ public class CSVtoRDF {
 	 * @throws IOException exception thrown if there is a problem with parsing the configs
 	 */
 	private CSVtoRDF(ArgList argList) throws IOException {
-		this(argList.get("i"),RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),argList.get("n"));
+		this(argList.get("i"), RecordHandlerFactory.parseConfig(argList.get("o"), argList.getValueMap("O")), argList.get("n"));
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class CSVtoRDF {
 	 * @throws IOException Exception for file access problems
 	 */
 	public CSVtoRDF(String CSVfilename, RecordHandler output, String uriNameSpace) throws IOException {
-		this(FileAide.getInputStream(CSVfilename),output,uriNameSpace);
+		this(FileAide.getInputStream(CSVfilename), output, uriNameSpace);
 	}
 
 	/**

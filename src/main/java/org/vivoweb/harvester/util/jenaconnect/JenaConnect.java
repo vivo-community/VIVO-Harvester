@@ -155,11 +155,14 @@ public abstract class JenaConnect {
 	/**
 	 * Export all RDF
 	 * @return the rdf
-	 * @throws IOException error writing to string
 	 */
-	public String exportRdfToString() throws IOException {
+	public String exportRdfToString() {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		exportRdfToStream(baos);
+		try {
+			exportRdfToStream(baos);
+		} catch(IOException e) {
+			throw new Error(e);
+		}
 		return baos.toString();
 	}
 	
