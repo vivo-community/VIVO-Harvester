@@ -91,6 +91,10 @@ public class JDBCFetch {
 	 * The user defined SQL Query string
 	 */
 	private Map<String, String> queryStrings;
+	/**
+	 * accepted table types
+	 */
+	private String[] tableTypes;
 	
 	/**
 	 * Constructor
@@ -147,7 +151,8 @@ public class JDBCFetch {
 			(args.has("I")?splitCommaList(args.getValueMap("I")):null), 
 			(args.has("W")?splitCommaList(args.getValueMap("W")):null), 
 			(args.has("R")?splitTildeMap(args.getValueMap("R")):null), 
-			(args.has("Q")?args.getValueMap("Q"):null)
+			(args.has("Q")?args.getValueMap("Q"):null),
+			args.getAll("tableType").toArray(new String[]{})
 		);
 	}
 	
@@ -165,9 +170,10 @@ public class JDBCFetch {
 	 * @param whereClauses List of conditions
 	 * @param relations Mapping of tablename to mapping of fieldname to tablename
 	 * @param queryStrings Mapping of tablename to query
+	 * @param tableTypes accepted table types
 	 * @throws IOException error accessing database
 	 */
-	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws IOException {
+	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings, String... tableTypes) throws IOException {
 		try {
 			this.cursor = dbConn.createStatement();
 		} catch(SQLException e) {
@@ -184,6 +190,11 @@ public class JDBCFetch {
 		this.queryPre = queryPre;
 		this.querySuf = querySuf;
 		this.queryStrings = queryStrings;
+		if(tableTypes != null) {
+			this.tableTypes = tableTypes;
+		} else {
+			this.tableTypes = new String[]{"TABLE"};
+		}
 		
 		if(this.rh == null) {
 			throw new IllegalArgumentException("Must provide output recordhandler!");
@@ -262,10 +273,11 @@ public class JDBCFetch {
 	 * @param whereClauses List of conditions
 	 * @param relations Mapping of tablename to mapping of fieldname to tablename
 	 * @param queryStrings Mapping of tablename to query
+	 * @param tableTypes accepted table types
 	 * @throws IOException error accessing database
 	 */
-	public JDBCFetch(String driverClass, String connLine, String username, String password, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws IOException {
-		this(createConnection(driverClass, connLine, username, password), rh, uriNS, queryPre, querySuf, tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings);
+	public JDBCFetch(String driverClass, String connLine, String username, String password, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings, String... tableTypes) throws IOException {
+		this(createConnection(driverClass, connLine, username, password), rh, uriNS, queryPre, querySuf, tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings, tableTypes);
 	}
 	
 	/**
@@ -454,8 +466,7 @@ public class JDBCFetch {
 	 */
 	private Set<String> getTableNames() throws SQLException {
 		if(this.tableNames.isEmpty()) {
-			String[] tableTypes = {"TABLE"};
-			ResultSet tableData = this.cursor.getConnection().getMetaData().getTables(this.cursor.getConnection().getCatalog(), null, "%", tableTypes);
+			ResultSet tableData = this.cursor.getConnection().getMetaData().getTables(this.cursor.getConnection().getCatalog(), null, "%", this.tableTypes);
 			while(tableData.next()) {
 				this.tableNames.add(tableData.getString("TABLE_NAME"));
 			}
@@ -692,6 +703,7 @@ public class JDBCFetch {
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t for more table names]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("validTableType").withParameters(true, "TABLE_TYPE").setDescription("a single table type (TABLE, VIEW, etc) [have multiple -v for more table types]").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("query").withParameterValueMap("TABLE_NAME", "SQL_QUERY").setDescription("use SQL_QUERY to select from TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("id").withParameterValueMap("TABLE_NAME", "ID_FIELD_LIST").setDescription("use columns in ID_FIELD_LIST[comma separated] as identifier for TABLE_NAME").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('F').setLongOpt("fields").withParameterValueMap("TABLE_NAME", "FIELD_LIST").setDescription("fetch columns in FIELD_LIST[comma separated] for TABLE_NAME").setRequired(false));
