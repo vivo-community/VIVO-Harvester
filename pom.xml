@@ -180,16 +180,6 @@
 	</profiles>
 	<dependencies>
 		<dependency>
-			<groupId>thewebsemantic</groupId>
-			<artifactId>jenabean</artifactId>
-			<version>1.0.6</version>
-		</dependency>
-		<dependency>
-			<groupId>thewebsemantic</groupId>
-			<artifactId>jpa4jena</artifactId>
-			<version>0.7</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-vfs</groupId>
 			<artifactId>commons-vfs</artifactId>
 			<version>1.0</version>
