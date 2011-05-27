@@ -84,12 +84,7 @@ XSLFILE="config/datamaps/csv-people-to-vivo.xsl"
 # Execute Fetch
 $CSVtoJDBC -i $CSVFILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
 
-FIELDS="CSV=ROWID,PERSONID,EMAIL,PHONE,FAX,FIRSTNAME,MIDNAME,LASTNAME,NAMEPREFIX,NAMESUFFIX,FULLNAME,TITLE,POSITIONTYPE,STARTDATE,ENDDATE,DEPARTMENTID,DEPARTMENTNAME"
-#$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV" -I "CSV=ROWID" -F $FIELDS  -o $TFRH -O fileDir=$RAWRHDIR
-
 $JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
-
-#$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE
 
 # backup fetch
 BACKRAW="raw"
@@ -102,7 +97,7 @@ rm -rf $RDFRHDIR
 
 # Execute Translate
 $XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x $XSLFILE
-exit
+
 # backup translate
 BACKRDF="rdf"
 backup-path $RDFRHDIR $BACKRDF
@@ -149,18 +144,9 @@ $Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}position/ -r
 # Scoring sponsors by labels
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}position/
 
-# Scoring of PI Roles
-PIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$PIROLEOF -Pperson=$PIROLEOF"
-GRANTURI="-Agrant=$EQTEST -Wgrant=0.5 -Fgrant=$ROLEIN -Pgrant=$ROLEIN"
-$Score $SCOREMODELS $PIURI $GRANTURI -n ${BASEURI}piRole/
-
-# Scoring of coPI Roles
-COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COPIROLEOF -Pperson=$COPIROLEOF"
-$Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
-
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
-
+exit
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched.rdf.xml
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data

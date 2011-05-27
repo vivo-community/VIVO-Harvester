@@ -152,7 +152,7 @@ public class JDBCFetch {
 			(args.has("W")?splitCommaList(args.getValueMap("W")):null), 
 			(args.has("R")?splitTildeMap(args.getValueMap("R")):null), 
 			(args.has("Q")?args.getValueMap("Q"):null),
-			args.getAll("tableType").toArray(new String[]{})
+			args.getAll("v").toArray(new String[]{})
 		);
 	}
 	

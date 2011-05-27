@@ -215,11 +215,13 @@ public class Match {
 			String oldUri = entry.get("sInputURI");
 			String newUri = entry.get("sVivoURI");
 			count++;
-			//get resource in input model and perform rename
-			Resource res = this.inputJena.getJenaModel().getResource(oldUri);
 			float percent = Math.round(10000f * count / total) / 100f;
 			log.trace("(" + count + "/" + total + ": " + percent + "%): Renaming match <" + oldUri + "> to <" + newUri + ">");
-			ResourceUtils.renameResource(res, newUri);
+			//get resource in input model and perform rename
+			if(oldUri != newUri){
+				Resource res = this.inputJena.getJenaModel().getResource(oldUri);
+				ResourceUtils.renameResource(res, newUri);
+			}
 		}
 	}
 	
