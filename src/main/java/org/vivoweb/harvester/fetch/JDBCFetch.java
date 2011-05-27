@@ -190,7 +190,7 @@ public class JDBCFetch {
 		this.queryPre = queryPre;
 		this.querySuf = querySuf;
 		this.queryStrings = queryStrings;
-		if(tableTypes != null) {
+		if(tableTypes.length > 0 && tableTypes[0] != null) {
 			this.tableTypes = tableTypes;
 		} else {
 			this.tableTypes = new String[]{"TABLE"};
