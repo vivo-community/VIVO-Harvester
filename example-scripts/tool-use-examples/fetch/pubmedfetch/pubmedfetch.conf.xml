@@ -18,7 +18,6 @@ tool packaged with Harvester.
     <Param name="a">b</Param>
 
     <!-- 
-    //todo: make specific to PubmedFetch
     Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
     information to more detailed debugging information.
     -----
