@@ -48,6 +48,7 @@ import org.w3c.dom.NodeList;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  * @author Jefffrey A. Young, OCLC Online Computer Library Center
  */
+@SuppressWarnings("unused")
 public class OAIHarvester {
 	/**
 	 * SLF4J Logger
@@ -345,9 +346,10 @@ public class OAIHarvester {
 	 * @param out output recordhandler
 	 * @throws IOException error
 	 */
+	@SuppressWarnings("null")
 	protected static void RawWriteRun(String baseURL, String from, String until, String metadataPrefix, String setSpec, RecordHandler out) throws IOException {
 		try {
-			OAIHarvester hv = new OAIHarvester(OAIHarvester.getRequestURL(baseURL, from, until, setSpec, metadataPrefix));
+			OAIHarvester hv = null;//new OAIHarvester(OAIHarvester.getRequestURL(baseURL, from, until, setSpec, metadataPrefix));
 	        while(hv != null) {
 				NodeList errors = hv.getErrors();
 				if(errors != null && errors.getLength() > 0) {
@@ -383,13 +385,13 @@ public class OAIHarvester {
 				if(resumptionToken == null || resumptionToken.length() == 0) {
 					hv = null;
 				} else {
-					hv = new OAIHarvester(OAIHarvester.getRequestURL(baseURL, resumptionToken));
+					hv = null;//new OAIHarvester(OAIHarvester.getRequestURL(baseURL, resumptionToken));
 				}
 			}
 		} catch(TransformerException e) {
 			throw new IOException(e);
-		} catch(NoSuchFieldException e) {
-			throw new IOException(e);
+//		} catch(NoSuchFieldException e) {
+//			throw new IOException(e);
 		}
 	}
 }

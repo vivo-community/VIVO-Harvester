@@ -1,0 +1,806 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+ <responseDate>2011-05-25T16:49:39Z</responseDate>
+ <request from="2000-01-01" metadataPrefix="oai_dc" until="2002-12-12" verb="ListRecords">http://archivesic.ccsd.cnrs.fr/oai/oai.php</request>
+ <ListRecords>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000288</identifier>
+   <datestamp>2002-12-12T12:03:53Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:EDIT</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS:INFO:HYPE</setSpec>
+   <setSpec>SHS:INFO:CINE</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000288/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/21/19/PDF/sic_00000288.pdf</dc:identifier>
+     <dc:title>Vérité et fiction sur Internet. Le statut des documents publiés en ligne</dc:title>
+     <dc:creator>maignien, yannick</dc:creator>
+     <dc:subject>[SHS:INFO:EDIT] Humanities and Social Sciences/Library and information sciences/Electronic publishing</dc:subject>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>[SHS:INFO:HYPE] Humanities and Social Sciences/Library and information sciences/Hypertext, hypermedia</dc:subject>
+     <dc:subject>[SHS:INFO:CINE] Humanities and Social Sciences/Library and information sciences/Cinema, art, esthetics</dc:subject>
+     <dc:subject>internet</dc:subject>
+     <dc:subject>web</dc:subject>
+     <dc:subject>vérité</dc:subject>
+     <dc:subject>fiction</dc:subject>
+     <dc:subject>confiance</dc:subject>
+     <dc:subject>pragmatique</dc:subject>
+     <dc:subject>mondes possibles</dc:subject>
+     <dc:subject>memetique</dc:subject>
+     <dc:subject>métalangage</dc:subject>
+     <dc:subject>web sémantique</dc:subject>
+     <dc:subject>RDF</dc:subject>
+     <dc:subject>logique modale</dc:subject>
+     <dc:subject>esthétique</dc:subject>
+     <dc:description>C'est fondamentalement le rapport linguistique au monde qui serait à nouveau en jeu avec le Web. Aussi les relations de référence, de dénotation, de véridiction, de dénotation symbolique et de fiction, apportées par la logique et la philosophie analytique devraient être plus mobilisées. Par ailleurs les conduites humaines, sous-jacentes au Web, devraient être mieux caractérisées à l'aide des théories pragmatiques, afin d'intégrer des métadonnées procédurales. Date de publication : 25 novembre 2002</dc:description>
+     <dc:date>2002-12-10</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>proceeding with peer review</dc:type>
+     <dc:source>"Les défis de l'édition numérique" Entrretiens J. Cartier / ISDN. Lyon, Ennssib 9-11 décembre 2002</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000282</identifier>
+   <datestamp>2002-12-02T21:23:47Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:EDUC</setSpec>
+   <setSpec>SHS:INFO:EDIT</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000282/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/21/17/PDF/sic_00000282.pdf</dc:identifier>
+     <dc:title>Cybertextes et hyperlectures dans l'enseignement à l'université</dc:title>
+     <dc:creator>Bachand, Denis</dc:creator>
+     <dc:subject>[SHS:INFO:EDUC] Humanities and Social Sciences/Library and information sciences/Education, e-learning, training</dc:subject>
+     <dc:subject>[SHS:INFO:EDIT] Humanities and Social Sciences/Library and information sciences/Electronic publishing</dc:subject>
+     <dc:subject>enseignement</dc:subject>
+     <dc:subject>Internet</dc:subject>
+     <dc:subject>édition numérique</dc:subject>
+     <dc:description>Le recours à l'Internet comme dispositif de conception, de gestion et de distribution de contenus de cours se généralise de plus en plus à tous les niveaux de l'enseignement. Pour l'assister dans la conception de sites web adaptés à ses contenus de cours, le pédagogue dispose maintenant d'un certain nombre de systèmes-auteurs destinés à lui faciliter la tâche. Nous en aborderons l'étude en nous intéressant à l'un des chefs de file de ce type de produits, le progiciel WebCt (Web Course Tools) auquel sont associés des éditeurs de manuels électroniques multimédias regroupant divers types de documents numérisés sous forme de " packages " (appelés e-packs). Les données sur lesquelles se fonde l'analyse proviennent d'une enquête pan canadienne de même que de notre propre expérimentation dans des cours de premier cycle universitaire.</dc:description>
+     <dc:date>2002-12-02</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>proceeding with peer review</dc:type>
+     <dc:source>Colloque «Les défis de l'édition numérique». Rencontres Jacques Cartier, Lyon, 9-11 décembre 2002</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000263</identifier>
+   <datestamp>2002-11-22T14:28:45Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:COMM</setSpec>
+   <setSpec>SHS:INFO:CONF</setSpec>
+   <setSpec>SHS:INFO:MEDI</setSpec>
+   <setSpec>SHS:INFO:GEOP</setSpec>
+   <setSpec>SHS:INFO:ECON</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000263/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/21/10/PDF/sic_00000263.pdf</dc:identifier>
+     <dc:title>L'information en guerre : les médias français et le conflit du Kosovo</dc:title>
+     <dc:creator>Pélissier, Nicolas</dc:creator>
+     <dc:subject>[SHS:INFO:COMM] Humanities and Social Sciences/Library and information sciences/Scientific communication and information</dc:subject>
+     <dc:subject>[SHS:INFO:CONF] Humanities and Social Sciences/Library and information sciences/Conflicts, information strategy, intelligence</dc:subject>
+     <dc:subject>[SHS:INFO:MEDI] Humanities and Social Sciences/Library and information sciences/Mass media</dc:subject>
+     <dc:subject>[SHS:INFO:GEOP] Humanities and Social Sciences/Library and information sciences/Geopolitics</dc:subject>
+     <dc:subject>[SHS:INFO:ECON] Humanities and Social Sciences/Library and information sciences/Economy, cultural industry</dc:subject>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>journalisme</dc:subject>
+     <dc:subject>médiatisation</dc:subject>
+     <dc:subject>conflits</dc:subject>
+     <dc:subject>analyse de contenus médiatiques</dc:subject>
+     <dc:subject>stratégies des organisations</dc:subject>
+     <dc:subject>veille</dc:subject>
+     <dc:subject>épistémologie de l'information</dc:subject>
+     <dc:description>L'objectif essentiel de cet article est d'offrir un premier aperçu de la couverture par les médias français du conflit du Kosovo (24 mars-20 juin 1999). Son hypothèse principale, qui reste à valider de façon plus expérimentale, est que les journalistes français, en dépit d'un réel changement de comportement par rapport à des conflits précédents, ont produit un discours mythologique dominant peu différent de celui véhiculé par la communication institutionnelle de l'OTAN, discours dont la pertinence a été mise à mal par la réalité des opérations menées sur le terrain. A l'origine de ce phénomène se trouvent des explications globales et locales, de l'ordre de la géopolitique et de l'anthropologie culturelle. Mais il convient d'aller plus loin, et de soulever des questions épistémologiques liées à la formation des acteurs journalistiques et à la modélisation de l'activité informationnelle.</dc:description>
+     <dc:date>2000-11-22</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Annuaire Français des Relations Internationales</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000260</identifier>
+   <datestamp>2002-11-21T16:03:20Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:ESPA</setSpec>
+   <setSpec>SHS:INFO:ORGA</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000260/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/21/08/PDF/sic_00000260.pdf</dc:identifier>
+     <dc:title>« Réflexions sur la politique de communication de l'Union européenne ».</dc:title>
+     <dc:creator>dacheux, Eric</dc:creator>
+     <dc:subject>[SHS:INFO:ESPA] Humanities and Social Sciences/Library and information sciences/Public Sphere</dc:subject>
+     <dc:subject>[SHS:INFO:ORGA] Humanities and Social Sciences/Library and information sciences/Organisation and communication</dc:subject>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>communication politique — espace public européen — Commission européenne — Europe politique</dc:subject>
+     <dc:description>Les forts taux d'abstention aux dernières élections européennes, montrent qu'une large partie des européens se montre circonspecte voire méfiante vis-à-vis de la construction européenne. Certains attribuent cet "euroscepticisme" à une défaillance de la politique de communication de l'Union européenne. Note article cherche à cerner la part de vérité, mais aussi la part de "fausse évidence" de cette affirmation. Pour ce faire, nous avons procédé à une analyse critique la politique de communication mise en place par la Commission européenne (avant l'arrivée de Romano Prodi), puis mis en lumière l'absence d'un espace public européen.</dc:description>
+     <dc:date>2002-11-21</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Communication et Organisation, 2001.</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000258</identifier>
+   <datestamp>2002-11-19T14:11:17Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:ECON</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000258/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/21/07/PDF/sic_00000258.pdf</dc:identifier>
+     <dc:title>L'édition entre biens et services</dc:title>
+     <dc:creator>Salaün, Jean-Michel</dc:creator>
+     <dc:subject>[SHS:INFO:ECON] Humanities and Social Sciences/Library and information sciences/Economy, cultural industry</dc:subject>
+     <dc:subject>Edition</dc:subject>
+     <dc:subject>livre</dc:subject>
+     <dc:subject>économie de l'internet</dc:subject>
+     <dc:description>Il y a contradiction entre une branche construite sur une économie de l'oeuvre (édition) et un réseau structuré sur une économie de la consultation (Internet). Ainsi donc entre les éditeurs, accrochés à l'organisation traditionnelle, et les militants de l'internet, confondant le particulier et le général, il faudra beaucoup de pragmatisme et de force de persuasion pour redéfinir un nouveau compromis autorisant l'élaboration d'une économie politique éditoriale du livre sur une base numérique.</dc:description>
+     <dc:date>2002-11-19</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>proceeding with peer review</dc:type>
+     <dc:source>Colloque Les défis de la publication sur le Web Hyperlectures, cybertextes et méta-éditions 9-11 décembre 2002, Lyon</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000231</identifier>
+   <datestamp>2002-10-19T18:58:58Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:GEOP</setSpec>
+   <setSpec>SHS:INFO:THEO</setSpec>
+   <setSpec>SHS:INFO:HIST</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000231/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/97/PDF/sic_00000231.pdf</dc:identifier>
+     <dc:title>ESQUISSE D'UNE POSTURE ANTHROPOLOGIQUE POUR LES SCIENCES DE L'INFORMATION ET DE LA COMMUNICATION</dc:title>
+     <dc:creator>Rasse, Paul</dc:creator>
+     <dc:subject>[SHS:INFO:GEOP] Humanities and Social Sciences/Library and information sciences/Geopolitics</dc:subject>
+     <dc:subject>[SHS:INFO:THEO] Humanities and Social Sciences/Library and information sciences/Theory of information/communication</dc:subject>
+     <dc:subject>[SHS:INFO:HIST] Humanities and Social Sciences/Library and information sciences/History of information/communication</dc:subject>
+     <dc:subject>Anthropologie de la communication</dc:subject>
+     <dc:subject>nouvelles tribus</dc:subject>
+     <dc:subject>identité</dc:subject>
+     <dc:subject>mondialisation</dc:subject>
+     <dc:subject>globalisation</dc:subject>
+     <dc:description>_ Par opposition aux écoles d'anthropologie de la communication nord américaines centrées sur l'étude des relations inter personnelles au sein de groupes restreint, l'auteur esquisse le projet d'une anthropologie culturelle historique, géopolitique de la communication qui s'inscrit dans la lignée des travaux de chercheurs comme Claude Lévi-Strauss ou Fernand Braudel. La perspective en est : 1/ de dire ce que la communication fait à l'histoire de l'humanité, 2/ de prendre la mesure des phénomènes contemporains de mondialisation, de brassage et de recomposition des cultures, d'invention de nouvelles formes d'expression identitaire liées à l'essor des moyens de communication. Au croisement des disciplines, les Sciences de l'information et de la communication peuvent attirer l'attention des anthropologues sur l'importance historique des processus de communication, et inversement, utiliser l'Anthropologie comme discipline constituée et constituante, à fin prendre du recul sur les phénomènes de communication qu'elles étudient. _ À l'heure où s'amplifie le débat sur la mondialisation et où se multiplient, non sans succès, les ouvrages publiés sur ce sujet, cet essai aura le mérite de renouveler le point de vue en proposant une vision globale du phénomène, tout en s'appuyant sur l'étude de processus historiques marquants et de situations concrètes exemplaires.</dc:description>
+     <dc:date>2002-10-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Recherche en communication</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000230</identifier>
+   <datestamp>2002-10-19T18:45:18Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:ESPA</setSpec>
+   <setSpec>SHS:INFO:HIST</setSpec>
+   <setSpec>SHS:INFO:MUSE</setSpec>
+   <setSpec>SHS:INFO:THEO</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000230/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/96/PDF/sic_00000230.pdf</dc:identifier>
+     <dc:title>LA MEDIATION, ENTRE IDEAL THEORIQUE ET APPLICATION PRATIQUE</dc:title>
+     <dc:creator>Rasse, Paul</dc:creator>
+     <dc:subject>[SHS:INFO:ESPA] Humanities and Social Sciences/Library and information sciences/Public Sphere</dc:subject>
+     <dc:subject>[SHS:INFO:HIST] Humanities and Social Sciences/Library and information sciences/History of information/communication</dc:subject>
+     <dc:subject>[SHS:INFO:MUSE] Humanities and Social Sciences/Library and information sciences/Museology</dc:subject>
+     <dc:subject>[SHS:INFO:THEO] Humanities and Social Sciences/Library and information sciences/Theory of information/communication</dc:subject>
+     <dc:subject>médiation cultu-relle</dc:subject>
+     <dc:subject>utopie de la communication</dc:subject>
+     <dc:subject>animateurs socioculturels</dc:subject>
+     <dc:description>Comme toute notion à la mode, le terme de “médiation cultu-relle” devient difficile à cerner. Sa définition oscille entre deux extrêmes : d'un côté, une approche théorique très générale, de l'autre, des descriptions, des comptes rendus d'expérience très pragmatiques, centrées sur les réali-sations novatrices du moment. Le risque est que le lien ne se fasse pas, entre le ciel évanescent des idées et le monde concret des praticiens, abandonnés à eux-mêmes, dont la seule quête est celle de l'efficacité, pour laquelle ils mobilisent un appareil-lage toujours plus sophistiqué en perdant de vue les enjeux et la fina-lité profonde de leur travail. Après avoir cherché à définir chacun de ces deux pôles, nous nous efforcerons de tenir les deux bouts, de ne pas renoncer à l'expé-rience, mais de donner du sens aux pratiques, en jouant du débat théorique et des utopies auxquelles il renvoie, en référant à l'histoire, celle des animateurs socioculturels, ou plus ancienne encore de l'espace public, en n'abandonnant jamais la discussion sur les enjeux que recouvrent la légitimation et le partage des cultures.</dc:description>
+     <dc:date>2001-01-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Recherche en communication</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000227</identifier>
+   <datestamp>2002-10-19T17:38:01Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:ESPA</setSpec>
+   <setSpec>SHS:INFO:HIST</setSpec>
+   <setSpec>SHS:INFO:MUSE</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000227/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/95/PDF/sic_00000227.pdf</dc:identifier>
+     <dc:title>L'HISTOIRE POUR ANALYSER LE MONDE CONTEMPORAIN : l'espace public et les musées</dc:title>
+     <dc:creator>Rasse, Paul</dc:creator>
+     <dc:subject>[SHS:INFO:ESPA] Humanities and Social Sciences/Library and information sciences/Public Sphere</dc:subject>
+     <dc:subject>[SHS:INFO:HIST] Humanities and Social Sciences/Library and information sciences/History of information/communication</dc:subject>
+     <dc:subject>[SHS:INFO:MUSE] Humanities and Social Sciences/Library and information sciences/Museology</dc:subject>
+     <dc:subject>musées</dc:subject>
+     <dc:subject>espace public</dc:subject>
+     <dc:subject>médiation culturelle</dc:subject>
+     <dc:subject>Habermas</dc:subject>
+     <dc:subject>siècle des lumières</dc:subject>
+     <dc:description>L'histoire ne se répète pas on le sait ; pour autant, l'analogie avec une époque, peut-elle, permettre de forger un modèle historique susceptible de nous aider à comprendre le monde contemporain ? Nous voudrions monter que la constitution de l'espace public au siècle des lumières, peut permettre de repairer et d'analyser l'émergence nouveaux rapport du public contemporain à la culture, singulièrement dans les musées, saisi dans ces fonctions de communication, comme espace de médiation . Mais c'est à condition de faire un retour au travail d'Habermas quand il étudie la révolution culturelle qui conduira à la Révolution française, et dans toute l'Europe du XVIII siècle, à de profondes mutations sociales et politiques.../...</dc:description>
+     <dc:date>1999-10-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>MEI</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000226</identifier>
+   <datestamp>2002-10-19T17:21:27Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:ORGA</setSpec>
+   <setSpec>SHS:INFO:MUSE</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000226/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/94/PDF/sic_00000226.pdf</dc:identifier>
+     <dc:title>LA DÉMARCHE DE PROJET DANS LES MUSÉES ET LES ORGANISATIONS CULTURELLES</dc:title>
+     <dc:creator>Rasse, Paul</dc:creator>
+     <dc:creator>Girault, Yves</dc:creator>
+     <dc:subject>[SHS:INFO:ORGA] Humanities and Social Sciences/Library and information sciences/Organisation and communication</dc:subject>
+     <dc:subject>[SHS:INFO:MUSE] Humanities and Social Sciences/Library and information sciences/Museology</dc:subject>
+     <dc:subject>Ingénierie culturelles</dc:subject>
+     <dc:subject>management de projet</dc:subject>
+     <dc:subject>médiation culturelle</dc:subject>
+     <dc:subject>muséologie</dc:subject>
+     <dc:description>La décentralisation offre aux établissement culturels de nouveaux moyens, mais les contraint aussi à gagner en efficacité et à justifier de l'intérêt que les collectivités locales ont à les financer. Ils doivent faire parler d'eux, élargir leur public, l'intéresser, le fidéliser, alors que leur productions deviennent de plus en plus complexes et onéreuses. Le recours aux méthodes de projet, en l'honneur dans de nombreuses organisations culturelles, tant pour exposer les demandes de subventions que pour piloter les réalisations, procède de cette nouvelle dynamique. Le monde des musées en pleine mutation, offre une bonne illustration des enjeux et de l'intérêt que recouvre l'emploi du concept de projets dans l'espace culturel.</dc:description>
+     <dc:date>2002-10-19</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Communication et organisation</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000225</identifier>
+   <datestamp>2002-10-19T17:09:29Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:CINE</setSpec>
+   <setSpec>SHS:INFO:THEO</setSpec>
+   <setSpec>SHS:INFO:HIST</setSpec>
+   <setSpec>SHS:INFO:GEOP</setSpec>
+   <setSpec>SHS:INFO:COLL</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>AOM</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000225/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/93/PDF/sic_00000225.pdf</dc:identifier>
+     <dc:title>IDENTITES CULTURELLES ET COMMUNICATION EN EUROPE, LE PARADIGME DE LA MEDITERRANEE</dc:title>
+     <dc:creator>Rasse, Paul</dc:creator>
+     <dc:subject>[SHS:INFO:CINE] Humanities and Social Sciences/Library and information sciences/Cinema, art, esthetics</dc:subject>
+     <dc:subject>[SHS:INFO:THEO] Humanities and Social Sciences/Library and information sciences/Theory of information/communication</dc:subject>
+     <dc:subject>[SHS:INFO:HIST] Humanities and Social Sciences/Library and information sciences/History of information/communication</dc:subject>
+     <dc:subject>[SHS:INFO:GEOP] Humanities and Social Sciences/Library and information sciences/Geopolitics</dc:subject>
+     <dc:subject>[SHS:INFO:COLL] Humanities and Social Sciences/Library and information sciences/Local authorities</dc:subject>
+     <dc:subject>Méditerranée</dc:subject>
+     <dc:subject>Europe</dc:subject>
+     <dc:subject>identités locales</dc:subject>
+     <dc:subject>histoire de la communication</dc:subject>
+     <dc:subject>mondialisation</dc:subject>
+     <dc:subject>globalisation</dc:subject>
+     <dc:description>Aborder la question des identités locales pour un chercheur est toujours risqué, qui plus est dans le champ des Sciences de l'information et de la communication, où le prestige va aux nouvelles technologies de l'information, aux mass médias, à la communication des multinationales, bref, au processus de mondialisation, dont l'Europe est un des chaînons. Le local est un sujet désuet, tout juste susceptible d'intéresser les ethnologues en mal d'exotisme, affublés d'un strabisme désobligeant qui les pousse à ne voir que les survivances du passé irrémédiablement condamné, justement par l'essor des moyens de communication. Nous défendrons que les cultures locales méritent non seulement d'avantage d'attention pour leur actualité, parce qu'elles sont l'objet de nombreux processus de (re)-construction, mais aussi, qu'il devient urgent de les penser dans leurs relations aux phénomènes de mondialisation, pour en cerner le mouvement et les enjeux avant de les traiter pour elles mêmes. La construction de l'Europe comme maillon intermédiaire exacerbe le débat. D'un côté, elle accélère les processus de mondialisation. De l'autre, elle pourrait bien aussi être un espace où défendre les identités régionales, par-dessus les nationalismes. Préserver la mosaïque des cultures locales, cette richesse incontestable caractéristique de la CEE, qui la différencie des autres communautés supranationales (comme l'ASEAN ou ALAMI beaucoup plus homogènes), et qui paradoxalement là aussi, pourrait bien être le moteur de son unité.</dc:description>
+     <dc:date>2002-10-19</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Communication et organisation</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000054</identifier>
+   <datestamp>2002-10-18T12:21:18Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:HIST</setSpec>
+   <setSpec>SHS:INFO:CINE</setSpec>
+   <setSpec>SHS:INFO:ESPA</setSpec>
+   <setSpec>SHS:INFO:ECON</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000054/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/57/PDF/sic_00000054.pdf</dc:identifier>
+     <dc:title>ESPACE PUBLIC ET NOUVELLES RELATIONS ESTHÉTIQUES DANS LE THÉATRE, LE FESTIVAL "OFF" D'AVIGNON</dc:title>
+     <dc:creator>rasse, paul</dc:creator>
+     <dc:subject>[SHS:INFO:HIST] Humanities and Social Sciences/Library and information sciences/History of information/communication</dc:subject>
+     <dc:subject>[SHS:INFO:CINE] Humanities and Social Sciences/Library and information sciences/Cinema, art, esthetics</dc:subject>
+     <dc:subject>[SHS:INFO:ESPA] Humanities and Social Sciences/Library and information sciences/Public Sphere</dc:subject>
+     <dc:subject>[SHS:INFO:ECON] Humanities and Social Sciences/Library and information sciences/Economy, cultural industry</dc:subject>
+     <dc:subject>Festival espace public` esthétique médiation théâtre</dc:subject>
+     <dc:description>Au fil des années, le "Off" est devenu le premier festival de théâtre du monde par le nombre et la diversité des spectateurs, mais surtout parce que le public y fait l'apprentissage de nouveaux rapports à la création contemporaine, qui transforment le champ de la culture. Nous nous efforçons de montrer que dans l'indifférence de la presse et le mépris de l'intelligentsia, se joue une expérience esthétique originale, de grande ampleur, significative des nouvelles aspirations du public.</dc:description>
+     <dc:date>2002-05-31</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Quaderni</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000144</identifier>
+   <datestamp>2002-10-01T11:15:22Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:HYPE</setSpec>
+   <setSpec>SHS:INFO:EDIT</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS:INFO:ESPA</setSpec>
+   <setSpec>SHS:INFO:MEDI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000144/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/90/PDF/sic_00000144.pdf</dc:identifier>
+     <dc:title>La plume dans la toile : l'identité des journalistes à l'épreuve des réseaux numériques</dc:title>
+     <dc:creator>Pélissier, Nicolas</dc:creator>
+     <dc:subject>[SHS:INFO:HYPE] Humanities and Social Sciences/Library and information sciences/Hypertext, hypermedia</dc:subject>
+     <dc:subject>[SHS:INFO:EDIT] Humanities and Social Sciences/Library and information sciences/Electronic publishing</dc:subject>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>[SHS:INFO:ESPA] Humanities and Social Sciences/Library and information sciences/Public Sphere</dc:subject>
+     <dc:subject>[SHS:INFO:MEDI] Humanities and Social Sciences/Library and information sciences/Mass media</dc:subject>
+     <dc:subject>journalisme</dc:subject>
+     <dc:subject>Internet</dc:subject>
+     <dc:subject>identité professionnelle</dc:subject>
+     <dc:subject>démocratie en-ligne</dc:subject>
+     <dc:subject>espace public</dc:subject>
+     <dc:description>Qu'est-ce qu'un journaliste ? Pas plus qu'il y a environ un siècle, lorsque le journalisme français s'est constitué en corps professionnel avec ses règles spécifiques de fonctionnement , la réponse à cette question n'est aisée. D'aucuns objecteront que le journaliste peut toujours se définir comme un professionnel de l'information qui dégage l'essentiel de ses revenus de ses activités au sein d'une entreprise de presse. Mais qu'est-ce qu'un " professionnel ", lorsque l'on sait que des autodidactes font d'excellents journalistes, tandis que des diplômés d'Ecoles conventionnées ne parviennent pas à réussir dans ce métier ? Qu'est-ce que " l'information ", à l'heure où celle-ci n'est plus produite de façon monopolistique par les journalistes, et où les scientifiques en donnent une définition toujours plus métissée ? Qu'est-ce qu'une " entreprise de presse ", à l'heure où un particulier ayant de l'initiative peut produire de façon autonome et sérieuse son propre journal sur le Web ? Notre propos n'est pas ici de revenir sur ces questions délicates , qui suscitent encore de nombreuses et vives polémiques au sein des syndicats, organismes de formation, entreprises de presse et de la Commission Nationale Paritaire chargée, en France, de délivrer la " carte de presse " . Il s'agit plutôt, dans une démarche didactique, de rappeler les principales caractéristiques de l'identité journalistique puis, dans une perspective prospective, de s'interroger sur son actuelle mise à l'épreuve par les nouvelles technologies de l'information et de la communication...avant de conclure sur l'élasticité identitaire propre à la profession.</dc:description>
+     <dc:date>2002-03-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>MédiaMorphoses</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000140</identifier>
+   <datestamp>2002-09-22T10:33:21Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS:INFO:MUSE</setSpec>
+   <setSpec>SHS:INFO:COMM</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000140/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/88/PDF/sic_00000140.pdf</dc:identifier>
+     <dc:title>Le musée à l'épreuve des thèmes sciences et sociétés : les visiteurs en public</dc:title>
+     <dc:creator>Le Marec, Joelle</dc:creator>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>[SHS:INFO:MUSE] Humanities and Social Sciences/Library and information sciences/Museology</dc:subject>
+     <dc:subject>[SHS:INFO:COMM] Humanities and Social Sciences/Library and information sciences/Scientific communication and information</dc:subject>
+     <dc:subject>musée</dc:subject>
+     <dc:subject>exposition</dc:subject>
+     <dc:subject>vulgarisation</dc:subject>
+     <dc:subject>environnement</dc:subject>
+     <dc:subject>enquête</dc:subject>
+     <dc:subject>évaluation</dc:subject>
+     <dc:subject>public</dc:subject>
+     <dc:description>Les analyses communicationnelles des expositions ont été particulièrement développées dans le cas des musées de sciences et des centres de culture scientifique et technique. En effet, ce type d'institution muséale ne tire pas sa justification culturelle des missions de collecte et de conservation traditionellement dévolues aux musées, mais uniquement des missions qui impliquent un rapport de communication avec le public. Plusieurs dimensions du fonctionnement de ces institutions sont concernées : l'approche de l'exposition comme média, le fonctionnement du musée comme espace public, la circulation sociales des savoirs, qui s'ancre elle-même dans des problématiques de diffusion des siences. Ces analyses portent sur des niveaux très différents de la communication, depuis les interactions interpersonnelles en cours de visite ou lors de la conception, jusqu'aux analyses qui restituent le fonctionnement du média dans des matrices culturelles historiques. Cet article restitue l'analyse de situations suscitées par les enquêtes d'évaluation préalables à la conception : les visiteurs interrogés anticipent ce que pourrait être la relation entre l'institution et le public qu'ils représentent à titre éphémère pendant l'enquête. Le projet d'exposition joue alors comme la réactualisation permanente du projet, toujours à venir, d'une institution fonctionnant sur le modèle d'un espace public dans le champ des relations entre sciences, public et société.</dc:description>
+     <dc:date>2002-01-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Quaderni</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000135</identifier>
+   <datestamp>2002-09-21T19:31:26Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS:INFO:ESPA</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000135/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/87/PDF/sic_00000135.pdf</dc:identifier>
+     <dc:title>Le public : définitions et représentations</dc:title>
+     <dc:creator>Le Marec, Joelle</dc:creator>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>[SHS:INFO:ESPA] Humanities and Social Sciences/Library and information sciences/Public Sphere</dc:subject>
+     <dc:subject>public</dc:subject>
+     <dc:subject>enquête</dc:subject>
+     <dc:subject>representation sociale</dc:subject>
+     <dc:subject>pratique culturelle</dc:subject>
+     <dc:description>Le public est une notion difficile à manier, qui renvoie à des acceptions contradictoires : entité collective abstraite qui fonde un « en-commun » fondé sur l'exercice de la raison, phénomène cumulatif hétérogène constitué en audience par des instances spécialisées, ou encore cible, moteur de l'action destinée à modifier quelque chose des individus qu'on souhaite toucher. Dans tous ces cas, il n'est pas un collectif social qui se définirait par lui-même. Pourtant, on parle couramment du point de vue du public. Peut-il exister une telle position qui permettrait de penser le public comme énonciateur possible d'un point de vue ? À tout le moins comme interlocuteur dans des communications avec les institutions dont il est le public ? Nous détaillerons dans cet article le clivage entre le statut des membres du public engagés dans des communications interpersonnelles avec des représentants de l'institution, et le statut du public comme entité collective abstraite engagée dans une « communication » avec l'institution.</dc:description>
+     <dc:date>2001-03-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Bulletin des Bibliothèques de France</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000131</identifier>
+   <datestamp>2002-09-21T14:21:39Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:AUTR</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000131/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/85/PDF/sic_00000131.pdf</dc:identifier>
+     <dc:title>Dialogue interdisciplinaire sur l'"interactivité"</dc:title>
+     <dc:creator>Le Marec, Joelle</dc:creator>
+     <dc:subject>[SHS:INFO:AUTR] Humanities and Social Sciences/Library and information sciences/Others</dc:subject>
+     <dc:subject>interdisciplinarité</dc:subject>
+     <dc:subject>interactivité</dc:subject>
+     <dc:description>Rien de plus consensuel que l'interdisciplinarité. En tant que mot d'ordre, elle est devenue une représentation sociale de la mise en oeuvre d'un rapport d'altérité dans les sciences humaines pensé sur le mode sur le mode vague de la complémentarité d'approches différentes. Or, cette complémentarité pré-détermine, avant même que la réflexion soit entamée, une représentation positive d'une interdisciplinarité qui court-circuite les conditions de sa construction au plan scientifique et donc sa signification scientifique elle-même. Il est vrai que la pratique scientifique appelle un processus de textualisation qui gomme une grande partie des processus par lesquels elle se construit en collectif et en débat. Or, les démarches interdisciplinaires s'appuient en grande partie sur des formes de construction dans la communication qui rendent difficiles toute mise en récit. Cet article propose de détailler une modalité précise et particulière de l'interdisciplinarité : le dialogue, sous la forme du séminaire. Il s'agit ici d'un dialogue sur la notion d'interactivité et sur son statut dans le discours scientifique.</dc:description>
+     <dc:date>2001-06-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>communication et langages</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000132</identifier>
+   <datestamp>2002-09-21T14:21:18Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000132/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/86/PDF/sic_00000132.pdf</dc:identifier>
+     <dc:title>L'usage et ses modèles : quelques réflexions méthodologiques</dc:title>
+     <dc:creator>Le Marec, Joelle</dc:creator>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>usages</dc:subject>
+     <dc:subject>représentations sociales</dc:subject>
+     <dc:subject>technique</dc:subject>
+     <dc:subject>musées</dc:subject>
+     <dc:subject>cédéroms</dc:subject>
+     <dc:subject>réseaux</dc:subject>
+     <dc:subject>communication</dc:subject>
+     <dc:description>Cet article tente propose de discuter de la notion d'usage sur la base suivante : la notion d'usage s'est développée en sciences humaines dans un contexte très particulier : celui de la « résistance » à une lecture de l'insertion sociale des nouvelles technologies en terme de phénomène socio-économique et de rapports de pouvoir. Les démarches très qualitatives centrées sur les pratiques, sur la construction des significations et des savoirs, se sont multipliées ces dix dernières années. La notion de représentations sociales est selon nous au cœur de ce mouvement, elle place les phénomènes liés à l'usage dans le champ des savoirs sociaux. Pourtant, les implications du recours à la notion de représentations sociales n'ont pas toujours été poussées dans leur logique : on le sent clairement dans le détail des études empiriques qui ont été menées sur les TIC en milieu muséal. Cette notion déplace selon nous la manière d'aborder les usages à partir de questions propres à des disciplines, elle ouvre sur la complexité des phénomènes de circulation des savoirs sociaux.</dc:description>
+     <dc:date>2001-10-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Spirale</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000100</identifier>
+   <datestamp>2002-07-05T11:41:14Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:GEST</setSpec>
+   <setSpec>SHS:INFO:ORGA</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>ENSSIB</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000100/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/79/PDF/sic_00000100.pdf</dc:identifier>
+     <dc:title>Partage de connaissances ou partage de documents ?</dc:title>
+     <dc:creator>Kolmayer, Elisabeth</dc:creator>
+     <dc:creator>Peyrelong, Marie-France</dc:creator>
+     <dc:subject>[SHS:INFO:GEST] Humanities and Social Sciences/Library and information sciences/Knowledge management</dc:subject>
+     <dc:subject>[SHS:INFO:ORGA] Humanities and Social Sciences/Library and information sciences/Organisation and communication</dc:subject>
+     <dc:subject>capitalisation des connaissances</dc:subject>
+     <dc:subject>partage des connaissances</dc:subject>
+     <dc:subject>management des connaissances</dc:subject>
+     <dc:description>Les évolutions technologiques et les discours managériaux semblent conduire à une vision "enchantée" de la gestion et du partage des connaissances dans les entreprises. Cette gestion passe de manière "évidente" par l'outil électronique. Or s'interroger sur les supports de connaissance, c'est moins s'interroger sur le passage du papier à l'électronique, que sur l'élaboration de connaissances ou d'informations "collectives", et sur leurs possibilités d'appropriation. Nous nous appuyons pour cela sur deux observations. Après avoir rapidement défini ce que nous entendons par processus de capitalisation de connaissance, nous analysons en premier lieu quelques aspects du passage des connaissances aux documents "collectifs". Dans un second temps, nous cherchons à expliciter les processus d'appropriation des connaissances par les utilisateurs du dispositif de capitalisation. Ces processus sont à la fois lourds et complexes ; nous les analysons d'un triple point de vue : pragmatique, pédagogique et cognitif.</dc:description>
+     <dc:date>1999-12-01</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Document numérique</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000097</identifier>
+   <datestamp>2002-07-03T15:38:44Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000097/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/78/PDF/sic_00000097.pdf</dc:identifier>
+     <dc:title>Quelques problématiques pour éclairer l'étude de l'information dans les organisations</dc:title>
+     <dc:creator>Guyot, Brigitte</dc:creator>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>activité d'information</dc:subject>
+     <dc:subject>management de l'information</dc:subject>
+     <dc:subject>technologies d'information</dc:subject>
+     <dc:subject>système d'information</dc:subject>
+     <dc:description>l'analyse des modes de management de l'information en entreprise peut se faire par au moins deux approches : celle des systèmes d'information, qui y voit un outil de structuration, et celle des stratégies d'acteurs, qui insiste sur la diversité des dynamiques individuelles et collectives. l'intensification des activités d'information, l'éclatement des lieux et des modes de sa gestion, ainsi que la montée des outils, nécessitent de prendre en compte les pratiques pour s'interroger sur la rationalisation des modes de travail par la transversalité et la coopération, sur les nouvelles formes de la relation de service et d'ingéniérie d'information.</dc:description>
+     <dc:date>2002-07-03</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Sciences de la Société</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000073</identifier>
+   <datestamp>2002-06-19T18:51:27Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:THEO</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000073/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/70/PDF/sic_00000073.pdf</dc:identifier>
+     <dc:title>De la "Viêtcommunication" comme processus d'insertion et de communication viêtnamiens</dc:title>
+     <dc:creator>Basilico, Sandrine</dc:creator>
+     <dc:subject>[SHS:INFO:THEO] Humanities and Social Sciences/Library and information sciences/Theory of information/communication</dc:subject>
+     <dc:subject>Viêtcommunication Produits occidentalisés Echanges Minorités ethniques Viêt-Nam</dc:subject>
+     <dc:description>Il s'agit d'une présentant le concept que nous avons développé dans notre étude doctorale soutenue le 17 mars 2001 : la « Viêtcommunication » en tant que processus d'insertion des ethnies Thaï et Muong dans l'Etat-Nation viêtnamien en développement, plus principalement au travers de l'étude des modifications de leur habitation, tant au niveau structurel qu'architectural. C'est-à-dire à travers l'étude des objets échangés, essentiellement occidentaux, que l'on retrouve désormais au sein des habitations des ethnies minoritaires (appelées aussi « montagnards »). Ce concept nouveau cherche à examiner à la fois la manière et le contenu de la communication entre minorités et majorité à travers l'habitation et ses changements.</dc:description>
+     <dc:date>2002-06-11</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Quaderni</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000072</identifier>
+   <datestamp>2002-06-19T18:43:04Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:MEDI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000072/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/69/PDF/sic_00000072.pdf</dc:identifier>
+     <dc:title>Etude de l'influence de la télévision et des objets occidentalisés sur deux minorités du nord Viêt-Nam</dc:title>
+     <dc:creator>Basilico, Sandrine</dc:creator>
+     <dc:subject>[SHS:INFO:MEDI] Humanities and Social Sciences/Library and information sciences/Mass media</dc:subject>
+     <dc:subject>Télévision Produits occidentalisés Modernité Viêt-Nam Développement</dc:subject>
+     <dc:description>Bien longtemps, les minorités ethniques du Viêt-Nam, aux mœurs et coutumes propres, sont restées oubliées, en marge de tout développement économique. Cependant, aujourd'hui apparaît la conscience d'appartenir à l'entité nationale viêtnamienne, autrement dit, à une entité élargie. Selon nous, c'est l'acquisition d'objets occidentalisés qui en serait le miroir, car synonymes de modèle de développement pour les montagnards, modèle qui n'est autre que celui véhiculé par les citadins Viêt induisant toutes sortes de modifications (costume, organisation sociale, perception de l'espace/temps, rituels).</dc:description>
+     <dc:date>2002-06-19</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Terminal</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000071</identifier>
+   <datestamp>2002-06-19T10:25:08Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:ORGA</setSpec>
+   <setSpec>SHS:INFO:ECON</setSpec>
+   <setSpec>SHS:INFO:SOCI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000071/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/68/PDF/sic_00000071.pdf</dc:identifier>
+     <dc:title>"Tout ce que vous avez toujours voulu savoir sur les créatifs de publicité"</dc:title>
+     <dc:creator>PERRET, Jean-Baptiste</dc:creator>
+     <dc:subject>[SHS:INFO:ORGA] Humanities and Social Sciences/Library and information sciences/Organisation and communication</dc:subject>
+     <dc:subject>[SHS:INFO:ECON] Humanities and Social Sciences/Library and information sciences/Economy, cultural industry</dc:subject>
+     <dc:subject>[SHS:INFO:SOCI] Humanities and Social Sciences/Library and information sciences/Sociology of information and communication</dc:subject>
+     <dc:subject>publicité</dc:subject>
+     <dc:subject>créatif</dc:subject>
+     <dc:subject>agences</dc:subject>
+     <dc:subject>distinction</dc:subject>
+     <dc:subject>sociologie</dc:subject>
+     <dc:description>Les inquiétudes des pouvoirs publics quant à l'image des femmes en publicité et une certaine actualité éditoriale ont récemment mis les créatifs de publicité sur le devant de la scène. Cet article se propose de mettre en lumière les spécificités de cette profession, dont les aspects les plus caricaturaux, qui nourrissent les stéréotypes négatifs, prennent tout leur sens à partir de l'observation sociologique des particularités de leur marché de l'emploi, leurs pratiques de travail, et leur identité culturelle. Après avoir remis en perspective la spécialisation progressive de la profession, et la prégnance de la compétition interne, des "profils-types" de créatifs sont dégagés à partir de leur philosophie de la création, rapport au milieu publicitaire, aux agences et aux annonceurs.</dc:description>
+     <dc:date>2002-04-15</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Les écrits de l'image</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000069</identifier>
+   <datestamp>2002-06-18T13:43:51Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:HYPE</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000069/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/67/PDF/sic_00000069.pdf</dc:identifier>
+     <dc:title>Du texte-fragment à l'hypertexte fractal : pour une critiqe "topologique"</dc:title>
+     <dc:creator>Ertzscheid, olivier</dc:creator>
+     <dc:subject>[SHS:INFO:HYPE] Humanities and Social Sciences/Library and information sciences/Hypertext, hypermedia</dc:subject>
+     <dc:subject>hypertexte</dc:subject>
+     <dc:subject>fractal</dc:subject>
+     <dc:subject>navigation</dc:subject>
+     <dc:subject>organisation hypertextuelle</dc:subject>
+     <dc:description>L'écriture hypertextuelle, et tout particulièrement celle à l'œuvre dans les hypertextes littéraires est largement assimilée à une écriture fragmentaire. Nous montrerons pourquoi il s'agit là d'une commodité du discours critique permettant d'analyser à l'aune de figures déjà éprouvées un ensemble de traits paraissant pourtant nécessiter des méthodologies critiques à tout le moins renouvelées. En effet, qu'il s'agisse des pratiques énonciatives ayant cours, de la question de l'émergence de genres hypertextuels, de l'existence d'une pratique rhétorique et stylistique propre, l'hypertexte constitue une rupture au regard de la figure du texte, tant du point de vue de l'objet-texte (la dimension étudiée étant alors celle de la textualité) que de celui du texte comme lieu et marque d'un discours (et l'on parlera alors de littérarité). Avec l'hypertexte, du fait de la temporalité particulière dans laquelle celui-ci prend place et se déploie – une temporalité de l'ordre de la session – le rythme de l'écriture hypertextuelle se caractérise par des indices de spatialité et non plus temporels. C'est dans cette alternance, dans ce passage d'un paradigme temporel à un autre, spatial, que s'offre au discours critique le passage du fragment au fractal que nous tenterons ici d'argumenter. En parallèle, nous tenterons de dresser à grands traits les enjeux d'une critique topologique qui nous semble seule être capable de rendre compte de la nature profonde de l'écriture hypertextuelle et des œuvres ainsi produites.</dc:description>
+     <dc:date>2002-06-18</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Revue "Champs du signe" Presses Universitaires du Mirail.</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000067</identifier>
+   <datestamp>2002-06-15T15:08:03Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:COMM</setSpec>
+   <setSpec>SHS:INFO:MEDI</setSpec>
+   <setSpec>SHS:INFO:CINE</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000067/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/66/PDF/sic_00000067.pdf</dc:identifier>
+     <dc:title>Images numériques et médiatisation des sciences</dc:title>
+     <dc:creator>Babou, Igor</dc:creator>
+     <dc:subject>[SHS:INFO:COMM] Humanities and Social Sciences/Library and information sciences/Scientific communication and information</dc:subject>
+     <dc:subject>[SHS:INFO:MEDI] Humanities and Social Sciences/Library and information sciences/Mass media</dc:subject>
+     <dc:subject>[SHS:INFO:CINE] Humanities and Social Sciences/Library and information sciences/Cinema, art, esthetics</dc:subject>
+     <dc:subject>sémiotique</dc:subject>
+     <dc:subject>images numériques</dc:subject>
+     <dc:subject>vulgarisation</dc:subject>
+     <dc:subject>télévision</dc:subject>
+     <dc:subject>médias</dc:subject>
+     <dc:subject>images virtuelles</dc:subject>
+     <dc:description>Les images numériques, fréquentes dans notre univers symbolique, sont utilisées tant par les médias que par le champ scientifique pour construire et représenter des connaissances. Ces pratiques sont-elles le signe d'un mode particulier d'appropriation du réel, d'une rupture radicale dans la représentation comme le laissent entendre certaines approches ? Cet article s'appuie sur la sémiotique de Peirce pour analyser un corpus de séquences extraites de documentaires de vulgarisation. Il tente de montrer, sans préjuger des interprétations des spectateurs, que le caractère numérique des images ne peut pas leur imposer un mode de signification tant les pratiques et les contextes de communication sont variés. Cette même sémiotique permet de plus d'observer les glissements de sens qui s'opèrent au cours du processus de médiatisation.</dc:description>
+     <dc:date>1997-06-15</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Hermes</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000066</identifier>
+   <datestamp>2002-06-15T14:27:09Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:HYPE</setSpec>
+   <setSpec>SHS:INFO:MEDI</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000066/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/65/PDF/sic_00000066.pdf</dc:identifier>
+     <dc:title>DES DISCOURS D'ACCOMPAGNEMENT AUX LANGAGES : LES NOUVEAUX MEDIAS</dc:title>
+     <dc:creator>Babou, Igor</dc:creator>
+     <dc:subject>[SHS:INFO:HYPE] Humanities and Social Sciences/Library and information sciences/Hypertext, hypermedia</dc:subject>
+     <dc:subject>[SHS:INFO:MEDI] Humanities and Social Sciences/Library and information sciences/Mass media</dc:subject>
+     <dc:subject>sémiotique</dc:subject>
+     <dc:subject>nouveaux médias</dc:subject>
+     <dc:subject>ntic</dc:subject>
+     <dc:subject>hypermédias</dc:subject>
+     <dc:subject>web</dc:subject>
+     <dc:subject>Internet</dc:subject>
+     <dc:description>Les nouvelles technologies sont généralement pensées comme si elles constituaient seulement un champ technique que l'on pourrait mobiliser au profit de la transmission des savoirs sans que soit nécessaire une réflexion préalable sur leurs usages, les langages qui y sont à l'œuvre, ou encore l'ensemble des discours sociaux qui les accompagnent. Contre les présupposés technicistes aujourd'hui dominants, on essaiera de montrer à quel point la prise en compte de leur dimension symbolique est nécessaire : plus que de techniques, il s'agit de médias inscrits dans un ensemble de représentations, de valeurs, de pratiques sociales, bref, dans une forme de culture. Pour cette raison, on ne saurait en attendre une quelconque transparence : leur utilisation pour la transmission des connaissances nécessite alors une compréhension de leurs spécificités.</dc:description>
+     <dc:date>1998-12-15</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Etudes de linguistique Appliquée</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <record>
+   <header>
+   <identifier>oai:archivesic.ccsd.cnrs.fr:sic_00000065</identifier>
+   <datestamp>2002-06-15T14:20:16Z</datestamp>
+   <setSpec>archivesic</setSpec>
+   <setSpec>SHS:INFO:HYPE</setSpec>
+   <setSpec>SHS:INFO:MEDI</setSpec>
+   <setSpec>SHS:INFO:CINE</setSpec>
+   <setSpec>SHS</setSpec>
+   <setSpec>FULLTEXT</setSpec>
+   </header>
+   <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/sic_00000065/en/</dc:identifier>
+     <dc:identifier>http://archivesic.ccsd.cnrs.fr/docs/00/06/20/64/PDF/sic_00000065.pdf</dc:identifier>
+     <dc:title>L'absence de cadre comme utopie des “réalités virtuelles”</dc:title>
+     <dc:creator>Babou, Igor</dc:creator>
+     <dc:subject>[SHS:INFO:HYPE] Humanities and Social Sciences/Library and information sciences/Hypertext, hypermedia</dc:subject>
+     <dc:subject>[SHS:INFO:MEDI] Humanities and Social Sciences/Library and information sciences/Mass media</dc:subject>
+     <dc:subject>[SHS:INFO:CINE] Humanities and Social Sciences/Library and information sciences/Cinema, art, esthetics</dc:subject>
+     <dc:subject>sémiotique</dc:subject>
+     <dc:subject>ntic</dc:subject>
+     <dc:subject>réalité virtuelle</dc:subject>
+     <dc:subject>images de synthèse</dc:subject>
+     <dc:subject>cadre</dc:subject>
+     <dc:subject>image</dc:subject>
+     <dc:subject>représentation</dc:subject>
+     <dc:description>Une image sans cadre est-elle possible ? Les “réalités virtuelles” disponibles aujourd'hui pourraient le laisser croire, tant les univers qu'elles proposent semblent avoir brisé les limites habituelles de l‘image. Cet article tente de montrer, au contraire, que la notion de cadre, si elle peut être repensée, reste une des conditions nécessaires à la représentation.</dc:description>
+     <dc:date>1999-01-15</dc:date>
+     <dc:language>FRE</dc:language>
+     <dc:type>peer-reviewed article</dc:type>
+     <dc:source>Champs Visuels</dc:source>
+    </oai_dc:dc>
+   </metadata>
+  </record>
+  <resumptionToken completeListSize="32" cursor="0" expirationDate="2011-05-25T17:49:37Z">lr4ddd3321c42c4</resumptionToken>
+ </ListRecords>
+</OAI-PMH>

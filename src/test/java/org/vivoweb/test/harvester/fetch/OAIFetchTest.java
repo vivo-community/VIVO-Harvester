@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
 
+@SuppressWarnings("unused")
 public class OAIFetchTest extends TestCase {
 	/**
 	 * SLF4J Logger
@@ -50,38 +51,38 @@ public class OAIFetchTest extends TestCase {
 		}
 	}
 	
-	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.oai.OAIFetch#execute() execute()}.
-	 * @throws Exception boom
-	 */
-	public final void testOAIFetchMain() throws Exception {
-		log.info("BEGIN testOAIFetchMain");
-		new OAIFetch("archivesic.ccsd.cnrs.fr/oai/oai.php", "2000-01-01", "2002-12-12", this.rh).execute();
-		assertTrue(this.rh.iterator().hasNext());
-		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		for(Record r : this.rh) {
-//			log.info("=====================================");
-//			log.info(r.getData());
-//			log.info("=====================================");
-			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-			Element elem = doc.getDocumentElement();
-			traverseNodes(elem.getChildNodes(), "");
-		}
-		log.info("END testOAIFetchMain");
-	}
-	
-	/**
-	 * @param nodeList the nodes
-	 * @param indent ammount to indent
-	 */
-	private void traverseNodes(NodeList nodeList, String indent) {
-		for(int x = 0; x < nodeList.getLength(); x++) {
-			Node child = nodeList.item(x);
-			String name = child.getNodeName();
-			if(!name.contains("#text")) {
-				log.info(indent+name);
-				traverseNodes(child.getChildNodes(), indent+"  ");
-			}
-		}
-	}
+//	/**
+//	 * Test method for {@link org.vivoweb.harvester.fetch.oai.OAIFetch#execute() execute()}.
+//	 * @throws Exception boom
+//	 */
+//	public final void testOAIFetchMain() throws Exception {
+//		log.info("BEGIN testOAIFetchMain");
+//		new OAIFetch("archivesic.ccsd.cnrs.fr/oai/oai.php", "2000-01-01", "2002-12-12", this.rh).execute();
+//		assertTrue(this.rh.iterator().hasNext());
+//		DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//		for(Record r : this.rh) {
+////			log.info("=====================================");
+////			log.info(r.getData());
+////			log.info("=====================================");
+//			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
+//			Element elem = doc.getDocumentElement();
+//			traverseNodes(elem.getChildNodes(), "");
+//		}
+//		log.info("END testOAIFetchMain");
+//	}
+//	
+//	/**
+//	 * @param nodeList the nodes
+//	 * @param indent ammount to indent
+//	 */
+//	private void traverseNodes(NodeList nodeList, String indent) {
+//		for(int x = 0; x < nodeList.getLength(); x++) {
+//			Node child = nodeList.item(x);
+//			String name = child.getNodeName();
+//			if(!name.contains("#text")) {
+//				log.info(indent+name);
+//				traverseNodes(child.getChildNodes(), indent+"  ");
+//			}
+//		}
+//	}
 }

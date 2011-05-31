@@ -1,32 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
 JDBCFetch - Fetches rdf data from a relational database
------
+- - -
 Fetches data from a relational database placing the data into
 an rdf/xml format in an ontology derived from the schema
  -->
 <config>
     <!-- 
     source - the relational database
-    -----
+    - - -
     This section defines the relational database that
     JDBCFetch will access and retrieve data from
      -->
-    <database>
+    <source>
     	<!--
-    	driver - the JDBC driver class to use
-    	-----
-    	mysql -> org.blah.mysql.Driver
-    	h2 -> org.h2.Driver
-    	blah -> boab.ajb.aga.Driver 
+    	driver-class - the JDBC driver class to use
+    	- - -
+    	Examples:
+	    	mysql: <driver-class>com.mysql.jdbc.Driver</driver-class>
+	    	h2: <driver-class>org.h2.Driver</driver-class>
     	 -->
-		<driver>org.h2.Driver</driver>
-		<connection>jdbc:h2:harvested-data/default/h2/store</connection>
+		<driver-class>org.h2.Driver</driver-class>
+    	<!--
+    	dburl - the JDBC connection url
+    	- - -
+    	Examples:
+	    	mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl>
+	    		see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html for format
+	    	h2: <dburl>jdbc:h2:path/to/h2/store</dburl>
+	    		see http://www.h2database.com/html/features.html#database_url for format
+    	 -->
+		<dburl>jdbc:h2:harvested-data/default/h2/store</dburl>
+    	<!--
+    	username - the DB username to use
+    	- - -
+    	Example:
+    		<username>myUser</username>
+    	 -->
 		<username>sa</username>
+    	<!--
+    	driver - the DB password to use
+    	- - -
+    	Example:
+    		<password>myPass</password>
+    	 -->
 		<password></password>
-    </database>
+    </source>
+   	<!--
+   	table - defines a virtual view (defined by a query) for
+   		JDBCFetch to retrieve data from
+   	- - -
+   	Parameters:
+   		name: an internal designation used by JDBCFetch for
+   			this table. It is used to identify the records
+   			pulled from this table
+   	Example:
+   		<table name="myTable">
+   			...
+   		</table>
+   	 -->
     <table name="people">
+    	<!--
+    	id - the field set used to distinctly identify
+    		each record
+    	- - -
+    	Examples:
+    		<id>myCol</id>
+    		<id>myCol1,myCol2,myCol3</id>
+    		<id>myCol1, myCol2, myCol3</id>
+    	 -->
 		<id>UID</id>
+    	<!--
+    	query - the SQL query to execute to produce the virtual
+    		view result set
+    	- - -
+    	Examples:
+    		<query>SELECT * FROM myTable</query>
+    		<query>
+    			SELECT myCol1, myCol2, myCol3 FROM myTable
+    		</query>
+    		<query>
+    			SELECT
+    				m1.myCol1 AS m1Col1, 
+    				m1.myCol2 AS m1Col2, 
+    				m1.myCol3 AS m1Col3, 
+    				m2.myCol1 AS m2Col1
+    			FROM myTable1 AS m1
+    			LEFT JOIN myTable2 AS m2 ON
+    				m1.myCol1 = m2.myCol4 AND m2.myCol5 = 0
+    			WHERE
+    				m1.myCol7 = 15
+    		</query>
+    	 -->
     	<query>
 			SELECT 
 				emp.person_id AS UID, 
@@ -50,8 +115,52 @@ an rdf/xml format in an ontology derived from the schema
 				emp.person_id LIKE '%6%'<!- - -->
 		</query>
     </table>
+   	<!--
+   	table - defines a virtual view (defined by a query) for
+   		JDBCFetch to retrieve data from
+   	- - -
+   	Parameters:
+   		name: an internal designation used by JDBCFetch for
+   			this table. It is used to identify the records
+   			pulled from this table
+   	Example:
+   		<table name="myTable">
+   			...
+   		</table>
+   	 -->
     <table name="positions">
+    	<!--
+    	id - the field set used to distinctly identify
+    		each record
+    	- - -
+    	Examples:
+    		<id>myCol</id>
+    		<id>myCol1,myCol2,myCol3</id>
+    		<id>myCol1, myCol2, myCol3</id>
+    	 -->
     	<id>UID,TYPE,DEPTID,STARTDATE</id>
+    	<!--
+    	query - the SQL query to execute to produce the virtual
+    		view result set
+    	- - -
+    	Examples:
+    		<query>SELECT * FROM myTable</query>
+    		<query>
+    			SELECT myCol1, myCol2, myCol3 FROM myTable
+    		</query>
+    		<query>
+    			SELECT
+    				m1.myCol1 AS m1Col1, 
+    				m1.myCol2 AS m1Col2, 
+    				m1.myCol3 AS m1Col3, 
+    				m2.myCol1 AS m2Col1
+    			FROM myTable1 AS m1
+    			LEFT JOIN myTable2 AS m2 ON
+    				m1.myCol1 = m2.myCol4 AND m2.myCol5 = 0
+    			WHERE
+    				m1.myCol7 = 15
+    		</query>
+    	 -->
     	<query>
 			SELECT 
 				emp.person_id AS UID, 
@@ -70,8 +179,52 @@ an rdf/xml format in an ontology derived from the schema
 				emp.person_id LIKE '%6%'<!- - -->
     	</query>
     </table>
+   	<!--
+   	table - defines a virtual view (defined by a query) for
+   		JDBCFetch to retrieve data from
+   	- - -
+   	Parameters:
+   		name: an internal designation used by JDBCFetch for
+   			this table. It is used to identify the records
+   			pulled from this table
+   	Example:
+   		<table name="myTable">
+   			...
+   		</table>
+   	 -->
     <table name="organizations">
+    	<!--
+    	id - the field set used to distinctly identify
+    		each record
+    	- - -
+    	Examples:
+    		<id>myCol</id>
+    		<id>myCol1,myCol2,myCol3</id>
+    		<id>myCol1, myCol2, myCol3</id>
+    	 -->
     	<id>DEPTID</id>
+    	<!--
+    	query - the SQL query to execute to produce the virtual
+    		view result set
+    	- - -
+    	Examples:
+    		<query>SELECT * FROM myTable</query>
+    		<query>
+    			SELECT myCol1, myCol2, myCol3 FROM myTable
+    		</query>
+    		<query>
+    			SELECT
+    				m1.myCol1 AS m1Col1, 
+    				m1.myCol2 AS m1Col2, 
+    				m1.myCol3 AS m1Col3, 
+    				m2.myCol1 AS m2Col1
+    			FROM myTable1 AS m1
+    			LEFT JOIN myTable2 AS m2 ON
+    				m1.myCol1 = m2.myCol4 AND m2.myCol5 = 0
+    			WHERE
+    				m1.myCol7 = 15
+    		</query>
+    	 -->
     	<query>
 			SELECT 
 				dept.dept_id AS DEPTID, 

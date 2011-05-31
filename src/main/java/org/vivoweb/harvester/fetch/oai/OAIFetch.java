@@ -52,6 +52,7 @@ import com.ctc.wstx.io.EBCDICCodec;
  * @author Dale Scheppler
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
+@SuppressWarnings("unused")
 public class OAIFetch {
 	/**
 	 * SLF4J Logger
@@ -118,35 +119,35 @@ public class OAIFetch {
 		RawWriteRun(this.requestURL, startDate, endDate, "oai_dc", "", this.rhOutput);
 	}
 	
-	/**
-	 * Executes the task
-	 * @param resumptionToken the token for the oai repository to continue the same search
-	 * @throws IOException error getting recrords
-	 */
-	private void fetchResume(String resumptionToken) throws IOException {
-		StringBuilder requestSb = new StringBuilder(this.requestURL);
-        requestSb.append("&resumptionToken=").append(URLEncoder.encode(resumptionToken, "UTF-8"));
-        return requestSb.toString();
-		RawWriteRun(requestSb.toString(), null, null, "oai_dc", "", this.rhOutput);
-	}
-    
-    /**
-     * Get the oai:resumptionToken from the response
-     * 
-     * @return the oai:resumptionToken value
-     * @throws TransformerException
-     * @throws NoSuchFieldException
-     */
-    private String getResumptionToken() throws TransformerException, NoSuchFieldException {
-        String schemaLocation = getSchema();
-        if (schemaLocation.indexOf(SCHEMA_LOCATION_V2_0) != -1) {
-            return getSingleString("/oai20:OAI-PMH/oai20:ListRecords/oai20:resumptionToken");
-        } else if (schemaLocation.indexOf(SCHEMA_LOCATION_V1_1_LIST_RECORDS) != -1) {
-            return getSingleString("/oai11_ListRecords:ListRecords/oai11_ListRecords:resumptionToken");
-        } else {
-            throw new NoSuchFieldException(schemaLocation);
-        }
-    }
+//	/**
+//	 * Executes the task
+//	 * @param resumptionToken the token for the oai repository to continue the same search
+//	 * @throws IOException error getting recrords
+//	 */
+//	private void fetchResume(String resumptionToken) throws IOException {
+//		StringBuilder requestSb = new StringBuilder(this.requestURL);
+//        requestSb.append("&resumptionToken=").append(URLEncoder.encode(resumptionToken, "UTF-8"));
+//        return requestSb.toString();
+//		RawWriteRun(requestSb.toString(), null, null, "oai_dc", "", this.rhOutput);
+//	}
+//    
+//    /**
+//     * Get the oai:resumptionToken from the response
+//     * 
+//     * @return the oai:resumptionToken value
+//     * @throws TransformerException
+//     * @throws NoSuchFieldException
+//     */
+//    private String getResumptionToken() throws TransformerException, NoSuchFieldException {
+//        String schemaLocation = getSchema();
+//        if (schemaLocation.indexOf(SCHEMA_LOCATION_V2_0) != -1) {
+//            return getSingleString("/oai20:OAI-PMH/oai20:ListRecords/oai20:resumptionToken");
+//        } else if (schemaLocation.indexOf(SCHEMA_LOCATION_V1_1_LIST_RECORDS) != -1) {
+//            return getSingleString("/oai11_ListRecords:ListRecords/oai11_ListRecords:resumptionToken");
+//        } else {
+//            throw new NoSuchFieldException(schemaLocation);
+//        }
+//    }
 	
 	/**
 	 * Modified version of org.oclc.oai.harvester2.app.RawWrite.run()
@@ -158,12 +159,13 @@ public class OAIFetch {
 	 * @param out output recordhandler
 	 * @throws IOException error
 	 */
+	@SuppressWarnings("null")
 	private static void RawWriteRun(String baseURL, String from, String until, String metadataPrefix, String setSpec, RecordHandler out) throws IOException {
 		try {
-			HarvesterVerb listRecords = new HarvesterVerb(HarvesterVerb.getRequestURL(baseURL, from, until, setSpec, metadataPrefix));
+			OAIHarvester listRecords = null;// = new OAIHarvester(OAIHarvester.getRequestURL(baseURL, from, until, setSpec, metadataPrefix));
 //			ListRecords listRecords = new ListRecords(baseURL, from, until, setSpec, metadataPrefix);
 	        while(listRecords != null) {
-				NodeList errors = listRecords.getErrors();
+				NodeList errors = null;// = listRecords.getErrors();
 				if(errors != null && errors.getLength() > 0) {
 					int length = errors.getLength();
 					for(int i = 0; i < length; ++i) {
@@ -172,10 +174,10 @@ public class OAIFetch {
 					}
 					break;
 				}
-				NodeList nodes = listRecords.getNodeList("/oai20:OAI-PMH/oai20:ListRecords/oai20:record");
+				NodeList nodes = null;// = listRecords.getNodeList("/oai20:OAI-PMH/oai20:ListRecords/oai20:record");
 				System.out.println(nodes.getLength());
 				for(Node n : IterableAide.adapt(nodes)) {
-		            String nodeId = XPathAPI.selectSingleNode(n, "./oai20:header/oai20:identifier/text()", namespaceNode).getNodeValue();
+		            String nodeId = XPathAPI.selectSingleNode(n, "./oai20:header/oai20:identifier/text()", OAIHarvester.namespaceNode).getNodeValue();
 			        StringBuilder nodeSb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<harvest>\n");
 					Source input = new DOMSource(n);
 			        StringWriter sw = new StringWriter();
@@ -197,17 +199,17 @@ public class OAIFetch {
 				if(resumptionToken == null || resumptionToken.length() == 0) {
 					listRecords = null;
 				} else {
-					listRecords = new ListRecords(baseURL, resumptionToken);
+					listRecords = null;//new ListRecords(baseURL, resumptionToken);
 				}
 			}
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e);
-		} catch(SAXException e) {
-			throw new IOException(e);
+//		} catch(ParserConfigurationException e) {
+//			throw new IOException(e);
+//		} catch(SAXException e) {
+//			throw new IOException(e);
 		} catch(TransformerException e) {
 			throw new IOException(e);
-		} catch(NoSuchFieldException e) {
-			throw new IOException(e);
+//		} catch(NoSuchFieldException e) {
+//			throw new IOException(e);
 		}
 	}
 }

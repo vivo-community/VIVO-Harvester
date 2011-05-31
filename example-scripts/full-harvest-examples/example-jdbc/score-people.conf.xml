@@ -1,31 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-Score - Fetches rdf data from a relational database
+Score - Evaluates records and stores score values
 -----
-Fetches data from a relational database placing the data into
-an rdf/xml format in an ontology derived from the schema
+Compares the values of a set of fields using a specified
+algorithm and stores the weighted value produced by the
+algorithm in a score model
  -->
 <config>
     <!-- 
-    source - the relational database
+    source - the jena model that contains harvested data
     -----
-    This section defines the relational database that
-    JDBCFetch will access and retrieve data from
+    This section defines the jena model that
+    Score will treat as harvested data
      -->
     <source>
+    	<!--
+    	jena-type - the type of jena model
+    	- - -
+    	Examples:
+	    	sdb: <jena-type>sdb</jena-type>
+	    	rdb: <jena-type>rdb</jena-type>
+	    	tdb: <jena-type>tdb</jena-type>
+    	 -->
     	<jena-type>sdb</jena-type>
+    	<!--
+    	sdb-layout - the layout to use for an sdb model
+    		(only needed when jena-type is sdb)
+    	- - -
+    	Examples:
+	    	layout2 (default): <sdb-layout>layout2</sdb-layout>
+    	 -->
     	<sdb-layout>layout2</sdb-layout>
+    	<!--
+    	database-type - the name of the database type (as specified by jena)
+    	- - -
+    	Examples:
+	    	mysql: <database-type>MySQL</database-type>
+	    	h2: <database-type>H2</database-type>
+    	 -->
     	<database-type>H2</database-type>
     	<!--
-    	driver - the JDBC driver class to use
-    	-----
-    	mysql -> org.blah.mysql.Driver
-    	h2 -> org.h2.Driver
-    	blah -> boab.ajb.aga.Driver 
+    	driver-class - the JDBC driver class to use
+    	- - -
+    	Examples:
+	    	mysql: <driver-class>com.mysql.jdbc.Driver</driver-class>
+	    	h2: <driver-class>org.h2.Driver</driver-class>
     	 -->
 		<driver-class>org.h2.Driver</driver-class>
+    	<!--
+    	dburl - the JDBC connection url
+    	- - -
+    	Examples:
+	    	mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl>
+	    		see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html for format
+	    	h2: <dburl>jdbc:h2:path/to/h2/store</dburl>
+	    		see http://www.h2database.com/html/features.html#database_url for format
+    	 -->
 		<dburl>jdbc:h2:harvested-data/default/h2/store</dburl>
+    	<!--
+    	username - the DB username to use
+    	- - -
+    	Example:
+    		<username>myUser</username>
+    	 -->
 		<username>sa</username>
+    	<!--
+    	driver - the DB password to use
+    	- - -
+    	Example:
+    		<password>myPass</password>
+    	 -->
 		<password></password>
     </source>
 </config>
