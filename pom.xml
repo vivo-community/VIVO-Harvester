@@ -42,7 +42,7 @@
 		<url>http://vivoweb.org</url>
 	</organization>
 	<build>
-		<directory>bin</directory>
+		<directory>build</directory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -86,6 +86,16 @@
 									<mapper>
 										<type>perm</type>
 										<prefix>/usr/share/vivo/harvester/bin/dependency</prefix>
+									</mapper>
+								</data>
+								<data>
+									<src>${project.basedir}/bin</src>
+									<type>directory</type>
+									<!-- <includes/> -->
+									<excludes>**/*.svn*/**</excludes>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/vivo/harvester/bin</prefix>
 									</mapper>
 								</data>
 								<data>

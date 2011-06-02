@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<!--INPUT -->
+	<Param name="input-config">harvested-data.model.xml</Param>
+	
+	<!--SCORING DATA OUTPUT -->
+	<Param name="score-config">score-data.model.xml</Param>
+	
+	<!--OPTIONS -->
+	<Param name="rename">true</Param>
+	<Param name="threshold">1.0</Param>
+</Task>

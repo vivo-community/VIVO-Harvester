@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<!--INPUT -->
+	<Param name="minuend">previous-harvest.model.xml</Param>
+	
+	<!--VIVO -->
+	<Param name="subtrahend">harvested-data.model.xml</Param>
+	
+	<!--  OPTIONS -->
+	<Param name="dumptofile">data/vivo-subtractions.rdf.xml</Param>
+</Task>

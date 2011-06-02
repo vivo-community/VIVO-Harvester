@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<!--INPUT -->
+	<Param name="inputModel">harvested-data.model.xml</Param>
+	
+	<!--  VIVO -->
+	<Param name="vivoModel">vivo.model.xml</Param>
+	
+	<!--  OPTIONS -->
+	<Param name="oldNamespace">http://vivoweb.org/harvest/example/jdbc/people/</Param>
+	<Param name="newNamespace">http://vivo.sample.edu/inidividual/</Param>
+</Task>

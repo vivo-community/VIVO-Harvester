@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<!--INPUT -->
+	<Param name="input">raw-records.config.xml</Param>
+	
+	<!--OUTPUT -->
+	<Param name="output">translated-records.config.xml</Param>
+
+	<!--DATAMAP -->
+	<Param name="xslFile">jdbc-to-vivo.datamap.xsl</Param>
+</Task>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<!--INPUT -->
+	<Param name="inputJena-config">harvested-data.model.xml</Param>
+	
+	<!--VIVO INPUT -->
+	<Param name="vivoJena-config">vivo.model.xml</Param>
+	
+	<!--SCORING DATA OUTPUT -->
+	<Param name="score-config">score-data.model.xml</Param>
+	
+	<!--OPTIONS -->
+	<Param name="tempJenaDir">data/temp-score-model</Param>
+	<Param name="algorithms">uid=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
+	<Param name="weights">uid=1.0</Param>
+	<Param name="inputJena-predicates">uid=http://vivo.sample.edu/ontology/uId</Param>
+	<Param name="vivoJena-predicates">uid=http://vivo.sample.edu/ontology/uId</Param>
+	<Param name="namespace">http://vivoweb.org/harvest/example/jdbc/people/</Param>
+</Task>
