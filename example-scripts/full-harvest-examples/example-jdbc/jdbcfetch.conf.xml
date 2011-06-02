@@ -7,44 +7,69 @@ an rdf/xml format in an ontology derived from the schema
  -->
 <config>
     <!-- 
-    source - the relational database
+    source - the source for jdbcfetch to retrieve data from
     - - -
-    This section defines the relational database that
-    JDBCFetch will access and retrieve data from
+    This section defines the source that JDBCFetch will access
+    and retrieve data from
      -->
     <source>
-    	<!--
-    	driver-class - the JDBC driver class to use
-    	- - -
-    	Examples:
-	    	mysql: <driver-class>com.mysql.jdbc.Driver</driver-class>
-	    	h2: <driver-class>org.h2.Driver</driver-class>
-    	 -->
-		<driver-class>org.h2.Driver</driver-class>
-    	<!--
-    	dburl - the JDBC connection url
-    	- - -
-    	Examples:
-	    	mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl>
-	    		see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html for format
-	    	h2: <dburl>jdbc:h2:path/to/h2/store</dburl>
-	    		see http://www.h2database.com/html/features.html#database_url for format
-    	 -->
-		<dburl>jdbc:h2:harvested-data/default/h2/store</dburl>
-    	<!--
-    	username - the DB username to use
-    	- - -
-    	Example:
-    		<username>myUser</username>
-    	 -->
-		<username>sa</username>
-    	<!--
-    	driver - the DB password to use
-    	- - -
-    	Example:
-    		<password>myPass</password>
-    	 -->
-		<password></password>
+	    <!-- 
+	    database - a relational database
+	    - - -
+	    This section defines a relational database that
+	    JDBCFetch will use as a source
+	     -->
+    	<database>
+	    	<!--
+	    	driver-class - the JDBC driver class to use
+	    	- - -
+	    	Examples:
+		    	mysql: <driver-class>com.mysql.jdbc.Driver</driver-class>
+		    	h2: <driver-class>org.h2.Driver</driver-class>
+	    	 -->
+			<driver-class>org.h2.Driver</driver-class>
+	    	<!--
+	    	dburl - the JDBC connection url
+	    	- - -
+	    	Examples:
+		    	mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl>
+		    		see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html for format
+		    	h2: <dburl>jdbc:h2:path/to/h2/store</dburl>
+		    		see http://www.h2database.com/html/features.html#database_url for format
+	    	 -->
+			<dburl>jdbc:h2:harvested-data/default/h2/store</dburl>
+	    	<!--
+	    	username - the DB username to use
+	    	- - -
+	    	Example:
+	    		<username>myUser</username>
+	    	 -->
+			<username>sa</username>
+	    	<!--
+	    	driver - the DB password to use
+	    	- - -
+	    	Example:
+	    		<password>myPass</password>
+	    	 -->
+			<password></password>
+		</database>
+	    <!-- 
+	    csv - a csv file
+	    - - -
+	    This section defines a csv file that JDBCFetch will use
+	    as a source (treated as a table called csv)
+	     -->
+    	<!-- <csv> -->
+	    	<!--
+	    	file - the file to use
+	    	- - -
+	    	Example:
+	    		<file>relative/path/to/my/file.csv</file>
+	    		<file>/unix/absolute/path/to/my/file.csv</file>
+	    		<file>c:/windows/absolute/path/to/my/file.csv</file>
+	    	 -->
+			<!-- <file>path/to/file.csv</file> -->
+		<!-- </csv> -->
     </source>
    	<!--
    	table - defines a virtual view (defined by a query) for
