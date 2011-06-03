@@ -189,10 +189,7 @@ public class FileAide {
 	 * @throws IOException error resolving
 	 */
 	public static OutputStream getOutputStream(String path) throws IOException {
-		if(path == null) {
-			return null;
-		}
-		return getFileObject(path).getContent().getOutputStream();
+		return getOutputStream(path, false);
 	}
 	
 	/**

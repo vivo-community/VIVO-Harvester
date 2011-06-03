@@ -127,7 +127,11 @@ public class SmushTest extends TestCase {
 	@Override
 	public void tearDown() {
 		log.info("testing End");
-		this.inputModel.close();
+		try {
+			this.inputModel.close();
+		} catch(IOException e) {
+			//ignore
+		}
 		this.inputModel = null;
 //		this.outputModel.close();
 //		this.outputModel = null;

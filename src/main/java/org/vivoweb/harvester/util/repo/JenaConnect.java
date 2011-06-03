@@ -136,22 +136,41 @@ public abstract class JenaConnect {
 			return null;
 		}
 		if(!params.containsKey("type")) {
-			throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','tdb','mem'}");
+			throw new IllegalArgumentException("Must specify 'type' parameter {'rdb','sdb','tdb','file','mem'}");
 		}
+		String type = params.get("type");
 		JenaConnect jc;
-		if(params.get("type").equalsIgnoreCase("mem")) {
+		if(type.equalsIgnoreCase("mem")) {
 			jc = new MemJenaConnect(params.get("modelName"));
-		} else if(params.get("type").equalsIgnoreCase("rdb")) {
+		} else if(type.equalsIgnoreCase("rdb")) {
 			jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
-		} else if(params.get("type").equalsIgnoreCase("sdb")) {
+		} else if(type.equalsIgnoreCase("sdb")) {
 			jc = new SDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("dbLayout"), params.get("modelName"));
-		} else if(params.get("type").equalsIgnoreCase("tdb")) {
+		} else if(type.equalsIgnoreCase("tdb")) {
 			jc = new TDBJenaConnect(params.get("dbDir"), params.get("modelName"));
+		} else if(type.equalsIgnoreCase("file")) {
+			jc = new FileJenaConnect(params.get("file"), params.get("language"));
 		} else {
-			throw new IllegalArgumentException("unknown type: " + params.get("type"));
+			throw new IllegalArgumentException("unknown type: " + type);
 		}
 		if((!params.containsKey("checkEmpty") || (params.get("checkEmpty").toLowerCase() == "true")) && jc.isEmpty()) {
-			JenaConnect.log.warn("jena model empty database: " + ((params.get("type").equalsIgnoreCase("tdb"))?params.get("dbDir"):params.get("dbUrl")) + " modelName: " + jc.getModelName());
+			StringBuilder emptyWarn = new StringBuilder("jena model empty! ");
+			emptyWarn.append(type);
+			emptyWarn.append(": ");
+			if(!type.equalsIgnoreCase("mem")) {
+				if(type.equalsIgnoreCase("tdb")) {
+					emptyWarn.append("dbDir: ");
+					emptyWarn.append(params.get("dbDir"));
+					emptyWarn.append(" ");
+				} else {
+					emptyWarn.append("dbDir: ");
+					emptyWarn.append(params.get("dbDir"));
+					emptyWarn.append(" ");
+				}
+			}
+			emptyWarn.append("modelName: ");
+			emptyWarn.append(jc.getModelName());
+			JenaConnect.log.warn(emptyWarn.toString());
 		}
 		return jc;
 	}
@@ -260,6 +279,16 @@ public abstract class JenaConnect {
 	}
 	
 	/**
+	 * Export the RDF to a file
+	 * @param fileName the file to write to
+	 * @param append append to the file
+	 * @throws IOException error writing to file
+	 */
+	public void exportRdfToFile(String fileName, boolean append) throws IOException {
+		exportRdfToStream(FileAide.getOutputStream(fileName, append));
+	}
+	
+	/**
 	 * Remove RDF from another JenaConnect
 	 * @param inputJC the Model to read from
 	 */
@@ -345,9 +374,22 @@ public abstract class JenaConnect {
 	}
 	
 	/**
-	 * Closes the model and the jdbc connection
+	 * Closes the model
+	 * @throws IOException error syncronizing
 	 */
-	public abstract void close();
+	public void close() throws IOException {
+		sync();
+	}
+	
+	/**
+	 * Syncronizes the model to the datastore
+	 * @throws IOException error syncronizing
+	 */
+	@SuppressWarnings("unused")
+	public void sync() throws IOException {
+		log.trace("Syncronizing the model...");
+		log.trace("Syncronization of model complete");
+	}
 	
 	/**
 	 * Build a QueryExecution from a queryString

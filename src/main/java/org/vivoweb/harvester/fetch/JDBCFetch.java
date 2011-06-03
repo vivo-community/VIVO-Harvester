@@ -192,6 +192,9 @@ public class JDBCFetch {
 		this.queryStrings = queryStrings;
 		if(tableTypes.length > 0 && tableTypes[0] != null) {
 			this.tableTypes = tableTypes;
+			for(int x=0; x<this.tableTypes.length; x++) {
+				this.tableTypes[x] = this.tableTypes[x].toUpperCase();
+			}
 		} else {
 			this.tableTypes = new String[]{"TABLE"};
 		}

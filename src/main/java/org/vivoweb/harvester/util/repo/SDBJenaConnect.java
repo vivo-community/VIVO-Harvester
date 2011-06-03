@@ -137,7 +137,8 @@ public class SDBJenaConnect extends DBJenaConnect {
 	}
 	
 	@Override
-	public void close() {
+	public void close() throws IOException {
+		super.close();
 		getJenaModel().close();
 		this.store.close();
 		this.store.getConnection().close();
