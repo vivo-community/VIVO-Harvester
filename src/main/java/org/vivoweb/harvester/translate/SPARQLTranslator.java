@@ -116,6 +116,8 @@ public class SPARQLTranslator {
 			QuerySolution qs = rs.next();
 			log.info(qs.toString());
 		}
+		this.inputJC.sync();
+		this.outputJC.sync();
 		
 		log.info("Translation: End");
 	}

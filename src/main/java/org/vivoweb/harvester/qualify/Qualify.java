@@ -262,6 +262,7 @@ public class Qualify {
 				strReplace(this.dataPredicate, this.matchTerm, this.newVal);
 			}
 		}
+		this.model.sync();
 	}
 	
 	/**

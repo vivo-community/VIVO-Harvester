@@ -205,6 +205,8 @@ public class RenameBlankNodes {
 	 */
 	public void execute() {
 		renameBNodes(this.inJC, this.outJC, this.namespaceEtc, this.dedupJC, this.pattern, this.property);
+		this.inJC.sync();
+		this.outJC.sync();
 	}
 	
 	/**

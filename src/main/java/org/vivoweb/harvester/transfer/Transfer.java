@@ -145,6 +145,12 @@ public class Transfer {
 		if(this.dumpFile != null) {
 			this.output.exportRdfToFile(this.dumpFile);
 		}
+		if(this.input != null) {
+			this.input.sync();
+		}
+		if(this.output != null) {
+			this.output.sync();
+		}
 	}
 	
 	/**

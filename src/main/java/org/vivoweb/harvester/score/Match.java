@@ -425,7 +425,9 @@ public class Match {
 		
 		if(this.outputJena != null) {
 			this.outputJena.getJenaModel().add(outputMatches(resultSet).getJenaModel());
+			this.outputJena.sync();
 		}
+		this.inputJena.sync();
 	}
 	
 	/**

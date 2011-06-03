@@ -191,6 +191,7 @@ public class SplitProperty {
 	 */
 	public void execute() {
 		this.model.getJenaModel().add(splitPropertyValues(this.model, this.splitRegex, this.oldPropertyURI, this.newPropertyURI, this.trim).getJenaModel());
+		this.model.sync();
 	}
 	
 	/**

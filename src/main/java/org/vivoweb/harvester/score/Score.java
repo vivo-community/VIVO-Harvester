@@ -521,6 +521,7 @@ public class Score {
 			}
 			log.info("Result Processing Complete");
 		}
+		this.scoreJena.sync();
 	}
 	
 	/**

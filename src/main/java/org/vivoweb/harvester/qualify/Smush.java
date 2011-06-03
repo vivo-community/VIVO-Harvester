@@ -262,6 +262,8 @@ public class Smush {
 			this.inputJena.removeRdfFromJC(subtractions);
 			this.inputJena.loadRdfFromJC(additions);
 		}
+		this.inputJena.sync();
+		this.outputJena.sync();
 	}
 
 	/**

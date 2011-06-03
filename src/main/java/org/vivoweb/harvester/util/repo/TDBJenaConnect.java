@@ -9,7 +9,6 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
-import java.io.IOException;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +87,7 @@ public class TDBJenaConnect extends JenaConnect {
 	}
 	
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		super.close();
 		getJenaModel().close();
 	}

@@ -375,18 +375,15 @@ public abstract class JenaConnect {
 	
 	/**
 	 * Closes the model
-	 * @throws IOException error syncronizing
 	 */
-	public void close() throws IOException {
+	public void close() {
 		sync();
 	}
 	
 	/**
 	 * Syncronizes the model to the datastore
-	 * @throws IOException error syncronizing
 	 */
-	@SuppressWarnings("unused")
-	public void sync() throws IOException {
+	public void sync() {
 		log.trace("Syncronizing the model...");
 		log.trace("Syncronization of model complete");
 	}
@@ -803,6 +800,7 @@ public abstract class JenaConnect {
 			} else {
 				throw new IllegalArgumentException("No Operation Specified");
 			}
+			jc.sync();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 			System.err.println(getParser().getUsage());

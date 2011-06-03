@@ -55,9 +55,13 @@ public class FileJenaConnect extends MemJenaConnect {
 	}
 	
 	@Override
-	public void sync() throws IOException {
+	public void sync() {
 		log.trace("Syncronizing the model...");
-		exportRdfToFile(this.filepath);
-		log.trace("Syncronization of model complete");
+		try {
+			exportRdfToFile(this.filepath);
+			log.trace("Syncronization of model complete");
+		} catch(IOException e) {
+			log.error("Failed to syncronize the model!", e);
+		}
 	}
 }

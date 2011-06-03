@@ -219,6 +219,7 @@ public class ChangeNamespace {
 	 */
 	public void execute() throws IOException {
 		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.errorLogging);
+		this.model.sync();
 	}
 	
 	/**
