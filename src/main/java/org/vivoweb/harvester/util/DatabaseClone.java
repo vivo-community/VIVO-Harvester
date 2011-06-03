@@ -215,7 +215,7 @@ public class DatabaseClone {
 			QueryDataSet partialDataSet = new QueryDataSet(this.db1);
 			for(String table : this.tables) {
 				log.info("Adding table '"+table+"' to dataset");
-				partialDataSet.addTable(table, "SELECT * FROM "+table);
+				partialDataSet.addTable(table, "SELECT * FROM "+table+";");
 			}
 			data = partialDataSet;
 		} else if(this.inFile != null) {
@@ -239,7 +239,7 @@ public class DatabaseClone {
 			}
 			for(String table : data.getTableNames()) {
 				log.debug("Droping table '"+table+"' from output database");
-				this.db2.getConnection().createStatement().executeUpdate("DROP TABLE IF EXISTS "+table);
+				this.db2.getConnection().createStatement().executeUpdate("DROP TABLE IF EXISTS "+table+";");
 				// get record set
 				log.debug("Creating table '"+table+"' in output database");
 				ResultSet columnRS = this.db1.getConnection().getMetaData().getColumns(null, null, table, null);
@@ -264,7 +264,7 @@ public class DatabaseClone {
 						count++;
 					}
 				}
-				createTableSB.append("\n)");
+				createTableSB.append("\n);");
 				log.debug("Create Table SQL Query:\n"+createTableSB);
 				this.db2.getConnection().createStatement().executeUpdate(createTableSB.toString());
 			}
