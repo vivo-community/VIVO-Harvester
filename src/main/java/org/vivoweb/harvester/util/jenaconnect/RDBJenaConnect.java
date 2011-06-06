@@ -93,6 +93,7 @@ public class RDBJenaConnect extends DBJenaConnect {
 	
 	@Override
 	public void close() {
+		super.close();
 		getJenaModel().close();
 		try {
 			this.conn.close();

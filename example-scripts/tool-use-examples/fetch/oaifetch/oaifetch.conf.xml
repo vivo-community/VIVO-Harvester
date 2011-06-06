@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
+<!--  All rights reserved. This program and the accompanying materials -->
+<!--  are made available under the terms of the new BSD license -->
+<!--  which accompanies this distribution, and is available at -->
+<!--  http://www.opensource.org/licenses/bsd-license.html -->
+ 
+<!--  Contributors: -->
+<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
+
+<!-- 
+OAIFetch - A fetch tool to pull data from an Open Archives Initiative repository.
+-----
+OAIFetch fetches data from an Open Archives Initiative repository.  Such a repository is specified by a URL, and the fetch will pull all
+records from that repository with date stamps between a date range specified in this configuration file.
+ -->
+<Config>
+    <!-- 
+    a - Description and repercussions
+    -----
+    Possible Values:
+    b - Meaning of b
+    c - Meaning of c
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
+    information to more detailed debugging information.
+    -----
+    Allowable values:
+    OFF - No log information is displayed on the console.
+    FATAL - Only fatal errors are displayed on the console.
+    ERROR - All error messages are displayed. 
+    WARN - Error and warning messages are displayed.
+    INFO - Errors, warnings, and general user information is displayed.  This is the default.
+    DEBUG - Errors, warnings, general information, and information intended for debuggers is displayed to the console.
+    TRACE - All of the above as well as even finer-grain debugging information is displayed.
+    ALL - Everything that goes into the log is displayed on the console.
+    
+    Values meaningful for OAIFetch:
+    ERROR: All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    INFO: Start and end of fetch run
+     -->
+    <Param name="a">b</Param>
+
+    <!--
+    StartDate - The start date of the range of records to pull.  The fetch will pull all records after this start date and before the EndDate.
+     -->
+    <Param name="a">b</Param>
+
+    <!--
+    EndDate - The end date of the range of records to pull.  The fetch will pull all records prior to this end date and after the StartDate.
+     -->
+    <Param name="a">b</Param>
+
+    <!--
+    URL - The URL of the OAI repository from which to fetch.
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    RecordDestination - The record handler in which the results of the fetch will be placed, so that other Harvester tools or other programs may operate
+                        on the data.
+     -->
+    <Param name="a">b</Param>
+
+</Config>

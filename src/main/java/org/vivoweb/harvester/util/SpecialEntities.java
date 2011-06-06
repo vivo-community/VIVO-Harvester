@@ -504,6 +504,9 @@ public class SpecialEntities {
 	 * @return encoded string
 	 */
 	private static String encode(String s, String encodeType, char... exceptions) {
+		if(s == null){
+			return null;
+		}
 		Map<String, String> encodeMap;
 		List<Character> accept = new LinkedList<Character>(getAcceptedChars());
 		for(char c : exceptions) {

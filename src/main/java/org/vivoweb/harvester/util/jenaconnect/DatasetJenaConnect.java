@@ -37,7 +37,7 @@ public class DatasetJenaConnect extends JenaConnect {
 	
 	@Override
 	public void close() {
+		super.close();
 		getJenaModel().close();
 	}
-	
 }

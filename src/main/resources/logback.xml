@@ -114,6 +114,11 @@
     <appender-ref ref="Error"/>
     <appender-ref ref="AllAppender"/>
   </logger>
+  <logger name="org.dbunit" level="${dbunit-level:-ERROR}">
+  	<appender-ref ref="Console"/>
+  	<appender-ref ref="Error"/>
+  	<appender-ref ref="AllAppender"/>
+  </logger>
   <root level="${root-level:-OFF}"/>
   
 </configuration>

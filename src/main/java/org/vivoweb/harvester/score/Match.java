@@ -106,11 +106,12 @@ public class Match {
 	
 	/**
 	 * Check that the results are ready
+	 * @param operation the operation attempting to be performed
 	 * @throws IllegalStateException resultset is not initialized
 	 */
-	private void checkResultsReady() throws IllegalStateException {
+	private void checkResultsReady(String operation) throws IllegalStateException {
 		if(this.resultSet == null) {
-			throw new IllegalStateException("");
+			throw new IllegalStateException("Cannot perform "+operation+" when no match result set built!");
 		}
 	}
 	
@@ -173,20 +174,39 @@ public class Match {
 	 * @param model model to apply renames to
 	 */
 	public void rename(JenaConnect model) {
-		checkResultsReady();
+		checkResultsReady("rename");
 		log.trace("Beginning rename loop");
 		int total = this.resultSet.size();
 		int count = 0;
 		for(Map<String,String> entry : this.resultSet) {
-			String oldUri = entry.get("sInputURI");
-			String newUri = entry.get("sVivoURI");
+			String oldUri = entry.get("sInputURI").trim();
+			String newUri = entry.get("sVivoURI").trim();
 			count++;
-			//get resource in input model and perform rename
-			Resource res = model.getJenaModel().getResource(oldUri);
 			float percent = Math.round(10000f * count / total) / 100f;
 			log.trace("(" + count + "/" + total + ": " + percent + "%): Renaming match <" + oldUri + "> to <" + newUri + ">");
-			ResourceUtils.renameResource(res, newUri);
+			//get resource in input model and perform rename
+			if(!oldUri.equals(newUri)) {
+				Resource res = model.getJenaModel().getResource(oldUri);
+				ResourceUtils.renameResource(res, newUri);
+			} else {
+				log.warn("Discarding Illegal Rename To Same URI!");
+				log.debug("Scoring model contains comparison data of the uri <" + oldUri + "> to <" + newUri + "> which are the same! Should not have happened!");
+				String sQuery = "" +
+					"PREFIX scoreValue: <http://vivoweb.org/harvester/scoreValue/>\n" +
+					"DESCRIBE ?s \n" +
+					"WHERE { \n" +
+					"  ?s scoreValue:InputRes <"+oldUri+"> . \n" +
+					"  ?s scoreValue:VivoRes <"+newUri+"> . \n" +
+					"}";
+				log.trace("Dump Score Data Query:\n"+sQuery);
+				try {
+					log.trace("Score Data:\n"+this.scoreJena.executeDescribeQuery(sQuery).exportRdfToString());
+				} catch(IOException e) {
+					log.error("Error Dumping Score Data", e);
+				}
+			}
 		}
+		model.sync();
 	}
 	
 	/**
@@ -196,7 +216,7 @@ public class Match {
 	 * @param inputToVivo input to vivo property
 	 */
 	public void link(JenaConnect model, String vivoToInput, String inputToVivo) {
-		checkResultsReady();
+		checkResultsReady("link");
 		Property vivoToInputProperty = ResourceFactory.createProperty(vivoToInput);
 		Property inputToVivoProperty = ResourceFactory.createProperty(inputToVivo);
 		
@@ -216,6 +236,7 @@ public class Match {
 			log.trace("Adding vivo to input match link [ <" + vivoUri + "> <" + vivoToInput + "> <" + inputUri + "> ]");
 			model.getJenaModel().add(vivoRes, vivoToInputProperty, inputRes);
 		}
+		model.sync();
 	}
 	
 	/**
@@ -224,7 +245,7 @@ public class Match {
 	 * @throws IOException error connecting
 	 */
 	public void clearTypesAndLiterals(JenaConnect model) throws IOException {
-		checkResultsReady();
+		checkResultsReady("clear types and literals");
 		if(!this.resultSet.isEmpty()) {
 			log.trace("Beginning clear types and literals");
 			Set<String> uriFilters = new HashSet<String>();
@@ -246,6 +267,7 @@ public class Match {
 			log.trace("Cleared " + count + " types and literals");
 			log.trace("Ending clear types and literals");
 		}
+		model.sync();
 	}
 	
 	/**
@@ -276,10 +298,21 @@ public class Match {
 	 * @throws IOException no idea why it throws this
 	 */
 	public JenaConnect outputMatches(JenaConnect model) throws IOException {
-		checkResultsReady();
+		JenaConnect returnModel = new MemJenaConnect();
+		outputMatches(model, returnModel);
+		return returnModel;
+	}
+	
+	/**
+	 * Output the nodes (and all related nodes) in the result set
+	 * @param model Model from which to get the original statements from
+	 * @param outputModel the model to load the completed set of matches
+	 * @throws IOException no idea why it throws this
+	 */
+	public void outputMatches(JenaConnect model, JenaConnect outputModel) throws IOException {
+		checkResultsReady("output matches");
 		log.trace("Beginning separate output of matches");
 		Stack<String> linkRes = new Stack<String>();
-		JenaConnect returnModel = new MemJenaConnect();
 		int i = 0;
 		for(Map<String, String> entry : this.resultSet) {
 			String oldUri = entry.get("sInputURI");
@@ -294,14 +327,14 @@ public class Match {
 				if(!linkRes.contains(subj)) {
 //					log.trace("Submitting to recursive build " + subj.getURI());
 					linkRes.push(subj.getURI());
-					returnModel.getJenaModel().add(recursiveBuild(subj, linkRes));
+					outputModel.getJenaModel().add(recursiveBuild(subj, linkRes));
 				}
 			}
 			
-			returnModel.getJenaModel().add(model.getJenaModel().listStatements(null, null, model.getJenaModel().getResource(newUri)));
+			outputModel.getJenaModel().add(model.getJenaModel().listStatements(null, null, model.getJenaModel().getResource(newUri)));
 		}
 		log.debug("Outputted " + i + " matches");
-		return returnModel;
+		outputModel.sync();
 	}
 	
 	/**

@@ -88,6 +88,7 @@ public class TDBJenaConnect extends JenaConnect {
 	
 	@Override
 	public void close() {
+		super.close();
 		getJenaModel().close();
 	}
 	

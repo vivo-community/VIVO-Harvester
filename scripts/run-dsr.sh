@@ -58,18 +58,11 @@ SCOREDATA="-s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -Schec
 SCOREMODELS="$SCOREINPUT -v $VIVOCONFIG -VcheckEmpty=$CHECKEMPTY $SCOREDATA -t $TEMPCOPYDIR -b $SCOREBATCHSIZE"
 MATCHOUTPUT="-o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL -OcheckEmpty=$CHECKEMPTY"
 
-#Changenamespace settings
-CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n $NAMESPACE"
-
-
 #matching properties
 RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
 BASEURI="http://vivoweb.org/harvest/ufl/dsr/"
 
-#connection info for reindex of lucene
-ADMINNAME="USERNAME"
-ADMINPASS="vitro123"
 
 #clear old fetches
 rm -rf $RAWRHDIR
@@ -112,12 +105,8 @@ backup-path $MODELDIR $BACKMODEL
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
-
 CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
-UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid"
-
-#smushes in-place(-r) on the contract number THEN on the UFID
-$Smush $SCOREINPUT -P $CONNUM -P $UFID -n ${BASEURI} -r
+UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\""
 
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.dsr.rdf.xml
 
@@ -133,7 +122,6 @@ $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumb
 
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 
-$Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 # Scoring sponsors by labels
 $Score $SCOREMODELS -A label=$EQTEST -W label=1.0 -F label=$RDFSLABEL -P label=$RDFSLABEL -n ${BASEURI}sponsor/
 
@@ -146,9 +134,14 @@ $Score $SCOREMODELS -A ufid=$EQTEST -W ufid=1.0 -F ufid=$UFID -P ufid=$UFID -n $
 
 UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
 
-$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
 # Scoring of orgs on DeptID
 $Score $SCOREMODELS -A deptID=$EQTEST -W deptID=1.0 -F deptID=$UFDEPTID -P deptID=$UFDEPTID -n ${BASEURI}org/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
 
 ROLEIN="http://vivoweb.org/ontology/core#roleIn"
 PIROLEOF="http://vivoweb.org/ontology/core#principalInvestigatorRoleOf"
@@ -166,6 +159,9 @@ $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
 
 DATETIME="http://www.w3.org/2001/XMLSchema#dateTime"
 
@@ -187,10 +183,22 @@ $Score $SCOREMODELS -Asdate=$EQTEST -Wsdate=0.5 -Fsdate=$STARTTIME -Psdate=$STAR
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
 
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
 
 $Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-2.dsr.rdf.xml
 
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-2.dsr.rdf.xml
+
+#smushes in-place(-r) on the contract number THEN on the UFID
+$Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grant/ -r
+$Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
+$Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
+#$Smush $SCOREINPUT -P $PIROLEOF -n ${BASEURI}piRole/ -r
+#$Smush $SCOREINPUT -P $COPIROLEOF -n ${BASEURI}coPiRole/ -r
+
+#Changenamespace settings
+CNFLAGS="$SCOREINPUT -v $VIVOCONFIG -n $NAMESPACE"
 
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
@@ -216,10 +224,9 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}piRole/
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}coPiRole/
 
-# Execute ChangeNamespace to get co-PI roles into current namespace
+# Execute ChangeNamespace to get timeIntervals into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}timeInterval/
-
 
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.dsr.rdf.xml
 # backup H2 matched Model
@@ -241,7 +248,7 @@ SUBFILE="$BASEDIR/subtractions.rdf.xml"
 # Find Subtractions
 $Diff -m $H2MODEL -MdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -McheckEmpty=$CHECKEMPTY -MmodelName=$PREVHARVESTMODEL -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -SmodelName=$PREVHARVESTMODEL  -d $ADDFILE
+$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -SmodelName=$PREVHARVESTMODEL -d $ADDFILE
 
 # Backup adds and subs
 backup-file $ADDFILE adds.rdf.xml
@@ -268,10 +275,13 @@ backup-mysqldb $BACKPOSTDB
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
 echo $HARVESTER_TASK ' completed successfully'
 
+#connection info for reindex of lucene
+#ADMINNAME="defaultAdmin"
+#ADMINPASS="vitro123"
+
 #if [$ADMINNAME = "USERNAME"]; then
-	/etc/init.d/tomcat6 stop
-	/etc/init.d/apache2 restart
-	/etc/init.d/tomcat6 start
+#	/etc/init.d/tomcat6 restart
+
 #else
 #	rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
 #	rm -f cookie.txt

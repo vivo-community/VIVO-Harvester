@@ -82,6 +82,7 @@ public class RenameResources {
 		for(String sec : this.oldUris) {
 			ResourceUtils.renameResource(this.jena.getJenaModel().getResource(sec), this.newUri);
 		}
+		this.jena.sync();
 	}
 	
 	/**

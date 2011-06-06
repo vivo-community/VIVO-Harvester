@@ -120,5 +120,6 @@ public class RenameBlankNodes {
 		} finally {
 			inModel.leaveCriticalSection();
 		}
+		outJC.sync();
 	}
 }

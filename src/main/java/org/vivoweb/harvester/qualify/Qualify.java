@@ -66,6 +66,7 @@ public class Qualify {
 			log.debug("newValue: " + newValue);
 			stmt.changeObject(newValue);
 		}
+		this.model.sync();
 	}
 	
 	/**
@@ -103,6 +104,7 @@ public class Qualify {
 		this.model.executeUpdateQuery(deleteQ.toString());
 		log.debug("Inserting updated data:\n" + insertQ);
 		this.model.executeUpdateQuery(insertQ.toString());
+		this.model.sync();
 	}
 	
 	/**
@@ -133,6 +135,7 @@ public class Qualify {
 		+ "FILTER (regex(str(?s), \"^" + ns + "\" ) || regex(str(?o), \"^" + ns + "\" ))" + "}";
 		log.debug(query);
 		this.model.executeUpdateQuery(query);
+		this.model.sync();
 	}
 	
 	/**
@@ -146,5 +149,6 @@ public class Qualify {
 		+ "FILTER regex(str(?p), \"^" + ns + "\" ) " + "}";
 		log.debug(predicateQuery);
 		this.model.executeUpdateQuery(predicateQuery);
+		this.model.sync();
 	}
 }

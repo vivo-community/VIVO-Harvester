@@ -86,6 +86,10 @@ public class JDBCFetch {
 	 * The user defined SQL Query string
 	 */
 	private Map<String, String> queryStrings;
+	/**
+	 * accepted table types
+	 */
+	private String[] tableTypes;
 	
 	/**
 	 * Constructor
@@ -126,9 +130,10 @@ public class JDBCFetch {
 	 * @param whereClauses List of conditions
 	 * @param relations Mapping of tablename to mapping of fieldname to tablename
 	 * @param queryStrings Mapping of tablename to query
+	 * @param tableTypes accepted table types
 	 * @throws IOException error accessing database
 	 */
-	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws IOException {
+	public JDBCFetch(Connection dbConn, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings, String... tableTypes) throws IOException {
 		try {
 			this.cursor = dbConn.createStatement();
 		} catch(SQLException e) {
@@ -145,6 +150,14 @@ public class JDBCFetch {
 		this.queryPre = (queryPre!=null)?queryPre:"";
 		this.querySuf = (querySuf!=null)?querySuf:"";
 		this.queryStrings = queryStrings;
+		if(tableTypes.length > 0 && tableTypes[0] != null) {
+			this.tableTypes = tableTypes;
+			for(int x=0; x<this.tableTypes.length; x++) {
+				this.tableTypes[x] = this.tableTypes[x].toUpperCase();
+			}
+		} else {
+			this.tableTypes = new String[]{"TABLE"};
+		}
 		
 		if(this.rh == null) {
 			throw new IllegalArgumentException("Must provide output recordhandler!");
@@ -223,10 +236,11 @@ public class JDBCFetch {
 	 * @param whereClauses List of conditions
 	 * @param relations Mapping of tablename to mapping of fieldname to tablename
 	 * @param queryStrings Mapping of tablename to query
+	 * @param tableTypes accepted table types
 	 * @throws IOException error accessing database
 	 */
-	public JDBCFetch(String driverClass, String connLine, String username, String password, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings) throws IOException {
-		this(createConnection(driverClass, connLine, username, password), rh, uriNS, queryPre, querySuf, tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings);
+	public JDBCFetch(String driverClass, String connLine, String username, String password, RecordHandler rh, String uriNS, String queryPre, String querySuf, Set<String> tableNames, Map<String, String> fromClauses, Map<String, List<String>> dataFields, Map<String, List<String>> idFields, Map<String, List<String>> whereClauses, Map<String, Map<String, String>> relations, Map<String, String> queryStrings, String... tableTypes) throws IOException {
+		this(createConnection(driverClass, connLine, username, password), rh, uriNS, queryPre, querySuf, tableNames, fromClauses, dataFields, idFields, whereClauses, relations, queryStrings, tableTypes);
 	}
 	
 	/**
@@ -373,8 +387,7 @@ public class JDBCFetch {
 	 */
 	private Set<String> getTableNames() throws SQLException {
 		if(this.tableNames.isEmpty()) {
-			String[] tableTypes = {"TABLE"};
-			ResultSet tableData = this.cursor.getConnection().getMetaData().getTables(this.cursor.getConnection().getCatalog(), null, "%", tableTypes);
+			ResultSet tableData = this.cursor.getConnection().getMetaData().getTables(this.cursor.getConnection().getCatalog(), null, "%", this.tableTypes);
 			while(tableData.next()) {
 				this.tableNames.add(tableData.getString("TABLE_NAME"));
 			}

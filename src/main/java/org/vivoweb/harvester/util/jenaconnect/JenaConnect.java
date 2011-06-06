@@ -176,6 +176,16 @@ public abstract class JenaConnect {
 	}
 	
 	/**
+	 * Export the RDF to a file
+	 * @param fileName the file to write to
+	 * @param append append to the file
+	 * @throws IOException error writing to file
+	 */
+	public void exportRdfToFile(String fileName, boolean append) throws IOException {
+		exportRdfToStream(FileAide.getOutputStream(fileName, append));
+	}
+	
+	/**
 	 * Remove RDF from another JenaConnect
 	 * @param inputJC the Model to read from
 	 */
@@ -261,9 +271,19 @@ public abstract class JenaConnect {
 	}
 	
 	/**
-	 * Closes the model and the jdbc connection
+	 * Closes the model
 	 */
-	public abstract void close();
+	public void close() {
+		sync();
+	}
+	
+	/**
+	 * Syncronizes the model to the datastore
+	 */
+	public void sync() {
+		log.trace("Syncronizing the model...");
+		log.trace("Syncronization of model complete");
+	}
 	
 	/**
 	 * Build a QueryExecution from a queryString

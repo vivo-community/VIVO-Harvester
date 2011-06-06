@@ -133,14 +133,17 @@ public class ArgList {
 	 * @return the value
 	 */
 	public String get(String arg) {
-		ArgDef argDef = this.argParser.getOptMap().get(arg);
-		if(!argDef.hasParameter()) {
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(argdef == null) {
+			throw new IllegalArgumentException("No such parameter: "+arg);
+		}
+		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
-		if(argDef.hasParameters()) {
+		if(argdef.hasParameters()) {
 			throw new IllegalArgumentException(arg + " potentially has more than one value, use getAll()");
 		}
-		if(argDef.isParameterValueMap()) {
+		if(argdef.isParameterValueMap()) {
 			throw new IllegalArgumentException(arg + " is a value map parameter, use getValueMap()");
 		}
 		String retVal = null;
@@ -149,10 +152,10 @@ public class ArgList {
 		} else {
 			String confVal;
 			try {
-				if((this.oConfSet != null) && (confVal = XPathAPI.eval(this.oConfSet, argDef.getXPath()).str()) != null) {
+				if((this.oConfSet != null) && (confVal = XPathAPI.eval(this.oConfSet, argdef.getXPath()).str()) != null) {
 					retVal = confVal;
 				} else {
-					retVal = argDef.getDefaultValue();
+					retVal = argdef.getDefaultValue();
 				}
 			} catch(TransformerException e) {
 				throw new Error(e);
@@ -171,6 +174,9 @@ public class ArgList {
 	 */
 	public Map<String, String> getValueMap(String arg) {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(argdef == null) {
+			throw new IllegalArgumentException("No such parameter: "+arg);
+		}
 		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}
@@ -212,6 +218,9 @@ public class ArgList {
 	 */
 	public List<String> getAll(String arg, boolean includeDefaultValue) {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(argdef == null) {
+			throw new IllegalArgumentException("No such parameter: "+arg);
+		}
 		if(!argdef.hasParameter()) {
 			throw new IllegalArgumentException(arg + " has no parameters");
 		}

@@ -87,6 +87,7 @@ public class ChangeNamespace {
 			return;
 		}
 		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim(), errorLog);
+		model.sync();
 	}
 	
 	/**
