@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.vivoweb.harvester.util.DatabaseClone;
 import org.vivoweb.harvester.util.FileAide;
+import org.vivoweb.harvester.util.InitLog;
 import junit.framework.TestCase;
 
 /**
@@ -42,6 +43,7 @@ public class DatabaseCloneTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		InitLog.initLogger(null, null);
 		Class.forName(inputDriverClass);
 		this.inputConn = DriverManager.getConnection(inputConnLine, inputUsername, inputPassword);
 		Class.forName(outputDriverClass);

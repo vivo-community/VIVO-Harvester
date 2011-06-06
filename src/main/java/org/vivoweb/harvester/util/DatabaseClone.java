@@ -216,14 +216,16 @@ public class DatabaseClone {
 			}
 			QueryDataSet partialDataSet = new QueryDataSet(this.db1);
 			for(String table : this.tables) {
-				log.info("Adding table '"+table+"' to dataset");
-				partialDataSet.addTable(table, "SELECT * FROM "+table);
+				log.debug("Adding table '"+table+"' to dataset");
+				String sql = "SELECT * FROM "+table;
+				log.trace("Query for table '"+table+"':\n"+sql);
+				partialDataSet.addTable(table, sql);
 			}
 			data = partialDataSet;
 		} else if(this.inFile != null) {
 			if(this.dbUnitFeatures != null) {
 				for(String feature : this.dbUnitFeatures.keySet()) {
-					log.debug("feature '"+feature+"' not supported for input files");
+					log.warn("feature '"+feature+"' not supported for input files");
 				}
 			}
 			data = new FlatDtdDataSet(this.inFile);
@@ -248,7 +250,9 @@ public class DatabaseClone {
 				for(String db1table : data.getTableNames()) {
 					if(db1table.trim().equalsIgnoreCase(db2tableName.trim())) {
 						log.debug("Droping table '"+db2tableName+"' from output database");
-						db2conn.createStatement().executeUpdate("DROP TABLE "+db2tableName);
+						String sql = "DROP TABLE "+db2tableName;
+						log.trace("Drop Table SQL Query:\n"+sql);
+						db2conn.createStatement().executeUpdate(sql);
 					}
 				}
 			}
@@ -278,11 +282,12 @@ public class DatabaseClone {
 					}
 				}
 				createTableSB.append("\n)");
-				log.debug("Create Table SQL Query:\n"+createTableSB);
+				log.trace("Create Table SQL Query:\n"+createTableSB);
 				this.db2.getConnection().createStatement().executeUpdate(createTableSB.toString());
 			}
-			log.debug("Dumping Dataset To Output");
+			log.info("Dumping Dataset To Output");
 			DatabaseOperation.INSERT.execute(this.db2, data);
+			log.info("Dataset Output Complete");
 		}
 		if(this.outFile != null) {
 			FlatDtdDataSet.write(data, this.outFile);
