@@ -72,6 +72,13 @@ harvester-jdbcfetch -X jdbcfetch.config.xml
 harvester-xsltranslator -X xsltranslator.config.xml
 
 # Execute Transfer to import from record handler into local temp model
+# From this stage on the script places the data into a Jena model. A model is a
+#	data storage structure similar to a database, but is in RDF.
+# The harvester tool Transfer is used to move/add/remove/dump data in models.
+# For this call on the transfer tool:
+# -h refers to the source translated records file, which was just produced by the translator step
+# -o refers to the destination model for harvested data
+# -d means that this call will also produce a text dump file in the specificed location 
 harvester-transfer -h translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 # Execute Score for People
