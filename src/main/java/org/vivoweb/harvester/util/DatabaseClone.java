@@ -194,10 +194,12 @@ public class DatabaseClone {
 		if(this.db1 != null) {
 			DatabaseConfig config = this.db1.getConfig();
 			config.setProperty("http://www.dbunit.org/properties/tableType", this.tableTypes);
-			for(String feature : this.dbUnitFeatures.keySet()) {
-				Boolean b = Boolean.valueOf(this.dbUnitFeatures.get(feature));
-				log.debug("Setting '"+feature+"' to "+b);
-				config.setProperty(feature, b);
+			if(this.dbUnitFeatures != null) {
+				for(String feature : this.dbUnitFeatures.keySet()) {
+					Boolean b = Boolean.valueOf(this.dbUnitFeatures.get(feature));
+					log.debug("Setting '"+feature+"' to "+b);
+					config.setProperty(feature, b);
+				}
 			}
 			if(this.tables != null && this.tables.length > 0) {
 				// partial database export
@@ -210,7 +212,7 @@ public class DatabaseClone {
 				while(tableRS.next()) {
 					tableSet.add(tableRS.getString("TABLE_NAME"));
 				}
-				this.tables = tableSet.toArray(this.tables);
+				this.tables = tableSet.toArray(new String[]{});
 			}
 			QueryDataSet partialDataSet = new QueryDataSet(this.db1);
 			for(String table : this.tables) {
@@ -219,8 +221,10 @@ public class DatabaseClone {
 			}
 			data = partialDataSet;
 		} else if(this.inFile != null) {
-			for(String feature : this.dbUnitFeatures.keySet()) {
-				log.debug("feature '"+feature+"' not supported for input files");
+			if(this.dbUnitFeatures != null) {
+				for(String feature : this.dbUnitFeatures.keySet()) {
+					log.debug("feature '"+feature+"' not supported for input files");
+				}
 			}
 			data = new FlatDtdDataSet(this.inFile);
 		} else {
@@ -229,7 +233,8 @@ public class DatabaseClone {
 		if(this.db2 != null) {
 			log.info("Preparing Output Database");
 			Map<Integer,String> dbTypes = new HashMap<Integer, String>();
-			ResultSet dbTypeInfo = this.db2.getConnection().getMetaData().getTypeInfo();
+			Connection db2conn = this.db2.getConnection();
+			ResultSet dbTypeInfo = db2conn.getMetaData().getTypeInfo();
 			while(dbTypeInfo.next()) {
 				Integer typeCode = Integer.valueOf(dbTypeInfo.getInt("DATA_TYPE"));
 				String typeName = dbTypeInfo.getString("TYPE_NAME");
@@ -237,9 +242,17 @@ public class DatabaseClone {
 					dbTypes.put(typeCode, typeName);
 				}
 			}
+			ResultSet tableData = db2conn.getMetaData().getTables(db2conn.getCatalog(), null, "%", this.tableTypes);
+			while(tableData.next()) {
+				String db2tableName = tableData.getString("TABLE_NAME");
+				for(String db1table : data.getTableNames()) {
+					if(db1table.trim().equalsIgnoreCase(db2tableName.trim())) {
+						log.debug("Droping table '"+db2tableName+"' from output database");
+						db2conn.createStatement().executeUpdate("DROP TABLE "+db2tableName+";");
+					}
+				}
+			}
 			for(String table : data.getTableNames()) {
-				log.debug("Droping table '"+table+"' from output database");
-				this.db2.getConnection().createStatement().executeUpdate("DROP TABLE IF EXISTS "+table+";");
 				// get record set
 				log.debug("Creating table '"+table+"' in output database");
 				ResultSet columnRS = this.db1.getConnection().getMetaData().getColumns(null, null, table, null);
