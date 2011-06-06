@@ -82,18 +82,29 @@ harvester-xsltranslator -X xsltranslator.config.xml
 harvester-transfer -h translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 # Execute Score for People
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+# 	is created with the values / scores of the data comparsions. 
 harvester-score -X score-people.config.xml
 
 # Find matches using scores and rename nodes to matching uri
+# Using the data model created by the score phase, the match process changes the harvested uris for
+# 	comparsion values above the chosen threshold within the xml configuration file.
 harvester-match -X match-people.config.xml
 
 # Execute ChangeNamespace to get unmatched People into current namespace
+# This is where the new people from the harvest are given uris within the namespace of Vivo
+# 	If there is an issue with uris being in another namespace, this is the phase
+#	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-people.config.xml
 
 # Find Subtractions
+# When making the previous harvest model agree with the current harvest, the entries that exist in
+#	the previous harvest but not in the current harvest need to be identified for removal.
 harvester-diff -X diff-subtractions.config.xml
 
 # Find Additions
+# When making the previous harvest model agree with the current harvest, the entries that exist in
+#	the current harvest but not in the previous harvest need to be identified for addition.
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
