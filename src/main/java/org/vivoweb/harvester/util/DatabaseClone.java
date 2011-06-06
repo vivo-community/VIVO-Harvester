@@ -217,7 +217,7 @@ public class DatabaseClone {
 			QueryDataSet partialDataSet = new QueryDataSet(this.db1);
 			for(String table : this.tables) {
 				log.info("Adding table '"+table+"' to dataset");
-				partialDataSet.addTable(table, "SELECT * FROM "+table+";");
+				partialDataSet.addTable(table, "SELECT * FROM "+table);
 			}
 			data = partialDataSet;
 		} else if(this.inFile != null) {
@@ -248,7 +248,7 @@ public class DatabaseClone {
 				for(String db1table : data.getTableNames()) {
 					if(db1table.trim().equalsIgnoreCase(db2tableName.trim())) {
 						log.debug("Droping table '"+db2tableName+"' from output database");
-						db2conn.createStatement().executeUpdate("DROP TABLE "+db2tableName+";");
+						db2conn.createStatement().executeUpdate("DROP TABLE "+db2tableName);
 					}
 				}
 			}
@@ -277,7 +277,7 @@ public class DatabaseClone {
 						count++;
 					}
 				}
-				createTableSB.append("\n);");
+				createTableSB.append("\n)");
 				log.debug("Create Table SQL Query:\n"+createTableSB);
 				this.db2.getConnection().createStatement().executeUpdate(createTableSB.toString());
 			}
