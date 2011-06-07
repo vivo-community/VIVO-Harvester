@@ -9,17 +9,85 @@
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
 <!-- 
-JDBCFetch - Summary of Tool
+JDBCFetch - Fetches rdf data from a relational database
 -----
-Detailed description of tool
+Fetches data from a relational database placing the data into
+an rdf/xml format in an ontology derived from the schema
  -->
 <Config>
     <!-- 
-    a - Description and repercussions
+    source - the relational database
     -----
-    Possible Values:
-    b - Meaning of b
-    c - Meaning of c
+    This section defines the relational database that
+    JDBCFetch will access and retrieve data from
      -->
-    <Param name="a">b</Param>
+    <source>
+    	<!--
+    	driver - the JDBC driver class to use
+    	-----
+    	mysql -> org.blah.mysql.Driver
+    	h2 -> org.h2.Driver
+    	blah -> boab.ajb.aga.Driver 
+    	 -->
+		<driver>org.h2.Driver</driver>
+		<connection>jdbc:h2:harvested-data/default/h2/store</connection>
+		<username>sa</username>
+		<password></password>
+    </source>
+    <table name="people">
+		<id>UID</id>
+    	<query>
+SELECT 
+	emp.person_id AS UID, 
+	emp.first_name AS FNAME, 
+	emp.last_name AS LNAME, 
+	emp.middle_name AS MNAME, 
+	emp.prefix_name AS PRENAME, 
+	emp.suffix_name AS SUFNAME, 
+	emp.full_name AS FULLNAME, 
+	emp.official_name AS BUSNAME, 
+	emp.pref_title AS TITLE, 
+	emp.email_address AS EMAIL, 
+	emp.work_phone AS PHONE, 
+	emp.work_fax AS FAX, 
+	login.login_name AS NETID 
+FROM person AS emp 
+LEFT JOIN user AS login ON 
+	emp.person_id = login.person_id AND login.expired = 0 
+WHERE 
+	emp.publish_ok = 1<!-- - -> AND 
+	emp.person_id LIKE '%6%'<!- - -->
+		</query>
+    </table>
+    <table name="positions">
+    	<id>UID,TYPE,DEPTID,STARTDATE</id>
+    	<query>
+SELECT 
+	emp.person_id AS UID, 
+	pos.type_id AS TYPE, 
+	pos.dept_id AS DEPTID, 
+	pos.start_date AS STARTDATE, 
+	code.value AS WORKTITLE 
+FROM job AS pos 
+INNER JOIN person AS emp ON 
+	pos.person_id = emp.person_id 
+INNER JOIN type AS code ON 
+	pos.type_id = code.type_id 
+WHERE 
+	pos.type_id IN (121,122,254,392,393) AND 
+	emp.publish_ok = 1<!-- - -> AND 
+	emp.person_id LIKE '%6%'<!- - -->
+    	</query>
+    </table>
+    <table name="organizations">
+    	<id>DEPTID</id>
+    	<query>
+SELECT 
+	dept.dept_id AS DEPTID, 
+	dept.dept_name AS NAME, 
+	dept.type_id AS TYPE, 
+	dept.super_dept_id AS SUPERDEPTID 
+FROM department AS dept
+    	</query>
+    </table>
 </Config>

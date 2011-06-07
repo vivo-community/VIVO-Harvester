@@ -399,7 +399,7 @@ public class ScoreTest extends TestCase {
 		String namespace = "http://vivoweb.org/harvester/org/";
 		// run org score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 0).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 0, false, false).execute();
 		log.info("Score: End");
 		// run org match
 		log.info("Match: Start");
@@ -422,7 +422,7 @@ public class ScoreTest extends TestCase {
 		namespace = "http://vivoweb.org/harvester/people/";
 		// run people score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 20).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 20, false, false).execute();
 		log.info("Score: End");
 		// run people match
 		log.info("Match: Start");
@@ -453,7 +453,7 @@ public class ScoreTest extends TestCase {
 		namespace = "http://vivoweb.org/harvester/position/";
 		// run position score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 50).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 50, false, false).execute();
 		log.info("Score: End");
 		// run position match
 		log.info("Match: Start");
@@ -497,7 +497,7 @@ public class ScoreTest extends TestCase {
 		
 		// run score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, null, 50).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, null, 50, false, false).execute();
 		log.info("Score: End");
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		log.info("Match: Start");
@@ -569,7 +569,7 @@ public class ScoreTest extends TestCase {
 		
 		// run score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, null, 250).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, null, 250, false, false).execute();
 		log.info("Score: End");
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		
@@ -591,7 +591,7 @@ public class ScoreTest extends TestCase {
 		
 		// run filter score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, Float.valueOf(7/16f), 250).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, "http://vivoweb.org/pubmed/article/", weights, Float.valueOf(7/16f), 250, false, false).execute();
 		log.info("Score: End");
 		//log.info("Score Dump Post-Score\n" + this.vivo.exportRdfToString());
 		log.info("Match: Start");

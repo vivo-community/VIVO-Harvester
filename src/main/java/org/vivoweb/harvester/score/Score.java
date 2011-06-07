@@ -104,6 +104,14 @@ public class Score {
 	 * number of records to use in batch
 	 */
 	private int batchSize;
+	/**
+	 * reload the temp copy of input, only needed if input has changed since last score
+	 */
+	private boolean reloadInput;
+	/**
+	 * reload the temp copy of Vivo, only needed if Vivo has changed since last score
+	 */
+	private boolean reloadVivo;
 	
 	/**
 	 * Constructor
@@ -118,8 +126,10 @@ public class Score {
 	 * @param weights the weightings (0.0 , 1.0) for this score
 	 * @param matchThreshold score things with a total current score greater than or equal to this threshold
 	 * @param batchSize number of records to use in batch
+	 * @param reloadInput reload the temp copy of input, only needed if input has changed since last score
+	 * @param reloadVivo reload the temp copy of Vivo, only needed if Vivo has changed since last score
 	 */
-	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, Float matchThreshold, int batchSize) {
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, Float matchThreshold, int batchSize, boolean reloadInput, boolean reloadVivo) {
 		if(inputJena == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
@@ -196,6 +206,8 @@ public class Score {
 		this.matchThreshold = matchThreshold;
 		setBatchSize(batchSize);
 		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
+		this.reloadInput = reloadInput;
+		this.reloadVivo = reloadVivo;
 	}
 	
 	/**
@@ -224,7 +236,9 @@ public class Score {
 			opts.get("n"), 
 			initWeights(opts.getValueMap("W")), 
 			(opts.has("m")?Float.valueOf(opts.get("m")):null), 
-			Integer.parseInt(opts.get("b"))
+			Integer.parseInt(opts.get("b")), 
+			opts.has("reloadInput"), 
+			opts.has("reloadVivo")
 		);
 	}
 	
@@ -313,6 +327,8 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "SCORE_NAMESPACE").setDescription("limit match Algorithm to only match rdf nodes in inputJena whose URI begin with SCORE_NAMESPACE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("approximate number of triples to process in each batch - default 2000 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("2000").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("matchThreshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(false));
+		parser.addArgument(new ArgDef().setLongOpt("reloadInput").setDescription("reload the temp copy of input, only needed if input has changed since last score").setRequired(false));
+		parser.addArgument(new ArgDef().setLongOpt("reloadVivo").setDescription("reload the temp copy of Vivo, only needed if Vivo has changed since last score").setRequired(false));
 		return parser;
 	}
 	
@@ -324,7 +340,11 @@ public class Score {
 	private Dataset prepDataset() throws IOException {
 		// Bring all models into a single Dataset
 		JenaConnect vivoClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#vivoClone");
-		if(vivoClone.isEmpty()) {
+		if(vivoClone.isEmpty() || this.reloadVivo) {
+			if(this.reloadVivo) {
+				log.debug("Clearing old VIVO model data from temp copy model");
+				vivoClone.truncate();
+			}
 			log.debug("Loading VIVO model into temp copy model");
 			vivoClone.loadRdfFromJC(this.vivoJena);
 //			log.debug("vivo clone contents:\n"+vivoClone.exportRdfToString());
@@ -332,7 +352,11 @@ public class Score {
 			log.debug("VIVO model already in temp copy model");
 		}
 		JenaConnect inputClone = this.tempJena.neighborConnectClone("http://vivoweb.org/harvester/model/scoring#inputClone");
-		if(inputClone.isEmpty()) {
+		if(inputClone.isEmpty() || this.reloadInput) {
+			if(this.reloadInput) {
+				log.debug("Clearing old Input model data from temp copy model");
+				inputClone.truncate();
+			}
 			log.debug("Loading Input model into temp copy model");
 			inputClone.loadRdfFromJC(this.inputJena);
 //			log.debug("input clone contents:\n"+inputClone.exportRdfToString());

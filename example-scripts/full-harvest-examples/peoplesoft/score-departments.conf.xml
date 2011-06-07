@@ -14,5 +14,3 @@ Detailed description of tool
      -->
     <Param name="a">b</Param>
 </Config>
-
-<!-- <Param name="reloadInput">true</Param> -->

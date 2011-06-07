@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-Score - Summary of Tool
+DatabaseClone - Summary of Tool
 -----
 Detailed description of tool
  -->
@@ -14,5 +14,3 @@ Detailed description of tool
      -->
     <Param name="a">b</Param>
 </Config>
-
-<!-- <Param name="reloadInput">true</Param> -->
