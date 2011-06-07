@@ -148,6 +148,7 @@ public class Diff {
 		}
 		if(oJC != null) {
 			oJC.getJenaModel().add(diffModel);
+			oJC.sync();
 		}
 	}
 	
@@ -157,9 +158,6 @@ public class Diff {
 	 */
 	public void execute() throws IOException {
 		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile);
-		this.minuendJC.sync();
-		this.subtrahendJC.sync();
-		this.output.sync();
 	}
 	
 	/**
