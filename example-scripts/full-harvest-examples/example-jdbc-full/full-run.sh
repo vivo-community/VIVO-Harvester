@@ -1,39 +1,39 @@
 #!/bin/bash
 
-./databaseclone.sh
+harvester-databaseclone -X databaseclone.conf.xml
 
-./jdbcfetch.sh
+harvester-jdbcfetch -X jdbcfetch.conf.xml
 
-./xsltranslator.sh
+harvester-xsltranslator -X xsltranslator.conf.xml
 
-./transfer-records-to-model.sh
+harvester-transfer -X transfer-records-to-model.conf.xml
 
-./score-people.sh
+harvester-score -X score-people.conf.xml
 
-./score-departments.sh
+harvester-score -X score-departments.conf.xml
 
-./match-people-departments.sh
+harvester-match -X match-people-departments.conf.xml
 
-./jenaconnect-clear-score-data.sh
+harvester-jenaconnect -X jenaconnect-clear-score-data.conf.xml
 
-./score-positions.sh
+harvester-score -X score-positions.conf.xml
 
-./match-positions.sh
+harvester-match -X match-positions.conf.xml
 
-./changenamespace-people.sh
+harvester-changenamespace -X changenamespace-people.conf.xml
 
-./changenamespace-departments.sh
+harvester-changenamespace -X changenamespace-departments.conf.xml
 
-./changenamespace-positions.sh
+harvester-changenamespace -X changenamespace-positions.conf.xml
 
-./diff-subtractions.sh
+harvester-diff -X diff-subtractions.conf.xml
 
-./diff-additions.sh
+harvester-diff -X diff-additions.conf.xml
 
-./transfer-subtractions-to-prevharv.sh
+harvester-transfer -X transfer-subtractions-to-prevharv.conf.xml
 
-./transfer-additions-to-prevharv.sh
+harvester-transfer -X transfer-additions-to-prevharv.conf.xml
 
-./transfer-subtractions-to-vivo.sh
+harvester-transfer -X transfer-subtractions-to-vivo.conf.xml
 
-./transfer-additions-to-vivo.sh
+harvester-transfer -X transfer-additions-to-vivo.conf.xml
