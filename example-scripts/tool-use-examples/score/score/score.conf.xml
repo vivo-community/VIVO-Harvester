@@ -1,107 +1,161 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<!--   Copyright (c) 2011                                                                                               -->
-<!--   Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams          -->
-<!--   All rights reserved. This program and the accompanying materials                                                 -->
-<!--   are made available under the terms of the new BSD license                                                        -->
-<!--   which accompanies this distribution, and is available at                                                         -->
-<!--   http://www.opensource.org/licenses/bsd-license.html                                                              -->
-<!--																													-->
-<!--   Contributors: Initial API and implementation                                                                     -->
-<!--       Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams      -->
-<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<!-- ===== Score ===== 																									-->
-<!-- Evaluates records and stores score values by comparing the values of a set of fields using a specified algorithm	-->
-<!-- and stores the weighted value produced by the algorithm in a score model. 											-->
-<!-- ===== 																												-->
-<!-- This tool is used to compare harvested data (<source>) with the data in the existing system (<reference>) and 		-->
-<!-- stores scores in the score model (<score-data>) so that it might be used by Match later.							-->
-<!-- ===== Score Parameters ===== 																						-->
-<!-- <source> - This section defines the <model> (see Model section below) Score will use as the harvested data 		-->
-<!-- <reference> - This section defines the <model> (see Model section below) Score will use as reference data			-->
-<!-- <score-data> - This section defines the <model> (see Model section below) Score will use to store scoring data		-->
-<!-- <filter-namespace> - the namespace root to use as a filter for data in the source model.  The uris from the source	-->
-<!-- 		model will be limited to only those that begin with the given filter-namespace								-->
-<!-- 	Example: 																										-->
-<!-- 		<filter-namespace>http://vivoweb.org/harvest/example/jdbc/person/</filter-namespace> 						-->
-<!-- 		<filter-namespace>http://vivo.local.edu/orgs</filter-namespace> 											-->
-<!--																													-->
-<!-- ===== Model ===== 																									-->
-<!-- <model> - defines a jena model that contains data to use as Score's source/reference/score-data					-->
-<!-- 	===== Model Parameters ===== 																					-->
-<!-- 	<jena-type> - the type of jena model 																			-->
-<!--     	Examples: 																									-->
-<!-- 			sdb: <jena-type>sdb</jena-type> 																		-->
-<!-- 			rdb: <jena-type>rdb</jena-type> 																		-->
-<!-- 			tdb: <jena-type>tdb</jena-type> 																		-->
-<!-- 			file: <jena-type>file</jena-type> 																		-->
-<!-- 	===== 																											-->
-<!-- 	<tdb-directory> - the directory to store a tdb model in 														-->
-<!-- 			(only needed when jena-type is tdb) 																	-->
-<!-- 		Examples: 																									-->
-<!-- 			<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</tdb-directory> 			-->
-<!-- 			<tdb-directory>/path/to/directory/to/store/tdb/data</tdb-directory> 									-->
-<!-- 	===== 																											-->
-<!-- 	<file-path> - the path to the file that contains rdf data 														-->
-<!-- 			(only needed when jena-type is file) 																	-->
-<!-- 		Examples: 																									-->
-<!-- 			<file-path>/usr/local/share/harvester/harvested-data/example-jdbc/rdf-data.rdf.xml</file-path> 			-->
-<!-- 			<file-path>/path/to/directory/to/store/rdf/file.n3</file-path> 											-->
-<!-- 	===== 																											-->
-<!-- 	<rdf-format> - the format of the rdf in the file																-->
-<!-- 			(optional, only used when jena-type is file) 															-->
-<!-- 		Examples: 																									-->
-<!-- 			rdf/xml (default): <rdf-format>RDF/XML</rdf-format> 													-->
-<!-- 			n3: <rdf-format>N3</rdf-format> 																		-->
-<!-- 			turtle: <rdf-format>TTL</rdf-format> 																	-->
-<!-- 			n-triple: <rdf-format>N-TRIPLE</rdf-format> 															-->
-<!-- 	===== 																											-->
-<!-- 	<sdb-layout> - the layout to use for an sdb model 																-->
-<!-- 			(optional, only used when jena-type is sdb) 															-->
-<!-- 		Examples: 																									-->
-<!-- 			layout2 (default): <sdb-layout>layout2</sdb-layout> 													-->
-<!-- 	===== 																											-->
-<!-- 	<database-type> - the name of the database type (as specified by jena) 											-->
-<!-- 			(only needed when jena-type is rdb or sdb) 																-->
-<!-- 		Examples: 																									-->
-<!-- 			mysql: <database-type>MySQL</database-type> 															-->
-<!-- 			h2: <database-type>H2</database-type> 																	-->
-<!-- 	===== 																											-->
-<!-- 	<driver-class> - the JDBC driver class to use 																	-->
-<!-- 			(only needed when jena-type is rdb or sdb) 																-->
-<!-- 		Examples: 																									-->
-<!-- 			mysql: <driver-class>com.mysql.jdbc.Driver</driver-class> 												-->
-<!-- 			h2: <driver-class>org.h2.Driver</driver-class> 															-->
-<!-- 	===== 																											-->
-<!-- 	<dburl> - the JDBC connection url 																				-->
-<!-- 			(only needed when jena-type is rdb or sdb) 																-->
-<!-- 		Examples: 																									-->
-<!-- 			mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl> 												-->
-<!-- 				see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html		-->
-<!-- 			h2: <dburl>jdbc:h2:path/to/h2/store</dburl> 															-->
-<!-- 				see http://www.h2database.com/html/features.html#database_url										-->
-<!-- 	===== 																											-->
-<!-- 	<model-name> - the named model to use (optional, uses default model if not specified) 							-->
-<!-- 		Examples: 																									-->
-<!-- 			<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name> 							-->
-<!-- 			<model-name>mySimpleModelName</model-name> 																-->
-<!-- 			<model-name>http://vivo.localinstitution.edu/models/my-uri-model</model-name> 							-->
-<!-- 	===== 																											-->
-<!-- 	<username> - the DB username to use 																			-->
-<!-- 			(only needed when jena-type is rdb or sdb) 																-->
-<!-- 		Example: 																									-->
-<!-- 			<username>myUser</username> 																			-->
-<!-- 	===== 																											-->
-<!-- 	<password> - the DB password to use 																			-->
-<!-- 			(only needed when jena-type is rdb or sdb) 																-->
-<!-- 		Example: 																									-->
-<!-- 			<password>myPass</password> 																			-->
-<!-- 	===== 																											-->
-		
-<!-- ===== -->
-<!-- ===== -->
-
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Copyright (c) 2011																									%>
+<%	Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams				%>
+<%	All rights reserved. This program and the accompanying materials are made available under the terms of the new		%>
+<%	BSD license which accompanies this distribution, and is available at:												%>
+<%		http://www.opensource.org/licenses/bsd-license.html                                                            	%>
+<%																														%>
+<%	Contributors: Initial API and implementation                                                                     	%>
+<%		Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams			%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
 <config>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Score ===== 																									%>
+<%	Evaluates records and stores score values by comparing the values of a set of fields using a specified algorithm	%>
+<%		and stores the weighted value produced by the algorithm in a score model. 										%>
+<%	=== 																												%>
+<%	This tool is used to compare harvested data (<source>) with the data in the existing system (<reference>) and 		%>
+<%		stores scores in the score model (<score-data>) so that it might be used by Match later.						%>
+<%																														%>
+<%	===== Score Parameters ===== 																						%>
+<%	<filter-namespace> - (optional) the namespace root to use as a filter for data in the source model.  The uris		%>
+<%			from the source model will be limited to only those that begin with the given filter-namespace				%>
+<%		Example: 																										%>
+<%			<filter-namespace>http://vivoweb.org/harvest/example/jdbc/person/</filter-namespace> 						%>
+<%			<filter-namespace>http://vivo.local.edu/orgs</filter-namespace> 											%>
+<%	=== 																												%>
+<%																														%>
+<%	<source> - defines the <model> (see Models section below) Score will use as the harvested data 						%>
+<%		Example: 																										%>
+<%			<source>																									%>
+<%				<model>																									%>
+<%					...																									%>
+<%				</model>																								%>
+<%			</source>																									%>
+<%	=== 																												%>
+<%																														%>
+<%	<reference> - defines the <model> (see Models section below) Score will use as reference data						%>
+<%		Example: 																										%>
+<%			<reference>																									%>
+<%				<model>																									%>
+<%					...																									%>
+<%				</model>																								%>
+<%			</reference>																								%>
+<%	=== 																												%>
+<%																														%>
+<%	<score-data> - defines the <model> (see Models section below) Score will use to store scoring data					%>
+<%		Example: 																										%>
+<%			<score-data>																								%>
+<%				<model>																									%>
+<%					...																									%>
+<%				</model>																								%>
+<%			</score-data>																								%>
+<%	=== 																												%>
+<%																														%>
+<%	<predicate-comparisons> - defines the set of <predicate-comparison> (see Predicate Comparisons section below)		%>
+<%		Example: 																										%>
+<%			<predicate-comparisons>																						%>
+<%				<predicate-comparison name="...">																		%>
+<%					... 																								%>
+<%				</predicate-comparison> 																				%>
+<%				<predicate-comparison name="...">																		%>
+<%					... 																								%>
+<%				</predicate-comparison> 																				%>
+<%				... 																									%>
+<%			</predicate-comparisons> 																					%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+    <filter-namespace>http://vivoweb.org/harvest/example/jdbc/person/</filter-namespace>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Models ===== 																									%>
+<%	<model> - defines a jena model that contains data to use as Score's source/reference/score-data						%>
+<%																														%>
+<%	===== Model Parameters ===== 																						%>
+<%	<jena-type> - the type of jena model 																				%>
+<%		Examples: 																										%>
+<%			sdb: <jena-type>sdb</jena-type> 																			%>
+<%			rdb: <jena-type>rdb</jena-type> 																			%>
+<%			tdb: <jena-type>tdb</jena-type> 																			%>
+<%			file: <jena-type>file</jena-type> 																			%>
+<%	=== 																												%>
+<%																														%>
+<%	<tdb-directory> - the directory to store a tdb model in 															%>
+<%			(only needed when jena-type is tdb) 																		%>
+<%		Examples: 																										%>
+<%			<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</tdb-directory> 				%>
+<%			<tdb-directory>/path/to/directory/to/store/tdb/data</tdb-directory> 										%>
+<%	=== 																												%>
+<%																														%>
+<%	<file-path> - the path to the file that contains rdf data 															%>
+<%			(only needed when jena-type is file) 																		%>
+<%		Examples: 																										%>
+<%			<file-path>/usr/local/share/harvester/harvested-data/example-jdbc/rdf-data.rdf.xml</file-path> 				%>
+<%			<file-path>/path/to/directory/to/store/rdf/file.n3</file-path> 												%>
+<%	=== 																												%>
+<%																														%>
+<%	<rdf-format> - the format of the rdf in the file																	%>
+<%			(optional, only used when jena-type is file) 																%>
+<%		Examples: 																										%>
+<%			rdf/xml (default): <rdf-format>RDF/XML</rdf-format> 														%>
+<%			n3: <rdf-format>N3</rdf-format> 																			%>
+<%			turtle: <rdf-format>TTL</rdf-format> 																		%>
+<%			n-triple: <rdf-format>N-TRIPLE</rdf-format> 																%>
+<%	=== 																												%>
+<%																														%>
+<%	<sdb-layout> - the layout to use for an sdb model 																	%>
+<%			(optional, only used when jena-type is sdb) 																%>
+<%		Examples: 																										%>
+<%			layout2 (default): <sdb-layout>layout2</sdb-layout> 														%>
+<%	=== 																												%>
+<%																														%>
+<%	<database-type> - the name of the database type (as specified by jena) 												%>
+<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%		Examples: 																										%>
+<%			mysql: <database-type>MySQL</database-type> 																%>
+<%			h2: <database-type>H2</database-type> 																		%>
+<%	=== 																												%>
+<%																														%>
+<%	<driver-class> - the JDBC driver class to use 																		%>
+<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%		Examples: 																										%>
+<%			mysql: <driver-class>com.mysql.jdbc.Driver</driver-class> 													%>
+<%			h2: <driver-class>org.h2.Driver</driver-class> 																%>
+<%	=== 																												%>
+<%																														%>
+<%	<dburl> - the JDBC connection url 																					%>
+<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%		Examples: 																										%>
+<%			mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl> 													%>
+<%				see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html			%>
+<%			h2: <dburl>jdbc:h2:path/to/h2/store</dburl> 																%>
+<%				see http://www.h2database.com/html/features.html#database_url											%>
+<%	=== 																												%>
+<%																														%>
+<%	<model-name> - the named model to use (optional, uses default model if not specified) 								%>
+<%		Examples: 																										%>
+<%			<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name> 								%>
+<%			<model-name>mySimpleModelName</model-name> 																	%>
+<%			<model-name>http://vivo.localinstitution.edu/models/my-uri-model</model-name> 								%>
+<%	=== 																												%>
+<%																														%>
+<%	<username> - the DB username to use 																				%>
+<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%		Example: 																										%>
+<%			<username>myUser</username> 																				%>
+<%	=== 																												%>
+<%																														%>
+<%	<password> - the DB password to use 																				%>
+<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%		Example: 																										%>
+<%			<password>myPass</password> 																				%>
+<%																														%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
     <source>
 	    <model>
 	    	<jena-type>tdb</jena-type>
@@ -128,45 +182,46 @@
 			<model-name>example-jdbc_score-data</model-name>
 		</model>
     </score-data>
-    <filter-namespace>http://vivoweb.org/harvest/example/jdbc/person/</filter-namespace>
-   	<!--
-   	field-comparison - defines a pair for 
-   	- - -
-   	Parameters:
-   		name: description
-   	Example:
-   		<field-comparison name="compareFieldX">
-   			...
-   		</field-comparison>
-   	 -->
-    <field-comparison name="uid">
-    	<!--
-    	algorithm - description
-    	- - -
-    	Example:
-    		<algorithm>org.vivoweb.harvester.score.algorithm.EqualityTest</algorithm>
-    	 -->
-    	<algorithm>org.vivoweb.harvester.score.algorithm.EqualityTest</algorithm>
-    	<!--
-    	reference-predicate - description
-    	- - -
-    	Example:
-    		<reference-predicate>http://vivo.sample.edu/ontology/uId</reference-predicate>
-    	 -->
-    	<reference-predicate>http://vivo.sample.edu/ontology/uId</reference-predicate>
-    	<!--
-    	source-predicate - description
-    	- - -
-    	Example:
-    		<source-predicate>http://vivo.sample.edu/ontology/uId</source-predicate>
-    	 -->
-    	<source-predicate>http://vivo.sample.edu/ontology/uId</source-predicate>
-    	<!--
-    	weight - description
-    	- - -
-    	Example:
-    		<weight>1.0</weight>
-    	 -->
-    	<weight>1.0</weight>
-    </field-comparison>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Predicate Comparisons ===== 																					%>
+<%	<predicate-comparison> - defines a comparison of two predicates.  Specifies an algorithm, a weight, and a pair of	%>
+<%			predicates (one from the <source> the other from the <reference>) for comparison.  Score uses the specified	%>
+<%			algorithm to compare values of the predicates and stores the score and weighted score in <score-data>		%>
+<%		Attributes: 																									%>
+<%			name: a unique name for this predicate-comparison 															%>
+<%		Example: 																										%>
+<%			<predicate-comparison name="comparePredicateXandY">															%>
+<%				... 																									%>
+<%			</predicate-comparison> 																					%>
+<%																														%>
+<%	===== Predicate Comparison Parameters ===== 																		%>
+<%	<algorithm> - description																							%>
+<%		Example:																										%>
+<%			<algorithm>org.vivoweb.harvester.score.algorithm.EqualityTest</algorithm>									%>
+<%	=== 																												%>
+<%																														%>
+<%	<reference-predicate> - description																					%>
+<%		Example:																										%>
+<%			<reference-predicate>http://vivo.sample.edu/ontology/uId</reference-predicate>								%>
+<%	=== 																												%>
+<%																														%>
+<%	<source-predicate> - description																					%>
+<%		Example:																										%>
+<%			<source-predicate>http://vivo.sample.edu/ontology/uId</source-predicate>									%>
+<%	=== 																												%>
+<%																														%>
+<%	<weight> - description																								%>
+<%		Example:																										%>
+<%			<weight>1.0</weight>																						%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+    <predicate-comparisons>
+	    <predicate-comparison name="uid">
+	    	<algorithm>org.vivoweb.harvester.score.algorithm.EqualityTest</algorithm>
+	    	<reference-predicate>http://vivo.sample.edu/ontology/uId</reference-predicate>
+	    	<source-predicate>http://vivo.sample.edu/ontology/uId</source-predicate>
+	    	<weight>1.0</weight>
+	    </predicate-comparison>
+    </predicate-comparisons>
 </config>
