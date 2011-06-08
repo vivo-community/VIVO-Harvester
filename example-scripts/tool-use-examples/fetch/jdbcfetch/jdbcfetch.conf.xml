@@ -13,7 +13,7 @@
 <!-- ===== JDBCFetch =====																								-->
 <!-- Gathers information from a database and places it within a given RecordHandler organized according to how the data -->
 <!-- is arranged within the chosen database.                                                   							-->
-<!-- ======                                                                                                             -->
+<!-- == Reason for use ==                                                                                               -->
 <!-- Connection with different types of databases is essential to effectively populating a VIVO instance with viable    -->
 <!--     data. Java Database Connectivity is available and flexible, while allowing standard SQL queries to retrieve    -->
 <!--     the information from the chosen database.                                                                      --> 
@@ -22,19 +22,31 @@
 <!--                                                                                                                    -->
 <!-- <driver> - A JDBC driver is a java class which handles the interface between the program and a given database.     -->
 <!--     The driver needs to exist within the classpath, for the program to be able to use it.                          -->
-<!--     example value =  <driver>org.h2.Driver</driver>                                                                -->
+<!--     EXAMPLES:                                                                                                      -->
+<!--            <driver>org.h2.Driver</driver>                                                                          -->
 <!--                                                                                                                    -->
-<!-- connection - JDBC uses a connection string related to the Driver being used.                                       -->
-<!--    It is in the general format : "jdbc:somejdbcvendor:other data needed"                                           -->
-<!--    Specifically the harvester tends to use :                                                                       -->
-<!--     "jdbc:jtds:sqlserver://127.0.0.1:8080/databasename" for a Microsoft SQL server                                 -->
-<!--     "jdbc:h2:directory/location" for an H2 database ( http://www.h2database.com )                                  -->
+<!-- <connection> - JDBC uses a connection string related to the Driver being used.                                     -->
+<!--    It is in the general format "jdbc:somejdbcvendor:other data needed"                                             -->
+<!--    EXAMPLES :                                                                                                      -->
+<!--     Microsoft SQL server : <connection>jdbc:jtds:sqlserver://127.0.0.1:8080/databasename</connection>              -->
+<!--     H2 database ( http://www.h2database.com ) : <connection>jdbc:h2:directory/location</connection>                -->
 <!--                                                                                                                    -->
-<!--  username - A valid login with proper permissions                                                                  -->
-<!--  password - The associated secure password                                                                         -->
+<!-- <username> - A valid login with proper permissions                                                                 -->
+<!-- <password> - The associated secure password                                                                        -->
 <!--   These are what the fetch uses when accessing the given database. These must be valid otherwise the harvest run   -->
 <!--  will not have access to the database. By default we use "sa" for system administrator and a blank password.       -->                                                                                                                -->
 <!--                                                                                                                    -->
+<!-- The database table information:                                                                                    -->
+<!--                                                                                                                    -->
+<!-- <name> - Each table has an identifying name associated with it. These names are case sensitive and should be       -->
+<!--     checked several times before the first run.                                                                    -->
+<!--                                                                                                                    -->
+<!-- <id> - To distinguish records from each other this should be a distinct non-null field. If such a field is not     -->
+<!--    available, the configuration supports forming a concatenation of several fields (aka a composite key). The      -->
+<!--    concatenation is used by supplying a comma separated list of field names rather than a single field name.       -->
+<!--                                                                                                                    -->
+<!-- <query> - Within this tag is placed an SQL query which will be ran on the supplied database table. The names       -->
+<!--    attributed during this query will supply the names applied to the data within the record handler.               -->
 <!--                                                                                                                    -->
 <!--                                                                                                                    -->
 <!--  -->
@@ -50,7 +62,8 @@
 <!-- 			<file-path>/path/to/file.csv</file-path> -->
 <!-- 		</csv-file> -->
     </source>
-    <table name="people">
+    <table>
+        <name>people</name>
 		<id>UID</id>
     	<query>
 SELECT 
