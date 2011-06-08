@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
-<!--  All rights reserved. This program and the accompanying materials -->
-<!--  are made available under the terms of the new BSD license -->
-<!--  which accompanies this distribution, and is available at -->
-<!--  http://www.opensource.org/licenses/bsd-license.html -->
- 
-<!--  Contributors: -->
-<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!--   Copyright (c) 2011                                                                                               -->
+<!--   Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams          -->
+<!--   All rights reserved. This program and the accompanying materials                                                 -->
+<!--   are made available under the terms of the new BSD license                                                        -->
+<!--   which accompanies this distribution, and is available at                                                         -->
+<!--   http://www.opensource.org/licenses/bsd-license.html                                                              -->
+  
+<!--   Contributors: Initial API and implementation                                                                     -->
+<!--       Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams      -->
 
-<!-- 
-JDBCFetch - Fetches rdf data from a relational database
------
-Fetches data from a relational database placing the data into
-an rdf/xml format in an ontology derived from the schema
- -->
+<!--  = = = = =                                                                                              = = = = =  -->
+<!-- JDBCFetch - Gathers information from a database and places it within a given RecordHandler organized according     -->
+<!--        to how the data is arranged within the chosen database.                                                     -->
+<!-- ======                                                                                                             -->
+<!-- Connection with different types of databases is essential to effectively populating a VIVO instance with viable    -->
+<!--     data. Java Database Connectivity is available and flexible, while allowing standard SQL queries to retrieve    -->
+<!--     the information from the chosen database.                                                                      --> 
+<!-- ===== PARAMETERS =====                                                                                             -->
+<!-- The source relational database information:                                                                        -->
+<!--                                                                                                                    -->
+<!-- driver - A JDBC driver is a java class which handles the interface between the program and a given database.       -->
+<!--     The driver needs to exist within the classpath, for the program to be able to use it.                          -->
+<!--     example value =  org.h2.Driver                                                                                 -->
+<!--                                                                                                                    -->
+<!-- connection - JDBC uses a connection string related to the Driver being used.                                       -->
+<!--    It is in the general format : "jdbc:somejdbcvendor:other data needed"                                           -->
+<!--    Specifically the harvester tends to use :                                                                       -->
+<!--     "jdbc:jtds:sqlserver://127.0.0.1:8080/databasename" for a Microsoft SQL server                                 -->
+<!--     "jdbc:h2:directory/location" for an H2 database ( http://www.h2database.com )                                  -->
+<!--                                                                                                                    -->
+<!--  username - A valid login with proper permissions                                                                  -->
+<!--  password - The associated secure password                                                                         -->
+<!--   These are what the fetch uses when accessing the given database. These must be valid otherwise the harvest run   -->
+<!--  will not have access to the database. By default we use "sa" for system administrator and a blank password.       -->                                                                                                                -->
+<!--                                                                                                                    -->
+<!--                                                                                                                    -->
+<!--                                                                                                                    -->
+<!--  -->
 <Config>
-    <!-- 
-    source - the relational database
-    -----
-    This section defines the relational database that
-    JDBCFetch will access and retrieve data from
-     -->
     <source>
-    	<!--
-    	driver - the JDBC driver class to use
-    	-----
-    	mysql -> org.blah.mysql.Driver
-    	h2 -> org.h2.Driver
-    	blah -> boab.ajb.aga.Driver 
-    	 -->
 		<driver>org.h2.Driver</driver>
 		<connection>jdbc:h2:harvested-data/default/h2/store</connection>
 		<username>sa</username>
