@@ -248,12 +248,37 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to stream
 	 */
 	public void exportRdfToStream(OutputStream out) throws IOException {
-		RDFWriter fasterWriter = this.jenaModel.getWriter("RDF/XML");
+		exportRdfToStream(out, null);
+	}
+	
+	/**
+	 * Export all RDF
+	 * @param out output stream to write rdf to
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
+	 * @throws IOException error writing to stream
+	 */
+	public void exportRdfToStream(OutputStream out, String language) throws IOException {
+		exportRdfToStream(this.jenaModel, out, language);
+	}
+	
+	/**
+	 * Export all RDF
+	 * @param m the model to export from
+	 * @param out output stream to write rdf to
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
+	 * @throws IOException error writing to stream
+	 */
+	private static void exportRdfToStream(Model m, OutputStream out, String language) throws IOException {
+		RDFWriter fasterWriter = m.getWriter(language);
 		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
 		fasterWriter.setProperty("relativeURIs", "");
 		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
-		fasterWriter.write(this.jenaModel, osw, "");
+		fasterWriter.write(m, osw, "");
 		osw.flush();
 		out.flush();
 	}
@@ -264,8 +289,20 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to string
 	 */
 	public String exportRdfToString() throws IOException {
+		return exportRdfToString(null);
+	}
+	
+	/**
+	 * Export all RDF
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
+	 * @return the rdf
+	 * @throws IOException error writing to string
+	 */
+	public String exportRdfToString(String language) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		exportRdfToStream(baos);
+		exportRdfToStream(baos, language);
 		return baos.toString();
 	}
 	
@@ -275,7 +312,19 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to file
 	 */
 	public void exportRdfToFile(String fileName) throws IOException {
-		exportRdfToStream(FileAide.getOutputStream(fileName));
+		exportRdfToFile(fileName, null);
+	}
+	
+	/**
+	 * Export the RDF to a file
+	 * @param fileName the file to write to
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
+	 * @throws IOException error writing to file
+	 */
+	public void exportRdfToFile(String fileName, String language) throws IOException {
+		exportRdfToFile(fileName, language, false);
 	}
 	
 	/**
@@ -285,7 +334,20 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to file
 	 */
 	public void exportRdfToFile(String fileName, boolean append) throws IOException {
-		exportRdfToStream(FileAide.getOutputStream(fileName, append));
+		exportRdfToFile(fileName, null, append);
+	}
+	
+	/**
+	 * Export the RDF to a file
+	 * @param fileName the file to write to
+	 * @param language the language the rdf is in. Predefined values for lang are "RDF/XML", "N-TRIPLE", "TURTLE" (or
+	 *        "TTL") and "N3". null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is a synonym for
+	 *        "RDF/XML"
+	 * @param append append to the file
+	 * @throws IOException error writing to file
+	 */
+	public void exportRdfToFile(String fileName, String language, boolean append) throws IOException {
+		exportRdfToStream(FileAide.getOutputStream(fileName, append), language);
 	}
 	
 	/**
@@ -595,7 +657,7 @@ public abstract class JenaConnect {
 					throw new IllegalArgumentException("Query Invalid: Not Select, Construct, Ask, or Describe");
 				}
 				
-				resultModel.write(out, resultFormatParam);
+				exportRdfToStream(resultModel, out, resultFormatParam);
 			}
 		} catch(QueryParseException e1) {
 			try {
