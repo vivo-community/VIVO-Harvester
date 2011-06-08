@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE config SYSTEM "note.dtd">
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 <%	Copyright (c) 2011																									%>
@@ -32,27 +33,27 @@
 <%	<source> - defines the <model> (see Models section below) Score will use as the harvested data 						%>
 <%		Example: 																										%>
 <%			<source>																									%>
-<%				<model>																									%>
+<%				<xxx-model>																								%>
 <%					...																									%>
-<%				</model>																								%>
+<%				</xxx-model>																							%>
 <%			</source>																									%>
 <%	=== 																												%>
 <%																														%>
 <%	<reference> - defines the <model> (see Models section below) Score will use as reference data						%>
 <%		Example: 																										%>
 <%			<reference>																									%>
-<%				<model>																									%>
+<%				<xxx-model>																								%>
 <%					...																									%>
-<%				</model>																								%>
+<%				</xxx-model>																							%>
 <%			</reference>																								%>
 <%	=== 																												%>
 <%																														%>
 <%	<score-data> - defines the <model> (see Models section below) Score will use to store scoring data					%>
 <%		Example: 																										%>
 <%			<score-data>																								%>
-<%				<model>																									%>
+<%				<xxx-model>																								%>
 <%					...																									%>
-<%				</model>																								%>
+<%				</xxx-model>																							%>
 <%			</score-data>																								%>
 <%	=== 																												%>
 <%																														%>
@@ -73,33 +74,54 @@
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 <%	===== Models ===== 																									%>
-<%	<model> - defines a jena model that contains data to use as Score's source/reference/score-data						%>
-<%																														%>
-<%	===== Model Parameters ===== 																						%>
-<%	<jena-type> - the type of jena model 																				%>
-<%		Examples: 																										%>
-<%			sdb: <jena-type>sdb</jena-type> 																			%>
-<%			rdb: <jena-type>rdb</jena-type> 																			%>
-<%			tdb: <jena-type>tdb</jena-type> 																			%>
-<%			file: <jena-type>file</jena-type> 																			%>
+<%	<tdb-model> - defines a tdb jena model that contains data to use as Score's source/reference/score-data				%>
+<%		Example: 																										%>
+<%			<tdb-model>																									%>
+<%				<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 					%>
+<%				<model-name>mySimpleModelName</model-name> 																%>
+<%			</tdb-model>																								%>
 <%	=== 																												%>
 <%																														%>
-<%	<tdb-directory> - the directory to store a tdb model in 															%>
-<%			(only needed when jena-type is tdb) 																		%>
+<%	<sdb-model> - defines an sdb jena model that contains data to use as Score's source/reference/score-data			%>
+<%		Example: 																										%>
+<%			<sdb-model>																									%>
+<%				<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 					%>
+<%				<model-name>mySimpleModelName</model-name> 																%>
+<%			</sdb-model>																								%>
+<%	=== 																												%>
+<%																														%>
+<%	<rdb-model> - defines an rdb jena model that contains data to use as Score's source/reference/score-data			%>
+<%		Example: 																										%>
+<%			<rdb-model>																									%>
+<%				<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 					%>
+<%				<model-name>mySimpleModelName</model-name> 																%>
+<%			</rdb-model>																								%>
+<%	=== 																												%>
+<%																														%>
+<%	<file-model> - defines a file jena model that contains data to use as Score's source/reference/score-data			%>
+<%		Example: 																										%>
+<%			<file-model>																									%>
+<%				<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 					%>
+<%				<model-name>mySimpleModelName</model-name> 																%>
+<%			</file-model>																								%>
+<%																														%>
+<%	===== Model Parameters ===== 																						%>
+<%	<directory> - the directory to store a tdb model in 																%>
+<%			(only needed for tdb-model type)	 																		%>
 <%		Examples: 																										%>
-<%			<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</tdb-directory> 				%>
-<%			<tdb-directory>/path/to/directory/to/store/tdb/data</tdb-directory> 										%>
+<%			<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 						%>
+<%			<directory>/path/to/directory/to/store/tdb/data</directory> 												%>
 <%	=== 																												%>
 <%																														%>
 <%	<file-path> - the path to the file that contains rdf data 															%>
-<%			(only needed when jena-type is file) 																		%>
+<%			(only needed for file-model type) 																			%>
 <%		Examples: 																										%>
 <%			<file-path>/usr/local/share/harvester/harvested-data/example-jdbc/rdf-data.rdf.xml</file-path> 				%>
 <%			<file-path>/path/to/directory/to/store/rdf/file.n3</file-path> 												%>
 <%	=== 																												%>
 <%																														%>
 <%	<rdf-format> - the format of the rdf in the file																	%>
-<%			(optional, only used when jena-type is file) 																%>
+<%			(optional, only used by file-model type) 																	%>
 <%		Examples: 																										%>
 <%			rdf/xml (default): <rdf-format>RDF/XML</rdf-format> 														%>
 <%			n3: <rdf-format>N3</rdf-format> 																			%>
@@ -107,28 +129,28 @@
 <%			n-triple: <rdf-format>N-TRIPLE</rdf-format> 																%>
 <%	=== 																												%>
 <%																														%>
-<%	<sdb-layout> - the layout to use for an sdb model 																	%>
-<%			(optional, only used when jena-type is sdb) 																%>
+<%	<layout> - the layout to use for an sdb model 																		%>
+<%			(optional, only used by sdb-model type) 																	%>
 <%		Examples: 																										%>
-<%			layout2 (default): <sdb-layout>layout2</sdb-layout> 														%>
+<%			layout2 (default): <layout>layout2</layout> 																%>
 <%	=== 																												%>
 <%																														%>
 <%	<database-type> - the name of the database type (as specified by jena) 												%>
-<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%			(only needed for rdb-model and sdb-model types)																%>
 <%		Examples: 																										%>
 <%			mysql: <database-type>MySQL</database-type> 																%>
 <%			h2: <database-type>H2</database-type> 																		%>
 <%	=== 																												%>
 <%																														%>
 <%	<driver-class> - the JDBC driver class to use 																		%>
-<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%			(only needed for rdb-model and sdb-model types)																%>
 <%		Examples: 																										%>
 <%			mysql: <driver-class>com.mysql.jdbc.Driver</driver-class> 													%>
 <%			h2: <driver-class>org.h2.Driver</driver-class> 																%>
 <%	=== 																												%>
 <%																														%>
 <%	<dburl> - the JDBC connection url 																					%>
-<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%			(only needed for rdb-model and sdb-model types)																%>
 <%		Examples: 																										%>
 <%			mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl> 													%>
 <%				see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html			%>
@@ -136,7 +158,8 @@
 <%				see http://www.h2database.com/html/features.html#database_url											%>
 <%	=== 																												%>
 <%																														%>
-<%	<model-name> - the named model to use (optional, uses default model if not specified) 								%>
+<%	<model-name> - the named model to use																				%>
+<%			(optional, uses default model if not specified, only used by rdb-model, tdb-model, and sdb-model types) 	%>
 <%		Examples: 																										%>
 <%			<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name> 								%>
 <%			<model-name>mySimpleModelName</model-name> 																	%>
@@ -144,43 +167,40 @@
 <%	=== 																												%>
 <%																														%>
 <%	<username> - the DB username to use 																				%>
-<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%			(only needed for rdb-model and sdb-model types)																%>
 <%		Example: 																										%>
 <%			<username>myUser</username> 																				%>
 <%	=== 																												%>
 <%																														%>
 <%	<password> - the DB password to use 																				%>
-<%			(only needed when jena-type is rdb or sdb) 																	%>
+<%			(only needed for rdb-model and sdb-model types)																%>
 <%		Example: 																										%>
 <%			<password>myPass</password> 																				%>
 <%																														%>
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 -->
     <source>
-	    <model>
-	    	<jena-type>tdb</jena-type>
-	    	<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</tdb-directory>
+	    <tdb-model>
+	    	<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory>
 			<model-name>example-jdbc_temp-transfer</model-name>
-		</model>
+		</tdb-model>
     </source>
     <reference>
-	    <model>
-	    	<jena-type>sdb</jena-type>
-	    	<sdb-layout>layout2</sdb-layout>
+	    <sdb-model>
+	    	<layout>layout2</layout>
 	    	<database-type>MySQL</database-type>
 			<driver-class>com.mysql.jdbc.Driver</driver-class>
 			<dburl>jdbc:mysql://127.0.0.1:3306/vitrodb</dburl>
 			<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name>
 			<username>USERNAME</username>
 			<password>PASSWORD</password>
-		</model>
+		</sdb-model>
     </reference>
     <score-data>
-	    <model>
-	    	<jena-type>tdb</jena-type>
-	    	<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/score-data</tdb-directory>
+	    <tdb-model>
+	    	<directory>/usr/local/share/harvester/harvested-data/example-jdbc/score-data</directory>
 			<model-name>example-jdbc_score-data</model-name>
-		</model>
+		</tdb-model>
     </score-data>
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
