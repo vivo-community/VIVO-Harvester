@@ -41,10 +41,10 @@ format.  This can be done via the XSLTranslator tool packaged with Harvester.
     ALL - Everything that goes into the log is displayed on the console.
 
     Values meaningful for NLMJournalFetch:
-    ERROR: All runtime errors are categorized as ERROR, so none will be shown for FATAL
-    INFO: Start and end of fetch run, number of results returned by query, range of records being fetched in a given batch operation
-    DEBUG: Query text sent to NLM, start and end of sanitize step, plus length of XML file pre- and post-sanitize
-    TRACE: Very fine-grain details, such as start and end of I/O operations
+    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    INFO - Start and end of fetch run, number of results returned by query, range of records being fetched in a given batch operation
+    DEBUG - Query text sent to NLM, start and end of sanitize step, plus length of XML file pre- and post-sanitize
+    TRACE - Very fine-grain details, such as start and end of I/O operations
      -->
     <Param name="a">b</Param>
 

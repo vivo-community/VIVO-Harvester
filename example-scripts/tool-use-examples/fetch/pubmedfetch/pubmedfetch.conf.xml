@@ -41,11 +41,11 @@ tool packaged with Harvester.
     ALL - Everything that goes into the log is displayed on the console.
     
     Values meaningful for PubmedFetch:
-    ERROR: All runtime errors are categorized as ERROR, so none will be shown for FATAL
-    INFO: Start and end of fetch run, number of results returned by query, range of records being fetched in a given batch operation
-    DEBUG: Query text sent to Pubmed, start and end of result buffering and buffer size, start and end of sanitize step, plus length of XML file
+    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    INFO - Start and end of fetch run, number of results returned by query, range of records being fetched in a given batch operation
+    DEBUG - Query text sent to Pubmed, start and end of result buffering and buffer size, start and end of sanitize step, plus length of XML file
            pre- and post-sanitize
-    TRACE: Very fine-grain details, such as start and end of I/O operations
+    TRACE - Very fine-grain details, such as start and end of I/O operations
      -->
     <Param name="a">b</Param>
 

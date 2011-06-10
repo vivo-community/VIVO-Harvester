@@ -39,8 +39,8 @@ records from that repository with date stamps between a date range specified in 
     ALL - Everything that goes into the log is displayed on the console.
     
     Values meaningful for OAIFetch:
-    ERROR: All runtime errors are categorized as ERROR, so none will be shown for FATAL
-    INFO: Start and end of fetch run
+    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    INFO - Start and end of fetch run
      -->
     <Param name="a">b</Param>
 

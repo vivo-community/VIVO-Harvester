@@ -13,4 +13,41 @@ Detailed description of tool
     c - Meaning of c
      -->
     <Param name="a">b</Param>
+
+    <!-- 
+    Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
+    information to more detailed debugging information.
+    -----
+    Allowable values:
+    OFF - No log information is displayed on the console.
+    FATAL - Only fatal errors are displayed on the console.
+    ERROR - All error messages are displayed. 
+    WARN - Error and warning messages are displayed.
+    INFO - Errors, warnings, and general user information is displayed.  This is the default.
+    DEBUG - Errors, warnings, general information, and information intended for debuggers is displayed to the console.
+    TRACE - All of the above as well as even finer-grain debugging information is displayed.
+    ALL - Everything that goes into the log is displayed on the console.
+
+    Values meaningful for D2RMapFetch:
+    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    INFO - Start and end of fetch run
+     -->
+    <Param name="a">b</Param>
+
+    <!--
+    D2RMapConfig - 
+     -->
+    <Param name="a">b</Param>
+
+    <!--
+    WorkingDirectory - 
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    RecordDestination - The record handler in which the results of the fetch will be placed, so that other Harvester tools or other programs may operate
+                        on the data.
+     -->
+    <Param name="a">b</Param>
+
 </Config>
