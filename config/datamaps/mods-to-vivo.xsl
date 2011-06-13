@@ -456,7 +456,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 			</xsl:if>
 			<xsl:if test="$type='corporate'">
 				<core:informationResourceInAuthorship>
-					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'org/modsId_', $modsId, '_', encode-for-uri(namePart))" /></xsl:attribute>
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="concat($baseURI, 'authorship/modsId_', $modsId, '_', encode-for-uri(namePart))" /></xsl:attribute>
 				</core:informationResourceInAuthorship>
 			</xsl:if>
 		</xsl:if>
