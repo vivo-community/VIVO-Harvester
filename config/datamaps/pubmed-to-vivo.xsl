@@ -109,13 +109,34 @@
 			</xsl:variable>
 			<xsl:choose>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-					<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:year>
+				    <core:dataTimeValue>
+                        <rdf:Description rdf:about="{$baseURI}pub/year{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
+					        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+					        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision"/>
+	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-01-01T00:00:00</core:dateTime>
+				        </rdf:Description>
+                    </core:dataTimeValue>
+					<!-- <core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:year> -->
 				</xsl:when>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-					<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth>
+                    <core:dataTimeValue>
+                        <rdf:Description rdf:about="{$baseURI}pub/monthyear{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
+	                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+	                        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision"/>
+	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-01T00:00:00</core:dateTime>
+                        </rdf:Description>
+                    </core:dataTimeValue>
+					<!-- <core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth> -->
 				</xsl:when>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-					<core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:date>
+					<core:dataTimeValue>
+                        <rdf:Description rdf:about="{$baseURI}pub/daymonthyear{MedlineCitation/Article/Journal/JournalIssue/PubDate/Day}{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
+	                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+	                        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
+	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/>T00:00:00</core:dateTime>
+                        </rdf:Description>
+                    </core:dataTimeValue>
+					<!-- <core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:date> -->
 				</xsl:when>
 			</xsl:choose>
 			<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
