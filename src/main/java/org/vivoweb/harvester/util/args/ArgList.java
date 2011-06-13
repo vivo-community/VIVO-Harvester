@@ -10,6 +10,7 @@
 package org.vivoweb.harvester.util.args;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -45,9 +46,9 @@ public class ArgList {
 	 */
 	private CommandLine oCmdSet;
 	/**
-	 * Argument set from configuration file
+	 * Map from configuration file
 	 */
-	private CommandLine oConfSet;
+	private Map<String, List<String>> confMap;
 	/**
 	 * Argument Parse Mappings
 	 */
@@ -70,11 +71,11 @@ public class ArgList {
 			}
 			String[] confArgs = {""};
 			if(this.oCmdSet.hasOption("X")) {
+				this.confMap = new ConfigParser().parseConfig(this.oCmdSet.getOptionValue("X"));
 				confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
 				log.debug("config file args: " + getSanitizedArgString(confArgs));
-				this.oConfSet = new PosixParser().parse(this.argParser.getOptions(), confArgs);
 			} else {
-				this.oConfSet = null;
+				this.confMap = null;
 			}
 			for(ArgDef arg : this.argParser.getArgDefs()) {
 				if(arg.isRequired()) {
@@ -92,6 +93,27 @@ public class ArgList {
 		} catch(ParseException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
+	}
+	
+	/**
+	 * Get the values for the given argdef
+	 * @param argdef the argdef
+	 * @return the values
+	 */
+	private List<String> getConfArgValues(ArgDef argdef) {
+		List<String> retVal = new ArrayList<String>();
+		Character shortOp = argdef.getShortOption();
+		if((shortOp != null) && this.confMap.containsKey(shortOp.toString())) {
+			retVal.addAll(this.confMap.get(shortOp.toString()));
+		}
+		String longOp = argdef.getLongOption();
+		if((longOp != null) && this.confMap.containsKey(longOp)) {
+			retVal.addAll(this.confMap.get(longOp));
+		}
+		if(retVal.isEmpty() || retVal.size() < 1) {
+			return null;
+		}
+		return retVal;
 	}
 	
 	/**
@@ -151,8 +173,12 @@ public class ArgList {
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal = this.oCmdSet.getOptionValue(arg);
 		} else {
-			if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
-				retVal = this.oConfSet.getOptionValue(arg);
+			List<String> confVals = null;
+			if((this.confMap != null) && ((confVals = getConfArgValues(argdef)) != null)) {
+				if(confVals.size() > 1) {
+					throw new IllegalArgumentException("Invalid config file: contains more than one value for parameter '"+argdef.getOptionString()+"'");
+				}
+				retVal = confVals.get(0);
 			} else {
 				retVal = this.argParser.getOptMap().get(arg).getDefaultValue();
 			}
@@ -183,10 +209,14 @@ public class ArgList {
 			throw new IllegalArgumentException(arg + " is not a value map parameter, use get()");
 		}
 		Map<String, String> p = new HashMap<String, String>();
-		if(this.oConfSet != null) {
-			Properties props = this.oConfSet.getOptionProperties(arg);
-			for(String prop : props.stringPropertyNames()) {
-				p.put(prop.trim(), props.getProperty(prop).trim());
+		List<String> confVals = null;
+		if((this.confMap != null) && ((confVals = getConfArgValues(argdef)) != null)) {
+			for(String confVal : confVals) {
+				String[] confValSplit = confVal.split("=", 2);
+				if(confValSplit.length != 2) {
+					throw new IllegalArgumentException("Invalid config file: contains non-value map (paramName=paramValue) value for parameter '"+argdef.getOptionString()+"'");
+				}
+				p.put(confValSplit[0].trim(), confValSplit[1].trim());
 			}
 		}
 		Properties props = this.oCmdSet.getOptionProperties(arg);
@@ -231,9 +261,10 @@ public class ArgList {
 				retVal.add(value.trim());
 			}
 		}
-		if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
-			for(String value : this.oConfSet.getOptionValues(arg)) {
-				retVal.add(value.trim());
+		List<String> confVals = null;
+		if((this.confMap != null) && ((confVals = getConfArgValues(argdef)) != null)) {
+			for(String confVal : confVals) {
+				retVal.add(confVal.trim());
 			}
 		}
 		if((includeDefaultValue || retVal.isEmpty()) && argdef.hasDefaultValue()) {
@@ -251,7 +282,7 @@ public class ArgList {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
 		if(this.oCmdSet.hasOption(arg)) {
 			return true;
-		} else if((this.oConfSet != null) && this.oConfSet.hasOption(arg)) {
+		} else if((this.confMap != null) && (getConfArgValues(argdef) != null)) {
 			return true;
 		} else if((argdef != null) && argdef.hasDefaultValue()) {
 			return true;
@@ -291,7 +322,7 @@ public class ArgList {
 		 * @return equivalent commandline argument array
 		 * @throws IOException error reading config file
 		 */
-		public String[] configToArgs(String filePath) throws IOException {
+		String[] configToArgs(String filePath) throws IOException {
 			Map<String, List<String>> parameters = parseConfig(filePath);
 			List<String> paramList = new LinkedList<String>();
 			for(String key : parameters.keySet()) {
@@ -313,7 +344,7 @@ public class ArgList {
 		 * @return the Task described by the config file
 		 * @throws IOException xml parsing error
 		 */
-		private Map<String, List<String>> parseConfig(String filename) throws IOException {
+		Map<String, List<String>> parseConfig(String filename) throws IOException {
 			// get a factory
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			try {

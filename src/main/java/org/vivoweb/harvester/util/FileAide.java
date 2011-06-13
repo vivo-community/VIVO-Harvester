@@ -1,11 +1,13 @@
 package org.vivoweb.harvester.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.vfs.AllFileSelector;
@@ -180,6 +182,59 @@ public class FileAide {
 			sb.append(temp);
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * Resolves the path and sets the contents of the file from a text string (overwrites existing files)
+	 * @param path the path to resolve
+	 * @param value the value to set as the text content
+	 * @throws IOException error resolving
+	 */
+	public static void setTextContent(String path, String value) throws IOException {
+		setTextContent(path, value, true);
+	}
+	
+	/**
+	 * Resolves the path and sets the contents of the file from a text string
+	 * @param path the path to resolve
+	 * @param value the value to set as the text content
+	 * @param overwrite overwrite an existing file
+	 * @throws IOException error resolving
+	 */
+	public static void setTextContent(String path, String value, boolean overwrite) throws IOException {
+		if(path == null) {
+			throw new IllegalArgumentException("File path must not be null");
+		}
+		BufferedWriter bw = null;
+		try {
+			if(!overwrite && exists(path)) {
+				throw new IOException("Failed to set file text content because file " + path + " already exists.");
+			}
+			createFile(path);
+			if(!isWriteable(path)) {
+				throw new IOException("Insufficient file system privileges to modify file " + path);
+			}
+			bw = new BufferedWriter(new OutputStreamWriter(getOutputStream(path)));
+			bw.append(value);
+			bw.close();
+		} catch(IOException e) {
+			if(bw != null) {
+				try {
+					bw.close();
+				} catch(Exception ignore) {
+					// Ignore
+				}
+			}
+			throw e;
+		} finally {
+			if(bw != null) {
+				try {
+					bw.close();
+				} catch(Exception ignore) {
+					// Ignore
+				}
+			}
+		}
 	}
 	
 	/**

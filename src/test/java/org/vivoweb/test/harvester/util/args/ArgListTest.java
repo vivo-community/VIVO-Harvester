@@ -9,10 +9,12 @@
  *****************************************************************************************************************************/
 package org.vivoweb.test.harvester.util.args;
 
+import java.io.File;
 import java.util.List;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -28,28 +30,56 @@ public class ArgListTest extends TestCase {
 	private static Logger log = LoggerFactory.getLogger(ArgListTest.class);
 	/** */
 	private static ArgParser parser;
+	/** */
+	private File confFile;
 	
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
 		parser = new ArgParser("ArgListTest");
+		this.confFile = File.createTempFile("ArgListTest", ".xml");
+		this.confFile.deleteOnExit();
+		String confString = "" +
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+				"<Task>\n" +
+				"   <Param name=\"driver\">com.mysql.jdbc.Driver</Param>\n" +
+				"   <Param name=\"connection\">jdbc:mysql://127.0.0.1:3306/DemoDB</Param>\n" +
+				"   <Param name=\"username\">DemoDB</Param>\n" +
+				"   <Param name=\"password\">b8F5LdFPVEqHP3XX</Param>\n" +
+				"</Task>";
+		FileAide.setTextContent(this.confFile.getAbsolutePath(), confString);
+		makeArgList();
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
 		parser = null;
+		this.confFile.delete();
+		this.confFile = null;
+	}
+	
+	/** */
+	private final void makeArgList() {
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(false));
 	}
 	
 	/**
-	 * 
+	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#get(java.lang.String) get(String arg)}.
 	 */
-	@SuppressWarnings("unused")
-	private final void makeArgList() {
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("driver").withParameter(true, "JDBC_DRIVER").setDescription("jdbc driver class").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("connection").withParameter(true, "JDBC_CONN").setDescription("jdbc connection string").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+	public final void testConfig() {
+		log.info("BEGIN testConfig");
+		try {
+			ArgList a = parser.parse(new String[]{"-X", this.confFile.getAbsolutePath()});
+			assertEquals(a.get("u"), "DemoDB");
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+			fail(e.getMessage());
+		}
+		log.info("END testConfig");
 	}
 	
 	/**
@@ -57,7 +87,6 @@ public class ArgListTest extends TestCase {
 	 */
 	public final void testGet() {
 		log.info("BEGIN testGet");
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUT_FILE").setDescription("output file").setRequired(true));
 		try {
 			ArgList a = parser.parse(new String[]{"-o", "Testing"});
 			assertEquals(a.get("o"), "Testing");

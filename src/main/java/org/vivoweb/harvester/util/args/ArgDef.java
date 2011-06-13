@@ -262,4 +262,21 @@ public class ArgDef {
 		this.parameterValueMapType = true;
 		return withParameters(false, propertyName + "=" + valueName, -1);
 	}
+	
+	/**
+	 * Get the option string in the format '( -p / --param )'
+	 * @return the option string
+	 */
+	public String getOptionString() {
+		StringBuilder sb = new StringBuilder("( ");
+		if(getShortOption() != null) {
+			sb.append(getShortOption());
+			sb.append(" / ");
+		}
+		if(getLongOption() != null) {
+			sb.append(getLongOption());
+		}
+		sb.append(" )");
+		return sb.toString();
+	}
 }

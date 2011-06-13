@@ -132,41 +132,10 @@ public class TextFileRecordHandler extends RecordHandler {
 			return false;
 		}
 		// log.debug("Resolving file for record: " + cleanRec.getID());
-		String fo = null;
-		BufferedWriter bw = null;
-		try {
-			fo = this.fileDir+"/"+cleanRec.getID();
-			if(!overwrite && FileAide.exists(fo)) {
-				throw new IOException("Failed to add record " + cleanRec.getID() + " because file " + fo + " already exists.");
-			}
-			FileAide.createFile(fo);
-			if(!FileAide.isWriteable(fo)) {
-				throw new IOException("Insufficient file system privileges to add record " + cleanRec.getID() + " to file " + fo);
-			}
-			// log.debug("Writting data for record: "+cleanRec.getID());
-			bw = new BufferedWriter(new OutputStreamWriter(FileAide.getOutputStream(fo)));
-			bw.append(cleanRec.getData());
-			bw.close();
-			createMetaDataFile(cleanRec.getID());
-			setWritten(cleanRec, operator);
-		} catch(IOException e) {
-			if(bw != null) {
-				try {
-					bw.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
-			throw e;
-		} finally {
-			if(bw != null) {
-				try {
-					bw.close();
-				} catch(Exception ignore) {
-					// Ignore
-				}
-			}
-		}
+		String fo = this.fileDir+"/"+cleanRec.getID();
+		FileAide.setTextContent(fo, cleanRec.getData(), overwrite);
+		createMetaDataFile(cleanRec.getID());
+		setWritten(cleanRec, operator);
 		return true;
 	}
 	
