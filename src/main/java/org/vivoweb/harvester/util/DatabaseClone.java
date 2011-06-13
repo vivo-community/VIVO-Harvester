@@ -15,16 +15,20 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.operation.DatabaseOperation;
@@ -190,6 +194,97 @@ public class DatabaseClone {
 		if(this.tableTypes == null || this.tableTypes.length == 0) {
 			this.tableTypes = new String[]{"TABLE"};
 		}
+		IDataSet data = getDataSet();
+		if(this.db2 != null) {
+			log.info("Preparing Output Database");
+			Connection db1conn = this.db1.getConnection();
+			Connection db2conn = this.db2.getConnection();
+			Map<Integer,Map<String, String>> inputDbTypes = getDbTypes(db1conn, "input");
+			Map<Integer,Map<String, String>> outputDbTypes = getDbTypes(db2conn, "output");
+			ResultSet tableData = db2conn.getMetaData().getTables(db2conn.getCatalog(), null, "%", this.tableTypes);
+			while(tableData.next()) {
+				String db2tableName = tableData.getString("TABLE_NAME");
+				for(String db1table : data.getTableNames()) {
+					if(db1table.trim().equalsIgnoreCase(db2tableName.trim())) {
+						log.debug("Droping table '"+db2tableName+"' from output database");
+						String sql = "DROP TABLE "+db2tableName;
+						log.trace("Drop Table SQL Query:\n"+sql);
+						db2conn.createStatement().executeUpdate(sql);
+					}
+				}
+			}
+			for(String table : data.getTableNames()) {
+				// get record set
+				log.debug("Creating table '"+table+"' in output database");
+				ResultSet columnRS = db1conn.getMetaData().getColumns(null, null, table, null);
+				int count = 0;
+				StringBuilder createTableSB = new StringBuilder();
+				createTableSB.append("CREATE TABLE "+table+" (");
+				while(columnRS.next()) {
+					if(columnRS.getString("TABLE_NAME").equals(table)) {
+						String colName = columnRS.getString("COLUMN_NAME");
+						log.debug("Getting column information for '"+colName+"'");
+						Integer typeCode = Integer.valueOf(columnRS.getInt("DATA_TYPE"));
+						int size = columnRS.getInt("COLUMN_SIZE");
+						if(!outputDbTypes.containsKey(typeCode)) {
+							if(typeCode.intValue() == Types.BIT) {
+								typeCode = Integer.valueOf(Types.BOOLEAN);
+								size = 0;
+							} else {
+								if(inputDbTypes.containsKey(typeCode)) {
+									log.warn("Output database does not support datatype '"+inputDbTypes.get(typeCode).get("TYPE_NAME")+"': using VARCHAR");
+								} else {
+									log.error("Unknown datatype code '"+typeCode+"': using VARCHAR");
+								}
+								typeCode = Integer.valueOf(12);
+							}
+						} else {
+							log.trace("typeCode: "+typeCode);
+						}
+						Map<String, String> map = outputDbTypes.get(typeCode);
+						String typeName = map.get("TYPE_NAME");
+						String params = map.get("CREATE_PARAMS");
+						if(StringUtils.isBlank(params)) {
+							params = map.get("PARAMS");
+						}
+						boolean needParam = (StringUtils.isNotBlank(params) && (size != 0));
+						log.trace("column '"+colName+"': "+typeCode+" => '"+typeName+((needParam)?"("+size+")":"")+"'");
+						if(count != 0) {
+							createTableSB.append(',');
+						}
+						createTableSB.append("\n  ");
+						createTableSB.append(colName);
+						createTableSB.append(" ");
+						createTableSB.append(typeName);
+						if(needParam) {
+							createTableSB.append("(");
+							createTableSB.append(size);
+							createTableSB.append(")");
+						}
+						count++;
+					}
+				}
+				createTableSB.append("\n)");
+				log.trace("Create Table SQL Query:\n"+createTableSB);
+				db2conn.createStatement().executeUpdate(createTableSB.toString());
+			}
+			log.info("Dumping Dataset To Output");
+			DatabaseOperation.INSERT.execute(this.db2, data);
+			log.info("Dataset Output Complete");
+		}
+		if(this.outFile != null) {
+			FlatDtdDataSet.write(data, this.outFile);
+		}
+	}
+	
+	/**
+	 * Get the dataset
+	 * @return the dataset
+	 * @throws IOException error writting to flat file
+	 * @throws DataSetException error building dataset
+	 * @throws SQLException error communicating with database
+	 */
+	private IDataSet getDataSet() throws DataSetException, IOException, SQLException {
 		IDataSet data;
 		if(this.db1 != null) {
 			DatabaseConfig config = this.db1.getConfig();
@@ -232,68 +327,46 @@ public class DatabaseClone {
 		} else {
 			throw new IllegalStateException("inputFile or input database should be initialized!");
 		}
-		if(this.db2 != null) {
-			log.info("Preparing Output Database");
-			Map<Integer,String> dbTypes = new HashMap<Integer, String>();
-			Connection db2conn = this.db2.getConnection();
-			ResultSet dbTypeInfo = db2conn.getMetaData().getTypeInfo();
-			while(dbTypeInfo.next()) {
-				Integer typeCode = Integer.valueOf(dbTypeInfo.getInt("DATA_TYPE"));
-				String typeName = dbTypeInfo.getString("TYPE_NAME");
-				if(!dbTypes.containsKey(typeCode)) {
-					dbTypes.put(typeCode, typeName);
-				}
-			}
-			ResultSet tableData = db2conn.getMetaData().getTables(db2conn.getCatalog(), null, "%", this.tableTypes);
-			while(tableData.next()) {
-				String db2tableName = tableData.getString("TABLE_NAME");
-				for(String db1table : data.getTableNames()) {
-					if(db1table.trim().equalsIgnoreCase(db2tableName.trim())) {
-						log.debug("Droping table '"+db2tableName+"' from output database");
-						String sql = "DROP TABLE "+db2tableName;
-						log.trace("Drop Table SQL Query:\n"+sql);
-						db2conn.createStatement().executeUpdate(sql);
-					}
-				}
-			}
-			for(String table : data.getTableNames()) {
-				// get record set
-				log.debug("Creating table '"+table+"' in output database");
-				ResultSet columnRS = this.db1.getConnection().getMetaData().getColumns(null, null, table, null);
-				int count = 0;
-				StringBuilder createTableSB = new StringBuilder();
-				createTableSB.append("CREATE TABLE "+table+" (");
-				while(columnRS.next()) {
-					if(columnRS.getString("TABLE_NAME").equals(table)) {
-						if(count != 0) {
-							createTableSB.append(',');
-						}
-						createTableSB.append("\n  ");
-						createTableSB.append(columnRS.getString("COLUMN_NAME"));
-						createTableSB.append(" ");
-						createTableSB.append(dbTypes.get(Integer.valueOf(columnRS.getInt("DATA_TYPE"))));
-						int size = columnRS.getInt("COLUMN_SIZE");
-						if(size != 0) {
-							createTableSB.append("(");
-							createTableSB.append(size);
-							createTableSB.append(")");
-						}
-						count++;
-					}
-				}
-				createTableSB.append("\n)");
-				log.trace("Create Table SQL Query:\n"+createTableSB);
-				this.db2.getConnection().createStatement().executeUpdate(createTableSB.toString());
-			}
-			log.info("Dumping Dataset To Output");
-			DatabaseOperation.INSERT.execute(this.db2, data);
-			log.info("Dataset Output Complete");
-		}
-		if(this.outFile != null) {
-			FlatDtdDataSet.write(data, this.outFile);
-		}
+		return data;
 	}
-	
+
+	/**
+	 * Get the database type information for this connection
+	 * @param db the database connection
+	 * @param dbName the name for this database
+	 * @return the type information
+	 * @throws SQLException error getting information
+	 */
+	private Map<Integer, Map<String, String>> getDbTypes(Connection db, String dbName) throws SQLException {
+		Map<Integer,Map<String, String>> dbTypes = new HashMap<Integer, Map<String, String>>();
+		ResultSet dbTypeInfo = db.getMetaData().getTypeInfo();
+		ResultSetMetaData rsmd = dbTypeInfo.getMetaData();
+		log.debug("Building type code mappings for "+dbName+" database");
+		while(dbTypeInfo.next()) {
+			Integer typeCode = Integer.valueOf(dbTypeInfo.getInt("DATA_TYPE"));
+//			String typeName = dbTypeInfo.getString("TYPE_NAME");
+			Map<String, String> map = null;
+			if(!dbTypes.containsKey(typeCode)) {
+				log.trace("Adding mapping information for typecode "+typeCode+":");
+				map = new HashMap<String, String>();
+			} else {
+				log.trace("Already contained mapping information for typecode: "+typeCode);
+			}
+			for(int x = 1; x <= rsmd.getColumnCount(); x++) {
+				String colVal = dbTypeInfo.getString(x);
+				String colName = rsmd.getColumnName(x);
+				log.trace("'"+colName+"' => "+(colVal == null?"":"'")+colVal+(colVal == null?"":"'"));
+				if(map != null) {
+					map.put(colName, colVal);
+				}
+			}
+			if(map != null) {
+				dbTypes.put(typeCode, map);
+			}
+		}
+		return dbTypes;
+	}
+
 	/**
 	 * Get the ArgParser for this task
 	 * @return the ArgParser
@@ -327,11 +400,12 @@ public class DatabaseClone {
 			log.info(getParser().getAppName() + ": Start");
 			new DatabaseClone(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error("Error in execution", e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

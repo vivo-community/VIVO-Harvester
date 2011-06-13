@@ -8,8 +8,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.DatabaseClone;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
@@ -20,6 +24,10 @@ import junit.framework.TestCase;
  *
  */
 public class DatabaseCloneTest extends TestCase {
+	/**
+	 * SLF4J Logger
+	 */
+	private static Logger log = LoggerFactory.getLogger(DatabaseCloneTest.class);
 	/** */
 	private static String inputDriverClass = "org.h2.Driver";
 	/** */
@@ -28,6 +36,14 @@ public class DatabaseCloneTest extends TestCase {
 	private static String inputUsername = "sa";
 	/** */
 	private static String inputPassword = "";
+//	/** */
+//	private static String inputDriverClass = "com.mysql.jdbc.Driver";
+//	/** */
+//	private static String inputConnLine = "jdbc:mysql://127.0.0.1/junit";
+//	/** */
+//	private static String inputUsername = "junit";
+//	/** */
+//	private static String inputPassword = "HDAVvLh5aD2TsumX";
 	/** */
 	private Connection inputConn;
 	/** */
@@ -43,29 +59,60 @@ public class DatabaseCloneTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		InitLog.initLogger(null, null);
-		Class.forName(inputDriverClass);
-		this.inputConn = DriverManager.getConnection(inputConnLine, inputUsername, inputPassword);
-		Class.forName(outputDriverClass);
-		this.outputConn = DriverManager.getConnection(outputConnLine, outputUsername, outputPassword);
-		
-		Statement cursor = this.inputConn.createStatement();
-		cursor.executeUpdate("" +
-				"CREATE TABLE `department` (" +
-				"  `dept_id` varchar(8) NOT NULL," +
-				"  `dept_name` varchar(255) NOT NULL," +
-				"  `type_id` int(3) NOT NULL," +
-				"  `super_dept_id` varchar(8) NOT NULL," +
-				"  PRIMARY KEY (`dept_id`)" +
-				");" +
-		"");
-		cursor.executeUpdate("" +
-				"INSERT INTO `department` (`dept_id`, `dept_name`, `type_id`, `super_dept_id`) VALUES" +
-				"('12345678', 'Division of Medicine', 402, '00000000')," +
-				"('87654321', 'Department of Research Informatics', 403, '12345678')," +
-				"('09876543', 'Clinical and Translational Program', 405, '87654321')," +
-				"('00000000', 'University of Sample Data', 401, '');" +
-		"");
+		try {
+			InitLog.initLogger(null, null);
+			Class.forName(inputDriverClass);
+			this.inputConn = DriverManager.getConnection(inputConnLine, inputUsername, inputPassword);
+			Class.forName(outputDriverClass);
+			this.outputConn = DriverManager.getConnection(outputConnLine, outputUsername, outputPassword);
+			
+			Statement cursor = this.inputConn.createStatement();
+			cursor.executeUpdate("" +
+					"CREATE TABLE `department` (" +
+					"  `dept_id` varchar(8) NOT NULL," +
+					"  `dept_name` varchar(255) NOT NULL," +
+					"  `type_id` int(3) NOT NULL," +
+					"  `super_dept_id` varchar(8) NOT NULL," +
+					"  `mod_ts` timestamp," +
+					"  `is_current` tinyint(1)," +
+					"  PRIMARY KEY (`dept_id`)" +
+					");" +
+			"");
+			cursor.executeUpdate("" +
+					"INSERT INTO `department` (`dept_id`, `dept_name`, `type_id`, `super_dept_id`, `mod_ts`, `is_current`) VALUES" +
+					"('12345678', 'Division of Medicine', 402, '00000000', '2010-09-15 14:51:35', 1)," +
+					"('87654321', 'Department of Research Informatics', 403, '12345678', '1999-11-03 01:24:27', 0)," +
+					"('09876543', 'Clinical and Translational Program', 405, '87654321', '2004-05-21 09:32:57', 1)," +
+					"('00000000', 'University of Sample Data', 401, '', '2000-06-11 18:14:03', 1);" +
+			"");
+		} catch(Exception e) {
+			if(this.inputConn != null) {
+				try {
+					this.inputConn.createStatement().executeUpdate("DROP TABLE `department`");
+				} catch(SQLException e2) {
+					// ignore
+				}
+				try {
+					this.inputConn.close();
+				} catch(SQLException e2) {
+					// ignore
+				}
+			}
+			if(this.outputConn != null) {
+				try {
+					this.outputConn.createStatement().executeUpdate("DROP TABLE `department`");
+				} catch(SQLException e2) {
+					// ignore
+				}
+				try {
+					this.outputConn.close();
+				} catch(SQLException e2) {
+					// ignore
+				}
+			}
+			FileAide.delete("databaseclonetest-temp/");
+			throw e;
+		}
 	}
 	
 	/**
@@ -83,9 +130,21 @@ public class DatabaseCloneTest extends TestCase {
 		ids.add("87654321");
 		ids.add("09876543");
 		ids.add("00000000");
+		Map<String, String> current = new HashMap<String, String>();
+		current.put("12345678", "TRUE");
+		current.put("87654321", "FALSE");
+		current.put("09876543", "TRUE");
+		current.put("00000000", "TRUE");
 		
 		do{
-			assertTrue(ids.remove(rs.getString("dept_id")));
+			String deptid = rs.getString("dept_id");
+			log.trace("dept_id: "+deptid);
+			assertTrue(ids.remove(deptid));
+			String currentVal = current.get(deptid);
+			log.trace("currentVal: "+currentVal);
+			String is_current = Boolean.valueOf(rs.getBoolean("is_current")).toString().toUpperCase();
+			log.trace("is_current: "+is_current);
+			assertEquals(currentVal, is_current);
 			count++;
 		}while(rs.next());
 		assertEquals(4, count);
