@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-XPathTool - Summary of Tool
+XPathTool - Runs an XPath query on a file and writes the first result to the console.
 -----
-Detailed description of tool
- -->
+XPathTool runs a single XPath query on a specified file, and writes the first result, if any, to the console.  It can be used to parse out
+values in configuration files, which can then be placed in command-line scripting variables.  If the file could not be parsed an exception
+will be output.  If there was no data nothing will be output.
+-->
 <Config>
     <!-- 
     a - Description and repercussions
@@ -11,6 +13,35 @@ Detailed description of tool
     Possible Values:
     b - Meaning of b
     c - Meaning of c
-     -->
+    -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
+    information to more detailed debugging information.
+    -----
+    Allowable values:
+    OFF - No log information is displayed on the console.
+    FATAL - Only fatal errors are displayed on the console.
+    ERROR - All error messages are displayed. 
+    WARN - Error and warning messages are displayed.
+    INFO - Errors, warnings, and general user information is displayed.  This is the default.
+    DEBUG - Errors, warnings, general information, and information intended for debuggers is displayed to the console.
+    TRACE - All of the above as well as even finer-grain debugging information is displayed.
+    ALL - Everything that goes into the log is displayed on the console.
+    -----
+    Values meaningful for XPathTool:
+    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    FileSourceXML - Path to the XML file to be parsed.
+    -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    XPathExpression - XPath query to run on the file.
+    -->
     <Param name="a">b</Param>
 </Config>

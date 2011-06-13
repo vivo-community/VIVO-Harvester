@@ -40,7 +40,8 @@ be used to remove existing triples from a Jena model.
     TRACE - All of the above as well as even finer-grain debugging information is displayed.
     ALL - Everything that goes into the log is displayed on the console.
 
-    Values meaningful for RunBibutils:
+    Values meaningful for Transfer:
+    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
     DEBUG - Warning if no output is specified
     -->
     <Param name="a">b</Param>

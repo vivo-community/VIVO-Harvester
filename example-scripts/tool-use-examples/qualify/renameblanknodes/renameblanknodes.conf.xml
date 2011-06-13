@@ -22,4 +22,30 @@ Detailed description of tool
     c - Meaning of c
      -->
     <Param name="a">b</Param>
+
+    <!-- 
+    ModelDestination - 
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    ModelDedup - 
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    BaseNamespace - 
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    AddNamespace - 
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    PredicateNamespace - 
+     -->
+    <Param name="a">b</Param>
+
 </Config>
