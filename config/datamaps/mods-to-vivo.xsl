@@ -118,7 +118,7 @@ KNOWN ISSUE: relatedItem can be nested recursively.  Also, they can be of differ
 				<bibo:pageEnd><xsl:value-of select="extent[@unit='page']/end" /></bibo:pageEnd>
 				<bibo:abstract><xsl:value-of select="abstract"></xsl:value-of></bibo:abstract>
 
-				<core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher>
+				<!-- <core:publisher><xsl:value-of select="originInfo/publisher" /></core:publisher> -->
 				<core:placeOfPublication><xsl:value-of select="originInfo/place/placeTerm" /></core:placeOfPublication>
 
 				<xsl:apply-templates select="name" mode="withinPub">
