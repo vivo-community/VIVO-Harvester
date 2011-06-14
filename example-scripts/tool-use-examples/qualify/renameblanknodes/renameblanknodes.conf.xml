@@ -9,9 +9,9 @@
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
 <!-- 
-RenameBlankNodes - Summary of Tool
+RenameBlankNodes - Find nodes with no name and give them a name
 -----
-Detailed description of tool
+RenameBlankNodes finds nodes that do not have a name and creates a name for them.
  -->
 <Config>
     <!-- 
@@ -24,27 +24,27 @@ Detailed description of tool
     <Param name="a">b</Param>
 
     <!-- 
-    ModelDestination - 
+    ModelDestination - The Jena model in which to do the rename.
      -->
     <Param name="a">b</Param>
 
     <!-- 
-    ModelDedup - 
+    ModelDedup - Model which contains triples whose names we do not want to create duplicates of in the destination model.
      -->
     <Param name="a">b</Param>
 
     <!-- 
-    BaseNamespace - 
+    BaseNamespace - The first part of the namespace we wish to give to the renamed nodes.
      -->
     <Param name="a">b</Param>
 
     <!-- 
-    AddNamespace - 
+    AddNamespace - The part of the namespace between the base and the ID number
      -->
     <Param name="a">b</Param>
 
     <!-- 
-    PredicateNamespace - 
+    PredicateNamespace - The namespace for predicates.
      -->
     <Param name="a">b</Param>
 
