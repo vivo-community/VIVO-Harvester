@@ -125,10 +125,6 @@ RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 # Scoring sponsors by labels
 $Score $SCOREMODELS -A label=$EQTEST -W label=1.0 -F label=$RDFSLABEL -P label=$RDFSLABEL -n ${BASEURI}sponsor/
 
-$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-1.dsr.rdf.xml
-
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-1.dsr.rdf.xml
-
 # Scoring of people on UFID
 $Score $SCOREMODELS -A ufid=$EQTEST -W ufid=1.0 -F ufid=$UFID -P ufid=$UFID -n ${BASEURI}person/
 
@@ -194,6 +190,7 @@ $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/mat
 $Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grant/ -r
 $Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
 $Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
+$Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
 #$Smush $SCOREINPUT -P $PIROLEOF -n ${BASEURI}piRole/ -r
 #$Smush $SCOREINPUT -P $COPIROLEOF -n ${BASEURI}coPiRole/ -r
 

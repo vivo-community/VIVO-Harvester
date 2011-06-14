@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
+<!--  All rights reserved. This program and the accompanying materials -->
+<!--  are made available under the terms of the new BSD license -->
+<!--  which accompanies this distribution, and is available at -->
+<!--  http://www.opensource.org/licenses/bsd-license.html -->
+ 
+<!--  Contributors: -->
+<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
+
+<Task>
+	<!--INPUT -->
+	<Param name="driver">org.h2.Driver</Param>
+	<Param name="connection">jdbc:h2:data/databaseclone/database</Param>
+	<Param name="username">sa</Param>
+	<Param name="password"></Param>
+	
+	<!--  OUTPUT -->
+	<Param name="output">raw-records.config.xml</Param>
+	
+	<!-- TABLES -->
+	<Param name="tableName">people</Param>
+	<Param name="id">people=UID</Param>
+	<Param name="query">people=
+SELECT 
+	emp.person_id AS UID, 
+	emp.first_name AS FNAME, 
+	emp.last_name AS LNAME, 
+	emp.middle_name AS MNAME, 
+	emp.prefix_name AS PRENAME, 
+	emp.suffix_name AS SUFNAME, 
+	emp.full_name AS FULLNAME, 
+	emp.official_name AS BUSNAME, 
+	emp.pref_title AS TITLE, 
+	emp.email_address AS EMAIL, 
+	emp.work_phone AS PHONE, 
+	emp.work_fax AS FAX, 
+	login.login_name AS NETID 
+FROM person AS emp 
+LEFT JOIN user AS login ON 
+	emp.person_id = login.person_id AND login.expired = 0 
+WHERE 
+	emp.publish_ok = 1<!-- - -> AND 
+	emp.person_id LIKE '%6%'<!- - -->
+	</Param>
+</Task>

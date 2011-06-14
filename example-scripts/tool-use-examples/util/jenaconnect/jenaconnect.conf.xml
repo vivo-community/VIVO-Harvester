@@ -1,25 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
-<!--  All rights reserved. This program and the accompanying materials -->
-<!--  are made available under the terms of the new BSD license -->
-<!--  which accompanies this distribution, and is available at -->
-<!--  http://www.opensource.org/licenses/bsd-license.html -->
- 
-<!--  Contributors: -->
-<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!--   Copyright (c) 2011                                                                                               -->
+<!--   Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams          -->
+<!--   All rights reserved. This program and the accompanying materials                                                 -->
+<!--   are made available under the terms of the new BSD license                                                        -->
+<!--   which accompanies this distribution, and is available at                                                         -->
+<!--   http://www.opensource.org/licenses/bsd-license.html                                                              -->
+  
+<!--   Contributors: Initial API and implementation                                                                     -->
+<!--       Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams      -->
 
-<!-- 
-JenaConnect - Summary of Tool
------
-Detailed description of tool
- -->
-<Config>
+<!--  = = = = =                                                                                              = = = = =  -->
+<!-- JenaConnect - Is a wrapper to allow unified interactions with various forms of Jena models.                        -->
+<!-- ======                                                                                                             -->
+<!-- When working with jena models this tool allows uniform access with them. The RecordHandler formatted data can      -->
+<!--     be loaded into a model. A SPARQL query can be run from the command-line using this tool.                       --> 
+<!-- ===== PARAMETERS =====                                                                                             -->
+<!--                                                                                                                    -->
+<!-- driver - A JDBC driver is a java class which handles the interface between the program and a given database.       -->
+<!--     The driver needs to exist within the classpath, for the program to be able to use it.                          -->
+<!--     example value =  org.h2.Driver                                                                                 -->
+<!--                                                                                                                    -->
+<!-- connection - JDBC uses a connection string related to the Driver being used.                                       -->
+<!--    It is in the general format : "jdbc:somejdbcvendor:other data needed"                                           -->
+<!--    Specifically the harvester tends to use :                                                                       -->
+<!--     "jdbc:jtds:sqlserver://127.0.0.1:8080/databasename" for a Microsoft SQL server                                 -->
+<!--     "jdbc:h2:directory/location" for an H2 database ( http://www.h2database.com )                                  -->
+<!--                                                                                                                    -->
+<!--  username - A valid login with proper permissions                                                                  -->
+<!--  password - The associated secure password                                                                         -->
+<!--   These are what the fetch uses when accessing the given database. These must be valid otherwise the harvest run   -->
+<!--  will not have access to the database. By default we use "sa" for system administrator and a blank password.       -->
+<config>
     <!-- 
     a - Description and repercussions
-    -----
+    =====
     Possible Values:
     b - Meaning of b
     c - Meaning of c
      -->
-    <Param name="a">b</Param>
-</Config>
+    <param name="a">b</param>
+</config>
