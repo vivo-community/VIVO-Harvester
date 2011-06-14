@@ -394,6 +394,9 @@ public class DatabaseClone {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		for(String arg : args){
+			System.out.println(arg);
+		}
 		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());

@@ -18,15 +18,16 @@
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
 HARVESTER_INSTALL_DIR=/home/jrpence/workspace/HarvesterTrunk
-HARVEST_NAME=example-dsr
-DATE=`date +%Y-%m-%d'T'%T`
+export HARVEST_NAME=example-dsr
+export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
 # The tools within this script refer to binaries supplied within the harvester
 #	Since they can be located in another directory their path should be
 #	included within the classpath and the path enviromental variables.
-PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
-CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester-1.1.1.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
+export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester-1.2beta2.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester-1.2beta2.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
 # Exit on first error
 # The -e flag prevents the script from continuing even though a tool fails.
@@ -54,6 +55,7 @@ rm -rf data
 #	allows the use of intensive queries to happen to a local copy and only tie up the
 #	resources in the local machine.
 harvester-databaseclone -X databaseclone.config.xml
+
 
 # Execute Fetch
 # This stage of the script is where the information is gathered together into one local

@@ -89,10 +89,10 @@ public class InitLog {
 		context.putProperty("process-task", process);
 		JoranConfigurator jc = new JoranConfigurator();
 		jc.setContext(context);
-		context.reset();
 		try {
 			InputStream is = FileAide.getFirstFileNameChildInputStream(".", "logback.xml");
 			if(is != null) {
+				context.reset();
 				jc.doConfigure(is);
 			}
 		} catch(IOException e) {

@@ -10,10 +10,10 @@
 
 <Task>
 	<!--INPUT -->
-	<Param name="inputDriver">com.mysql.jdbc.Driver</Param>
-	<Param name="inputConnection">jdbc:mysql://127.0.0.1:3306/DemoDB</Param>
-	<Param name="inputUsername">DemoDB</Param>
-	<Param name="inputPassword">b8F5LdFPVEqHP3XX</Param>
+	<Param name="inputDriver">net.sourceforge.jtds.jdbc.Driver</Param>
+	<Param name="inputConnection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
+	<Param name="inputUsername">ichp-vivo</Param>
+	<Param name="inputPassword">ichp!d@ta</Param>
 	
 	<!--  OUTPUT -->
 	<Param name="outputDriver">org.h2.Driver</Param>
@@ -21,6 +21,13 @@
 	<Param name="outputUsername">sa</Param>
 	<Param name="outputPassword"></Param>
 	
+	<!--  TABLES  -->
+	<Param name="tableName">vwContracts</Param>
+    <Param name="tableName">vwProjectTeam</Param>
+    <Param name="tableName">vwVIVO</Param>
+	
 	<!--  OPTIONS -->
-	<Param name="DBUnitFeature">http://www.dbunit.org/features/caseSensitiveTableNames=true</Param>
+    <Param name="validTableType">TABLE</Param>
+    <Param name="validTableType">VIEW</Param>
+    <Param name="DBUnitFeature">http://www.dbunit.org/features/caseSensitiveTableNames=true</Param>
 </Task>
