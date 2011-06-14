@@ -615,7 +615,7 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to output
 	 */
 	public void executeQuery(String queryParam, String resultFormatParam, boolean datasetMode) throws IOException {
-		executeQuery(queryParam, resultFormatParam, System.out, datasetMode);
+		executeQuery(queryParam, resultFormatParam, null, datasetMode);
 	}
 	
 	/**
@@ -648,16 +648,16 @@ public abstract class JenaConnect {
 			} else if(query.isAskType()) {
 				out.write((Boolean.toString(qe.execAsk())+"\n").getBytes());
 			} else {
-				Model resultModel = null;
+				MemJenaConnect resultModel = new MemJenaConnect();
 				if(query.isConstructType()) {
-					resultModel = qe.execConstruct();
+					qe.execConstruct(resultModel.getJenaModel());
 				} else if(query.isDescribeType()) {
-					resultModel = qe.execDescribe();
+					qe.execDescribe(resultModel.getJenaModel());
 				} else {
 					throw new IllegalArgumentException("Query Invalid: Not Select, Construct, Ask, or Describe");
 				}
 				
-				exportRdfToStream(resultModel, out, resultFormatParam);
+				resultModel.exportRdfToStream(out, resultFormatParam);
 			}
 		} catch(QueryParseException e1) {
 			try {
@@ -711,6 +711,7 @@ public abstract class JenaConnect {
 		parser.addArgument(new ArgDef().setShortOption('J').setLongOpt("jenaOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('q').setLongOpt("query").withParameter(true, "SPARQL_QUERY").setDescription("sparql query to execute").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('Q').setLongOpt("queryResultFormat").withParameter(true, "RESULT_FORMAT").setDescription("the format to return the results in ('RS_RDF',etc for select queries / 'RDF/XML',etc for construct/describe queries)").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("fileOutput").withParameter(true, "OUTPUT_FILE").setDescription("the file to output the results in, if not specified writes to stdout").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dataset").setDescription("execute query against dataset rather than model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("truncate").setDescription("empty the jena model").setRequired(false));
 		return parser;
@@ -846,7 +847,7 @@ public abstract class JenaConnect {
 	public static void main(String... args) {
 		Exception error = null;
 		try {
-			InitLog.initLogger(args, getParser());
+			InitLog.initLogger(args, getParser(), "f");
 			ArgList argList = getParser().parse(args);
 			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
 			if(jc == null) {
@@ -858,7 +859,7 @@ public abstract class JenaConnect {
 				}
 				jc.truncate();
 			} else if(argList.has("q")) {
-				jc.executeQuery(argList.get("q"), argList.get("Q"), argList.has("d"));
+				jc.executeQuery(argList.get("q"), argList.get("Q"), FileAide.getOutputStream(argList.get("f")), argList.has("d"));
 			} else {
 				throw new IllegalArgumentException("No Operation Specified");
 			}

@@ -106,15 +106,22 @@ public class InitLog {
 	 * Setup the logger
 	 * @param args the commandline args passed
 	 * @param parser the arg parser to use
+	 * @param noLogIfNotSetFlags will turn off console logging if any of these flags are not set (note: wordiness will overwrite this)
 	 * @throws IOException error processing
 	 */
-	public static void initLogger(String[] args, ArgParser parser) throws IOException {
+	public static void initLogger(String[] args, ArgParser parser, String... noLogIfNotSetFlags) throws IOException {
 		String logLevel = System.getProperty("console-log-level");
 		String harvLevel = System.getProperty("harvester-level");
 		System.setProperty("harvester-level", "OFF");
 		setLogLevel("OFF");
 		if((args != null) && (parser != null)) {
 			ArgList argList = parser.parse(args);
+			for(String testFlag : noLogIfNotSetFlags) {
+				if(!argList.has(testFlag)) {
+					logLevel = "OFF";
+					break;
+				}
+			}
 			if(argList.has("w")) {
 				logLevel = argList.get("w");
 			}

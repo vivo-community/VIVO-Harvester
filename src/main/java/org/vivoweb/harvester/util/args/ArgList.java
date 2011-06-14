@@ -169,7 +169,7 @@ public class ArgList {
 		if(argdef.isParameterValueMap()) {
 			throw new IllegalArgumentException(arg + " is a value map parameter, use getValueMap()");
 		}
-		String retVal;
+		String retVal = null;
 		if(this.oCmdSet.hasOption(arg)) {
 			retVal = this.oCmdSet.getOptionValue(arg);
 		} else {
@@ -280,11 +280,14 @@ public class ArgList {
 	 */
 	public boolean has(String arg) {
 		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(argdef == null) {
+			throw new IllegalArgumentException("No such parameter: "+arg);
+		}
 		if(this.oCmdSet.hasOption(arg)) {
 			return true;
 		} else if((this.confMap != null) && (getConfArgValues(argdef) != null)) {
 			return true;
-		} else if((argdef != null) && argdef.hasDefaultValue()) {
+		} else if(argdef.hasDefaultValue()) {
 			return true;
 		}
 		return false;
