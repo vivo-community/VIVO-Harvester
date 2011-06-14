@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-D2RMapFetch - Summary of Tool
+D2RMapFetch - Fetch from a relational database.
 -----
-Detailed description of tool
+D2R (Database to RDF) Map is a language that describes mappings between a relational database schema and RDF.  D2RMapFetch allows
+you to fetch data from a database in RDF format using a mapping file.
  -->
 <Config>
     <!-- 
@@ -35,12 +36,13 @@ Detailed description of tool
     <Param name="a">b</Param>
 
     <!--
-    D2RMapConfig - 
+    D2RMapConfig - Path to a file containing the mapping and the connection info for the database.  The map file
+    specification can be found at http://www4.wiwiss.fu-berlin.de/bizer/d2rmap/d2rmap.htm .
      -->
     <Param name="a">b</Param>
 
     <!--
-    WorkingDirectory - 
+    WorkingDirectory - The working directory to use for relative pathnames.  Optional, default is the current directory.
      -->
     <Param name="a">b</Param>
 
