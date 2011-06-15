@@ -230,13 +230,13 @@ public class DatabaseClone {
 							if(typeCode.intValue() == Types.BIT) {
 								typeCode = Integer.valueOf(Types.BOOLEAN);
 								size = 0;
-							} else {
+							} else { //TODO: more type conversion issues possible, make this if/else more exhaustive
 								if(inputDbTypes.containsKey(typeCode)) {
 									log.warn("Output database does not support datatype '"+inputDbTypes.get(typeCode).get("TYPE_NAME")+"': using VARCHAR");
 								} else {
 									log.error("Unknown datatype code '"+typeCode+"': using VARCHAR");
 								}
-								typeCode = Integer.valueOf(12);
+								typeCode = Integer.valueOf(Types.VARCHAR);
 							}
 						} else {
 							log.trace("typeCode: "+typeCode);
