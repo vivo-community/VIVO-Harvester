@@ -20,9 +20,9 @@
 	
 	<!--OPTIONS -->
 	<Param name="tempJenaDir">data/temp-score-model</Param>
-	<Param name="algorithms">uid=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
-	<Param name="weights">uid=1.0</Param>
-	<Param name="inputJena-predicates">uid=http://vivo.sample.edu/ontology/uId</Param>
-	<Param name="vivoJena-predicates">uid=http://vivo.sample.edu/ontology/uId</Param>
-	<Param name="namespace">http://vivoweb.org/harvest/example/jdbc/people/</Param>
+	<Param name="algorithms">lname=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
+	<Param name="weights">lname=1.0</Param>
+	<Param name="inputJena-predicates">lname=http://xmlns.com/foaf/0.1/lastName</Param>
+	<Param name="vivoJena-predicates">lname=http://xmlns.com/foaf/0.1/lastName</Param>
+	<Param name="namespace">http://vivoweb.org/harvest/example/pubmed</Param>
 </Task>

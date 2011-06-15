@@ -16,6 +16,6 @@
 	<Param name="vivoModel">vivo.model.xml</Param>
 	
 	<!--  OPTIONS -->
-	<Param name="oldNamespace">http://vivoweb.org/harvest/example/jdbc/people/</Param>
+	<Param name="oldNamespace">http://vivoweb.org/harvest/example/pubmed</Param>
 	<Param name="newNamespace">http://vivo.sample.edu/inidividual/</Param>
 </Task>

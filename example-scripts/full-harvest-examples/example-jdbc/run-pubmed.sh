@@ -18,7 +18,7 @@
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
 HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
-HARVEST_NAME=example-jdbc
+HARVEST_NAME=example-pubmed
 DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
@@ -39,7 +39,7 @@ set -e
 #	a solution to the problem. It has become common practice in addressing a problem
 #	to request this file. The passwords and usernames are filtered out of this file
 #	to prevent these logs from containing sensitive information.
-echo "Full Logging in jdbc-harvest-$DATE.log"
+echo "Full Logging in pubmed-harvest-$DATE.log"
 
 #clear old data
 # For a fresh harvest, the removal of the previous information maintains data integrity.
@@ -48,21 +48,14 @@ echo "Full Logging in jdbc-harvest-$DATE.log"
 # 	the required harvest data.  
 rm -rf data
 
-# clone db
-# Databaseclone is a tool used to make a local copy of the database. One reason for this
-#	is that constantly querying a database could put undue load on a repository. This
-#	allows the use of intensive queries to happen to a local copy and only tie up the
-#	resources in the local machine.
-harvester-databaseclone -X databaseclone.config.xml
-
 # Execute Fetch
 # This stage of the script is where the information is gathered together into one local
 #	place to facilitate the further steps of the harvest. The data is stored locally
 #	in a format based off of the source. The format is a form of RDF but not in the VIVO ontology
-# The JDBCFetch tool in particular takes the data from the chosen source described in its
+# The pubmedFetch tool in particular takes the data from the chosen source described in its
 #	configuration XML file and places it into record set in the flat RDF directly 
 #	related to the rows, columns and tables described in the target database.
-harvester-jdbcfetch -X jdbcfetch.config.xml
+harvester-pubmedfetch -X pubmedfetch.config.xml
 
 # Execute Translate
 # This is the part of the script where the input data is transformed into valid RDF
@@ -80,21 +73,21 @@ harvester-xsltranslator -X xsltranslator.config.xml
 # -d means that this call will also produce a text dump file in the specified location 
 harvester-transfer -h translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
-# Execute Score for People
+# Execute Score
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
-harvester-score -X score-people.config.xml
+harvester-score -X score.config.xml
 
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
 # 	comparison values above the chosen threshold within the xml configuration file.
-harvester-match -X match-people.config.xml
+harvester-match -X match.config.xml
 
 # Execute ChangeNamespace to get unmatched People into current namespace
 # This is where the new people from the harvest are given uris within the namespace of Vivo
 # 	If there is an issue with uris being in another namespace after import, make sure this step
 #   was completed for those uris.
-harvester-changenamespace -X changenamespace-people.config.xml
+harvester-changenamespace -X changenamespace.config.xml
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
