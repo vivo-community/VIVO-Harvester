@@ -31,4 +31,4 @@ HARVESTER_JAVA_OPTS=""
 OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM $HARVESTER_JAVA_OPTS -Dharvester-task=$HARVEST_NAME.$DATE"
 
 #pass incoming params to java program
-java $OPTS -Dprocess-task=Score org.vivoweb.harvester.score.Score $@
+java $OPTS -Dprocess-task=Score org.vivoweb.harvester.score.Score "$@"
