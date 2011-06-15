@@ -1,4 +1,4 @@
-#!/bash
+#!/bin/bash
 
 # Copyright (c) 2010-2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
 # All rights reserved. This program and the accompanying materials
