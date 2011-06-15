@@ -93,7 +93,9 @@ public class InitLog {
 			InputStream is = FileAide.getFirstFileNameChildInputStream(".", "logback.xml");
 			if(is != null) {
 				context.reset();
+				context.stop();
 				jc.doConfigure(is);
+				context.start();
 			}
 		} catch(IOException e) {
 			throw new IllegalArgumentException(e);
