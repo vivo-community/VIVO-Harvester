@@ -10,37 +10,60 @@
 
 <Task>
 	<!--INPUT -->
+<!-- 
+<% ===== PARAMETERS =====                                                                                             %>
+<% The source relational database information:                                                                        %>
+<%                                                                                                                    %>
+<% <Param name="driver"> - A JDBC driver is a java class which handles the interface between the program and a given  %>
+<%      database.The driver needs to exist within the classpath, for the program to be able to use it.                %>
+<%     EXAMPLES:                                                                                                      %>
+<%            <Param name="driver">org.h2.Driver</Param>                                                              %>
+<%                                                                                                                    %>
+<% <Param name="driver"><connection> - JDBC uses a connection string related to the Driver being used.                %>
+<%    It is in the general format "jdbc:somejdbcvendor:other data needed"                                             %>
+<%    EXAMPLES :                                                                                                      %>
+<%     Microsoft SQL server : <Param name="connection">jdbc:jtds:sqlserver://127.0.0.1:8080/databasename</Param>      %>
+<%     H2 database ( http://www.h2database.com ) : <Param name="connection">jdbc:h2:directory/location</Param>        %>
+<%                                                                                                                    %>
+<% <Param name="username"> - A valid login with proper permissions                                                    %>
+<% <Param name="password"> - The associated secure password                                                           %>
+<%   These are what the fetch uses when accessing the given database. These must be valid otherwise the harvest run   %>
+<%  will not have access to the database. By default we use "sa" for system administrator and a blank password.       %>                                                                                                                %>
+<%                                                                                                                    %>
+-->
 	<Param name="driver">org.h2.Driver</Param>
 	<Param name="connection">jdbc:h2:data/databaseclone/database</Param>
 	<Param name="username">sa</Param>
 	<Param name="password"></Param>
 	
 	<!--  OUTPUT -->
+<!-- 
+<% The output from JDBCfetch is a recordhandler described by the provided                                            %>                                                                                                              %>
+<%                                                                                                                    %>                                                                                                              %>
+<%                                                                                                                    %>                                                                                                              %>
+<%                                                                                                                    %>                                                                                                              %>
+<%                                                                                                                    %>
+ -->
 	<Param name="output">raw-records.config.xml</Param>
 	
 	<!-- TABLES -->
-	<Param name="tableName">people</Param>
-	<Param name="id">people=UID</Param>
-	<Param name="query">people=
-SELECT 
-	emp.person_id AS UID, 
-	emp.first_name AS FNAME, 
-	emp.last_name AS LNAME, 
-	emp.middle_name AS MNAME, 
-	emp.prefix_name AS PRENAME, 
-	emp.suffix_name AS SUFNAME, 
-	emp.full_name AS FULLNAME, 
-	emp.official_name AS BUSNAME, 
-	emp.pref_title AS TITLE, 
-	emp.email_address AS EMAIL, 
-	emp.work_phone AS PHONE, 
-	emp.work_fax AS FAX, 
-	login.login_name AS NETID 
-FROM person AS emp 
-LEFT JOIN user AS login ON 
-	emp.person_id = login.person_id AND login.expired = 0 
-WHERE 
-	emp.publish_ok = 1<!-- - -> AND 
-	emp.person_id LIKE '%6%'<!- - -->
-	</Param>
+	
+    <!--limit the harvest for testing -->
+    <!--<Param name="whereClause">vwContracts=vwContracts.Confidential='',vwContracts.ContractNumber LIKE '%18%'</Param>-->
+    <Param name="tableName">vwContracts</Param>
+    <Param name="whereClause">vwContracts=vwContracts.Confidential=''</Param>
+    <Param name="id">vwContracts=ContractNumber</Param>
+    <Param name="fields">vwContracts=Confidential,ContractPI,Title,ContractDeptID,TotalAwarded,ContractUFID,BEGIN_DT,END_DT,SponsorID,Sponsor,FlowThruSponsorID,FlowThruSponsor</Param>
+    <!--limit the harvest for testing-->
+    <!--<Param name="whereClause">vwProjectTeam=vwProjectTeam.ContractNumber LIKE '%18%'</Param>-->
+    <Param name="tableName">vwProjectTeam</Param>
+    <Param name="id">vwProjectTeam=PS_ProjectNumber</Param>
+    <Param name="fields">vwProjectTeam=ContractUFID,ContractNumber,ProjectUPN,PrimaryProject,InvestigatorID,Investigator,isPI</Param>
+    <Param name="tableName">vwVIVO</Param>
+    <!--<Param name="whereClause">vwVIVO=vwVIVO.PS_Contract LIKE '%18%'</Param>-->
+    <Param name="id">vwVIVO=PS_Contract</Param>
+    <Param name="fields">vwVIVO=DSR_Number,PS_Contract,PS_Project,Title,RecordStatus,SubcontractType,Award_DT,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyNumber,Sponsor,SponsorID,FlowThruType,FlowThruSponsor,FlowThruID,PI,Type,Category,Program,ClinicalTrial,PrimeSponsorType,PrimeSponsorSource,PrimeAgency,PrimeCustID</Param>
+    <Param name="delimiterPrefix">[</Param>
+    <Param name="delimiterSuffix">]</Param>
+    <Param name="validTableType">VIEW</Param>
 </Task>

@@ -12,8 +12,8 @@
 	<!--INPUT -->
 	<Param name="inputDriver">net.sourceforge.jtds.jdbc.Driver</Param>
 	<Param name="inputConnection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
-	<Param name="inputUsername">ichp-vivo</Param>
-	<Param name="inputPassword">ichp!d@ta</Param>
+	<Param name="inputUsername">USERNAME</Param>
+	<Param name="inputPassword">PASSWORD</Param>
 	
 	<!--  OUTPUT -->
 	<Param name="outputDriver">org.h2.Driver</Param>
