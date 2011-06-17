@@ -84,11 +84,11 @@ public class XPathTool {
 //			log.debug("xpath result for '" + expression + "' on file '" + xmlFile + "': '" + value + "'");
 			return value;
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(XPathExpressionException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -132,10 +132,12 @@ public class XPathTool {
 			new XPathTool(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

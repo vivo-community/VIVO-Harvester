@@ -150,7 +150,13 @@ public class JDBCRecordHandler extends RecordHandler {
 	 */
 	private void initAll(String jdbcDriverClass, String connLine, String username, String password, String tableName, String dataFieldName) throws IOException {
 		this.table = tableName;
+		if(this.table == null) {
+			this.table = "recordTable";
+		}
 		this.dataField = dataFieldName;
+		if(this.dataField == null) {
+			this.dataField = "dataField";
+		}
 		try {
 			Class.forName(jdbcDriverClass);
 			this.db = DriverManager.getConnection(connLine, username, password);
@@ -166,9 +172,9 @@ public class JDBCRecordHandler extends RecordHandler {
 			}
 			checkMetaTableConfigured();
 		} catch(ClassNotFoundException e) {
-			throw new IOException("Unable to initialize DB Driver Class", e);
+			throw new IllegalArgumentException(e);
 		} catch(SQLException e) {
-			throw new IOException("Unable to connect to DB", e);
+			throw new IOException("Error in communication with database", e);
 		}
 	}
 	
@@ -307,7 +313,8 @@ public class JDBCRecordHandler extends RecordHandler {
 		try {
 			ri = new JDBCRecordIterator();
 		} catch(SQLException e) {
-			log.error("Unable to retrieve records", e);
+			log.error("Unable to retrieve records");
+			log.debug("Stacktrace:",e);
 		}
 		return ri;
 	}
@@ -335,7 +342,8 @@ public class JDBCRecordHandler extends RecordHandler {
 			try {
 				return this.rs.next();
 			} catch(SQLException e) {
-				log.error("Unable to retrieve next record", e);
+				log.error("Unable to retrieve next record");
+				log.debug("Stacktrace:",e);
 				return false;
 			}
 		}
@@ -365,8 +373,8 @@ public class JDBCRecordHandler extends RecordHandler {
 		String dbUrl = getParam(params, "dbUrl", true);
 		String dbUser = getParam(params, "dbUser", true);
 		String dbPass = getParam(params, "dbPass", true);
-		String dbTable = getParam(params, "dbTable", true);
-		String dataFieldName = getParam(params, "dataFieldName", true);
+		String dbTable = getParam(params, "dbTable", false);
+		String dataFieldName = getParam(params, "dataFieldName", false);
 		initAll(dbClass, dbUrl, dbUser, dbPass, dbTable, dataFieldName);
 	}
 	
@@ -375,7 +383,7 @@ public class JDBCRecordHandler extends RecordHandler {
 		try {
 			this.cursor.executeUpdate("insert into " + this.table + "_rmd (" + rmdRelField + ", " + rmdCalField + ", " + rmdOperationField + ", " + rmdOperatorField + ", " + rmdMD5Field + ") values ('" + rec.getID() + "', '" + rmd.getDate().getTimeInMillis() + "', '" + rmd.getOperation() + "', '" + rmd.getOperator().getName() + "', '" + rmd.getMD5() + "')");
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -384,7 +392,7 @@ public class JDBCRecordHandler extends RecordHandler {
 		try {
 			this.cursor.executeUpdate("delete from " + this.table + "_rmd where " + rmdRelField + "='" + recID + "'");
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -402,11 +410,9 @@ public class JDBCRecordHandler extends RecordHandler {
 				retVal.add(new RecordMetaData(cal, operator, operation, md5));
 			}
 		} catch(SQLException e) {
-			log.debug(e.getMessage(), e);
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(ClassNotFoundException e) {
-			log.debug(e.getMessage(), e);
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		if(retVal.isEmpty()) {
 			throw new IOException("No Matching MetaData Found");
@@ -420,7 +426,7 @@ public class JDBCRecordHandler extends RecordHandler {
 			this.cursor.close();
 			this.db.close();
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -434,7 +440,7 @@ public class JDBCRecordHandler extends RecordHandler {
 				retVal.add(rs.getString(1));
 			}
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		return retVal;
 	}

@@ -69,51 +69,39 @@ public class ArgListTest extends TestCase {
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#get(java.lang.String) get(String arg)}.
+	 * @throws Exception error
 	 */
-	public final void testConfig() {
+	public final void testConfig() throws Exception {
 		log.info("BEGIN testConfig");
-		try {
-			ArgList a = parser.parse(new String[]{"-X", this.confFile.getAbsolutePath()});
-			assertEquals(a.get("u"), "DemoDB");
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		ArgList a = parser.parse(new String[]{"-X", this.confFile.getAbsolutePath()});
+		assertEquals(a.get("u"), "DemoDB");
 		log.info("END testConfig");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#get(java.lang.String) get(String arg)}.
+	 * @throws Exception error
 	 */
-	public final void testGet() {
+	public final void testGet() throws Exception {
 		log.info("BEGIN testGet");
-		try {
-			ArgList a = parser.parse(new String[]{"-o", "Testing"});
-			assertEquals(a.get("o"), "Testing");
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		ArgList a = parser.parse(new String[]{"-o", "Testing"});
+		assertEquals(a.get("o"), "Testing");
 		log.info("END testGet");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String) getAll(String arg)}.
+	 * @throws Exception error
 	 */
-	public final void testGetAllString() {
+	public final void testGetAllString() throws Exception {
 		log.info("BEGIN testGetAllString");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
-		try {
-			ArgList a = parser.parse(new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
-			List<String> l = a.getAll("e");
-			assertTrue(l.contains("Testing1"));
-			assertTrue(l.contains("Testing2"));
-			assertTrue(l.contains("Testing3"));
-			assertFalse(l.contains("test"));
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		ArgList a = parser.parse(new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
+		List<String> l = a.getAll("e");
+		assertTrue(l.contains("Testing1"));
+		assertTrue(l.contains("Testing2"));
+		assertTrue(l.contains("Testing3"));
+		assertFalse(l.contains("test"));
 		log.info("END testGetAllString");
 	}
 	
@@ -121,44 +109,36 @@ public class ArgListTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#getAll(java.lang.String, boolean) getAll(String
 	 * arg,
 	 * boolean includeDefaultValue)}.
+	 * @throws Exception error
 	 */
-	public final void testGetAllStringBoolean() {
+	public final void testGetAllStringBoolean() throws Exception {
 		log.info("BEGIN testGetAllStringBoolean");
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("except").withParameters(true, "EXCEPTION").setDescription("exception").setDefaultValue("test"));
-		try {
-			ArgList a = parser.parse(new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
-			List<String> l = a.getAll("e", false);
-			assertTrue(l.contains("Testing1"));
-			assertTrue(l.contains("Testing2"));
-			assertTrue(l.contains("Testing3"));
-			assertFalse(l.contains("test"));
-			l = a.getAll("e", true);
-			assertTrue(l.contains("Testing1"));
-			assertTrue(l.contains("Testing2"));
-			assertTrue(l.contains("Testing3"));
-			assertTrue(l.contains("test"));
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		ArgList a = parser.parse(new String[]{"-e", "Testing1", "-e", "Testing2", "-e", "Testing3"});
+		List<String> l = a.getAll("e", false);
+		assertTrue(l.contains("Testing1"));
+		assertTrue(l.contains("Testing2"));
+		assertTrue(l.contains("Testing3"));
+		assertFalse(l.contains("test"));
+		l = a.getAll("e", true);
+		assertTrue(l.contains("Testing1"));
+		assertTrue(l.contains("Testing2"));
+		assertTrue(l.contains("Testing3"));
+		assertTrue(l.contains("test"));
 		log.info("END testGetAllStringBoolean");
 	}
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.util.args.ArgList#has(java.lang.String) has(String arg)}.
+	 * @throws Exception error
 	 */
-	public final void testHas() {
+	public final void testHas() throws Exception {
 		log.info("BEGIN testHas");
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("flag").setDescription("test flag"));
 		parser.addArgument(new ArgDef().setShortOption('z').setLongOpt("zig").setDescription("test missing flag"));
-		try {
-			ArgList a = parser.parse(new String[]{"-f"});
-			assertTrue(a.has("f"));
-			assertFalse(a.has("z"));
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		ArgList a = parser.parse(new String[]{"-f"});
+		assertTrue(a.has("f"));
+		assertFalse(a.has("z"));
 		log.info("END testHas");
 	}
 	

@@ -117,13 +117,13 @@ public class OAIFetch {
 		try {
 			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(TransformerException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(NoSuchFieldException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -152,11 +152,13 @@ public class OAIFetch {
 			log.info(getParser().getAppName() + ": Start");
 			new OAIFetch(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

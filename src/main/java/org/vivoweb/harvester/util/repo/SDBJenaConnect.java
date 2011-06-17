@@ -132,7 +132,7 @@ public class SDBJenaConnect extends DBJenaConnect {
 				this.store.getTableFormatter().create();
 			}
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	

@@ -238,7 +238,7 @@ public class RunBibutils {
 			exitVal = pr.waitFor();
 		}
 		catch(InterruptedException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		log.info("Bibutils exited with error code " + exitVal);
 	}
@@ -259,7 +259,8 @@ public class RunBibutils {
 			log.debug(e.getMessage(), e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 		} finally {
 			log.info(getParser().getAppName() + ": End");
 		}

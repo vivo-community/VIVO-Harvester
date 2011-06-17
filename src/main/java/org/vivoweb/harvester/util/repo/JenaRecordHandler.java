@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.IterableAdaptor;
@@ -127,7 +128,11 @@ public class JenaRecordHandler extends RecordHandler {
 	private void initVars(String dataFieldType) {
 		this.recType = this.model.getJenaModel().createProperty(rhNameSpace, "record");
 		this.idType = this.model.getJenaModel().createProperty(rhNameSpace, "idField");
-		this.dataType = this.model.getJenaModel().createProperty(dataFieldType);
+		if(StringUtils.isNotBlank(dataFieldType)) {
+			this.dataType = this.model.getJenaModel().createProperty(dataFieldType);
+		} else {
+			this.dataType = this.model.getJenaModel().createProperty("http://vivoweb.org/harvester/rh#", "dataFieldType");
+		}
 		this.isA = this.model.getJenaModel().createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "type");
 		this.metaType = this.model.getJenaModel().createProperty(rhNameSpace, "metaData");
 		this.metaRel = this.model.getJenaModel().createProperty(rhNameSpace, "metaRel");
@@ -266,13 +271,9 @@ public class JenaRecordHandler extends RecordHandler {
 	
 	@Override
 	public void setParams(Map<String, String> params) throws IOException {
-		String dataFieldType = getParam(params, "dataFieldType", true);
+		String dataFieldType = getParam(params, "dataFieldType", false);
 		String jenaConfig = getParam(params, "jenaConfig", false);
-		if(jenaConfig != null) {
-			this.model = JenaConnect.parseConfig(jenaConfig);
-		} else {
-			this.model = JenaConnect.parseConfig((String)null, params);
-		}
+		this.model = JenaConnect.parseConfig(jenaConfig, params);
 		initVars(dataFieldType);
 	}
 	
@@ -335,9 +336,9 @@ public class JenaRecordHandler extends RecordHandler {
 				String md5 = metaRes.getRequiredProperty(this.metaMD5).getString();
 				retVal.add(new RecordMetaData(cal, operator, operation, md5));
 			} catch(PropertyNotFoundException e) {
-				throw new IOException("Property Not Found", e);
+				throw new IOException("Malformated MetaData Record: <"+metaRes.getURI()+">", e);
 			} catch(ClassNotFoundException e) {
-				throw new IOException(e.getMessage(), e);
+				throw new IllegalArgumentException(e);
 			}
 		}
 		return retVal;

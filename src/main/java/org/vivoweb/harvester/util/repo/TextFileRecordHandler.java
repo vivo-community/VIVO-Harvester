@@ -266,7 +266,7 @@ public class TextFileRecordHandler extends RecordHandler {
 			if(is != null) {
 				is.close();
 			}
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} finally {
 			if(is != null) {
 				is.close();
@@ -304,7 +304,7 @@ public class TextFileRecordHandler extends RecordHandler {
 			if(os != null) {
 				os.close();
 			}
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} finally {
 			if(os != null) {
 				os.close();
@@ -334,9 +334,9 @@ public class TextFileRecordHandler extends RecordHandler {
 			}
 			return new TextFileMetaDataParser().parseMetaData(fmo);
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -364,7 +364,8 @@ public class TextFileRecordHandler extends RecordHandler {
 			try {
 				allFileListing.addAll(FileAide.getNonHiddenChildren(TextFileRecordHandler.this.fileDir));
 			} catch(IOException e) {
-				log.error(e.getMessage(), e);
+				log.error(e.getMessage());
+				log.debug("Stacktrace:",e);
 			}
 			this.fileNameIter = allFileListing.iterator();
 			log.debug("List compiled");

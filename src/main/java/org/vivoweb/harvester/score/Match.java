@@ -184,10 +184,10 @@ public class Match {
 		});
 		
 		//log trace
-		log.trace("Query Start");
-		log.trace("Query:\n" + sQuery);
+		log.trace("Match Query:\n" + sQuery);
+		log.trace("Query Execution Start");
 		Iterable<QuerySolution> matchQuery = IterableAdaptor.adapt(scoreJena.executeSelectQuery(sQuery));
-		log.trace("Query Complete");
+		log.trace("Query Execution Complete");
 		Map<String, String> tempMap = null;
 		for(QuerySolution solution : matchQuery) {
 			tempMap = new HashMap<String, String>();
@@ -208,7 +208,7 @@ public class Match {
 	 * @param matchSet a result set of scoreResources, vivoResources
 	 */
 	private void rename(Set<Map<String, String>> matchSet) {
-		log.trace("Beginning rename loop");
+		log.info("Beginning Rename of matches");
 		int total = matchSet.size();
 		int count = 0;
 		for(Map<String,String> entry : matchSet) {
@@ -223,6 +223,7 @@ public class Match {
 				ResourceUtils.renameResource(res, newUri);
 			}
 		}
+		log.info("Rename of matches complete");
 	}
 	
 	/**
@@ -260,7 +261,7 @@ public class Match {
 	 */
 	private void clearTypesAndLiterals(Set<Map<String, String>> resultSet) throws IOException {
 		if(!resultSet.isEmpty()) {
-			log.trace("Beginning clear types and literals");
+			log.info("Beginning clear types and literals");
 			Set<String> uriFilters = new HashSet<String>();
 			int count = 0;
 			int inc = 0;
@@ -278,7 +279,7 @@ public class Match {
 			buildTypesAndLiteralsQuery(uriFilters);
 			count += inc;
 			log.trace("Cleared " + count + " types and literals");
-			log.trace("Ending clear types and literals");
+			log.info("Ending clear types and literals");
 		}
 	}
 	
@@ -299,7 +300,9 @@ public class Match {
 //		log.debug("Construct Query:\n" + conQuery);
 //		log.debug("Constructed Literal Set:\n" + this.inputJena.executeConstructQuery(conQuery).exportRdfToString());
 		log.trace("Clear Literal Query:\n" + query);
-		this.inputJena.executeUpdateQuery(query);		
+		log.trace("Query Execution Start");
+		this.inputJena.executeUpdateQuery(query);
+		log.trace("Query Execution Complete");
 	}
 	
 	/**
@@ -308,7 +311,7 @@ public class Match {
 	 * @throws IOException no idea why it throws this
 	 */
 	private JenaConnect outputMatches(Set<Map<String, String>> matchSet) throws IOException {
-		log.trace("Beginning separate output of matches");
+		log.info("Beginning separate output of matches");
 		Stack<String> linkRes = new Stack<String>();
 		JenaConnect returnModel = new MemJenaConnect();
 		int i = 0;
@@ -331,7 +334,7 @@ public class Match {
 			
 			returnModel.getJenaModel().add(this.inputJena.getJenaModel().listStatements(null, null, this.inputJena.getJenaModel().getResource(newUri)));
 		}
-		log.debug("Outputted " + i + " matches");
+		log.info("Outputted " + i + " matches");
 		return returnModel;
 	}
 	
@@ -441,11 +444,13 @@ public class Match {
 			log.info(getParser().getAppName() + ": Start");
 			new Match(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

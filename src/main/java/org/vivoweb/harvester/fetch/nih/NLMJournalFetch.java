@@ -260,11 +260,13 @@ public class NLMJournalFetch extends NIHFetch {
 			log.info("NLMJournalFetch: Start");
 			new NLMJournalFetch(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser("NLMJournalFetch", database).getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info("NLMJournalFetch: End");

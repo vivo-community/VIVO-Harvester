@@ -52,28 +52,24 @@ public class OAIFetchTest extends TestCase {
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.fetch.OAIFetch#main(java.lang.String[]) main(String... args)}.
+	 * @throws Exception error
 	 */
-	public final void testOAIFetchMain() {
+	public final void testOAIFetchMain() throws Exception {
 		log.info("BEGIN testOAIFetchMain");
-		try {
-			this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
-			// FIXME cah: fix this later
-			// OAIFetch.main(new String[]{"-u", "archivesic.ccsd.cnrs.fr/oai/oai.php", "-s", "2000-01-01", "-e",
-			// "2002-12-12", "-o", this.configFile.getAbsolutePath()});
-			// assertTrue(this.rh.iterator().hasNext());
-			// DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			// for(Record r : this.rh) {
-			// log.info("=====================================");
-			// log.info(r.getData());
-			// log.info("=====================================");
-			// Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
-			// Element elem = doc.getDocumentElement();
-			// traverseNodes(elem.getChildNodes());
-			// }
-		} catch(Exception e) {
-			log.error(e.getMessage(), e);
-			fail(e.getMessage());
-		}
+		this.rh = RecordHandler.parseConfig(this.configFile.getAbsolutePath());
+		// FIXME cah: fix this later
+		// OAIFetch.main(new String[]{"-u", "archivesic.ccsd.cnrs.fr/oai/oai.php", "-s", "2000-01-01", "-e",
+		// "2002-12-12", "-o", this.configFile.getAbsolutePath()});
+		// assertTrue(this.rh.iterator().hasNext());
+		// DocumentBuilder docB = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		// for(Record r : this.rh) {
+		// log.info("=====================================");
+		// log.info(r.getData());
+		// log.info("=====================================");
+		// Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
+		// Element elem = doc.getDocumentElement();
+		// traverseNodes(elem.getChildNodes());
+		// }
 		log.info("END testOAIFetchMain");
 	}
 	

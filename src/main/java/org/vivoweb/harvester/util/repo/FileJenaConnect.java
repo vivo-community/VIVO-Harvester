@@ -61,7 +61,8 @@ public class FileJenaConnect extends MemJenaConnect {
 			exportRdfToFile(this.filepath);
 			log.trace("Syncronization of model complete");
 		} catch(IOException e) {
-			log.error("Failed to syncronize the model!", e);
+			log.error("Failed to syncronize the model!");
+			log.debug("Stacktrace:",e);
 		}
 	}
 }

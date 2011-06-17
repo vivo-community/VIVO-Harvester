@@ -24,7 +24,7 @@ public class NormalizedSoundExDifference implements Algorithm {
 			int diff = Soundex.US_ENGLISH.difference(itemX.toString(), itemY.toString());
 			return (diff / 4f);
 		} catch(EncoderException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	

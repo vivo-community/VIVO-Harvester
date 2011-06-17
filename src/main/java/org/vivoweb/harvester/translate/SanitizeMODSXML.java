@@ -163,12 +163,10 @@ public class SanitizeMODSXML {
 			
 			
 			xmlData = xmlToString(doc);
-		}			
-		catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-		catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
+		} catch(SAXException e) {
+			throw new IOException(e);
+		} catch(ParserConfigurationException e) {
+			throw new IOException(e);
 		}
 			
 		outStream.write(xmlData.getBytes());
@@ -385,9 +383,9 @@ public class SanitizeMODSXML {
             TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(stringWriter));
             return stringWriter.getBuffer().toString();
         } catch (TransformerConfigurationException e) {
-            throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
         } catch (TransformerException e) {
-            throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
         }
     }
 
@@ -439,10 +437,12 @@ public class SanitizeMODSXML {
 			log.info(getParser().getAppName() + ": Start");
 			new SanitizeMODSXML(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 		} finally {
 			log.info(getParser().getAppName() + ": End");
 		}

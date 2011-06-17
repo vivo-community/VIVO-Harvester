@@ -177,7 +177,7 @@ public class JDBCFetch {
 		try {
 			this.cursor = dbConn.createStatement();
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		this.rh = rh;
 		Set<String> argTables = tableNames;
@@ -228,23 +228,64 @@ public class JDBCFetch {
 		}
 		
 		if(this.queryStrings != null) {
+			// tablenames for queries are arbitrary
 			argTables.removeAll(this.queryStrings.keySet());
 		}
 		
+
 		this.tableNames = new TreeSet<String>();
-		Set<String> realDBTables;
 		try {
-			realDBTables = getTableNames();
+			this.tableNames = getTableNames();
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
+		Set<String> realDBTables = this.tableNames;
 		
 		this.tableNames = new TreeSet<String>();
+		//TODO: this is required as getTableNames loads data in and we want this to be a fresh start
+		// there should be a nicer way to do all of this, as this is very hacky at the moment
 		for(String argTable : argTables) {
 			boolean found = false;
 			for(String realTableName : realDBTables) {
-				if(argTable.equalsIgnoreCase(realTableName)) {
+				realTableName = realTableName.trim();
+				if(argTable.trim().equalsIgnoreCase(realTableName)) {
 					this.tableNames.add(realTableName);
+//					// fix the tablename in all the other structures >.>
+//					if(this.fromClauses != null) {
+//						for(String fromClausesTable : this.fromClauses.keySet()) {
+//							if(fromClausesTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.fromClauses.put(realTableName, this.fromClauses.remove(fromClausesTable));
+//							}
+//						}
+//					}
+//					if(this.dataFields != null) {
+//						for(String dataFieldsTable : this.dataFields.keySet()) {
+//							if(dataFieldsTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.dataFields.put(realTableName, this.dataFields.remove(dataFieldsTable));
+//							}
+//						}
+//					}
+//					if(this.idFields != null) {
+//						for(String idFieldsTable : this.idFields.keySet()) {
+//							if(idFieldsTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.idFields.put(realTableName, this.idFields.remove(idFieldsTable));
+//							}
+//						}
+//					}
+//					if(this.whereClauses != null) {
+//						for(String whereClausesTable : this.whereClauses.keySet()) {
+//							if(whereClausesTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.whereClauses.put(realTableName, this.whereClauses.remove(whereClausesTable));
+//							}
+//						}
+//					}
+//					if(this.fkRelations != null) {
+//						for(String fkRelationsTable : this.fkRelations.keySet()) {
+//							if(fkRelationsTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.fkRelations.put(realTableName, this.fkRelations.remove(fkRelationsTable));
+//							}
+//						}
+//					}
 					found = true;
 					break;
 				}
@@ -333,9 +374,9 @@ public class JDBCFetch {
 			Class.forName(driverClass);
 			return DriverManager.getConnection(connLine, username, password);
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -384,16 +425,19 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private List<String> getDataFields(String tableName) throws SQLException {
+		// TODO: the part after the OR looks like it should be on the next if statement, look into this
 		if((this.dataFields == null) || ((this.queryStrings != null) && this.queryStrings.containsKey(tableName))) {
 			this.dataFields = new HashMap<String, List<String>>();
 		}
 		if(!this.dataFields.containsKey(tableName)) {
+			log.debug("Finding data column names for table: "+tableName);
 			this.dataFields.put(tableName, new LinkedList<String>());
 			if((this.queryStrings == null) || !this.queryStrings.containsKey(tableName)) {
 				ResultSet columnData = this.cursor.getConnection().getMetaData().getColumns(this.cursor.getConnection().getCatalog(), null, tableName, "%");
 				while(columnData.next()) {
 					String colName = columnData.getString("COLUMN_NAME");
-					if(((getIDFields(tableName).size() > 1) || !getIDFields(tableName).contains(colName)) && !getFkRelationFields(tableName).containsKey(colName)) {
+					log.trace("Found data column: "+colName);
+					if(!getFkRelationFields(tableName).containsKey(colName)) {
 						this.dataFields.get(tableName).add(colName);
 					}
 				}
@@ -409,15 +453,21 @@ public class JDBCFetch {
 	 * @throws SQLException error connecting to DB
 	 */
 	private Map<String, String> getFkRelationFields(String tableName) throws SQLException {
+		// TODO: the part after the OR looks like it should be on the next if statement, look into this
 		if((this.fkRelations == null) || ((this.queryStrings != null) && this.queryStrings.containsKey(tableName))) {
 			this.fkRelations = new HashMap<String, Map<String, String>>();
 		}
 		if(!this.fkRelations.containsKey(tableName)) {
+			log.debug("Finding relation column names for table: "+tableName);
 			this.fkRelations.put(tableName, new HashMap<String, String>());
 			if((this.queryStrings == null) || !this.queryStrings.containsKey(tableName)) {
 				ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 				while(foreignKeys.next()) {
-					this.fkRelations.get(tableName).put(foreignKeys.getString("FKCOLUMN_NAME"), foreignKeys.getString("PKTABLE_NAME"));
+					String colName = foreignKeys.getString("FKCOLUMN_NAME");
+					String foreignTable = foreignKeys.getString("PKTABLE_NAME");
+					log.trace("Found relation column: "+colName);
+					log.trace("links to table: "+foreignTable);
+					this.fkRelations.get(tableName).put(colName, foreignTable);
 				}
 			}
 		}
@@ -450,10 +500,13 @@ public class JDBCFetch {
 			this.idFields = new HashMap<String, List<String>>();
 		}
 		if(!this.idFields.containsKey(tableName)) {
+			log.debug("Finding id column names for table: "+tableName);
 			this.idFields.put(tableName, new LinkedList<String>());
 			ResultSet primaryKeys = this.cursor.getConnection().getMetaData().getPrimaryKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 			while(primaryKeys.next()) {
-				this.idFields.get(tableName).add(primaryKeys.getString("COLUMN_NAME"));
+				String colName = primaryKeys.getString("COLUMN_NAME");
+				log.trace("Found id column: "+colName);
+				this.idFields.get(tableName).add(colName);
 			}
 		}
 		if(this.idFields.get(tableName).isEmpty()) {
@@ -689,7 +742,7 @@ public class JDBCFetch {
 				}
 			}
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		log.info("Added " + count + " Records");
 	}
@@ -731,11 +784,13 @@ public class JDBCFetch {
 			log.info(getParser().getAppName() + ": Start");
 			new JDBCFetch(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

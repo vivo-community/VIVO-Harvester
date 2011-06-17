@@ -149,7 +149,7 @@ public abstract class JenaConnect {
 		} else if(type.equalsIgnoreCase("tdb")) {
 			jc = new TDBJenaConnect(params.get("dbDir"), params.get("modelName"));
 		} else if(type.equalsIgnoreCase("file")) {
-			jc = new FileJenaConnect(params.get("file"), params.get("language"));
+			jc = new FileJenaConnect(params.get("file"), params.get("rdfLang"));
 		} else {
 			throw new IllegalArgumentException("unknown type: " + type);
 		}
@@ -760,9 +760,9 @@ public abstract class JenaConnect {
 					// parse the file and also register this class for call backs
 					sp.parse(inputStream, this);
 				} catch(SAXException e) {
-					throw new IOException(e.getMessage(), e);
+					throw new IOException(e);
 				} catch(ParserConfigurationException e) {
-					throw new IOException(e.getMessage(), e);
+					throw new IOException(e);
 				}
 			}
 			return this.params;
@@ -865,11 +865,13 @@ public abstract class JenaConnect {
 			}
 			jc.sync();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.err.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			if(error != null) {

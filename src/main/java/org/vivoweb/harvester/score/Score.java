@@ -253,9 +253,9 @@ public class Score {
 			try {
 				retVal.put(runName, Class.forName(algs.get(runName)).asSubclass(Algorithm.class));
 			} catch(ClassNotFoundException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
+				throw new IllegalArgumentException(e);
 			} catch(ClassCastException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
+				throw new IllegalArgumentException(e);
 			}
 		}
 		return retVal;
@@ -674,12 +674,13 @@ public class Score {
 		if(this.equalityOnlyMode || ((osUri != null) && (opUri != null) && osUri.equals(opUri))) {
 			score = 1 / 1f;
 		} else if((osLit != null) && (opLit != null)) {
+			Class<? extends Algorithm> algClass = this.algorithms.get(runName);
 			try {
-				score = this.algorithms.get(runName).newInstance().calculate(osLit, opLit);
+				score = algClass.newInstance().calculate(osLit, opLit);
 			} catch(IllegalAccessException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
+				throw new IllegalArgumentException("Unable to create new instance of class <"+algClass+">, does it not have a default (no-params) constructor publically available?", e);
 			} catch(InstantiationException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
+				throw new IllegalArgumentException(e);
 			}
 		}
 		double weightedscore = this.weights.get(runName).doubleValue() * score;
@@ -708,11 +709,13 @@ public class Score {
 			log.info(getParser().getAppName() + ": Start");
 			new Score(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

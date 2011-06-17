@@ -284,16 +284,16 @@ public abstract class RecordHandler implements Iterable<Record> {
 		try {
 			Object tempRH = Class.forName(type).newInstance();
 			if(!(tempRH instanceof RecordHandler)) {
-				throw new IOException("Class must extend RecordHandler");
+				throw new IllegalArgumentException("Class must extend RecordHandler");
 			}
 			rh = (RecordHandler)tempRH;
 			rh.setParams(params);
 		} catch(ClassNotFoundException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		} catch(InstantiationException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		} catch(IllegalAccessException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		}
 		
 		return rh;
@@ -363,9 +363,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 					// parse the stream and also register this class for call backs
 					sp.parse(configStream, this);
 				} catch(SAXException e) {
-					throw new IOException(e.getMessage(), e);
+					throw new IOException(e);
 				} catch(ParserConfigurationException e) {
-					throw new IOException(e.getMessage(), e);
+					throw new IOException(e);
 				}
 			}
 			return this.params;
@@ -522,11 +522,13 @@ public abstract class RecordHandler implements Iterable<Record> {
 			log.info(getParser().getAppName() + ": Start");
 			run(args);
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

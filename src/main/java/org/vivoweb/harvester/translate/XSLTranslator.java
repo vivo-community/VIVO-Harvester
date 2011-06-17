@@ -177,9 +177,9 @@ public class XSLTranslator {
 			// this outputs to outStream (through outputResult)
 			TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null).newTransformer(xslSource).transform(xmlSource, outputResult);
 		} catch(TransformerConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(TransformerException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		outStream.flush();
 	}
@@ -210,11 +210,13 @@ public class XSLTranslator {
 			log.info(getParser().getAppName() + ": Start");
 			new XSLTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

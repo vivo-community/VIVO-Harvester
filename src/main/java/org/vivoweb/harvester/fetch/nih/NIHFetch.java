@@ -199,6 +199,7 @@ public abstract class NIHFetch {
 			env = runESearch(this.searchTerm);
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 		}
 		if(env != null) {
 			if(recToFetch <= intBatchSize) {

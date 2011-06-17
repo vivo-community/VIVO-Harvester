@@ -105,7 +105,8 @@ public class Merge {
 			}
 		}
 		int count = matchedIDs.size();
-		log.debug("Matched " + count + " records");
+		log.info("Building List Complete: Matched " + count + " records");
+		log.info("Beginning Merging Records into Primary Records");
 		int cur = 0;
 		JenaConnect jc = new MemJenaConnect();
 		for(String rid : new TreeSet<String>(matchedIDs.keySet())) {
@@ -114,11 +115,12 @@ public class Merge {
 			log.debug("(" + cur + "/" + count + ": " + Math.round(10000f * cur / count) / 100f + "%): merging '" + matchTerm + "'");
 			jc.truncate();
 			for(String id : input.find(matchTerm)) {
-				log.trace("Merging record '" + id + "' into '" + matchTerm + "'");
+				log.trace("Merging Record '" + id + "' into '" + matchTerm + "'");
 				jc.loadRdfFromString(input.getRecord(id).getData(), null, null);
 			}
 			output.addRecord(matchTerm, jc.exportRdfToString(), Merge.class);
 		}
+		log.info("Merging into Primary Records Complete");
 		jc.close();
 	}
 	
@@ -159,10 +161,12 @@ public class Merge {
 			new Merge(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

@@ -148,7 +148,7 @@ public class GlozeTranslator {
 		try {
 			this.uriBase = new URI(base);
 		} catch(URISyntaxException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -178,7 +178,8 @@ public class GlozeTranslator {
 			gl.xml_to_rdf(tempFile, this.incomingSchema, this.uriBase, outputModel);
 			tempFile.delete();
 		} catch(Exception e) {
-			log.error("", e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 		}
 		
 		outputModel.write(this.outStream);
@@ -206,7 +207,8 @@ public class GlozeTranslator {
 				}
 				buff.close();
 			} catch(Exception e) {
-				log.error("", e);
+				log.error(e.getMessage());
+				log.debug("Stacktrace:",e);
 			}
 		} else {
 			log.error("Invalid Arguments: Gloze Translation requires a URIBase and XMLFile");
@@ -241,10 +243,12 @@ public class GlozeTranslator {
 			new GlozeTranslator(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

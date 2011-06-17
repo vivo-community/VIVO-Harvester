@@ -132,11 +132,11 @@ public class PubmedHTTPFetch extends NIHFetch {
 				log.info("Query resulted in a total of " + env[2] + " records.");
 			}
 		} catch(MalformedURLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(SAXException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(ParserConfigurationException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		return env;
 	}
@@ -225,11 +225,13 @@ public class PubmedHTTPFetch extends NIHFetch {
 			log.info("PubmedHTTPFetch: Start");
 			new PubmedHTTPFetch(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser("PubmedHTTPFetch", database).getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info("PubmedHTTPFetch: End");

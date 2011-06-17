@@ -139,9 +139,9 @@ public class CSVtoJDBC {
 			Class.forName(jdbcDriverClass);
 			return DriverManager.getConnection(connLine, username, password);
 		} catch(ClassNotFoundException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -191,9 +191,9 @@ public class CSVtoJDBC {
 				rowID++;
 			}
 		} catch(FileSystemException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		} catch(SQLException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new IOException(e);
 		}
 	}
 	
@@ -232,11 +232,13 @@ public class CSVtoJDBC {
 			log.info(getParser().getAppName() + ": Start");
 			new CSVtoJDBC(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

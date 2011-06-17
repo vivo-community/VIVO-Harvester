@@ -408,7 +408,8 @@ public class DatabaseClone {
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
-			log.error("Error in execution", e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

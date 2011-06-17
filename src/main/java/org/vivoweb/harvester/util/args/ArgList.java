@@ -91,7 +91,7 @@ public class ArgList {
 				}
 			}
 		} catch(ParseException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -356,9 +356,9 @@ public class ArgList {
 				// parse the file and also register this class for call backs
 				sp.parse(FileAide.getInputStream(filename), this);
 			} catch(ParserConfigurationException e) {
-				throw new IOException(e.getMessage(), e);
+				throw new IOException(e);
 			} catch(SAXException e) {
-				throw new IOException(e.getMessage(), e);
+				throw new IOException(e);
 			}
 			return this.params;
 		}
