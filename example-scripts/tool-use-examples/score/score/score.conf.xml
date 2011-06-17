@@ -85,24 +85,33 @@
 <%	<sdb-model> - defines an sdb jena model that contains data to use as Score's source/reference/score-data			%>
 <%		Example: 																										%>
 <%			<sdb-model>																									%>
-<%				<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 					%>
-<%				<model-name>mySimpleModelName</model-name> 																%>
+<%				<layout>layout2</layout>																				%>
+<%				<database-type>MySQL</database-type>																	%>
+<%				<driver-class>com.mysql.jdbc.Driver</driver-class>														%>
+<%				<dburl>jdbc:mysql://127.0.0.1:3306/vitrodb</dburl>														%>
+<%				<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name>							%>
+<%				<username>myUser</username>																				%>
+<%				<password>myPass</password>																				%>
 <%			</sdb-model>																								%>
 <%	=== 																												%>
 <%																														%>
 <%	<rdb-model> - defines an rdb jena model that contains data to use as Score's source/reference/score-data			%>
 <%		Example: 																										%>
 <%			<rdb-model>																									%>
-<%				<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 					%>
-<%				<model-name>mySimpleModelName</model-name> 																%>
+<%				<database-type>MySQL</database-type>																	%>
+<%				<driver-class>com.mysql.jdbc.Driver</driver-class>														%>
+<%				<dburl>jdbc:mysql://127.0.0.1:3306/vitrodb</dburl>														%>
+<%				<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name>							%>
+<%				<username>myUser</username>																				%>
+<%				<password>myPass</password>																				%>
 <%			</rdb-model>																								%>
 <%	=== 																												%>
 <%																														%>
 <%	<file-model> - defines a file jena model that contains data to use as Score's source/reference/score-data			%>
 <%		Example: 																										%>
-<%			<file-model>																									%>
-<%				<directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</directory> 					%>
-<%				<model-name>mySimpleModelName</model-name> 																%>
+<%			<file-model>																								%>
+<%				<file-path>/usr/local/share/harvester/harvested-data/example-jdbc/model.rdf.n3</file-path> 				%>
+<%				<rdf-format>N3</rdf-format>																				%>
 <%			</file-model>																								%>
 <%																														%>
 <%	===== Model Parameters ===== 																						%>
@@ -117,7 +126,8 @@
 <%			(only needed for file-model type) 																			%>
 <%		Examples: 																										%>
 <%			<file-path>/usr/local/share/harvester/harvested-data/example-jdbc/rdf-data.rdf.xml</file-path> 				%>
-<%			<file-path>/path/to/directory/to/store/rdf/file.n3</file-path> 												%>
+<%			<file-path>relative/path/to/directory/to/store/rdf/file.n3</file-path> 										%>
+<%			<file-path>/absolute/path/to/directory/to/store/rdf/file.ttl</file-path> 									%>
 <%	=== 																												%>
 <%																														%>
 <%	<rdf-format> - the format of the rdf in the file																	%>

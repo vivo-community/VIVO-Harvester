@@ -1,16 +1,379 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-Merge - Summary of Tool
------
-Detailed description of tool
- -->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Copyright (c) 2011																									%>
+<%	Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams				%>
+<%	All rights reserved. This program and the accompanying materials are made available under the terms of the new		%>
+<%	BSD license which accompanies this distribution, and is available at:												%>
+<%		http://www.opensource.org/licenses/bsd-license.html                                                            	%>
+<%																														%>
+<%	Contributors: Initial API and implementation                                                                     	%>
+<%		Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams			%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
 <Config>
-    <!-- 
-    a - Description and repercussions
-    -----
-    Possible Values:
-    b - Meaning of b
-    c - Meaning of c
-     -->
-    <Param name="a">b</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Merge ===== 																									%>
+<%	Combines multiple related rdf records into a single rdf record				 										%>
+<%	=== 																												%>
+<%	This tool Merge takes a set of records and a regular expression to find related records and combines them in		%>
+<%	another set of records																								%>
+<%																														%>
+<%	===== Merge Parameters ===== 																						%>
+<%	wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log		%>
+<%			level, the more detailed the messages.																		%>
+<%		Possible Values:																								%>
+<%			<Param name="wordiness">OFF</Param> - Results in no messages being displayed.								%>
+<%			<Param name="wordiness">ERROR</Param> - Results in only messages from the ERROR level to be displayed.		%>
+<%				Error messages detail when the tool has experienced an error preventing it from completing its task		%>
+<%			<Param name="wordiness">WARN</Param> - Results in only messages above and including WARN level messages		%>
+<%				to be displayed. Merge does not produce any WARN level messages.										%>
+<%			<Param name="wordiness">INFO</Param> - (Default) Results in all messages above and including INFO level		%>
+<%				messages to be displayed. INFO level messages detail when the tool has started and ended and when it	%>
+<%				begins/ends a phase ('Building List of Primary Records' and 'Beginning Merging into Primary Records')	%>
+<%				and how many primary records it found.																	%>
+<%			<Param name="wordiness">DEBUG</Param> - Results in all messages above and including DEBUG level messages	%>
+<%				to be displayed. DEBUG level messages detail each primary record name into which it will merge the		%>
+<%				matching records. Additionally, it will display stacktrace information if an error occurs.				%>
+<%			<Param name="wordiness">ALL</Param> or TRACE</Param> - Results in all messages above and including TRACE	%>
+<%				level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.		%>
+<%				TRACE level messages details every record as it is added to the primary record's merge set.				%>
+<%	===																													%>
+<%																														%>
+<%	baseRegex - Regex for finding primary records (with a grouping for the subsection to use to find sub-records)		%>
+<%		Example:																										%>
+<%			<Param name="baseRegex">tableName_(id_-_.*?)</Param> - A regular expression to match record IDs and			%>
+<%				grouping capture to isolate the id																		%>
+<%	===																													%>
+<%																														%>
+<%	input - (optional - at least one of this and/or inputOverride) the configuration file that describes the input		%>
+<%			record set. The parameters for this config file are described in the Record Sets section below.				%>
+<%		Example:																										%>
+<%			<Param name="input">/absolute/path/to/file.conf.xml</Param> - An absolute path to a recordhandler config	%>
+<%				file on linux/unix/macosx based systems																	%>
+<%			<Param name="input">C:/absolute/path/to/file.conf.xml</Param> - An absolute path to a recordhandler config	%>
+<%				file on a windows operating system																		%>
+<%			<Param name="input">relative/path/to/file.conf.xml</Param> - A path to a recordhandler config file that		%>
+<%				is relative to the folder the shell was in when this command was executed								%>
+<%	===																													%>
+<%																														%>
+<%	inputOverride - (optional - at least one of this and/or input) specify the parameters for the record set without	%>
+<%			a config file and/or override specific parameters from the given config file. The parameters that can be	%>
+<%			set/overridden are described in the Record Sets section below.												%>
+<%		Example:																										%>
+<%			<Param name="inputOverride">paramName=valueToUse</Param>													%>
+<%	===																													%>
+<%																														%>
+<%	output - (optional - at least one of this and/or outputOverride) the configuration file that describes the output	%>
+<%			record set. The parameters for this config file are described in the Record Sets section below.				%>
+<%		Example:																										%>
+<%			<Param name="output">/absolute/path/to/file.conf.xml</Param> - An absolute path to a recordhandler config	%>
+<%				file on linux/unix/macosx operating systems																%>
+<%			<Param name="output">C:/absolute/path/to/file.conf.xml</Param> - An absolute path to a recordhandler config	%>
+<%				file on a windows operating system																		%>
+<%			<Param name="output">relative/path/to/file.conf.xml</Param> - A path to a recordhandler config file that	%>
+<%				is relative to the folder the shell was in when this command was executed								%>
+<%	===																													%>
+<%																														%>
+<%	outputOverride - (optional - at least one of this and/or output) specify the parameters for the record set without	%>
+<%			a config file and/or override specific parameters from the given config file. The parameters that can be	%>
+<%			set/overridden are described in the Record Sets section below.												%>
+<%		Example:																										%>
+<%			<Param name="outputOverride">paramName=valueToUse</Param>													%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+	<Param name="wordiness">INFO</Param>
+	<Param name="baseRegex">tableName_(id_-_.*?)</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Record Sets =====																								%>
+<%	rhClass - The class for the handler for this record set																%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">rhClass=org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>			%>
+<%			 - to store each record as a file in a folder (specified by fileDir). NOTE: performance with				%>
+<%				TextFileRecordHandler is quite poor, but is the suggested while building and testing your				%>
+<%				script. Once the script works, switch to using a higher performance recordhandler like					%>
+<%				JDBCRecordHandler (in an h2 database) or JenaRecordHandler (in a tdb model).							%>
+<%			<Param name="outputOverride">rhClass=org.vivoweb.harvester.util.repo.JDBCRecordHandler</Param>				%>
+<%			 - to store each record in a table in a relational database (specified with dbClass, dbUrl, dbUser,			%>
+<%				dbPass, dbTable, and dataFieldName)																		%>
+<%			<Param name="inputOverride">rhClass=org.vivoweb.harvester.util.repo.JenaRecordHandler</Param>				%>
+<%			 - to store each record in a jena triple store (specified with dataFieldType, jenaConfig, and/or			%>
+<%				all the parameters for a jena model (see below)															%>
+<%																														%>
+<%	===== TextFileRecordHandler Parameters =====																		%>
+<%	fileDir - the directory in which to store the files for each record													%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">fileDir=/absolute/path/to/dir</Param> - An absolute path to a directory on		%>
+<%				linux/unix/macosx operating systems																		%>
+<%			<Param name="outputOverride">fileDir=C:/absolute/path/to/dir</Param> - An absolute path to a directory on	%>
+<%				a windows operating system																				%>
+<%			<Param name="inputOverride">fileDir=relative/path/to/dir</Param> - A path to a directory that is relative	%>
+<%				to the folder the shell was in when this command was executed											%>
+<%																														%>
+<%	===== JDBCRecordHandler Parameters =====																			%>
+<%	dbClass - the JDBC driver class to use																				%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">dbClass=com.mysql.jdbc.Driver</Param> - for a mysql database					%>
+<%			<Param name="outputOverride">dbClass=org.h2.Driver</Param> - for an h2 database								%>
+<%	===																													%>
+<%																														%>
+<%	dbUrl - the JDBC connection url																						%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">dbUrl=jdbc:mysql://127.0.0.1:3306/dbName</Param> - for a mysql database.		%>
+<%				See http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html			%>
+<%			<Param name="outputOverride">dbUrl=jdbc:h2:path/to/h2/store</Param> - for an h2 database.					%>
+<%				See http://www.h2database.com/html/features.html#database_url											%>
+<%	===																													%>
+<%																														%>
+<%	dbUser - the DB username to use																						%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">dbUser=sa</Param> - used for h2 database (the default h2 system admin login		%>
+<%			<Param name="outputOverride">dbUser=myUser</Param>															%>
+<%	===																													%>
+<%																														%>
+<%	dbPass - the DB password to use																						%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">dbPass=</Param> - used for h2 database (the default h2 system admin login		%>
+<%			<Param name="outputOverride">dbPass=myPass</Param>															%>
+<%	===																													%>
+<%																														%>
+<%	dbTable - (optional) the name of the table to store data in, if non-existent will be created						%>
+<%		Example Values:																									%>
+<%			(default) <Param name="inputOverride">dbTable=recordTable</Param>											%>
+<%			<Param name="outputOverride">dbTable=myTableName</Param>													%>
+<%	===																													%>
+<%																														%>
+<%	dataFieldName - (optional) the name of the field to use, if table is non-existent will be created with table		%>
+<%		Example Values:																									%>
+<%			(default) <Param name="inputOverride">dataFieldName=dataField</Param>										%>
+<%			<Param name="outputOverride">dataFieldName=myDataFieldName</Param>											%>
+<%																														%>
+<%	===== JenaRecordHandler Parameters =====																			%>
+<%	dataFieldType - (optional) the predicate to use for storing data properties											%>
+<%		Example Values:																									%>
+<%			(default) <Param name="inputOverride">dataFieldType=http://vivoweb.org/harvester/rh#dataFieldType</Param>	%>
+<%			<Param name="outputOverride">dataFieldType=http://yourmom.com/propbase#myProp</Param>						%>
+<%	===																													%>
+<%																														%>
+<%	jenaConfig - (optional - at least one of this and/or full set of params defining a model as described in Models		%>
+<%			section below) the configuration file that describes the model in which to store data. The parameters for	%>
+<%			this config file are described in the Models section below.													%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">jenaConfig=/absolute/path/to/jena-model.config.xml</Param> - An absolute path	%>
+<%				to a directory on linux/unix/macosx operating systems													%>
+<%			<Param name="outputOverride">jenaConfig=C:/absolute/path/to/jena-model.config.xml</Param> - An absolute		%>
+<%				path to a directory on a windows operating system														%>
+<%			<Param name="inputOverride">jenaConfig=relative/path/to/jena-model.config.xml</Param> - A path to a			%>
+<%				directory that is relative to the folder the shell was in when this command was executed				%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample TextFileRecordHandler input inline definition																%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+	<Param name="inputOverride">rhClass=org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>
+	<Param name="inputOverride">fileDir=data/tf-rh</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JDBCRecordHandler input inline definition - using h2 database and default dbTable and dataFieldName			%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="inputOverride">rhClass=org.vivoweb.harvester.util.repo.JDBCRecordHandler</Param>
+	<Param name="inputOverride">dbClass=org.h2.Driver</Param>
+	<Param name="inputOverride">dbUrl=jdbc:h2:data/h2-jdbc-rh/store</Param>
+	<Param name="inputOverride">dbUser=sa</Param>
+	<Param name="inputOverride">dbPass=</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JDBCRecordHandler input inline definition - using mysql database and custom dbTable and dataFieldName		%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="inputOverride">rhClass=org.vivoweb.harvester.util.repo.JDBCRecordHandler</Param>
+	<Param name="inputOverride">dbClass=com.mysql.jdbc.Driver</Param>
+	<Param name="inputOverride">dbUrl=jdbc:mysql://127.0.0.1:3306/dbName</Param>
+	<Param name="inputOverride">dbUser=myUser</Param>
+	<Param name="inputOverride">dbPass=myPass</Param>
+	<Param name="inputOverride">dbTable=myTableName</Param>
+	<Param name="inputOverride">dataFieldName=myDataFieldName</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JenaRecordHandler output external definition - using an external model config file as a recordhandler config	%>
+<%		(since the model params share names, this works by 'adding' the missing params using outputOverride as below)	%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="output">jena-model.conf.xml</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JenaRecordHandler output inline definition - just base params												%>
+<%		(using inline model configs as below the Models section or config file as defined above and below)				%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+	<Param name="outputOverride">rhClass=org.vivoweb.harvester.util.repo.JenaRecordHandler</Param>
+	<Param name="outputOverride">dataFieldType=http://yourmom.com/propbase#myProp</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JenaRecordHandler output inline definition - using an external model config file								%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+	<Param name="outputOverride">jenaConfig=jena-model.conf.xml</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Models ===== 																									%>
+<%	type - defines which type of jena model																				%>
+<%		Possible Values:																								%>
+<%			<Param name="inputOverride">type=tdb</Param> - defines a tdb jena model										%>
+<%			<Param name="outputOverride">type=sdb</Param> - defines an sdb jena model									%>
+<%			<Param name="inputOverride">type=rdb</Param> - defines an rdb jena model									%>
+<%			<Param name="outputOverride">type=file</Param> - defines an rdf file to use as a model						%>
+<%																														%>
+<%	===== Model Parameters ===== 																						%>
+<%	checkEmpty - (optional) check if the model is empty and log a warning if it is										%>
+<%		Possible Values:																								%>
+<%			(default) <Param name="inputOverride">checkEmpty=false</Param> - don't check and don't log a message		%>
+<%			<Param name="inputOverride">checkEmpty=true</Param> - check if empty and log a warn log message if empty	%>
+<%	=== 																												%>
+<%																														%>
+<%	dbDir - the directory to store a tdb model in 																		%>
+<%			(only needed when type is tdb)	 																			%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">dbDir=/absolute/path/to/dir</Param> - An absolute path to a directory on		%>
+<%				linux/unix/macosx operating systems																		%>
+<%			<Param name="outputOverride">dbDir=C:/absolute/path/to/dir</Param> - An absolute path to a directory on		%>
+<%				a windows operating system																				%>
+<%			<Param name="inputOverride">dbDir=relative/path/to/dir</Param> - A path to a directory that is relative		%>
+<%				to the folder the shell was in when this command was executed											%>
+<%	=== 																												%>
+<%																														%>
+<%	file - the path to the file that contains rdf data 																	%>
+<%			(only needed when type is file) 																			%>
+<%		Example Values:																									%>
+<%			<Param name="inputOverride">file=/absolute/path/to/rdf-data.rdf.xml</Param> - An absolute path to an rdf	%>
+<%				file on linux/unix/macosx operating systems																%>
+<%			<Param name="outputOverride">file=C:/absolute/path/to/rdf-data.n3</Param> - An absolute path to an rdf		%>
+<%				file on a windows operating system																		%>
+<%			<Param name="inputOverride">file=relative/path/to/rdf-data.ttl</Param> - A path to an rdf file that is		%>
+<%				relative to the folder the shell was in when this command was executed									%>
+<%	=== 																												%>
+<%																														%>
+<%	rdfLang - the format of the rdf in the file																			%>
+<%			(optional, only used when type is file) 																	%>
+<%		Possible Values:																								%>
+<%			(default) <Param name="inputOverride">rdfLang=RDF/XML</Param> - rdf/xml format								%>
+<%			<Param name="inputOverride">rdfLang=N3</Param> - n3 format													%>
+<%			<Param name="outputOverride">rdfLang=TTL</Param> - turtle/ttl format										%>
+<%			<Param name="inputOverride">rdfLang=N-TRIPLE</Param> - n-triple format										%>
+<%	=== 																												%>
+<%																														%>
+<%	dbLayout - the layout to use for an sdb model 																		%>
+<%			(optional, only used when type is sdb) 																		%>
+<%		Possible Values:																								%>
+<%			(default) <Param name="inputOverride">dbLayout=layout2</Param> - layout2									%>
+<%	=== 																												%>
+<%																														%>
+<%	dbType - the name of the database type (as specified by jena) 														%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Examples: 																										%>
+<%			<Param name="inputOverride">dbType=MySQL</Param> - mysql database											%>
+<%			<Param name="outputOverride">dbType=H2</Param> - h2 database												%>
+<%	=== 																												%>
+<%																														%>
+<%	dbClass - the JDBC driver class to use 																				%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Examples: 																										%>
+<%			<Param name="inputOverride">dbClass=com.mysql.jdbc.Driver</Param> - mysql database							%>
+<%			<Param name="outputOverride">dbClass=org.h2.Driver</Param> - h2 database									%>
+<%	=== 																												%>
+<%																														%>
+<%	dbUrl - the JDBC connection url 																					%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Examples: 																										%>
+<%			<Param name="inputOverride">dbUrl=jdbc:mysql://127.0.0.1:3306/dbName</Param> - mysql database				%>
+<%				see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html			%>
+<%			<Param name="outputOverride">dbUrl=jdbc:h2:path/to/h2/store</Param> - h2 database							%>
+<%				see http://www.h2database.com/html/features.html#database_url											%>
+<%	=== 																												%>
+<%																														%>
+<%	modelName - the named model to use																					%>
+<%			(optional, uses default model if not specified, only used when type is rdb, tdb, or sdb )					%>
+<%		Examples: 																										%>
+<%			<Param name="inputOverride">modelName=http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>			%>
+<%			<Param name="outputOverride">modelName=mySimpleModelName</Param>											%>
+<%			<Param name="inputOverride">modelName=http://vivo.localinstitution.edu/models/my-uri-model</Param>			%>
+<%	=== 																												%>
+<%																														%>
+<%	dbUser - the DB username to use 																					%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Example: 																										%>
+<%			<Param name="inputOverride">dbUser=sa</Param> - used for h2 database (the default h2 system admin login		%>
+<%			<Param name="outputOverride">dbUser=myUser</Param>															%>
+<%	=== 																												%>
+<%																														%>
+<%	dbPass - the DB password to use 																					%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Example: 																										%>
+<%			<Param name="inputOverride">dbPass=</Param> - used for h2 database (the default h2 system admin login		%>
+<%			<Param name="outputOverride">dbPass=myPass</Param>															%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JenaRecordHandler output inline definition - using an internally defined tdb model							%>
+<%		(using rhClass and dataFieldType as defined above the Models section)											%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="outputOverride">type=tdb</Param>
+	<Param name="outputOverride">dbDir=data/tdb-jena</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JenaRecordHandler output inline definition - using an internally defined file model							%>
+<%		(using rhClass and dataFieldType as defined above the Models section)											%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="outputOverride">type=file</Param>
+	<Param name="outputOverride">file=data/file-jena.rdf.n3</Param>
+	<Param name="outputOverride">rdfLang=N3</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JenaRecordHandler output inline definition - using an internally defined rdb model							%>
+<%		(using rhClass and dataFieldType as defined above the Models section)											%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="outputOverride">type=rdb</Param>
+	<Param name="outputOverride">dbType=H2</Param>
+	<Param name="outputOverride">dbClass=org.h2.Driver</Param>
+	<Param name="outputOverride">dbUrl=jdbc:h2:data/jena-model/store</Param>
+	<Param name="outputOverride">modelName=mySimpleModelName</Param>
+	<Param name="outputOverride">dbUser=sa</Param>
+	<Param name="outputOverride">dbPass=</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample JenaRecordHandler output inline definition - using an internally defined sdb model							%>
+<%		(using rhClass and dataFieldType as defined above the Models section)											%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="outputOverride">type=sdb</Param>
+	<Param name="outputOverride">dbLayout=layout2</Param>
+	<Param name="outputOverride">dbType=H2</Param>
+	<Param name="outputOverride">dbClass=org.h2.Driver</Param>
+	<Param name="outputOverride">dbUrl=jdbc:h2:data/jena-model/store</Param>
+	<Param name="outputOverride">modelName=mySimpleModelName</Param>
+	<Param name="outputOverride">dbUser=sa</Param>
+	<Param name="outputOverride">dbPass=</Param>
+-->
 </Config>

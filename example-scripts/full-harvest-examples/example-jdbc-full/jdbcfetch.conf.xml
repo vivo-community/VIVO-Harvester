@@ -46,7 +46,7 @@ an rdf/xml format in an ontology derived from the schema
 	    	 -->
 			<username>sa</username>
 	    	<!--
-	    	driver - the DB password to use
+	    	password - the DB password to use
 	    	- - -
 	    	Example:
 	    		<password>myPass</password>
