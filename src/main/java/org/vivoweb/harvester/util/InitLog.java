@@ -115,9 +115,7 @@ public class InitLog {
 		String logLevel = System.getProperty("console-log-level");
 		String harvLevel = System.getProperty("harvester-level");
 		System.setProperty("harvester-level", "OFF");
-		System.out.println("Setting Logging OFF Begin");
 		setLogLevel("OFF");
-		System.out.println("Setting Logging OFF End");
 		if((args != null) && (parser != null)) {
 			ArgList argList = parser.parse(args);
 			for(String testFlag : noLogIfNotSetFlags) {
@@ -135,8 +133,6 @@ public class InitLog {
 		} else {
 			System.clearProperty("harvester-level");
 		}
-		System.out.println("Setting Logging "+logLevel+" Begin");
 		setLogLevel(logLevel);
-		System.out.println("Setting Logging "+logLevel+" End");
 	}
 }
