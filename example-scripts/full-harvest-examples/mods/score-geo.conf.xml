@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Score - Evaluates records and stores score values
+-----
+Compares the values of a set of fields using a specified
+algorithm and stores the weighted value produced by the
+algorithm in a score model
+ -->
+<config>
+
+    <!-- 
+    source - the harvested data
+    -----
+    This section defines what Score will treat as the harvested data
+     -->
+    <source>
+    
+	    <!-- 
+	    model - defines a jena model that contains harvested data
+	    -----
+	    This section defines the jena model as Score's source
+	     -->
+	    <model>
+	    
+	    	<!--
+	    	jena-type - the type of jena model
+	    	- - -
+	    	Examples:
+		    	sdb: <jena-type>sdb</jena-type>
+		    	rdb: <jena-type>rdb</jena-type>
+		    	tdb: <jena-type>tdb</jena-type>
+	    	 -->
+	    	<jena-type>tdb</jena-type>
+	    	
+	    	<!--
+	    	tdb-directory - the directory to store a tdb model in
+	    		(only needed when jena-type is tdb)
+	    	- - -
+	    	Examples:
+	    		<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</tdb-directory>
+	    		<tdb-directory>/path/to/directory/to/store/tdb/data</tdb-directory>
+	    	 -->
+	    	<tdb-directory>/usr/local/share/harvester/harvested-data/mods/model</tdb-directory>
+	    	
+	    	<!--
+	    	sdb-layout - the layout to use for an sdb model
+	    		(optional, only used when jena-type is sdb)
+	    	- - -
+	    	Examples:
+		    	layout2 (default): <sdb-layout>layout2</sdb-layout>
+	    	 -->
+	    	<!-- <sdb-layout>layout2</sdb-layout> -->
+	    	
+	    	<!--
+	    	database-type - the name of the database type (as specified by jena)
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <database-type>MySQL</database-type>
+		    	h2: <database-type>H2</database-type>
+	    	 -->
+	    	<!-- <database-type>H2</database-type> -->
+	    	
+	    	<!--
+	    	driver-class - the JDBC driver class to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <driver-class>com.mysql.jdbc.Driver</driver-class>
+		    	h2: <driver-class>org.h2.Driver</driver-class>
+	    	 -->
+			<!-- <driver-class>org.h2.Driver</driver-class> -->
+			
+	    	<!--
+	    	dburl - the JDBC connection url
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl>
+		    		see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html for format
+		    	h2: <dburl>jdbc:h2:path/to/h2/store</dburl>
+		    		see http://www.h2database.com/html/features.html#database_url for format
+	    	 -->
+			<!-- <dburl>jdbc:h2:harvested-data/default/h2/store</dburl> -->
+			
+			<!--
+			model-name - the named model to use (optional, uses default model if not specified)
+			- - - 
+			Examples:
+				<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name>
+				<model-name>mySimpleModelName</model-name>
+				<model-name>http://vivo.localinstitution.edu/models/my-uri-model</model-name>
+			 -->
+			<model-name>mods_temp-transfer</model-name>
+			
+	    	<!--
+	    	username - the DB username to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Example:
+	    		<username>myUser</username>
+	    	 -->
+			<!-- <username>sa</username> -->
+			
+	    	<!--
+	    	driver - the DB password to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Example:
+	    		<password>myPass</password>
+	    	 -->
+			<!-- <password></password> -->
+		</model>
+    </source>
+    
+    <!-- 
+    reference - the reference data to match the source data to
+    -----
+    This section defines what Score will treat as reference data
+     -->
+    <reference>
+    
+	    <!-- 
+	    model - defines a jena model that contains reference data
+	    -----
+	    This section defines the jena model as Score's reference
+	     -->
+	    <model>
+	    
+	    	<!--
+	    	jena-type - the type of jena model
+	    	- - -
+	    	Examples:
+		    	sdb: <jena-type>sdb</jena-type>
+		    	rdb: <jena-type>rdb</jena-type>
+		    	tdb: <jena-type>tdb</jena-type>
+	    	 -->
+	    	<jena-type>sdb</jena-type>
+	    	
+	    	<!--
+	    	tdb-directory - the directory to store a tdb model in
+	    		(only needed when jena-type is tdb)
+	    	- - -
+	    	Examples:
+	    		<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</tdb-directory>
+	    		<tdb-directory>/path/to/directory/to/store/tdb/data</tdb-directory>
+	    	 -->
+	    	<!-- <tdb-directory>/path/to/directory/to/store/tdb/data</tdb-directory> -->
+	    	
+	    	<!--
+	    	sdb-layout - the layout to use for an sdb model
+	    		(optional, only used when jena-type is sdb)
+	    	- - -
+	    	Examples:
+		    	layout2 (default): <sdb-layout>layout2</sdb-layout>
+	    	 -->
+	    	<sdb-layout>layout2</sdb-layout>
+	    	
+	    	<!--
+	    	database-type - the name of the database type (as specified by jena)
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <database-type>MySQL</database-type>
+		    	h2: <database-type>H2</database-type>
+	    	 -->
+	    	<database-type>MySQL</database-type>
+	    	
+	    	<!--
+	    	driver-class - the JDBC driver class to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <driver-class>com.mysql.jdbc.Driver</driver-class>
+		    	h2: <driver-class>org.h2.Driver</driver-class>
+	    	 -->
+			<driver-class>com.mysql.jdbc.Driver</driver-class>
+			
+	    	<!--
+	    	dburl - the JDBC connection url
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl>
+		    		see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html for format
+		    	h2: <dburl>jdbc:h2:path/to/h2/store</dburl>
+		    		see http://www.h2database.com/html/features.html#database_url for format
+	    	 -->
+			<dburl>jdbc:mysql://127.0.0.1:3306/vitrodb</dburl>
+			
+			<!--
+			model-name - the named model to use (optional, uses default model if not specified)
+			- - - 
+			Examples:
+				<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name>
+				<model-name>mySimpleModelName</model-name>
+				<model-name>http://vivo.localinstitution.edu/models/my-uri-model</model-name>
+			 -->
+			<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name>
+			
+	    	<!--
+	    	username - the DB username to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Example:
+	    		<username>myUser</username>
+	    	 -->
+			<username>USERNAME</username>
+			
+	    	<!--
+	    	driver - the DB password to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Example:
+	    		<password>myPass</password>
+	    	 -->
+			<password>PASSWORD</password>
+		</model>
+    </reference>
+    
+    <!-- 
+    score-data - where to store scoring data
+    -----
+    This section defines where Score will store its scoring data
+     -->
+    <score-data>
+    
+	    <!-- 
+	    model - defines a jena model in which to store scoring data
+	    -----
+	    This section defines the jena model as Score's score-data
+	     -->
+	    <model>
+	    
+	    	<!--
+	    	jena-type - the type of jena model
+	    	- - -
+	    	Examples:
+		    	sdb: <jena-type>sdb</jena-type>
+		    	rdb: <jena-type>rdb</jena-type>
+		    	tdb: <jena-type>tdb</jena-type>
+	    	 -->
+	    	<jena-type>tdb</jena-type>
+	    	
+	    	<!--
+	    	tdb-directory - the directory to store a tdb model in
+	    		(only needed when jena-type is tdb)
+	    	- - -
+	    	Examples:
+	    		<tdb-directory>/usr/local/share/harvester/harvested-data/example-jdbc/model</tdb-directory>
+	    		<tdb-directory>/path/to/directory/to/store/tdb/data</tdb-directory>
+	    	 -->
+	    	<tdb-directory>/usr/local/share/harvester/harvested-data/mods/score-data</tdb-directory>
+	    	
+	    	<!--
+	    	sdb-layout - the layout to use for an sdb model
+	    		(optional, only used when jena-type is sdb)
+	    	- - -
+	    	Examples:
+		    	layout2 (default): <sdb-layout>layout2</sdb-layout>
+	    	 -->
+	    	<!-- <sdb-layout>layout2</sdb-layout> -->
+	    	
+	    	<!--
+	    	database-type - the name of the database type (as specified by jena)
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <database-type>MySQL</database-type>
+		    	h2: <database-type>H2</database-type>
+	    	 -->
+	    	<!-- <database-type>H2</database-type> -->
+	    	
+	    	<!--
+	    	driver-class - the JDBC driver class to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <driver-class>com.mysql.jdbc.Driver</driver-class>
+		    	h2: <driver-class>org.h2.Driver</driver-class>
+	    	 -->
+			<!-- <driver-class>org.h2.Driver</driver-class> -->
+			
+	    	<!--
+	    	dburl - the JDBC connection url
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Examples:
+		    	mysql: <dburl>jdbc:mysql://127.0.0.1:3306/dbName</dburl>
+		    		see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html for format
+		    	h2: <dburl>jdbc:h2:path/to/h2/store</dburl>
+		    		see http://www.h2database.com/html/features.html#database_url for format
+	    	 -->
+			<!-- <dburl>jdbc:h2:harvested-data/default/h2/store</dburl> -->
+			
+			<!--
+			model-name - the named model to use (optional, uses default model if not specified)
+			- - - 
+			Examples:
+				<model-name>http://vitro.mannlib.cornell.edu/default/vitro-kb-2</model-name>
+				<model-name>mySimpleModelName</model-name>
+				<model-name>http://vivo.localinstitution.edu/models/my-uri-model</model-name>
+			 -->
+			<model-name>mods_score-data</model-name>
+			
+	    	<!--
+	    	username - the DB username to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Example:
+	    		<username>myUser</username>
+	    	 -->
+			<!-- <username>sa</username> -->
+			
+	    	<!--
+	    	driver - the DB password to use
+	    		(only needed when jena-type is rdb or sdb)
+	    	- - -
+	    	Example:
+	    		<password>myPass</password>
+	    	 -->
+			<!-- <password></password> -->
+		</model>
+    </score-data>
+    
+   	<!--
+   	filter-namespace - the namespace root to use as a filter for data in the source model
+   		The uris from the source model will be limited to only those that begin with the given
+   		filter-namespace
+   	- - -
+   	Example:
+   		<filter-namespace>http://vivoweb.org/harvest/example/jdbc/person/</filter-namespace>
+   		<filter-namespace>http://vivo.local.edu/orgs</filter-namespace>
+   	 -->
+    <filter-namespace>http://vivoweb.org/harvest/mods/geo/</filter-namespace>
+    
+   	<!--
+   	field-comparison - defines a pair for 
+   	- - -
+   	Parameters:
+   		name: description
+   	Example:
+   		<field-comparison name="compareFieldX">
+   			...
+   		</field-comparison>
+   	 -->
+    <field-comparison name="rdfsLabel">
+    
+    	<!--
+    	algorithm - description
+    	- - -
+    	Example:
+    		<algorithm>org.vivoweb.harvester.score.algorithm.EqualityTest</algorithm>
+    	 -->
+    	<algorithm>org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference</algorithm>
+    	
+    	<!--
+    	reference-predicate - description
+    	- - -
+    	Example:
+    		<reference-predicate>http://vivo.sample.edu/ontology/uId</reference-predicate>
+    	 -->
+    	<reference-predicate>http://www.w3.org/2000/01/rdf-schema#label</reference-predicate>
+    	
+    	<!--
+    	source-predicate - description
+    	- - -
+    	Example:
+    		<source-predicate>http://vivo.sample.edu/ontology/uId</source-predicate>
+    	 -->
+    	<source-predicate>http://www.w3.org/2000/01/rdf-schema#label</source-predicate>
+    	
+    	<!--
+    	weight - description
+    	- - -
+    	Example:
+    		<weight>1.0</weight>
+    	 -->
+    	<weight>1.0</weight>
+    </field-comparison>
+</config>
