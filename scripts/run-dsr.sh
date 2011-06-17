@@ -120,10 +120,11 @@ EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 # Scoring of Grants on ContractNumber
 $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumber=$CONNUM -PContractNumber=$CONNUM -n ${BASEURI}grant/
 
+SPONSORID="http://vivo.ufl.edu/ontology/vivo-ufl/sponsorID"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 
 # Scoring sponsors by labels
-$Score $SCOREMODELS -A label=$EQTEST -W label=1.0 -F label=$RDFSLABEL -P label=$RDFSLABEL -n ${BASEURI}sponsor/
+$Score $SCOREMODELS -A spnsrid=$EQTEST -W spnsrid=1.0 -F spnsrid=$SPONSORID -P spnsrid=$SPONSORID -n ${BASEURI}sponsor/
 
 # Scoring of people on UFID
 $Score $SCOREMODELS -A ufid=$EQTEST -W ufid=1.0 -F ufid=$UFID -P ufid=$UFID -n ${BASEURI}person/
@@ -134,7 +135,7 @@ UFDEPTID="http://vivo.ufl.edu/ontology/vivo-ufl/deptID"
 $Score $SCOREMODELS -A deptID=$EQTEST -W deptID=1.0 -F deptID=$UFDEPTID -P deptID=$UFDEPTID -n ${BASEURI}org/
 
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
 
 rm -rf $SCOREDATADIR
 rm -rf $TEMPCOPYDIR
@@ -154,7 +155,7 @@ COPIURI="-Aperson=$EQTEST -Wperson=0.5 -Fperson=$COPIROLEOF -Pperson=$COPIROLEOF
 $Score $SCOREMODELS $COPIURI $GRANTURI -n ${BASEURI}coPiRole/
 
 # Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r -c
 
 rm -rf $SCOREDATADIR
 rm -rf $TEMPCOPYDIR
@@ -190,7 +191,7 @@ $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/mat
 $Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grant/ -r
 $Smush $SCOREINPUT -P $UFID -n ${BASEURI}person/ -r
 $Smush $SCOREINPUT -P $UFDEPTID -n ${BASEURI}org/ -r
-$Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
+$Smush $SCOREINPUT -P $SPONSORID -n ${BASEURI}sponsor/ -r
 #$Smush $SCOREINPUT -P $PIROLEOF -n ${BASEURI}piRole/ -r
 #$Smush $SCOREINPUT -P $COPIROLEOF -n ${BASEURI}coPiRole/ -r
 
