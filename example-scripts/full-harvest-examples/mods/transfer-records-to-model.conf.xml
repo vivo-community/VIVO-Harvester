@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
+<!--  All rights reserved. This program and the accompanying materials -->
+<!--  are made available under the terms of the new BSD license -->
+<!--  which accompanies this distribution, and is available at -->
+<!--  http://www.opensource.org/licenses/bsd-license.html -->
+ 
+<!--  Contributors: -->
+<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
+
+<!-- 
+Transfer - Transfers RDF data from one Jena model to another.
+-----
+Transfer allows you to copy RDF data from one location to another.  This is ultimately used for adding data that the Harvester has been
+manipulating into VIVO, and also for data transfers during intermediate steps.  It can also be used to pull data from a record handler
+(such as an H2 database or RDF/XML text files) into a Jena model, and to output data to a file in RDF/XML format.  Finally, Transfer can
+be used to remove existing triples from a Jena model.
+ -->
+<Config>
+    <!-- 
+    Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
+    information to more detailed debugging information.
+    -----
+    Allowable values:
+    OFF - No log information is displayed on the console.
+    FATAL - Only fatal errors are displayed on the console.
+    ERROR - All error messages are displayed. 
+    WARN - Error and warning messages are displayed.
+    INFO - Errors, warnings, and general user information is displayed.  This is the default.
+    DEBUG - Errors, warnings, general information, and information intended for debuggers is displayed to the console.
+    TRACE - All of the above as well as even finer-grain debugging information is displayed.
+    ALL - Everything that goes into the log is displayed on the console.
+
+    Values meaningful for Transfer:
+    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    DEBUG - Warning if no output is specified
+    -->
+    <Param name="Wordiness">INFO</Param>
+
+    <!-- 
+    RecordSource - Determines if we are using a file or a Jena model as the input.
+    -----
+    Possible Values:
+    File - Use a file as the input.  FileSourceRDF and SourceRDFSyntax becomes required, ModelSource is ignored.
+    Model - Use a Jena model as the input.  ModelSource becomes required, FileSourceRDF and SourceRDFSyntax are ignored.  
+    -->
+    <Param name="RecordSource">File</Param>
+
+    <!-- 
+    FileSourceRDF - The path to the RDF file or the directory containing RDF files used as input.  
+    -->
+    <Param name="FileSourceRDF">harvested-data/mods/rh-raw</Param>
+
+    <!-- 
+    SourceRDFSyntax - The language of the RDF file specified by FileSourceRDF.
+    -----
+    Possible Values:
+    RDF/XML - W3C Standard
+    RDF/XML-ABBREV - Synonym for RDF/XML
+    N3 - Notation3
+    TURTLE - Subset of Notation3
+    TTL - Synonym for Turtle
+    N-TRIPLE - Subset of Turtle
+    -->
+    <Param name="SourceRDFSyntax">RDF/XML</Param>
+
+    <!-- 
+    ModelSource - The name of the Jena model to use as input.
+    -->
+    <!-- <Param name="ModelSource"></Param> -->
+
+    <!-- 
+    TransferMode - Determine if we want to add or remove triples from the destination Jena model.  If Add is specified, data from the
+    source is added to the destination model.  If Remove is specified, any triples in the destination that match triples in the source
+    are removed from the destination.
+    -----
+    Possible Values:
+    Add - If we are adding the source triples to the destination (standard Transfer)
+    Remove - If we are removed the source triples from the destination
+    -->
+    <Param name="TransferMode">Add</Param>
+
+    <!-- 
+    ModelDestination - The name of the Jena model to output triples to (or to remove triples from).
+    -->
+    <Param name="ModelDestination">mods_temp-transfer</Param>
+
+    <!-- 
+    FileDestinationRDF - The path to write the output of Transfer to.  Optional.  File will be overwritten if exists, and is always written
+    to from the input if specified (ignoring TransferMode).
+    -->
+    <!-- <Param name="FileDestinationRDF"></Param> -->
+
+    <!-- 
+    NamespaceDestination - The namespace in which to place relative URIs from the input.  
+    -->
+    <Param name="NamespaceDestination">http://localhost/individual/</Param>
+
+</Config>
