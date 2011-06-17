@@ -14,24 +14,6 @@
 <Config>
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
-<%						TODO!!!! FINISH THIS, ITS IS COPY/PASTA FROM MERGE!!!											%>
-<%									Match Description	- done															%>
-<%									Match Params																		%>
-<%										wordiness		- done															%>
-<%										input model		- todo															%>
-<%										score model		- todo															%>
-<%										output model	- todo															%>
-<%										threshold		- todo															%>
-<%										linkInput2Vivo	- todo															%>
-<%										linkVivo2Input	- todo															%>
-<%										rename			- todo															%>
-<%										clearTypes&Lits	- todo															%>
-<%										batchsize		- todo															%>
-<%									Models section		- done															%>
-<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
--->
-<!--
-<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 <%	===== Match ===== 																									%>
 <%	Uses the score-data produced by Score to evaluate pairs of records from the input and VIVO.							%>
 <%	=== 																												%>
@@ -74,22 +56,24 @@
 <%				(<vivo-agent> <foaf:made> <input-thing>) and (<input-thing> <faof:maker> <vivo-agent>) to the input		%>
 <%	===																													%>
 <%																														%>
-<%	rename - (optional) a		%>
-<%		Possible Value:																										%>
-<%			(default) <Param name="rename">false</Param> - b																		%>
-<%			<Param name="rename">true</Param> - b																		%>
+<%	rename - (optional) rename the input node to the matching VIVO URI													%>
+<%		Possible Value:																									%>
+<%			(default) <Param name="rename">false</Param> - don't rename nodes											%>
+<%			<Param name="rename">true</Param> - rename nodes															%>
 <%	===																													%>
 <%																														%>
-<%	clear-type-and-literals - (optional) a		%>
+<%	clear-type-and-literals - (optional) sanitize the input data to remove all rdf:type statements and all literal		%>
+<%			value statements, preserving only the node relationship triples												%>
 <%		Example:																										%>
-<%			(default) <Param name="clear-type-and-literals">false</Param> - b																		%>
-<%			<Param name="clear-type-and-literals">true</Param> - b																		%>
+<%			(default) <Param name="clear-type-and-literals">false</Param> - don't sanitize input data					%>
+<%			<Param name="clear-type-and-literals">true</Param> - sanitize input data									%>
 <%	===																													%>
 <%																														%>
-<%	batch-size - (optional) a		%>
+<%	batch-size - (optional) number of records to process in batch - default 150 - lower this if getting StackOverflow	%>
+<%			or OutOfMemory Exceptions																					%>
 <%		Example:																										%>
-<%			(default) <Param name="batch-size">150</Param> - b																		%>
-<%			<Param name="batch-size">500</Param> - b																		%>
+<%			(default) <Param name="batch-size">150</Param> - process 150 records per batch								%>
+<%			<Param name="batch-size">50</Param> - process 50 records per batch											%>
 <%	===																													%>
 <%																														%>
 <%	input-config - (optional - at least one of this and/or inputOverride) the configuration file that describes the		%>
