@@ -16,5 +16,5 @@
 	<Param name="output">translated-records.config.xml</Param>
 
 	<!--DATAMAP -->
-	<Param name="xslFile">dsr-to-vivo.datamap.xsl</Param>
+	<Param name="xslFile">dsr-to-vivo.xsl</Param>
 </Task>

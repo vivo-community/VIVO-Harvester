@@ -40,21 +40,22 @@ set -e
 #	a solution to the problem. I has become common practice in addressing a problem
 #	to request this file. The passwords and user-names are filter out of this file
 #	To prevent these logs from containing sensitive information.
-echo "Full Logging in dsr-harvest-$DATE.log"
+echo "Full Logging in $HARVEST_NAME.$DATE.log"
 
 #clear old data
 # For a fresh harvest, the removal of the previous information maintains data integrity.
 #	If you are continuing a partial run or wish to use the old and already retrieved
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
-rm -rf data
+#rm -rf data
+#mv -f data data.$DATE
 
 # clone db
 # Databaseclone is a tool used to make a local copy of the database. One reason for this
 #	is that constantly querying a database could put undue load on a repository. This
 #	allows the use of intensive queries to happen to a local copy and only tie up the
 #	resources in the local machine.
-harvester-databaseclone -X databaseclone.config.xml
+#harvester-databaseclone -X databaseclone.config.xml
 
 
 # Execute Fetch
@@ -83,12 +84,12 @@ harvester-xsltranslator -X xsltranslator.config.xml
 # -d means that this call will also produce a text dump file in the specified location 
 harvester-transfer -h translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
-# Execute Score for People
+# Execute Score for Grants
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-grants.config.xml
 
-# Execute Score for People
+# Execute Score for Sponsor organizations.
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-sponsor.config.xml
@@ -98,29 +99,29 @@ harvester-score -X score-sponsor.config.xml
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-people.config.xml
 
-# Execute Score for People
+# Execute Score for Departments
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-dept.config.xml
 
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
-# 	comparsion values above the chosen threshold within the xml configuration file.
+# 	comparison values above the chosen threshold within the xml configuration file.
 harvester-match -X match-grants.config.xml
 
-# Execute Score for People
+# Execute Score for Primary investigator roles
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-pirole.config.xml
 
-# Execute Score for People
+# Execute Score for Co-primary investigator roles
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-copirole.config.xml
 
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
-# 	comparsion values above the chosen threshold within the xml configuration file.
+# 	comparison values above the chosen threshold within the xml configuration file.
 harvester-match -X match-roles.config.xml
 
 # Smush to remove duplicates
@@ -134,19 +135,19 @@ harvester-smush -X smush-person.config.xml
 
 harvester-smush -X smush-sponsor.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
+# Execute ChangeNamespace to get unmatched grants into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-grant.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
+# Execute ChangeNamespace to get unmatched organizations into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-org.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
+# Execute ChangeNamespace to get unmatched sponsoring organizations into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
@@ -158,19 +159,19 @@ harvester-changenamespace -X changenamespace-sponsor.config.xml
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-people.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
+# Execute ChangeNamespace to get unmatched Primary investigator roles into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-pirole.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
+# Execute ChangeNamespace to get unmatched Co-primary investigator roles into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-copirole.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
+# Execute ChangeNamespace to get unmatched time intervals into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
