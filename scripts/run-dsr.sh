@@ -123,8 +123,14 @@ $Score $SCOREMODELS -AContractNumber=$EQTEST -WContractNumber=1.0 -FContractNumb
 SPONSORID="http://vivo.ufl.edu/ontology/vivo-ufl/sponsorID"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 
-# Scoring sponsors by labels
+# Scoring sponsors by sponsorID
 $Score $SCOREMODELS -A spnsrid=$EQTEST -W spnsrid=1.0 -F spnsrid=$SPONSORID -P spnsrid=$SPONSORID -n ${BASEURI}sponsor/
+
+# Find matches using scores and rename nodes to matching uri
+$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
+
+rm -rf $SCOREDATADIR
+rm -rf $TEMPCOPYDIR
 
 # Scoring of people on UFID
 $Score $SCOREMODELS -A ufid=$EQTEST -W ufid=1.0 -F ufid=$UFID -P ufid=$UFID -n ${BASEURI}person/
