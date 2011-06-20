@@ -367,7 +367,7 @@ public class ArgList {
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			this.tempVal = "";
 			this.tempParamName = "";
-			if(qName.equalsIgnoreCase("Task")) {
+			if(qName.equalsIgnoreCase("Task") || qName.equalsIgnoreCase("Config")) {
 				// Do nothing, but keep to prevent falling into else
 			} else if(qName.equalsIgnoreCase("Param")) {
 				this.tempParamName = attributes.getValue("name");
@@ -383,7 +383,7 @@ public class ArgList {
 		
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if(qName.equalsIgnoreCase("Task")) {
+			if(qName.equalsIgnoreCase("Task") || qName.equalsIgnoreCase("Config")) {
 				// Do nothing, but leave it here so it doesn't fall into else statement
 			} else if(qName.equalsIgnoreCase("Param")) {
 				if(!this.params.containsKey(this.tempParamName)) {
