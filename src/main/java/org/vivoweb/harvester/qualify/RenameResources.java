@@ -20,6 +20,7 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import com.hp.hpl.jena.graph.BulkUpdateHandler;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -180,14 +181,17 @@ public class RenameResources {
 			addTriples.add(Triple.create(newResAsNode, t.getPredicate(), newResAsNode));
 		}
 		
-		// remove all triples marked for removal
-		for(final Triple t : removeTriples) {
-			rawGraph.delete(t);
-		}
-		// add all triples marked for addition
-		for(final Triple t : addTriples) {
-			rawGraph.add(t);
-		}
+//		// remove all triples marked for removal
+//		for(final Triple t : removeTriples) {
+//			rawGraph.delete(t);
+//		}
+//		// add all triples marked for addition
+//		for(final Triple t : addTriples) {
+//			rawGraph.add(t);
+//		}
+		BulkUpdateHandler buh = rawGraph.getBulkUpdateHandler();
+		buh.add(addTriples.iterator());
+		buh.delete(removeTriples.iterator());
 		
 		// Did we work in the back of the InfGraph? If so, we need to rebind raw data (more or less expensive)!
 		if(rawGraph != graph)
