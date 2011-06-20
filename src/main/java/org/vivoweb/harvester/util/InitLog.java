@@ -75,6 +75,11 @@ public class InitLog {
 				System.setProperty("console-debug", "DENY");
 				System.setProperty("console-info", "DENY");
 				System.setProperty("console-warnerror", "OFF");
+			} else {
+				System.clearProperty("console-trace");
+				System.clearProperty("console-debug");
+				System.clearProperty("console-info");
+				System.clearProperty("console-warnerror");
 			}
 		} else {
 			System.clearProperty("console-trace");
