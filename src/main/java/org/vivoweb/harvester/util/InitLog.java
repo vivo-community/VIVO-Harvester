@@ -41,46 +41,43 @@ public class InitLog {
 	
 	/**
 	 * Set the log level variables
-	 * @param logLevel the log level
+	 * @param level the log level
 	 */
-	private static void setLogLevel(String logLevel) {
-		if(logLevel != null) {
-			if(logLevel.equalsIgnoreCase("trace") || logLevel.equalsIgnoreCase("all")) {
-				System.setProperty("console-trace", "ACCEPT");
-				System.setProperty("console-debug", "ACCEPT");
-				System.setProperty("console-info", "ACCEPT");
-				System.setProperty("console-warnerror", "WARN");
-			} else if(logLevel.equalsIgnoreCase("debug")) {
-				System.setProperty("console-trace", "DENY");
-				System.setProperty("console-debug", "ACCEPT");
-				System.setProperty("console-info", "ACCEPT");
-				System.setProperty("console-warnerror", "WARN");
-			} else if(logLevel.equalsIgnoreCase("info")) {
-				System.setProperty("console-trace", "DENY");
-				System.setProperty("console-debug", "DENY");
-				System.setProperty("console-info", "ACCEPT");
-				System.setProperty("console-warnerror", "WARN");
-			} else if(logLevel.equalsIgnoreCase("warn")) {
-				System.setProperty("console-trace", "DENY");
-				System.setProperty("console-debug", "DENY");
-				System.setProperty("console-info", "DENY");
-				System.setProperty("console-warnerror", "WARN");
-			} else if(logLevel.equalsIgnoreCase("error")) {
-				System.setProperty("console-trace", "DENY");
-				System.setProperty("console-debug", "DENY");
-				System.setProperty("console-info", "DENY");
-				System.setProperty("console-warnerror", "ERROR");
-			} else if(logLevel.equalsIgnoreCase("off")) {
-				System.setProperty("console-trace", "DENY");
-				System.setProperty("console-debug", "DENY");
-				System.setProperty("console-info", "DENY");
-				System.setProperty("console-warnerror", "OFF");
-			} else {
-				System.clearProperty("console-trace");
-				System.clearProperty("console-debug");
-				System.clearProperty("console-info");
-				System.clearProperty("console-warnerror");
-			}
+	private static void setLogLevel(String level) {
+		String logLevel = level;
+		if(logLevel == null) {
+			logLevel = "";
+		}
+		if(logLevel.equalsIgnoreCase("trace") || logLevel.equalsIgnoreCase("all")) {
+			System.setProperty("console-trace", "ACCEPT");
+			System.setProperty("console-debug", "ACCEPT");
+			System.setProperty("console-info", "ACCEPT");
+			System.setProperty("console-warnerror", "WARN");
+		} else if(logLevel.equalsIgnoreCase("debug")) {
+			System.setProperty("console-trace", "DENY");
+			System.setProperty("console-debug", "ACCEPT");
+			System.setProperty("console-info", "ACCEPT");
+			System.setProperty("console-warnerror", "WARN");
+		} else if(logLevel.equalsIgnoreCase("info")) {
+			System.setProperty("console-trace", "DENY");
+			System.setProperty("console-debug", "DENY");
+			System.setProperty("console-info", "ACCEPT");
+			System.setProperty("console-warnerror", "WARN");
+		} else if(logLevel.equalsIgnoreCase("warn")) {
+			System.setProperty("console-trace", "DENY");
+			System.setProperty("console-debug", "DENY");
+			System.setProperty("console-info", "DENY");
+			System.setProperty("console-warnerror", "WARN");
+		} else if(logLevel.equalsIgnoreCase("error")) {
+			System.setProperty("console-trace", "DENY");
+			System.setProperty("console-debug", "DENY");
+			System.setProperty("console-info", "DENY");
+			System.setProperty("console-warnerror", "ERROR");
+		} else if(logLevel.equalsIgnoreCase("off")) {
+			System.setProperty("console-trace", "DENY");
+			System.setProperty("console-debug", "DENY");
+			System.setProperty("console-info", "DENY");
+			System.setProperty("console-warnerror", "OFF");
 		} else {
 			System.clearProperty("console-trace");
 			System.clearProperty("console-debug");
@@ -124,7 +121,13 @@ public class InitLog {
 		if((args != null) && (parser != null)) {
 			ArgList argList = parser.parse(args);
 			for(String testFlag : noLogIfNotSetFlags) {
-				if(!argList.has(testFlag)) {
+				boolean test;
+				try {
+					test = (!argList.has(testFlag));
+				} catch (IllegalArgumentException e) {
+					test = false;
+				}
+				if(test) {
 					logLevel = "OFF";
 					break;
 				}
