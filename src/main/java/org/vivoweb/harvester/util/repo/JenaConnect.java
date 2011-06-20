@@ -480,6 +480,17 @@ public abstract class JenaConnect {
 	/**
 	 * Executes a sparql select query against the JENA model and returns the selected result set
 	 * @param queryString the query to execute against the model
+	 * @param datasetMode execute against dataset
+	 * @return the executed query result set
+	 * @throws IOException error connecting
+	 */
+	public ResultSet executeSelectQuery(String queryString, boolean datasetMode) throws IOException {
+		return executeSelectQuery(queryString, false, datasetMode);
+	}
+	
+	/**
+	 * Executes a sparql select query against the JENA model and returns the selected result set
+	 * @param queryString the query to execute against the model
 	 * @param copyResultSet copy the resultset
 	 * @param datasetMode execute against dataset
 	 * @return the executed query result set
