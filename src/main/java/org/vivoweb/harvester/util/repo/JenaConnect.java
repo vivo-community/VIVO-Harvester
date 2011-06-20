@@ -486,9 +486,11 @@ public abstract class JenaConnect {
 	 * @throws IOException error connecting
 	 */
 	public ResultSet executeSelectQuery(String queryString, boolean copyResultSet, boolean datasetMode) throws IOException {
-		ResultSet rs = buildQueryExec(queryString, datasetMode).execSelect();
+		QueryExecution qexec = buildQueryExec(queryString, datasetMode);
+		ResultSet rs = qexec.execSelect();
 		if(copyResultSet) {
 			rs = ResultSetFactory.copyResults(rs);
+			qexec.close();
 		}
 		return rs;
 	}
@@ -774,7 +776,7 @@ public abstract class JenaConnect {
 			this.tempParamName = "";
 			if(qName.equalsIgnoreCase("Param")) {
 				this.tempParamName = attributes.getValue("name");
-			} else if(!qName.equalsIgnoreCase("Model")) {
+			} else if(!qName.equalsIgnoreCase("Model") && !qName.equalsIgnoreCase("Config")) {
 				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
@@ -788,7 +790,7 @@ public abstract class JenaConnect {
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
-			} else if(!qName.equalsIgnoreCase("Model")) {
+			} else if(!qName.equalsIgnoreCase("Model") && !qName.equalsIgnoreCase("Config")) {
 				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
