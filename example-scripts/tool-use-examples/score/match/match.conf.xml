@@ -176,7 +176,7 @@
 <%		Possible Values:																								%>
 <%			(default) <Param name="scoreOverride">rdfLang=RDF/XML</Param> - rdf/xml format								%>
 <%			<Param name="scoreOverride">rdfLang=N3</Param> - n3 format													%>
-<%			<Param name="scoreOverride">rdfLang=TTL</Param> - turtle/ttl format										%>
+<%			<Param name="scoreOverride">rdfLang=TTL</Param> - turtle/ttl format											%>
 <%			<Param name="scoreOverride">rdfLang=N-TRIPLE</Param> - n-triple format										%>
 <%	=== 																												%>
 <%																														%>
@@ -190,14 +190,14 @@
 <%			(only needed when type is rdb or sdb)																		%>
 <%		Examples: 																										%>
 <%			<Param name="scoreOverride">dbType=MySQL</Param> - mysql database											%>
-<%			<Param name="scoreOverride">dbType=H2</Param> - h2 database												%>
+<%			<Param name="scoreOverride">dbType=H2</Param> - h2 database													%>
 <%	=== 																												%>
 <%																														%>
 <%	dbClass - the JDBC driver class to use 																				%>
 <%			(only needed when type is rdb or sdb)																		%>
 <%		Examples: 																										%>
 <%			<Param name="scoreOverride">dbClass=com.mysql.jdbc.Driver</Param> - mysql database							%>
-<%			<Param name="scoreOverride">dbClass=org.h2.Driver</Param> - h2 database									%>
+<%			<Param name="scoreOverride">dbClass=org.h2.Driver</Param> - h2 database										%>
 <%	=== 																												%>
 <%																														%>
 <%	dbUrl - the JDBC connection url 																					%>
@@ -213,7 +213,7 @@
 <%			(optional, uses default model if not specified, only used when type is rdb, tdb, or sdb )					%>
 <%		Examples: 																										%>
 <%			<Param name="scoreOverride">modelName=http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>			%>
-<%			<Param name="scoreOverride">modelName=mySimpleModelName</Param>											%>
+<%			<Param name="scoreOverride">modelName=mySimpleModelName</Param>												%>
 <%			<Param name="scoreOverride">modelName=http://vivo.localinstitution.edu/models/my-uri-model</Param>			%>
 <%	=== 																												%>
 <%																														%>
