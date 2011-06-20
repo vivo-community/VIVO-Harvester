@@ -8,7 +8,7 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Task>
+<Config>
 	<!--INPUT : for more information please see the given config file -->
 	<Param name="inputJena-config">harvested-data.model.xml</Param>
 	
@@ -56,4 +56,4 @@
 	<Param name="inputJena-predicates">connumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber</Param>
 	<Param name="vivoJena-predicates">connumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/grant/</Param>
-</Task>
+</Config>

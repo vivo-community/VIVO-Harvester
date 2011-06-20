@@ -8,7 +8,7 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Task>
+<Config>
     <!--INPUT -->
     <Param name="inputDriver">net.sourceforge.jtds.jdbc.Driver</Param>
     <Param name="inputConnection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
@@ -30,4 +30,4 @@
     <Param name="validTableType">TABLE</Param>
     <Param name="validTableType">VIEW</Param>
     <Param name="DBUnitFeature">http://www.dbunit.org/features/caseSensitiveTableNames=true</Param>
-</Task>
+</Config>

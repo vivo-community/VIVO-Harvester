@@ -8,7 +8,7 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Task>
+<Config>
 	<!--INPUT -->
 	<Param name="inputJena-config">harvested-data.model.xml</Param>
 	
@@ -61,4 +61,4 @@
     <Param name="inputJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
     <Param name="vivoJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
     <Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/coPiRole/</Param>
-</Task>
+</Config>

@@ -8,7 +8,7 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Task>
+<Config>
     <!--INPUT -->
     <Param name="inputModel">harvested-data.model.xml</Param>
     
@@ -18,4 +18,4 @@
     <!--  OPTIONS -->
     <Param name="oldNamespace">http://vivoweb.org/harvest/ufl/dsr/sponsor/</Param>
     <Param name="newNamespace">http://vivo.ufl.edu/individual/</Param>
-</Task>
+</Config>

@@ -8,7 +8,7 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Task>
+<Config>
 	<!--INPUT -->
 	<Param name="input">raw-records.config.xml</Param>
 	
@@ -17,4 +17,4 @@
 
 	<!--DATAMAP -->
 	<Param name="xslFile">dsr-to-vivo.xsl</Param>
-</Task>
+</Config>

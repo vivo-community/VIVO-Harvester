@@ -8,17 +8,17 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Task>
-	<!--INPUT -->
-	<Param name="inputJena-config">harvested-data.model.xml</Param>
-	
-	<!--VIVO INPUT -->
-	<Param name="vivoJena-config">vivo.model.xml</Param>
-	
-	<!--SCORING DATA OUTPUT -->
-	<Param name="score-config">score-data.model.xml</Param>
-	
-	<!--OPTIONS -->
+<Config>
+    <!--INPUT : for more information please see the given config file -->
+    <Param name="inputJena-config">harvested-data.model.xml</Param>
+    
+    <!--VIVO INPUT : for more information please see the given config file -->
+    <Param name="vivoJena-config">vivo.model.xml</Param>
+    
+    <!--SCORING DATA OUTPUT  : for more information please see the given config file-->
+    <Param name="score-config">score-data.model.xml</Param>
+    
+    <!--OPTIONS -->
     <!--
 <%  Score uses a temporary jena model to store its scoring data. This model is used later by the Match process        %>                                                                                                               %>
 <%     to make the changes                                                                                            %>                                                                                                               %>
@@ -61,4 +61,4 @@
     <Param name="inputJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
     <Param name="vivoJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/piRole/</Param>
-</Task>
+</Config>

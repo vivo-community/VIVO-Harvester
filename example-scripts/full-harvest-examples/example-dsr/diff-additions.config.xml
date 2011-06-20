@@ -8,7 +8,7 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Task>
+<Config>
 	<!--INPUT -->
 	<Param name="minuend">harvested-data.model.xml</Param>
 	
@@ -17,4 +17,4 @@
 	
 	<!--  OPTIONS -->
 	<Param name="dumptofile">data/vivo-additions.rdf.xml</Param>
-</Task>
+</Config>

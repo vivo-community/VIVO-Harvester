@@ -8,13 +8,7 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
-<Config>
-	<!--INPUT -->
-	<Param name="minuend">previous-harvest.model.xml</Param>
-	
-	<!--VIVO -->
-	<Param name="subtrahend">harvested-data.model.xml</Param>
-	
-	<!--  OPTIONS -->
-	<Param name="dumptofile">data/vivo-subtractions.rdf.xml</Param>
-</Config>
+<Model>
+	<Param name="type">tdb</Param>
+	<Param name="dbDir">data/harvested-data/</Param>
+</Model>

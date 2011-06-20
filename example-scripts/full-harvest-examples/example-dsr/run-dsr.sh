@@ -48,7 +48,9 @@ echo "Full Logging in $HARVEST_NAME.$DATE.log"
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
 #rm -rf data
-#mv -f data data.$DATE
+if [ -d data]
+mv -f data data.$DATE
+fi
 
 # clone db
 # Databaseclone is a tool used to make a local copy of the database. One reason for this
