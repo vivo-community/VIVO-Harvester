@@ -19,15 +19,19 @@
 #	and should agree with the installation location
 HARVESTER_INSTALL_DIR=/home/mbarbieri/workspace/HarvesterDev
 #HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
-HARVEST_NAME=example-mods
-DATE=`date +%Y-%m-%d'T'%T`
+export HARVEST_NAME=example-mods
+export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
 # The tools within this script refer to binaries supplied within the harvester
 #	Since they can be located in another directory their path should be
 #	included within the classpath and the path environment variables.
-PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
-CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester-1.1.1.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
+export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester-1.2beta2.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester-1.2beta2.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
+
+
+
 
 # Exit on first error
 # The -e flag prevents the script from continuing even though a tool fails.

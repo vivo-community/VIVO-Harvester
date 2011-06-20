@@ -10,7 +10,7 @@
 
 <!-- 
 Transfer - Transfers RDF data from one Jena model to another.
------
+-
 Transfer allows you to copy RDF data from one location to another.  This is ultimately used for adding data that the Harvester has been
 manipulating into VIVO, and also for data transfers during intermediate steps.  It can also be used to pull data from a record handler
 (such as an H2 database or RDF/XML text files) into a Jena model, and to output data to a file in RDF/XML format.  Finally, Transfer can
@@ -20,7 +20,7 @@ be used to remove existing triples from a Jena model.
     <!-- 
     Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
     information to more detailed debugging information.
-    -----
+    -
     Allowable values:
     OFF - No log information is displayed on the console.
     FATAL - Only fatal errors are displayed on the console.
@@ -41,7 +41,7 @@ be used to remove existing triples from a Jena model.
 
     <!-- 
     RecordSource - Determines if we are using a file or a Jena model as the input.
-    -----
+    -
     Possible Values:
     File - Use a file as the input.  FileSourceRDF and SourceRDFSyntax becomes required, ModelSource is ignored.
     Model - Use a Jena model as the input.  ModelSource becomes required, FileSourceRDF and SourceRDFSyntax are ignored.
@@ -55,7 +55,7 @@ be used to remove existing triples from a Jena model.
 
     <!-- 
     SourceRDFSyntax - The language of the RDF file specified by FileSourceRDF.
-    -----
+    -
     Possible Values:
     RDF/XML - W3C Standard
     RDF/XML-ABBREV - Synonym for RDF/XML
@@ -75,7 +75,7 @@ be used to remove existing triples from a Jena model.
     TransferMode - Determine if we want to add or remove triples from the destination Jena model.  If Add is specified, data from the
     source is added to the destination model.  If Remove is specified, any triples in the destination that match triples in the source
     are removed from the destination.
-    -----
+    -
     Possible Values:
     Add - If we are adding the source triples to the destination (standard Transfer)
     Remove - If we are removed the source triples from the destination

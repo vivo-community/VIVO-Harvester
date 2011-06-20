@@ -10,7 +10,7 @@
 
 <!-- 
 RunBibutils - Runs the Bibutils tool, translating files from various sources into MODS format
------
+-
 Bibutils is a collection of open-source tools which translate files of many different formats into the Library of Congress's
 Metadata Object Description Schema (MODS) XML format.  This format is supported by a pre-written sample XSLT in the Harvester, thus allowing
 Harvester to support all these different formats.  The RunBibutils tool is provided as a convenience to perform batch Bibutils runs on
@@ -20,7 +20,7 @@ data coming in from a fetch.
     <!-- 
     Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
     information to more detailed debugging information.
-    -----
+    -
     Allowable values:
     OFF - No log information is displayed on the console.
     FATAL - Only fatal errors are displayed on the console.
@@ -48,7 +48,7 @@ data coming in from a fetch.
     <!-- 
     SourceFormat - The format of the input data, which Bibutils will convert to MODS.  This actually determines which executable is run, since Bibutils
                    uses a separate executable for each input format.
-	-----
+	-
 	Possible Values:
 	bib - BibTeX (this format is used by RefWorks) (executable: bib2xml)
 	biblatex - BibLaTeX (executable: biblatex2xml)
@@ -77,7 +77,7 @@ data coming in from a fetch.
     Force - Determines whether we want the system to decide if a record needs translation by Bibutils (based on a checksum of the most
             recent record of the same name that was translated) and to skip those which do not need to be translated, for the sake of
             performance
-    -----
+    -
     Possible Values:
     true - Force, meaning always translate all records
     false - Decide if the record needs translation before translating it
