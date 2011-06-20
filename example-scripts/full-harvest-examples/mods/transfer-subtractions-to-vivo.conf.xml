@@ -49,7 +49,7 @@ be used to remove existing triples from a Jena model.
     <!-- 
     FileSourceRDF - The path to the RDF file or the directory containing RDF files used as input.  
     -->
-    <Param name="rdf">data/subtractions.rdf.xml</Param>
+    <Param name="rdf">data/vivo-subtractions.rdf.xml</Param>
 
     <!-- 
     SourceRDFSyntax - The language of the RDF file specified by FileSourceRDF.
