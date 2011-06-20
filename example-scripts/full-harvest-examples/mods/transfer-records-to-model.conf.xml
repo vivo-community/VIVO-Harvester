@@ -51,7 +51,7 @@ be used to remove existing triples from a Jena model.
     <!-- 
     FileSourceRDF - The path to the RDF file or the directory containing RDF files used as input.  
     -->
-    <!-- <Param name="FileSourceRDF">harvested-data/mods/rh-raw</Param> -->
+    <!-- <Param name="FileSourceRDF">data/rh-raw</Param> -->
 
     <!-- 
     SourceRDFSyntax - The language of the RDF file specified by FileSourceRDF.
