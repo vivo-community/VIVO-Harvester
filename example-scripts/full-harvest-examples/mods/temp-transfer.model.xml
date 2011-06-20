@@ -4,7 +4,7 @@
 	<Param name="dbLayout">layout2</Param>
 	<Param name="dbClass">org.h2.Driver</Param>
 	<Param name="dbType">H2</Param>
-	<Param name="dbUrl">jdbc:h2:harvested-data/mods/model/store</Param>
+	<Param name="dbUrl">jdbc:h2:data/model/store</Param>
 	<Param name="dbUser">sa</Param>
 	<Param name="dbPass"></Param>
 	<Param name="modelName">modsTempTransfer</Param>
