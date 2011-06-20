@@ -16,7 +16,7 @@ Metadata Object Description Schema (MODS) XML format.  This format is supported 
 Harvester to support all these different formats.  The RunBibutils tool is provided as a convenience to perform batch Bibutils runs on
 data coming in from a fetch.
  -->
-<Config>
+<Task>
     <!-- 
     Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
     information to more detailed debugging information.
@@ -84,4 +84,4 @@ data coming in from a fetch.
      -->
     <!-- <Param name="Force">false</Param> -->
 
-</Config>
+</Task>

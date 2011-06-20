@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Config>
+<Task>
 	<Param name="inputJena-config">temp-transfer.model.xml</Param>
 	<Param name="vivoJena-config">vivo.model.xml</Param>
 	<Param name="score-config">score-data.model.xml</Param>
@@ -12,5 +12,5 @@
 	<Param name="weights">authauth=0.5</Param>
 	<Param name="vivoJena-predicates">authauth=http://vivoweb.org/ontology/core#linkedAuthor</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/mods/authorship/</Param>
-</Config>
+</Task>
 

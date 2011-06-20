@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<Config>
+<Task>
 	<Param name="inputJena-config">temp-transfer.model.xml</Param>
 	<Param name="vivoJena-config">vivo.model.xml</Param>
 	<Param name="score-config">score-data.model.xml</Param>
@@ -9,7 +9,7 @@
 	<Param name="weights">title=1.0</Param>
 	<Param name="vivoJena-predicates">title=http://www.w3.org/2000/01/rdf-schema#label</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/mods/pub/</Param>
-</Config>
+</Task>
 
 
 

@@ -16,7 +16,7 @@ manipulating into VIVO, and also for data transfers during intermediate steps.  
 (such as an H2 database or RDF/XML text files) into a Jena model, and to output data to a file in RDF/XML format.  Finally, Transfer can
 be used to remove existing triples from a Jena model.
  -->
-<Config>
+<Task>
     <!-- 
     Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
     information to more detailed debugging information.
@@ -98,4 +98,4 @@ be used to remove existing triples from a Jena model.
     -->
     <!-- <Param name="NamespaceDestination">http://localhost/individual/</Param> -->
 
-</Config>
+</Task>
