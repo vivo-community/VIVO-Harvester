@@ -11,6 +11,7 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -377,7 +378,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 			this.tempParamName = "";
 			if(qName.equalsIgnoreCase("Param")) {
 				this.tempParamName = attributes.getValue("name");
-			} else if(!qName.equalsIgnoreCase("RecordHandler")) {
+			} else if(!qName.equalsIgnoreCase("RecordHandler") && !qName.equalsIgnoreCase("Config")) {
 				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
@@ -391,7 +392,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if(qName.equalsIgnoreCase("Param")) {
 				this.params.put(this.tempParamName, this.tempVal);
-			} else if(!qName.equalsIgnoreCase("RecordHandler")) {
+			} else if(!qName.equalsIgnoreCase("RecordHandler") && !qName.equalsIgnoreCase("Config")) {
 				throw new SAXException("Unknown Tag: " + qName);
 			}
 		}
@@ -473,6 +474,13 @@ public abstract class RecordHandler implements Iterable<Record> {
 		boolean list = argList.has("l");
 		String recordId = argList.get("r");
 		String value = argList.get("v");
+		String output = argList.get("o");
+		PrintStream os;
+		if(output != null) {
+			os = new PrintStream(FileAide.getOutputStream(output));
+		} else {
+			os = System.out;
+		}
 		if(rh == null) {
 			throw new IllegalArgumentException("Must provide a source record handler");
 		}
@@ -484,16 +492,21 @@ public abstract class RecordHandler implements Iterable<Record> {
 		}
 		if(list) {
 			for(Record r : rh) {
-				System.out.println(r.getID());
+				os.println(r.getID());
 			}
 		}
 		if(recordId != null) {
 			Record r = rh.getRecord(recordId);
 			if(value != null) {
+				log.info("Setting new value for record: "+r.getID());
 				r.setData(value, RecordHandler.class);
 			} else {
-				System.out.println(r.getData());
+				os.println(r.getData());
 			}
+		}
+		os.flush();
+		if(output != null) {
+			os.close();
 		}
 	}
 	
@@ -507,7 +520,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhanlder config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("recordId").withParameter(true, "RECORD_ID").setDescription("the record id to use").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("value").withParameter(true, "RECORD_VALUE").setDescription("set the value of RECORD_ID to be RECORD_VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("list").setDescription("list the ids contained in this recordhandler").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output-file").withParameter(true, "FILE_PATH").setDescription("output to this file rather than stdout").setRequired(false));
 		return parser;
 	}
 	
@@ -518,7 +531,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 	public static void main(String... args) {
 		Exception error = null;
 		try {
-			InitLog.initLogger(args, getParser());
+			InitLog.initLogger(args, getParser(), "z");
 			log.info(getParser().getAppName() + ": Start");
 			run(args);
 		} catch(IllegalArgumentException e) {
