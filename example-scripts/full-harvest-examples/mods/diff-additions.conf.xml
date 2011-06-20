@@ -13,7 +13,7 @@
 	<Param name="minuend">harvested-data.model.xml</Param>
 	
 	<!--VIVO -->
-	<Param name="subtrahend">harvested-data.model.xml</Param>
+	<Param name="subtrahend">prev-harvest.model.xml</Param>
 	
 	<!--  OPTIONS -->
 	<Param name="dumptofile">data/vivo-additions.rdf.xml</Param>
