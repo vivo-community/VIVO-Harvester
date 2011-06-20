@@ -10,10 +10,10 @@
 
 <Task>
 	<!--INPUT -->
-	<Param name="minuend">temp-transfer.model.xml</Param>
+	<Param name="minuend">harvested-data.model.xml</Param>
 	
 	<!--VIVO -->
-	<Param name="subtrahend">previous-harvest.model.xml</Param>
+	<Param name="subtrahend">harvested-data.model.xml</Param>
 	
 	<!--  OPTIONS -->
 	<Param name="dumptofile">data/vivo-additions.rdf.xml</Param>

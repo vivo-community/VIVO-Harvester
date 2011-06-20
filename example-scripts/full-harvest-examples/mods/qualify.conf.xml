@@ -1,5 +1,5 @@
 <Task>
-	<Param name="jenaConfig">temp-transfer.model.xml</Param>
+	<Param name="jenaConfig">harvested-data.model.xml</Param>
 	<Param name="remove-namespace">http://vivoweb.org/ontology/score#</Param>
 	<Param name="predicate-clean">true</Param>
 </Task>

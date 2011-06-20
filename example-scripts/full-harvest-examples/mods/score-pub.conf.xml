@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Task>
-	<Param name="inputJena-config">temp-transfer.model.xml</Param>
+	<Param name="inputJena-config">harvested-data.model.xml</Param>
 	<Param name="vivoJena-config">vivo.model.xml</Param>
 	<Param name="score-config">score-data.model.xml</Param>
 	<Param name="algorithms">title=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>

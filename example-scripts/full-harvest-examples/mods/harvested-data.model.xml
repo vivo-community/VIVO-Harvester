@@ -7,6 +7,6 @@
 	<Param name="dbUrl">jdbc:h2:data/model/store</Param>
 	<Param name="dbUser">sa</Param>
 	<Param name="dbPass"></Param>
-	<Param name="modelName">modsTempTransfer</Param>
+	<Param name="modelName">modsHarvestedData</Param>
 </Model>
 

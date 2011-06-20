@@ -2,6 +2,7 @@
 	<Param name="wordiness">INFO</Param>
 	<Param name="input">post-bibutils.recordhandler.xml</Param>
 	<Param name="output">post-sanitize.recordhandler.xml</Param>
+    <Param name="force">true</Param>
 </Task>
 
 

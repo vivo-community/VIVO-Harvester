@@ -46,7 +46,7 @@ be used to remove existing triples from a Jena model.
     File - Use a file as the input.  FileSourceRDF and SourceRDFSyntax becomes required, ModelSource is ignored.
     Model - Use a Jena model as the input.  ModelSource becomes required, FileSourceRDF and SourceRDFSyntax are ignored.
     -->
-    <Param name="input">rdf.recordhandler.xml</Param>
+    <Param name="recordHandler">rdf.recordhandler.xml</Param>
 
     <!-- 
     FileSourceRDF - The path to the RDF file or the directory containing RDF files used as input.  
@@ -85,7 +85,7 @@ be used to remove existing triples from a Jena model.
     <!-- 
     ModelDestination - The name of the Jena model to output triples to (or to remove triples from).
     -->
-    <Param name="output">temp-transfer.model.xml</Param>
+    <Param name="output">harvested-data.model.xml</Param>
 
     <!-- 
     FileDestinationRDF - The path to write the output of Transfer to.  Optional.  File will be overwritten if exists, and is always written

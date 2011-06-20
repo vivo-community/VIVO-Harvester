@@ -17,4 +17,7 @@
 
 	<!--DATAMAP -->
 	<Param name="xslFile">mods-to-vivo.datamap.xsl</Param>
+
+    <Param name="force">true</Param>
+
 </Task>

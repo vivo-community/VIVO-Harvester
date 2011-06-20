@@ -10,7 +10,7 @@
 
 <Task>
 	<!--INPUT -->
-	<Param name="inputModel">temp-transfer.model.xml</Param>
+	<Param name="inputModel">harvested-data.model.xml</Param>
 	
 	<!--  VIVO -->
 	<Param name="vivoModel">vivo.model.xml</Param>
