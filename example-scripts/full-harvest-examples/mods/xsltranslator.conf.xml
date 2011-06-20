@@ -10,10 +10,10 @@
 
 <Task>
 	<!--INPUT -->
-	<Param name="input">raw-records.config.xml</Param>
+	<Param name="input">post-sanitize.recordhandler.xml</Param>
 	
 	<!--OUTPUT -->
-	<Param name="output">translated-records.config.xml</Param>
+	<Param name="output">rdf.recordhandler.xml</Param>
 
 	<!--DATAMAP -->
 	<Param name="xslFile">mods-to-vivo.datamap.xsl</Param>

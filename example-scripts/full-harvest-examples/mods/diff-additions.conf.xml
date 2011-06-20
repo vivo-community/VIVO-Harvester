@@ -10,7 +10,7 @@
 
 <Task>
 	<!--INPUT -->
-	<Param name="minuend">harvested-data.model.xml</Param>
+	<Param name="minuend">temp-transfer.model.xml</Param>
 	
 	<!--VIVO -->
 	<Param name="subtrahend">previous-harvest.model.xml</Param>

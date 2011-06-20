@@ -35,7 +35,7 @@ be used to remove existing triples from a Jena model.
     ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
     DEBUG - Warning if no output is specified
     -->
-    <Param name="Wordiness">INFO</Param>
+    <Param name="wordiness">INFO</Param>
 
     <!-- 
     RecordSource - Determines if we are using a file or a Jena model as the input.
@@ -44,12 +44,12 @@ be used to remove existing triples from a Jena model.
     File - Use a file as the input.  FileSourceRDF and SourceRDFSyntax becomes required, ModelSource is ignored.
     Model - Use a Jena model as the input.  ModelSource becomes required, FileSourceRDF and SourceRDFSyntax are ignored.  
     -->
-    <Param name="RecordSource">File</Param>
+    <!-- <Param name="RecordSource">File</Param> -->
 
     <!-- 
     FileSourceRDF - The path to the RDF file or the directory containing RDF files used as input.  
     -->
-    <Param name="FileSourceRDF">harvested-data/mods/additions.rdf.xml</Param>
+    <Param name="rdf">harvested-data/mods/additions.rdf.xml</Param>
 
     <!-- 
     SourceRDFSyntax - The language of the RDF file specified by FileSourceRDF.
@@ -62,7 +62,7 @@ be used to remove existing triples from a Jena model.
     TTL - Synonym for Turtle
     N-TRIPLE - Subset of Turtle
     -->
-    <Param name="SourceRDFSyntax">RDF/XML</Param>
+    <!-- <Param name="SourceRDFSyntax">RDF/XML</Param> -->
 
     <!-- 
     ModelSource - The name of the Jena model to use as input.
@@ -78,12 +78,12 @@ be used to remove existing triples from a Jena model.
     Add - If we are adding the source triples to the destination (standard Transfer)
     Remove - If we are removed the source triples from the destination
     -->
-    <Param name="TransferMode">Add</Param>
+    <!-- <Param name="TransferMode">Add</Param> -->
 
     <!-- 
     ModelDestination - The name of the Jena model to output triples to (or to remove triples from).
     -->
-    <Param name="ModelDestination">http://vivoweb.org/ingest/mods</Param>
+    <Param name="output">prev-harvest.model.xml</Param>
 
     <!-- 
     FileDestinationRDF - The path to write the output of Transfer to.  Optional.  File will be overwritten if exists, and is always written
@@ -94,6 +94,6 @@ be used to remove existing triples from a Jena model.
     <!-- 
     NamespaceDestination - The namespace in which to place relative URIs from the input.  
     -->
-    <Param name="NamespaceDestination">http://localhost/individual/</Param>
+    <!-- <Param name="NamespaceDestination">http://localhost/individual/</Param> -->
 
 </Config>

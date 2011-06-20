@@ -38,12 +38,12 @@ data coming in from a fetch.
     DEBUG - Console output of Bibutils program being executed
     TRACE - Start of run of Bibutils on an individual record, note if no Bibutils run is needed on an individual record
      -->
-    <Param name="Wordiness">INFO</Param>
+    <Param name="wordiness">INFO</Param>
 
     <!-- 
     BibutilsBasePath - The directory containing the Bibutils executables.  For a typical Linux apt-get installation, this is /usr/bin. 
      -->
-    <Param name="BibutilsBasePath">/usr/bin</Param>
+    <Param name="bibutilsBasePath">/usr/bin</Param>
 
     <!-- 
     SourceFormat - The format of the input data, which Bibutils will convert to MODS.  This actually determines which executable is run, since Bibutils
@@ -59,19 +59,19 @@ data coming in from a fetch.
 	med - Pubmed (executable: med2xml)
 	ris - RIS (executable: ris2xml)
      -->
-    <Param name="SourceFormat">bib</Param>
+    <Param name="inputFormat">bib</Param>
 
     <!-- 
     RecordSource - The record handler from which the input will be pulled.  Bibutils will be executed on this input.  If the input is not already formatted as
                    files, temp files will be created since Bibutils operates on files.
      -->
-    <Param name="RecordSource">harvested-data/rh-bibutils-in</Param>
+    <Param name="input">raw.recordhandler.xml</Param>
 
     <!-- 
     RecordDestination - The record handler in which the results of the translation will be placed, so that other Harvester tools or other programs may operate
                         on the data.
      -->
-    <Param name="RecordDestination">harvested-data/rh-bibutils-out</Param>
+    <Param name="output">post-bibutils.recordhandler.xml</Param>
 
     <!-- 
     Force - Determines whether we want the system to decide if a record needs translation by Bibutils (based on a checksum of the most
@@ -82,6 +82,6 @@ data coming in from a fetch.
     true - Force, meaning always translate all records
     false - Decide if the record needs translation before translating it
      -->
-    <Param name="Force">false</Param>
+    <!-- <Param name="Force">false</Param> -->
 
 </Config>
