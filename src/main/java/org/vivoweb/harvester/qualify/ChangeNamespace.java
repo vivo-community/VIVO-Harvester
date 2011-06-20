@@ -10,6 +10,7 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,9 +22,17 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.reasoner.InfGraph;
 import com.hp.hpl.jena.util.ResourceUtils;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.util.iterator.Filter;
 
 /**
  * Changes the namespace for all matching uris
@@ -192,11 +201,11 @@ public class ChangeNamespace {
 		log.debug("Change Query:\n" + subjectQuery);
 		
 		Set<String> changeArray = new TreeSet<String>();
-		for(QuerySolution solution : IterableAdaptor.adapt(model.executeSelectQuery(subjectQuery))) {
+		ResultSet results = model.executeSelectQuery(subjectQuery,true,false);
+		for(QuerySolution solution : IterableAdaptor.adapt(results)) {
 			String renameURI = solution.getResource("sub").getURI();
 			changeArray.add(renameURI);
 		}
-		
 		int total = changeArray.size();
 		int count = 0;
 		for(String sub : changeArray) {
@@ -208,10 +217,98 @@ public class ChangeNamespace {
 			if(errorLog) {
 				log.warn("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
 			}
-			ResourceUtils.renameResource(res, uri);
+			renameResource(res, uri);
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
 	}
+	
+	
+    /**
+     * <p>Answer a new resource that occupies the same position in the graph as the current
+     * resource <code>old</code>, but that has the given URI.  In the process, the existing
+     * statements referring to <code>old</code> are removed.  Since Jena does not allow the
+     * identity of a resource to change, this is the closest approximation to a rename operation
+     * that works.
+     * </p>
+     * <p><strong>Notes:</strong> This method does minimal checking, so renaming a resource
+     * to its own URI is unpredictable.  Furthermore, it is a general and simple approach, and
+     * in given applications it may be possible to do this operation more efficiently. Finally,
+     * if <code>res</code> is a property, existing statements that use the property will not
+     * be renamed, nor will occurrences of <code>res</code> in other models.
+     * </p>
+     * @param old An existing resource in a given model
+     * @param uri A new URI for resource old, or <code>null</code> to rename old to a bNode
+     * @return A new resource that occupies the same position in the graph as old, but which
+     * has the new given URI.
+     */
+    private static Resource renameResource(final Resource old, final String uri) {
+       	 // Let's work directly with the Graph. Faster if old is attached to a InfModel (~2 times).
+       	 // Otherwise, we would create more or less many fine grained removals and additions of
+       	 // statements on model which may cause to refresh the backing reasoner frequently, thus,
+       	 // introducing a lot of update work. With this implementation this happens at most once.
+       	 // It could be solved without the need to work directly with the graph if we had a bulk
+       	 // update feature over Model/InfModel/OntModel.
+       	 // Some tests have shown that even if there is just one triple involving the resource
+       	 // to be renamed and the model has a reasonable size (~10000 triples) then it is still
+       	 // faster (~30%) -- including the final rebind() -- than working at the level of model.
+       	 final Node resAsNode = old.asNode();
+       	 final Model model = old.getModel();
+       	 final Graph graph = model.getGraph(), rawGraph;
+       	 if (graph instanceof InfGraph) 
+       	     rawGraph = ((InfGraph) graph).getRawGraph();
+       	 else 
+       	     rawGraph = graph;
+    
+       	 final Set<Triple> reflexiveTriples = new HashSet<Triple>();
+    
+       	 // list the statements that mention old as a subject
+       	 ExtendedIterator<Triple> i = rawGraph.find(resAsNode, null, null);
+    
+       	 // List the statements that mention old as an object and filter reflexive triples.
+       	 // Latter ones are found twice in each find method, thus, we need to make sure to
+       	 // keep only one.
+       	 i = i.andThen(rawGraph.find(null, null, resAsNode)).filterKeep(new Filter<Triple>() {
+       		 @Override public boolean accept(final Triple o) {
+       			 if (o.getSubject().equals(o.getObject())) {
+       				 reflexiveTriples.add(o);
+       				 return false;
+       			 }
+       			 return true;
+       		 }
+       	 });
+    
+       	 // create a new resource node to replace old
+       	 final Resource newRes = model.createResource(uri);
+       	 final Node newResAsNode = newRes.asNode();
+    
+       	 Triple t;
+       	 Node subj, obj;
+       	 while (i.hasNext())
+       	 {
+       		 t = i.next();
+    
+       		 // first, create a new triple to refer to newRes instead of old
+       		 subj = (t.getSubject().equals(resAsNode))? newResAsNode : t.getSubject();
+       		 obj = (t.getObject().equals(resAsNode))? newResAsNode : t.getObject();
+       		 rawGraph.add(Triple.create(subj, t.getPredicate(), obj));
+    
+       		 // second, remove existing triple
+       		 i.remove();
+       	 }
+    
+       	 // finally, move reflexive triples (if any) <-- cannot do this in former loop as it
+       	 // causes ConcurrentModificationException
+       	 for (final Triple rt : reflexiveTriples)
+       	 {
+       		 rawGraph.delete(rt);
+       		 rawGraph.add(Triple.create(newResAsNode, rt.getPredicate(), newResAsNode));
+       	 }
+    
+       	 // Did we work in the back of the InfGraph? If so, we need to rebind raw data (more or less expensive)!
+       	 if (rawGraph != graph) ((InfGraph) graph).rebind();
+    
+       	 return newRes;
+    }
 	
 	/**
 	 * Change namespace
