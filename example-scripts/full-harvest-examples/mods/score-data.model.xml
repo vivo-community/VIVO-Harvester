@@ -1,11 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
+<!--  All rights reserved. This program and the accompanying materials -->
+<!--  are made available under the terms of the new BSD license -->
+<!--  which accompanies this distribution, and is available at -->
+<!--  http://www.opensource.org/licenses/bsd-license.html -->
+
+<!--  Contributors: -->
+<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
+
+<!-- 
+Model - Configuration file for a Jena model
+-
+Jena is an open source Semantic Web framework for Java, and a "Jena model" is an RDF graph in Jena.  A configuration
+file provides all information necessary for accessing a particular Jena model.  Therefore in Harvester scripts, if
+two Harvester tools reference the same model configuration file in their tool configurations, it means they are both
+working on the same set of data. 
+-->
 <Model>
+	<!--
+	type - the type of backend (or "persistence subsystem") used for the Jena model.
+	-
+	Allowable values:
+	sdb - uses SQL database and supports full ACID transactions
+	tdb - high-performance native engine
+	rdb - deprecated
+	-->
 	<Param name="type">sdb</Param>
+
+	<!--
+	dbLayout - for type=sdb use "layout2".
+	-->
 	<Param name="dbLayout">layout2</Param>
+
+	<!--
+	dbClass - the Java class of the database driver.
+	-->
 	<Param name="dbClass">org.h2.Driver</Param>
+
+	<!--
+	dbType - the database type, used by the driver.
+	-->
 	<Param name="dbType">H2</Param>
+
+	<!--
+	dbUrl - the URL pointing to the database.
+	-->
 	<Param name="dbUrl">jdbc:h2:data/score-data/store</Param>
+
+	<!--
+	dbUser - the name of a database user who has access to the data we are working with.
+	-->
 	<Param name="dbUser">sa</Param>
+
+	<!--
+	dbPass - the password of the user specified by dbUser.
+	-->
 	<Param name="dbPass"></Param>
+
+	<!--
+	modelName - the name of the model (or RDF graph) within the specified database that we wish to work with.
+	-->
 	<Param name="modelName">modsScoreData</Param>
 </Model>
