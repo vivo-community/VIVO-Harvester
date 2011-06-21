@@ -23,12 +23,12 @@ score values and decides whether it wants to rename incoming data so that it has
 	<Param name="inputJena-config">harvested-data.model.xml</Param>
 
 	<!--
-	inputJena-config - relative path to the configuration file of the Jena model containing the VIVO data.
+	vivoJena-config - relative path to the configuration file of the Jena model containing the VIVO data.
 	-->
 	<Param name="vivoJena-config">vivo.model.xml</Param>
 
 	<!--
-	inputJena-config - relative path to the configuration file of the Jena model in which Score will place its output.
+	score-config - relative path to the configuration file of the Jena model in which Score will place its output.
 	-->
 	<Param name="score-config">score-data.model.xml</Param>
 	
