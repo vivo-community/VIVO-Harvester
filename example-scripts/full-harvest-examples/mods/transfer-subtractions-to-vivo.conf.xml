@@ -18,12 +18,11 @@ be used to remove existing triples from a Jena model.
  -->
 <Task>
     <!-- 
-    Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
+    wordiness - how much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
     information to more detailed debugging information.
     -
     Allowable values:
     OFF - No log information is displayed on the console.
-    FATAL - Only fatal errors are displayed on the console.
     ERROR - All error messages are displayed. 
     WARN - Error and warning messages are displayed.
     INFO - Errors, warnings, and general user information is displayed.  This is the default.
@@ -32,68 +31,25 @@ be used to remove existing triples from a Jena model.
     ALL - Everything that goes into the log is displayed on the console.
 
     Values meaningful for Transfer:
-    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
+    ERROR - All runtime errors
     DEBUG - Warning if no output is specified
     -->
     <Param name="wordiness">INFO</Param>
 
     <!-- 
-    RecordSource - Determines if we are using a file or a Jena model as the input.
-    -
-    Possible Values:
-    File - Use a file as the input.  FileSourceRDF and SourceRDFSyntax becomes required, ModelSource is ignored.
-    Model - Use a Jena model as the input.  ModelSource becomes required, FileSourceRDF and SourceRDFSyntax are ignored.  
-    -->
-    <!-- <Param name="RecordSource">File</Param> -->
-
-    <!-- 
-    FileSourceRDF - The path to the RDF file or the directory containing RDF files used as input.  
+    rdf - relative path to the RDF file used as input.  
     -->
     <Param name="rdf">data/vivo-subtractions.rdf.xml</Param>
 
     <!-- 
-    SourceRDFSyntax - The language of the RDF file specified by FileSourceRDF.
-    -
-    Possible Values:
-    RDF/XML - W3C Standard
-    RDF/XML-ABBREV - Synonym for RDF/XML
-    N3 - Notation3
-    TURTLE - Subset of Notation3
-    TTL - Synonym for Turtle
-    N-TRIPLE - Subset of Turtle
-    -->
-    <!-- <Param name="SourceRDFSyntax">RDF/XML</Param> -->
-
-    <!-- 
-    ModelSource - The name of the Jena model to use as input.
-    -->
-    <!-- <Param name="ModelSource"></Param> -->
-
-    <!-- 
-    TransferMode - Determine if we want to add or remove triples from the destination Jena model.  If Add is specified, data from the
-    source is added to the destination model.  If Remove is specified, any triples in the destination that match triples in the source
-    are removed from the destination.
-    -
-    Possible Values:
-    Add - If we are adding the source triples to the destination (standard Transfer)
-    Remove - If we are removed the source triples from the destination
+    modeRemove - instead of adding data, any triples in the destination that match triples in the source are removed
+                 from the destination.
     -->
     <Param name="modeRemove">true</Param>
 
     <!-- 
-    ModelDestination - The name of the Jena model to output triples to (or to remove triples from).
+    output - relative path to the configuration file for the Jena model to output triples to (or to remove triples from).
     -->
     <Param name="output">vivo.model.xml</Param>
-
-    <!-- 
-    FileDestinationRDF - The path to write the output of Transfer to.  Optional.  File will be overwritten if exists, and is always written
-    to from the input if specified (ignoring TransferMode).
-    -->
-    <!-- <Param name="FileDestinationRDF"></Param> -->
-
-    <!-- 
-    NamespaceDestination - The namespace in which to place relative URIs from the input.  
-    -->
-    <!-- <Param name="NamespaceDestination">http://localhost/individual/</Param> -->
 
 </Task>

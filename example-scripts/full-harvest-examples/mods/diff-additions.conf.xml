@@ -8,13 +8,26 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
+<!-- 
+Diff - finds a set-difference between two Jena models.
+-
+Diff takes two data models (called a "minuend" model and a "subtrahend" model), compares them, and returns all
+triples in the minuend model that are not in the subtrahend model. 
+-->
 <Task>
-	<!--INPUT -->
+	<!--
+	minuend - relative path to the configuration file of the minuend model.
+	-->
 	<Param name="minuend">harvested-data.model.xml</Param>
 	
-	<!--VIVO -->
+	<!--
+	subtrahend - relative path to the configuration file of the subtrahend model.
+	-->
 	<Param name="subtrahend">prev-harvest.model.xml</Param>
 	
-	<!--  OPTIONS -->
+	<!--
+	dumptofile - relative path of the file in which to place the results.  Will be overwritten if
+	             it exists.
+	-->
 	<Param name="dumptofile">data/vivo-additions.rdf.xml</Param>
 </Task>

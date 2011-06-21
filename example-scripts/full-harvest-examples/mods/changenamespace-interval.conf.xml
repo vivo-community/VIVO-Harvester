@@ -8,14 +8,35 @@
 <!--  Contributors: -->
 <!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
 
+
+<!-- 
+ChangeNamespace - Perform a find/replace operation on the namespaces in a Jena model, and assign unique URIs to the
+entities whose namespace was changed.
+-
+ChangeNamespace allows you to specify a namespace to search for and a namespace to replace it with.  In addition, it
+removes the part of the URI after the namespace, and replaces it with a name that guarantees uniqueness within a
+specified reference model.
+-->
 <Task>
-	<!--INPUT -->
+	<!--
+	inputModel - relative path to the configuration file for the Jena model in which we are to
+	             perform the find/replace.
+	-->
 	<Param name="inputModel">harvested-data.model.xml</Param>
 	
-	<!--  VIVO -->
+	<!--
+	vivoModel - relative path to the configuration file for the Jena model to use as a reference to
+	            ensure renamed entities have unique names.
+	-->
 	<Param name="vivoModel">vivo.model.xml</Param>
 	
-	<!--  OPTIONS -->
+	<!--
+	oldNamespace - namespace to search for.
+	-->
 	<Param name="oldNamespace">http://vivoweb.org/harvest/mods/interval/</Param>
+	
+	<!--
+	newNamespace - namespace with which to replace the old namespace.
+	-->
 	<Param name="newNamespace">http://localhost/individual/</Param>
 </Task>
