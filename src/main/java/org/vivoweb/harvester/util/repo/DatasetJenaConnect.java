@@ -40,4 +40,9 @@ public class DatasetJenaConnect extends JenaConnect {
 		super.close();
 		getJenaModel().close();
 	}
+	
+	@Override
+	public void sync() {
+		// Do Nothing
+	}
 }

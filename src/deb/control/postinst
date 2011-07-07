@@ -1,0 +1,3 @@
+#!/bin/bash
+chmod +x /usr/share/vivo/harvester/bin/*
+chmod -R ugo+rw /usr/share/vivo/harvester

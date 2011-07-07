@@ -32,6 +32,7 @@ import org.vivoweb.harvester.util.SpecialEntities;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 
 /**
@@ -125,8 +126,9 @@ public class JDBCFetch {
 	 * Command line Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private JDBCFetch(String[] args) throws IOException {
+	private JDBCFetch(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -454,12 +456,14 @@ public class JDBCFetch {
 	 */
 	private Map<String, String> getFkRelationFields(String tableName) throws SQLException {
 		// TODO: the part after the OR looks like it should be on the next if statement, look into this
-		if((this.fkRelations == null) || ((this.queryStrings != null) && this.queryStrings.containsKey(tableName))) {
+		if(this.fkRelations == null) {
 			this.fkRelations = new HashMap<String, Map<String, String>>();
 		}
 		if(!this.fkRelations.containsKey(tableName)) {
-			log.debug("Finding relation column names for table: "+tableName);
 			this.fkRelations.put(tableName, new HashMap<String, String>());
+		}
+		if((this.queryStrings == null || !this.queryStrings.containsKey(tableName)) && this.fkRelations.get(tableName).isEmpty()) {
+			log.debug("Finding relation column names for table: "+tableName);
 			if((this.queryStrings == null) || !this.queryStrings.containsKey(tableName)) {
 				ResultSet foreignKeys = this.cursor.getConnection().getMetaData().getImportedKeys(this.cursor.getConnection().getCatalog(), null, tableName);
 				while(foreignKeys.next()) {
@@ -786,6 +790,10 @@ public class JDBCFetch {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

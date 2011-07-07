@@ -11,7 +11,6 @@ package org.vivoweb.harvester.fetch.nih;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.WebAide;
 import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -47,48 +47,22 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
 	 * as sending too many queries too quickly.
 	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
-	 * @param outStream output stream to write to
-	 * @throws IOException error finding latest record
-	 */
-	public PubmedHTTPFetch(String emailAddress, OutputStream outStream) throws IOException {
-		super(emailAddress, outStream, database);
-		setMaxRecords(getLatestRecord() + "");
-	}
-	
-	/**
-	 * Constructor: Primary method for running a PubMed Fetch. The email address of the person responsible for this
-	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
-	 * as sending too many queries too quickly.
-	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
-	 * @param searchTerm query to run on pubmed data
-	 * @param maxRecords maximum number of records to fetch
-	 * @param batchSize number of records to fetch per batch
-	 * @param outStream output stream to write to
-	 */
-	public PubmedHTTPFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
-		super(emailAddress, searchTerm, maxRecords, batchSize, outStream, database);
-	}
-	
-	/**
-	 * Constructor: Primary method for running a PubMed Fetch. The email address of the person responsible for this
-	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
-	 * as sending too many queries too quickly.
-	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
 	 * @param searchTerm query to run on pubmed data
 	 * @param maxRecords maximum number of records to fetch
 	 * @param batchSize number of records to fetch per batch
 	 * @param rh output stream to write to
 	 */
 	public PubmedHTTPFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh) {
-		super(emailAddress, searchTerm, maxRecords, batchSize,  PubmedFetch.baseXMLROS.clone().setRecordHandler(rh), database);
+		super(emailAddress, searchTerm, maxRecords, batchSize, rh, database);
 	}
 	
 	/**
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private PubmedHTTPFetch(String[] args) throws IOException {
+	private PubmedHTTPFetch(String[] args) throws IOException, UsageException {
 		this(getParser("PubmedHTTPFetch", database).parse(args));
 	}
 	
@@ -98,7 +72,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	private PubmedHTTPFetch(ArgList argList) throws IOException {
-		super(argList, database, PubmedFetch.baseXMLROS.clone());
+		super(argList, database);
 	}
 	
 	@Override
@@ -202,6 +176,9 @@ public class PubmedHTTPFetch extends NIHFetch {
 //		log.debug("====== POST-SANITIZE ======\n"+newS);
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
+		if(getOsWriter() == null) {
+			setOs(PubmedFetch.baseXMLROS.clone().setRso(this));
+		}
 		getOsWriter().write(newS);
 		//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
 		getOsWriter().write("\n");
@@ -212,6 +189,12 @@ public class PubmedHTTPFetch extends NIHFetch {
 	@Override
 	protected int getLatestRecord() throws IOException {
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
+	}
+
+	@Override
+	public void writeRecord(String id, String data) throws IOException {
+		log.trace("Adding Record "+id);
+		getRh().addRecord(id, data, getClass());
 	}
 	
 	/**
@@ -227,6 +210,10 @@ public class PubmedHTTPFetch extends NIHFetch {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser("PubmedHTTPFetch", database).getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser("PubmedHTTPFetch", database).getUsage());
 			error = e;
 		} catch(Exception e) {

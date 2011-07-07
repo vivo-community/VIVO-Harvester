@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
-<!--  All rights reserved. This program and the accompanying materials -->
-<!--  are made available under the terms of the new BSD license -->
-<!--  which accompanies this distribution, and is available at -->
-<!--  http://www.opensource.org/licenses/bsd-license.html -->
- 
-<!--  Contributors: -->
-<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
-
+<!-- 
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
+<%   Copyright (c) 2010 - 2011 VIVO Harvester Team.                                                                   %>
+<%   For full list of contributors, please see the AUTHORS file provided.                                             %>
+<%   All rights reserved. This program and the accompanying materials are made available under the terms of the new   %>
+<%   BSD license which accompanies this distribution, and is available at                                             %>
+<%   http://www.opensource.org/licenses/bsd-license.html                                                              %>
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
+-->
 <Config>
 	<!--INPUT -->
 <!-- 
@@ -91,7 +91,7 @@
     <Param name="fields">vwProjectTeam=ContractUFID,ContractNumber,ProjectUPN,PrimaryProject,InvestigatorID,Investigator,isPI</Param>
     <Param name="tableName">vwVIVO</Param>
     <Param name="whereClause">vwVIVO=vwVIVO.PS_Contract LIKE '%18%'</Param>
-    <Param name="id">vwVIVO=PS_Contract</Param>
+    <Param name="id">vwVIVO=DSR_Number</Param>
     <Param name="fields">vwVIVO=DSR_Number,PS_Contract,PS_Project,Title,RecordStatus,SubcontractType,Award_DT,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyNumber,Sponsor,SponsorID,FlowThruType,FlowThruSponsor,FlowThruID,PI,Type,Category,Program,ClinicalTrial,PrimeSponsorType,PrimeSponsorSource,PrimeAgency,PrimeCustID</Param>
     <Param name="delimiterPrefix">[</Param>
     <Param name="delimiterSuffix">]</Param>

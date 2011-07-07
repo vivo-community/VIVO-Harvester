@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 
 /**
  * This Class takes the data from a csv file and places it into a database
@@ -111,8 +112,9 @@ public class CSVtoJDBC {
 	 * Command line Constructor
 	 * @param args command line arguments
 	 * @throws IOException error establishing connection to database or file
+	 * @throws UsageException user requested usage message
 	 */
-	private CSVtoJDBC(String[] args) throws IOException {
+	private CSVtoJDBC(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -234,6 +236,10 @@ public class CSVtoJDBC {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

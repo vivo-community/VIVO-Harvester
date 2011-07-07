@@ -45,6 +45,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -56,7 +57,6 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.util.ResourceUtils;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 /**
@@ -97,8 +97,9 @@ public class RenameBlankNodes {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private RenameBlankNodes(String[] args) throws IOException {
+	private RenameBlankNodes(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -186,7 +187,7 @@ public class RenameBlankNodes {
 						if (stmt != null) {
 							Resource outRes = stmt.getSubject();
 							if(stmt.getObject().isLiteral()){
-								ResourceUtils.renameResource(outRes,namespaceEtc+pattern+"_"+stmt.getObject().toString());
+								RenameResources.renameResource(outRes,namespaceEtc+pattern+"_"+stmt.getObject().toString());
 							}
 							doneSet.add(res.getId().toString());
 						}
@@ -240,6 +241,10 @@ public class RenameBlankNodes {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

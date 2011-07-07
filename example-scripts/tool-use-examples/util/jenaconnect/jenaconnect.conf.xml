@@ -1,43 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<!--   Copyright (c) 2011                                                                                               -->
-<!--   Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams          -->
-<!--   All rights reserved. This program and the accompanying materials                                                 -->
-<!--   are made available under the terms of the new BSD license                                                        -->
-<!--   which accompanies this distribution, and is available at                                                         -->
-<!--   http://www.opensource.org/licenses/bsd-license.html                                                              -->
-  
-<!--   Contributors: Initial API and implementation                                                                     -->
-<!--       Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams      -->
-
-<!--  = = = = =                                                                                              = = = = =  -->
-<!-- JenaConnect - Is a wrapper to allow unified interactions with various forms of Jena models.                        -->
-<!-- ======                                                                                                             -->
-<!-- When working with jena models this tool allows uniform access with them. The RecordHandler formatted data can      -->
-<!--     be loaded into a model. A SPARQL query can be run from the command-line using this tool.                       --> 
-<!-- ===== PARAMETERS =====                                                                                             -->
-<!--                                                                                                                    -->
-<!-- driver - A JDBC driver is a java class which handles the interface between the program and a given database.       -->
-<!--     The driver needs to exist within the classpath, for the program to be able to use it.                          -->
-<!--     example value =  org.h2.Driver                                                                                 -->
-<!--                                                                                                                    -->
-<!-- connection - JDBC uses a connection string related to the Driver being used.                                       -->
-<!--    It is in the general format : "jdbc:somejdbcvendor:other data needed"                                           -->
-<!--    Specifically the harvester tends to use :                                                                       -->
-<!--     "jdbc:jtds:sqlserver://127.0.0.1:8080/databasename" for a Microsoft SQL server                                 -->
-<!--     "jdbc:h2:directory/location" for an H2 database ( http://www.h2database.com )                                  -->
-<!--                                                                                                                    -->
-<!--  username - A valid login with proper permissions                                                                  -->
-<!--  password - The associated secure password                                                                         -->
-<!--   These are what the fetch uses when accessing the given database. These must be valid otherwise the harvest run   -->
-<!--  will not have access to the database. By default we use "sa" for system administrator and a blank password.       -->
+<!-- 
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
+<%   Copyright (c) 2010 - 2011 VIVO Harvester Team.                                                                   %>
+<%   For full list of contributors, please see the AUTHORS file provided.                                             %>
+<%   All rights reserved. This program and the accompanying materials are made available under the terms of the new   %>
+<%   BSD license which accompanies this distribution, and is available at                                             %>
+<%   http://www.opensource.org/licenses/bsd-license.html                                                              %>
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
+-->
+<!-- 
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
+<%                                                                                                                    %>
+<% JenaConnect - Is a wrapper to allow unified interactions with various forms of Jena models.                        %>
+<% ======                                                                                                             %>
+<% When working with jena models this tool allows uniform access with them. The RecordHandler formatted data can      %>
+<%     be loaded into a model. A SPARQL query can be run from the command-line using this tool.                       %> 
+<%                                                                                                                    %>
+<% ===== PARAMETERS =====                                                                                             %>
+<%                                                                                                                    %>
+<%                                                                                                                    %>
+<%  wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log   %>
+<%          level, the more detailed the messages.                                                                    %>
+<%      Possible Values:                                                                                              %>
+<%          <wordiness>OFF</wordiness> - Results in no messages being displayed.                                      %>
+<%          <wordiness>ERROR</wordiness> - Results in only messages from the ERROR level to be displayed.             %>
+<%              Error messages detail when the tool has experienced an error preventing it from completing its task   %>
+<%          <wordiness>WARN</wordiness> - Results in only messages above and including WARN level messages            %>
+<%              to be displayed. Match does not produce any WARN level messages.                                      %>
+<%          <wordiness>INFO</wordiness> - (Default) Results in all messages above and including INFO level            %>
+<%              messages to be displayed. INFO level messages detail when the tool has started and ended and when it  %>
+<%              begins/ends a phase ('Finding matches' and 'Beginning Rename of matches') and how many matches have   %>
+<%              been found.                                                                                           %>
+<%          <wordiness>DEBUG</wordiness> - Results in all messages above and including DEBUG level messages           %>
+<%              to be displayed. DEBUG level messages detail each matching input URI to its VIVO URI as they are      %>
+<%              processed. Additionally, it will display stacktrace information if an error occurs.                   %>
+<%          <wordiness>ALL</Param> or TRACE<wordiness> - Results in all messages above and including TRACE            %>
+<%              level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.    %>
+<%              TRACE level messages details every matching set as it is processed in each phase along with SPARQL    %>
+<%              queries and start and stop for their execution.                                                       %>
+<%                                                                                                                    %>
+<%  modelSource - Provides the information needed for the connection to the source data model, which is the model     %>
+<%          that will be searched and possibly modified.                                                              %>
+<%          <Param name="jena">model.conf.xml</Param>                                                                 %>
+<%          <Param name="jenaOverride">parameter=Value</Param>                                                        %>
+<%                                                                                                                    %>
+<%                                                                                                                    %>
+<%  sparqlQuery - This is the sparql query being applied to the model. Since the query is provided in a command line  %>
+<%          string, it is possible to use bash to express a file as that string.                                      %>
+<%          <param name="query">"SELECT ?s ?p ?o WHERE { ?s ?p ?o } "</param>                                         %>
+<%                                                                                                                    %>
+<%  displayResultFormat - Since RDF can be expressed in several different format, this parameter is where the format  %>
+<%          is specified.                                                                                             %>
+<%          RS_XML RS_TEXT CSV RS_JSON RS_RDF  - for select                                                           %>
+<%          RDF/XML RDF/XML-ABBREV N3 N-TRIPLE TTL - for construct and describe                                       %>
+<%          <param name="queryResultFormat">RDF/XML</param>                                                           %>
+<%                                                                                                                    %>
+<%  outputfile - This specifies the output file for the results of the query. If it isn't specified then it is sent   %>
+<%          to the command line output.                                                                               %>
+<%          <param name="fileOutput">path/Filename</param>                                                            %>
+<%                                                                                                                    %>
+<%  dataset - This flag signals that the query should be done against the data set and not the model.                 %>
+<%          <param name="dataset">true</param>                                                                        %>
+<%                                                                                                                    %>
+<%  truncate - This flag means that the tool will truncate or clear the given jena model. This would be used for      %>
+<%          clearing out the model for a fresh harvest or trying to correct after data corruption                     %>
+<%          <param name="truncate">true</param>                                                                       %>
+<%                                                                                                                    %>
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
+-->
 <config>
-    <!-- 
-    a - Description and repercussions
-    =====
-    Possible Values:
-    b - Meaning of b
-    c - Meaning of c
-     -->
-    <param name="a">b</param>
+    <param name="jena">model.config.xml</param>
+    <param name="jenaOverride">Parameter=Value</param>
+    <param name="query">"SELECT ?s ?p ?o WHERE { ?s ?p ?o } "</param>
+    <param name="queryResultFormat">RDF/XML</param>
+    <param name="fileOutput">path/Filename</param>
+    <param name="dataset">true</param>
+    <param name="truncate">true</param>
 </config>

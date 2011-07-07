@@ -105,4 +105,9 @@ public abstract class DBJenaConnect extends JenaConnect {
 		log.trace("dbType: '" + this.dbType + "'");
 		log.trace("dbClass: '" + this.dbClass + "'");
 	}
+	
+	@Override
+	public void sync() {
+		// Do Nothing
+	}
 }

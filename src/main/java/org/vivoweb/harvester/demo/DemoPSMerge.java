@@ -34,6 +34,7 @@ import org.vivoweb.harvester.translate.XSLTranslator;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.Merge;
 import org.vivoweb.harvester.util.FileAide;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
@@ -138,9 +139,10 @@ public class DemoPSMerge {
 	 * @throws SQLException error
 	 * @throws ClassNotFoundException error
 	 * @throws IOException error
+	 * @throws UsageException user requested usage message
 	 */
 	//	@SuppressWarnings("unused")
-	public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
+	public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, UsageException {
 		System.setProperty("process-task", "Fetch");
 		InitLog.initLogger(null, null);
 		// setup fetch parameter variables

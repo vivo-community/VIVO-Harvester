@@ -14,7 +14,7 @@ public class NameCompare implements Algorithm {
 			throw new IllegalArgumentException("y cannot be null");
 		}
 		if(x.length() > 1 && y.length() > 1) {
-			return new NormalizedDamerauLevenshteinDifference().calculate(x, y);
+			return new NormalizedLevenshteinDifference().calculate(x, y);
 		}
 		return new CaseInsensitiveInitialTest().calculate(x, y);
 	}

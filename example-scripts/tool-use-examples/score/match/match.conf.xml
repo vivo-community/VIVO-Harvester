@@ -130,8 +130,8 @@
 <%			<Param name="outputOverride">paramName=valueToUse</Param>													%>
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 -->
-	<Param name="wordiness">INFO</Param>
-	<Param name="baseRegex">tableName_(id_-_.*?)</Param>
+	<Param name="rename">true</Param>
+	<Param name="threshold">1.0</Param>
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 <%	Sample input Jena model external definition																			%>

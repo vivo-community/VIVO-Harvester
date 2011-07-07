@@ -6,7 +6,8 @@
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:j.3="http://vivoweb.org/ontology/core#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
-  <rdf:Description rdf:about="http://vivo.ufl.edu/individual/n14560">    
+  <rdf:Description rdf:about="http://vivo.sample.edu/individual/n14560">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
     <j.2:lastName>Byrne</j.2:lastName>
     <j.2:firstName>Barry</j.2:firstName>
     <j.3:middleName>J</j.3:middleName>

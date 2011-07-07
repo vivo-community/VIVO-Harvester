@@ -14,7 +14,6 @@ import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.EFetchResult;
 import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.PubmedArticleSet_type0;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import javax.xml.namespace.QName;
@@ -26,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
 
@@ -48,34 +48,7 @@ public class PubmedFetch extends NIHFetch {
 	/**
 	 * a base xmlrecordoutputstream
 	 */
-	protected static XMLRecordOutputStream baseXMLROS = new XMLRecordOutputStream(new String[]{"PubmedArticle","PubmedBookArticle"}, "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2011//EN\" \"http://www.ncbi.nlm.nih.gov/entrez/query/DTD/pubmed_110101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<[pP][mM][iI][dD].*?>(.*?)</[pP][mM][iI][dD]>.*?", null, PubmedFetch.class);
-	
-	/**
-	 * Constructor: Primary method for running a PubMed Fetch. The email address of the person responsible for this
-	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
-	 * as sending too many queries too quickly.
-	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
-	 * @param outStream output stream to write to
-	 * @throws IOException error finding latest record
-	 */
-	public PubmedFetch(String emailAddress, OutputStream outStream) throws IOException {
-		super(emailAddress, outStream, database);
-		setMaxRecords(getLatestRecord() + "");
-	}
-	
-	/**
-	 * Constructor: Primary method for running a PubMed Fetch. The email address of the person responsible for this
-	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
-	 * as sending too many queries too quickly.
-	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
-	 * @param searchTerm query to run on pubmed data
-	 * @param maxRecords maximum number of records to fetch
-	 * @param batchSize number of records to fetch per batch
-	 * @param outStream output stream to write to
-	 */
-	public PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
-		super(emailAddress, searchTerm, maxRecords, batchSize, outStream, database);
-	}
+	protected static XMLRecordOutputStream baseXMLROS = new XMLRecordOutputStream(new String[]{"PubmedArticle","PubmedBookArticle"}, "<?xml version=\"1.0\"?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2011//EN\" \"http://www.ncbi.nlm.nih.gov/entrez/query/DTD/pubmed_110101.dtd\">\n<PubmedArticleSet>\n", "\n</PubmedArticleSet>", ".*?<[pP][mM][iI][dD].*?>(.*?)</[pP][mM][iI][dD]>.*?", null);
 	
 	/**
 	 * Constructor: Primary method for running a PubMed Fetch. The email address of the person responsible for this
@@ -88,15 +61,16 @@ public class PubmedFetch extends NIHFetch {
 	 * @param rh record handler to write to
 	 */
 	public PubmedFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh) {
-		super(emailAddress, searchTerm, maxRecords, batchSize, baseXMLROS.clone().setRecordHandler(rh), database);
+		super(emailAddress, searchTerm, maxRecords, batchSize, rh, database);
 	}
 	
 	/**
 	 * Constructor
 	 * @param args commandline argument
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private PubmedFetch(String[] args) throws IOException {
+	private PubmedFetch(String[] args) throws IOException, UsageException {
 		this(getParser("PubmedFetch", database).parse(args));
 	}
 	
@@ -106,7 +80,7 @@ public class PubmedFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	private PubmedFetch(ArgList argList) throws IOException {
-		super(argList, database, baseXMLROS.clone());
+		super(argList, database);
 	}
 	
 	@Override
@@ -200,6 +174,9 @@ public class PubmedFetch extends NIHFetch {
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
 //		log.debug("buffer contents:\n"+newS);
+		if(getOsWriter() == null) {
+			setOs(baseXMLROS.clone().setRso(this));
+		}
 		getOsWriter().write(newS);
 		//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
 		getOsWriter().write("\n");
@@ -210,6 +187,12 @@ public class PubmedFetch extends NIHFetch {
 	@Override
 	protected int getLatestRecord() throws IOException {
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
+	}
+
+	@Override
+	public void writeRecord(String id, String data) throws IOException {
+		log.trace("Adding Record "+id);
+		getRh().addRecord(id, data, getClass());
 	}
 	
 	/**
@@ -225,6 +208,10 @@ public class PubmedFetch extends NIHFetch {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser("PubmedFetch", database).getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser("PubmedFetch", database).getUsage());
 			error = e;
 		} catch(Exception e) {

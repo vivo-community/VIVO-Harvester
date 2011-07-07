@@ -19,6 +19,7 @@ import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -77,8 +78,9 @@ public class Diff {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error reading config files
+	 * @throws UsageException user requested usage message
 	 */
-	private Diff(String[] args) throws IOException {
+	private Diff(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -171,6 +173,10 @@ public class Diff {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

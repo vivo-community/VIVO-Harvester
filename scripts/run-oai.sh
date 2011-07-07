@@ -59,7 +59,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to transfer rdf into "scoring" JENA model
-$Transfer -h $TFRH -HfileDir=$RDFRHDIR -o $H2MODEL -OmodelName=oaiTempTransfer -OdbUrl=$MODELDBURL
+$Transfer -s $TFRH -SfileDir=$RDFRHDIR -o $H2MODEL -OmodelName=oaiTempTransfer -OdbUrl=$MODELDBURL
 
 # backup H2 transfer Model
 BACKMODEL="model"

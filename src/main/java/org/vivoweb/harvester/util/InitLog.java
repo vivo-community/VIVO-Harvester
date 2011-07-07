@@ -15,6 +15,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
@@ -91,8 +92,19 @@ public class InitLog {
 		context.putProperty("process-task", process);
 		JoranConfigurator jc = new JoranConfigurator();
 		jc.setContext(context);
+		
 		try {
-			InputStream is = FileAide.getFirstFileNameChildInputStream(".", "logback.xml");
+			InputStream is;
+			is = FileAide.getFirstFileNameChildInputStream(".", "logback-test.xml");
+			if(is == null) {
+				is = FileAide.getFirstFileNameChildInputStream(".", "logback.xml");
+			}
+			if(is == null) {
+				is = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback-test.xml");
+			}
+			if(is == null) {
+				is = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback.xml");
+			}
 			if(is != null) {
 				context.reset();
 				context.stop();
@@ -112,20 +124,29 @@ public class InitLog {
 	 * @param parser the arg parser to use
 	 * @param noLogIfNotSetFlags will turn off console logging if any of these flags are not set (note: wordiness will overwrite this)
 	 * @throws IOException error processing
+	 * @throws UsageException user requested usage message
 	 */
-	public static void initLogger(String[] args, ArgParser parser, String... noLogIfNotSetFlags) throws IOException {
+	public static void initLogger(String[] args, ArgParser parser, String... noLogIfNotSetFlags) throws IOException, UsageException {
 		String logLevel = System.getProperty("console-log-level");
 		String harvLevel = System.getProperty("harvester-level");
 		System.setProperty("harvester-level", "OFF");
-		setLogLevel("OFF");
 		if((args != null) && (parser != null)) {
-			ArgList argList = parser.parse(args);
+			ArgList argList = parser.parse(args, false);
 			for(String testFlag : noLogIfNotSetFlags) {
-				boolean test;
+				boolean test = false;
 				try {
 					test = (!argList.has(testFlag));
 				} catch (IllegalArgumentException e) {
-					test = false;
+					for(String subFlag : testFlag.split("|")) {
+						try {
+							if(argList.has(subFlag)) {
+								test = false;
+								break;
+							}
+						} catch (IllegalArgumentException se) {
+							test = true;
+						}
+					}
 				}
 				if(test) {
 					logLevel = "OFF";

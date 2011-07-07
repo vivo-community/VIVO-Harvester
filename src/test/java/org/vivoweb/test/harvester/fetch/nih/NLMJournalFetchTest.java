@@ -61,8 +61,16 @@ public class NLMJournalFetchTest extends TestCase {
 	 */
 	public final void testNLMJournalFetchNoRecordQuery() throws IOException {
 		log.info("BEGIN testNLMJournalFetchNoRecordQuery");
+		boolean boolA = true;
 		//test 1 record
-		new NLMJournalFetch("test@test.com", "", "100", "100", this.rh).execute();
+		try{
+			new NLMJournalFetch("test@test.com", "", "100", "100", this.rh).execute();
+		} catch(IllegalArgumentException e) {
+			boolA = false;
+		}
+		if(boolA) {
+			fail("Expected IllegalArgumentException none encountered");
+		}
 		assertFalse(this.rh.iterator().hasNext());
 		log.info("END testNLMJournalFetchNoRecordQuery");
 	}

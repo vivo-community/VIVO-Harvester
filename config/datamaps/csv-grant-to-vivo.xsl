@@ -118,15 +118,24 @@
 					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
-            <core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/start{$startDate}ToEnd{$endDate}" />
+	        <xsl:if test="not( ./db-csv:STARTDATE = '' or ./db-csv:STARTDATE = 'null' ) or not( ./db-csv:ENDDATE = '' or ./db-csv:ENDDATE = 'null' )">
+            	<core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/start{$startDate}ToEnd{$endDate}" />
+            </xsl:if>
         </rdf:Description>
         
+         <xsl:if test="not( ./db-csv:STARTDATE = '' or ./db-csv:STARTDATE = 'null' ) or not( ./db-csv:ENDDATE = '' or ./db-csv:ENDDATE = 'null' )">
          <rdf:Description rdf:about="{$baseURI}timeInterval/start{$startDate}ToEnd{$endDate}">
              <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
              <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeInterval"/>
-             <core:start rdf:resource="{$baseURI}timeInterval/date{$startDate}"/>
-             <core:end rdf:resource="{$baseURI}timeInterval/date{$endDate}"/>
+             
+             <xsl:if test="not( ./db-csv:STARTDATE = '' or ./db-csv:STARTDATE = 'null' )">
+             	<core:start rdf:resource="{$baseURI}timeInterval/date{$startDate}"/>
+             </xsl:if>
+	         <xsl:if test="not( ./db-csv:ENDDATE = '' or ./db-csv:ENDDATE = 'null' )">
+    	         <core:end rdf:resource="{$baseURI}timeInterval/date{$endDate}"/>
+    	     </xsl:if>
          </rdf:Description>
+         </xsl:if>
          
          <xsl:if test="not( ./db-csv:STARTDATE = '' or ./db-csv:STARTDATE = 'null' )">
          <rdf:Description rdf:about="{$baseURI}timeInterval/date{$startDate}">
@@ -145,7 +154,7 @@
              <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="./db-csv:ENDDATE"/>T00:00:00</core:dateTime>
          </rdf:Description>
          </xsl:if>
-         
+
 		<xsl:if test="not( ./db-csv:PIID = '' or ./db-csv:PIID = 'null' )">
 		<!--            Creating the PI-->
 			<rdf:Description rdf:about="{$baseURI}piRole/inGrant{$grantid}For{./db-csv:PIID}">

@@ -54,6 +54,7 @@ BASEURI="http://vivoweb.org/harvest/ufl/peoplesoft/"
 rm -rf $RAWRHDIR
 
 # Execute Fetch
+#$JDBCFetch -X config/tasks/peoplesoft.jdbcfetch.xml -o $TFRH -OfileDir=$RAWRHDIR
 $JDBCFetch -X config/tasks/peoplesoft.jdbcfetch.xml -o $H2RH -OdbUrl=$RAWRHDBURL
 
 # backup fetch
@@ -66,6 +67,7 @@ backup-path $RAWRHDIR $BACKRAW
 rm -rf $RDFRHDIR
 
 # Execute Translate
+#$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x config/datamaps/peoplesoft-to-vivo.xsl
 $XSLTranslator -i $H2RH -IdbUrl=$RAWRHDBURL -o $H2RH -OdbUrl=$RDFRHDBURL -x config/datamaps/peoplesoft-to-vivo.xsl
 
 # backup translate
@@ -78,7 +80,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -s $H2RH -SdbUrl=$RDFRHDBURL -n $NAMESPACE
 
 # backup H2 transfer Model
 BACKMODEL="model"

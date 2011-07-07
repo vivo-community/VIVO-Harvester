@@ -21,11 +21,13 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.qualify.RenameResources;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import com.hp.hpl.jena.query.QuerySolution;
@@ -34,7 +36,6 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.util.ResourceUtils;
 
 /**
  * VIVO Match
@@ -116,8 +117,9 @@ public class Match {
 	 * Constructor
 	 * @param args argument list
 	 * @throws IOException error parsing options
+	 * @throws UsageException user requested usage message
 	 */
-	private Match(String[] args) throws IOException {
+	private Match(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -220,7 +222,7 @@ public class Match {
 			//get resource in input model and perform rename
 			if(oldUri != newUri){
 				Resource res = this.inputJena.getJenaModel().getResource(oldUri);
-				ResourceUtils.renameResource(res, newUri);
+				RenameResources.renameResource(res, newUri);
 			}
 		}
 		log.info("Rename of matches complete");
@@ -446,6 +448,10 @@ public class Match {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

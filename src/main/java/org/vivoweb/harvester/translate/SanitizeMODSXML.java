@@ -28,6 +28,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.w3c.dom.Document;
@@ -82,8 +83,9 @@ public class SanitizeMODSXML {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private SanitizeMODSXML(String[] args) throws IOException {
+	private SanitizeMODSXML(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 
@@ -113,9 +115,7 @@ public class SanitizeMODSXML {
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force").setDescription("force sanitize of all input records, even if previously processed").setRequired(false));
 		return parser;
 	}
-
-
-
+	
 	/**
 	 * Sanitize all files in directory
 	 * @throws IOException if an error in reading or writing occurs
@@ -369,8 +369,7 @@ public class SanitizeMODSXML {
 			documentElement.removeAttribute("xmlns");
 		}
 	}
-
-
+	
 	/**
 	 * Takes a Document and turns it into a String
 	 * @param doc the Document to serialize
@@ -388,9 +387,7 @@ public class SanitizeMODSXML {
 			throw new IOException(e);
         }
     }
-
-
-
+	
 	/**
 	 * Loads the data from a record, and replaces all bad characters
 	 * @param record the file to read 
@@ -407,9 +404,7 @@ public class SanitizeMODSXML {
 		String output = builder.toString();
 		return output;
 	}
-
-
-
+	
 	/**
 	 * Tests a character to see if it should be replaced with another one or combination
 	 * @param character the character to test
@@ -425,13 +420,13 @@ public class SanitizeMODSXML {
 
 		return replacement;
 	}
-
-
+	
 	/**
 	 * Main method
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
@@ -440,11 +435,20 @@ public class SanitizeMODSXML {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
+			System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
 	}
 }

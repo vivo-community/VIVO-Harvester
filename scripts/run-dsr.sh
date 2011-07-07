@@ -92,9 +92,10 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL -n $NAMESPACE
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -s $H2RH -SdbUrl=$RDFRHDBURL -n $NAMESPACE
 
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.dsr.rdf.xml
+#dump the new harvest model
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.dsr.rdf.xml
 
 # backup H2 transfer Model
 BACKMODEL="model"
@@ -107,8 +108,6 @@ rm -rf $SCOREDATADIR
 
 CONNUM="http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber"
 UFID="http://vivo.ufl.edu/ontology/vivo-ufl/ufid rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\""
-
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.dsr.rdf.xml
 
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
@@ -189,9 +188,11 @@ $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
 rm -rf $SCOREDATADIR
 rm -rf $TEMPCOPYDIR
 
-$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-2.dsr.rdf.xml
+#Dumping score data model
+#$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/scored-2.dsr.rdf.xml
 
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-2.dsr.rdf.xml
+#Dumping data model of matched data
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched-2.dsr.rdf.xml
 
 #smushes in-place(-r) on the contract number THEN on the UFID
 $Smush $SCOREINPUT -P $CONNUM -n ${BASEURI}grant/ -r
@@ -232,7 +233,9 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}coPiRole/
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}timeInterval/
 
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.dsr.rdf.xml
+#dumping changed model
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.dsr.rdf.xml
+
 # backup H2 matched Model
 BACKMATCHED="matched"
 backup-path $MODELDIR $BACKMATCHED

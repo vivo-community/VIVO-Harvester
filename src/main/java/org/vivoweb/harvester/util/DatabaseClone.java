@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 
 /**
  * Clone a database from one jdbc connection to another
@@ -85,18 +86,25 @@ public class DatabaseClone {
 	 * @param tableNames list of tables to export (null exports all)
 	 * @param tableTypes list of table types to export (null exports 'TABLE' type only)
 	 * @param dbUnitFeatures map of DBUnit features to boolean strings "true"/"false"
-	 * @throws IOException error resolving file
-	 * @throws DatabaseUnitException error connecting to database
+	 * @throws IOException error resolving file or connecting to database
 	 */
-	public DatabaseClone(Connection inputConn, String inputFile, Connection outputConn, String outputFile, String[] tableNames, String[] tableTypes, Map<String, String> dbUnitFeatures) throws IOException, DatabaseUnitException {
+	public DatabaseClone(Connection inputConn, String inputFile, Connection outputConn, String outputFile, String[] tableNames, String[] tableTypes, Map<String, String> dbUnitFeatures) throws IOException {
 		if(inputConn != null) {
-			this.db1 = new DatabaseConnection(inputConn);
+			try {
+				this.db1 = new DatabaseConnection(inputConn);
+			} catch(DatabaseUnitException e) {
+				throw new IOException(e);
+			}
 		} else {
 			this.db1 = null;
 		}
 		this.inFile = FileAide.getInputStream(inputFile);
 		if(outputConn != null) {
-			this.db2 = new DatabaseConnection(outputConn);
+			try {
+				this.db2 = new DatabaseConnection(outputConn);
+			} catch(DatabaseUnitException e) {
+				throw new IOException(e);
+			}
 		} else {
 			this.db2 = null;
 		}
@@ -123,24 +131,19 @@ public class DatabaseClone {
 	/**
 	 * Constructor
 	 * @param args commandline arguments
-	 * @throws IOException error creating task
-	 * @throws ClassNotFoundException error loading driver
-	 * @throws SQLException error connecting to database
-	 * @throws DatabaseUnitException error connecting to database
+	 * @throws IOException error resolving file or connecting to database
+	 * @throws UsageException user requested usage message
 	 */
-	public DatabaseClone(String[] args) throws IOException, ClassNotFoundException, SQLException, DatabaseUnitException {
+	public DatabaseClone(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
 	/**
 	 * Constructor
 	 * @param argList option set of parsed args
-	 * @throws ClassNotFoundException error loading driver
-	 * @throws SQLException error connecting to database
-	 * @throws IOException error resolving file
-	 * @throws DatabaseUnitException error connecting to database
+	 * @throws IOException error resolving file or connecting to database
 	 */
-	private DatabaseClone(ArgList argList) throws ClassNotFoundException, SQLException, IOException, DatabaseUnitException {
+	private DatabaseClone(ArgList argList) throws IOException {
 		this(
 			initDBConn("input", argList.get("inputDriver"), argList.get("inputConnection"), argList.get("inputUsername"), argList.get("inputPassword")),
 			argList.get("inputFile"),
@@ -160,10 +163,9 @@ public class DatabaseClone {
 	 * @param user the username
 	 * @param pass the password
 	 * @return the database connection
-	 * @throws ClassNotFoundException error loading driver
-	 * @throws SQLException error connecting to database
+	 * @throws IOException error connecting to database
 	 */
-	private static Connection initDBConn(String dbname, String driver, String connLine, String user, String pass) throws ClassNotFoundException, SQLException {
+	private static Connection initDBConn(String dbname, String driver, String connLine, String user, String pass) throws IOException {
 		if(driver == null) {
 			log.debug("No "+dbname+"Driver provided, not using "+dbname+" database");
 			return null;
@@ -180,8 +182,16 @@ public class DatabaseClone {
 			log.debug("No "+dbname+"Password provided, not using "+dbname+" database");
 			return null;
 		}
-		Class.forName(driver);
-		return DriverManager.getConnection(connLine, user, pass);
+		try {
+			Class.forName(driver);
+		} catch(ClassNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
+		try {
+			return DriverManager.getConnection(connLine, user, pass);
+		} catch(SQLException e) {
+			throw new IOException(e);
+		}
 	}
 	
 	/**
@@ -239,7 +249,7 @@ public class DatabaseClone {
 								typeCode = Integer.valueOf(Types.VARCHAR);
 							}
 						} else {
-							log.trace("typeCode: "+typeCode);
+//							log.trace("typeCode: "+typeCode);
 						}
 						Map<String, String> map = outputDbTypes.get(typeCode);
 						String typeName = map.get("TYPE_NAME");
@@ -248,7 +258,7 @@ public class DatabaseClone {
 							params = map.get("PARAMS");
 						}
 						boolean needParam = (StringUtils.isNotBlank(params) && (size != 0));
-						log.trace("column '"+colName+"': "+typeCode+" => '"+typeName+((needParam)?"("+size+")":"")+"'");
+//						log.trace("column '"+colName+"': "+typeCode+" => '"+typeName+((needParam)?"("+size+")":"")+"'");
 						if(count != 0) {
 							createTableSB.append(',');
 						}
@@ -347,15 +357,15 @@ public class DatabaseClone {
 //			String typeName = dbTypeInfo.getString("TYPE_NAME");
 			Map<String, String> map = null;
 			if(!dbTypes.containsKey(typeCode)) {
-				log.trace("Adding mapping information for typecode "+typeCode+":");
+//				log.trace("Adding mapping information for typecode "+typeCode+":");
 				map = new HashMap<String, String>();
 			} else {
-				log.trace("Already contained mapping information for typecode: "+typeCode);
+//				log.trace("Already contained mapping information for typecode: "+typeCode);
 			}
 			for(int x = 1; x <= rsmd.getColumnCount(); x++) {
 				String colVal = dbTypeInfo.getString(x);
 				String colName = rsmd.getColumnName(x);
-				log.trace("'"+colName+"' => "+(colVal == null?"":"'")+colVal+(colVal == null?"":"'"));
+//				log.trace("'"+colName+"' => "+(colVal == null?"":"'")+colVal+(colVal == null?"":"'"));
 				if(map != null) {
 					map.put(colName, colVal);
 				}
@@ -394,9 +404,6 @@ public class DatabaseClone {
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
-		for(String arg : args){
-			System.out.println(arg);
-		}
 		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());
@@ -405,6 +412,10 @@ public class DatabaseClone {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

@@ -11,7 +11,7 @@
 
 #update memory to match your hardware -- set both to be the same, in general the more memory the better, but too much can cause errors as well.
 #8G-12G on large vivo's seems to work well
-MIN_MEM=2048m
+MIN_MEM=256m
 MAX_MEM=2048m
 
 #Variable for optimizations to the Java virtual machine.

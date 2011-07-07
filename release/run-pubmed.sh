@@ -45,8 +45,8 @@ EQTEST="org.vivoweb.harvester.score.algorithm.EqualityTest"
 LEVDIFF="org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference"
 
 #matching properties
-CWEMAIL="http://vivoweb.org/ontology/core#workEmail"
-SWEMAIL="http://vivoweb.org/ontology/score#workEmail"
+CWEMAIL="http://vivoweb.org/ontology/core#email"
+SWEMAIL="http://vivoweb.org/ontology/score#email"
 FFNAME="http://xmlns.com/foaf/0.1/firstName"
 SFNAME="http://vivoweb.org/ontology/score#foreName"
 FLNAME="http://xmlns.com/foaf/0.1/lastName"
@@ -98,8 +98,8 @@ rm -rf $SCOREDATADIR
 rm -rf $TEMPCOPYDIR
 
 # Execute Score to disambiguate data in "scoring" JENA model
-WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$CWEMAIL -WwEmail=0.7 -PwEmail=$SWEMAIL"
-FNAME="-AfName=$LEVDIFF -FfName=$FFNAME -WfName=0.3 -PfName=$SFNAME"
+WORKEMAIL="-AwEmail=$LEVDIFF -FwEmail=$SWEMAIL -WwEmail=0.7 -PwEmail=$CWEMAIL"
+FNAME="-AfName=$LEVDIFF -FfName=$SFNAME -WfName=0.3 -PfName=$FFNAME"
 LNAME="-AlName=$LEVDIFF -FlName=$FLNAME -WlName=0.5 -PlName=$FLNAME"
 MNAME="-AmName=$LEVDIFF -FmName=$CMNAME -WmName=0.1 -PmName=$CMNAME"
 $Score $SCOREMODELS $WORKEMAIL $LNAME $FNAME $MNAME -n ${BASEURI}author/

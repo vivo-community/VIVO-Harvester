@@ -36,24 +36,25 @@
 package org.vivoweb.harvester.qualify;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.diff.Diff;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
 /**
  * Smush
@@ -68,17 +69,17 @@ public class Smush {
 	/**
 	 * model containing statements to be scored
 	 */
-	private JenaConnect inputJena;
+	private JenaConnect inputJC;
 	/**
 	 * model in which to store temp copy of input and vivo data statements
 	 */
 	private JenaConnect outputJena;
 	/**
-	 * the predicates to look for in inputJena model
+	 * the predicates to look for in inputJC model
 	 */
 	private List<String> inputPredicates;
 	/**
-	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
+	 * limit match Algorithm to only match rdf nodes in inputJC whose URI begin with this namespace
 	 */
 	private String namespace;
 	/**
@@ -90,22 +91,17 @@ public class Smush {
 	 * Constructor
 	 * @param inputJena model containing statements to be smushed
 	 * @param outputJena model containing only resources about the smushed statements is returned
-	 * @param inputPredicates the predicates to look for in inputJena model
-	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
+	 * @param inputPredicates the predicates to look for in inputJC model
+	 * @param namespace limit match Algorithm to only match rdf nodes in inputJC whose URI begin with this namespace
 	 * @param inPlace replace the input model with the output model
 	 */
 	public Smush(JenaConnect inputJena, JenaConnect outputJena, List<String> inputPredicates, String namespace, boolean inPlace) {
 		if(inputJena == null) {
 			throw new IllegalArgumentException("Input model cannot be null");
 		}
-		this.inputJena = inputJena;
+		this.inputJC = inputJena;
 		
 		this.outputJena = outputJena;
-		if(this.outputJena == null) {
-			log.debug("Output model null generating a memory model");
-			this.outputJena = new MemJenaConnect();
-		}
-		
 		if(inputPredicates == null) {
 			throw new IllegalArgumentException("Input Predicate cannot be null");
 		}
@@ -113,11 +109,12 @@ public class Smush {
 		this.namespace = namespace;
 		this.inPlace = inPlace;
 	}
+	
 	/**
 	 * Constructor
 	 * @param inputJena model containing statements to be smushed
-	 * @param inputPredicates the predicates to look for in inputJena model
-	 * @param namespace limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
+	 * @param inputPredicates the predicates to look for in inputJC model
+	 * @param namespace limit match Algorithm to only match rdf nodes in inputJC whose URI begin with this namespace
 	 */
 	public Smush(JenaConnect inputJena, List<String> inputPredicates, String namespace) {
 		this(inputJena, null, inputPredicates, namespace, true);
@@ -127,8 +124,9 @@ public class Smush {
 	 * Constructor
 	 * @param args argument list
 	 * @throws IOException error parsing options
+	 * @throws UsageException user requested usage message
 	 */
-	private Smush(String... args) throws IOException {
+	private Smush(String... args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -154,116 +152,108 @@ public class Smush {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("Smush");
 		// Models
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJena jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJena JENA configuration filename").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJC JENA configuration filename").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of inputJC jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputJena-config").withParameter(true, "CONFIG_FILE").setDescription("inputJC JENA configuration filename").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of outputJena jena model config using VALUE").setRequired(false));
 		
 		// Parameters
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("inputJena-predicates").withParameters(true, "PREDICATE").setDescription("PREDICATE(s) on which, to match. Multiples are done in series not simultaineously.").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "NAMESPACE").setDescription("only match rdf nodes in inputJena whose URI begin with NAMESPACE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "NAMESPACE").setDescription("only match rdf nodes in inputJC whose URI begin with NAMESPACE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("replace").setDescription("replace input model with changed / output model").setRequired(false));
 		return parser;
 	}
 	
-
-	
 	/**
 	 * A simple resource smusher based on a supplied inverse-functional property.
-	 * @param inJC - model to operate on
+	 * @param inputJC - model to operate on
+	 * @param subsJC model to hold subtractions
+	 * @param addsJC model to hold additions
 	 * @param property - property for smush
-	 * @param namespace - filter on resources addressed (if null then applied to whole model)
-	 * @return a new model containing only resources about the smushed statements.
+	 * @param ns - filter on resources addressed (if null then applied to whole model)
 	 */
-	public static JenaConnect smushResources(JenaConnect inJC, String property, String namespace) { 
-		log.debug("Smushing on property:\"" + property + "\"");
-		log.debug((namespace != null )? " within namespace:\""+ namespace + "\"" : " any namespace" );
-		JenaConnect outJC = new MemJenaConnect();
-		Model inModel = inJC.getJenaModel();
+	public static void findSmushResourceChanges(JenaConnect inputJC, JenaConnect subsJC, JenaConnect addsJC, String property, String ns) {
+		log.debug("Smushing on property <" + property + "> within "+((ns != null )?"namespace <"+ ns + ">":"any namespace"));
+		Model inModel = inputJC.getJenaModel();
+		Model subsModel = subsJC.getJenaModel();
+		Model addsModel = addsJC.getJenaModel();
 		Property prop = inModel.createProperty(property);
-		Model outModel = outJC.getJenaModel();
-		outModel.add(inModel);
 		inModel.enterCriticalSection(Lock.READ);
 		try {
-			ClosableIterator<RDFNode> closeIt = inModel.listObjectsOfProperty(prop);
+			NodeIterator objIt = inModel.listObjectsOfProperty(prop);
 			try {
-				for (Iterator<RDFNode> objIt = closeIt; objIt.hasNext();) {
-					RDFNode rdfn = objIt.next();
-					ClosableIterator<Resource> closfIt = inModel.listSubjectsWithProperty(prop, rdfn);
+				while(objIt.hasNext()) {
+					RDFNode obj = objIt.next();
+					ResIterator subjIt = inModel.listSubjectsWithProperty(prop, obj);
 					try {
 						boolean first = true;
 						Resource smushToThisResource = null;
-						for (Iterator<Resource> subjIt = closfIt; closfIt.hasNext();) {
+						while (subjIt.hasNext()) {
 							Resource subj = subjIt.next();
-							if(subj.getNameSpace().equals(namespace) || namespace == null){
+							if(subj.getNameSpace().equals(ns) || ns == null){
 								if (first) {
 									smushToThisResource = subj;
 									first = false;
 									log.debug("Smush running for <"+subj+">");
-									continue;
-								}
-								
-								ClosableIterator<Statement> closgIt = inModel.listStatements(subj,(Property)null,(RDFNode)null);
-								try {
-									for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
-										Statement stmt = stmtIt.next();
-										log.trace("Smushing subject <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
-										outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
-										outModel.add(smushToThisResource, stmt.getPredicate(), stmt.getObject());
+								} else {
+									log.trace("Smushing <"+subj+"> into <"+smushToThisResource+">");
+									StmtIterator stmtIt = inModel.listStatements(subj,(Property)null,(RDFNode)null);
+									try {
+										while(stmtIt.hasNext()) {
+											Statement stmt = stmtIt.next();
+											log.trace("Changing <"+stmt.getPredicate()+"> <"+stmt.getObject()+"> from <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
+											subsModel.add(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
+											addsModel.add(smushToThisResource, stmt.getPredicate(), stmt.getObject());
+										}
+									} finally {
+										stmtIt.close();
 									}
-								} finally {
-									closgIt.close();
-								}
-								closgIt = inModel.listStatements((Resource) null, (Property)null, subj);
-								try {
-									for (Iterator<Statement> stmtIt = closgIt; stmtIt.hasNext();) {
-										Statement stmt = stmtIt.next();
-										log.trace("Smushing object <"+stmt.getSubject()+"> to <"+smushToThisResource+">");
-										outModel.remove(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
-										outModel.add(stmt.getSubject(), stmt.getPredicate(), smushToThisResource);
+									stmtIt = inModel.listStatements((Resource) null, (Property)null, subj);
+									try {
+										while(stmtIt.hasNext()) {
+											Statement stmt = stmtIt.next();
+											log.trace("Changing <"+stmt.getSubject()+"> <"+stmt.getPredicate()+"> from <"+stmt.getObject()+"> to <"+smushToThisResource+">");
+											subsModel.add(stmt.getSubject(), stmt.getPredicate(), stmt.getObject());
+											addsModel.add(stmt.getSubject(), stmt.getPredicate(), smushToThisResource);
+										}
+									} finally {
+										stmtIt.close();
 									}
-								} finally {
-									closgIt.close();
 								}
 							}
 						}
 					} finally {
-						closfIt.close();
+						subjIt.close();
 					}
 				}
 			} finally {
-				closeIt.close();
+				objIt.close();
 			}
 		} finally {
 			inModel.leaveCriticalSection();
 		}
-		return outJC;
 	}
 	
 	/**
 	 * Execute is that method where the smushResoures method is ran for each predicate.
 	 */
 	public void execute() {
-		Model outModel = this.outputJena.getJenaModel();
+		JenaConnect subsJC = new MemJenaConnect();
+		JenaConnect addsJC = new MemJenaConnect();
 		for(String runName : this.inputPredicates) {
-			JenaConnect results = smushResources(this.inputJena, runName, this.namespace);
-			outModel.add(results.getJenaModel());
+			findSmushResourceChanges(this.inputJC, subsJC, addsJC, runName, this.namespace);
 		}
 		if(this.inPlace){
-			JenaConnect additions = new MemJenaConnect();
-			JenaConnect subtractions = new MemJenaConnect();
-			try {
-				Diff.diff(this.inputJena, this.outputJena, subtractions, null);
-				Diff.diff(this.outputJena, this.inputJena, additions, null);
-			} catch(IOException e) {
-				// should never happen
-				log.debug(e.getMessage(), e);
-			}
-			this.inputJena.removeRdfFromJC(subtractions);
-			this.inputJena.loadRdfFromJC(additions);
+			this.inputJC.removeRdfFromJC(subsJC);
+			this.inputJC.loadRdfFromJC(addsJC);
 		}
-		this.inputJena.sync();
-		this.outputJena.sync();
+		if(this.outputJena != null) {
+			this.outputJena.loadRdfFromJC(this.inputJC);
+			this.outputJena.removeRdfFromJC(subsJC);
+			this.outputJena.loadRdfFromJC(addsJC);
+			this.outputJena.sync();
+		}
+		this.inputJC.sync();
 	}
 
 	/**
@@ -281,6 +271,10 @@ public class Smush {
 			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
 			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
+			System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
@@ -292,5 +286,4 @@ public class Smush {
 			}
 		}
 	}
-	
 }

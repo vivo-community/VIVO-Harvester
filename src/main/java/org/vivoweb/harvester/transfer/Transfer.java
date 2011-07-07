@@ -16,6 +16,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
@@ -68,8 +69,9 @@ public class Transfer {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
+	 * @throws UsageException user requested usage message
 	 */
-	private Transfer(String... args) throws IOException {
+	private Transfer(String... args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -90,7 +92,7 @@ public class Transfer {
 		this.inRDFlang = argList.get("R");
 		
 		// load data from recordhandler
-		this.inRH = RecordHandler.parseConfig(argList.get("h"), argList.getValueMap("H"));
+		this.inRH = RecordHandler.parseConfig(argList.get("s"), argList.getValueMap("S"));
 		
 		// output to file, if requested
 		this.dumpFile = argList.get("d");
@@ -164,8 +166,8 @@ public class Transfer {
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rdf").withParameter(true, "RDF_FILE").setDescription("rdf filename to load into output model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('R').setLongOpt("rdfLang").withParameter(true, "LANGUAGE").setDescription("rdf language of rdf file").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('h').setLongOpt("recordHandler").withParameter(true, "RECORD_HANDLER").setDescription("record handler to load into output model").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('H').setLongOpt("recordHandlerOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("recordHandler").withParameter(true, "RECORD_HANDLER").setDescription("record handler to load into output model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("recordHandlerOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "URI_BASE").setDescription("use URI_BASE when importing relative uris").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("modeRemove").setDescription("remove from output model rather than add").setRequired(false));
 		
@@ -189,6 +191,10 @@ public class Transfer {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

@@ -16,6 +16,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import de.fuberlin.wiwiss.d2r.D2rProcessor;
 
@@ -64,8 +65,9 @@ public class D2RMapFetch {
 	 * Command line Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private D2RMapFetch(String[] args) throws IOException {
+	private D2RMapFetch(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -134,6 +136,10 @@ public class D2RMapFetch {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

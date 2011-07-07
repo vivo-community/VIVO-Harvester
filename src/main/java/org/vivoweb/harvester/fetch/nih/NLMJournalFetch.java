@@ -10,13 +10,13 @@
 package org.vivoweb.harvester.fetch.nih;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.WebAide;
 import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
 
@@ -35,32 +35,7 @@ public class NLMJournalFetch extends NIHFetch {
 	/**
 	 * a base xmlrecordoutputstream
 	 */
-	protected static XMLRecordOutputStream baseXMLROS = new XMLRecordOutputStream(new String[]{"NLMCatalogRecord"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE NLMCatalogRecordSet PUBLIC \"-//NLM//DTD CatalogRecord, 1st January 2009//EN\" \"http://www.nlm.nih.gov/databases/dtd/nlmcatalogrecord_090101.dtd\">\n<NLMCatalogRecordSet>\n", "\n</NLMCatalogRecordSet>", ".*?<[nN][lL][mM][uU][nN][iI][qQ][uU][eE][iI][dD].*?>(.*?)</[nN][lL][mM][uU][nN][iI][qQ][uU][eE][iI][dD]>.*?", null, NLMJournalFetch.class);
-	
-	/**
-	 * Constructor: Primary method for running a Journal Fetch. The email address of the person responsible for this
-	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
-	 * as sending too many queries too quickly.
-	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
-	 * @param outStream output stream to write to
-	 */
-	public NLMJournalFetch(String emailAddress, OutputStream outStream) {
-		super(emailAddress, outStream, database);
-	}
-	
-	/**
-	 * Constructor: Primary method for running a Journal Fetch. The email address of the person responsible for this
-	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
-	 * as sending too many queries too quickly.
-	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
-	 * @param searchTerm query to run on journal data
-	 * @param maxRecords maximum number of records to fetch
-	 * @param batchSize number of records to fetch per batch
-	 * @param outStream output stream to write to
-	 */
-	public NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, OutputStream outStream) {
-		super(emailAddress, searchTerm, maxRecords, batchSize, outStream, database);
-	}
+	protected static XMLRecordOutputStream baseXMLROS = new XMLRecordOutputStream(new String[]{"NLMCatalogRecord"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE NLMCatalogRecordSet PUBLIC \"-//NLM//DTD CatalogRecord, 1st January 2009//EN\" \"http://www.nlm.nih.gov/databases/dtd/nlmcatalogrecord_090101.dtd\">\n<NLMCatalogRecordSet>\n", "\n</NLMCatalogRecordSet>", ".*?<[nN][lL][mM][uU][nN][iI][qQ][uU][eE][iI][dD].*?>(.*?)</[nN][lL][mM][uU][nN][iI][qQ][uU][eE][iI][dD]>.*?", null);
 	
 	/**
 	 * Constructor: Primary method for running a Journal Fetch. The email address of the person responsible for this
@@ -73,15 +48,16 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @param rh record handler to write to
 	 */
 	public NLMJournalFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh) {
-		super(emailAddress, searchTerm, maxRecords, batchSize, baseXMLROS.clone().setRecordHandler(rh), database);
+		super(emailAddress, searchTerm, maxRecords, batchSize, rh, database);
 	}
 	
 	/**
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private NLMJournalFetch(String[] args) throws IOException {
+	private NLMJournalFetch(String[] args) throws IOException, UsageException {
 		this(getParser("NLMJournalFetch", database).parse(args));
 	}
 	
@@ -91,7 +67,7 @@ public class NLMJournalFetch extends NIHFetch {
 	 * @throws IOException error creating task
 	 */
 	private NLMJournalFetch(ArgList argList) throws IOException {
-		super(argList, database, baseXMLROS.clone());
+		super(argList, database);
 	}
 	
 	@Override
@@ -152,6 +128,9 @@ public class NLMJournalFetch extends NIHFetch {
 //		log.debug("====== POST-SANITIZE ======\n"+newS);
 		log.debug("Sanitization Complete");
 		log.trace("Writing to output");
+		if(getOsWriter() == null) {
+			setOs(baseXMLROS.clone().setRso(this));
+		}
 		getOsWriter().write(newS);
 		//file close statements.  Warning, not closing the file will leave incomplete xml files and break the translate method
 		getOsWriter().write("\n");
@@ -248,6 +227,12 @@ public class NLMJournalFetch extends NIHFetch {
 		//FIXME: make this work for NLM Journal Fetch? Is relevant? if not, try to move out of NIHFetch
 		return Integer.parseInt(runESearch("1:8000[dp]", false)[3]);
 	}
+
+	@Override
+	public void writeRecord(String id, String data) throws IOException {
+		log.trace("Adding Record "+id);
+		getRh().addRecord(id, data, getClass());
+	}
 	
 	/**
 	 * Main method
@@ -262,6 +247,10 @@ public class NLMJournalFetch extends NIHFetch {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser("NLMJournalFetch", database).getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser("NLMJournalFetch", database).getUsage());
 			error = e;
 		} catch(Exception e) {

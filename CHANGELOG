@@ -1,3 +1,10 @@
+1.2
+	Scoring
+		Tiered Scoring is now implemented allowing for more complex workflows and performance improvements
+		
+	Old style scripts/ and configs/ folder are now deprecated in favor of the self-contained scripts and config files folder
+	update pubmed xsl to reflect core:email instead of core:workEmail
+	
 1.1.1
 	MODS
 		Fix XSLT and script to handle relatedItem recursion better, and add hyperlinks into VIVO

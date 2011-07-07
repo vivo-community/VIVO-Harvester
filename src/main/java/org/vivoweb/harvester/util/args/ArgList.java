@@ -59,21 +59,38 @@ public class ArgList {
 	 * @param p parser
 	 * @param args commandline args
 	 * @throws IOException error parsing args
+	 * @throws UsageException user requested usage message
 	 */
-	protected ArgList(ArgParser p, String[] args) throws IOException {
+	protected ArgList(ArgParser p, String[] args) throws IOException, UsageException {
+		this(p, args, true);
+	}
+	
+	/**
+	 * Constructor
+	 * @param p parser
+	 * @param args commandline args
+	 * @param logLines log lines
+	 * @throws IOException error parsing args
+	 * @throws UsageException user requested usage message
+	 */
+	protected ArgList(ArgParser p, String[] args, boolean logLines) throws IOException, UsageException {
 		try {
 			this.argParser = p;
-			log.debug("running " + p.getAppName());
-			log.debug("command line args: " + getSanitizedArgString(args));
+			if(logLines) {
+				log.debug("running " + p.getAppName());
+				log.debug("command line args: " + getSanitizedArgString(args));
+			}
 			this.oCmdSet = new PosixParser().parse(this.argParser.getOptions(), args);
 			if(this.oCmdSet.hasOption("help")) {
-				throw new IllegalArgumentException("Printing Usage:");
+				throw new UsageException();
 			}
 			String[] confArgs = {""};
 			if(this.oCmdSet.hasOption("X")) {
 				this.confMap = new ConfigParser().parseConfig(this.oCmdSet.getOptionValue("X"));
 				confArgs = new ConfigParser().configToArgs(this.oCmdSet.getOptionValue("X"));
-				log.debug("config file args: " + getSanitizedArgString(confArgs));
+				if(logLines) {
+					log.debug("config file args: " + getSanitizedArgString(confArgs));
+				}
 			} else {
 				this.confMap = null;
 			}

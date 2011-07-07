@@ -9,9 +9,11 @@
  *****************************************************************************************************************************/
 package org.vivoweb.harvester.util.repo;
 
+import java.io.IOException;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
@@ -57,6 +59,11 @@ public class TDBJenaConnect extends JenaConnect {
 	 */
 	public TDBJenaConnect(String dbDir, String modelName) {
 		this.dbDir = dbDir;
+		try {
+			FileAide.createFolder(this.dbDir);
+		} catch(IOException e) {
+			throw new IllegalArgumentException("Invalid Directory", e);
+		}
 		init(modelName);
 	}
 	
@@ -97,5 +104,10 @@ public class TDBJenaConnect extends JenaConnect {
 		super.printParameters();
 		log.trace("type: 'tdb'");
 		log.trace("dbDir: '" + this.dbDir + "'");
+	}
+	
+	@Override
+	public void sync() {
+		// Do Nothing
 	}
 }

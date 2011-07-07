@@ -19,6 +19,7 @@ import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
 import com.hp.hpl.jena.graph.Graph;
@@ -56,8 +57,9 @@ public class RenameResources {
 	 * Commandline Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error parsing args
+	 * @throws UsageException user requested usage message
 	 */
-	private RenameResources(String[] args) throws IOException {
+	private RenameResources(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -229,6 +231,10 @@ public class RenameResources {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:", e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

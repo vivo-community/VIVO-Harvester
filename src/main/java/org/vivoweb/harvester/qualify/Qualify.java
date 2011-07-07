@@ -19,6 +19,7 @@ import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.query.QuerySolution;
@@ -73,8 +74,9 @@ public class Qualify {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private Qualify(String[] args) throws IOException {
+	private Qualify(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -296,6 +298,10 @@ public class Qualify {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

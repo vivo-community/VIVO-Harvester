@@ -11,11 +11,9 @@ package org.vivoweb.harvester.fetch.nih;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.IdListType;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,7 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.repo.RecordHandler;
-import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
+import org.vivoweb.harvester.util.repo.RecordStreamOrigin;
 
 /**
  * Shared code for modules for fetching NIH data using the SOAP or HTML Interface Based on the example code available at
@@ -32,7 +30,7 @@ import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
  * @author Dale R. Scheppler (dscheppler@ctrip.ufl.edu)
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public abstract class NIHFetch {
+public abstract class NIHFetch implements RecordStreamOrigin {
 	/**
 	 * SLF4J Logger
 	 */
@@ -65,18 +63,10 @@ public abstract class NIHFetch {
 	 * Database name
 	 */
 	private String databaseName;
-	
 	/**
-	 * Constructor: Primary method for running an NIH Fetch. The email address of the person responsible for this
-	 * install of the program is required by NIH guidelines so the person can be contacted if there is a problem, such
-	 * as sending too many queries too quickly.
-	 * @param emailAddress contact email address of the person responsible for this install of the VIVO Harvester
-	 * @param outStream output stream to write to
-	 * @param database database name
+	 * The Record Handler to write to
 	 */
-	protected NIHFetch(String emailAddress, OutputStream outStream, String database) {
-		this(emailAddress, "1:8000[dp]", "ALL", "1000", outStream, database);
-	}
+	private RecordHandler rh;
 	
 	/**
 	 * Constructor: Primary method for running an NIH Fetch. The email address of the person responsible for this
@@ -86,16 +76,16 @@ public abstract class NIHFetch {
 	 * @param searchTerm query to run on data
 	 * @param maxRecords maximum number of records to fetch
 	 * @param batchSize number of records to fetch per batch
-	 * @param outStream output stream to write to
+	 * @param rh record handler to write to
 	 * @param database database name
 	 */
-	protected NIHFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, OutputStream outStream, String database) {
+	protected NIHFetch(String emailAddress, String searchTerm, String maxRecords, String batchSize, RecordHandler rh, String database) {
 		this.emailAddress = emailAddress; // NIH Will email this person if there is a problem
 		this.searchTerm = searchTerm;
 		this.maxRecords = maxRecords;
 		this.batchSize = batchSize;
 		this.databaseName = database;
-		setOsWriter(outStream);
+		this.rh = rh;
 		//TODO Erroroneous input checking
 	}
 	
@@ -103,22 +93,10 @@ public abstract class NIHFetch {
 	 * Constructor
 	 * @param argList parsed argument list
 	 * @param database database name
-	 * @param os xml record output stream
 	 * @throws IOException error creating task
 	 */
-	protected NIHFetch(ArgList argList, String database, XMLRecordOutputStream os) throws IOException {
-		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), os.setRecordHandler(RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O"))), database);
-	}
-	
-	/**
-	 * Constructor
-	 * @param argList parsed argument list
-	 * @param database database name
-	 * @param outputFile output file path
-	 * @throws IOException error creating task
-	 */
-	protected NIHFetch(ArgList argList, String database, String outputFile) throws IOException {
-		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), new FileOutputStream(outputFile, true), database);
+	protected NIHFetch(ArgList argList, String database) throws IOException {
+		this(argList.get("m"), argList.get("t"), argList.get("n"), argList.get("b"), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")), database);
 	}
 	
 	/**
@@ -195,12 +173,8 @@ public abstract class NIHFetch {
 //		log.debug("recToFetch: "+recToFetch);
 //		log.debug("intBatchSize: "+intBatchSize);
 		String[] env = null;
-		try {
-			env = runESearch(this.searchTerm);
-		} catch(IllegalArgumentException e) {
-			log.error(e.getMessage());
-			log.debug("Stacktrace:",e);
-		}
+		env = runESearch(this.searchTerm);
+
 		if(env != null) {
 			if(recToFetch <= intBatchSize) {
 				fetchRecords(env, "0", "" + recToFetch);
@@ -268,14 +242,6 @@ public abstract class NIHFetch {
 	}
 	
 	/**
-	 * Setter for xmlwriter
-	 * @param os outputstream to write to
-	 */
-	protected void setOsWriter(OutputStream os) {
-		this.osWriter = new OutputStreamWriter(os, Charset.availableCharsets().get("UTF-8"));
-	}
-	
-	/**
 	 * Get the ArgParser for this task
 	 * @param appName the application name
 	 * @param database the database name
@@ -311,6 +277,14 @@ public abstract class NIHFetch {
 	 */
 	protected OutputStreamWriter getOsWriter() {
 		return this.osWriter;
+	}
+	
+	/**
+	 * Set the outputstream
+	 * @param os the outputstream to write to
+	 */
+	protected void setOs(OutputStream os) {
+		this.osWriter = new OutputStreamWriter(os);
 	}
 	
 	/**
@@ -360,5 +334,13 @@ public abstract class NIHFetch {
 	 */
 	protected String getToolName() {
 		return this.toolName;
+	}
+	
+	/**
+	 * Get the recordhandler
+	 * @return the recordhandler
+	 */
+	protected RecordHandler getRh() {
+		return this.rh;
 	}
 }

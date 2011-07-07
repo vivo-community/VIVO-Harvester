@@ -11,6 +11,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 
 /**
@@ -38,8 +39,9 @@ public class CSVtoRDF {
 	/**
 	 * @param args array of command line arguments
 	 * @throws IOException exception thrown if there is a problem with parsing the configs
+	 * @throws UsageException user requested usage message
 	 */
-	private CSVtoRDF(String... args) throws IOException {
+	private CSVtoRDF(String... args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 
@@ -104,6 +106,10 @@ public class CSVtoRDF {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

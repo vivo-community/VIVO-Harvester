@@ -62,8 +62,14 @@ public class PubmedFetchTest extends TestCase {
 	 */
 	public final void testPubmedFetchNoRecordQuery() throws IOException {
 		log.info("BEGIN testPubmedFetchNoRecordQuery");
-		//test 1 record
-		new PubmedFetch("test@test.com", "", "100", "100", this.rh).execute();
+		//test no records
+		boolean hasRecords = true;
+		try {
+			new PubmedFetch("test@test.com", "", "100", "100", this.rh).execute();
+		} catch(IllegalArgumentException e) {
+			hasRecords = false;
+		}
+		assertFalse(hasRecords);
 		assertFalse(this.rh.iterator().hasNext());
 		log.info("END testPubmedFetchNoRecordQuery");
 	}

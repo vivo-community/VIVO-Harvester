@@ -29,6 +29,7 @@ import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.TDBJenaConnect;
@@ -43,6 +44,7 @@ import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 /**
  * VIVO Score
@@ -214,8 +216,9 @@ public class Score {
 	 * Constructor
 	 * @param args argument list
 	 * @throws IOException error parsing options
+	 * @throws UsageException user requested usage message
 	 */
-	private Score(String... args) throws IOException {
+	private Score(String... args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -231,8 +234,8 @@ public class Score {
 			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
 			opts.get("t"), 
 			initAlgs(opts.getValueMap("A")), 
-			opts.getValueMap("P"), 
 			opts.getValueMap("F"), 
+			opts.getValueMap("P"), 
 			opts.get("n"), 
 			initWeights(opts.getValueMap("W")), 
 			(opts.has("m")?Float.valueOf(opts.get("m")):null), 
@@ -448,9 +451,17 @@ public class Score {
 				Resource sVivo = this.vivoJena.getJenaModel().getResource(svivouri);
 				for(String runName : this.vivoPredicates.keySet()) {
 					Property os_runName = this.inputJena.getJenaModel().getProperty(this.inputPredicates.get(runName));
-					RDFNode os = sInput.getProperty(os_runName).getObject();
+					Statement os_stmnt = sInput.getProperty(os_runName);
+					RDFNode os = null;
+					if(os_stmnt != null) {
+						os = os_stmnt.getObject();
+					}
 					Property op_runName = this.vivoJena.getJenaModel().getProperty(this.vivoPredicates.get(runName));
-					RDFNode op = sVivo.getProperty(op_runName).getObject();
+					Statement op_stmnt = sVivo.getProperty(op_runName);
+					RDFNode op = null;
+					if(op_stmnt != null) {
+						op = op_stmnt.getObject();
+					}
 					addRunName(tempMap, runName, os, op);
 				}
 				solSet.add(tempMap);
@@ -711,6 +722,10 @@ public class Score {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

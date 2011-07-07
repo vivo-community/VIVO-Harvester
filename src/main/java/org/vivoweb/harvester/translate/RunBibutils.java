@@ -23,6 +23,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 
@@ -109,8 +110,9 @@ public class RunBibutils {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	public RunBibutils(String[] args) throws IOException {
+	public RunBibutils(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 
@@ -181,8 +183,7 @@ public class RunBibutils {
 		log.info(String.valueOf(translated) + " records translated into MODS by Bibutils.");
 		log.info(String.valueOf(skipped) + " records did not need translation into MODS by Bibutils.");
 	}
-
-
+	
 	/**
 	 * Translates a single record by using bibutils on it.  Bibutils works only on files, but we already have streams from the record handler, so
 	 * we write the streams out to temp files before calling bibutils on them.
@@ -201,8 +202,7 @@ public class RunBibutils {
 		
 		runBibutilsCommand(command, outStream);
 	}
-
-
+	
 	/**
 	 * Runs the specified command line.
 	 * @param command the command to execute
@@ -242,27 +242,35 @@ public class RunBibutils {
 		}
 		log.info("Bibutils exited with error code " + exitVal);
 	}
-
-
-
-
+	
 	/**
 	 * Main method
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
+		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new RunBibutils(args).execute();
 		} catch(IllegalArgumentException e) {
-			log.debug(e.getMessage(), e);
+			log.error(e.getMessage());
+			log.debug("Stacktrace:",e);
 			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
+			System.out.println(getParser().getUsage());
+			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
 	}
 }

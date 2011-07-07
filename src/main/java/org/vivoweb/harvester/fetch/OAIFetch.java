@@ -10,7 +10,6 @@
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.slf4j.Logger;
@@ -19,7 +18,9 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.repo.RecordStreamOrigin;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
 import org.xml.sax.SAXException;
 import ORG.oclc.oai.harvester2.app.RawWrite;
@@ -29,7 +30,7 @@ import ORG.oclc.oai.harvester2.app.RawWrite;
  * @author Dale Scheppler
  * @author Christopher Haines (hainesc@ctrip.ufl.edu)
  */
-public class OAIFetch {
+public class OAIFetch implements RecordStreamOrigin {
 	/**
 	 * SLF4J Logger
 	 */
@@ -53,25 +54,30 @@ public class OAIFetch {
 	 */
 	private String strEndDate;
 	/**
-	 * The output stream to send the harvested XML to
+	 * The record handler to write records to
 	 */
-	private OutputStream osOutStream;
+	private RecordHandler rhOutput;
+	/**
+	 * the base for each instance's xmlRos
+	 */
+	private static XMLRecordOutputStream xmlRosBase = new XMLRecordOutputStream(new String[]{"record"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", null);
 	
 	/**
 	 * Constuctor
 	 * @param address The website address of the repository, without http://
-	 * @param outStream The output stream to write to
+	 * @param rhOutput The recordhandler to write to
 	 */
-	public OAIFetch(String address, OutputStream outStream) {
-		this(address, "0001-01-01", "8000-01-01", outStream);
+	public OAIFetch(String address, RecordHandler rhOutput) {
+		this(address, "0001-01-01", "8000-01-01", rhOutput);
 	}
 	
 	/**
 	 * Constructor
 	 * @param args command line arguments
 	 * @throws IOException error connecting to record handler
+	 * @throws UsageException user requested usage message
 	 */
-	private OAIFetch(String[] args) throws IOException {
+	private OAIFetch(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -92,21 +98,10 @@ public class OAIFetch {
 	 * @param rhOutput The recordhandler to write to
 	 */
 	public OAIFetch(String address, String startDate, String endDate, RecordHandler rhOutput) {
-		this(address, startDate, endDate, new XMLRecordOutputStream(new String[]{"record"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", rhOutput, OAIFetch.class));
-	}
-	
-	/**
-	 * Constructor
-	 * @param address The website address of the repository, without http://
-	 * @param startDate The date at which to begin fetching records, format and time resolution depends on repository.
-	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
-	 * @param outStream The output stream to write to
-	 */
-	public OAIFetch(String address, String startDate, String endDate, OutputStream outStream) {
 		this.strAddress = address;
 		this.strStartDate = startDate;
 		this.strEndDate = endDate;
-		this.osOutStream = outStream;
+		this.rhOutput = rhOutput;
 	}
 	
 	/**
@@ -115,7 +110,9 @@ public class OAIFetch {
 	 */
 	public void execute() throws IOException {
 		try {
-			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", this.osOutStream);
+			XMLRecordOutputStream xmlRos = xmlRosBase.clone();
+			xmlRos.setRso(this);
+			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", xmlRos);
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e);
 		} catch(SAXException e) {
@@ -140,6 +137,12 @@ public class OAIFetch {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
+
+	@Override
+	public void writeRecord(String id, String data) throws IOException {
+		log.trace("Adding record "+id);
+		this.rhOutput.addRecord(id, data, getClass());
+	}
 	
 	/**
 	 * Main method
@@ -154,6 +157,10 @@ public class OAIFetch {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

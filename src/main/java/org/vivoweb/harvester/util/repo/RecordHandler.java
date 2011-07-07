@@ -27,6 +27,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordMetaData.RecordMetaDataType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -467,8 +468,9 @@ public abstract class RecordHandler implements Iterable<Record> {
 	 * Run from commandline
 	 * @param args the commandline args
 	 * @throws IOException error parsing args
+	 * @throws UsageException user requested usage message
 	 */
-	public static void run(String... args) throws IOException {
+	public static void run(String... args) throws IOException, UsageException {
 		ArgList argList = getParser().parse(args);
 		RecordHandler rh = RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I"));
 		boolean list = argList.has("l");
@@ -476,7 +478,7 @@ public abstract class RecordHandler implements Iterable<Record> {
 		String value = argList.get("v");
 		String output = argList.get("o");
 		PrintStream os;
-		if(output != null) {
+		if(output != null && value != null) {
 			os = new PrintStream(FileAide.getOutputStream(output));
 		} else {
 			os = System.out;
@@ -537,6 +539,10 @@ public abstract class RecordHandler implements Iterable<Record> {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

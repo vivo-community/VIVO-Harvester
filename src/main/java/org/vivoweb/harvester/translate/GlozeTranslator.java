@@ -24,6 +24,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import com.hp.gloze.Gloze;
@@ -74,8 +75,9 @@ public class GlozeTranslator {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
+	 * @throws UsageException user requested usage message
 	 */
-	private GlozeTranslator(String... args) throws IOException {
+	private GlozeTranslator(String... args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -244,6 +246,10 @@ public class GlozeTranslator {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

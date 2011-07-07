@@ -91,7 +91,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $H2RH -HdbUrl=$RDFRHDBURL
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -s $H2RH -SdbUrl=$RDFRHDBURL
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -d ../modeldumpfile.xml
 
 # backup H2 transfer Model
@@ -116,14 +116,14 @@ rm -rf $TEMPCOPYDIR
 #$JenaConnect -Jtype=tdb -JdbDir=$TEMPCOPYDIR -JmodelName=http://vivoweb.org/harvester/model/scoring#inputClone -t
 
 # Execute Score to disambiguate data in "scoring" JENA model
-FNAME="-AfName=$NAMECOMP -FfName=$FFNAME -WfName=0.20 -PfName=$SFNAME"
+FNAME="-AfName=$NAMECOMP -FfName=$SFNAME -WfName=0.20 -PfName=$FFNAME"
 #we want 75% FNAME match
 LNAME="-AlName=$EQTEST -FlName=$FLNAME -WlName=0.35 -PlName=$FLNAME"
 #we want 100% LNAME match
 $Score $SCOREMODELS $LNAME $FNAME -n ${BASEURI}author/
 
 MNAME="-AmName=$NAMECOMP -FmName=$CMNAME -WmName=0.15 -PmName=$CMNAME"
-WORKEMAIL="-AwEmail=$EQTEST -FwEmail=$CWEMAIL -WwEmail=0.30 -PwEmail=$SWEMAIL"
+WORKEMAIL="-AwEmail=$EQTEST -FwEmail=$SWEMAIL -WwEmail=0.30 -PwEmail=$CWEMAIL"
 $Score $SCOREMODELS $FNAME $MNAME $WORKEMAIL -n ${BASEURI}author/ -m 0.5
 
 # Find matches using scores and rename nodes to matching uri and clear literals

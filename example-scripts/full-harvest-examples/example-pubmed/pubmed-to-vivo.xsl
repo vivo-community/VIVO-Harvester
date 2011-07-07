@@ -109,33 +109,33 @@
 			</xsl:variable>
 			<xsl:choose>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-				    <core:dataTimeValue>
+				    <core:dateTimeValue>
                         <rdf:Description rdf:about="{$baseURI}pub/year{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
 					        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
 					        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision"/>
 	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-01-01T00:00:00</core:dateTime>
 				        </rdf:Description>
-                    </core:dataTimeValue>
+                    </core:dateTimeValue>
 					<!-- <core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/></core:year> -->
 				</xsl:when>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-                    <core:dataTimeValue>
+                    <core:dateTimeValue>
                         <rdf:Description rdf:about="{$baseURI}pub/monthyear{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
 	                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
 	                        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision"/>
 	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-01T00:00:00</core:dateTime>
                         </rdf:Description>
-                    </core:dataTimeValue>
+                    </core:dateTimeValue>
 					<!-- <core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth> -->
 				</xsl:when>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
-					<core:dataTimeValue>
+					<core:dateTimeValue>
                         <rdf:Description rdf:about="{$baseURI}pub/daymonthyear{MedlineCitation/Article/Journal/JournalIssue/PubDate/Day}{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
 	                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
 	                        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
 	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/>T00:00:00</core:dateTime>
                         </rdf:Description>
-                    </core:dataTimeValue>
+                    </core:dateTimeValue>
 					<!-- <core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:date> -->
 				</xsl:when>
 			</xsl:choose>
@@ -189,13 +189,34 @@
 			</xsl:variable>
 			<xsl:choose>
 				<xsl:when test="string(BookDocument/Book/PubDate/Year)">
-					<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="BookDocument/Book/PubDate/Year"/></core:year>
+                    <core:dateTimeValue>
+                        <rdf:Description rdf:about="{$baseURI}pub/year{BookDocument/Book/PubDate/Year}">
+                            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+                            <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision"/>
+                            <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-01-01T00:00:00</core:dateTime>
+                        </rdf:Description>
+                    </core:dateTimeValue>
+<!-- 					<core:year rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"><xsl:value-of select="BookDocument/Book/PubDate/Year"/></core:year> -->
 				</xsl:when>
 				<xsl:when test="string(BookDocument/Book/PubDate/Month) and string(BookDocument/Book/PubDate/Year)">
-					<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth>
+                    <core:dateTimeValue>
+                        <rdf:Description rdf:about="{$baseURI}pub/monthyear{$MonthNumber}{BookDocument/Book/PubDate/Year}">
+                            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+                            <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision"/>
+                            <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-01T00:00:00</core:dateTime>
+                        </rdf:Description>
+                    </core:dateTimeValue>
+<!-- 					<core:yearMonth rdf:datatype="http://www.w3.org/2001/XMLSchema#gYearMonth"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" /></core:yearMonth> -->
 				</xsl:when>
 				<xsl:when test="string(BookDocument/Book/PubDate/Day) and string(BookDocument/Book/PubDate/Month) and string(BookDocument/Book/PubDate/Year)">
-					<core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="BookDocument/Book/PubDate/Day"/></core:date>
+                    <core:dateTimeValue>
+                        <rdf:Description rdf:about="{$baseURI}pub/daymonthyear{MedlineCitation/Article/Journal/JournalIssue/PubDate/Day}{$MonthNumber}{BookDocument/Book/PubDate/Year}">
+                            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
+                            <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
+                            <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-<xsl:value-of select="BookDocument/Book/PubDate/Day"/>T00:00:00</core:dateTime>
+                        </rdf:Description>
+                    </core:dateTimeValue>
+<!-- 					<core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="BookDocument/Book/PubDate/Day"/></core:date> -->
 				</xsl:when>
 			</xsl:choose>
 			<xsl:apply-templates select="BookDocument/Book/AuthorList/Author" mode="authorRef" />
@@ -251,7 +272,7 @@
 		</rdf:Description>
 		<rdf:Description rdf:about="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
-			<score:workEmail><xsl:value-of select="$email" /></score:workEmail>
+			<score:email><xsl:value-of select="$email" /></score:email>
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
@@ -261,10 +282,14 @@
 					<score:initials><xsl:value-of select="Initials" /></score:initials>
 					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
 					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
 						<xsl:matching-substring>
 							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+							<xsl:choose>
+								<xsl:when test="normalize-space(regex-group(2))">
+									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+								</xsl:when>
+							</xsl:choose>
 						</xsl:matching-substring>
 					</xsl:analyze-string>
 				</xsl:when>
@@ -276,10 +301,14 @@
 					<score:initials><xsl:value-of select="Initials" /></score:initials>
 					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>	
 					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
 					    <xsl:matching-substring>
 							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+							<xsl:choose>
+								<xsl:when test="normalize-space(regex-group(2))">
+									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+								</xsl:when>
+							</xsl:choose>
 						</xsl:matching-substring>
 					</xsl:analyze-string>			
 				</xsl:when>
@@ -333,10 +362,14 @@
 					<score:initials><xsl:value-of select="Initials" /></score:initials>
 					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
 					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
 						<xsl:matching-substring>
 							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+							<xsl:choose>
+								<xsl:when test="normalize-space(regex-group(2))">
+									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+								</xsl:when>
+							</xsl:choose>
 						</xsl:matching-substring>
 					</xsl:analyze-string>
 				</xsl:when>
@@ -348,10 +381,14 @@
 					<score:initials><xsl:value-of select="Initials" /></score:initials>
 					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>	
 					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="(.*) (.*)">
+					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
 					    <xsl:matching-substring>
 							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+							<xsl:choose>
+								<xsl:when test="normalize-space(regex-group(2))">
+									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
+								</xsl:when>
+							</xsl:choose>
 						</xsl:matching-substring>
 					</xsl:analyze-string>			
 				</xsl:when>

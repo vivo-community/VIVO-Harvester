@@ -28,6 +28,7 @@ import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -153,7 +154,7 @@ public abstract class JenaConnect {
 		} else {
 			throw new IllegalArgumentException("unknown type: " + type);
 		}
-		if((!params.containsKey("checkEmpty") || (params.get("checkEmpty").toLowerCase() == "true")) && jc.isEmpty()) {
+		if((params.containsKey("checkEmpty") && (params.get("checkEmpty").toLowerCase() == "true")) && jc.isEmpty()) {
 			StringBuilder emptyWarn = new StringBuilder("jena model empty! ");
 			emptyWarn.append(type);
 			emptyWarn.append(": ");
@@ -445,10 +446,7 @@ public abstract class JenaConnect {
 	/**
 	 * Syncronizes the model to the datastore
 	 */
-	public void sync() {
-		log.trace("Syncronizing the model...");
-		log.trace("Syncronization of model complete");
-	}
+	public abstract void sync();
 	
 	/**
 	 * Build a QueryExecution from a queryString
@@ -641,7 +639,13 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to output
 	 */
 	public void executeQuery(String queryParam, String resultFormatParam, OutputStream output, boolean datasetMode) throws IOException {
-		OutputStream out = (output != null) ? output : System.out;
+		OutputStream out;
+		if(output != null) {
+			out = output;
+			log.info("Outputting to the specified location");
+		} else {
+			out = System.out;
+		}
 		QueryExecution qe = null;
 		try {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
@@ -854,39 +858,56 @@ public abstract class JenaConnect {
 	}
 	
 	/**
+	 * Run from commandline
+	 * @param args the commandline args
+	 * @throws IOException error parsing args
+	 * @throws UsageException user requested usage message
+	 */
+	public static void run(String... args) throws IOException, UsageException {
+		ArgList argList = getParser().parse(args);
+		JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
+		if(jc == null) {
+			throw new IllegalArgumentException("Must specify a jena model");
+		}
+		if(argList.has("t")) {
+			if(argList.has("q") || argList.has("Q")) {
+				throw new IllegalArgumentException("Cannot Execute Query and Truncate");
+			}
+			log.info("Removing all triples");
+			jc.truncate();
+		} else if(argList.has("q")) {
+			jc.executeQuery(argList.get("q"), argList.get("Q"), FileAide.getOutputStream(argList.get("f")), argList.has("d"));
+		} else {
+			throw new IllegalArgumentException("No Operation Specified");
+		}
+		jc.sync();
+	}
+	
+	/**
 	 * Main method
 	 * @param args commandline arguments
 	 */
 	public static void main(String... args) {
 		Exception error = null;
 		try {
-			InitLog.initLogger(args, getParser(), "f");
-			ArgList argList = getParser().parse(args);
-			JenaConnect jc = JenaConnect.parseConfig(argList.get("j"), argList.getValueMap("J"));
-			if(jc == null) {
-				throw new IllegalArgumentException("Must specify a jena model");
-			}
-			if(argList.has("t")) {
-				if(argList.has("q") || argList.has("Q")) {
-					throw new IllegalArgumentException("Cannot Execute Query and Truncate");
-				}
-				jc.truncate();
-			} else if(argList.has("q")) {
-				jc.executeQuery(argList.get("q"), argList.get("Q"), FileAide.getOutputStream(argList.get("f")), argList.has("d"));
-			} else {
-				throw new IllegalArgumentException("No Operation Specified");
-			}
-			jc.sync();
+			InitLog.initLogger(args, getParser(), "ft");
+			log.info(getParser().getAppName() + ": Start");
+			run(args);
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
 			System.err.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
+			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
+			log.info(getParser().getAppName() + ": End");
 			if(error != null) {
 				System.exit(1);
 			}

@@ -12,7 +12,7 @@ Screencasted examples of using the harvester example scripts can be found here:
 https://sourceforge.net/projects/vivo/files/VIVO%20Harvester/Demonstration/
 
 Example scripts
-The scripts directory contains example scripts for reference and demonstration. These are meant as a guide and template to follow for your own harvest.
+The example-scripts directory contains example scripts for reference and demonstration. These are meant as a guide and template to follow for your own harvest.
 
 Contacting Us
 We would love to hear from you and answer any questions, take patches, or bugs. Join us on IRC and/or our mailing lists:

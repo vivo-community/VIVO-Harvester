@@ -13,10 +13,12 @@
 set -e
 
 # Set working directory
-HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
-HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
+#HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+#HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
+HARVESTERDIR=${WORKING_DIRECTORY} #replaced by servlet
+cd $HARVESTERDIR
 
-HARVESTER_TASK=csv
+HARVESTER_TASK=csvpeople
 
 if [ -f scripts/env ]; then
   . scripts/env
@@ -27,7 +29,8 @@ echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 # Setting variables for cleaner script lines.
 #Base data directory
-BASEDIR=harvested-data/$HARVESTER_TASK
+BASEDIR=${HARVESTED_DATA_PATH} #this gets replaced by servlet
+PREVHARVDBURLBASE="jdbc:h2:${GLOBAL_HARVESTED_DATA_RELATIVE_PATH}prevHarvs/" #GLOBAL_HARVESTED_DATA_RELATIVE_PATH is replaced by server
 
 #data directories
 RAWCSVDIR=$BASEDIR/csv
@@ -78,13 +81,23 @@ BASEURI="http://vivoweb.org/harvest/csvfile/"
 rm -rf $RAWRHDIR
 rm -rf $RAWCSVDIR
 
-CSVFILE="files/persontemplatetest.csv"
+#CSVFILE="files/persontemplatetest.csv"
 XSLFILE="config/datamaps/csv-people-to-vivo.xsl"
 
 # Execute Fetch
-$CSVtoJDBC -i $CSVFILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
+#$CSVtoJDBC -i $CSVFILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
 
-$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
+#$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
+
+for CURRENT_FILE in ${UPLOADS_FOLDER}* #UPLOADS_FOLDER variable gets replaced by servlet
+do
+	$CSVtoJDBC -i $CURRENT_FILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV2"
+
+	$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
+done
+
+
+
 
 # backup fetch
 BACKRAW="raw"
@@ -146,7 +159,7 @@ $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFS
 
 # Find matches using scores and rename nodes to matching uri
 $Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
-exit
+
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched.rdf.xml
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
@@ -198,6 +211,8 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
+rm -rf $TEMPCOPYDIR
+
 # Backup posttransfer vivo database, symlink latest to latest.sql
 BACKPOSTDB="posttransfer"
 backup-mysqldb $BACKPOSTDB
@@ -215,6 +230,6 @@ echo $HARVESTER_TASK ' completed successfully'
 #rm SearchIndex
 #wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
 
-/etc/init.d/tomcat6 stop
-/etc/init.d/apache2 restart
-/etc/init.d/tomcat6 start
+#/etc/init.d/tomcat6 stop
+#/etc/init.d/apache2 restart
+#/etc/init.d/tomcat6 start

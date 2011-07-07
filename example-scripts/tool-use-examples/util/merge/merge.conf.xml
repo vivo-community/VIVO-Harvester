@@ -171,11 +171,19 @@
 -->
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample RecordHandler input using external definition																%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+	<Param name="input">record-set.conf.xml</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 <%	Sample TextFileRecordHandler input inline definition																%>
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 -->
+<!--
 	<Param name="inputOverride">rhClass=org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>
 	<Param name="inputOverride">fileDir=data/tf-rh</Param>
+-->
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
 <%	Sample JDBCRecordHandler input inline definition - using h2 database and default dbTable and dataFieldName			%>

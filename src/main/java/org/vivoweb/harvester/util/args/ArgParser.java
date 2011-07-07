@@ -110,9 +110,23 @@ public class ArgParser {
 	 * @return the parsed arglist
 	 * @throws IllegalArgumentException bad arguments provided
 	 * @throws IOException error parsing args
+	 * @throws UsageException user requested usage message
 	 */
-	public ArgList parse(String[] args) throws IllegalArgumentException, IOException {
-		return new ArgList(this, args);
+	public ArgList parse(String[] args) throws IllegalArgumentException, IOException, UsageException {
+		return parse(args, true);
+	}
+	
+	/**
+	 * Parse the commandline arguments
+	 * @param args the commandline arguments
+	 * @param logLines log messages?
+	 * @return the parsed arglist
+	 * @throws IllegalArgumentException bad arguments provided
+	 * @throws IOException error parsing args
+	 * @throws UsageException user requested usage message
+	 */
+	public ArgList parse(String[] args, boolean logLines) throws IllegalArgumentException, IOException, UsageException {
+		return new ArgList(this, args, logLines);
 	}
 	
 	/**

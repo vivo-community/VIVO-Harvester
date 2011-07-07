@@ -85,7 +85,7 @@ backup-path $RDFRHDIR $BACKRDF
 rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -h $TFRH -HfileDir=$RDFRHDIR -n $NAMESPACE
+$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OcheckEmpty=$CHECKEMPTY -OdbUrl=$MODELDBURL -s $TFRH -SfileDir=$RDFRHDIR -n $NAMESPACE
 
 # backup H2 transfer Model
 BACKMODEL="model"

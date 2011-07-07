@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Copyright (c) 2010 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams.
@@ -13,8 +14,10 @@
 set -e
 
 # Set working directory
-HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
-HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
+#HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+#HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
+HARVESTERDIR=${WORKING_DIRECTORY} #replaced by servlet
+cd $HARVESTERDIR
 
 HARVESTER_TASK=csv
 
@@ -27,7 +30,8 @@ echo "Full Logging in $HARVESTER_TASK_DATE.log"
 
 # Setting variables for cleaner script lines.
 #Base data directory
-BASEDIR=harvested-data/$HARVESTER_TASK
+BASEDIR=${HARVESTED_DATA_PATH} #this gets replaced by servlet
+PREVHARVDBURLBASE="jdbc:h2:${GLOBAL_HARVESTED_DATA_RELATIVE_PATH}prevHarvs/" #GLOBAL_HARVESTED_DATA_RELATIVE_PATH is replaced by server
 
 #data directories
 RAWRHDIR=$BASEDIR/rh-raw
@@ -81,11 +85,17 @@ ADMINPASS="vitro123"
 #clear old fetches
 rm -rf $RAWRHDIR
 
-CSVFILE="files/granttemplatetest.csv"
+#CSVFILE="files/granttemplatetest.csv"
 XSLFILE="config/datamaps/csv-grant-to-vivo.xsl"
 
 # Execute Fetch
-$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE
+#$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE
+
+for CURRENT_FILE in ${UPLOADS_FOLDER}* #UPLOADS_FOLDER variable gets replaced by servlet
+do
+  $CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CURRENT_FILE
+done
+
 
 # backup fetch
 BACKRAW="raw"
@@ -248,6 +258,8 @@ $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
 $Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
+rm -rf $TEMPCOPYDIR
+
 # Backup posttransfer vivo database, symlink latest to latest.sql
 BACKPOSTDB="posttransfer"
 backup-mysqldb $BACKPOSTDB
@@ -259,12 +271,12 @@ backup-mysqldb $BACKPOSTDB
 echo $HARVESTER_TASK ' completed successfully'
 
 
-rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
-rm -f cookie.txt
-wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+#rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
+#rm -f cookie.txt
+#wget --cookies=on --keep-session-cookies --save-cookies=cookie.txt "http://localhost:8080/vivo/authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"
 
-rm -f "SearchIndex"
-wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
+#rm -f "SearchIndex"
+#wget --referer=http://first_page --cookies=on --load-cookies=cookie.txt --keep-session-cookies --save-cookies=cookie.txt http://localhost:8080/vivo/SearchIndex
 
 #/etc/init.d/tomcat6 stop
 #/etc/init.d/apache2 restart

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -55,8 +56,9 @@ public class XPathTool {
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
+	 * @throws UsageException user requested usage message
 	 */
-	private XPathTool(String[] args) throws IOException {
+	private XPathTool(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -122,7 +124,7 @@ public class XPathTool {
 		try {
 			String harvLev = System.getProperty("console-log-level");
 			System.setProperty("console-log-level", "OFF");
-			InitLog.initLogger(args, getParser());
+			InitLog.initLogger(args, getParser(), "h");
 			if(harvLev == null) {
 				System.clearProperty("console-log-level");
 			} else {
@@ -133,6 +135,10 @@ public class XPathTool {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {

@@ -17,7 +17,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/home/jrpence/workspace/HarvesterTrunk
+HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-dsr
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -26,8 +26,8 @@ export DATE=`date +%Y-%m-%d'T'%T`
 #	Since they can be located in another directory their path should be
 #	included within the classpath and the path enviromental variables.
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
-export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester-1.2beta2.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
-export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester-1.2beta2.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
 # Exit on first error
 # The -e flag prevents the script from continuing even though a tool fails.
@@ -48,16 +48,9 @@ echo "Full Logging in $HARVEST_NAME.$DATE.log"
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
 #rm -rf data
-if [ -d data]
-mv -f data data.$DATE
-fi
-
-# clone db
-# Databaseclone is a tool used to make a local copy of the database. One reason for this
-#	is that constantly querying a database could put undue load on a repository. This
-#	allows the use of intensive queries to happen to a local copy and only tie up the
-#	resources in the local machine.
-#harvester-databaseclone -X databaseclone.config.xml
+#if [ -d data]; then
+#mv -f data data.$DATE
+#fi
 
 
 # Execute Fetch
@@ -84,7 +77,7 @@ harvester-xsltranslator -X xsltranslator.config.xml
 # -h refers to the source translated records file, which was just produced by the translator step
 # -o refers to the destination model for harvested data
 # -d means that this call will also produce a text dump file in the specified location 
-harvester-transfer -h translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
+harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 # Execute Score for Grants
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
@@ -96,6 +89,11 @@ harvester-score -X score-grants.config.xml
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-sponsor.config.xml
 
+# Find matches using scores and rename nodes to matching uri
+# Using the data model created by the score phase, the match process changes the harvested uris for
+# 	comparison values above the chosen threshold within the xml configuration file.
+harvester-match -X match-grants.config.xml
+
 # Execute Score for People
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
@@ -105,11 +103,6 @@ harvester-score -X score-people.config.xml
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-dept.config.xml
-
-# Find matches using scores and rename nodes to matching uri
-# Using the data model created by the score phase, the match process changes the harvested uris for
-# 	comparison values above the chosen threshold within the xml configuration file.
-harvester-match -X match-grants.config.xml
 
 # Execute Score for Primary investigator roles
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
@@ -124,11 +117,13 @@ harvester-score -X score-copirole.config.xml
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
 # 	comparison values above the chosen threshold within the xml configuration file.
+# This config differs from the previous match config, in that it removes types and literals from the 
+#       resources in the incoming model for those that are considered a match.
 harvester-match -X match-roles.config.xml
 
 # Smush to remove duplicates
 # Using a particular predicate as an identifying data element the smush tool will rename those
-#	resources which match to be one resource.
+#	resources which have matching values of that predicate to be one resource.
 harvester-smush -X smush-grant.config.xml
 
 harvester-smush -X smush-org.config.xml

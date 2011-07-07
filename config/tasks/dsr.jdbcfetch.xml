@@ -17,8 +17,8 @@
     <Param name="fields">vwProjectTeam=ContractUFID,ContractNumber,ProjectUPN,PrimaryProject,InvestigatorID,Investigator,isPI</Param>
     <Param name="tableName">vwVIVO</Param>
     <!--<Param name="whereClause">vwVIVO=vwVIVO.PS_Contract LIKE '%18%'</Param>-->
-    <Param name="id">"vwVIVO=PS_Contract"</Param>
-    <Param name="fields">"vwVIVO=DSR_Number,PS_Contract,PS_Project,Title,RecordStatus,SubcontractType,Award_DT,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyNumber,Sponsor,SponsorID,FlowThruType,FlowThruSponsor,FlowThruID,PI,Type,Category,Program,ClinicalTrial,PrimeSponsorType,PrimeSponsorSource,PrimeAgency,PrimeCustID"</Param>
+    <Param name="id">vwVIVO=PS_Contract</Param>
+    <Param name="fields">vwVIVO=DSR_Number,PS_Contract,PS_Project,Title,RecordStatus,SubcontractType,Award_DT,TotalAwarded,ProjectBegin,ProjectEnd,PI_UFID,PI_College,PI_Dept,DeptID,ProjectDeptID,ContractPI,ContractUFID,ContractDeptID,ProjectUFID,FiscalYear,FullTitle,ProjectMajorSubdivision,AgencyNumber,Sponsor,SponsorID,FlowThruType,FlowThruSponsor,FlowThruID,PI,Type,Category,Program,ClinicalTrial,PrimeSponsorType,PrimeSponsorSource,PrimeAgency,PrimeCustID</Param>
     <Param name="delimiterPrefix">[</Param>
     <Param name="delimiterSuffix">]</Param>
     <Param name="validTableType">VIEW</Param>
