@@ -14,49 +14,48 @@
 #This tool requires you to have your ssh key on the sourceforge server
 #No attempts to sanitize or rationalize input have been made
 
-echo -n "Enter sourceforge username: "
-read NAME
+#echo -n "Enter sourceforge username: "
+#read NAME
+NAME=mbarbier
 
-echo -n "Enter release version: "
-read RELEASENAME
+#echo -n "Enter release version: "
+#read RELEASENAME
+RELEASENAME=TEST
 
-echo -n "Run junit tests before build?: "
-read RUNTEST
+#echo -n "Run junit tests before build?: "
+#read RUNTEST
+RUNTEST=n
 
 #update changelog, exit if not been updated
-echo -n "Has changelog been updated?: "
-read CHANGELOG
+#echo -n "Has changelog been updated?: "
+#read CHANGELOG
+CHANGELOG=y
 
 if [ "$CHANGELOG" != "y" ]; then
 	echo "Please update CHANGELOG and re-run"
 	exit
 fi 
 
-echo -n "Commit script version file changes?: "
-read COMMIT
+#echo -n "Commit script version file changes?: "
+#read COMMIT
+COMMIT=n
 
-echo -n "Upload files to sourceforge?: "
-read UPLOAD
+#echo -n "Upload files to sourceforge?: "
+#read UPLOAD
+UPLOAD=n
 
 #echo -n "Tag release?: "
 #read TAG
 
 # Set working directory
-#cd ~
-#mkdir temp-release-folder
-#cd temp-release-folder
+cd ~
+mkdir temp-release-folder
+cd temp-release-folder
 
-#get code
-#hg clone https://${NAME}@hg.code.sf.net/p/vivo/harvester/code-hg code-hg
-#cd code-hg
-#hg pull
-#hg update
-#cd Harvester/trunk
+svn checkout svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/svn/trunk vivo-harvester-svn
+cd vivo-harvester-svn
 
-cd ..
-cd bin
-chmod +x *
-cd ..
+find . -name '*.sh' | xargs chmod +x
 
 #update pom.xml,deb control, and env file with new version
 #hack alert -- this will be fixed later
@@ -66,7 +65,6 @@ cat pom1.xml pom2.xml > pom.xml
 rm pom1.xml pom2.xml
 
 sed -i "s/Version\: .*/Version\: $RELEASENAME/" src/deb/control/control
-#sed -i "s/VERSION=.*/VERSION=$RELEASENAME/" scripts/env
 
 #update conffiles from config
 
@@ -86,8 +84,7 @@ fi
 
 #commit pom file and deb control file
 if [ "$COMMIT" = "y" ]; then
-	hg commit -m "Update pom.xml and deb control file for release $RELEASENAME"
-	hg push
+	svn commit -m "Update pom.xml and deb control file for release $RELEASENAME"
 fi
 
 
@@ -99,12 +96,12 @@ mv harvester_*.deb harvester-$RELEASENAME.deb
 ar -x harvester-$RELEASENAME.deb
 
 #create tarball
-tar -xvzf data.tar.gz
+tar -xvzpf data.tar.gz #
 cd usr/share/vivo/
 
 #set permissions
-chmod +x harvester/bin/*
-tar -cvzf harvester-$RELEASENAME.tar.gz harvester/
+find . -name '*.sh' | xargs chmod +x
+tar -cvzpf harvester-$RELEASENAME.tar.gz harvester/
 mv harvester-$RELEASENAME.tar.gz ../../../
 cd ../../../
 
@@ -115,11 +112,11 @@ if [ "$UPLOAD" = "y" ]; then
 fi
 
 #tag
-#if [ "$TAG" = "y" ]; then
-#	cd $HARVESTERDIR
-#	svn cp -rHEAD svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/trunk svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/harvestersvn/Harvester/tags/$RELEASENAME
-#	svn commit -m "Tag Release $RELEASENAME"
-#fi
+if [ "$TAG" = "y" ]; then
+	cd $HARVESTERDIR
+	svn cp -rHEAD svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/svn/trunk svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/svn/tags/$RELEASENAME
+	svn commit -m "Tag Release $RELEASENAME"
+fi
 
 cd ~
 rm -rf temp-release-folder
