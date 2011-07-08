@@ -14,38 +14,32 @@
 #This tool requires you to have your ssh key on the sourceforge server
 #No attempts to sanitize or rationalize input have been made
 
-#echo -n "Enter sourceforge username: "
-#read NAME
-NAME=mbarbier
+echo -n "Enter sourceforge username: "
+read NAME
 
-#echo -n "Enter release version: "
-#read RELEASENAME
-RELEASENAME=TEST
+echo -n "Enter release version: "
+read RELEASENAME
 
-#echo -n "Run junit tests before build?: "
-#read RUNTEST
-RUNTEST=n
+echo -n "Run junit tests before build?: "
+read RUNTEST
 
 #update changelog, exit if not been updated
-#echo -n "Has changelog been updated?: "
-#read CHANGELOG
-CHANGELOG=y
+echo -n "Has changelog been updated?: "
+read CHANGELOG
 
 if [ "$CHANGELOG" != "y" ]; then
 	echo "Please update CHANGELOG and re-run"
 	exit
 fi 
 
-#echo -n "Commit script version file changes?: "
-#read COMMIT
-COMMIT=n
+echo -n "Commit script version file changes?: "
+read COMMIT
 
-#echo -n "Upload files to sourceforge?: "
-#read UPLOAD
-UPLOAD=n
+echo -n "Upload files to sourceforge?: "
+read UPLOAD
 
-#echo -n "Tag release?: "
-#read TAG
+echo -n "Tag release?: "
+read TAG
 
 # Set working directory
 cd ~
