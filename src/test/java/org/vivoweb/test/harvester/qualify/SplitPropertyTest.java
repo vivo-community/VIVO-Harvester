@@ -88,7 +88,6 @@ public class SplitPropertyTest extends TestCase {
 		Set<String> res3parts = new HashSet<String>();
 		for(Statement s : IterableAdaptor.adapt(this.jena.getJenaModel().listStatements(res3, this.scoreLabelParts, (RDFNode)null))) {
 			res3parts.add(s.getString());
-			System.out.println(s.getString());
 		}
 		assertTrue(res3parts.containsAll(part3s));
 		assertTrue(part3s.containsAll(res3parts));
