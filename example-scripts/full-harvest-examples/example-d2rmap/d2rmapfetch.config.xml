@@ -35,6 +35,6 @@ WHERE
 		<d2r:DatatypePropertyBridge d2r:property="foaf:firstName" d2r:column="FNAME"/>
 		<d2r:DatatypePropertyBridge d2r:property="core:middleName" d2r:column="MNAME"/>
 		<d2r:DatatypePropertyBridge d2r:property="foaf:lastName" d2r:column="LNAME"/>
-		<d2r:DatatypePropertyBridge d2r:property="core:workEmail" d2r:column="EMAIL"/>
+		<d2r:DatatypePropertyBridge d2r:property="core:email" d2r:column="EMAIL"/>
 	</d2r:ClassMap>
 </d2r:Map>
