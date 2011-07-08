@@ -81,12 +81,44 @@
 			<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid"/></ufVivo:ufid>
 			<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-			<core:workEmail><xsl:value-of select="$this/db-people:EMAIL" /></core:workEmail>
+			<core:email><xsl:value-of select="$this/db-people:EMAIL" /></core:email>
 			<xsl:if test="normalize-space( $this/db-people:PHONE_AREA ) or normalize-space( $this/db-people:PHONE_NUM )">
-				<core:workPhone><xsl:value-of select="$this/db-people:PHONE_AREA"/><xsl:value-of select="$this/db-people:PHONE_NUM"/></core:workPhone>
+				<core:phoneNumber>
+					<xsl:if test="normalize-space( $this/db-people:PHONE_AREA )">
+						<xsl:value-of select="$this/db-people:PHONE_AREA"/>
+					</xsl:if>
+					<xsl:if test="normalize-space( $this/db-people:PHONE_AREA ) and normalize-space( $this/db-people:PHONE_NUM )">
+						<xsl:text>-</xsl:text>
+					</xsl:if>
+					<xsl:if test="normalize-space( $this/db-people:PHONE_NUM )">
+						<xsl:analyze-string select="$this/db-people:PHONE_NUM" regex="^(...)(....).*?$">
+							<xsl:matching-substring>
+								<xsl:value-of select="regex-group(1)"/>
+								<xsl:text>-</xsl:text>
+								<xsl:value-of select="regex-group(2)"/>
+							</xsl:matching-substring>
+						</xsl:analyze-string>
+					</xsl:if>
+				</core:phoneNumber>
 			</xsl:if>
 			<xsl:if test="normalize-space( $this/db-people:FAX_AREA ) or normalize-space( $this/db-people:FAX_NUM )">
-				<core:workFax><xsl:value-of select="$this/db-people:FAX_AREA"/><xsl:value-of select="$this/db-people:FAX_NUM"/></core:workFax>
+				<core:faxNumber>
+					<xsl:if test="normalize-space( $this/db-people:FAX_AREA )">
+						<xsl:value-of select="$this/db-people:FAX_AREA"/>
+					</xsl:if>
+					<xsl:if test="normalize-space( $this/db-people:FAX_AREA ) and normalize-space( $this/db-people:FAX_NUM )">
+						<xsl:text>-</xsl:text>
+					</xsl:if>
+					<xsl:if test="normalize-space( $this/db-people:FAX_NUM )">
+						<xsl:analyze-string select="$this/db-people:FAX_NUM" regex="^(...)(....).*?$">
+							<xsl:matching-substring>
+								<xsl:value-of select="regex-group(1)"/>
+								<xsl:text>-</xsl:text>
+								<xsl:value-of select="regex-group(2)"/>
+							</xsl:matching-substring>
+						</xsl:analyze-string>
+					</xsl:if>
+				</core:faxNumber>
 			</xsl:if>
 			<xsl:if test="normalize-space( $this/db-people:FNAME )">
 				<foaf:firstName><xsl:value-of select="$this/db-people:FNAME"/></foaf:firstName>
