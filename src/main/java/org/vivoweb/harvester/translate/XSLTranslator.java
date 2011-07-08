@@ -147,7 +147,7 @@ public class XSLTranslator {
 			if(this.force || r.needsProcessed(this.getClass())) {
 				log.trace("Translating Record " + r.getID());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				xmlTranslate(new ByteArrayInputStream(r.getData().getBytes()), baos, new ByteArrayInputStream(this.translationString.getBytes()));
+				xmlTranslate(new ByteArrayInputStream(r.getData().getBytes("UTF-8")), baos, new ByteArrayInputStream(this.translationString.getBytes()));
 				this.outStore.addRecord(r.getID(), baos.toString(), this.getClass());
 				r.setProcessed(this.getClass());
 				baos.close();
