@@ -5,6 +5,8 @@
  ******************************************************************************/
 package org.vivoweb.harvester.score.algorithm;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * First Character Equality Test Algorithm
  * @author Michael Barbieri mbarbier@ufl.edu
@@ -15,7 +17,7 @@ public class CaseInsensitiveInitialTest implements Algorithm {
 	public float calculate(CharSequence itemX, CharSequence itemY) {
 		float testResult = 0f;
 		
-		if(itemX.length() > 0 && itemY.length() > 0) {
+		if(StringUtils.isNotBlank(itemX.toString()) && StringUtils.isNotBlank(itemY.toString())) {
 			char loweredItemXInitial = Character.toLowerCase(itemX.toString().trim().charAt(0)); 
 			char loweredItemYInitial = Character.toLowerCase(itemY.toString().trim().charAt(0));
 			if(loweredItemXInitial == loweredItemYInitial) {
