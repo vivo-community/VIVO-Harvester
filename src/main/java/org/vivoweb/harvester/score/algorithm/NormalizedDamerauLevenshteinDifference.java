@@ -1,12 +1,8 @@
-/******************************************************************************************************************************
- * Copyright (c) 2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+/*******************************************************************************
+ * Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
  * All rights reserved.
- * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this
- * distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
- * Contributors:
- * Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri
- * - initial API and implementation
- *****************************************************************************************************************************/
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ ******************************************************************************/
 package org.vivoweb.harvester.score.algorithm;
 
 import org.vivoweb.harvester.util.MathAide;
@@ -20,7 +16,13 @@ public class NormalizedDamerauLevenshteinDifference implements Algorithm {
 	@Override
 	public float calculate(CharSequence itemX, CharSequence itemY) {
 		float maxSize = Math.max(itemX.length(), itemY.length()) / 1f;
-		return ((maxSize - getDamerauLevenshtein(itemX, itemY)) / maxSize);
+		if(maxSize == 0f) {
+			return 0f;
+		}
+		float diff = getDamerauLevenshtein(itemX, itemY);
+		System.out.println(diff);
+		System.out.println(maxSize);
+		return ((maxSize - diff) / maxSize);
 	}
 	
 	/**
@@ -29,64 +31,129 @@ public class NormalizedDamerauLevenshteinDifference implements Algorithm {
 	 * @param y another string
 	 * @return the distance
 	 */
-	private int getDamerauLevenshtein(CharSequence x, CharSequence y) {
+	protected float getDamerauLevenshtein(CharSequence x, CharSequence y) {
 		if(x == null) {
 			throw new IllegalArgumentException("x cannot be null");
 		}
 		if(y == null) {
 			throw new IllegalArgumentException("y cannot be null");
 		}
+		
 		int sLen = x.length();
-		int bLen = y.length();
+		int tLen = y.length();
+		
 		if(sLen == 0) {
-			return bLen;
+			return tLen;
 		}
-		if(bLen == 0) {
+		if(tLen == 0){
 			return sLen;
 		}
-		CharSequence small;
-		CharSequence big;
-		if(sLen > bLen) {
-			big = x;
-			small = y;
-			int tmpLen = bLen;
-			bLen = sLen;
-			sLen = tmpLen;
+		
+		char[] source;
+		char[] target;
+		if(tLen > sLen) {
+			int tempSize = tLen;
+			tLen = sLen;
+			sLen = tempSize;
+			source = y.toString().toCharArray();
+			target = x.toString().toCharArray();
 		} else {
-			big = y;
-			small = x;
+			source = x.toString().toCharArray();
+			target = y.toString().toCharArray();
 		}
-		int[] prevprev = new int[sLen + 1];
-		int[] prev = new int[sLen + 1];
-		int[] dist = new int[sLen + 1];
-		int[] editCosts = new int[3];
-		int[] tmp; // memory holder
-		char bigJm1; // big[j-1]
-		int sameChar; // is small[i-1] == big[j-1]
-		int editTypeIndex; // the edit type
-		for(int i = 0; i <= sLen; i++) {
-			prev[i] = i;
-			prevprev[i] = i;
+		
+		int sLenp1 = sLen + 1;
+		int tLenp1 = tLen + 1;
+		
+		int[] dist = new int[tLenp1 * sLenp1];
+		
+		// initialize first row to 0..n
+		for(int col = 0; col < sLenp1; col++) {
+			dist[col] = col;
 		}
-		for(int j = 1; j <= bLen; j++) {
-			dist[0] = j;
-			bigJm1 = big.charAt(j - 1);
-			for(int i = 1; i <= sLen; i++) {
-				sameChar = (small.charAt(i - 1) == bigJm1) ? 0 : 1;
-				editCosts[0] = dist[i - 1] + 1; // deletion
-				editCosts[1] = prev[i] + 1; // addition
-				editCosts[2] = prev[i - 1] + sameChar; //substitution
-				editTypeIndex = MathAide.minIntIndex(editCosts);
-				dist[i] = editCosts[editTypeIndex];
-				if((i > 1) && (j > 1) && (small.charAt(i) == big.charAt(j - 1)) && (small.charAt(i - 1) == big.charAt(j))) {
-					dist[i] = MathAide.minIntIndex(dist[i], prevprev[i - 2] + sameChar); // transposition
+		
+		// initialize first column to 0..m
+		int row = sLenp1;
+		for(int inc = 1; inc < tLenp1; inc++) {
+			dist[row] = inc;
+			row += sLenp1;
+		}
+		
+		// throughout these loops, sIm1 = sIndex-1
+		int sIm1 = 0;
+		for(int sIndex = 1; sIndex < sLenp1; sIndex++) {
+			row = sIndex;
+			
+			// throughout the for tIndex loop, tIm1 = tIndex-1
+			int tIm1 = 0;
+			for(int tIndex = 1; tIndex < tLenp1; tIndex++) {
+				// hold position of previous row
+				int prev = row;
+				// increment row by sLenp1 to point to the new (this iteration's) row
+				row += sLenp1;
+
+				int sameChar = ((source[sIm1] == target[tIm1]) ? 0 : 1);
+				int[] editCosts = new int[3];
+				editCosts[0] = dist[prev] + 1; // addition
+				editCosts[1] = dist[row-1] + 1; // deletion
+				editCosts[2] = dist[prev - 1] + sameChar; // substitution
+				String transpose = "";
+				if(sameChar != 0) {
+					/* transposition */
+					if(sIndex < sLen && tIndex < tLen) {
+						if(source[sIndex] == target[tIm1] && source[sIm1] == target[tIndex]) {
+							int tr = dist[(prev) - 1];
+							if(tr < editCosts[0]) {
+								editCosts[0] = tr;
+								transpose = " - transpose";
+							}
+						}
+					}
 				}
+				int editTypeIndex = MathAide.minIntIndex(editCosts);
+				if(editTypeIndex == 0) {
+					System.out.println("delete");
+				} else if(editTypeIndex == 1) {
+					System.out.println("add");
+				} else if(editTypeIndex == 2) {
+					System.out.println("substitute"+transpose);
+				}
+				distAugment(editTypeIndex, source[sIm1], target[tIm1]);
+				dist[row] = editCosts[editTypeIndex];
+				// tIm1 = tIndex := tIndex-1 for the next iteration
+				tIm1 = tIndex;
 			}
-			tmp = prevprev; // hold existing memory
-			prevprev = prev;
-			prev = dist;
-			dist = tmp; // reuse existing memory
+			// sIm1 = sIndex := tIndex-1 for the next iteration
+			sIm1 = sIndex;
 		}
-		return prev[sLen];
+		float aug = getAugment();
+		resetAugment();
+		return dist[row] + aug;
+	}
+	
+	/**
+	 * Reset the augmentation
+	 */
+	protected void resetAugment() {
+		// do nothing
+	}
+
+	/**
+	 * Option additional calculation hook on small[i] and big[j] to store an augmentation to the final cost
+	 * @param editTypeIndex the index of the edit type
+	 * @param si character from small at char (i)
+	 * @param bj character from big at char (j)
+	 */
+	@SuppressWarnings("unused")
+	protected void distAugment(int editTypeIndex, char si, char bj) {
+		// do nothing
+	}
+	
+	/**
+	 * Get the augmentation for the final cost
+	 * @return the augment
+	 */
+	protected float getAugment() {
+		return 0f;
 	}
 }

@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
-<!--  All rights reserved. This program and the accompanying materials -->
-<!--  are made available under the terms of the new BSD license -->
-<!--  which accompanies this distribution, and is available at -->
-<!--  http://www.opensource.org/licenses/bsd-license.html -->
- 
-<!--  Contributors: -->
-<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
-
-<!-- 
-Transfer - Transfers RDF data from one Jena model to another.
------
-Transfer allows you to copy RDF data from one location to another.  This is ultimately used for adding data that the Harvester has been
-manipulating into VIVO, and also for data transfers during intermediate steps.  It can also be used to pull data from a record handler
-(such as an H2 database or RDF/XML text files) into a Jena model, and to output data to a file in RDF/XML format.  Finally, Transfer can
-be used to remove existing triples from a Jena model.
- -->
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
 <Config>
     <!-- 
     a - Description and repercussions

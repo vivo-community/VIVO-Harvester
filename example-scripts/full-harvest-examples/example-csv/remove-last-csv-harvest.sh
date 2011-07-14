@@ -1,13 +1,8 @@
-#!/bash
+#!/bin/bash
 
-# Copyright (c) 2010-2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
-# All rights reserved. This program and the accompanying materials
-# are made available under the terms of the new BSD license
-# which accompanies this distribution, and is available at
-# http://www.opensource.org/licenses/bsd-license.html
-# 
-# Contributors:
-#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri - initial API and implementation
+#Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+#All rights reserved.
+#This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 
 # set to the directory where the harvester was installed or unpacked
 # HARVESTER_INSTALL_DIR is set to the location of the installed harvester
@@ -18,7 +13,7 @@
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
 HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
-export HARVEST_NAME=example-dsr
+export HARVEST_NAME=example-csv
 export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
@@ -41,6 +36,11 @@ set -e
 #	to request this file. The passwords and user-names are filter out of this file
 #	To prevent these logs from containing sensitive information.
 echo "Full Logging in $HARVEST_NAME.$DATE.log"
+
+echo "addition node count to be removed: " `grep -c "<rdf:Description" data/vivo-additions.rdf.xml`
+
+echo "subtraction node count to be added: " `grep -c "<rdf:Description" data/vivo-subtractions.rdf.xml`
+
 
 # During the reverse process the previous harvest model needs to be adjusted when the
 #	vivo model is also adjusted. This keeps the previous model as a mirror of the changes

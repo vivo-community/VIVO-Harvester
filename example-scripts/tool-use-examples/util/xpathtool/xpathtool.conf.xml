@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-XPathTool - Runs an XPath query on a file and writes the first result to the console.
------
-XPathTool runs a single XPath query on a specified file, and writes the first result, if any, to the console.  It can be used to parse out
-values in configuration files, which can then be placed in command-line scripting variables.  If the file could not be parsed an exception
-will be output.  If there was no data nothing will be output.
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 -->
 <Config>
     <!-- 

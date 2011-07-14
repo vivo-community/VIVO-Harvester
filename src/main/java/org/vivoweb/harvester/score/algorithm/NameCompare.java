@@ -1,3 +1,8 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+ * All rights reserved.
+ * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+ ******************************************************************************/
 package org.vivoweb.harvester.score.algorithm;
 
 /**
@@ -14,7 +19,7 @@ public class NameCompare implements Algorithm {
 			throw new IllegalArgumentException("y cannot be null");
 		}
 		if(x.length() > 1 && y.length() > 1) {
-			return new NormalizedLevenshteinDifference().calculate(x, y);
+			return new NormalizedDamerauLevenshteinDifference().calculate(x, y);
 		}
 		return new CaseInsensitiveInitialTest().calculate(x, y);
 	}

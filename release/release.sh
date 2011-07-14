@@ -42,14 +42,19 @@ echo -n "Tag release?: "
 read TAG
 
 # Set working directory
-cd ~
-mkdir temp-release-folder
-cd temp-release-folder
+#cd ~
+#mkdir temp-release-folder
+#cd temp-release-folder
 
-svn checkout svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/svn/trunk vivo-harvester-svn
-cd vivo-harvester-svn
+#svn checkout svn+ssh://${NAME}@svn.code.sf.net/p/vivo/harvester/svn/trunk vivo-harvester-svn
+#cd vivo-harvester-svn
 
-find . -name '*.sh' | xargs chmod +x
+#find . -name '*.sh' | xargs chmod +x
+
+cd ..
+cd bin
+chmod +x *
+cd ..
 
 #update pom.xml,deb control, and env file with new version
 #hack alert -- this will be fixed later

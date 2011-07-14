@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-RenameResources - Changes the URI for all matching URIs
------
-RenameResources takes a set of URIs in a particular model and changes them all to a particular URI.
- -->
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
 <Config>
     <!-- 
     a - Description and repercussions

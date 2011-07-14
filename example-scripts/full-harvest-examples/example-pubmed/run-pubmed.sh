@@ -1,13 +1,8 @@
 #!/bin/bash
 
-# Copyright (c) 2010-2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
-# All rights reserved. This program and the accompanying materials
-# are made available under the terms of the new BSD license
-# which accompanies this distribution, and is available at
-# http://www.opensource.org/licenses/bsd-license.html
-# 
-# Contributors:
-#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri - initial API and implementation
+#Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+#All rights reserved.
+#This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 
 # set to the directory where the harvester was installed or unpacked
 # HARVESTER_INSTALL_DIR is set to the location of the installed harvester
@@ -40,7 +35,14 @@ set -e
 #	a solution to the problem. It has become common practice in addressing a problem
 #	to request this file. The passwords and usernames are filtered out of this file
 #	to prevent these logs from containing sensitive information.
-echo "Full Logging in pubmed-harvest-$DATE.log"
+echo "Full Logging in $HARVEST_NAME.$DATE.log"
+if [ ! -d logs ]; then
+  mkdir logs
+fi
+cd logs
+touch $HARVEST_NAME.$DATE.log
+ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
+cd ..
 
 #clear old data
 # For a fresh harvest, the removal of the previous information maintains data integrity.

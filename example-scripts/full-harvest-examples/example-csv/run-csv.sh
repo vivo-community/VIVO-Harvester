@@ -1,13 +1,8 @@
 #!/bin/bash
 
-# Copyright (c) 2010-2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
-# All rights reserved. This program and the accompanying materials
-# are made available under the terms of the new BSD license
-# which accompanies this distribution, and is available at
-# http://www.opensource.org/licenses/bsd-license.html
-# 
-# Contributors:
-#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri - initial API and implementation
+#Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+#All rights reserved.
+#This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 
 # set to the directory where the harvester was installed or unpacked
 # HARVESTER_INSTALL_DIR is set to the location of the installed harvester
@@ -18,7 +13,7 @@
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
 HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
-export HARVEST_NAME=example-jdbc
+export HARVEST_NAME=example-csv
 export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
@@ -40,7 +35,14 @@ set -e
 #	a solution to the problem. It has become common practice in addressing a problem
 #	to request this file. The passwords and usernames are filtered out of this file
 #	to prevent these logs from containing sensitive information.
-echo "Full Logging in jdbc-harvest-$DATE.log"
+echo "Full Logging in $HARVEST_NAME.$DATE.log"
+if [ ! -d logs ]; then
+  mkdir logs
+fi
+cd logs
+touch $HARVEST_NAME.$DATE.log
+ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
+cd ..
 
 #clear old data
 # For a fresh harvest, the removal of the previous information maintains data integrity.
@@ -49,21 +51,11 @@ echo "Full Logging in jdbc-harvest-$DATE.log"
 # 	the required harvest data.  
 rm -rf data
 
+
 # Import CSV
-# CSVtoJDBC is a tool 
-
-# CONVERT THIS TO NEW FORMAT
-##CSVFILE="files/persontemplatetest.csv"
-#XSLFILE="config/datamaps/csv-people-to-vivo.xsl"
-
-#for CURRENT_FILE in ${UPLOADS_FOLDER}* #UPLOADS_FOLDER variable gets replaced by servlet
-#do
-#	$CSVtoJDBC -i $CURRENT_FILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV2"
-#
-#	$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
-#done
-# CONVERT THIS TO NEW FORMAT
-
+# Takes the data from a comma-separated-values file and places it in a relational database.  Then
+#   JDBCFetch, in the next step, can use this to generate XML.
+harvester-csvtojdbc -X csvtojdbc.config.xml
 
 # Execute Fetch
 # This stage of the script is where the information is gathered together into one local

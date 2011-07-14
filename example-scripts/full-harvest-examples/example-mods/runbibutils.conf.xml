@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  Copyright (c) 2011 Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams -->
-<!--  All rights reserved. This program and the accompanying materials -->
-<!--  are made available under the terms of the new BSD license -->
-<!--  which accompanies this distribution, and is available at -->
-<!--  http://www.opensource.org/licenses/bsd-license.html -->
- 
-<!--  Contributors: -->
-<!--      Michael Barbieri, Christopher Haines, James Pence, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams - initial API and implementation -->
-
-<!-- 
-RunBibutils - Runs the Bibutils tool, translating files from various sources into MODS format
--
-Bibutils is a collection of open-source tools which translate files of many different formats into the Library of Congress's
-Metadata Object Description Schema (MODS) XML format.  This format is supported by a pre-written sample XSLT in the Harvester, thus allowing
-Harvester to support all these different formats.  The RunBibutils tool is provided as a convenience to perform batch Bibutils runs on
-data coming in from a fetch.
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 -->
 <Task>
     <!-- 
