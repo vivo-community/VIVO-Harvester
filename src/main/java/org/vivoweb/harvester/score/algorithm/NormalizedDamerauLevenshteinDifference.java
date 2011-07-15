@@ -20,8 +20,6 @@ public class NormalizedDamerauLevenshteinDifference implements Algorithm {
 			return 0f;
 		}
 		float diff = getDamerauLevenshtein(itemX, itemY);
-		System.out.println(diff);
-		System.out.println(maxSize);
 		return ((maxSize - diff) / maxSize);
 	}
 	
@@ -97,7 +95,6 @@ public class NormalizedDamerauLevenshteinDifference implements Algorithm {
 				editCosts[0] = dist[prev] + 1; // addition
 				editCosts[1] = dist[row-1] + 1; // deletion
 				editCosts[2] = dist[prev - 1] + sameChar; // substitution
-				String transpose = "";
 				if(sameChar != 0) {
 					/* transposition */
 					if(sIndex < sLen && tIndex < tLen) {
@@ -105,19 +102,11 @@ public class NormalizedDamerauLevenshteinDifference implements Algorithm {
 							int tr = dist[(prev) - 1];
 							if(tr < editCosts[0]) {
 								editCosts[0] = tr;
-								transpose = " - transpose";
-							}
+								}
 						}
 					}
 				}
 				int editTypeIndex = MathAide.minIntIndex(editCosts);
-				if(editTypeIndex == 0) {
-					System.out.println("delete");
-				} else if(editTypeIndex == 1) {
-					System.out.println("add");
-				} else if(editTypeIndex == 2) {
-					System.out.println("substitute"+transpose);
-				}
 				distAugment(editTypeIndex, source[sIm1], target[tIm1]);
 				dist[row] = editCosts[editTypeIndex];
 				// tIm1 = tIndex := tIndex-1 for the next iteration
