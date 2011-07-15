@@ -13,5 +13,5 @@
 	
 	<!--  OPTIONS -->
 	<Param name="oldNamespace">http://vivo.ufl.edu/translated/peoplesoft/person/</Param>
-	<Param name="newNamespace">http://vivo.ufl.edu/inidividual/</Param>
+	<Param name="newNamespace">http://vivo.ufl.edu/individual/</Param>
 </Config>

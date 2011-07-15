@@ -6,10 +6,13 @@
 -->
 <Task>
 	<!--INPUT -->
-	<Param name="input-config">matched-data.model.xml</Param>
+	<Param name="input-config">harvested-data.model.xml</Param>
 	
-	<!--SCORING DATA OUTPUT -->
+	<!--SCORING DATA -->
 	<Param name="score-config">score-data.model.xml</Param>
+	
+	<!--OUTPUT-->
+	<Param name="output-config">matched-data.model.xml</Param>
 	
 	<!--OPTIONS -->
 	<Param name="rename">true</Param>

@@ -11,7 +11,7 @@
 	<!--SCORING DATA -->
 	<Param name="score-config">score-data.model.xml</Param>
 	
-	<!--SCORING DATA -->
+	<!--OUTPUT -->
 	<Param name="output-config">matched-data.model.xml</Param>
 	
 	<!--OPTIONS -->
