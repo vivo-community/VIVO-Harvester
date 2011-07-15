@@ -8,9 +8,6 @@
 #This tool requires you to have your ssh key on the sourceforge server
 #No attempts to sanitize or rationalize input have been made
 
-echo -n "Enter sourceforge username: "
-read NAME
-
 echo -n "Enter release version: "
 read RELEASENAME
 
@@ -19,20 +16,21 @@ read RUNTEST
 
 echo -n "Upload files to sourceforge?: "
 read UPLOAD
-
-#update pom.xml,deb control, and env file with new version
-#hack alert -- this will be fixed later
-#sed 10q pom.xml | sed "s/<version>.*<\/version>/<version>$RELEASENAME<\/version>/" > pom1.xml
-#sed '1,10d' pom.xml > pom2.xml
-#cat pom1.xml pom2.xml > pom.xml
-#rm pom1.xml pom2.xml
-#sed -i "s/Version\: .*/Version\: $RELEASENAME/" src/deb/control/control
-
-#update conffiles from config
-
+if [ "$UPLOAD" = "y" ]; then
+	echo -n "Enter sourceforge username: "
+	read NAME
+fi
 
 #assuming inside release dir, up one dir
 cd ..
+
+#update pom.xml,deb control, and env file with new version
+#hack alert -- this will be fixed later
+sed 10q pom.xml | sed "s/<version>.*<\/version>/<version>$RELEASENAME<\/version>/" > pom1.xml
+sed '1,10d' pom.xml > pom2.xml
+cat pom1.xml pom2.xml > pom.xml
+rm pom1.xml pom2.xml
+sed -i "s/Version\: .*/Version\: $RELEASENAME/" src/deb/control/control
 
 #build
 if [ "$RUNTEST" = "y" ]; then
