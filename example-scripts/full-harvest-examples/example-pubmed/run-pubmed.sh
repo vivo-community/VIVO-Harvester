@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-export HARVESTER_INSTALL_DIR=/home/cah//workspace/code-hg/Harvester/trunk
+export HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-pubmed
 export DATE=`date +%Y-%m-%d'T'%T`
 
