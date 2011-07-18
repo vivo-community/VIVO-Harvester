@@ -37,6 +37,12 @@ set -e
 #	To prevent these logs from containing sensitive information.
 echo "Full Logging in $HARVEST_NAME.$DATE.log"
 
+# Be aware that the additions file may have data which was duplicating existing triples and
+#	removing the additions file will result in removing the previously existing triples.
+#	To prevent post-removal data issues inspections and edits of the additions may need
+#	to be done.
+
+
 echo "addition node count to be removed: " `grep -c "<rdf:Description" data/vivo-additions.rdf.xml`
 
 echo "subtraction node count to be added: " `grep -c "<rdf:Description" data/vivo-subtractions.rdf.xml`
