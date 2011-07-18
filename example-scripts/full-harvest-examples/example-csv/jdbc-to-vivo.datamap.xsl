@@ -80,12 +80,12 @@
 			<localVivo:uId rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$uid"/></localVivo:uId>
 			<localVivo:harvestedBy>Example.JDBCFetch-Harvester</localVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-			<core:workEmail><xsl:value-of select="$this/db-people:EMAIL" /></core:workEmail>
+			<core:email><xsl:value-of select="$this/db-people:EMAIL" /></core:email>
 			<xsl:if test="normalize-space( $this/db-people:PHONE )">
-				<core:workPhone><xsl:value-of select="$this/db-people:PHONE"/></core:workPhone>
+				<core:phoneNumber><xsl:value-of select="$this/db-people:PHONE"/></core:phoneNumber>
 			</xsl:if>
 			<xsl:if test="normalize-space( $this/db-people:FAX )">
-				<core:workFax><xsl:value-of select="$this/db-people:FAX"/></core:workFax>
+				<core:faxNumber><xsl:value-of select="$this/db-people:FAX"/></core:faxNumber>
 			</xsl:if>
 			<xsl:if test="normalize-space( $this/db-people:FNAME )">
 				<foaf:firstName><xsl:value-of select="$this/db-people:FNAME"/></foaf:firstName>
