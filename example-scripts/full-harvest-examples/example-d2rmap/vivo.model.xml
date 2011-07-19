@@ -106,5 +106,4 @@
     <Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
     <Param name="dbUser">vitro</Param>
     <Param name="dbPass">vitro123</Param>
-    <Param name="namespace">http://vivo.mydomain.edu/individual/</Param>
 </Model>

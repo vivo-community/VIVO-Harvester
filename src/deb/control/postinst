@@ -1,9 +1,10 @@
 #!/bin/bash
-chmod +x /usr/share/vivo/harvester/bin/harvester-*
+chmod +x /usr/share/vivo/harvester/bin/harvester*
+chmod +x /usr/share/vivo/harvester/vivo/scripts/*
 find /usr/share/vivo/harvester -name '*.sh' | xargs chmod +x
 chmod -R ugo+rw /usr/share/vivo/harvester
 
-mkdir /usr/share/vivo/harvester/logs  #uncomment if .deb has no logs/ folder
+mkdir /usr/share/vivo/harvester/logs
 chgrp -R tomcat6 /usr/share/vivo/harvester/logs/
 chmod -R g+w /usr/share/vivo/harvester/logs/
 

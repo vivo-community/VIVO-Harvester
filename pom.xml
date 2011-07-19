@@ -4,7 +4,7 @@
 
 	<groupId>org.vivoweb</groupId>
 	<artifactId>harvester</artifactId>
-	<version>1.2RC4</version>
+	<version>1.2-rc5</version>
 	<packaging>jar</packaging>
 
 
@@ -149,6 +149,15 @@
 										<prefix>/usr/share/vivo/harvester/scripts</prefix>
 									</mapper>
 								</data>--> 
+								<data>
+									<src>${project.basedir}/example-datamaps</src>
+									<type>directory</type>
+									<excludes>**/*.svn*/**,**/data/**,**/previous-harvest/**</excludes>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/vivo/harvester/example-datamaps</prefix>
+									</mapper>
+								</data>
 								<data>
 									<src>${project.basedir}/example-scripts/full-harvest-examples</src>
 									<type>directory</type>
