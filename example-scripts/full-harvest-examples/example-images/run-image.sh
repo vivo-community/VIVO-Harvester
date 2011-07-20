@@ -37,7 +37,8 @@ export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTE
 echo "Full Logging in image-harvest-$DATE.log"
 
 #Get a model of the people who dont have images 
-nano model.xml
+rm -f model.xml
+touch model.xml
 harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID  } WHERE { ?URI <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID . NOT EXISTS { ?URI <http://vitro.mannlib.cornell.edu/ns/vitro/public#mainImage> ?y . } }" -Q RDF/XML -f model.xml
 
 #Get the ufids of the people who dont have images
@@ -47,5 +48,12 @@ grep -o "[0-9]\{8\}</j.2:ufid>$" model.xml  > ufids.txt
 #	For each image in the uplod folder there is corresponding person in VIVO
 #	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
 java createFolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
+
+#Create XML files for all the images 
+rm -rf xmlFiles
+mkdir xmlFiles
+cd xmlFiles
+ls -1 $HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/ | sed 's/[^0-9]*//g' | xargs -n1 -I {} sh -c "echo \<?xml version="1.0"?\>\<ufid\>'{}'\</ufid\> > '{}'" 
+cd ..
 
 echo '******* END ********'
