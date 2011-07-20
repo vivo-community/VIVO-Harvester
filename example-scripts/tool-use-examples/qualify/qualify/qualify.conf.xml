@@ -17,19 +17,19 @@
 <%  wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log   %>
 <%          level, the more detailed the messages.                                                                    %>
 <%      Possible Values:                                                                                              %>
-<%          <wordiness>OFF</wordiness> - Results in no messages being displayed.                                      %>
-<%          <wordiness>ERROR</wordiness> - Results in only messages from the ERROR level to be displayed.             %>
+<%          <Param name="wordiness">OFF</Param> - Results in no messages being displayed.                             %>
+<%          <Param name="wordiness">ERROR</Param> - Results in only messages from the ERROR level to be displayed.    %>
 <%              Error messages detail when the tool has experienced an error preventing it from completing its task   %>
-<%          <wordiness>WARN</wordiness> - Results in only messages above and including WARN level messages            %>
+<%          <Param name="wordiness">WARN</Param> - Results in only messages above and including WARN level messages   %>
 <%              to be displayed. Match does not produce any WARN level messages.                                      %>
-<%          <wordiness>INFO</wordiness> - (Default) Results in all messages above and including INFO level            %>
+<%          <Param name="wordiness">INFO</Param> - (Default) Results in all messages above and including INFO level   %>
 <%              messages to be displayed. INFO level messages detail when the tool has started and ended and when it  %>
 <%              begins/ends a phase ('Finding matches' and 'Beginning Rename of matches') and how many matches have   %>
 <%              been found.                                                                                           %>
-<%          <wordiness>DEBUG</wordiness> - Results in all messages above and including DEBUG level messages           %>
+<%          <Param name="wordiness">DEBUG</Param> - Results in all messages above and including DEBUG level messages  %>
 <%              to be displayed. DEBUG level messages detail each matching input URI to its VIVO URI as they are      %>
 <%              processed. Additionally, it will display stacktrace information if an error occurs.                   %>
-<%          <wordiness>ALL</Param> or TRACE<wordiness> - Results in all messages above and including TRACE            %>
+<%          <Param name="wordiness">ALL or TRACE</Param> - Results in all messages above and including TRACE          %>
 <%              level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.    %>
 <%              TRACE level messages details every matching set as it is processed in each phase along with SPARQL    %>
 <%              queries and start and stop for their execution.                                                       %>
