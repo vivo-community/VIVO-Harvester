@@ -37,7 +37,7 @@ FROM person AS emp
 LEFT JOIN user AS login ON 
 	emp.person_id = login.person_id AND login.expired = 0 
 WHERE 
-	emp.publish_ok = 1" d2r:groupBy="UID"  d2r:uriPattern="http://some.org/vivo/individual/@@UID@@">
+	emp.publish_ok = 1" d2r:groupBy="NETID"  d2r:uriPattern="http://vivoweb.org/harvest/example/d2r/person/person@@NETID@@">
 		<d2r:DatatypePropertyBridge d2r:property="rdfs:label" d2r:column="FULLNAME"/>
 		<d2r:DatatypePropertyBridge d2r:property="foaf:firstName" d2r:column="FNAME"/>
 		<d2r:DatatypePropertyBridge d2r:property="core:middleName" d2r:column="MNAME"/>
@@ -57,7 +57,7 @@ WHERE
 	dept.dept_name AS NAME, 
 	dept.type_id AS TYPE, 
 	dept.super_dept_id AS SUPERDEPTID 
-FROM department AS dept" d2r:groupBy="DEPTID"  d2r:uriPattern="http://some.org/vivo/individual/@@DEPTID@@">
+FROM department AS dept" d2r:groupBy="DEPTID"  d2r:uriPattern="http://vivoweb.org/harvest/example/d2r/org/dept@@DEPTID@@">
 		<d2r:DatatypePropertyBridge d2r:property="rdfs:label" d2r:column="NAME"/>
 		<d2r:DatatypePropertyBridge d2r:property="localVivo:deptId" d2r:column="DEPTID"/>
 	</d2r:ClassMap>	
