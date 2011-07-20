@@ -69,7 +69,7 @@ harvester-d2rmapfetch -X d2rmapfetch.config.xml
 # -h refers to the source translated records file, which was just produced by the translator step
 # -o refers to the destination model for harvested data
 # -d means that this call will also produce a text dump file in the specified location 
-harvester-transfer -h translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
+harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 # Execute Score
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
