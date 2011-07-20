@@ -81,7 +81,7 @@ tar -xzpf data.tgz
 #	data storage structure similar to a database, but is in RDF.
 # The harvester tool Transfer is used to move/add/remove/dump data in models.
 # For this call on the transfer tool:
-# -h refers to the source translated records file, which was just produced by the translator step
+# -s refers to the source translated records file, which was just produced by the translator step
 # -o refers to the destination model for harvested data
 # -d means that this call will also produce a text dump file in the specificed location 
 #harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
