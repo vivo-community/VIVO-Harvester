@@ -216,7 +216,10 @@ rm -rf $TEMPCOPYDIR
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-echo $HARVESTER_TASK ' completed successfully'
+#echo $HARVESTER_TASK ' completed successfully'
+
+#IMPORTANT: This line must exist AS-IS in every File Harvest script.  The server checks the output and uses this line to verify that the harvest completed.
+echo 'File Harvest completed successfully' 
 
 #rm cookie.txt
 #rm "authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"
