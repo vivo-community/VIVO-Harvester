@@ -13,7 +13,7 @@ set -e
 HARVESTERDIR=${WORKING_DIRECTORY} #replaced by servlet
 cd $HARVESTERDIR
 
-HARVESTER_TASK=csv
+HARVESTER_TASK=csvGrant
 
 if [ -f vivo/scripts/env ]; then
   . vivo/scripts/env
@@ -83,7 +83,7 @@ rm -rf $RAWRHDIR
 rm -rf $RAWCSVDIR
 
 #CSVFILE="files/granttemplatetest.csv"
-XSLFILE="config/datamaps/csv-grant-to-vivo.xsl"
+XSLFILE="vivo/datamaps/csv-grant-to-vivo.xsl"
 
 # Execute Fetch
 #$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE

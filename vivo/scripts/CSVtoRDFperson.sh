@@ -13,7 +13,7 @@ set -e
 HARVESTERDIR=${WORKING_DIRECTORY} #replaced by servlet
 cd $HARVESTERDIR
 
-HARVESTER_TASK=csvpeople
+HARVESTER_TASK=csvPerson
 
 if [ -f vivo/scripts/env ]; then
   . vivo/scripts/env
@@ -77,7 +77,7 @@ rm -rf $RAWRHDIR
 rm -rf $RAWCSVDIR
 
 #CSVFILE="files/persontemplatetest.csv"
-XSLFILE="config/datamaps/csv-people-to-vivo.xsl"
+XSLFILE="vivo/datamaps/csv-people-to-vivo.xsl"
 
 # Execute Fetch
 #$CSVtoJDBC -i $CSVFILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"

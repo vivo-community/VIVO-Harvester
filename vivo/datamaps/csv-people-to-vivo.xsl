@@ -13,7 +13,7 @@
 	xmlns:score = 'http://vivoweb.org/ontology/score#'
     xmlns:foaf = 'http://xmlns.com/foaf/0.1/'
     xmlns:bibo = 'http://purl.org/ontology/bibo/'
-    xmlns:db-CSV='jdbc:h2:harvested-data/csv/csv/store/fields/CSV/'>
+    xmlns:db-CSV='nullfields/CSV/'>
 	
 	<xsl:output method = "xml" indent = "yes"/>
 	<xsl:variable name = "baseURI">http://vivoweb.org/harvest/csvfile/</xsl:variable>
