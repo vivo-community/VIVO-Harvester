@@ -64,7 +64,7 @@ grep -o "[0-9]\{8\}</j.2:ufid>$" model.xml  > ufids.txt
 #Generate upload and backup folders 
 #	For each image in the uplod folder there is corresponding person in VIVO
 #	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
-java createFolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
+harvester-createimagefolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
 
 #Create XML files for all the images
 #	Each xml file contains just the ufid of a person	 
