@@ -8,7 +8,7 @@
 	update pubmed xsl to reflect core:email instead of core:workEmail
 	vivo harvester now integrated with vivo web site via ingest menu
 		Ingest people and ingest grants via csv templates
-	revampled d2rmap, and mods harvester examples
+	revamped d2rmap, and mods harvester examples
 	new csv example script
 		allows importing directly from a csv file
 	new image import script
@@ -17,12 +17,13 @@
 	script formatting cleanups and standardization
 	example pubmed script authorship mismatching fixed
 		this should show vastly improved performance and consistency
-	Harvester minimum memory requirement is now 256mb\
+	Harvester minimum memory requirement is now 256mb
 	Transfer -h argument changed to -s to prevent confusion with -h being help
 	Cleanup copyright headers -- we're now using authors file and standard template headers
 	Update packaging permissions to ease post-installation configuration
 	Fixed "missing author" bug on ingest publications
 	Add symlink to latest log in logs folder
+	Added counts to inform number of new objects imported by a harvest
 	
 1.1.1
 	MODS
