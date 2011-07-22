@@ -1,13 +1,9 @@
 #!/bin/bash
 
-# Copyright (c) 2010-2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
-# All rights reserved. This program and the accompanying materials
-# are made available under the terms of the new BSD license
-# which accompanies this distribution, and is available at
-# http://www.opensource.org/licenses/bsd-license.html
-# 
-# Contributors:
-#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri - initial API and implementation
+#Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+#All rights reserved.
+#This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+
 
 # set to the directory where the harvester was installed or unpacked
 # HARVESTER_INSTALL_DIR is set to the location of the installed harvester
@@ -63,7 +59,7 @@ grep -o "[0-9]\{8\}</j.2:ufid>$" model.xml  > ufids.txt
 
 #Generate upload and backup folders 
 #	For each image in the uplod folder there is corresponding person in VIVO
-#	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
+#	Back up folder contains images for which there is no corresponding people in VIVO or there is a corresponding person and already have an image
 harvester-createimagefolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
 
 #Create XML files for all the images
@@ -90,6 +86,11 @@ harvester-xsltranslator -X xsltranslator.config.xml
 # -s refers to the source translated records file, which was just produced by the translator step
 # -o refers to the destination model for harvested data
 # -d means that this call will also produce a text dump file in the specified location 
-harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
+harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/vivo-additions.rdf.xml
 
-echo '******* END ********'
+#Output some counts
+PICS=`cat data/vivo-additions.rdf.xml | grep mainImg | wc -l`
+PEOPLE=`cat data/vivo-additions.rdf.xml | grep peopleImage | wc -l`
+echo "Imported $PICS pictures for $PEOPLE persons"
+
+echo 'Harvest completed successfully'
