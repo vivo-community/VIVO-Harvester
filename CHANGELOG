@@ -1,9 +1,28 @@
 1.2
 	Scoring
-		Tiered Scoring is now implemented allowing for more complex workflows and performance improvements
-		
-	Old style scripts/ and configs/ folder are now deprecated in favor of the self-contained scripts and config files folder
+		Tiered Scoring is now implemented allowing for more complex workflows and performance improvements	
+	The examples are now located inside the example-scripts folder. Each folder is a self-contained harvest.
+		Old style scripts/ and configs/ folder are now deprecated in favor of the self-contained scripts and config files folder.
+	remove-last-*-harvest.sh scripts are now in the examples folders.
+		This allows you to undo (meaning restore your vivo to a pre-harvest state) the last harvest you ran for each example	
 	update pubmed xsl to reflect core:email instead of core:workEmail
+	vivo harvester now integrated with vivo web site via ingest menu
+		Ingest people and ingest grants via csv templates
+	revampled d2rmap, and mods harvester examples
+	new csv example script
+		allows importing directly from a csv file
+	new image import script
+		allows for batch harvesting of images to vivo people
+	Extraneous debugging info removed
+	script formatting cleanups and standardization
+	example pubmed script authorship mismatching fixed
+		this should show vastly improved performance and consistency
+	Harvester minimum memory requirement is now 256mb\
+	Transfer -h argument changed to -s to prevent confusion with -h being help
+	Cleanup copyright headers -- we're now using authors file and standard template headers
+	Update packaging permissions to ease post-installation configuration
+	Fixed "missing author" bug on ingest publications
+	Add symlink to latest log in logs folder
 	
 1.1.1
 	MODS

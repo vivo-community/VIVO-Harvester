@@ -86,10 +86,13 @@ XSLFILE="vivo/datamaps/csv-people-to-vivo.xsl"
 
 for CURRENT_FILE in ${UPLOADS_FOLDER}* #UPLOADS_FOLDER variable gets replaced by servlet
 do
-	$CSVtoJDBC -i "$CURRENT_FILE" -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV2"
+	$CSVtoJDBC -i "$CURRENT_FILE" -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
+	
+#	$CSVtoJDBC -i "$CURRENT_FILE" -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV2"
 
-	$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
+#	$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
 done
+$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR -n "null"
 
 
 
@@ -216,7 +219,10 @@ rm -rf $TEMPCOPYDIR
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-echo $HARVESTER_TASK ' completed successfully'
+#echo $HARVESTER_TASK ' completed successfully'
+
+#IMPORTANT: This line must exist AS-IS in every File Harvest script.  The server checks the output and uses this line to verify that the harvest completed.
+echo 'File Harvest completed successfully' 
 
 #rm cookie.txt
 #rm "authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"
