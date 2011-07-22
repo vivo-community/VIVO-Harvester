@@ -139,4 +139,10 @@ harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
+#Output some counts
+ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
+PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
+POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
+echo "Imported $ORGS organizations, $PEOPLE people, and $POSITIONS positions"
+
 echo 'Harvest completed successfully'
