@@ -248,42 +248,42 @@ public class JDBCFetch {
 				realTableName = realTableName.trim();
 				if(argTable.trim().equalsIgnoreCase(realTableName)) {
 					this.tableNames.add(realTableName);
-					// fix the tablename in all the other structures >.>
-					if(this.fromClauses != null) {
-						for(String fromClausesTable : this.fromClauses.keySet()) {
-							if(fromClausesTable.trim().equalsIgnoreCase(realTableName)) {
-								this.fromClauses.put(realTableName, this.fromClauses.remove(fromClausesTable));
-							}
-						}
-					}
-					if(this.dataFields != null) {
-						for(String dataFieldsTable : this.dataFields.keySet()) {
-							if(dataFieldsTable.trim().equalsIgnoreCase(realTableName)) {
-								this.dataFields.put(realTableName, this.dataFields.remove(dataFieldsTable));
-							}
-						}
-					}
-					if(this.idFields != null) {
-						for(String idFieldsTable : this.idFields.keySet()) {
-							if(idFieldsTable.trim().equalsIgnoreCase(realTableName)) {
-								this.idFields.put(realTableName, this.idFields.remove(idFieldsTable));
-							}
-						}
-					}
-					if(this.whereClauses != null) {
-						for(String whereClausesTable : this.whereClauses.keySet()) {
-							if(whereClausesTable.trim().equalsIgnoreCase(realTableName)) {
-								this.whereClauses.put(realTableName, this.whereClauses.remove(whereClausesTable));
-							}
-						}
-					}
-					if(this.fkRelations != null) {
-						for(String fkRelationsTable : this.fkRelations.keySet()) {
-							if(fkRelationsTable.trim().equalsIgnoreCase(realTableName)) {
-								this.fkRelations.put(realTableName, this.fkRelations.remove(fkRelationsTable));
-							}
-						}
-					}
+//					// fix the tablename in all the other structures >.>
+//					if(this.fromClauses != null) {
+//						for(String fromClausesTable : this.fromClauses.keySet()) {
+//							if(fromClausesTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.fromClauses.put(realTableName, this.fromClauses.remove(fromClausesTable));
+//							}
+//						}
+//					}
+//					if(this.dataFields != null) {
+//						for(String dataFieldsTable : this.dataFields.keySet()) {
+//							if(dataFieldsTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.dataFields.put(realTableName, this.dataFields.remove(dataFieldsTable));
+//							}
+//						}
+//					}
+//					if(this.idFields != null) {
+//						for(String idFieldsTable : this.idFields.keySet()) {
+//							if(idFieldsTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.idFields.put(realTableName, this.idFields.remove(idFieldsTable));
+//							}
+//						}
+//					}
+//					if(this.whereClauses != null) {
+//						for(String whereClausesTable : this.whereClauses.keySet()) {
+//							if(whereClausesTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.whereClauses.put(realTableName, this.whereClauses.remove(whereClausesTable));
+//							}
+//						}
+//					}
+//					if(this.fkRelations != null) {
+//						for(String fkRelationsTable : this.fkRelations.keySet()) {
+//							if(fkRelationsTable.trim().equalsIgnoreCase(realTableName)) {
+//								this.fkRelations.put(realTableName, this.fkRelations.remove(fkRelationsTable));
+//							}
+//						}
+//					}
 					found = true;
 					break;
 				}
