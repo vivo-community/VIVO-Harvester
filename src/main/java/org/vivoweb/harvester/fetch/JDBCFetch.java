@@ -254,6 +254,8 @@ public class JDBCFetch {
 						for(String fromClausesTable : this.fromClauses.keySet()) {
 							if(fromClausesTable.trim().equalsIgnoreCase(realTableName)) {
 								tempMap.put(realTableName, this.fromClauses.get(fromClausesTable));
+							} else {
+								tempMap.put(fromClausesTable, this.fromClauses.get(fromClausesTable));
 							}
 						}
 						this.fromClauses = tempMap;
@@ -263,6 +265,8 @@ public class JDBCFetch {
 						for(String dataFieldsTable : this.dataFields.keySet()) {
 							if(dataFieldsTable.trim().equalsIgnoreCase(realTableName)) {
 								tempMap.put(realTableName, this.dataFields.get(dataFieldsTable));
+							} else {
+								tempMap.put(dataFieldsTable, this.dataFields.get(dataFieldsTable));
 							}
 						}
 						this.dataFields = tempMap;
@@ -272,6 +276,8 @@ public class JDBCFetch {
 						for(String idFieldsTable : this.idFields.keySet()) {
 							if(idFieldsTable.trim().equalsIgnoreCase(realTableName)) {
 								tempMap.put(realTableName, this.idFields.get(idFieldsTable));
+							} else {
+								tempMap.put(idFieldsTable, this.idFields.get(idFieldsTable));
 							}
 						}
 						this.idFields = tempMap;
@@ -281,6 +287,8 @@ public class JDBCFetch {
 						for(String whereClausesTable : this.whereClauses.keySet()) {
 							if(whereClausesTable.trim().equalsIgnoreCase(realTableName)) {
 								tempMap.put(realTableName, this.whereClauses.get(whereClausesTable));
+							} else {
+								tempMap.put(whereClausesTable, this.whereClauses.get(whereClausesTable));
 							}
 						}
 						this.whereClauses = tempMap;
@@ -290,6 +298,8 @@ public class JDBCFetch {
 						for(String fkRelationsTable : this.fkRelations.keySet()) {
 							if(fkRelationsTable.trim().equalsIgnoreCase(realTableName)) {
 								tempMap.put(realTableName, this.fkRelations.get(fkRelationsTable));
+							} else {
+								tempMap.put(fkRelationsTable, this.fkRelations.get(fkRelationsTable));
 							}
 						}
 						this.fkRelations = tempMap;
