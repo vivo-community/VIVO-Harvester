@@ -81,21 +81,18 @@ public class CreateImageFolders {
 	 */
 	private void transferImages() throws IOException {
 	
-		String fileName;
-		/*
-		 * Make sure to create upload and backup folders in the script if they are not created!
-		 */
-		//Runtime.getRuntime().exec("mkdir " + getPathToImageDirectory() + "/upload " + path + "/backup");		
-				
+		String fileName;				
 		try {			
 			for(File f : this.folder.listFiles()) {
 				if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
 					fileName = f.getName();
 					System.out.println("Image name:"+fileName);
 					if(this.ufidSet.contains(fileName.substring(0, 8))) {							
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/upload");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/mainImages");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(8,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/mainImages");
 					} else {						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/backup");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/mainImages");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(8,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbImages");
 					}
 				}
 			}
@@ -141,7 +138,7 @@ public class CreateImageFolders {
 	{
 		this.pathToImageScriptDirectory = pathToImageScriptFolder;
 		this.ufidSet = new HashSet<String>();
-		this.folder = new File(this.pathToImageScriptDirectory + "/images");
+		this.folder = new File(this.pathToImageScriptDirectory + "/images/mainImages");
 	}
 	
 	/**
