@@ -27,8 +27,8 @@
 	
 	<xsl:template match="ufid">
 		<rdf:Description rdf:about="{$baseURI}peopleImage/ufid{self::*}">  		
-		 	 <public:mainImage rdf:resource="{$baseURI}/mainImg/ufid{self::*}"/>	
- 			 <ufVivo:ufid><xsl:value-of select="." /></ufVivo:ufid>
+		 	 <public:mainImage rdf:resource="{$baseURI}mainImg/ufid{self::*}"/>	
+ 			 <ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="." /></ufVivo:ufid>
 		</rdf:Description>			
 	
 		<rdf:Description rdf:about="{$baseURI}mainImg/ufid{self::*}">
@@ -36,7 +36,7 @@
   			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#File"/>
   			<public:downloadLocation rdf:resource="{$baseURI}fullDirDownload/ufid{self::*}"/>
   			<public:thumbnailImage rdf:resource="{$baseURI}thumbImg/ufid{self::*}"/>
-  			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="." />.jpeg</public:filename>
+  			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10698710.jpeg</public:filename>
   			<public:mimeType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">image/jpeg</public:mimeType>
 		</rdf:Description>
 	
@@ -44,18 +44,18 @@
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#File"/>
 			<public:downloadLocation rdf:resource="{$baseURI}thumbDirDownload/ufid{self::*}"/>
-			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="." />_thumb.jpeg</public:filename>
+			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10698710_thumbnail.jpeg</public:filename>
 			<public:mimeType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">image/jpeg</public:mimeType>
 		</rdf:Description>
 			
 		<rdf:Description rdf:about="{$baseURI}thumbDirDownload/ufid{self::*}">
-  			<public:directDownloadUrl>/file/<xsl:value-of select="." />_image.jpeg</public:directDownloadUrl>
+  			<public:directDownloadUrl>/harvestedImages/gryphon_thumbnail.jpeg</public:directDownloadUrl>
   			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
   			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
 		</rdf:Description>
 		
 		<rdf:Description rdf:about="{$baseURI}fullDirDownload/ufid{self::*}">
-			<public:directDownloadUrl>/file/<xsl:value-of select="." />.jpeg</public:directDownloadUrl>
+			<public:directDownloadUrl>/harvestedImages/gryphon.jpeg</public:directDownloadUrl>
   			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
  			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
 		</rdf:Description>			

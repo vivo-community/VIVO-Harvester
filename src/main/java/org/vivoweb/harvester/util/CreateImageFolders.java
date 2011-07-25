@@ -8,47 +8,185 @@ package org.vivoweb.harvester.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashSet;
+import javax.activation.MimetypesFileTypeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.args.ArgDef;
+import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
 
 /**
- * Create Image Folders
+ * This Class takes the images directory and segregates them in to two folders upload and backup
+ * @author name ufid
  */
 public class CreateImageFolders {
 	
 	/**
-	 * Main Method
-	 * @param args command-line arguments
+	 * SLF4J Logger
 	 */
-	public static void main(String args[]) {
+	private static Logger log = LoggerFactory.getLogger(CreateImageFolders.class);
+	
+	/**
+	 * Path to the ImageScript directory
+	 */
+	private String pathToImageScriptDirectory;
+	
+	/**
+	 * Contains the list of UFID's who doesn't have images in VIVO
+	 */
+	private HashSet<String> ufidSet;
+	
+	/**
+	 * 
+	 */
+	private BufferedReader bufferReader;
+	
+	/**
+	 * 
+	 */
+	private File folder;
+	
+	
+	/**
+	 * Stores the Ufid's in a HashSet
+	 * @param path the path to the text file containing Ufid's
+	 * @throws FileNotFoundException cannot find ufids.txt
+	 * @throws IOException error reading from ufids.txt
+	 * 
+	 */
+	private void getUfids(String path) throws FileNotFoundException, IOException {		
+		String tempLine;				
 		try {
-			//Get the directory name
-			String path = args[0];
-			
-			//Store the list of UFID's of the people who don't have an image in VIVO
-			HashSet<String> listFromVivo = new HashSet<String>();			
-			BufferedReader bufferReader = new BufferedReader(new FileReader(path + "/ufids.txt"));
-			String tempLine;
-			while((tempLine = bufferReader.readLine()) != null) {		
-				listFromVivo.add(tempLine.substring(0,8));
+			this.bufferReader = new BufferedReader(new FileReader(path + "/ufids.txt"));						
+			while((tempLine = this.bufferReader.readLine()) != null) 
+			{
+				System.out.println("Temp Line in ufid's:"+tempLine.substring(0, 8));
+				this.ufidSet.add(tempLine.substring(0, 8));
 			}
-			bufferReader.close();
-			
-			//Create and transfer images to upload and backup folders
-			Runtime.getRuntime().exec("mkdir " + path + "/upload " + path + "/backup");
-			File folder = new File(path+"/images");
-			for(File f : folder.listFiles()) {
-				if(f.isFile()) {
-					String fileName = f.getName();
-					if(listFromVivo.contains(fileName.substring(0, 8))) {
-						Runtime.getRuntime().exec("mv " + path + "/images/" + fileName + " " + path + "/upload");
+			this.bufferReader.close();
+		} catch(FileNotFoundException e) {
+			throw new IOException(e);
+		} catch(IOException e) {
+			throw new IOException(e);
+		}
+	}
+	
+
+	/**
+	 * @throws IOException error executing the "mv" command 
+	 */
+	private void transferImages() throws IOException {
+	
+		String fileName;
+		/*
+		 * Make sure to create upload and backup folders in the script if they are not created!
+		 */
+		//Runtime.getRuntime().exec("mkdir " + getPathToImageDirectory() + "/upload " + path + "/backup");		
+				
+		try {			
+			for(File f : this.folder.listFiles()) {
+				if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
+					fileName = f.getName();
+					System.out.println("Image name:"+fileName);
+					if(this.ufidSet.contains(fileName.substring(0, 8))) {	
+						System.out.println("Shifting"+fileName+"to upload directory");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/upload");
+						System.out.println("Executing Command:"+"mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/upload");
 					} else {
-						Runtime.getRuntime().exec("mv " + path + "/images/" + fileName + " " + path + "/backup");
+						System.out.println("Shifting"+fileName+"to backup directory");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/backup");
+						System.out.println("Executing Command:"+"mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/backup");
 					}
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch(IOException e) {
+			throw new IOException(e);
+		}
+	}
+	
+	/**
+	 * Get the ArgParser for this task
+	 * @return the ArgParser
+	 */
+	private static ArgParser getParser() {
+		ArgParser parser = new ArgParser("CreateImageFolders");
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pathToImageScriptDirectory").withParameter(true, "PATH").setDescription("path to the Image Script Directory").setRequired(true));
+		return parser;
+	}
+	
+	/**
+	 * Command line Constructor
+	 * @param args command line arguments
+	 * @throws UsageException 
+	 * @throws IOException 
+	 * @throws IllegalArgumentException 
+	 */
+	private CreateImageFolders(String[] args) throws IllegalArgumentException, IOException, UsageException {
+		this(getParser().parse(args));
+	}
+	
+	/**
+	 * ArgList Constructor
+	 * @param argList option set of parsed args
+	 */
+	private CreateImageFolders(ArgList argList) {
+		this(argList.get("p"));
+	}
+	
+	/**
+	 * Library style Constructor
+	 * @param pathToImageScriptFolder
+	 */
+	public CreateImageFolders(String pathToImageScriptFolder) 
+	{
+		this.pathToImageScriptDirectory = pathToImageScriptFolder;
+		this.ufidSet = new HashSet<String>();
+		this.folder = new File(this.pathToImageScriptDirectory + "/images");
+	}
+	
+	/**
+	 * @throws IOException 
+	 * 
+	 */
+	public void execute() throws IOException
+	{
+		getUfids(this.pathToImageScriptDirectory);
+		transferImages();
+	}
+		
+	/**
+	 * Main method
+	 * @param args command line arguments
+	 */
+	public static void main(String... args) {
+		Exception error = null;
+		try {
+			InitLog.initLogger(args, getParser());
+			log.info(getParser().getAppName() + ": Start");
+			new CreateImageFolders(args).execute();
+		} catch(IllegalArgumentException e) {
+			log.error(e.getMessage());
+			log.debug("Stacktrace:", e);
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(UsageException e) {
+			log.info("Printing Usage:");
+			System.out.println(getParser().getUsage());
+			error = e;
+		} catch(Exception e) {
+			log.error(e.getMessage());
+			log.debug("Stacktrace:", e);
+			error = e;
+		} finally {
+			log.info(getParser().getAppName() + ": End");
+			if(error != null) {
+				System.exit(1);
+			}
 		}
 	}
 }
