@@ -64,8 +64,7 @@ public class CreateImageFolders {
 		try {
 			this.bufferReader = new BufferedReader(new FileReader(path + "/ufids.txt"));						
 			while((tempLine = this.bufferReader.readLine()) != null) 
-			{
-				System.out.println("Temp Line in ufid's:"+tempLine.substring(0, 8));
+			{				
 				this.ufidSet.add(tempLine.substring(0, 8));
 			}
 			this.bufferReader.close();
@@ -93,14 +92,10 @@ public class CreateImageFolders {
 				if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
 					fileName = f.getName();
 					System.out.println("Image name:"+fileName);
-					if(this.ufidSet.contains(fileName.substring(0, 8))) {	
-						System.out.println("Shifting"+fileName+"to upload directory");
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/upload");
-						System.out.println("Executing Command:"+"mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/upload");
-					} else {
-						System.out.println("Shifting"+fileName+"to backup directory");
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/backup");
-						System.out.println("Executing Command:"+"mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/backup");
+					if(this.ufidSet.contains(fileName.substring(0, 8))) {							
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/upload");						
+					} else {						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/" + fileName + " " + this.pathToImageScriptDirectory + "/backup");						
 					}
 				}
 			}
