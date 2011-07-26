@@ -86,14 +86,15 @@ public class CreateImageFolders {
 			for(File f : this.folder.listFiles()) {
 				if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
 					fileName = f.getName();
-					System.out.println("Image name:"+fileName);
-					if(this.ufidSet.contains(fileName.substring(0, 8))) {							
+					
+					if(this.ufidSet.contains(fileName.substring(0, 8))) {									
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/mainImages");
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(8,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/mainImages");
-					} else {						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbImages");						
+						
+					} else {										
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/mainImages");
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(8,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbImages");
-					}
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbImages");						
+					} 
 				}
 			}
 		} catch(IOException e) {
@@ -147,8 +148,9 @@ public class CreateImageFolders {
 	 */
 	public void execute() throws IOException
 	{
-		getUfids(this.pathToImageScriptDirectory);
+		getUfids(this.pathToImageScriptDirectory);		
 		transferImages();
+		log.info("Transfered images to upload and backup directories!");
 	}
 		
 	/**

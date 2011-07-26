@@ -28,6 +28,7 @@ export DATE=`date +%Y-%m-%d'T'%T`
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/temp.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
@@ -48,7 +49,7 @@ cd ..
 #	If you are continuing a partial run or wish to use the old and already retrieved
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
-rm -rf data
+####rm -rf data
 rm -f model.xml
 rm -f ufids.txt
 rm -rf upload
@@ -61,19 +62,43 @@ harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.e
 #Get the ufids of the people who dont have images using the model generated above
 grep -o "[0-9]\{8\}</...:ufid>$" model.xml  > ufids.txt
 
+if [ ! -d "upload" ]; then
+    mkdir upload
+    mkdir upload/mainImages
+    mkdir upload/thumbImages		
+fi
+
+if [ ! -d "backup" ]; then
+    mkdir backup
+    mkdir backup/mainImages
+    mkdir backup/thumbImages    
+fi
+
+
 #Generate upload and backup folders 
 #	For each image in the uplod folder there is corresponding person in VIVO
 #	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
-java CreateFolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
+####java CreateFolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
 harvester-createimagefolders -p $HARVESTER_INSTALL_DIR/example-scripts/example-images
 
 #Create XML files for all the images
 #	Each xml file contains just the ufid of a person	 
-mkdir data
+if [ ! -d "data" ]; then
+	mkdir data
+fi
+if [ ! -d "data/raw-records" ]; then
+        mkdir data/raw-records
+fi
 cd data
-mkdir raw-records
 cd raw-records
-ls -1 $HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/ | sed 's/[^0-9]*//g' | xargs -n1 -I {} sh -c "echo '<?xml version=\"1.0\"?><ufid>'{}'</ufid>' > '{}'" 
+####ls -1 $HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/mainImages | sed 's/[^0-9]*//g' | xargs -n1 -I {} sh -c "echo '<?xml version=\"1.0\"?><details><ufid>'{}'</ufid><format></format></details>' > '{}'" 
+FOLDER="$HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/mainImages/*"
+echo $FOLDER
+for file in $FOLDER
+do
+        imageName=`echo $file | grep -o "[0-9]\{8\}.*"`
+        echo "$file" | sed 's/[^0-9]*//g' | xargs -n1 -I {} sh -c "echo '<?xml version=\"1.0\"?><imageName>$imageName</imageName>'> '{}'"        
+done
 cd ..
 cd ..
 
@@ -85,7 +110,7 @@ harvester-xsltranslator -X xsltranslator.config.xml
 
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
-#	data storage structure similar to a database, but is in RDF.
+#	data torage structure similar to a database, but is in RDF.
 # The harvester tool Transfer is used to move/add/remove/dump data in models.
 # For this call on the transfer tool:
 # -s refers to the source translated records file, which was just produced by the translator step
@@ -127,9 +152,16 @@ harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
-#Output some counts
-PICS=`cat data/vivo-additions.rdf.xml | grep mainImg | wc -l`
-PEOPLE=`cat data/vivo-additions.rdf.xml | grep peopleImage | wc -l`
-echo "Imported $PICS pictures for $PEOPLE persons"
+#if there is no harvestedImages dirctory make one in tomcat VIVO
+if [ ! -d "/var/lib/tomcat6/webapps/vivo/harvestedImages" ]; then
+    mkdir /var/lib/tomcat6/webapps/vivo/harvestedImages
+fi
 
-echo 'Harvest completed successfully'
+mainImages=`ls -la ./upload/mainImages/ | grep "[0-9]\{8\}.*" | wc -l`
+thumbImages=`ls -la ./upload/thumbImages/ | grep "[0-9]\{8\}.*" | wc -l`
+mv ./upload/mainImages/* /var/lib/tomcat6/webapps/vivo/harvestedImages/mainImages/
+mv ./upload/thumbImages/* /var/lib/tomcat6/webapps/vivo/harvestedImages/thumbImages/
+
+echo "Harvested $mainImages main images"
+echo "Harvested $thumbImages thumbnails"
+echo '~~~~~~~~~~~~~~~~~Sucessfully Harvested Images~~~~~~~~~~~~~~~~~~~~~~~~~~~'
