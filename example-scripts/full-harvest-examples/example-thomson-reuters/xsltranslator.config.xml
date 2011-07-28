@@ -12,5 +12,5 @@
 	<Param name="output">translated-records.config.xml</Param>
 
 	<!--DATAMAP -->
-	<Param name="xslFile">pubmed-to-vivo.xsl</Param>
+	<Param name="xslFile">thomson-reuters-to-vivo.datamap.xsl</Param>
 </Task>

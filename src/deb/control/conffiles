@@ -90,7 +90,7 @@
 /usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/score-data.model.xml
 /usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/qualify-clear-score-predicates.config.xml
 /usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/score-publication.config.xml
-/usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/pubmed-to-vivo.xsl
+/usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/pubmed-to-vivo.datamap.xsl
 /usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/score-authorship.config.xml
 /usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/changenamespace-authors.config.xml
 /usr/share/vivo/harvester/example-scripts/full-harvest-examples/example-pubmed/score-author-all.config.xml
