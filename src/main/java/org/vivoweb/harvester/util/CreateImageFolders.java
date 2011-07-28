@@ -42,12 +42,12 @@ public class CreateImageFolders {
 	private HashSet<String> ufidSet;
 	
 	/**
-	 * 
+	 * Used for efficiently reading UFID's form ufids.txt file
 	 */
 	private BufferedReader bufferReader;
 	
 	/**
-	 * 
+	 * Used for reading files the images directory
 	 */
 	private File folder;
 	
@@ -88,12 +88,12 @@ public class CreateImageFolders {
 					fileName = f.getName();
 					
 					if(this.ufidSet.contains(fileName.substring(0, 8))) {									
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/mainImages");
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbImages");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbImages/");						
 						
-					} else {										
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/mainImages");
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbImages");						
+					} else {																
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fImages/");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbImages/");						
 					} 
 				}
 			}

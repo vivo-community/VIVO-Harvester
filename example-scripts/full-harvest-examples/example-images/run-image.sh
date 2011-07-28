@@ -49,11 +49,11 @@ cd ..
 #	If you are continuing a partial run or wish to use the old and already retrieved
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
-####rm -rf data
+#rm -rf data
 rm -f model.xml
 rm -f ufids.txt
-rm -rf upload
-rm -rf backup
+#rm -rf upload
+#rm -rf backup
 
 #Get a model of the people who dont have images 
 touch model.xml
@@ -62,19 +62,20 @@ harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.e
 #Get the ufids of the people who dont have images using the model generated above
 grep -o "[0-9]\{8\}</...:ufid>$" model.xml  > ufids.txt
 
-if [ ! -d "upload" ]; then
+if [ ! -d "upload" -a ! -d "backup" ]; then
     mkdir upload
     mkdir upload/mainImages
     mkdir upload/thumbImages		
-fi
 
-if [ ! -d "backup" ]; then
     mkdir backup
     mkdir backup/mainImages
     mkdir backup/thumbImages    
+else
+#move any images from the previous harvest stored in backup directory in to images directory
+mv backup/mainImages/* images/mainImages/
+mv backup/thumbImages/* images/thumbImages/
 fi
-
-
+  
 #Generate upload and backup folders 
 #	For each image in the uplod folder there is corresponding person in VIVO
 #	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
@@ -164,4 +165,4 @@ mv ./upload/thumbImages/* /var/lib/tomcat6/webapps/vivo/harvestedImages/thumbIma
 
 echo "Harvested $mainImages main images"
 echo "Harvested $thumbImages thumbnails"
-echo '~~~~~~~~~~~~~~~~~Sucessfully Harvested Images~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+echo 'Sucessfully Harvested Images'
