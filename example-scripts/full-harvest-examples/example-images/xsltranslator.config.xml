@@ -13,4 +13,6 @@
 
 	<!--DATAMAP -->
 	<Param name="xslFile">image-to-vivo.xsl</Param>
+
+	<Param name="force">true</Param>
 </Config>
