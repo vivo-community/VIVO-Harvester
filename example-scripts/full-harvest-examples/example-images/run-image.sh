@@ -94,7 +94,6 @@ cd data
 cd raw-records
 ####ls -1 $HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/mainImages | sed 's/[^0-9]*//g' | xargs -n1 -I {} sh -c "echo '<?xml version=\"1.0\"?><details><ufid>'{}'</ufid><format></format></details>' > '{}'" 
 FOLDER="$HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/mainImages/*"
-echo $FOLDER
 for file in $FOLDER
 do
         imageName=`echo $file | grep -o "[0-9]\{8\}.*"`
@@ -142,7 +141,7 @@ harvester-diff -X diff-subtractions.config.xml
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+##harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
 harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
@@ -166,3 +165,4 @@ mv ./upload/thumbImages/* /var/lib/tomcat6/webapps/vivo/harvestedImages/thumbIma
 echo "Harvested $mainImages main images"
 echo "Harvested $thumbImages thumbnails"
 echo 'Sucessfully Harvested Images'
+

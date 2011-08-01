@@ -22,7 +22,7 @@ import org.vivoweb.harvester.util.args.UsageException;
 
 /**
  * This Class takes the images directory and segregates them in to two folders upload and backup
- * @author name ufid
+ * @author Sivananda Reddy Thummala Abbigari, 64254635
  */
 public class CreateImageFolders {
 	
@@ -87,13 +87,16 @@ public class CreateImageFolders {
 				if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
 					fileName = f.getName();
 					
-					if(this.ufidSet.contains(fileName.substring(0, 8))) {									
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbImages/");						
-						
+					if(this.ufidSet.contains(fileName.substring(9,16))) {						
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");						
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");
 					} else {																
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/mainImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/images/thumbImages/" + fileName.substring(0,8)+"_thumbnail."+fileName.substring(9,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbImages/");						
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");
 					} 
 				}
 			}
