@@ -91,8 +91,7 @@ if [ ! -d "data/raw-records" ]; then
         mkdir data/raw-records
 fi
 cd data
-cd raw-records
-####ls -1 $HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/mainImages | sed 's/[^0-9]*//g' | xargs -n1 -I {} sh -c "echo '<?xml version=\"1.0\"?><details><ufid>'{}'</ufid><format></format></details>' > '{}'" 
+cd raw-records 
 FOLDER="$HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/mainImages/*"
 for file in $FOLDER
 do
@@ -141,7 +140,7 @@ harvester-diff -X diff-subtractions.config.xml
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-##harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
 harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
