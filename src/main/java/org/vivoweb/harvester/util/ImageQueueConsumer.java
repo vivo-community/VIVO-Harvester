@@ -1,4 +1,6 @@
 package org.vivoweb.harvester.util;
+/*
+@author Mayank Saini*/
 
 
 /* To run this program you need to do is to import the server certificate and install it in your JDK's KeyStore for more reference check the 
@@ -64,7 +66,7 @@ public class ImageQueueConsumer {
 	public static void getUpdatesFromQueue() throws JMSException {
 	
 		//this is for testing purpose only.. so that I pull only partial images
-		for(int i = 1; i < 2; i++) {
+		for(int i = 0; i < 5; i++) {
 			Message message;
 			//while ((message = consumer.receiveNoWait()) != null) {
 			
