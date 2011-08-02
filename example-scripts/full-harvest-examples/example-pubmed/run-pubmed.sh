@@ -83,7 +83,7 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons.
 # We execute scores in 2 different steps, known as "tiered scoring". The initial score limits our input set to speed up performance 
-harvester-score -X score-author-first-last.config.xml
+harvester-score -X score-author-last-name.config.xml
 harvester-score -X score-author-all.config.xml
 
 # Find matches using scores and rename nodes to matching uri

@@ -24,10 +24,4 @@
 	<Param name="weights">lname=0.35</Param>
 	<Param name="inputJena-predicates">lname=http://xmlns.com/foaf/0.1/lastName</Param>
 	<Param name="vivoJena-predicates">lname=http://xmlns.com/foaf/0.1/lastName</Param>
-	
-	<!--FIRST NAME-->
-	<Param name="algorithms">fname=org.vivoweb.harvester.score.algorithm.NameCompare</Param>
-	<Param name="weights">fname=0.20</Param>
-	<Param name="inputJena-predicates">fname=http://xmlns.com/foaf/0.1/firstName</Param>
-	<Param name="vivoJena-predicates">fname=http://xmlns.com/foaf/0.1/firstName</Param>
 </Task>

@@ -17,9 +17,15 @@
 	<!--OPTIONS -->
 	<Param name="tempJenaDir">data/temp-score-model</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/pubmed/author/</Param>
-	<Param name="matchThreshold">0.5</Param>
+	<Param name="matchThreshold">0.35</Param>
 	
 	<!--COMPARISIONS -->
+	<!--FIRST NAME-->
+	<Param name="algorithms">fname=org.vivoweb.harvester.score.algorithm.NameCompare</Param>
+	<Param name="weights">fname=0.20</Param>
+	<Param name="inputJena-predicates">fname=http://xmlns.com/foaf/0.1/firstName</Param>
+	<Param name="vivoJena-predicates">fname=http://xmlns.com/foaf/0.1/firstName</Param>
+	
 	<!--MIDDLE NAME-->
 	<Param name="algorithms">mname=org.vivoweb.harvester.score.algorithm.NameCompare</Param>
 	<Param name="weights">mname=0.15</Param>
