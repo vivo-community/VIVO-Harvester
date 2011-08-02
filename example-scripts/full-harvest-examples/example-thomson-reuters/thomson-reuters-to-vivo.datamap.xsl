@@ -20,7 +20,7 @@
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
-	<xsl:variable name="baseURI">http://vivoweb.org/harvest/pubmed/</xsl:variable>
+	<xsl:variable name="baseURI">http://vivoweb.org/harvest/thomsonreuters/</xsl:variable>
 
 	<!-- The main Article Set of all pubmed citations loaded 
 		This serves as the header of the RDF file produced
