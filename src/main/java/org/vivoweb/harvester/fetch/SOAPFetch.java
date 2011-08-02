@@ -5,10 +5,10 @@
  ******************************************************************************/
 package org.vivoweb.harvester.fetch;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -21,7 +21,6 @@ import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
-import org.vivoweb.harvester.util.repo.RecordHandler;
 
 /**
  * Fetches rdf data from a JDBC database placing the data in the supplied record handler.
@@ -34,7 +33,7 @@ public class SOAPFetch {
 	/**
 	 * Record Handler to write records to
 	 */
-	private RecordHandler rh;
+	private OutputStream outputFile;
 	
 	/**
 	 * Record Handler to write records to
@@ -63,8 +62,8 @@ public class SOAPFetch {
 	 * @param xmlFile xml file to POST to the url
 	 * @throws IOException error talking with database
 	 */
-	public SOAPFetch(URL url, RecordHandler output, File xmlFile) throws IOException {
-		this(url, output, FileAide.getInputStream( xmlFile.getPath() ) );
+	public SOAPFetch(URL url, String output, String xmlFile) throws IOException {
+		this(url, FileAide.getOutputStream( output ), FileAide.getInputStream( xmlFile ) );
 	}
 	
 	
@@ -84,12 +83,9 @@ public class SOAPFetch {
 	 * @throws IOException error creating task
 	 */
 	private SOAPFetch(ArgList args) throws IOException {
-//		this.url = new URL(args.get("u"));
-//		this.urlCon = this.url.openConnection();
-//		this.inputFile = FileAide.getInputStream(args.get("p"));
 		this(
 			new URL(args.get("u")), 
-			RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")),
+			FileAide.getOutputStream(args.get("o")),
 			FileAide.getInputStream(args.get("m"))
 		);
 	}
@@ -97,21 +93,29 @@ public class SOAPFetch {
 	/**
 	 * Library style Constructor
 	 * @param url URL to connect with.
-	 * @param rh Record Handler to write records to
+	 * @param output The stream to the output file
 	 * @param xmlFileStream The stream which points to the Soap Message
 	 * @throws IOException problem with opening url connection
 	 */
-	public SOAPFetch(URL url, RecordHandler rh, InputStream xmlFileStream) throws IOException {
+	public SOAPFetch(URL url, OutputStream output, InputStream xmlFileStream) throws IOException {
 
-		this.rh = rh;
+		
+		this.outputFile = output;
 		this.url = url;
-		this.urlCon = this.url.openConnection();
 		this.inputFile = xmlFileStream;
-
-		if(this.rh == null) {
-			throw new IllegalArgumentException("Must provide output recordhandler!");
+		if(this.outputFile == null) {
+			throw new IllegalArgumentException("Must provide output file!");
 		}
 		
+		if(this.inputFile == null) {
+			throw new IllegalArgumentException("Must provide message file!");
+		}
+		
+		if(this.url == null) {
+			throw new IllegalArgumentException("Must provide url!");
+		}
+		this.urlCon = this.url.openConnection();
+
 	    // specify that we will send output and accept input
 		this.urlCon.setDoInput(true);
 		this.urlCon.setDoOutput(true);
@@ -133,12 +137,11 @@ public class SOAPFetch {
 	 */
 	public void execute() throws IOException {
 	    // tell the web server what we are sending
-		this.urlCon.setRequestProperty ( "Content-Type", "text/xml" );
+		this.urlCon.setRequestProperty ( "Content-Type", "application/soap+xml; charset=utf-8" );
 
-	    OutputStreamWriter writer = new OutputStreamWriter( this.urlCon.getOutputStream() );
-	    writer.write(this.xmlString);
-	    writer.flush();
-	    writer.close();
+	    OutputStreamWriter osWriter = new OutputStreamWriter( this.urlCon.getOutputStream() );
+	    osWriter.write(this.xmlString);
+	    osWriter.close();
 
 	    // reading the response
 	    InputStreamReader isReader = new InputStreamReader( this.urlCon.getInputStream() );
@@ -153,37 +156,10 @@ public class SOAPFetch {
 	    }
 
 	    String result = buf.toString();
-	    System.err.println( "\nResponse from server after POST:\n" + result );
-		
-		
-		int count = 0;
-//		try {
-			 //for(;;)//
-			 { // TODO: need to figure out how to divide desired records.
-				StringBuilder sb = new StringBuilder();
-				
-//				while(results.next()) //
-				{
-					StringBuilder recID = new StringBuilder();
-					recID.append("id");
-					recID.append("_-_");
-					
-					String id = "something that uniquly identifies the record";
-					recID.append(id);
-					
-					sb = new StringBuilder();// building each record's contents
-					
-					
-					// Write RDF to RecordHandler
-					log.trace("Adding record: " + recID);
-					this.rh.addRecord(recID.toString(), sb.toString(), this.getClass());//putting those records into the record handler
-					count++;
-				}
-			}
-//		} catch(SQLException e) {
-//			throw new IOException(e);
-//		}
-		log.info("Added " + count + " Records");
+	    OutputStreamWriter outputWriter = new OutputStreamWriter(this.outputFile);
+	    outputWriter.write(result);
+	    outputWriter.close();
+
 	}
 	
 	/**
@@ -194,7 +170,7 @@ public class SOAPFetch {
 		ArgParser parser = new ArgParser("JDBCFetch");
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").withParameter(true, "URL").setDescription("The URL which will receive the MESSAGE.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("message").withParameter(true, "MESSAGE").setDescription("The MESSAGE file path.").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(false));
 		//parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceBase").withParameter(true, "NAMESPACE_BASE").setDescription("the base namespace to use for each node created").setRequired(false));
 		return parser;
 	}
