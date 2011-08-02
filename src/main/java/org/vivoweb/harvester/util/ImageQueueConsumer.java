@@ -15,7 +15,7 @@ package org.vivoweb.harvester.util;
   <xs:element name="ImageChange" nillable="true" type="tns:ImageChange" />
 </xs:schema>
  */
-import java.io.File;
+import java.io.File; 
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -120,9 +120,9 @@ public class ImageQueueConsumer {
 	
 
 	/**
-	 * Stores the Ufid's in a HashSet
-	 * @param JMS Message objecr 
-	 * @throws throws JMS Exception
+	 * This function  process the message if message type is ImageChange
+	 * @param JMS Message object 
+	 * @throws throws JMSException
 	 */
 	public static void processMessage(Message message) throws JMSException {
 		
@@ -177,6 +177,24 @@ public class ImageQueueConsumer {
 		}
 	}
 	
+	
+	/**
+	 * This function get the XML tag values  for example : for Tag "DateUpdated" it will give you the updatedate, for Image Tag it will give 
+	 * you the encoded Image String
+	 * @param base64String text encoded Image ,path Path to store the Image,This process repeats for every received message
+	 * @throwsI OException
+	 */
+	
+	public static String getCharacterDataFromElement(Element e) {
+		Node child = e.getFirstChild();
+		if(child instanceof CharacterData) {
+			CharacterData cd = (CharacterData)child;
+			return cd.getData();
+		}
+		return "?";
+	}
+	
+	
 	/**
 	 * This function convert the base64String encoded image to actual Image and store it in specified directory path
 	 * @param base64String text encoded Image ,path Path to store the Image,This process repeats for every received message
@@ -194,22 +212,12 @@ public class ImageQueueConsumer {
 		fos.close();
 	}
 	
+
+	
 	/**
-	 * This function convert the base64String encoded image to actual Image and store it in specified directory path
-	 * @param base64String text encoded Image ,path Path to store the Image,This process repeats for every received message
+	 * This function  create a connection to the activeMQ queue 
 	 * @throwsI OException
 	 */
-	
-	public static String getCharacterDataFromElement(Element e) {
-		Node child = e.getFirstChild();
-		if(child instanceof CharacterData) {
-			CharacterData cd = (CharacterData)child;
-			return cd.getData();
-		}
-		return "?";
-	}
-	
-	//This function creates a connection to the ActiveMQ
 	public static MessageConsumer createConnection() {
 		connectionFactory = new ActiveMQConnectionFactory(url);
 		try {
@@ -229,8 +237,11 @@ public class ImageQueueConsumer {
 		}
 		
 	}
-	
-	//This funtion intialize the class static members { ActiveMQServer,ActiveMQUser,ActiveMQPassword} from the system.properties file
+	/**
+	 * This funtion intialize the class static members { ActiveMQServer,ActiveMQUser,ActiveMQPassword} from the system.properties file
+	 * @throwsI OException
+	 */
+
 	private static void intializeServer() {
 	
 		file = new File(propdir+"/system.properties");
@@ -332,7 +343,7 @@ public void execute() throws IOException
 		e.printStackTrace();
 	}
 	
-	log.info("Pulle Images from Gator one Server");
+	log.info("Pull Images from Gator one Server");
 }
 
 }
