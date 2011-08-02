@@ -8,7 +8,7 @@ HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
 HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
 
 # define shared variables
-VIVOCONFIG="config/models/vivo.xml"
+VIVOCONFIG="vivo/config/vivo.xml"
 LOG_LEVEL=INFO
 VERSION=1.2+rc3
 SCOREBATCHSIZE=100
@@ -78,10 +78,10 @@ DBNAME=`$XPathTool -e "/Model/Param[@name='dbUrl']" -x $VIVOCONFIG | sed 's|^.*/
 USERNAME=`$XPathTool -e "/Model/Param[@name='dbUser']" -x $VIVOCONFIG`
 PASSWORD=`$XPathTool -e "/Model/Param[@name='dbPass']" -x $VIVOCONFIG`
 NAMESPACE=`$XPathTool -e "/Model/Param[@name='namespace']" -x $VIVOCONFIG`
-H2MODEL="config/models/h2-sdb.xml"
+H2MODEL="vivo/config/h2-sdb.xml"
 PREVHARVDBURLBASE="jdbc:h2:harvested-data/prevHarvs/"
-H2RH="config/recordhandlers/h2-jdbc.xml"
-TFRH="config/recordhandlers/tfrh.xml"
+H2RH="vivo/config/h2-jdbc.xml"
+TFRH="vivo/config/tfrh.xml"
 BACKUPPATH="$HARVESTERDIR/backups"
 LATESTBACKUPPATH="$BACKUPPATH/latest"
 

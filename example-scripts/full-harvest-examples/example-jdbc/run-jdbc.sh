@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/home/cah/workspace/code-hg/Harvester/trunk/
+HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-jdbc
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -78,7 +78,7 @@ harvester-xsltranslator -X xsltranslator.config.xml
 #	data storage structure similar to a database, but in RDF.
 # The harvester tool Transfer is used to move/add/remove/dump data in models.
 # For this call on the transfer tool:
-# -h refers to the source translated records file, which was just produced by the translator step
+# -s refers to the source translated records file, which was just produced by the translator step
 # -o refers to the destination model for harvested data
 # -d means that this call will also produce a text dump file in the specified location 
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
@@ -150,5 +150,11 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+
+#Output some counts
+ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
+PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
+POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
+echo "Imported $ORGS organizations, $PEOPLE people, and $POSITIONS positions"
 
 echo 'Harvest completed successfully'

@@ -13,7 +13,7 @@ set -e
 HARVESTERDIR=${WORKING_DIRECTORY} #replaced by servlet
 cd $HARVESTERDIR
 
-HARVESTER_TASK=csv
+HARVESTER_TASK=csvGrant
 
 if [ -f vivo/scripts/env ]; then
   . vivo/scripts/env
@@ -83,7 +83,7 @@ rm -rf $RAWRHDIR
 rm -rf $RAWCSVDIR
 
 #CSVFILE="files/granttemplatetest.csv"
-XSLFILE="config/datamaps/csv-grant-to-vivo.xsl"
+XSLFILE="vivo/datamaps/csv-grant-to-vivo.xsl"
 
 # Execute Fetch
 #$CSVtoRDF -o $TFRH -O fileDir=$RAWRHDIR -i $CSVFILE
@@ -274,7 +274,10 @@ rm -rf $TEMPCOPYDIR
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-echo $HARVESTER_TASK ' completed successfully'
+#echo $HARVESTER_TASK ' completed successfully'
+
+#IMPORTANT: This line must exist AS-IS in every File Harvest script.  The server checks the output and uses this line to verify that the harvest completed.
+echo 'File Harvest completed successfully' 
 
 
 #rm -f "authenticate?loginName=${ADMINNAME}&loginPassword=${ADMINPASS}&loginForm=1"

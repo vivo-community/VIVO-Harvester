@@ -11,7 +11,7 @@
 	xmlns:core="http://vivoweb.org/ontology/core#"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
-	xmlns:db-csv='${CSV_NAMESPACE}'>
+	xmlns:db-csv='nullfields/CSV/'>
 	
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/csvfile/</xsl:variable>

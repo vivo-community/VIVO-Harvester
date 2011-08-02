@@ -7,9 +7,9 @@
 <Task>
 	<!--INPUT -->
 	<Param name="inputDriver">com.mysql.jdbc.Driver</Param>
-	<Param name="inputConnection">jdbc:mysql://127.0.0.1:3306/DemoDB</Param>
-	<Param name="inputUsername">DemoDB</Param>
-	<Param name="inputPassword">7UUvZ3JXv867tN39</Param>
+	<Param name="inputConnection">jdbc:mysql://127.0.0.1:3306/demodb</Param>
+	<Param name="inputUsername">demodb</Param>
+	<Param name="inputPassword">demodb</Param>
 	
 	<!--  OUTPUT -->
 	<Param name="outputDriver">org.h2.Driver</Param>

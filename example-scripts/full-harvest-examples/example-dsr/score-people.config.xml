@@ -16,20 +16,26 @@
     
     <!--OPTIONS -->
     <!--
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
+<%                                                                                                                    %>
 <%  Score uses a temporary jena model to store its scoring data. This model is used later by the Match process        %>                                                                                                               %>
 <%     to make the changes                                                                                            %>                                                                                                               %>
 <%  <Param name="tempJenaDir">data/temp-score-model</Param>                                                           %>
 <%                                                                                                                    %>
 <%  The next several parameters have the concept of a run-name embedded within them. The run-name appears before      %>
 <%      the equal sign. In this example the run-name is connumber.                                                    %>
+<%                                                                                                                    %>
 <%  <Param name="algorithms">  is the parameter which determines the method of determining how much of a match the    %>
 <%     given predicate related string-type objects is. The values returned by the algorithm are between 0 and 1       %>
 <%     inclusively.                                                                                                   %>
+<%                                                                                                                    %>
 <%  <Param name="weights"> is the parameter to signify how much the weight of the run should be considered. The score %>
 <%     between 0 and 1 is scaled by this number (i.e. a score of 0.5 weighted at 0.5 has a score of 0.25 against the  %>
 <%     threshold used within the match statement. )                                                                   %>
+<%                                                                                                                    %>
 <%  <Param name="inputJena-predicates"> is the tag which signifies that the value of the object associated with this  %>
 <%     predicate within the input model will be one elements of the comparisons                                       %>
+<%                                                                                                                    %>
 <%  <Param name="vivoJena-predicates"> is the tag which signifies that the value of the object associated with this   %>
 <%     predicate within the vivo model will be one elements of the comparisons                                        %>
 <%                                                                                                                    %>
@@ -52,6 +58,8 @@
 <%  <Param name="reloadVivo"> When the vivo model is expected to have changed since scoring began or the last reload  %>
 <%     then the local vivo, which is the on compared against, should be refreshed.                                    %>
 <%  <Param name="reloadVivo">true</Param>                                                                             %>
+<%                                                                                                                    %>
+<% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
      -->
 	<Param name="tempJenaDir">data/temp-score-model</Param>
 	<Param name="algorithms">ufid=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>

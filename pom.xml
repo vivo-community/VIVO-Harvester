@@ -4,7 +4,7 @@
 
 	<groupId>org.vivoweb</groupId>
 	<artifactId>harvester</artifactId>
-	<version>1.2-rc5</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 
@@ -219,6 +219,13 @@
 	<profiles>
 	</profiles>
 	<dependencies>
+		
+
+			<dependency>
+   				<groupId>org.apache.activemq</groupId>
+  				<artifactId>activemq-all</artifactId>
+  				<version>5.5.0</version>
+			</dependency>
 		<dependency>
 			<groupId>commons-vfs</groupId>
 			<artifactId>commons-vfs</artifactId>

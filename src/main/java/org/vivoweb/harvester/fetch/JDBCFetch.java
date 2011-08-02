@@ -250,39 +250,59 @@ public class JDBCFetch {
 					this.tableNames.add(realTableName);
 					// fix the tablename in all the other structures >.>
 					if(this.fromClauses != null) {
+						Map<String, String> tempMap = new HashMap<String, String>();
 						for(String fromClausesTable : this.fromClauses.keySet()) {
 							if(fromClausesTable.trim().equalsIgnoreCase(realTableName)) {
-								this.fromClauses.put(realTableName, this.fromClauses.remove(fromClausesTable));
+								tempMap.put(realTableName, this.fromClauses.get(fromClausesTable));
+							} else {
+								tempMap.put(fromClausesTable, this.fromClauses.get(fromClausesTable));
 							}
 						}
+						this.fromClauses = tempMap;
 					}
 					if(this.dataFields != null) {
+						Map<String, List<String>> tempMap = this.dataFields;
 						for(String dataFieldsTable : this.dataFields.keySet()) {
 							if(dataFieldsTable.trim().equalsIgnoreCase(realTableName)) {
-								this.dataFields.put(realTableName, this.dataFields.remove(dataFieldsTable));
+								tempMap.put(realTableName, this.dataFields.get(dataFieldsTable));
+							} else {
+								tempMap.put(dataFieldsTable, this.dataFields.get(dataFieldsTable));
 							}
 						}
+						this.dataFields = tempMap;
 					}
 					if(this.idFields != null) {
+						Map<String, List<String>> tempMap = this.idFields;
 						for(String idFieldsTable : this.idFields.keySet()) {
 							if(idFieldsTable.trim().equalsIgnoreCase(realTableName)) {
-								this.idFields.put(realTableName, this.idFields.remove(idFieldsTable));
+								tempMap.put(realTableName, this.idFields.get(idFieldsTable));
+							} else {
+								tempMap.put(idFieldsTable, this.idFields.get(idFieldsTable));
 							}
 						}
+						this.idFields = tempMap;
 					}
 					if(this.whereClauses != null) {
+						Map<String, List<String>> tempMap = this.whereClauses;
 						for(String whereClausesTable : this.whereClauses.keySet()) {
 							if(whereClausesTable.trim().equalsIgnoreCase(realTableName)) {
-								this.whereClauses.put(realTableName, this.whereClauses.remove(whereClausesTable));
+								tempMap.put(realTableName, this.whereClauses.get(whereClausesTable));
+							} else {
+								tempMap.put(whereClausesTable, this.whereClauses.get(whereClausesTable));
 							}
 						}
+						this.whereClauses = tempMap;
 					}
 					if(this.fkRelations != null) {
+						Map<String, Map<String, String>> tempMap = this.fkRelations;
 						for(String fkRelationsTable : this.fkRelations.keySet()) {
 							if(fkRelationsTable.trim().equalsIgnoreCase(realTableName)) {
-								this.fkRelations.put(realTableName, this.fkRelations.remove(fkRelationsTable));
+								tempMap.put(realTableName, this.fkRelations.get(fkRelationsTable));
+							} else {
+								tempMap.put(fkRelationsTable, this.fkRelations.get(fkRelationsTable));
 							}
 						}
+						this.fkRelations = tempMap;
 					}
 					found = true;
 					break;
