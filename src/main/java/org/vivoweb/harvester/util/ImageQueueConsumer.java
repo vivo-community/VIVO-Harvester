@@ -1,10 +1,20 @@
 package org.vivoweb.harvester.util;
+/**
+@author Mayank Saini*/
 
-
-/* To run this program you need to do is to import the server certificate and install it in your JDK's KeyStore for more reference check the 
- * Installation Manual
- * Author Mayank Saini
-*/
+/// Prerequisite Mesaage xml to Undertand the following Class
+/**﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://www.bsd.ufl.edu/webservices/IdCard/20100701" elementFormDefault="qualified" targetNamespace="http://www.bsd.ufl.edu/webservices/IdCard/20100701" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ImageChange">
+    <xs:sequence>
+      <xs:element name="DateUpdated" type="xs:dateTime" />
+      <xs:element name="Image" nillable="true" type="xs:base64Binary" />
+      <xs:element name="Ufid" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ImageChange" nillable="true" type="tns:ImageChange" />
+</xs:schema>
+ */
 import java.io.File;
 
 import java.io.FileInputStream;
@@ -41,41 +51,79 @@ import sun.misc.BASE64Decoder;
 
 public class ImageQueueConsumer {
 	/**
-	 * SLF4J Logger
+	 * This Class acts a a consumer to image message on the GatorOne publised queue.It 
+	 * consumes the message and write it as a Image of specific type. Gator messages are
+	 * of JPEF format 
 	 */
 	private static Logger log = LoggerFactory.getLogger(ImageQueueConsumer.class);
 	
+
+	/**
+	 * This is the Image file  written in the local dir after consuming the message
+	 */
 	private static File file;
+	/**
+	 * Input steam to the system.property file
+	 */
 	private static FileInputStream propFile = null;
+	/**
+	 * Consumer object to consuem the message
+	 */
+	private static MessageConsumer consumer;
+	/**
+	 * UFAD username and password
+	 */
 	private static String userName;
 	private static String password;
+	
 	private static Properties P = null;
+	/**
+	 * ActiveMQ Server URL
+	 */
 	private static String url ;
 	private static String subject ;
 	private static ConnectionFactory connectionFactory;
+	
 	private static Connection connection;
 	private static Session session;
 	private static Destination destination;
-	private static MessageConsumer consumer;
+	/**
+	 * Dir name to write the Image files  
+	 */
 	private static String imagedir ;
+	/**
+	 * Dir name to store the property file   
+	 */
 	private static String propdir;
 	
 	
+
+	/**
+	 * Consume all Message from the ActiveMQ queue
+	 * @throws JMSException 
+	 */
+	
 	public static void getUpdatesFromQueue() throws JMSException {
 	
-		//this is for testing purpose only.. so that I pull only partial images
-		for(int i = 1; i < 2; i++) {
+		//this is for testing purpose only.. so that I can test for 5 images at a time
+		//this need to be changed to while (not all messages ) after the final testing
+		for(int i = 0; i < 5; i++) {
 			Message message;
 			//while ((message = consumer.receiveNoWait()) != null) {
 			
-			message = consumer.receiveNoWait();
+			message = consumer.receiveNoWait(); //Receives the next message if one is immediately available.
 			processMessage(message);
 			
 		}
 	}
 	
 	
-	// This funciton processes every received messages 
+
+	/**
+	 * Stores the Ufid's in a HashSet
+	 * @param JMS Message objecr 
+	 * @throws throws JMS Exception
+	 */
 	public static void processMessage(Message message) throws JMSException {
 		
 		String jmsType = message.getStringProperty("type");
@@ -84,15 +132,16 @@ public class ImageQueueConsumer {
 			System.out.println("No Text Message Found");
 		
 		else if(jmsType.equals("ImageChange")) {
-			getUfidsAndImages(text.getText());
+			getUfidsAndImages(text.getText()); // this passes the Content of the ImageChange TAG to process
 		}
 		
 	}
 	
 	
-	/*This function takes the Xml string as a argument , convert it into Xml document , then pass the xml dom to get the Image and Ufid codes. 
-	 * 
-	 * */
+	/**
+	 * This fucntion parsed the XML image 
+	 * @param Content of the ImageChange TAG to process
+	 */
 	public static void getUfidsAndImages(String xmlText) {
 		
 		try {
@@ -116,6 +165,7 @@ public class ImageQueueConsumer {
 			String id = getCharacterDataFromElement(line3);
 			
 			System.out.println("Uploading Image Uf ID: "+ id+ "to Dir :"+imagedir);
+			
 			WriteImageFromBase64(getCharacterDataFromElement(line2), imagedir + id);
 			
 			System.out.println("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
@@ -126,9 +176,12 @@ public class ImageQueueConsumer {
 			System.err.println(e);
 		}
 	}
-	/* Message contains the Image in the Base64String format, the below fuction converts base64String to byte [] and save it as a 
-	image on the disk. This process repeats for every received message 
-	*/
+	
+	/**
+	 * This function convert the base64String encoded image to actual Image and store it in specified directory path
+	 * @param base64String text encoded Image ,path Path to store the Image,This process repeats for every received message
+	 * @throwsI OException
+	 */
 	
 	public static void WriteImageFromBase64(String base64String, String path) throws IOException {
 		
@@ -141,7 +194,12 @@ public class ImageQueueConsumer {
 		fos.close();
 	}
 	
-	//This function get the value of <ufid> & <Image> tag from the xml string 
+	/**
+	 * This function convert the base64String encoded image to actual Image and store it in specified directory path
+	 * @param base64String text encoded Image ,path Path to store the Image,This process repeats for every received message
+	 * @throwsI OException
+	 */
+	
 	public static String getCharacterDataFromElement(Element e) {
 		Node child = e.getFirstChild();
 		if(child instanceof CharacterData) {
