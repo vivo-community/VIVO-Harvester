@@ -229,8 +229,21 @@
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<core:Title><xsl:value-of select="Title" /></core:Title>
-			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
+			<!-- Use ISO abbreviation if title doesn't exist, otherwise set to unknown -->
+			<xsl:choose>
+				<xsl:when test ="Title">
+					<core:Title><xsl:value-of select="Title" /></core:Title>
+					<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
+				</xsl:when>
+				<xsl:when test ="ISOAbbreviation">
+					<core:Title><xsl:value-of select="ISOAbbreviation" /></core:Title>
+					<rdfs:label><xsl:value-of select="ISOAbbreviation" /></rdfs:label>
+				</xsl:when>
+				<xsl:otherwise>
+					<core:Title>Unknown</core:Title>
+					<rdfs:label>Unknown</rdfs:label>
+				</xsl:otherwise>
+			</xsl:choose>
 			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
 			<core:publicationVenueFor rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
