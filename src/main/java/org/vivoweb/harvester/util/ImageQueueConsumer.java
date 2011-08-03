@@ -335,7 +335,7 @@ public class ImageQueueConsumer {
 			e.printStackTrace();
 		}
 		
-		log.info("Pull Images from Gator one Server");
+		log.info("Pulled Images from Gator one Server");
 	}
 	
 }
