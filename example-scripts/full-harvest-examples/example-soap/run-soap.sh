@@ -57,6 +57,13 @@ rm -rf data
 #	in a format based off of the source. The format is a form of RDF but not in the VIVO ontology
 harvester-soapfetch -X soapfetch-auth.config.xml
 
+SESID=`harvester-xpathtool -X xpath-get-authcode.config.xml`
+
+echo " The session ID is :" $SESID
+
+harvester-soapfetch -X soapfetch-search.config.xml -a "$SESID"
+
+harvester-soapfetch -X soapfetch-close.config.xml -a "$SESID"
 # Execute Translate
 # This is the part of the script where the input data is transformed into valid RDF
 #   Translate will apply an xslt file to the fetched data which will result in the data 
