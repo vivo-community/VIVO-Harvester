@@ -7,7 +7,7 @@
 <Task>
 	<!--INPUT -->
 	<Param name="url">http://search.isiknowledge.com/esti/wokmws/ws/WokSearchLite</Param>
-	<Param name="message">soap-search-message.xml</Param>
+	<Param name="message">soap-query-message.xml</Param>
 	
 	<!--  OUTPUT -->
 	<Param name="output">data/raw-search-response.xml</Param>
