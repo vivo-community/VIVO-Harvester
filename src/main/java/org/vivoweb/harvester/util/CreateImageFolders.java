@@ -138,7 +138,7 @@ public class CreateImageFolders {
 	{
 		this.pathToImageScriptDirectory = pathToImageScriptFolder;
 		this.ufidSet = new HashSet<String>();
-		this.folder = new File(this.pathToImageScriptDirectory + "/images/fullImages");
+		this.folder = new File(this.pathToImageScriptDirectory + "/fullImages");
 	}
 	
 	/**
