@@ -12,13 +12,22 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Scanner;
+import javax.xml.namespace.QName;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,11 +109,14 @@ public class SOAPFetch {
 	 * @throws IOException problem with opening url connection
 	 */
 	public SOAPFetch(URL url, OutputStream output, InputStream xmlFileStream) throws IOException {
-
 		
 		this.outputFile = output;
 		this.url = url;
 		this.inputFile = xmlFileStream;
+		log.debug("Outputfile = " + this.outputFile.toString());
+		log.debug("URL = "+ this.url.toString());
+		log.debug("Inputfile = " + this.inputFile.toString());
+		log.debug("Checking for NULL values");
 		if(this.outputFile == null) {
 			throw new IllegalArgumentException("Must provide output file!");
 		}
@@ -116,6 +128,7 @@ public class SOAPFetch {
 		if(this.url == null) {
 			throw new IllegalArgumentException("Must provide url!");
 		}
+		log.info("opening the url connection");
 		this.urlCon = this.url.openConnection();
 
 	    // specify that we will send output and accept input
@@ -128,7 +141,10 @@ public class SOAPFetch {
 		this.urlCon.setUseCaches (false);
 		this.urlCon.setDefaultUseCaches (false);
 
-		this.xmlString = new Scanner(this.inputFile,"UTF-8").useDelimiter("\\A").next();
+		this.xmlString = IOUtils.toString(this.inputFile,"UTF-8");
+
+		log.info("Built message");
+		log.debug("Message contents:\n" + this.xmlString);
 		
 	}
 	
@@ -141,11 +157,15 @@ public class SOAPFetch {
 	    // tell the web server what we are sending
 		this.urlCon.setRequestProperty ( "Content-Type", "application/soap+xml; charset=utf-8" );
 
+
+		log.debug("getting writer for url connection");
 	    OutputStreamWriter osWriter = new OutputStreamWriter( this.urlCon.getOutputStream() );
+		log.debug("writting to url connection");
 	    osWriter.write(this.xmlString);
 	    osWriter.close();
 
 	    // reading the response
+		log.debug("getting reader for url connection");
 	    InputStreamReader isReader = new InputStreamReader( this.urlCon.getInputStream() );
 
 	    StringBuilder buf = new StringBuilder();
@@ -158,10 +178,44 @@ public class SOAPFetch {
 	    }
 
 	    String result = buf.toString();
+
+		log.debug("Response contents:\n" + result);
 	    OutputStreamWriter outputWriter = new OutputStreamWriter(this.outputFile);
+		log.info("writing response");
 	    outputWriter.write(result);
 	    outputWriter.close();
 
+	}
+	
+	private String SOAPRequest(URL url, OutputStream output, InputStream xmlFileStream){
+		String result = new String();
+	    try {
+	        SOAPConnectionFactory sfc = SOAPConnectionFactory.newInstance();
+	        SOAPConnection connection = sfc.createConnection();
+
+	        MessageFactory mf = MessageFactory.newInstance();
+	        SOAPMessage sm = mf.createMessage();
+
+	        SOAPHeader sh = sm.getSOAPHeader();
+	        SOAPBody sb = sm.getSOAPBody();
+	        sh.detachNode();
+	        QName bodyName = new QName("http://quoteCompany.com", "GetQuote", "d");
+	        SOAPBodyElement bodyElement = sb.addBodyElement(bodyName);
+	        QName qn = new QName("aName");
+	        SOAPElement messageBody = bodyElement.addChildElement(qn);
+
+	        messageBody.addTextNode("TextMode");
+
+	        System.out.println("\n Soap Request:\n");
+	        sm.writeTo(System.out);
+	        System.out.println();
+
+	        SOAPMessage response = connection.call(sm, url);
+	        System.out.println(response.getContentDescription());
+	      } catch (Exception ex) {
+	        ex.printStackTrace();
+	      }
+		return result;
 	}
 	
 	/**

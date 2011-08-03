@@ -73,7 +73,7 @@
 		<xsl:param name='this' />
 		<xsl:variable name="ufid" select="$this/db-people:UFID"/>
 		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
-			<ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$ufid"/></ufVivo:ufid>
+			<ufVivo:ufid><xsl:value-of select="$ufid"/></ufVivo:ufid>
 			<ufVivo:harvestedBy>PeopleSoft-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 			<core:email><xsl:value-of select="$this/db-people:EMAIL" /></core:email>

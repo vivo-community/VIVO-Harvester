@@ -108,7 +108,7 @@ public class NLMJournalFetchTest extends TestCase {
 		//test 1200 records, batch 500
 		new NLMJournalFetch("test@test.com", "1:8000[dp]", "1200", "500", this.rh).execute();
 		assertTrue(this.rh.iterator().hasNext());
-		int count = 0;
+		int count = 1;
 		for(Record r : this.rh) {
 			log.debug("record ID: "+r.getID());
 			count++;
