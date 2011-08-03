@@ -84,21 +84,17 @@ public class CreateImageFolders {
 		String fileName;				
 		try {			
 			for(File f : this.folder.listFiles()) {
-				if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
+				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
 					fileName = f.getName();
 					
-					if(this.ufidSet.contains(fileName.substring(9,16))) {						
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");
+					if(this.ufidSet.contains(fileName.substring(9,16))) {												
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");						
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");
-					} else {																
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");												//
+					} else {																						
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");						
 					} 
-				}
+				//}
 			}
 		} catch(IOException e) {
 			throw new IOException(e);
@@ -142,7 +138,7 @@ public class CreateImageFolders {
 	{
 		this.pathToImageScriptDirectory = pathToImageScriptFolder;
 		this.ufidSet = new HashSet<String>();
-		this.folder = new File(this.pathToImageScriptDirectory + "/images/mainImages");
+		this.folder = new File(this.pathToImageScriptDirectory + "/images/fullImages");
 	}
 	
 	/**
