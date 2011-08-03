@@ -12,15 +12,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -128,6 +119,15 @@ public class SOAPFetch {
 		if(this.url == null) {
 			throw new IllegalArgumentException("Must provide url!");
 		}
+		
+	}
+	
+	
+	/**
+	 * Executes the task
+	 * @throws IOException error processing record handler or jdbc connection
+	 */
+	public void execute() throws IOException {
 		log.info("opening the url connection");
 		this.urlCon = this.url.openConnection();
 
@@ -145,15 +145,6 @@ public class SOAPFetch {
 
 		log.info("Built message");
 		log.debug("Message contents:\n" + this.xmlString);
-		
-	}
-	
-	
-	/**
-	 * Executes the task
-	 * @throws IOException error processing record handler or jdbc connection
-	 */
-	public void execute() throws IOException {
 	    // tell the web server what we are sending
 		this.urlCon.setRequestProperty ( "Content-Type", "application/soap+xml; charset=utf-8" );
 
@@ -185,37 +176,6 @@ public class SOAPFetch {
 	    outputWriter.write(result);
 	    outputWriter.close();
 
-	}
-	
-	private String SOAPRequest(URL url, OutputStream output, InputStream xmlFileStream){
-		String result = new String();
-	    try {
-	        SOAPConnectionFactory sfc = SOAPConnectionFactory.newInstance();
-	        SOAPConnection connection = sfc.createConnection();
-
-	        MessageFactory mf = MessageFactory.newInstance();
-	        SOAPMessage sm = mf.createMessage();
-
-	        SOAPHeader sh = sm.getSOAPHeader();
-	        SOAPBody sb = sm.getSOAPBody();
-	        sh.detachNode();
-	        QName bodyName = new QName("http://quoteCompany.com", "GetQuote", "d");
-	        SOAPBodyElement bodyElement = sb.addBodyElement(bodyName);
-	        QName qn = new QName("aName");
-	        SOAPElement messageBody = bodyElement.addChildElement(qn);
-
-	        messageBody.addTextNode("TextMode");
-
-	        System.out.println("\n Soap Request:\n");
-	        sm.writeTo(System.out);
-	        System.out.println();
-
-	        SOAPMessage response = connection.call(sm, url);
-	        System.out.println(response.getContentDescription());
-	      } catch (Exception ex) {
-	        ex.printStackTrace();
-	      }
-		return result;
 	}
 	
 	/**

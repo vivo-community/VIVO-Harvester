@@ -6,7 +6,7 @@
 -->
 <Task>
 	<!--INPUT -->
-	<Param name="url">http://search.isiknowledge.com/wokmws/ws/WOKMWSAuthenticate?wsdl</Param>
+	<Param name="url">http://search.isiknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate</Param>
 	<Param name="message">soap-authenticate-message.xml</Param>
 	
 	<!--  OUTPUT -->
