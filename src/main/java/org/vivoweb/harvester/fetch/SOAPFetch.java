@@ -58,14 +58,19 @@ public class SOAPFetch {
 	private String xmlString;
 	
 	/**
+	 * The authentication sessionID
+	 */
+	private String sessionID;
+	
+	/**
 	 * Constructor
 	 * @param url address to connect with
 	 * @param output RecordHandler to write data to
 	 * @param xmlFile xml file to POST to the url
 	 * @throws IOException error talking with database
 	 */
-	public SOAPFetch(URL url, String output, String xmlFile) throws IOException {
-		this(url, FileAide.getOutputStream( output ), FileAide.getInputStream( xmlFile ) );
+	public SOAPFetch(URL url, String output, String xmlFile,String sesID) throws IOException {
+		this(url, FileAide.getOutputStream( output ), FileAide.getInputStream( xmlFile ), sesID );
 	}
 	
 	
@@ -88,7 +93,8 @@ public class SOAPFetch {
 		this(
 			new URL(args.get("u")), 
 			FileAide.getOutputStream(args.get("o")),
-			FileAide.getInputStream(args.get("m"))
+			FileAide.getInputStream(args.get("m")),
+			args.get("a")
 		);
 	}
 	
@@ -99,14 +105,16 @@ public class SOAPFetch {
 	 * @param xmlFileStream The stream which points to the Soap Message
 	 * @throws IOException problem with opening url connection
 	 */
-	public SOAPFetch(URL url, OutputStream output, InputStream xmlFileStream) throws IOException {
+	public SOAPFetch(URL url, OutputStream output, InputStream xmlFileStream, String sesID) throws IOException {
 		
 		this.outputFile = output;
 		this.url = url;
 		this.inputFile = xmlFileStream;
+		this.sessionID = sesID;
 		log.debug("Outputfile = " + this.outputFile.toString());
 		log.debug("URL = "+ this.url.toString());
 		log.debug("Inputfile = " + this.inputFile.toString());
+		log.debug("SessionID = " + this.sessionID);
 		log.debug("Checking for NULL values");
 		if(this.outputFile == null) {
 			throw new IllegalArgumentException("Must provide output file!");
@@ -118,6 +126,10 @@ public class SOAPFetch {
 		
 		if(this.url == null) {
 			throw new IllegalArgumentException("Must provide url!");
+		}
+		
+		if(this.sessionID == null) {
+			this.sessionID = "";
 		}
 		
 	}
@@ -147,6 +159,9 @@ public class SOAPFetch {
 		log.debug("Message contents:\n" + this.xmlString);
 	    // tell the web server what we are sending
 		this.urlCon.setRequestProperty ( "Content-Type", "application/soap+xml; charset=utf-8" );
+		if(this.sessionID != ""){
+			this.urlCon.setRequestProperty ( "Cookie", "SID=\""+this.sessionID + "\"" );
+		}
 
 
 		log.debug("getting writer for url connection");
@@ -186,8 +201,8 @@ public class SOAPFetch {
 		ArgParser parser = new ArgParser("SOAPFetch");
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").withParameter(true, "URL").setDescription("The URL which will receive the MESSAGE.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("message").withParameter(true, "MESSAGE").setDescription("The MESSAGE file path.").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(false));
-		//parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceBase").withParameter(true, "NAMESPACE_BASE").setDescription("the base namespace to use for each node created").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authentication").withParameter(true, "AUTH").setDescription("The authentication session ID").setRequired(false));
 		return parser;
 	}
 	

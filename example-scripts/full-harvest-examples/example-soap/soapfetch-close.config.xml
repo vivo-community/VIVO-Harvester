@@ -7,9 +7,9 @@
 <Task>
 	<!--INPUT -->
 	<Param name="url">http://search.isiknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate</Param>
-	<Param name="message">soap-authenticate-message.xml</Param>
+	<Param name="message">soap-close-message.xml</Param>
 	
 	<!--  OUTPUT -->
-	<Param name="output">data/raw-auth-response.xml</Param>
+	<Param name="output">data/raw-close-response.xml</Param>
 
 </Task>
