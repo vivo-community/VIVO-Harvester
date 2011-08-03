@@ -13,17 +13,19 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 /**
- * Fetches rdf data from a JDBC database placing the data in the supplied record handler.
+ * Fetches SOAP-XML data from a SOAP compatible site placing the data in the supplied file.
  */
 public class SOAPFetch {
 	/**
@@ -31,27 +33,27 @@ public class SOAPFetch {
 	 */
 	private static Logger log = LoggerFactory.getLogger(SOAPFetch.class);
 	/**
-	 * Record Handler to write records to
+	 * File to put XML in.
 	 */
 	private OutputStream outputFile;
 	
 	/**
-	 * Record Handler to write records to
+	 * URL to send message to
 	 */
 	private URL url;
 
 	/**
-	 * Record Handler to write records to
+	 * Connection derived from that URL
 	 */
 	private URLConnection urlCon;
 	
 	/**
-	 * Record Handler to write records to
+	 * Inputstream with SOAP style XML message
 	 */
 	private InputStream inputFile;
 	
 	/**
-	 * Record Handler to write records to
+	 * String of XML gathered from the inputStream
 	 */
 	private String xmlString;
 	
@@ -167,7 +169,7 @@ public class SOAPFetch {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("JDBCFetch");
+		ArgParser parser = new ArgParser("SOAPFetch");
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").withParameter(true, "URL").setDescription("The URL which will receive the MESSAGE.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("message").withParameter(true, "MESSAGE").setDescription("The MESSAGE file path.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(false));
