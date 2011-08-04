@@ -76,18 +76,21 @@ if [ ! -d "upload" -a ! -d "backup" ]; then
 	mkdir backup
 	mkdir backup/fullImages
 	mkdir backup/thumbnails    
-else
-	#move any images from the previous harvest stored in backup directory in to images directory
-	numberOfFiles=`ls -A ./backup/fullImages/ | wc -l`
-
-	if [ "$numberOfFiles" == "0" ]; then
-		echo "There are no backed up images in backup directory"
-	else
-		echo "Backed up images are used in the new harvest"
-		mv backup/fullImages/* fullImages/
-                mv backup/thumbnails/* thumbnails/
-	fi
 fi
+
+
+#move any images from the previous harvest stored in backup directory in to images directory
+numberOfFiles=`ls -A ./backup/fullImages/ | wc -l`
+
+
+if [ "$numberOfFiles" == "0" ]; then
+	echo "There are no backed up images in backup directory"
+else
+	echo "Backed up images are used in the new harvest"
+	mv backup/fullImages/* fullImages/
+        mv backup/thumbnails/* thumbnails/
+fi
+
   
 #Generate upload and backup folders 
 #	For each image in the uplod folder there is corresponding person in VIVO
@@ -176,7 +179,7 @@ fi
 numberOfFiles=`ls -A ./upload/fullImages/ | wc -l`
 #move all the files in upload directory to  harvestedImages only if there are images in upload directory
 if [ "$numberOfFiles" == "0" ]; then
-	#echo "There are no images to upload"	        
+	echo "There are no images to upload"	        
 else
        echo "Uploading images to VIVO"
        mv ./upload/fullImages/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages/
