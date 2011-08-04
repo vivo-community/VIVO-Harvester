@@ -113,7 +113,7 @@ public class ImageQueueConsumer {
 			message = consumer.receiveNoWait(); //Receives the next message if one is immediately available.
 			if(message==null)
 				System.out.println("No Message is the queue");
-			
+			else
 			processMessage(message);
 			
 		}
