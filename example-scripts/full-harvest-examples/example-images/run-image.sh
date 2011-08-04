@@ -17,6 +17,7 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
+VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
 export HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-images
 export DATE=`date +%Y-%m-%d'T'%T`
@@ -28,7 +29,6 @@ export DATE=`date +%Y-%m-%d'T'%T`
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
-export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/temp.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
@@ -50,10 +50,16 @@ cd ..
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
 #rm -rf data
+
+#remove previous model
 rm -f model.xml
+#remove previous ufids.txt
 rm -f ufids.txt
-#rm -rf upload
-#rm -rf backup
+#remove upload directory
+rm -rf upload
+#remove backed uup images
+#	In this directory all the images that are not mapped to people we saved adn these images are used  
+rm -rf backup
 
 #Get a model of the people who dont have images 
 touch model.xml
@@ -63,17 +69,24 @@ harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.e
 grep -o "[0-9]\{8\}</...:ufid>$" model.xml  > ufids.txt
 
 if [ ! -d "upload" -a ! -d "backup" ]; then
-    mkdir upload
-    mkdir upload/mainImages
-    mkdir upload/thumbImages		
+	mkdir upload
+	mkdir upload/fullImages
+	mkdir upload/thumbnails		
 
-    mkdir backup
-    mkdir backup/mainImages
-    mkdir backup/thumbImages    
+	mkdir backup
+	mkdir backup/fullImages
+	mkdir backup/thumbnails    
 else
-#move any images from the previous harvest stored in backup directory in to images directory
-mv backup/mainImages/* images/mainImages/
-mv backup/thumbImages/* images/thumbImages/
+	#move any images from the previous harvest stored in backup directory in to images directory
+	numberOfFiles=`ls -A ./backup/fullImages/ | wc -l`
+
+	if [ "$numberOfFiles" == "0" ]; then
+		echo "There are no backed up images in backup directory"
+	else
+		echo "Backed up images are used in the new harvest"
+		mv backup/fullImages/* fullImages/
+                mv backup/thumbnails/* thumbnails/
+	fi
 fi
   
 #Generate upload and backup folders 
@@ -82,17 +95,19 @@ fi
 ####java CreateFolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
 harvester-createimagefolders -p $HARVESTER_INSTALL_DIR/example-scripts/example-images
 
-#Create XML files for all the images
+#If the upload folder is empty then exit the script
+
+
+
+#Create raw records for all the images
 #	Each xml file contains just the ufid of a person	 
 if [ ! -d "data" ]; then
 	mkdir data
-fi
-if [ ! -d "data/raw-records" ]; then
         mkdir data/raw-records
 fi
 cd data
-cd raw-records 
-FOLDER="$HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/mainImages/*"
+cd raw-records
+FOLDER="$HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/fullImages/*"
 for file in $FOLDER
 do
         imageName=`echo $file | grep -o "[0-9]\{8\}.*"`
@@ -152,16 +167,20 @@ harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 #if there is no harvestedImages dirctory make one in tomcat VIVO
-if [ ! -d "/var/lib/tomcat6/webapps/vivo/harvestedImages" ]; then
-    mkdir /var/lib/tomcat6/webapps/vivo/harvestedImages
+if [ ! -d "$VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages" ]; then
+	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages
+  	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages
+	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/thumbnails
 fi
 
-mainImages=`ls -la ./upload/mainImages/ | grep "[0-9]\{8\}.*" | wc -l`
-thumbImages=`ls -la ./upload/thumbImages/ | grep "[0-9]\{8\}.*" | wc -l`
-mv ./upload/mainImages/* /var/lib/tomcat6/webapps/vivo/harvestedImages/mainImages/
-mv ./upload/thumbImages/* /var/lib/tomcat6/webapps/vivo/harvestedImages/thumbImages/
+numberOfFiles=`ls -A ./upload/fullImages/ | wc -l`
+#move all the files in upload directory to  harvestedImages only if there are images in upload directory
+if [ "$numberOfFiles" == "0" ]; then
+	#echo "There are no images to upload"	        
+else
+       echo "Uploading images to VIVO"
+       mv ./upload/fullImages/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages/
+       mv ./upload/thumbnails/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/thumbnails/
+fi
 
-echo "Harvested $mainImages main images"
-echo "Harvested $thumbImages thumbnails"
-echo 'Sucessfully Harvested Images'
-
+echo 'Harvest completed successfully'
