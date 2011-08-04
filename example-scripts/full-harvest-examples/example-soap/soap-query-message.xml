@@ -5,22 +5,6 @@
 				<databaseID>WOS</databaseID>
 				<editions>
 					<collection>WOS</collection>
-					<edition>CCR</edition>
-				</editions>
-				<editions>
-					<collection>WOS</collection>
-					<edition>IC</edition>
-				</editions>
-				<editions>
-					<collection>WOS</collection>
-					<edition>ISSHP</edition>
-				</editions>
-				<editions>
-					<collection>WOS</collection>
-					<edition>ISTP</edition>
-				</editions>
-				<editions>
-					<collection>WOS</collection>
 					<edition>AHCI</edition>
 				</editions>
 				<editions>
@@ -36,10 +20,10 @@
 					<begin>1993-01-01</begin>
 					<end>2010-12-31</end>
 				</timeSpan>
-				<!--
 				<userQuery>TS=(cadmium)</userQuery>
-				-->
+				<!--
 				<userQuery>OG=(University of Florida)</userQuery>
+				-->
 			</queryParameters>
 			<retrieveParameters>
 				<count>100</count>
