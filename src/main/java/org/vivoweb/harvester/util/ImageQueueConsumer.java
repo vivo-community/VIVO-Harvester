@@ -114,9 +114,9 @@ public class ImageQueueConsumer {
 			
 			System.out.println("received message"+i);
 			if(message==null)
-				System.out.println("No Message is the queue");
+				{System.out.println("No Message is the queue");}
 			else
-			processMessage(message);
+			{	processMessage(message);}
 			
 		}
 	}
