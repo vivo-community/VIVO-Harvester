@@ -103,14 +103,16 @@ public class ImageQueueConsumer {
 	 */
 	
 	public static void getUpdatesFromQueue() throws JMSException {
-		
+
 		//this is for testing purpose only.. so that I can test for 5 images at a time
 		//this need to be changed to while (not all messages ) after the final testing
 		for(int i = 0; i < 5; i++) {
 			Message message=null;
 			//while ((message = consumer.receiveNoWait()) != null) {
 			
-			message = consumer.receiveNoWait(); //Receives the next message if one is immediately available.
+			message = consumer.receiveNoWait();//Receives the next message if one is immediately available.
+			
+			System.out.println("received message"+i);
 			if(message==null)
 				System.out.println("No Message is the queue");
 			else
