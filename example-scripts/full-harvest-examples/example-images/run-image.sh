@@ -61,6 +61,21 @@ rm -rf upload
 #	In this directory all the images that are not mapped to people we saved adn these images are used  
 rm -rf backup
 
+
+#Look for fulllImages directory if not present exit the script
+if [ ! -d "fullImages" ]; then
+        echo "Missing fullImages directory, please create fullImages directory and put all full images in this directory"
+	exit
+fi
+
+
+#Look for  if they are not present exit the script
+if [ ! -d "thumbnails" ]; then
+        echo "Missing thumbnails directory, please create thumbnails directory and put all thumbnails in this directory"
+        exit
+fi
+
+
 #Get a model of the people who dont have images 
 touch model.xml
 harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID  } WHERE { ?URI <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID . NOT EXISTS { ?URI <http://vitro.mannlib.cornell.edu/ns/vitro/public#mainImage> ?y . } }" -Q RDF/XML -f model.xml
