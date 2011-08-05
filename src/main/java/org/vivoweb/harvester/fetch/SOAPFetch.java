@@ -122,37 +122,45 @@ public class SOAPFetch {
 		this.url = url;
 		this.inputFile = xmlFileStream;
 		this.sessionID = sesID;
-		log.debug("Outputfile = " + this.outputFile.toString());
-		log.debug("URL = "+ this.url.toString());
-		log.debug("Inputfile = " + this.inputFile.toString());
-		log.debug("SessionID = " + this.sessionID);
+		
 		log.debug("Checking for NULL values");
 		if(this.outputFile == null) {
-			throw new IllegalArgumentException("Must provide output file!");
+			log.debug("Outputfile = null");
+			log.error("Must provide output file!");
+		}else{
+			log.debug("Outputfile = " + this.outputFile.toString());
 		}
 		
 		if(this.inputFile == null) {
-			throw new IllegalArgumentException("Must provide message file!");
+			log.debug("Inputfile = null");
+			log.error("Must provide message file!");
+		}else{
+			log.debug("Inputfile = " + this.inputFile.toString());
 		}
 		
 		if(this.url == null) {
-			throw new IllegalArgumentException("Must provide url!");
+			log.debug("URL = null");
+			log.error("Must provide url!");
+		}else{
+			log.debug("URL = "+ this.url.toString());
 		}
 		
 		if(this.sessionID == null) {
+			log.debug("SessionID = null");
 			this.sessionID = "";
+		}else{
+			log.debug("SessionID = " + this.sessionID);
 		}
 		
 	}
 	
-	
 	/**
-	 * Executes the task
-	 * @throws IOException error processing record handler or jdbc connection
+	 * @param urlCon
+	 * @param message
+	 * @throws IOException
 	 */
-	public void execute() throws IOException {
-		log.info("opening the url connection");
-		this.urlCon = this.url.openConnection();
+	private void sendMessage(URLConnection urlCon,String message) throws IOException{
+
 
 	    // specify that we will send output and accept input
 		this.urlCon.setDoInput(true);
@@ -164,37 +172,60 @@ public class SOAPFetch {
 		this.urlCon.setUseCaches (false);
 		this.urlCon.setDefaultUseCaches (false);
 
-		this.xmlString = IOUtils.toString(this.inputFile,"UTF-8");
-
-		log.info("Built message");
-		log.debug("Message contents:\n" + this.xmlString);
 	    // tell the web server what we are sending
 		this.urlCon.setRequestProperty ( "Content-Type", "application/soap+xml; charset=utf-8" );
 		if(this.sessionID != ""){
 			this.urlCon.setRequestProperty ( "Cookie", "SID=\""+this.sessionID + "\"" );
 		}
-
-
+		
 		log.debug("getting writer for url connection");
 	    OutputStreamWriter osWriter = new OutputStreamWriter( this.urlCon.getOutputStream() );
+	    
 		log.debug("writting to url connection");
 	    osWriter.write(this.xmlString);
 	    osWriter.close();
-
-	    // reading the response
-		log.debug("getting reader for url connection");
+	}
+	
+	/**
+	 * @param urlCon
+	 * @return
+	 * @throws IOException
+	 */
+	private String readMessage(URLConnection urlCon) throws IOException{
 	    InputStreamReader isReader = new InputStreamReader( this.urlCon.getInputStream() );
-
+	
 	    StringBuilder buf = new StringBuilder();
 	    char[] cbuf = new char[ 2048 ];
 	    int num;
-
+	
 	    while ( -1 != (num=isReader.read( cbuf )))
 	    {
 	        buf.append( cbuf, 0, num );
 	    }
+	
+	    return buf.toString();
+	}
+	
+	/**
+	 * Executes the task
+	 * @throws IOException error processing record handler or jdbc connection
+	 */
+	public void execute() throws IOException {
 
-	    String result = buf.toString();
+		this.xmlString = IOUtils.toString(this.inputFile,"UTF-8");
+
+		log.info("Built message");
+		log.debug("Message contents:\n" + this.xmlString);
+
+		log.info("opening the url connection");
+		this.urlCon = this.url.openConnection();
+		
+		sendMessage(this.urlCon,this.xmlString);
+
+	    // reading the response
+		log.debug("getting reader for url connection");
+		String result = readMessage(this.urlCon);
+
 	    result = formatResult(result);
 
 		log.debug("Response contents:\n" + result);
@@ -210,7 +241,7 @@ public class SOAPFetch {
 	 * @param inputXml the input XML string
 	 * @return the formatted XML string
 	 */
-	private String formatResult(String inputXml) {
+	public String formatResult(String inputXml) {
 		try {
 			StringReader reader = new StringReader(inputXml);
 			InputSource source = new InputSource(reader);
