@@ -106,7 +106,7 @@ public class ImageQueueConsumer {
 
 		//this is for testing purpose only.. so that I can test for 5 images at a time
 		//this need to be changed to while (not all messages ) after the final testing
-		for(int i = 0; i < 5; i++) {
+		for(int i = 0; i < 1; i++) {
 			Message message=null;
 			//while ((message = consumer.receiveNoWait()) != null) {
 			
