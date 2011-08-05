@@ -10,14 +10,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,6 +195,7 @@ public class SOAPFetch {
 	    }
 
 	    String result = buf.toString();
+	    result = formatResult(result);
 
 		log.debug("Response contents:\n" + result);
 	    OutputStreamWriter outputWriter = new OutputStreamWriter(this.outputFile);
@@ -192,6 +204,36 @@ public class SOAPFetch {
 	    outputWriter.close();
 
 	}
+	
+	/**
+	 * Take an XML string and ensure there are line breaks and indentation.
+	 * @param inputXml the input XML string
+	 * @return the formatted XML string
+	 */
+	private String formatResult(String inputXml) {
+		try {
+			StringReader reader = new StringReader(inputXml);
+			InputSource source = new InputSource(reader);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(source);
+			
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			
+			StreamResult result = new StreamResult(new StringWriter());
+			DOMSource domSource = new DOMSource(document);
+			transformer.transform(domSource, result);
+			
+			return result.getWriter().toString();
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+			return inputXml; //log error and then just don't format the result
+		}
+	}
+	
+	
 	
 	/**
 	 * Get the ArgParser for this task
