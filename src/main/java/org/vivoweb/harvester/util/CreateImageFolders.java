@@ -84,7 +84,7 @@ public class CreateImageFolders {
 		String fileName;				
 		try {			
 			for(File f : this.folder.listFiles()) {
-				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) {
+				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) { //Uncomment this if you need to explicitly check for the mime type of the image 
 					fileName = f.getName();
 					
 					if(this.ufidSet.contains(fileName.substring(9,16))) {												
