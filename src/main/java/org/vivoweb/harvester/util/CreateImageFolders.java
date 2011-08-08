@@ -85,14 +85,13 @@ public class CreateImageFolders {
 		try {			
 			for(File f : this.folder.listFiles()) {
 				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) { //Uncomment this if you need to explicitly check for the mime type of the image 
-					fileName = f.getName();
-					
-					if(this.ufidSet.contains(fileName.substring(9,16))) {												
+					fileName = f.getName();					
+					if(this.ufidSet.contains(fileName.substring(0,8))) {												
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");												//
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");												//
 					} else {																						
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName.substring(9,16)+" "+fileName.substring(17,fileName.length())+ " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");						
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");						
 					} 
 				//}
 			}

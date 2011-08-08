@@ -59,7 +59,7 @@ rm -f ufids.txt
 rm -rf upload
 #remove backed uup images
 #	In this directory all the images that are not mapped to people we saved adn these images are used  
-rm -rf backup
+#rm -rf backup
 
 
 #Look for fulllImages directory if not present exit the script
