@@ -44,12 +44,12 @@
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#File"/>
 			<public:downloadLocation rdf:resource="{$baseURI}thumbDirDownload/ufid{self::*}"/>
-			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">thumbnail.<xsl:value-of select="." /></public:filename>
+			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">thumbnail<xsl:value-of select="." /></public:filename>
 			<public:mimeType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">image/<xsl:value-of select="substring(current(),10)" /></public:mimeType>
 		</rdf:Description>
 			
 		<rdf:Description rdf:about="{$baseURI}thumbDirDownload/ufid{self::*}">
-  			<public:directDownloadUrl>/harvestedImages/thumbnails/thumbnail.<xsl:value-of select="." /></public:directDownloadUrl>
+  			<public:directDownloadUrl>/harvestedImages/thumbnails/thumbnail<xsl:value-of select="." /></public:directDownloadUrl>
   			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
   			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
 		</rdf:Description>
