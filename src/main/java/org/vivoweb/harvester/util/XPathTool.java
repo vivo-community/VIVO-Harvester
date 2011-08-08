@@ -6,6 +6,7 @@
 package org.vivoweb.harvester.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
@@ -74,12 +75,22 @@ public class XPathTool {
 	 * @throws IOException error reading xml file
 	 */
 	public static String getXPathResult(String xmlFile, String expression) throws IOException {
+		return getXpathStreamResult(FileAide.getInputStream(xmlFile), expression);
+	}
+
+
+	/**
+	 * @param xmlIS
+	 * @param expression
+	 * @return
+	 * @throws IOException
+	 */
+	public static String getXpathStreamResult(InputStream xmlIS, String expression) throws IOException{
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true); // never forget this!
-			Document doc = factory.newDocumentBuilder().parse(FileAide.getInputStream(xmlFile));
+			Document doc = factory.newDocumentBuilder().parse(xmlIS);
 			String value = XPathFactory.newInstance().newXPath().compile(expression).evaluate(doc, XPathConstants.STRING).toString();
-//			log.debug("xpath result for '" + expression + "' on file '" + xmlFile + "': '" + value + "'");
 			return value;
 		} catch(ParserConfigurationException e) {
 			throw new IOException(e);

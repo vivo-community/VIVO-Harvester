@@ -27,7 +27,7 @@
 				-->
 			</queryParameters>
 			<retrieveParameters>
-				<count>2</count>
+				<count>1</count>
 				<fields>
 					<name>Date</name>
 					<sort>D</sort>
@@ -36,7 +36,7 @@
 					<name>Relevance</name>
 					<sort>D</sort>
 				</fields>
-				<firstRecord>1</firstRecord>
+				<firstRecord>2</firstRecord>
 			</retrieveParameters>
 		</ns2:search>
 	</soap:Body>

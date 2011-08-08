@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=~/git/Harvester
+HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-soap
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -59,9 +59,11 @@ harvester-soapfetch -X soapfetch-auth.config.xml
 
 SESID=`harvester-xpathtool -X xpath-get-authcode.config.xml`
 
-echo " The session ID is :" $SESID
+#echo " The session ID is :" $SESID
 
 harvester-soapfetch -X soapfetch-search.config.xml -a "$SESID"
+
+harvester-soapfetch -X soapfetch-retrieve.config.xml -a "$SESID"
 
 harvester-soapfetch -X soapfetch-close.config.xml -a "$SESID"
 # Execute Translate
