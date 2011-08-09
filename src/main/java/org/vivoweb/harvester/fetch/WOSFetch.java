@@ -40,6 +40,7 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -191,7 +192,11 @@ public class WOSFetch {
 		}
 		
 	}
-	private String documentToString(Document document){
+	/**
+	 * @param documentNode
+	 * @return
+	 */
+	private String nodeToString(Node documentNode){
 		StreamResult result =null;
 		try {
 		Transformer	transformer = TransformerFactory.newInstance().newTransformer();
@@ -199,7 +204,7 @@ public class WOSFetch {
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		
 		result = new StreamResult(new StringWriter());
-		DOMSource domSource = new DOMSource(document);
+		DOMSource domSource = new DOMSource(documentNode);
 		transformer.transform(domSource, result);
 		} catch(TransformerException e) {
 			// TODO Auto-generated catch block
@@ -212,44 +217,100 @@ public class WOSFetch {
 	return result.getWriter().toString();
 	}
 	
-	private String getnextQuery(String previousQuery){
+	/**
+	 * @param previousQuery
+	 * @param recordsFound
+	 * @return
+	 * @throws IOException
+	 */
+	private String getnextQuery(String previousQuery,int recordsFound) throws IOException{
 		String nextQuery = "";
 		try {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true); // never forget this!
 		Document searchDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(previousQuery.getBytes()) );
-		log.debug("searchDoc:");
-		log.debug(documentToString(searchDoc));
+		//log.debug("searchDoc:");
+		//log.debug(documentToString(searchDoc));
 		
 		NodeList firstrecordNodes = searchDoc.getElementsByTagName("firstRecord");
-		log.debug("Node length = " + firstrecordNodes.getLength());
+		log.debug("Node length = " + firstrecordNodes.getLength() );
 		Node firstnode = firstrecordNodes.item(0);
-		int firstrecord = Integer.parseInt(firstnode.getTextContent());
+		int firstrecord = Integer.parseInt(firstnode.getTextContent() );
 		log.debug("firstrecord = " + firstrecord);
 		
 		NodeList countNodes = searchDoc.getElementsByTagName("count");
-		log.debug("Node length = " + countNodes.getLength());
+		log.debug("Node length = " + countNodes.getLength() );
 		Node countnode = countNodes.item(0);
-		int count = Integer.parseInt(countnode.getTextContent());
+		int count = Integer.parseInt(countnode.getTextContent() );
 		log.debug("count= " + count);
+		int newFirst=firstrecord + count;
+		//Commented out adjustment caused by fear of requesting nonexistant records with count tag.
+//		if((firstrecord + (count * 2)) < recordsFound){
+			firstnode.setTextContent(Integer.toString(newFirst) );
+			log.debug("new first= " + newFirst);
+//		}
+//		else{
+//			int newCount = recordsFound - (newFirst);
+//			firstnode.setTextContent(Integer.toString(newFirst) );
+//			countnode.setTextContent(Integer.toString(newCount) );
+//			log.debug("new count= " + newCount );
+//		}
 		
-		firstnode.setTextContent(""+(firstrecord + count));
 
-		log.debug("searchDoc:");
-		nextQuery = documentToString(searchDoc);
-		
+		nextQuery = nodeToString(searchDoc);
+		//log.debug("newsearchDoc:\n"+nextQuery);
 		} catch(SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new IOException(e);
 		} catch(ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch(IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			throw new IOException(e);
+		} 
 		return nextQuery;
 		
+	}
+	
+	/**
+	 * @param responseXML
+	 * @return
+	 */
+	private int extractRecords(String responseXML){
+		int numRecords = 0;
+			try {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(true); // never forget this!
+				Document responseDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(responseXML.getBytes()) );
+				NodeList recordList = responseDoc.getElementsByTagName("records");
+				for(int index = 0; index < recordList.getLength(); index++){
+					Element currentRecord = (Element)recordList.item(index);
+					String identifier = currentRecord.getElementsByTagName("UT").item(0).getTextContent();
+					String id = "id_-_" + identifier;
+					String data = nodeToString(currentRecord);
+					writeRecord(id, data);
+					numRecords++;
+				}
+			} catch(SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch(IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch(ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		return numRecords;
+	}
+	
+	/**
+	 * @param id
+	 * @param data
+	 * @throws IOException
+	 */
+	public void writeRecord(String id, String data) throws IOException {
+		log.trace("Adding Record " + id);
+		this.outputRH.addRecord(id, data, this.getClass());
 	}
 	
 	
@@ -264,25 +325,37 @@ public class WOSFetch {
 			SOAPFetch soapfetch = new SOAPFetch(this.authUrl,authResponse,this.authFile,"");
 			soapfetch.execute();
 		}
-		
 		String authCode = XPathTool.getXpathStreamResult(new ByteArrayInputStream(authResponse.toByteArray()), "//return");
-		
-		ByteArrayOutputStream searchResponse = new ByteArrayOutputStream();
-		{
-			SOAPFetch soapfetch = new SOAPFetch(this.searchUrl,searchResponse,new ByteArrayInputStream(searchQuery.getBytes()),authCode);
-			soapfetch.execute();
-		}
-		
-		String recFound = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchResponse.toByteArray()), "//recordsFound");
-		String searchCount = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/count");
-		log.debug("Search count = \"" + searchCount + "\"");
-		log.debug("Records Found = \"" + recFound + "\"");
-		int recordsFound = Integer.parseInt(recFound);
-		int searchCnt = Integer.parseInt(searchCount);
-		log.debug("Records left = " + (recordsFound - searchCnt));
-		if((recordsFound - searchCnt) > 0){
-			getnextQuery(searchQuery);
-		}
+		int recordsFound,lastRec;
+		do{
+			
+			ByteArrayOutputStream searchResponse = new ByteArrayOutputStream();
+			{
+				SOAPFetch soapfetch = new SOAPFetch(this.searchUrl,searchResponse,new ByteArrayInputStream(searchQuery.getBytes()),authCode);
+				soapfetch.execute();
+			}
+			String recFound = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchResponse.toByteArray()), "//recordsFound");
+			String searchCount = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/count");
+			String firstrecord = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/firstRecord");
+			extractRecords(new String(searchResponse.toByteArray(),"UTF-8"));
+			log.debug("Search count = \"" + searchCount + "\"");
+			log.debug("Records Found = \"" + recFound + "\"");
+			recordsFound = Integer.parseInt(recFound);
+			lastRec = Integer.parseInt(searchCount) + Integer.parseInt(firstrecord);
+			log.debug("Records left = " + (recordsFound - lastRec));
+			searchQuery = getnextQuery(searchQuery,recordsFound);
+			try
+			{
+				Thread.sleep(100); // do nothing for 100 miliseconds (1000 miliseconds = 1 second)
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			} 
+		}while(lastRec < recordsFound);
+
+		//add records to record handler
+		//cycle thru until there are no more records to be gathered
 		
 
 	}
