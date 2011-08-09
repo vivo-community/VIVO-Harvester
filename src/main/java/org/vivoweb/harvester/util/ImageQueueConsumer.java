@@ -111,7 +111,7 @@ public class ImageQueueConsumer {
 			Message message=null;
 			while ((message = consumer.receiveNoWait()) != null) {//comment it if you want to pull single Image
 			
-			message = consumer.receiveNoWait();//Receives the next message if one is immediately available.
+			//message = consumer.receiveNoWait();//Receives the next message if one is immediately available.
 			
 			if(message==null)
 				{System.out.println("No Message is the queue");}
