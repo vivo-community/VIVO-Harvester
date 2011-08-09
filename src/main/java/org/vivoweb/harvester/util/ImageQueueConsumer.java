@@ -106,13 +106,13 @@ public class ImageQueueConsumer {
 
 		//this is for testing purpose only.. so that I can test for 5 images at a time
 		//this need to be changed to while (not all messages ) after the final testing
-		for(int i = 0; i < 1; i++) {
+		//uncomment the following  line and comment the while loop if you want to pull just one Image
+		//for(int i = 0; i < 1; i++) {//uncomment if for pulling single image
 			Message message=null;
-			//while ((message = consumer.receiveNoWait()) != null) {
+			while ((message = consumer.receiveNoWait()) != null) {//comment it if you want to pull single Image
 			
 			message = consumer.receiveNoWait();//Receives the next message if one is immediately available.
 			
-			System.out.println("received message"+i);
 			if(message==null)
 				{System.out.println("No Message is the queue");}
 			else
