@@ -19,6 +19,7 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -89,7 +90,7 @@ public class XPathTool {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true); // never forget this!
-			Document doc = factory.newDocumentBuilder().parse(xmlIS);
+			Document doc = factory.newDocumentBuilder().parse(new InputSource(xmlIS));
 			String value = XPathFactory.newInstance().newXPath().compile(expression).evaluate(doc, XPathConstants.STRING).toString();
 			return value;
 		} catch(ParserConfigurationException e) {

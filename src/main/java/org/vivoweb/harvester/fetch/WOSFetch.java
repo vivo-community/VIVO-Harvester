@@ -22,7 +22,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathConstants;
@@ -37,6 +40,8 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.apache.commons.io.IOUtils;
@@ -186,15 +191,74 @@ public class WOSFetch {
 		}
 		
 	}
-
+	private String documentToString(Document document){
+		StreamResult result =null;
+		try {
+		Transformer	transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		
+		result = new StreamResult(new StringWriter());
+		DOMSource domSource = new DOMSource(document);
+		transformer.transform(domSource, result);
+		} catch(TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(TransformerFactoryConfigurationError e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	
+	return result.getWriter().toString();
+	}
+	
+	private String getnextQuery(String previousQuery){
+		String nextQuery = "";
+		try {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true); // never forget this!
+		Document searchDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(previousQuery.getBytes()) );
+		log.debug("searchDoc:");
+		log.debug(documentToString(searchDoc));
+		
+		NodeList firstrecordNodes = searchDoc.getElementsByTagName("firstRecord");
+		log.debug("Node length = " + firstrecordNodes.getLength());
+		Node firstnode = firstrecordNodes.item(0);
+		int firstrecord = Integer.parseInt(firstnode.getTextContent());
+		log.debug("firstrecord = " + firstrecord);
+		
+		NodeList countNodes = searchDoc.getElementsByTagName("count");
+		log.debug("Node length = " + countNodes.getLength());
+		Node countnode = countNodes.item(0);
+		int count = Integer.parseInt(countnode.getTextContent());
+		log.debug("count= " + count);
+		
+		firstnode.setTextContent(""+(firstrecord + count));
 
+		log.debug("searchDoc:");
+		nextQuery = documentToString(searchDoc);
+		
+		} catch(SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return nextQuery;
+		
+	}
+	
 	
 	/**
 	 * Executes the task
 	 * @throws IOException error processing record handler or jdbc connection
 	 */
 	public void execute() throws IOException {
+		String searchQuery = IOUtils.toString(this.searchFile);
 		ByteArrayOutputStream authResponse = new ByteArrayOutputStream();
 		{
 			SOAPFetch soapfetch = new SOAPFetch(this.authUrl,authResponse,this.authFile,"");
@@ -205,11 +269,21 @@ public class WOSFetch {
 		
 		ByteArrayOutputStream searchResponse = new ByteArrayOutputStream();
 		{
-			SOAPFetch soapfetch = new SOAPFetch(this.searchUrl,searchResponse,this.searchFile,authCode);
+			SOAPFetch soapfetch = new SOAPFetch(this.searchUrl,searchResponse,new ByteArrayInputStream(searchQuery.getBytes()),authCode);
 			soapfetch.execute();
 		}
-		String recFound = XPathTool.getXpathStreamResult(new ByteArrayInputStream(authResponse.toByteArray()), "//recordsFound");
-		int recordsFound = Integer.parseInt(recFound);	
+		
+		String recFound = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchResponse.toByteArray()), "//recordsFound");
+		String searchCount = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/count");
+		log.debug("Search count = \"" + searchCount + "\"");
+		log.debug("Records Found = \"" + recFound + "\"");
+		int recordsFound = Integer.parseInt(recFound);
+		int searchCnt = Integer.parseInt(searchCount);
+		log.debug("Records left = " + (recordsFound - searchCnt));
+		if((recordsFound - searchCnt) > 0){
+			getnextQuery(searchQuery);
+		}
+		
 
 	}
 	
@@ -223,6 +297,7 @@ public class WOSFetch {
 		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("searchconnection").withParameter(true, "URL").setDescription("The URL which will receive the AUTHMESSAGE.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("searchmessage").withParameter(true, "SEARCHMESSAGE").setDescription("The SEARCHMESSAGE file path.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authenticationmessage").withParameter(true, "AUTHMESSAGE").setDescription("The authentication session ID").setRequired(false));
 		return parser;
 	}

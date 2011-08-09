@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns2:search xmlns:ns2="http://woksearchlite.cxf.wokmws.thomsonreuters.com">
+			<queryParameters>
+				<databaseID>WOS</databaseID>
+				<editions>
+					<collection>WOS</collection>
+					<edition>AHCI</edition>
+				</editions>
+				<editions>
+					<collection>WOS</collection>
+					<edition>SSCI</edition>
+				</editions>
+				<editions>
+					<collection>WOS</collection>
+					<edition>SCI</edition>
+				</editions>
+				<queryLanguage>en</queryLanguage>
+				<timeSpan>
+					<begin>1993-01-01</begin>
+					<end>2011-12-31</end>
+				</timeSpan>
+				<userQuery>OG=(UF)</userQuery>
+				<!--
+				<userQuery>OG=(University of Florida)</userQuery>
+				-->
+			</queryParameters>
+			<retrieveParameters>
+				<count>1</count>
+				<fields>
+					<name>Date</name>
+					<sort>D</sort>
+				</fields>
+				<fields>
+					<name>Relevance</name>
+					<sort>D</sort>
+				</fields>
+				<firstRecord>2</firstRecord>
+			</retrieveParameters>
+		</ns2:search>
+	</soap:Body>
+</soap:Envelope>
+
+
+
+
