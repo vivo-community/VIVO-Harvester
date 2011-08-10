@@ -87,7 +87,7 @@ public class PubmedFetchTest extends TestCase {
 		int count = 0;
 		for(Record r : this.rh) {
 			log.debug("record ID: "+r.getID());
-			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes()));
+			Document doc = docB.parse(new ByteArrayInputStream(r.getData().getBytes("UTF-8")));
 			Element elem = doc.getDocumentElement();
 			traverseNodes(elem.getChildNodes());
 			count++;
