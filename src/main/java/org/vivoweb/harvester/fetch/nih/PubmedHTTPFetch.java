@@ -93,7 +93,7 @@ public class PubmedHTTPFetch extends NIHFetch {
 			
 			DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
 			docBuildFactory.setIgnoringComments(true);
-			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(WebAide.getURLContents(urlSb.toString()).getBytes())));
+			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(WebAide.getURLContents(urlSb.toString()).getBytes("UTF-8"))));
 			env[0] = doc.getElementsByTagName("WebEnv").item(0).getTextContent();
 			env[1] = doc.getElementsByTagName("QueryKey").item(0).getTextContent();
 			env[2] = doc.getElementsByTagName("Count").item(0).getTextContent();
