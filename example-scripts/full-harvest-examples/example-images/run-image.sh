@@ -83,17 +83,17 @@ harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.e
 #Get the ufids of the people who dont have images using the model generated above
 grep -o "[0-9]\{8\}</...:ufid>$" model.xml  > ufids.txt
 
-if [ ! -d "upload" -a ! -d "backup" ]; then
+if [ ! -d "upload" ]; then
 	mkdir upload
 	mkdir upload/fullImages
-	mkdir upload/thumbnails		
+	mkdir upload/thumbnails		  
+fi
 
+if [ ! -d "backup" ]; then	
 	mkdir backup
 	mkdir backup/fullImages
 	mkdir backup/thumbnails    
 fi
-
-
 #move any images from the previous harvest stored in backup directory in to images directory
 numberOfFiles=`ls -A ./backup/fullImages/ | wc -l`
 
