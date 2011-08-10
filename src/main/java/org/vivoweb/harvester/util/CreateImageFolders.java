@@ -84,20 +84,14 @@ public class CreateImageFolders {
 		String fileName;				
 		try {			
 			for(File f : this.folder.listFiles()) {
-				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) { //Uncomment this if you need to explicitly check for the mime type of the image 
-					
-					fileName = f.getName();
-					System.out.println("filename"+fileName);
-					if(this.ufidSet.contains(fileName.substring(0,8))) {
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");
+				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) { //Uncomment this if you need to explicitly check for the mime type of the image 					
+					fileName = f.getName();					
+					if(this.ufidSet.contains(fileName.substring(0,8))) {					
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");												//
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");												//
-					} else {																						
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");																		
+					} else {																												
 						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");
-						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");
+						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");						
 					} 
 				//}
 			}
