@@ -28,7 +28,7 @@
 	<xsl:template match="imageName">
 		<rdf:Description rdf:about="{$baseURI}peopleImage/ufid{self::*}">  		
 		 	 <public:mainImage rdf:resource="{$baseURI}mainImg/ufid{self::*}"/>	
- 			 <ufVivo:ufid rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="substring(current(),1,8)" /></ufVivo:ufid>
+ 			 <ufVivo:ufid><xsl:value-of select="substring(current(),1,8)" /></ufVivo:ufid>
 		</rdf:Description>		
 		
 		<rdf:Description rdf:about="{$baseURI}mainImg/ufid{self::*}">
