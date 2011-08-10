@@ -61,7 +61,7 @@ harvester-wosfetch -X wosfetch.config.xml
 
 #echo " The session ID is :" $SESID
 
-#harvester-soapfetch -X soapfetch-search.config.xml -a "$SESID"
+#harvester-soapfetch -X wos-lamrtest.config.xml
 
 #harvester-soapfetch -X soapfetch-retrieve.config.xml -a "$SESID"
 

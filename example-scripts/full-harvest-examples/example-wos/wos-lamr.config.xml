@@ -6,13 +6,10 @@
 -->
 <Task>
 	<!--INPUT -->
-	<Param name="authurl">http://search.isiknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate</Param>
-	<Param name="searchconnection">http://search.isiknowledge.com/esti/wokmws/ws/WokSearchLite</Param>
-	<Param name="lamrconnection">https://ws.isiknowledge.com/cps/xrpc</Param>
-	<Param name="searchmessage">wos-query-message.xml</Param>
-	<Param name="lamrmessage">wos-lamr-message.xml</Param>
+	<Param name="url">http://search.isiknowledge.com/esti/wokmws/ws/WokSearchLite</Param>
+	<Param name="message">soap-query-message.xml</Param>
 	
 	<!--  OUTPUT -->
-	<Param name="output">raw-records.config.xml</Param>
+	<Param name="output">data/raw-search-response.xml</Param>
 
 </Task>

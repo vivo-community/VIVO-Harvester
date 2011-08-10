@@ -9,28 +9,21 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
-import javax.xml.parsers.DocumentBuilder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.XPathTool;
@@ -43,8 +36,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,21 +66,34 @@ public class WOSFetch {
 	 * URL to send Authorization message to
 	 */
 	private URL searchUrl;
+	
+	/**
+	 * URL to send Authorization message to
+	 */
+	private URL lamrUrl;
 
 	/**
 	 * Inputstream with SOAP style XML message to get authorization
 	 */
-	private InputStream authFile;
+	private InputStream authMessage;
+
+	/**
+	 * Inputstream with SOAP style XML message to close session
+	 */
+	private InputStream closeMessage;
 
 	/**
 	 * Inputstream with SOAP style XML message to perform the search
 	 */
 	private InputStream searchFile;
+
 	/**
-	 * String of XML gathered from the inputStream
+	 * Inputstream with SOAP style XML message to perform the search
 	 */
-	private String xmlString;
+	private InputStream lamrFile;
+	private String lamrMessage;
 	
+	private Set<String> lamrSet;
 	/**
 	 * The authentication sessionID
 	 */
@@ -95,14 +101,14 @@ public class WOSFetch {
 	
 	/**
 	 * Constructor
-	 * @param url address to connect with
+	 * @param authurl 
+	 * @param searchurl 
 	 * @param outputRH 
-	 * @param xmlAuthFile 
 	 * @param xmlSearchFile 
 	 * @throws IOException error talking with database
 	 */
-	public WOSFetch(URL authurl,URL searchurl, RecordHandler outputRH, String xmlAuthFile, String xmlSearchFile) throws IOException {
-		this(authurl,searchurl, outputRH, FileAide.getInputStream( xmlAuthFile ), FileAide.getInputStream( xmlSearchFile ) );
+	public WOSFetch(URL authurl, URL searchurl, URL lamrurl, RecordHandler outputRH,  String xmlSearchFile, String xmlLamrFile) throws IOException {
+		init(authurl,searchurl,lamrurl, outputRH,null, FileAide.getInputStream( xmlSearchFile ), FileAide.getInputStream( xmlLamrFile ) );
 	}
 	
 	
@@ -122,13 +128,27 @@ public class WOSFetch {
 	 * @throws IOException error creating task
 	 */
 	private WOSFetch(ArgList args) throws IOException {
-		this(
-			new URL(args.get("u")), 
-			new URL(args.get("c")), 
-			RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")),
-			FileAide.getInputStream(args.get("a")),
-			FileAide.getInputStream(args.get("s"))
-		);
+		if(args.has("a")){
+			init(
+				new URL(args.get("u")), 
+				new URL(args.get("c")), 
+				new URL(args.get("l")), 
+				RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")),
+				FileAide.getInputStream(args.get("a")),
+				FileAide.getInputStream(args.get("s")),
+				FileAide.getInputStream(args.get("m"))
+			);
+		}else{
+			init(
+				new URL(args.get("u")), 
+				new URL(args.get("c")), 
+				new URL(args.get("l")), 
+				RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")),
+				null,
+				FileAide.getInputStream(args.get("s")),
+				FileAide.getInputStream(args.get("m"))
+			);
+		}
 	}
 	
 	/**
@@ -138,15 +158,51 @@ public class WOSFetch {
 	 * @param output The stream to the output file
 	 * @param xmlAuthStream 
 	 * @param xmlSearchStream 
-	 * @throws IOException problem with opening url connection
 	 */
-	public WOSFetch(URL authorizationUrl, URL searchUrl, RecordHandler output, InputStream xmlAuthStream, InputStream xmlSearchStream) throws IOException {
+	public WOSFetch(URL authorizationUrl, URL searchUrl, URL lamrhUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream) {
+		init(authorizationUrl, searchUrl, lamrhUrl, output,xmlAuthStream, xmlSearchStream, xmlLamrStream);
+		
+	}
+	
+	/**
+	 * @param authorizationUrl
+	 * @param searchUrl
+	 * @param output
+	 * @param xmlAuthStream
+	 * @param xmlSearchStream
+	 */
+	private void init(URL authorizationUrl, URL searchUrl, URL lamrUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream) {
+		String authString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+			"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "+
+			"xmlns:ns2=\"http://auth.cxf.wokmws.thomsonreuters.com\">"+
+			"<soap:Body><ns2:authenticate/></soap:Body></soap:Envelope>";
+		
+		String closeString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+			"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "+
+		    "xmlns:ns2=\"http://auth.cxf.wokmws.thomsonreuters.com\">"+
+			"<soap:Body><ns2:closeSession/></soap:Body></soap:Envelope>";
 		
 		this.outputRH = output;
 		this.authUrl = authorizationUrl;
-		this.authFile = xmlAuthStream;
+		if(xmlAuthStream == null){
+			this.authMessage = new ByteArrayInputStream(authString.getBytes());
+		}else{
+			this.authMessage = xmlAuthStream;
+		}
+		this.closeMessage = new ByteArrayInputStream(closeString.getBytes());
 		this.searchUrl = searchUrl;
 		this.searchFile = xmlSearchStream;
+
+		this.lamrUrl = lamrUrl;
+		this.lamrFile = xmlLamrStream;
+		try {
+			this.lamrMessage = IOUtils.toString(this.lamrFile);
+//			log.debug("LAMR message\n" + this.lamrMessage);
+		} catch(IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.lamrSet = new TreeSet<String>();
 		
 		log.debug("Checking for NULL values");
 		if(this.outputRH == null) {
@@ -154,13 +210,6 @@ public class WOSFetch {
 			log.error("Must provide output file!");
 		}else{
 			log.debug("Outputfile = " + this.outputRH.toString());
-		}
-		
-		if(this.authFile == null) {
-			log.debug("Authorization = null");
-			log.error("Must provide authorization message file!");
-		}else{
-			log.debug("Authorization = " + this.authFile.toString());
 		}
 		
 		if(this.searchFile == null) {
@@ -192,9 +241,10 @@ public class WOSFetch {
 		}
 		
 	}
+	
 	/**
-	 * @param documentNode
-	 * @return
+	 * @param documentNode a DOM node to be changed into a properly indented string
+	 * @return The indented string containing the node and sub-nodes
 	 */
 	private String nodeToString(Node documentNode){
 		StreamResult result =null;
@@ -207,10 +257,8 @@ public class WOSFetch {
 		DOMSource domSource = new DOMSource(documentNode);
 		transformer.transform(domSource, result);
 		} catch(TransformerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch(TransformerFactoryConfigurationError e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	
@@ -218,12 +266,11 @@ public class WOSFetch {
 	}
 	
 	/**
-	 * @param previousQuery
-	 * @param recordsFound
-	 * @return
-	 * @throws IOException
+	 * @param previousQuery a WOS soap query xml message
+	 * @return the string with the altered first node in the 
+	 * @throws IOException thrown if there is an issue parsing the previousQuery string
 	 */
-	private String getnextQuery(String previousQuery,int recordsFound) throws IOException{
+	private String getnextQuery(String previousQuery) throws IOException{
 		String nextQuery = "";
 		try {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -233,13 +280,11 @@ public class WOSFetch {
 		//log.debug(documentToString(searchDoc));
 		
 		NodeList firstrecordNodes = searchDoc.getElementsByTagName("firstRecord");
-		log.debug("Node length = " + firstrecordNodes.getLength() );
 		Node firstnode = firstrecordNodes.item(0);
 		int firstrecord = Integer.parseInt(firstnode.getTextContent() );
 		log.debug("firstrecord = " + firstrecord);
 		
 		NodeList countNodes = searchDoc.getElementsByTagName("count");
-		log.debug("Node length = " + countNodes.getLength() );
 		Node countnode = countNodes.item(0);
 		int count = Integer.parseInt(countnode.getTextContent() );
 		log.debug("count= " + count);
@@ -271,10 +316,11 @@ public class WOSFetch {
 	}
 	
 	/**
-	 * @param responseXML
-	 * @return
+	 * @param responseXML String containing the results from the WOS soap query
+	 * @return the number of records found in the string
 	 */
-	private int extractRecords(String responseXML){
+	private Map<String,String> extractSearchRecords(String responseXML){
+		HashMap<String,String> recordMap = new HashMap<String, String>();
 		int numRecords = 0;
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -285,34 +331,137 @@ public class WOSFetch {
 					Element currentRecord = (Element)recordList.item(index);
 					String identifier = currentRecord.getElementsByTagName("UT").item(0).getTextContent();
 					String id = "id_-_" + identifier;
+					compileLamrList(identifier);
 					String data = nodeToString(currentRecord);
-					writeRecord(id, data);
+					recordMap.put(id, data);
+//					writeRecord(id, data);
 					numRecords++;
 				}
 			} catch(SAXException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch(IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch(ParserConfigurationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-		return numRecords;
+		log.debug("Extracted "+ numRecords +" records from search");	
+		return recordMap;
 	}
 	
 	/**
-	 * @param id
-	 * @param data
-	 * @throws IOException
+	 * @throws ParserConfigurationException 
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * 
+	 */
+	private void executeLamrQuery(){
+		if(this.lamrSet.isEmpty()){
+			log.debug("No LAMR query sent, empty LAMR set.");
+			return;
+		}
+		//compile lamrquery with lamrSet
+		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true); // never forget this!
+		Document lamrDoc = null;
+		try {
+			lamrDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(this.lamrMessage.getBytes()) );
+
+			log.debug("LAMR Message :\n"+nodeToString(lamrDoc));
+			NodeList mapElements = lamrDoc.getElementsByTagName("map");
+			Element lookUp = null;
+			for(int index = 0;index < mapElements.getLength(); index++){
+				Element currentmap = (Element)mapElements.item(index);
+	//			log.debug("Element :\n" + nodeToString(currentmap));
+	//			log.debug("Element name = \"" + currentmap.getAttribute("id")+ "\"");
+				if(currentmap.getAttribute("id").contentEquals("lookup")){
+					log.debug("Found element lookup");
+	//				lookUp = (Element)currentmap.getParentNode();
+					lookUp = currentmap;
+					break;
+				}
+			}
+			if(lookUp == null){
+				log.error("No \"lookup\" node in LAMR query message");
+			}
+			log.debug("prelookUp = " + nodeToString(lookUp));
+	
+			for(String currentUT : this.lamrSet){
+				Element val = lamrDoc.createElement("val");
+				val.setAttribute("name", "ut");
+				val.setTextContent(currentUT);
+				Element docMap = lamrDoc.createElement("map");
+				docMap.setAttribute("name", "doc-"+currentUT);
+				docMap.appendChild(val);
+				lookUp.appendChild(docMap);
+			}
+			log.debug("LAMR Message :\n"+nodeToString(lamrDoc));
+			
+			//send lamrquery
+			Document lamrRespDoc =null;
+
+			ByteArrayOutputStream lamrResponse = new ByteArrayOutputStream();
+			{
+				SOAPFetch soapfetch = new SOAPFetch(this.lamrUrl,lamrResponse,new ByteArrayInputStream(nodeToString(lamrDoc).getBytes()),"");
+				soapfetch.execute();
+			}
+			lamrRespDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(lamrResponse.toByteArray()) );
+	
+			log.debug("LAMR Response :\n"+nodeToString(lamrRespDoc));
+			//extract records
+			NodeList respMapList = lamrRespDoc.getElementsByTagName("map");
+			for(int index = 0; index < respMapList.getLength();index++){
+				Element currentNode = (Element)respMapList.item(index);
+				if(currentNode.getAttribute("name").contentEquals("WOS")){
+					String ut = "";
+					NodeList valList = currentNode.getElementsByTagName("val");
+					for(int index2 = 0; index2 < valList.getLength(); index2++){
+						Element currentVal = (Element)valList.item(index2);
+						if(currentVal.getAttribute("name").contentEquals("ut")){
+							ut = currentVal.getTextContent();
+						}
+					}
+					writeRecord("id_-_LAMR_-_" + ut, nodeToString(currentNode));
+				}
+			}
+			
+		
+			//write records
+		} catch(SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.lamrSet.clear();
+	}
+	
+	/**
+	 * @param id The identifying name for the record. (used as a filename in the text file record handler)
+	 * @param data A string representing the information to place within the record.
+	 * @throws IOException Thrown if there is an issue with the recordhandler back-end
 	 */
 	public void writeRecord(String id, String data) throws IOException {
 		log.trace("Adding Record " + id);
 		this.outputRH.addRecord(id, data, this.getClass());
 	}
 	
+	/**
+	 * @param id The identifying name for the record. (<UT> attribute)
+	 * @param data A string representing the information to place within the record.
+	 * @throws IOException Thrown if there is an issue with the recordhandler back-end
+	 */
+	public void compileLamrList(String id) {
+		log.trace("Adding LAMR UT = " + id);
+		this.lamrSet.add(id);
+		if(this.lamrSet.size() == 50){
+			executeLamrQuery();
+		}
+	}
 	
 	/**
 	 * Executes the task
@@ -322,7 +471,7 @@ public class WOSFetch {
 		String searchQuery = IOUtils.toString(this.searchFile);
 		ByteArrayOutputStream authResponse = new ByteArrayOutputStream();
 		{
-			SOAPFetch soapfetch = new SOAPFetch(this.authUrl,authResponse,this.authFile,"");
+			SOAPFetch soapfetch = new SOAPFetch(this.authUrl,authResponse,this.authMessage,"");
 			soapfetch.execute();
 		}
 		String authCode = XPathTool.getXpathStreamResult(new ByteArrayInputStream(authResponse.toByteArray()), "//return");
@@ -337,13 +486,18 @@ public class WOSFetch {
 			String recFound = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchResponse.toByteArray()), "//recordsFound");
 			String searchCount = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/count");
 			String firstrecord = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/firstRecord");
-			extractRecords(new String(searchResponse.toByteArray(),"UTF-8"));
+
+			Map<String,String> recordMap = extractSearchRecords(new String(searchResponse.toByteArray(),"UTF-8"));
+			for(String recId : recordMap.keySet()){
+
+				writeRecord(recId, recordMap.get(recId));
+			}
 			log.debug("Search count = \"" + searchCount + "\"");
 			log.debug("Records Found = \"" + recFound + "\"");
 			recordsFound = Integer.parseInt(recFound);
 			lastRec = Integer.parseInt(searchCount) + Integer.parseInt(firstrecord);
 			log.debug("Records left = " + (recordsFound - lastRec));
-			searchQuery = getnextQuery(searchQuery,recordsFound);
+			searchQuery = getnextQuery(searchQuery);
 			try
 			{
 				Thread.sleep(100); // do nothing for 100 miliseconds (1000 miliseconds = 1 second)
@@ -353,11 +507,13 @@ public class WOSFetch {
 				e.printStackTrace();
 			} 
 		}while(lastRec < recordsFound);
-
-		//add records to record handler
-		//cycle thru until there are no more records to be gathered
+		executeLamrQuery();
 		
-
+		ByteArrayOutputStream closeResponse = new ByteArrayOutputStream();
+		{
+			SOAPFetch soapfetch = new SOAPFetch(this.authUrl,closeResponse,this.closeMessage,authCode);
+			soapfetch.execute();
+		}
 	}
 	
 	/**
@@ -367,11 +523,13 @@ public class WOSFetch {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("WOSFetch");
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("authurl").withParameter(true, "URL").setDescription("The URL which will receive the AUTHMESSAGE.").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("searchconnection").withParameter(true, "URL").setDescription("The URL which will receive the AUTHMESSAGE.").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("searchconnection").withParameter(true, "URL").setDescription("The URL which will receive the SEARCHMESSAGE.").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("lamrconnection").withParameter(true, "URL").setDescription("The URL which will receive the LAMRMESSAGE.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("searchmessage").withParameter(true, "SEARCHMESSAGE").setDescription("The SEARCHMESSAGE file path.").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authmessage").withParameter(true, "AUTHMESSAGE").setDescription("The AUTHMESSAGE file path.").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("lamrmessage").withParameter(true, "LAMRMESSAGE").setDescription("The LAMRMESSAGE file path.").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authenticationmessage").withParameter(true, "AUTHMESSAGE").setDescription("The authentication session ID").setRequired(false));
 		return parser;
 	}
 	
