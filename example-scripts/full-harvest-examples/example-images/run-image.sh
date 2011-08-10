@@ -56,7 +56,7 @@ rm -f model.xml
 #remove previous ufids.txt
 rm -f ufids.txt
 #remove upload directory
-rm -rf upload
+#rm -rf upload
 #remove backed uup images
 #	In this directory all the images that are not mapped to people we saved adn these images are used  
 #rm -rf backup
