@@ -62,6 +62,7 @@ public class JenaConnectTest extends TestCase {
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
 		this.configFile = File.createTempFile("jcConfig", "xml");
+		this.configFile.deleteOnExit();
 		this.jc = null;
 	}
 	

@@ -76,6 +76,7 @@ public class MemJenaConnect extends TDBJenaConnect {
 			f.delete();
 			f.mkdir();
 			usedModelNames.put(mod, f.getAbsolutePath());
+			f.deleteOnExit();
 		}
 		return usedModelNames.get(mod);
 	}
