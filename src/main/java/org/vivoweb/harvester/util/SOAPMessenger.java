@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
  ******************************************************************************/
-package org.vivoweb.harvester.fetch;
+package org.vivoweb.harvester.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +21,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -38,11 +36,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Fetches SOAP-XML data from a SOAP compatible site placing the data in the supplied file.
  */
-public class SOAPFetch {
+public class SOAPMessenger {
 	/**
 	 * SLF4J Logger
 	 */
-	private static Logger log = LoggerFactory.getLogger(SOAPFetch.class);
+	private static Logger log = LoggerFactory.getLogger(SOAPMessenger.class);
 	/**
 	 * File to put XML in.
 	 */
@@ -80,7 +78,7 @@ public class SOAPFetch {
 	 * @param xmlFile xml file to POST to the url
 	 * @throws IOException error talking with database
 	 */
-	public SOAPFetch(URL url, String output, String xmlFile,String sesID) throws IOException {
+	public SOAPMessenger(URL url, String output, String xmlFile,String sesID) throws IOException {
 		this(url, FileAide.getOutputStream( output ), FileAide.getInputStream( xmlFile ), sesID );
 	}
 	
@@ -91,7 +89,7 @@ public class SOAPFetch {
 	 * @throws IOException error creating task
 	 * @throws UsageException user requested usage message
 	 */
-	private SOAPFetch(String[] args) throws IOException, UsageException {
+	private SOAPMessenger(String[] args) throws IOException, UsageException {
 		this(getParser().parse(args));
 	}
 	
@@ -100,7 +98,7 @@ public class SOAPFetch {
 	 * @param args option set of parsed args
 	 * @throws IOException error creating task
 	 */
-	private SOAPFetch(ArgList args) throws IOException {
+	private SOAPMessenger(ArgList args) throws IOException {
 		this(
 			new URL(args.get("u")), 
 			FileAide.getOutputStream(args.get("o")),
@@ -116,7 +114,7 @@ public class SOAPFetch {
 	 * @param xmlFileStream The stream which points to the Soap Message
 	 * @throws IOException problem with opening url connection
 	 */
-	public SOAPFetch(URL url, OutputStream output, InputStream xmlFileStream, String sesID) throws IOException {
+	public SOAPMessenger(URL url, OutputStream output, InputStream xmlFileStream, String sesID) throws IOException {
 		
 		this.outputFile = output;
 		this.url = url;
@@ -271,7 +269,7 @@ public class SOAPFetch {
 	 * @return the ArgParser
 	 */
 	private static ArgParser getParser() {
-		ArgParser parser = new ArgParser("SOAPFetch");
+		ArgParser parser = new ArgParser("SOAPMessenger");
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").withParameter(true, "URL").setDescription("The URL which will receive the MESSAGE.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("message").withParameter(true, "MESSAGE").setDescription("The MESSAGE file path.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(true));
@@ -288,7 +286,7 @@ public class SOAPFetch {
 		try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
-			new SOAPFetch(args).execute();
+			new SOAPMessenger(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);

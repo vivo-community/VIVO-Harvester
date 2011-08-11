@@ -12,8 +12,8 @@ import javax.xml.transform.TransformerException;
 import org.apache.commons.lang.IllegalClassException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.fetch.SOAPFetch;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.SOAPMessenger;
 import org.xml.sax.SAXException;
 import junit.framework.TestCase;
 
@@ -63,7 +63,7 @@ public class SoapFetchTest extends TestCase {
 //	}
 	
 	/**
-	 * Test method for {@link org.vivoweb.harvester.fetch.SOAPFetch#xmlFormat(java.lang.String)}.
+	 * Test method for {@link org.vivoweb.harvester.util.SOAPMessenger#xmlFormat(java.lang.String)}.
 	 * @throws IOException 
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
@@ -74,9 +74,9 @@ public class SoapFetchTest extends TestCase {
 		this.xmlFileStream = null;
 		this.output=null;
 		this.sesID=null;
-		SOAPFetch testSubject = null;
+		SOAPMessenger testSubject = null;
 		try{	
-			testSubject = new SOAPFetch(this.url,this.output, this.xmlFileStream, this.sesID);
+			testSubject = new SOAPMessenger(this.url,this.output, this.xmlFileStream, this.sesID);
 		}
 		catch(IllegalArgumentException e){
 			log.error(e.getMessage());

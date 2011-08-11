@@ -26,6 +26,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.SOAPMessenger;
 import org.vivoweb.harvester.util.XPathTool;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -402,7 +403,7 @@ public class WOSFetch {
 
 			ByteArrayOutputStream lamrResponse = new ByteArrayOutputStream();
 			{
-				SOAPFetch soapfetch = new SOAPFetch(this.lamrUrl,lamrResponse,new ByteArrayInputStream(nodeToString(lamrDoc).getBytes()),"");
+				SOAPMessenger soapfetch = new SOAPMessenger(this.lamrUrl,lamrResponse,new ByteArrayInputStream(nodeToString(lamrDoc).getBytes()),"");
 				soapfetch.execute();
 			}
 			lamrRespDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(lamrResponse.toByteArray()) );
@@ -471,7 +472,7 @@ public class WOSFetch {
 		String searchQuery = IOUtils.toString(this.searchFile);
 		ByteArrayOutputStream authResponse = new ByteArrayOutputStream();
 		{
-			SOAPFetch soapfetch = new SOAPFetch(this.authUrl,authResponse,this.authMessage,"");
+			SOAPMessenger soapfetch = new SOAPMessenger(this.authUrl,authResponse,this.authMessage,"");
 			soapfetch.execute();
 		}
 		String authCode = XPathTool.getXpathStreamResult(new ByteArrayInputStream(authResponse.toByteArray()), "//return");
@@ -480,7 +481,7 @@ public class WOSFetch {
 			
 			ByteArrayOutputStream searchResponse = new ByteArrayOutputStream();
 			{
-				SOAPFetch soapfetch = new SOAPFetch(this.searchUrl,searchResponse,new ByteArrayInputStream(searchQuery.getBytes()),authCode);
+				SOAPMessenger soapfetch = new SOAPMessenger(this.searchUrl,searchResponse,new ByteArrayInputStream(searchQuery.getBytes()),authCode);
 				soapfetch.execute();
 			}
 			String recFound = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchResponse.toByteArray()), "//recordsFound");
@@ -511,7 +512,7 @@ public class WOSFetch {
 		
 		ByteArrayOutputStream closeResponse = new ByteArrayOutputStream();
 		{
-			SOAPFetch soapfetch = new SOAPFetch(this.authUrl,closeResponse,this.closeMessage,authCode);
+			SOAPMessenger soapfetch = new SOAPMessenger(this.authUrl,closeResponse,this.closeMessage,authCode);
 			soapfetch.execute();
 		}
 	}

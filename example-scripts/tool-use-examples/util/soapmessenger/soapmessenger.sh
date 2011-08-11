@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
+HARVESTER_INSTALL_DIR=~/git/code
 export HARVEST_NAME=example-soap
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -55,17 +55,17 @@ rm -rf data
 # This stage of the script is where the information is gathered together into one local
 #	place to facilitate the further steps of the harvest. The data is stored locally
 #	in a format based off of the source. The format is a form of RDF but not in the VIVO ontology
-harvester-soapfetch -X soapfetch-auth.config.xml
+harvester-soapmessenger -X soapmessenger-auth.config.xml
 
 SESID=`harvester-xpathtool -X xpath-get-authcode.config.xml`
 
 #echo " The session ID is :" $SESID
 
-harvester-soapfetch -X soapfetch-search.config.xml -a "$SESID"
+harvester-soapmessenger -X soapmessenger-search.config.xml -a "$SESID"
 
-harvester-soapfetch -X soapfetch-retrieve.config.xml -a "$SESID"
+harvester-soapmessenger -X soapmessenger-retrieve.config.xml -a "$SESID"
 
-harvester-soapfetch -X soapfetch-close.config.xml -a "$SESID"
+harvester-soapmessenger -X soapmessenger-close.config.xml -a "$SESID"
 # Execute Translate
 # This is the part of the script where the input data is transformed into valid RDF
 #   Translate will apply an xslt file to the fetched data which will result in the data 

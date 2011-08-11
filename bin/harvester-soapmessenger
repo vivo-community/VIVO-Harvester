@@ -26,4 +26,4 @@ HARVESTER_JAVA_OPTS=""
 OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM $HARVESTER_JAVA_OPTS -Dharvester-task=$HARVEST_NAME.$DATE"
 
 #pass incoming params to java program
-java $OPTS -Dprocess-task=JDBCFetch org.vivoweb.harvester.fetch.SOAPFetch "$@"
+java $OPTS -Dprocess-task=JDBCFetch org.vivoweb.harvester.util.SOAPMessenger "$@"
