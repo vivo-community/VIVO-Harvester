@@ -71,7 +71,7 @@ RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 PERSONIDNUM="http://vivoweb.org/ontology/score#personID"
 ORGIDNUM="http://vivoweb.org/ontology/score#orgID"
-EMAIL="http://vivoweb.org/ontology/core#email"
+EMAIL="http://vivoweb.org/ontology/core#primaryEmail"
 POSITION="http://vivoweb.org/ontology/core#positionForPerson"
 BASEURI="http://vivoweb.org/harvest/csvfile/"
 
@@ -145,32 +145,31 @@ $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smu
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
 
-# Scoring of people on email
-$Score $SCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/dumpinput.rdf.xml
+$Transfer -i $VIVOCONFIG -d $BASEDIR/dumpvivo.rdf.xml
+
+rm -rf $TEMPCOPYDIR
+
+PERSONSCOREMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -v $VIVOCONFIG -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -t $TEMPCOPYDIR -n ${BASEURI}person/"
+$Score $PERSONSCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data.rdf.xml
+
+PERSONMATCHMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL"
+$Match $PERSONMATCHMODELS -r -t 0.55   
+$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched.rdf.xml
+
+$Qualify -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -n "http://vivoweb.org/ontology/score#" -p
 
 
-$Smush $SCOREINPUT -P $ORGIDNUM -n ${BASEURI}org/ -r
-# Scoring of orgs on label
-$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}org/
-
-
-$Smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}position/ -r
-# Scoring sponsors by labels
-$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}position/
-
-# Find matches using scores and rename nodes to matching uri
-$Match $SCOREINPUT $SCOREDATA -b $SCOREBATCHSIZE -t 1.0 -r
-
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched.rdf.xml
 # Execute ChangeNamespace to get persons into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}person/
 
-# Execute ChangeNamespace to get orgs into current namespace
+# Execute ChangeNamespace to get positions into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}position/
 
-# Execute ChangeNamespace to get sponsors into current namespace
+# Execute ChangeNamespace to get orgs into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}org/
 
@@ -188,9 +187,15 @@ $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/cha
 # uncomment to restore pretransfer vivo database
 #restore-mysqldb $BACKPREDB
 
+rm -rf $MULTIJENADIR
+
+
 PREVHARVESTMODEL="http://vivoweb.org/ingest/csv"
 ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
+
+VIVOMODELNAME=`$XPathTool -x $VIVOCONFIG -e "//Model/Param[@name='modelName']"`
+VIVOINFMODELNAME="http://vitro.mannlib.cornell.edu/default/vitro-kb-inf"
 
 # Everything harvested will be added to VIVO
 $Transfer -i $H2MODEL -IdbUrl=$MODELDBURL -ImodelName=$MODELNAME -d $ADDFILE
@@ -200,16 +205,20 @@ $Transfer -i $H2MODEL -IdbUrl=$MODELDBURL -ImodelName=$MODELNAME -d $ADDFILE
 #   harvested data will be placed in a separate model.  Then that model will be queried for the predicates
 #   we are looking to replace with the data input from the harvest.
 MULTIJENARESULTFILE="$BASEDIR/multijena.rdf.xml"
-MULTIJENAQUERY="PREFIX harv: <http://localhost/vivo/> PREFIX vivo: <http://vitro.mannlib.cornell.edu/default/> CONSTRUCT { ?subject ?predicate ?object } FROM NAMED <http://localhost/vivo/harvested-data> FROM NAMED <http://vitro.mannlib.cornell.edu/default/vitro-kb-2> WHERE { GRAPH vivo:vitro-kb-2 { ?subject ?predicate ?object . } GRAPH harv:harvested-data { ?subject ?dummy1 ?dummy2 . } }"
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -o $H2MODEL -OmodelName=$MULTIJENANAME -OdbUrl=$MULTIJENADBURL
-$Transfer -i $VIVOCONFIG -o $H2MODEL -OmodelName=$MULTIJENANAME -OdbUrl=$MULTIJENADBURL
-$JenaConnect -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -q $MULTIJENAQUERY -d -f $MULTIJENARESULTFILE 
+MULTIJENAQUERYFILE=vivo/config/multijenaquery.xml
+#MULTIJENAQUERY="PREFIX harv: <http://localhost/vivo/> PREFIX vivo: <http://vitro.mannlib.cornell.edu/default/> CONSTRUCT { ?subject ?predicate ?object } FROM NAMED <http://localhost/vivo/harvested-data> FROM NAMED <http://vitro.mannlib.cornell.edu/default/vitro-kb-2> WHERE { GRAPH vivo:vitro-kb-2 { ?subject ?predicate ?object . } GRAPH harv:harvested-data { ?subject ?dummy1 ?dummy2 . } }"
+$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MULTIJENADBURL
+$Transfer -i $VIVOCONFIG -o $H2MODEL -OmodelName=$VIVOMODELNAME -OdbUrl=$MULTIJENADBURL
+$Transfer -i $VIVOCONFIG -ImodelName=$VIVOINFMODELNAME -o $H2MODEL -OmodelName=$VIVOMODELNAME -OdbUrl=$MULTIJENADBURL
+$JenaConnect -X $MULTIJENAQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -d -f $MULTIJENARESULTFILE 
 
 # Step 2 of getting the subtractions
 PREDICATESQUERYFILE=vivo/config/personquery.xml
 rm -rf $MULTIJENADIR
 $Transfer -o $H2MODEL -OmodelName=$MULTIJENANAME -OdbUrl=$MULTIJENADBURL -r $MULTIJENARESULTFILE
-$JenaConnect -X $PREDICATESQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -q $MULTIJENAQUERY -d -f $SUBFILE 
+#$Transfer -i $H2MODEL -ImodelName=$MULTIJENANAME -IdbUrl=$MULTIJENADBURL -d "$BASEDIR/dumpmultijenamodel.rdf.xml"
+$JenaConnect -X $PREDICATESQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -d -f $SUBFILE 
+#$JenaConnect -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -q "PREFIX harv: <http://localhost/vivo/> CONSTRUCT { ?a ?b ?c } FROM NAMED <http://localhost/vivo/multi-jena> WHERE { GRAPH harv:multi-jena { ?a ?b ?c } }" -d -f $SUBFILE 
 
 
 
@@ -229,9 +238,9 @@ $JenaConnect -X $PREDICATESQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -Jdb
 # Apply Additions to Previous model
 #$Transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
 # Apply Subtractions to VIVO
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
+#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
+#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 rm -rf $TEMPCOPYDIR
 
@@ -246,7 +255,7 @@ rm -rf $TEMPCOPYDIR
 #echo $HARVESTER_TASK ' completed successfully'
 
 #IMPORTANT: This line must exist AS-IS in every File Harvest script.  The server checks the output and uses this line to verify that the harvest completed.
-echo 'File Harvest completed successfully' 
+#echo 'File Harvest completed successfully' 
 
 #rm cookie.txt
 #rm "authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"

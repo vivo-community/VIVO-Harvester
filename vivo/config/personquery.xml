@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<Param name="query">
+PREFIX rdf:   &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs:  &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd:   &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX owl:   &lt;http://www.w3.org/2002/07/owl#&gt;
+PREFIX swrl:  &lt;http://www.w3.org/2003/11/swrl#&gt;
+PREFIX swrlb: &lt;http://www.w3.org/2003/11/swrlb#&gt;
+PREFIX vitro: &lt;http://vitro.mannlib.cornell.edu/ns/vitro/0.7#&gt;
+PREFIX bibo: &lt;http://purl.org/ontology/bibo/&gt;
+PREFIX dcelem: &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+PREFIX event: &lt;http://purl.org/NET/c4dm/event.owl#&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX geo: &lt;http://aims.fao.org/aos/geopolitical.owl#&gt;
+PREFIX pvs: &lt;http://vivoweb.org/ontology/provenance-support#&gt;
+PREFIX ero: &lt;http://purl.obolibrary.org/obo/&gt;
+PREFIX scires: &lt;http://vivoweb.org/ontology/scientific-research#&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX ufVivo: &lt;http://vivo.ufl.edu/ontology/vivo-ufl/&gt;
+PREFIX core: &lt;http://vivoweb.org/ontology/core#&gt;
+PREFIX harv: &lt;http://localhost/vivo/&gt;
+
+CONSTRUCT
+{
+		?subject core:primaryEmail ?primaryEmail .
+		?subject core:phoneNumber ?phoneNumber .
+		?subject core:faxNumber ?faxNumber .
+		?subject foaf:firstName ?firstName .
+		?subject core:middleName ?middleName .
+		?subject foaf:lastName ?lastName .
+		?subject bibo:prefixName ?namePrefix .
+		?subject bibo:suffixName ?nameSuffix .
+		?subject rdfs:label ?fullName .
+		?subject core:preferredTitle ?title .
+		?subject core:startDate ?startDate .
+		?subject core:endDate ?endDate .
+		?subject ?typeFacultyMember core:FacultyMember .
+		?subject ?typeNonAcademic core:NonAcademic .
+		?subject ?typeEmeritusProfessor core:EmeritusProfessor .
+}
+FROM NAMED &lt;http://localhost/vivo/multi-jena&gt;
+WHERE
+{
+	GRAPH harv:multi-jena
+	{
+		?subject rdf:type foaf:Person .
+		OPTIONAL
+		{
+			?subject core:primaryEmail ?primaryEmail .
+		}
+		OPTIONAL
+		{
+			?subject core:phoneNumber ?phoneNumber .
+		}
+		OPTIONAL
+		{
+			?subject core:faxNumber ?faxNumber .
+		}
+		OPTIONAL
+		{
+			?subject foaf:firstName ?firstName .
+		}
+		OPTIONAL
+		{
+			?subject core:middleName ?middleName .
+		}
+		OPTIONAL
+		{
+			?subject foaf:lastName ?lastName .
+		}
+		OPTIONAL
+		{
+			?subject bibo:prefixName ?namePrefix .
+		}
+		OPTIONAL
+		{
+			?subject bibo:suffixName ?nameSuffix .
+		}
+		OPTIONAL
+		{
+			?subject rdfs:label ?fullName .
+		}
+		OPTIONAL
+		{
+			?subject core:preferredTitle ?title .
+		}
+		OPTIONAL
+		{
+			?subject rdf:type core:FacultyMember .
+			?subject ?typeFacultyMember core:FacultyMember .
+		}
+		OPTIONAL
+		{
+			?subject rdf:type core:NonAcademic .
+			?subject ?typeNonAcamedic core:NonAcademic .
+		}
+		OPTIONAL
+		{
+			?subject rdf:type core:EmeritusProfessor .
+			?subject ?typeEmeritusProfessor core:EmeritusProfessor .
+		}
+		OPTIONAL
+		{
+			?subject core:startDate ?startDate .
+		}
+		OPTIONAL
+		{
+			?subject core:endDate ?endDate .
+		}
+	}
+}
+	</Param>
+</Task>

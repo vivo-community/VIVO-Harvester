@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<Param name="query">
+PREFIX harv: &lt;http://localhost/vivo/&gt;
+PREFIX vivo: &lt;http://vitro.mannlib.cornell.edu/default/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX core: &lt;http://vivoweb.org/ontology/core#&gt;
+
+CONSTRUCT
+{
+	?subject ?predicate ?object
+}
+FROM NAMED &lt;http://localhost/vivo/harvested-data&gt;
+FROM NAMED &lt;http://vitro.mannlib.cornell.edu/default/vitro-kb-2&gt;
+WHERE
+{
+	GRAPH vivo:vitro-kb-2
+	{
+		?subject ?predicate ?object .
+	}
+	GRAPH harv:harvested-data
+	{
+		?subject ?dummy1 ?dummy2 .
+	}
+}
+	</Param>
+</Task>

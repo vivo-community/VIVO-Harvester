@@ -45,7 +45,7 @@
             <rdf:type rdf:resource = "http://xmlns.com/foaf/0.1/Person"/>
 			<score:personID><xsl:value-of select = "$personid" /></score:personID>
             <xsl:if test="not( $this/db-CSV:EMAIL = '' or $this/db-CSV:EMAIL = 'null' )">
-                <core:email><xsl:value-of select = "$this/db-CSV:EMAIL" /></core:email>
+                <core:primaryEmail><xsl:value-of select = "$this/db-CSV:EMAIL" /></core:primaryEmail>
             </xsl:if>
             <xsl:if test="not( $this/db-CSV:PHONE = '' or $this/db-CSV:PHONE = 'null' )">
                 <core:phoneNumber><xsl:value-of select = "$this/db-CSV:PHONE"/></core:phoneNumber>
