@@ -30,6 +30,13 @@ import org.slf4j.LoggerFactory;
  * @author Christopher Haines hainesc@ufl.edu
  */
 public class FileAide {
+	/**
+	 * SLF4J Logger
+	 */
+	static Logger log = LoggerFactory.getLogger(FileAide.class);
+	/**
+	 * Set of registered temp files to delete on JVM shutdown
+	 */
 	static Set<String> deleteOnExitSet;
 
 
@@ -321,14 +328,13 @@ public class FileAide {
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
 				public void run() {
-					Logger logger = LoggerFactory.getLogger(this.getClass());
 					synchronized (FileAide.deleteOnExitSet) {
 						for ( String fpath : FileAide.deleteOnExitSet) {
 							File f = new File(fpath);
 							if (!FileUtils.deleteQuietly(f) ) {
-								logger.error("Failed to temporary file space {}, please remove manually  ",f.getAbsolutePath());
+								log.error("Failed to temporary file space {}, please remove manually  ",f.getAbsolutePath());
 							} else {
-								logger.trace("Deleted temporary file space {}  ",f.getAbsolutePath());
+								log.trace("Deleted temporary file space {}  ",f.getAbsolutePath());
 							}
 						}
 						FileAide.deleteOnExitSet.clear();
@@ -339,6 +345,7 @@ public class FileAide {
 		}
 		synchronized (FileAide.deleteOnExitSet) {
 			FileAide.deleteOnExitSet.add(tempFile.getAbsolutePath());
+			log.trace("Allocating temporary file space {}  ",tempFile.getAbsolutePath());
 		}
 		return tempFile;
 	}

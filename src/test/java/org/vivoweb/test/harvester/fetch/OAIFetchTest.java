@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 
@@ -32,8 +33,7 @@ public class OAIFetchTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
-		this.configFile = File.createTempFile("oaiRHConfig", "xml");
-		this.configFile.deleteOnExit();
+		this.configFile = FileAide.createTempFile("oaiRHConfig", "xml");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(this.configFile));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<RecordHandler type=\"org.vivoweb.harvester.util.repo.JDBCRecordHandler\">\n	<Param name=\"dbClass\">org.h2.Driver</Param>\n	<Param name=\"dbUrl\">jdbc:h2:mem:TestOAIFetchRH</Param>\n	<Param name=\"dbUser\">sa</Param>\n	<Param name=\"dbPass\"></Param>\n	<Param name=\"dbTable\">recordTable</Param>\n	<Param name=\"dataFieldName\">dataField</Param>\n</RecordHandler>");
 		bw.close();

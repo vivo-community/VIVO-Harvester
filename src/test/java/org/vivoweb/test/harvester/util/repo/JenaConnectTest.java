@@ -13,6 +13,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JDBCRecordHandler;
 import org.vivoweb.harvester.util.repo.JenaConnect;
@@ -61,8 +62,7 @@ public class JenaConnectTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
-		this.configFile = File.createTempFile("jcConfig", "xml");
-		this.configFile.deleteOnExit();
+		this.configFile = FileAide.createTempFile("jcConfig", "xml");
 		this.jc = null;
 	}
 	
