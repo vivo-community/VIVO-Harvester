@@ -130,7 +130,7 @@ public class ImageQueueConsumer {
 			System.out.println("No Text Message Found");
 		
 		else if(jmsType.equals("ImageChange")) {
-			getUfidsAndImages(text.getText()); // this passes the Content of the ImageChange TAG to process
+			getUfidsAndImages(text.getText()); // this pacsses the Content of the ImageChange TAG to process
 		}
 		
 	}
