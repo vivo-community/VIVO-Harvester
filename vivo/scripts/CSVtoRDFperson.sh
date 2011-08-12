@@ -150,15 +150,34 @@ $Transfer -i $VIVOCONFIG -d $BASEDIR/dumpvivo.rdf.xml
 
 rm -rf $TEMPCOPYDIR
 
-PERSONSCOREMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -v $VIVOCONFIG -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -t $TEMPCOPYDIR -n ${BASEURI}person/"
-$Score $PERSONSCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
-$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data.rdf.xml
+SCOREMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -v $VIVOCONFIG -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -t $TEMPCOPYDIR"
+MATCHMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL"
 
-PERSONMATCHMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL"
-$Match $PERSONMATCHMODELS -r -t 0.55   
-$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched.rdf.xml
+$Score $SCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-1.rdf.xml
 
-$Qualify -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -n "http://vivoweb.org/ontology/score#" -p
+$Match $MATCHMODELS -r -t 0.55   
+$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-1.rdf.xml
+
+
+$Score $SCOREMODELS -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$ORGIDNUM -PdeptId=$ORGIDNUM -n ${BASEURI}org/
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-2.rdf.xml
+
+$Match $MATCHMODELS -r -t 0.55   
+$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-2.rdf.xml
+
+
+$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}position/
+$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-3.rdf.xml
+
+$Match $MATCHMODELS -r -t 0.55   
+$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-3.rdf.xml
+
+
+
+
+
+$Qualify -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -n "http://vivoweb.org/ontology/score#" -p
 
 
 # Execute ChangeNamespace to get persons into current namespace
@@ -205,7 +224,7 @@ $Transfer -i $H2MODEL -IdbUrl=$MODELDBURL -ImodelName=$MODELNAME -d $ADDFILE
 #   harvested data will be placed in a separate model.  Then that model will be queried for the predicates
 #   we are looking to replace with the data input from the harvest.
 MULTIJENARESULTFILE="$BASEDIR/multijena.rdf.xml"
-MULTIJENAQUERYFILE=vivo/config/multijenaquery.xml
+MULTIJENAQUERYFILE=vivo/config/personmultijenaquery.xml
 #MULTIJENAQUERY="PREFIX harv: <http://localhost/vivo/> PREFIX vivo: <http://vitro.mannlib.cornell.edu/default/> CONSTRUCT { ?subject ?predicate ?object } FROM NAMED <http://localhost/vivo/harvested-data> FROM NAMED <http://vitro.mannlib.cornell.edu/default/vitro-kb-2> WHERE { GRAPH vivo:vitro-kb-2 { ?subject ?predicate ?object . } GRAPH harv:harvested-data { ?subject ?dummy1 ?dummy2 . } }"
 $Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MULTIJENADBURL
 $Transfer -i $VIVOCONFIG -o $H2MODEL -OmodelName=$VIVOMODELNAME -OdbUrl=$MULTIJENADBURL
@@ -238,9 +257,9 @@ $JenaConnect -X $PREDICATESQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -Jdb
 # Apply Additions to Previous model
 #$Transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
 # Apply Subtractions to VIVO
-#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
-#$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
+$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 rm -rf $TEMPCOPYDIR
 
@@ -255,7 +274,7 @@ rm -rf $TEMPCOPYDIR
 #echo $HARVESTER_TASK ' completed successfully'
 
 #IMPORTANT: This line must exist AS-IS in every File Harvest script.  The server checks the output and uses this line to verify that the harvest completed.
-#echo 'File Harvest completed successfully' 
+echo 'File Harvest completed successfully' 
 
 #rm cookie.txt
 #rm "authenticate?loginName=defaultAdmin&loginPassword=vitro123&loginForm=1"
