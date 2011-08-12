@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Task>
 	<Param name="query">
+#All these PREFIX statements are necessary to prevent Jena from using "j.1", etc., which are 
+#  "reserved by Jena" and will screw up the ability to properly use the results of this query
+#  in another JenaConnect.
 PREFIX harv: &lt;http://localhost/vivo/&gt;
 PREFIX vivo: &lt;http://vitro.mannlib.cornell.edu/default/&gt;
 PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
