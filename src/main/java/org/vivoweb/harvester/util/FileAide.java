@@ -14,18 +14,25 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Assists in common tasks using Files
  * @author Christopher Haines hainesc@ufl.edu
  */
 public class FileAide {
+	static Set<String> deleteOnExitSet;
+
+
 	/**
 	 * Resolves a FileObject relative to the execution directory
 	 * @param path the path to resolve
@@ -296,5 +303,43 @@ public class FileAide {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Creates an empty file in the default temporary-file directory, using the given prefix and suffix to generate its name. Invoking this method is equivalent to invoking createTempFile(prefix, suffix, null).
+	 * @param prefix The prefix string to be used in generating the file's name; must be at least three characters long.
+	 * @param suffix The suffix string to be used in generating the file's name; may be null, in which case the suffix ".tmp" will be used.
+	 * @return An abstract pathname denoting a newly-created empty file.
+	 * @throws IllegalArgumentException - If the prefix argument contains fewer than three characters.
+	 * @throws IOException - If a file could not be created.
+	 * @throws SecurityException - If a security manager exists and its SecurityManager.checkWrite(java.lang.String) method does not allow a file to be created.
+	 */
+	public static synchronized File createTempFile(String prefix, String suffix) throws IOException {
+		File tempFile = File.createTempFile(prefix, suffix);
+		if ( deleteOnExitSet == null ) {
+			deleteOnExitSet = new LinkedHashSet<String>();
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					Logger logger = LoggerFactory.getLogger(this.getClass());
+					synchronized (FileAide.deleteOnExitSet) {
+						for ( String fpath : FileAide.deleteOnExitSet) {
+							File f = new File(fpath);
+							if (!FileUtils.deleteQuietly(f) ) {
+								logger.error("Failed to temporary file space {}, please remove manually  ",f.getAbsolutePath());
+							} else {
+								logger.trace("Deleted temporary file space {}  ",f.getAbsolutePath());
+							}
+						}
+						FileAide.deleteOnExitSet.clear();
+						FileAide.deleteOnExitSet = null;
+					}
+				}
+			});
+		}
+		synchronized (FileAide.deleteOnExitSet) {
+			FileAide.deleteOnExitSet.add(tempFile.getAbsolutePath());
+		}
+		return tempFile;
 	}
 }

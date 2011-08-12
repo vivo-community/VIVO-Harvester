@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -156,8 +157,7 @@ public class RunBibutils {
 	 * @throws IOException if an error in reading or writing occurs
 	 */
 	public void execute() throws IOException {
-		File tempInputFile = File.createTempFile("vivo", ".bib");
-		tempInputFile.deleteOnExit();
+		File tempInputFile = FileAide.createTempFile("vivo", ".bib");
 
 		int translated = 0;
 		int skipped = 0;
