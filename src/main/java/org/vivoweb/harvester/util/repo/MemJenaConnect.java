@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.SpecialEntities;
 
 /**
@@ -68,7 +69,7 @@ public class MemJenaConnect extends TDBJenaConnect {
 			log.trace("attempting to create temp file for: " + mod);
 			File f;
 			try {
-				f = File.createTempFile(mod, ".tdb");
+				f = FileAide.createTempFile(mod, ".tdb");
 			} catch(IOException e) {
 				throw new IllegalArgumentException(e);
 			}

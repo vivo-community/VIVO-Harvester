@@ -33,8 +33,7 @@ public class ArgListTest extends TestCase {
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
 		parser = new ArgParser("ArgListTest");
-		this.confFile = File.createTempFile("ArgListTest", ".xml");
-		this.confFile.deleteOnExit();
+		this.confFile = FileAide.createTempFile("ArgListTest", ".xml");
 		String confString = "" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 				"<Task>\n" +

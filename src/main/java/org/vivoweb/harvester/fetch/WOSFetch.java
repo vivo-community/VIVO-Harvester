@@ -333,7 +333,10 @@ public class WOSFetch {
 					String identifier = currentRecord.getElementsByTagName("UT").item(0).getTextContent();
 					String id = "id_-_" + identifier;
 					compileLamrList(identifier);
-					String data = nodeToString(currentRecord);
+					Element recordRoot = responseDoc.createElementNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#","Description");
+					recordRoot.setAttributeNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "ID",  identifier);
+					recordRoot.appendChild(currentRecord);
+					String data = nodeToString(recordRoot);
 					recordMap.put(id, data);
 //					writeRecord(id, data);
 					numRecords++;
@@ -413,8 +416,10 @@ public class WOSFetch {
 			NodeList respMapList = lamrRespDoc.getElementsByTagName("map");
 			for(int index = 0; index < respMapList.getLength();index++){
 				Element currentNode = (Element)respMapList.item(index);
+				Element recordRoot = lamrRespDoc.createElementNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#","Description");
 				if(currentNode.getAttribute("name").contentEquals("WOS")){
 					String ut = "";
+
 					NodeList valList = currentNode.getElementsByTagName("val");
 					for(int index2 = 0; index2 < valList.getLength(); index2++){
 						Element currentVal = (Element)valList.item(index2);
@@ -422,7 +427,9 @@ public class WOSFetch {
 							ut = currentVal.getTextContent();
 						}
 					}
-					writeRecord("id_-_LAMR_-_" + ut, nodeToString(currentNode));
+					recordRoot.setAttributeNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "ID",  ut);
+					recordRoot.appendChild(currentNode);
+					writeRecord("id_-_LAMR_-_" + ut, nodeToString(recordRoot));
 				}
 			}
 			
