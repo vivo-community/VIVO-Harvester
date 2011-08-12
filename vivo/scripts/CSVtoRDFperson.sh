@@ -125,7 +125,7 @@ rm -rf $MODELDIR
 
 $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -s $TFRH -SfileDir=$RDFRHDIR -n $NAMESPACE
 
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.rdf.xml
 
 # backup H2 transfer Model
 #BACKMODEL="model"
@@ -139,14 +139,14 @@ rm -rf $SCOREDATADIR
 #smushes in-place(-r) on the person ID
 $Smush $SCOREINPUT -P $PERSONIDNUM -n ${BASEURI} -r
 
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.rdf.xml
 
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
 
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/dumpinput.rdf.xml
-$Transfer -i $VIVOCONFIG -d $BASEDIR/dumpvivo.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/dumpinput.rdf.xml
+#$Transfer -i $VIVOCONFIG -d $BASEDIR/dumpvivo.rdf.xml
 
 rm -rf $TEMPCOPYDIR
 
@@ -154,24 +154,24 @@ SCOREMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -v $VIVOCONF
 MATCHMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL"
 
 $Score $SCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
-$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-1.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-1.rdf.xml
 
 $Match $MATCHMODELS -r -t 0.55   
-$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-1.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-1.rdf.xml
 
 
 $Score $SCOREMODELS -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$ORGIDNUM -PdeptId=$ORGIDNUM -n ${BASEURI}org/
-$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-2.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-2.rdf.xml
 
 $Match $MATCHMODELS -r -t 0.55   
-$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-2.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-2.rdf.xml
 
 
 $Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}position/
-$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-3.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-3.rdf.xml
 
 $Match $MATCHMODELS -r -t 0.55   
-$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-3.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-3.rdf.xml
 
 
 
@@ -192,7 +192,7 @@ $ChangeNamespace $CNFLAGS -u ${BASEURI}position/
 # the -o flag value is determined by the XSLT used to translate the data
 $ChangeNamespace $CNFLAGS -u ${BASEURI}org/
 
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.rdf.xml
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.rdf.xml
 
 # backup H2 matched Model
 #BACKMATCHED="matched"
