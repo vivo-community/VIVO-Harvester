@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns2:authenticateResponse xmlns:ns2="http://auth.cxf.wokmws.thomsonreuters.com">
+            <return>4WAgaj6bff4BKnHhhae</return>
+        </ns2:authenticateResponse>
+    </soap:Body>
+</soap:Envelope>

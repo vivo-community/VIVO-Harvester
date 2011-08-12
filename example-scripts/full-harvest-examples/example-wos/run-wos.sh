@@ -57,20 +57,12 @@ rm -rf data
 #	in a format based off of the source. The format is a form of RDF but not in the VIVO ontology
 harvester-wosfetch -X wosfetch.config.xml
 
-#SESID=`harvester-xpathtool -X xpath-get-authcode.config.xml`
 
-#echo " The session ID is :" $SESID
-
-#harvester-soapfetch -X wos-lamrtest.config.xml
-
-#harvester-soapfetch -X soapfetch-retrieve.config.xml -a "$SESID"
-
-#harvester-soapfetch -X soapfetch-close.config.xml -a "$SESID"
 # Execute Translate
 # This is the part of the script where the input data is transformed into valid RDF
 #   Translate will apply an xslt file to the fetched data which will result in the data 
 #   becoming valid RDF in the VIVO ontology
-#harvester-xsltranslator -X xsltranslator.config.xml
+harvester-xsltranslator -X xsltranslator.config.xml
 
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
