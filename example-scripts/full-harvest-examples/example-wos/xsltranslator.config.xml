@@ -12,5 +12,5 @@
 	<Param name="output">translated-records.config.xml</Param>
 
 	<!--DATAMAP -->
-	<Param name="xslFile">wos-vivo.datamap.xsl</Param>
+	<Param name="xslFile">wos-to-vivo.datamap.xsl</Param>
 </Config>
