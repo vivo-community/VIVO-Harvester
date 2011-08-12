@@ -53,6 +53,8 @@ WHERE
 {
 	GRAPH harv:multi-jena
 	{
+		#That we are searching VIVO for a foaf:Person is why we need to $Transfer in inferences for the first query.
+		#  (because otherwise this won't work for, say, a Faculty Member)
 		?subject rdf:type foaf:Person .
 		OPTIONAL
 		{
