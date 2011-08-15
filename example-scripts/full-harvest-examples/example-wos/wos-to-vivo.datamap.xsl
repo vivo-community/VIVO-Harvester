@@ -9,14 +9,15 @@
 	the new elements
 -->
 <xsl:stylesheet version="2.0"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns:ns2="http://woksearchlite.cxf.wokmws.thomsonreuters.com"
+	xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+	xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+	xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'
+	xmlns:ns2='http://woksearchlite.cxf.wokmws.thomsonreuters.com'
 	xmlns:core='http://vivoweb.org/ontology/core#'
-	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:foaf='http://xmlns.com/foaf/0.1/'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
-	xmlns:bibo='http://purl.org/ontology/bibo/'>
+	xmlns:bibo='http://purl.org/ontology/bibo/'
+    xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'>
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
@@ -28,7 +29,8 @@
 		         xmlns:core='http://vivoweb.org/ontology/core#'
 		         xmlns:foaf="http://xmlns.com/foaf/0.1/"
 		         xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
-		         xmlns:bibo='http://purl.org/ontology/bibo/'>
+		         xmlns:bibo='http://purl.org/ontology/bibo/'
+    			 xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'>
 			<xsl:apply-templates select="records" />
 			<xsl:apply-templates select="map[@name='WOS']"/>
 		</rdf:RDF>
@@ -38,6 +40,7 @@
 	<xsl:template match="records">
 		<rdf:Description rdf:about="{$baseURI}pub/wosid{UT}">
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+			<ufVivo:thomsonReutersUT><xsl:value-of select="UT" /></ufVivo:thomsonReutersUT>
 			<rdfs:label><xsl:value-of select="title/values" /></rdfs:label>
 			<bibo:volume><xsl:value-of select="source[label='Volume']/values" /></bibo:volume>
 			<bibo:issue><xsl:value-of select="source[label='Issue']/values" /></bibo:issue>
@@ -130,7 +133,7 @@
 		
 		<xsl:variable name="label" select="." />
 
-		<!-- Create the Subject Area node -->
+		<!-- Create the Journal node -->
 		<rdf:Description rdf:about="{$baseURI}journal/wosid{ancestor::records/UT}journal{position()}">
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
 			<rdfs:label><xsl:value-of select="$label" /></rdfs:label>
@@ -146,28 +149,30 @@
 	</xsl:template>
 	
 	
-		<!-- Each publication record is contained in a "records" node -->
+		<!-- Each publication record is contained in a map name="WOS" node -->
 	<xsl:template match="map[@name='WOS']">
 		<rdf:Description rdf:about="{$baseURI}pub/wosid{val[@name='ut']}">
+			<bibo:doi><xsl:value-of select="val[@name='doi']"/></bibo:doi>
+			<bibo:pmid><xsl:value-of select="val[@name='pmid']"/></bibo:pmid>
 			<core:webpage>
-				<rdf:Description rdf:about="{$baseURI}pub/relatedURLforwosid{val[@name='ut']}">
-					<core:linkAnchorText>Related Records</core:linkAnchorText>
+				<rdf:Description rdf:about="{$baseURI}webpage/relatedURLforwosid{val[@name='ut']}">
+					<core:linkAnchorText>Related Records Page</core:linkAnchorText>
 					<core:linkURI><xsl:value-of select="val[@name='relatedRecordsURL']"/></core:linkURI>
 					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
 				</rdf:Description>
 			</core:webpage>
 			
 			<core:webpage>
-				<rdf:Description rdf:about="{$baseURI}pub/sourceURLforwosid{val[@name='ut']}">
-					<core:linkAnchorText>Related Records</core:linkAnchorText>
+				<rdf:Description rdf:about="{$baseURI}webpage/sourceURLforwosid{val[@name='ut']}">
+					<core:linkAnchorText>Source Page</core:linkAnchorText>
 					<core:linkURI><xsl:value-of select="val[@name='sourceURL']"/></core:linkURI>
 					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
 				</rdf:Description>
 			</core:webpage>
 			
 			<core:webpage>
-				<rdf:Description rdf:about="{$baseURI}pub/citingURLforwosid{val[@name='ut']}">
-					<core:linkAnchorText>Related Records</core:linkAnchorText>
+				<rdf:Description rdf:about="{$baseURI}webpage/citingURLforwosid{val[@name='ut']}">
+					<core:linkAnchorText>Citing Page</core:linkAnchorText>
 					<core:linkURI><xsl:value-of select="val[@name='citingArticlesURL']"/></core:linkURI>
 					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
 				</rdf:Description>
