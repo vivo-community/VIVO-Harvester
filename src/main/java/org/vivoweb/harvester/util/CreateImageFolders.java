@@ -81,22 +81,49 @@ public class CreateImageFolders {
 	 */
 	private void transferImages() throws IOException {
 	
+		Process p1;
+		Process p2;
+		Process p3;		
+		Process p4;
 		String fileName;				
 		try {			
 			for(File f : this.folder.listFiles()) {
 				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) { //Uncomment this if you need to explicitly check for the mime type of the image 					
 					fileName = f.getName();					
 					if(this.ufidSet.contains(fileName.substring(0,8))) {					
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");																		
+						p1 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
+						p2 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");
+						p1.waitFor();
+						p1.getInputStream().close();
+						p1.getOutputStream().close();
+						p1.getErrorStream().close();
+						System.out.println("p1 after:"+p1.exitValue());
+						p2.waitFor();
+						p2.getInputStream().close();
+						p2.getOutputStream().close();
+						p2.getErrorStream().close(); 									
+						System.out.println("p2 after:"+p2.exitValue());
 					} else {																												
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
-						Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");						
+						p3 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
+						p4 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");	
+						p3.waitFor();
+						p3.getInputStream().close();
+						p3.getOutputStream().close();
+						p3.getErrorStream().close();
+						System.out.println("p3 after:"+p3.exitValue());
+						p4.waitFor();
+						p4.getInputStream().close();
+						p4.getOutputStream().close();
+						p4.getErrorStream().close(); 									
+						System.out.println("p2 after:"+p4.exitValue());						
 					} 
 				//}
 			}
 		} catch(IOException e) {
 			throw new IOException(e);
+		} catch(InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
