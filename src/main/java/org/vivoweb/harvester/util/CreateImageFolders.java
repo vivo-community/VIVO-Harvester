@@ -97,12 +97,12 @@ public class CreateImageFolders {
 						p1.getInputStream().close();
 						p1.getOutputStream().close();
 						p1.getErrorStream().close();
-						System.out.println("p1 after:"+p1.exitValue());
+						//System.out.println("p1 after:"+p1.exitValue());
 						p2.waitFor();
 						p2.getInputStream().close();
 						p2.getOutputStream().close();
 						p2.getErrorStream().close(); 									
-						System.out.println("p2 after:"+p2.exitValue());
+						//System.out.println("p2 after:"+p2.exitValue());
 					} else {																												
 						p3 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
 						p4 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");	
