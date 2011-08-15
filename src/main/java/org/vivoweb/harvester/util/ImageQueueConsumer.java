@@ -76,7 +76,7 @@ public class ImageQueueConsumer {
 	 */
 	private static String userName;
 	private static String password;
-	
+	private static int maxnum=1;
 	private static Properties P = null;
 	/**
 	 * ActiveMQ Server URL
@@ -106,17 +106,13 @@ public class ImageQueueConsumer {
 
 		//this is for testing purpose only.. so that I can test for 5 images at a time
 		//this need to be changed to while (not all messages ) after the final testing
-		//uncomment the following  line and comment the while loop if you want to pull just one Image
-		//for(int i = 0; i < 1; i++) {//uncomment if for pulling single image
-			Message message=null;
-			while ((message = consumer.receiveNoWait()) != null) {//comment it if you want to pull single Image
-			
-			//message = consumer.receiveNoWait(); Un Comment to fectch one 1 Image//Receives the next message if one is immediately available.
-			
-			if(message==null)
-				{System.out.println("No Message is the queue");}
-			else
-			{	processMessage(message);}
+
+		Message message=null;
+		for(int i = 0;( (message = consumer.receiveNoWait()) != null )&& (i<= maxnum);){
+
+			if(maxnum!=0)
+				i++;
+			processMessage(message);
 			
 		}
 	}
@@ -134,7 +130,7 @@ public class ImageQueueConsumer {
 			System.out.println("No Text Message Found");
 		
 		else if(jmsType.equals("ImageChange")) {
-			getUfidsAndImages(text.getText()); // this passes the Content of the ImageChange TAG to process
+			getUfidsAndImages(text.getText()); // this pacsses the Content of the ImageChange TAG to process
 		}
 		
 	}
@@ -297,6 +293,7 @@ public class ImageQueueConsumer {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("ImageQueueConsumer");
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pathToImageScriptDirectory").withParameter(true, "PATH").setDescription("path to the Image Script Directory").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("maxFetch").withParameter(true, "MAXFETCH").setDescription("Maximum number if Images that should be fetched from thr queue").setRequired(true));
 		return parser;
 	}
 	
@@ -316,7 +313,8 @@ public class ImageQueueConsumer {
 		this(getParser().parse(args));
 	}
 	
-	public ImageQueueConsumer(String pathToImageDir) {
+	public ImageQueueConsumer(String pathToImageDir,String maxFetched) {
+		maxnum=Integer.parseInt(maxFetched.trim());
 		this.propdir = pathToImageDir;
 		this.imagedir = pathToImageDir + "/images/";
 	}
@@ -326,7 +324,7 @@ public class ImageQueueConsumer {
 	 * @param argList option set of parsed args
 	 */
 	private ImageQueueConsumer(ArgList argList) {
-		this(argList.get("p"));
+		this(argList.get("p"), argList.get("m"));
 	}
 	
 	public void execute() throws IOException {

@@ -34,17 +34,27 @@ CONSTRUCT
 		?subject bibo:suffixName ?nameSuffix .
 		?subject rdfs:label ?fullName .
 		?subject core:preferredTitle ?title .
-		?subject core:startDate ?startDate .
-		?subject core:endDate ?endDate .
 		?subject ?typeFacultyMember core:FacultyMember .
 		?subject ?typeNonAcademic core:NonAcademic .
 		?subject ?typeEmeritusProfessor core:EmeritusProfessor .
+		?subject core:personInPosition ?position .
+		?position core:positionForPerson ?positionForPerson .
+		?position core:startDate ?startDate .
+		?position core:endDate ?endDate .
+		?position ?positionTypeFacultyMember core:FacultyMember .
+		?position ?positionTypeNonAcademic core:NonAcademic .
+		?position ?positionTypeEmeritusProfessor core:EmeritusProfessor .
+		?position core:positionInOrganization ?organization .
+		?organization rdfs:label ?organizationLabel .
+		?organization core:organizationForPosition ?organizationForPosition .
 }
 FROM NAMED &lt;http://localhost/vivo/multi-jena&gt;
 WHERE
 {
 	GRAPH harv:multi-jena
 	{
+		#That we are searching VIVO for a foaf:Person is why we need to $Transfer in inferences for the first query.
+		#  (because otherwise this won't work for, say, a Faculty Member)
 		?subject rdf:type foaf:Person .
 		OPTIONAL
 		{
@@ -103,11 +113,46 @@ WHERE
 		}
 		OPTIONAL
 		{
-			?subject core:startDate ?startDate .
-		}
-		OPTIONAL
-		{
-			?subject core:endDate ?endDate .
+			?subject core:personInPosition ?position .
+			OPTIONAL
+			{
+				?position core:positionForPerson ?positionForPerson .
+			}
+			OPTIONAL
+			{
+				?position core:startDate ?startDate .
+			}
+			OPTIONAL
+			{
+				?position core:endDate ?endDate .
+			}
+			OPTIONAL
+			{
+				?position rdf:type core:FacultyMember .
+				?position ?positionTypeFacultyMember core:FacultyMember .
+			}
+			OPTIONAL
+			{
+				?position rdf:type core:NonAcademic .
+				?position ?positionTypeNonAcamedic core:NonAcademic .
+			}
+			OPTIONAL
+			{
+				?position rdf:type core:EmeritusProfessor .
+				?position ?positionTypeEmeritusProfessor core:EmeritusProfessor .
+			}
+			OPTIONAL
+			{
+				?position core:positionInOrganization ?organization .
+				OPTIONAL
+				{
+					?organization rdfs:label ?organizationLabel .
+				}
+				OPTIONAL
+				{
+					?organization core:organizationForPosition ?organizationForPosition .
+				}
+			}
 		}
 	}
 }
