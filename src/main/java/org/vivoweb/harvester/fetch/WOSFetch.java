@@ -402,19 +402,25 @@ public class WOSFetch {
 			lamrRespDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(lamrResponse.toByteArray()) );
 	
 //			log.debug("LAMR Response :\n"+nodeToString(lamrRespDoc));
-			//extract records
+//			extract records - A little hacky - message specifics sensitive
+//			To ensure no erroneous name spaces rebuilding structure from existing data.
 			log.debug("Extracting LAMR Records");
+//			 records are in map elements.
 			NodeList respMapList = lamrRespDoc.getElementsByTagName("map");
 			int recordsFound = 0;
+//			cycle through existing map elements;
 			for(int index = 0; index < respMapList.getLength();index++){
 				Element currentNode = (Element)respMapList.item(index);
-				Element recordRoot = lamrRespDoc.createElement("Description");
+//				what we are looking for is found in maps named "WOS"
 				if(currentNode.getAttribute("name").contentEquals("WOS")){
+//					for output similarity  have the root node be Description
+					Element recordRoot = lamrRespDoc.createElement("Description");
 					String ut = "";
-
+//					each WOS node has the result formatted as named val nodes.
 					NodeList valList = currentNode.getElementsByTagName("val");
 					for(int index2 = 0; index2 < valList.getLength(); index2++){
 						Element currentVal = (Element)valList.item(index2);
+//						Getting Record ID
 						if(currentVal.getAttribute("name").contentEquals("ut")){
 							ut = currentVal.getTextContent();
 							break;
@@ -423,7 +429,18 @@ public class WOSFetch {
 					if(ut != ""){
 						recordsFound++;
 						recordRoot.setAttribute( "ID",  ut);
-						recordRoot.appendChild(currentNode);
+						NodeList currentchildren = currentNode.getElementsByTagName("val");
+						Element currentDup = lamrRespDoc.createElement("map");
+						currentDup.setAttribute("name", "WOS");
+						for(int index2 = 0; index2 < currentchildren.getLength(); index2++){
+							Element cur = (Element)currentchildren.item(index2);
+							Element childNode = lamrRespDoc.createElement(cur.getTagName());
+							childNode.setAttribute("name", cur.getAttribute("name"));
+							childNode.setTextContent(cur.getTextContent());
+							currentDup.appendChild( childNode );
+						}
+						recordRoot.appendChild(currentDup);
+						
 						writeRecord("id_-_LAMR_-_" + ut, nodeToString(recordRoot));
 					}
 				}
