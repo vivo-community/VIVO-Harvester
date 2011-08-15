@@ -30,6 +30,7 @@
 		         xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
 		         xmlns:bibo='http://purl.org/ontology/bibo/'>
 			<xsl:apply-templates select="records" />
+			<xsl:apply-templates select="map[@name='WOS']"/>
 		</rdf:RDF>
 	</xsl:template>
 
@@ -144,6 +145,35 @@
 		<core:hasPublicationVenue rdf:resource="{$baseURI}journal/wosid{ancestor::records/UT}journal{position()}" />
 	</xsl:template>
 	
+	
+		<!-- Each publication record is contained in a "records" node -->
+	<xsl:template match="map[@name='WOS']">
+		<rdf:Description rdf:about="{$baseURI}pub/wosid{val[@name='ut']}">
+			<core:webpage>
+				<rdf:Description rdf:about="{$baseURI}pub/relatedURLforwosid{val[@name='ut']}">
+					<core:linkAnchorText>Related Records</core:linkAnchorText>
+					<core:linkURI><xsl:value-of select="val[@name='relatedRecordsURL']"/></core:linkURI>
+					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
+				</rdf:Description>
+			</core:webpage>
+			
+			<core:webpage>
+				<rdf:Description rdf:about="{$baseURI}pub/sourceURLforwosid{val[@name='ut']}">
+					<core:linkAnchorText>Related Records</core:linkAnchorText>
+					<core:linkURI><xsl:value-of select="val[@name='sourceURL']"/></core:linkURI>
+					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
+				</rdf:Description>
+			</core:webpage>
+			
+			<core:webpage>
+				<rdf:Description rdf:about="{$baseURI}pub/citingURLforwosid{val[@name='ut']}">
+					<core:linkAnchorText>Related Records</core:linkAnchorText>
+					<core:linkURI><xsl:value-of select="val[@name='citingArticlesURL']"/></core:linkURI>
+					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
+				</rdf:Description>
+			</core:webpage>
+		</rdf:Description>
+	</xsl:template>
 
 
 </xsl:stylesheet>
