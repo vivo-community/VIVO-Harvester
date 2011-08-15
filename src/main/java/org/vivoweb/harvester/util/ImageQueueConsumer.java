@@ -76,7 +76,7 @@ public class ImageQueueConsumer {
 	 */
 	private static String userName;
 	private static String password;
-	private static int maxnum=1;
+	private static int maxnum = 1;
 	private static Properties P = null;
 	/**
 	 * ActiveMQ Server URL
@@ -103,14 +103,14 @@ public class ImageQueueConsumer {
 	 */
 	
 	public static void getUpdatesFromQueue() throws JMSException {
-
+		
 		//this is for testing purpose only.. so that I can test for 5 images at a time
 		//this need to be changed to while (not all messages ) after the final testing
-
-		Message message=null;
-		for(int i = 0;( (message = consumer.receiveNoWait()) != null )&& (i<= maxnum);){
-
-			if(maxnum!=0)
+		
+		Message message = null;
+		for(int i = 0; ((message = consumer.receiveNoWait()) != null) && (i <= maxnum);) {
+			
+			if(maxnum != 0)
 				i++;
 			processMessage(message);
 			
@@ -168,7 +168,7 @@ public class ImageQueueConsumer {
 			System.out.println("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
 			
 		}
-
+		
 		catch(Exception e) {
 			System.err.println(e);
 		}
@@ -207,10 +207,10 @@ public class ImageQueueConsumer {
 		int len;
 		FileOutputStream fos = new FileOutputStream(file);
 		while((len = in.read(buf)) > 0)
-		fos.write(buf, 0, len);
+			fos.write(buf, 0, len);
 		fos.close();
 		in.close();
-	
+		
 	}
 	
 	/**
@@ -221,7 +221,9 @@ public class ImageQueueConsumer {
 		connectionFactory = new ActiveMQConnectionFactory(url);
 		try {
 			connection = connectionFactory.createConnection(userName, password);
+			System.out.println("trying to start connection with username:->" + userName + "password:->" + password);
 			connection.start();
+			
 			session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);// Auto Ack is on
 			destination = session.createQueue(subject);
@@ -230,7 +232,7 @@ public class ImageQueueConsumer {
 			
 		} catch(JMSException e) {
 			// TODO Auto-generated catch block
-			
+			System.out.println("Connection Failed");
 			e.printStackTrace();
 			return null;
 		}
@@ -313,8 +315,8 @@ public class ImageQueueConsumer {
 		this(getParser().parse(args));
 	}
 	
-	public ImageQueueConsumer(String pathToImageDir,String maxFetched) {
-		maxnum=Integer.parseInt(maxFetched.trim());
+	public ImageQueueConsumer(String pathToImageDir, String maxFetched) {
+		maxnum = Integer.parseInt(maxFetched.trim());
 		this.propdir = pathToImageDir;
 		this.imagedir = pathToImageDir + "/images/";
 	}

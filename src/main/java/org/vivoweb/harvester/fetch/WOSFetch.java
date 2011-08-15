@@ -200,7 +200,6 @@ public class WOSFetch {
 			this.lamrMessage = IOUtils.toString(this.lamrFile);
 //			log.debug("LAMR message\n" + this.lamrMessage);
 		} catch(IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.lamrSet = new TreeSet<String>();
@@ -286,20 +285,11 @@ public class WOSFetch {
 		log.debug("firstrecord = " + firstrecord);
 		
 		NodeList countNodes = searchDoc.getElementsByTagName("count");
-		Node countnode = countNodes.item(0);
-		int count = Integer.parseInt(countnode.getTextContent() );
+		int count = Integer.parseInt(countNodes.item(0).getTextContent() );
 		log.debug("count= " + count);
 		int newFirst=firstrecord + count;
-		//Commented out adjustment caused by fear of requesting nonexistant records with count tag.
-//		if((firstrecord + (count * 2)) < recordsFound){
-			firstnode.setTextContent(Integer.toString(newFirst) );
-			log.debug("new first= " + newFirst);
-//		}
-//		else{
-//			int newCount = recordsFound - (newFirst);
-//			firstnode.setTextContent(Integer.toString(newFirst) );
-//			countnode.setTextContent(Integer.toString(newCount) );
-//			log.debug("new count= " + newCount );
+		firstnode.setTextContent(Integer.toString(newFirst) );
+		log.debug("new First Record= " + newFirst);
 //		}
 		
 
@@ -333,12 +323,12 @@ public class WOSFetch {
 					String identifier = currentRecord.getElementsByTagName("UT").item(0).getTextContent();
 					String id = "id_-_" + identifier;
 					compileLamrList(identifier);
-					Element recordRoot = responseDoc.createElementNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#","Description");
-					recordRoot.setAttributeNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "ID",  identifier);
+					Element recordRoot = responseDoc.createElement("Description");
+					recordRoot.setAttribute( "ID",  identifier);
 					recordRoot.appendChild(currentRecord);
 					String data = nodeToString(recordRoot);
 					recordMap.put(id, data);
-//					writeRecord(id, data);
+					writeRecord(id, data);
 					numRecords++;
 				}
 			} catch(SAXException e) {
@@ -371,7 +361,7 @@ public class WOSFetch {
 		try {
 			lamrDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(this.lamrMessage.getBytes()) );
 
-			log.debug("LAMR Message :\n"+nodeToString(lamrDoc));
+//			log.debug("LAMR Message :\n"+nodeToString(lamrDoc));
 			NodeList mapElements = lamrDoc.getElementsByTagName("map");
 			Element lookUp = null;
 			for(int index = 0;index < mapElements.getLength(); index++){
@@ -388,7 +378,7 @@ public class WOSFetch {
 			if(lookUp == null){
 				log.error("No \"lookup\" node in LAMR query message");
 			}
-			log.debug("prelookUp = " + nodeToString(lookUp));
+//			log.debug("prelookUp = " + nodeToString(lookUp));
 	
 			for(String currentUT : this.lamrSet){
 				Element val = lamrDoc.createElement("val");
@@ -399,7 +389,7 @@ public class WOSFetch {
 				docMap.appendChild(val);
 				lookUp.appendChild(docMap);
 			}
-			log.debug("LAMR Message :\n"+nodeToString(lamrDoc));
+//			log.debug("LAMR Message :\n"+nodeToString(lamrDoc));
 			
 			//send lamrquery
 			Document lamrRespDoc =null;
@@ -411,38 +401,59 @@ public class WOSFetch {
 			}
 			lamrRespDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(lamrResponse.toByteArray()) );
 	
-			log.debug("LAMR Response :\n"+nodeToString(lamrRespDoc));
-			//extract records
+//			log.debug("LAMR Response :\n"+nodeToString(lamrRespDoc));
+//			extract records - A little hacky - message specifics sensitive
+//			To ensure no erroneous name spaces rebuilding structure from existing data.
+			log.debug("Extracting LAMR Records");
+//			 records are in map elements.
 			NodeList respMapList = lamrRespDoc.getElementsByTagName("map");
+			int recordsFound = 0;
+//			cycle through existing map elements;
 			for(int index = 0; index < respMapList.getLength();index++){
 				Element currentNode = (Element)respMapList.item(index);
-				Element recordRoot = lamrRespDoc.createElementNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#","Description");
+//				what we are looking for is found in maps named "WOS"
 				if(currentNode.getAttribute("name").contentEquals("WOS")){
+//					for output similarity  have the root node be Description
+					Element recordRoot = lamrRespDoc.createElement("Description");
 					String ut = "";
-
+//					each WOS node has the result formatted as named val nodes.
 					NodeList valList = currentNode.getElementsByTagName("val");
 					for(int index2 = 0; index2 < valList.getLength(); index2++){
 						Element currentVal = (Element)valList.item(index2);
+//						Getting Record ID
 						if(currentVal.getAttribute("name").contentEquals("ut")){
 							ut = currentVal.getTextContent();
+							break;
 						}
 					}
-					recordRoot.setAttributeNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "ID",  ut);
-					recordRoot.appendChild(currentNode);
-					writeRecord("id_-_LAMR_-_" + ut, nodeToString(recordRoot));
+					if(ut != ""){
+						recordsFound++;
+						recordRoot.setAttribute( "ID",  ut);
+						NodeList currentchildren = currentNode.getElementsByTagName("val");
+						Element currentDup = lamrRespDoc.createElement("map");
+						currentDup.setAttribute("name", "WOS");
+						for(int index2 = 0; index2 < currentchildren.getLength(); index2++){
+							Element cur = (Element)currentchildren.item(index2);
+							Element childNode = lamrRespDoc.createElement(cur.getTagName());
+							childNode.setAttribute("name", cur.getAttribute("name"));
+							childNode.setTextContent(cur.getTextContent());
+							currentDup.appendChild( childNode );
+						}
+						recordRoot.appendChild(currentDup);
+						
+						writeRecord("id_-_LAMR_-_" + ut, nodeToString(recordRoot));
+					}
 				}
 			}
+			log.debug("Found " + recordsFound + " LAMR Records");
 			
 		
 			//write records
 		} catch(SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch(IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch(ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.lamrSet.clear();
@@ -496,10 +507,10 @@ public class WOSFetch {
 			String firstrecord = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/firstRecord");
 
 			Map<String,String> recordMap = extractSearchRecords(new String(searchResponse.toByteArray(),"UTF-8"));
-			for(String recId : recordMap.keySet()){
-
-				writeRecord(recId, recordMap.get(recId));
-			}
+//			for(String recId : recordMap.keySet()){
+//
+//				writeRecord(recId, recordMap.get(recId));
+//			}
 			log.debug("Search count = \"" + searchCount + "\"");
 			log.debug("Records Found = \"" + recFound + "\"");
 			recordsFound = Integer.parseInt(recFound);

@@ -23,7 +23,7 @@
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/wos/</xsl:variable>
 
 	<!-- The root of the XML returned by WOS.  This serves as the header of the RDF file produced. -->
-	<xsl:template match="/soap:Envelope/soap:Body/ns2:searchResponse/return">
+	<xsl:template match="/Description">
 		<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 		         xmlns:core='http://vivoweb.org/ontology/core#'
 		         xmlns:foaf="http://xmlns.com/foaf/0.1/"
