@@ -68,7 +68,8 @@ public class ImageQueueConsumer {
 	 */
 	private static FileInputStream propFile = null;
 	/**
-	 * Consumer object to consuem the message
+	 * Consumer
+	 *  object to consuem the message
 	 */
 	private static MessageConsumer consumer;
 	/**
@@ -127,7 +128,7 @@ public class ImageQueueConsumer {
 		String jmsType = message.getStringProperty("type");
 		TextMessage text = (TextMessage)message;
 		if(text == null)
-			System.out.println("No Text Message Found");
+			log.info("No Text Message Found");
 		
 		else if(jmsType.equals("ImageChange")) {
 			getUfidsAndImages(text.getText()); // this pacsses the Content of the ImageChange TAG to process
@@ -160,17 +161,17 @@ public class ImageQueueConsumer {
 			NodeList Ufid = doc.getElementsByTagName("Ufid");
 			Element line3 = (Element)Ufid.item(0);
 			String id = getCharacterDataFromElement(line3);
+			log.info("Uploading Image Uf ID: " + id + "to Dir :" + imagedir);
 			
-			System.out.println("Uploading Image Uf ID: " + id + "to Dir :" + imagedir);
 			
 			WriteImageFromBase64(getCharacterDataFromElement(line2), imagedir + id);
+			log.info("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
 			
-			System.out.println("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
 			
 		}
 		
 		catch(Exception e) {
-			System.err.println(e);
+			log.info(e.toString());
 		}
 	}
 	
@@ -232,8 +233,8 @@ public class ImageQueueConsumer {
 			
 		} catch(JMSException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Connection Failed");
-			e.printStackTrace();
+			log.info("Connection Failed"+e.toString());
+			
 			return null;
 		}
 		
@@ -274,11 +275,11 @@ public class ImageQueueConsumer {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:", e);
-			System.out.println(getParser().getUsage());
+			log.info(getParser().getUsage());
 			error = e;
 		} catch(UsageException e) {
 			log.info("Printing Usage:");
-			System.out.println(getParser().getUsage());
+			log.info(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
