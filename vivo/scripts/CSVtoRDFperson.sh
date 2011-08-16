@@ -71,8 +71,9 @@ RDFTYPE="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 RDFSLABEL="http://www.w3.org/2000/01/rdf-schema#label"
 PERSONIDNUM="http://vivoweb.org/ontology/score#personID"
 ORGIDNUM="http://vivoweb.org/ontology/score#orgID"
-EMAIL="http://vivoweb.org/ontology/core#primaryEmail"
-POSITION="http://vivoweb.org/ontology/core#positionForPerson"
+EMAIL="http://vivoweb.org/ontology/core#email"
+POSITIONPERSON="http://vivoweb.org/ontology/core#positionForPerson"
+POSITIONORG="http://vivoweb.org/ontology/core#positionInOrganization"
 BASEURI="http://vivoweb.org/harvest/csvfile/"
 
 #clear old fetches
@@ -136,10 +137,6 @@ $Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -s $TFRH -Sfile
 #clear score model for next batch.
 rm -rf $SCOREDATADIR
 
-#smushes in-place(-r) on the person ID
-$Smush $SCOREINPUT -P $PERSONIDNUM -n ${BASEURI} -r
-
-#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.rdf.xml
 
 # Execute score to match with existing VIVO
 # The -n flag value is determined by the XLST file
@@ -153,28 +150,38 @@ rm -rf $TEMPCOPYDIR
 SCOREMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -v $VIVOCONFIG -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -t $TEMPCOPYDIR"
 MATCHMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -s $H2MODEL -SmodelName=$SCOREDATANAME -SdbUrl=$SCOREDATADBURL -o $H2MODEL -OmodelName=$MATCHEDNAME -OdbUrl=$MATCHEDDBURL"
 
+
+#smushes in-place(-r) on the person ID
+$Smush $SCOREINPUT -P $PERSONIDNUM -n ${BASEURI} -r
+
+#smushes in-place(-r) on the department ID
+$Smush $SCOREINPUT -P $ORGIDNUM -n ${BASEURI} -r
+
+#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.rdf.xml
+
+
 $Score $SCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
+
+$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}person/
+
 #$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-1.rdf.xml
 
 $Match $MATCHMODELS -r -t 0.55   
 #$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-1.rdf.xml
 
 
-$Score $SCOREMODELS -AdeptId=$EQTEST -WdeptId=1.0 -FdeptId=$ORGIDNUM -PdeptId=$ORGIDNUM -n ${BASEURI}org/
+$Score $SCOREMODELS -AdeptName=$EQTEST -WdeptName=1.0 -FdeptName=$RDFSLABEL -PdeptName=$RDFSLABEL -n ${BASEURI}org/
 #$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-2.rdf.xml
 
 $Match $MATCHMODELS -r -t 0.55   
 #$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-2.rdf.xml
 
 
-$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}position/
+$Score $SCOREMODELS -reloadInput -Aperson=$EQTEST -Wperson=0.5 -Fperson=$POSITIONPERSON -Pperson=$POSITIONPERSON -Aorg=$EQTEST -Worg=0.5 -Forg=$POSITIONORG -Porg=$POSITIONORG -n ${BASEURI}position/
 #$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-3.rdf.xml
 
 $Match $MATCHMODELS -r -t 0.55   
 #$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-3.rdf.xml
-
-
-
 
 
 $Qualify -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -n "http://vivoweb.org/ontology/score#" -p
