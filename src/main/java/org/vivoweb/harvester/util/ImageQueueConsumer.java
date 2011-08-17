@@ -68,7 +68,8 @@ public class ImageQueueConsumer {
 	 */
 	private static FileInputStream propFile = null;
 	/**
-	 * Consumer object to consuem the message
+	 * Consumer
+	 *  object to consuem the message
 	 */
 	private static MessageConsumer consumer;
 	/**
@@ -76,7 +77,7 @@ public class ImageQueueConsumer {
 	 */
 	private static String userName;
 	private static String password;
-	
+	private static int maxnum = 1;
 	private static Properties P = null;
 	/**
 	 * ActiveMQ Server URL
@@ -103,20 +104,16 @@ public class ImageQueueConsumer {
 	 */
 	
 	public static void getUpdatesFromQueue() throws JMSException {
-
+		
 		//this is for testing purpose only.. so that I can test for 5 images at a time
 		//this need to be changed to while (not all messages ) after the final testing
-		//uncomment the following  line and comment the while loop if you want to pull just one Image
-		//for(int i = 0; i < 1; i++) {//uncomment if for pulling single image
-			Message message=null;
-			while ((message = consumer.receiveNoWait()) != null) {//comment it if you want to pull single Image
+		
+		Message message = null;
+		for(int i = 0; ((message = consumer.receiveNoWait()) != null) && (i <= maxnum);) {
 			
-			//message = consumer.receiveNoWait(); Un Comment to fectch one 1 Image//Receives the next message if one is immediately available.
-			
-			if(message==null)
-				{System.out.println("No Message is the queue");}
-			else
-			{	processMessage(message);}
+			if(maxnum != 0)
+				i++;
+			processMessage(message);
 			
 		}
 	}
@@ -131,10 +128,10 @@ public class ImageQueueConsumer {
 		String jmsType = message.getStringProperty("type");
 		TextMessage text = (TextMessage)message;
 		if(text == null)
-			System.out.println("No Text Message Found");
+			log.info("No Text Message Found");
 		
 		else if(jmsType.equals("ImageChange")) {
-			getUfidsAndImages(text.getText()); // this passes the Content of the ImageChange TAG to process
+			getUfidsAndImages(text.getText()); // this pacsses the Content of the ImageChange TAG to process
 		}
 		
 	}
@@ -164,17 +161,17 @@ public class ImageQueueConsumer {
 			NodeList Ufid = doc.getElementsByTagName("Ufid");
 			Element line3 = (Element)Ufid.item(0);
 			String id = getCharacterDataFromElement(line3);
+			log.info("Uploading Image Uf ID: " + id + "to Dir :" + imagedir);
 			
-			System.out.println("Uploading Image Uf ID: " + id + "to Dir :" + imagedir);
 			
 			WriteImageFromBase64(getCharacterDataFromElement(line2), imagedir + id);
+			log.info("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
 			
-			System.out.println("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
 			
 		}
-
+		
 		catch(Exception e) {
-			System.err.println(e);
+			log.info(e.toString());
 		}
 	}
 	
@@ -211,10 +208,10 @@ public class ImageQueueConsumer {
 		int len;
 		FileOutputStream fos = new FileOutputStream(file);
 		while((len = in.read(buf)) > 0)
-		fos.write(buf, 0, len);
+			fos.write(buf, 0, len);
 		fos.close();
 		in.close();
-	
+		
 	}
 	
 	/**
@@ -225,7 +222,9 @@ public class ImageQueueConsumer {
 		connectionFactory = new ActiveMQConnectionFactory(url);
 		try {
 			connection = connectionFactory.createConnection(userName, password);
+			System.out.println("trying to start connection with username:->" + userName + "password:->" + password);
 			connection.start();
+			
 			session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);// Auto Ack is on
 			destination = session.createQueue(subject);
@@ -234,8 +233,8 @@ public class ImageQueueConsumer {
 			
 		} catch(JMSException e) {
 			// TODO Auto-generated catch block
+			log.info("Connection Failed"+e.toString());
 			
-			e.printStackTrace();
 			return null;
 		}
 		
@@ -276,11 +275,11 @@ public class ImageQueueConsumer {
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:", e);
-			System.out.println(getParser().getUsage());
+			log.info(getParser().getUsage());
 			error = e;
 		} catch(UsageException e) {
 			log.info("Printing Usage:");
-			System.out.println(getParser().getUsage());
+			log.info(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
@@ -297,6 +296,7 @@ public class ImageQueueConsumer {
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("ImageQueueConsumer");
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pathToImageScriptDirectory").withParameter(true, "PATH").setDescription("path to the Image Script Directory").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("maxFetch").withParameter(true, "MAXFETCH").setDescription("Maximum number if Images that should be fetched from thr queue").setRequired(true));
 		return parser;
 	}
 	
@@ -316,7 +316,8 @@ public class ImageQueueConsumer {
 		this(getParser().parse(args));
 	}
 	
-	public ImageQueueConsumer(String pathToImageDir) {
+	public ImageQueueConsumer(String pathToImageDir, String maxFetched) {
+		maxnum = Integer.parseInt(maxFetched.trim());
 		this.propdir = pathToImageDir;
 		this.imagedir = pathToImageDir + "/images/";
 	}
@@ -326,7 +327,7 @@ public class ImageQueueConsumer {
 	 * @param argList option set of parsed args
 	 */
 	private ImageQueueConsumer(ArgList argList) {
-		this(argList.get("p"));
+		this(argList.get("p"), argList.get("m"));
 	}
 	
 	public void execute() throws IOException {

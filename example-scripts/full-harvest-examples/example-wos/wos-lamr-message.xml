@@ -14,6 +14,7 @@ src="app.id=VIVOHarvester,env.id=Ubuntu Linux,partner.email=jrpence@ctrip.ufl.ed
 				<val>timesCited</val>
 				<val>ut</val>
 				<val>doi</val>
+				<val>pmid</val>
 				<val>sourceURL</val>
 				<val>citingArticlesURL</val>
 				<val>relatedRecordsURL</val>
