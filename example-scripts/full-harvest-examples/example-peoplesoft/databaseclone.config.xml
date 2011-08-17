@@ -84,7 +84,7 @@
 <%                                                                                                                    %>
 <%  <Param name="validTableType">  This parameter is used to determine which types of tables are to be harvester from %>
 <%     Possible values (If the parameter is not present it uses the default value):                                   %>
-<%          TABLE - If set to this then the JDBCFetch is expecting a table {DEFAULT}                                  %>
+<%          TABLE - If set to this then the DatabaseClone is expecting a table {DEFAULT}                              %>
 <%          VIEW - this setting expects a view generated from the database.                                           %>
 <%                                                                                                                    %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
