@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=~/git/code
+HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-wos
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -79,25 +79,74 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 # 	is created with the values / scores of the data comparsions. 
 
 # Execute Score for People
-#harvester-score -X score-people.config.xml
+harvester-score -X score-author.config.xml
 
 # Execute Score for Departments
 #harvester-score -X score-departments.config.xml
+
+
+
+
+########################################
+# Publication / Journal / Author Stubs #
+########################################
+# find previously ingested publication
+# Execute publication Scoring
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+#       is created with the values / scores of the data comparisons.
+harvester-score -X score-publication.config.xml
+
+
 
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
 # 	comparsion values above the chosen threshold within the xml configuration file.
 # Execute Match for People and Departments
-#harvester-match -X match-people-departments.config.xml
+
+harvester-match -X match-author.config.xml
+
+# Clear author score data, since we are done with it
+#harvester-jenaconnect -j score-data.model.xml -t
+
+
+
+##############
+# Authorship #
+##############
+# Execute Authorship Scoring and Matching
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+# 	is created with the values / scores of the data comparisons.
+harvester-score -X score-authorship.config.xml
+
+
+harvester-score -X score-subjectarea.config.xml
+
+harvester-score -X score-journal.config.xml
+
+
+harvester-score -X score-webpage.config.xml
 
 
 # Execute ChangeNamespace to get unmatched  into current namespace
 # This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
-# 	If there is an issue with uris being in another namespace, this is the phase
-#	which should give some light to the problem.
+#       If there is an issue with uris being in another namespace, this is the phase
+#       which should give some light to the problem.
 # Execute ChangeNamespace for People
-#harvester-changenamespace -X changenamespace-people.config.xml
 
+
+harvester-changenamespace -X changenamespace-authors.config.xml
+harvester-changenamespace -X changenamespace-authorship.config.xml
+harvester-changenamespace -X changenamespace-journal.config.xml
+
+harvester-changenamespace -X changenamespace-publication.config.xml
+harvester-changenamespace -X changenamespace-webpage.config.xml
+harvester-changenamespace -X changenamespace-subjectarea.config.xml
+
+
+harvester-match -X match-author.config.xml
+
+
+harvester-transfer  -i harvested-data.model.xml  -d  data/changednamespace.xml
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
@@ -108,29 +157,30 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the statements that exist in
 #	the previous harvest but not in the current harvest need to be identified for removal.
-#harvester-diff -X diff-subtractions.config.xml
+harvester-diff -X diff-subtractions.config.xml
 
 # Find Additions
 # When making the previous harvest model agree with the current harvest, the statements that exist in
 #	the current harvest but not in the previous harvest need to be identified for addition.
-#harvester-diff -X diff-additions.config.xml
+harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #	agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 #Output some counts
-#ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
-#PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
-#POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
-#echo "Imported $ORGS organizations, $PEOPLE people, and $POSITIONS positions"
+ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
+PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
+POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
+echo "Imported $ORGS organizations, $PEOPLE people, and $POSITIONS positions"
 
 echo 'Harvest completed successfully'
+
