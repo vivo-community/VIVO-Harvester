@@ -24,7 +24,7 @@ PREFIX harv: &lt;http://localhost/vivo/&gt;
 
 CONSTRUCT
 {
-		?subject core:email ?primaryEmail .
+		?subject core:primaryEmail ?primaryEmail .
 		?subject core:phoneNumber ?phoneNumber .
 		?subject core:faxNumber ?faxNumber .
 		?subject foaf:firstName ?firstName .
@@ -58,7 +58,7 @@ WHERE
 		?subject rdf:type foaf:Person .
 		OPTIONAL
 		{
-			?subject core:email ?primaryEmail .
+			?subject core:primaryEmail ?primaryEmail .
 		}
 		OPTIONAL
 		{

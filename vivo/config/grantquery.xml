@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+	<Param name="query">
+PREFIX rdf:   &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs:  &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd:   &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX owl:   &lt;http://www.w3.org/2002/07/owl#&gt;
+PREFIX swrl:  &lt;http://www.w3.org/2003/11/swrl#&gt;
+PREFIX swrlb: &lt;http://www.w3.org/2003/11/swrlb#&gt;
+PREFIX vitro: &lt;http://vitro.mannlib.cornell.edu/ns/vitro/0.7#&gt;
+PREFIX bibo: &lt;http://purl.org/ontology/bibo/&gt;
+PREFIX dcelem: &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+PREFIX event: &lt;http://purl.org/NET/c4dm/event.owl#&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX geo: &lt;http://aims.fao.org/aos/geopolitical.owl#&gt;
+PREFIX pvs: &lt;http://vivoweb.org/ontology/provenance-support#&gt;
+PREFIX ero: &lt;http://purl.obolibrary.org/obo/&gt;
+PREFIX scires: &lt;http://vivoweb.org/ontology/scientific-research#&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX ufVivo: &lt;http://vivo.ufl.edu/ontology/vivo-ufl/&gt;
+PREFIX core: &lt;http://vivoweb.org/ontology/core#&gt;
+PREFIX harv: &lt;http://localhost/vivo/&gt;
+
+CONSTRUCT
+{
+		?subject rdf:type core:Grant .
+		?subject rdf:type core:Relationship .
+		?subject rdf:type core:Agreement .
+		?subject rdfs:label ?grantName .
+		?subject core:totalAwardAmount ?awardAmount .
+		?subject core:sponsorAwardId ?sponAwardId .
+		?subject core:administeredBy ?admindept .
+		?admindept rdfs:label ?deptLabel .
+		?admindept core:administers ?subject .
+
+		?subject core:grantAwardedBy ?sponsor .
+		?sponsor core:awardsGrant ?subject .
+		?sponsor rdfs:label ?sponsorName .
+
+		?subject core:grantSubcontractedThrough ?subsponsor .
+		?subsponsor core:subcontractsGrant ?subject .
+		?subsponsor rdfs:label ?subsponsorName  .
+
+		?subject core:dateTimeInterval ?DTI .
+		?DTI rdf:type core:DateTimeInterval .
+		?DTI rdf:type owl:Thing .
+		?DTI core:start ?startDate .
+		?DTI core:end ?endDate .
+		
+		?startDate rdf:type core:DateTimeValue .
+		?startDate rdf:type owl:Thing .
+		?startDate core:dateTimePrecision ?startPrecision .
+		?startDate core:dateTime ?startTime .
+		
+		?endDate rdf:type core:DateTimeValue .
+		?endDate rdf:type owl:Thing .
+		?endDate core:dateTimePrecision ?endPrecision .
+		?endDate core:dateTime ?endTime .
+		
+		?subject core:relatedRole ?piRole .
+		?piRole core:roleIn ?subject .
+		?piRole rdf:type core:PrincipalInvestigatorRole .
+		?piRole rdf:type core:InvestigatorRole .
+		?piRole rdf:type core:ResearcherRole .
+		?piRole core:principalInvestigatorRoleOf ?piPerson .
+
+		?piPerson rdfs:label ?piPersonLabel .
+		?piPerson core:hasPrincipalInvestigatorRole ?piRole .
+
+		?subject core:relatedRole ?copiRole .
+		?copiRole core:roleIn ?subject .
+		?copiRole rdf:type core:CoPrincipalInvestigatorRole .
+		?copiRole rdf:type core:InvestigatorRole .
+		?copiRole rdf:type core:ResearcherRole .
+		?copiRole core:co-PrincipalInvestigatorRoleOf ?copiPerson .
+
+		?copiPerson rdfs:label ?copiPersonLabel .
+		?copiPerson core:hasCo-PrincipalInvestigatorRole ?copiRole .
+
+}
+FROM NAMED &lt;http://localhost/vivo/multi-jena&gt;
+WHERE
+{
+	GRAPH harv:multi-jena
+	{
+
+		?subject rdf:type core:Grant .
+		OPTIONAL
+		{
+			?subject rdfs:label ?grantName .
+		}
+		OPTIONAL
+		{
+			?subject core:totalAwardAmount ?awardAmount .
+		}
+		OPTIONAL
+		{
+			?subject core:sponsorAwardId ?sponAwardId .
+		}
+		OPTIONAL
+		{
+			?subject core:administeredBy ?admindept .
+			OPTIONAL
+			{
+				?admindept rdfs:label ?deptLabel .
+			}
+			OPTIONAL
+			{
+				?admindept core:administers ?subject .
+			}
+		}
+		OPTIONAL
+		{
+			?subject core:grantAwardedBy ?sponsor .
+			?sponsor core:awardsGrant ?subject .
+			OPTIONAL
+			{
+				?sponsor rdfs:label ?sponsorName .
+			}
+		}
+		OPTIONAL
+		{
+			?subject core:grantSubcontractedThrough ?subsponsor .
+			?subsponsor core:subcontractsGrant ?subject .
+			OPTIONAL
+			{
+				?subsponsor rdfs:label ?subsponsorName  .
+			}
+		}
+		OPTIONAL
+		{
+		?subject core:dateTimeInterval ?DTI .
+			OPTIONAL
+			{
+				?DTI rdf:type core:DateTimeInterval .
+				?DTI rdf:type owl:Thing .
+				?DTI core:start ?startDate .
+				?DTI core:end ?endDate .
+		
+				?startDate rdf:type core:DateTimeValue .
+				?startDate rdf:type owl:Thing .
+				?startDate core:dateTimePrecision ?startPrecision .
+				?startDate core:dateTime ?startTime .
+		
+				?endDate rdf:type core:DateTimeValue .
+				?endDate rdf:type owl:Thing .
+				?endDate core:dateTimePrecision ?endPrecision .
+				?endDate core:dateTime ?endTime .
+			}
+		}
+		OPTIONAL
+		{
+			?subject core:relatedRole ?piRole .
+			?piRole core:roleIn ?subject .
+			OPTIONAL
+			{
+				?piRole rdf:type core:PrincipalInvestigatorRole .
+				?piRole core:principalInvestigatorRoleOf ?piPerson .
+
+				?piPerson rdfs:label ?piPersonLabel .
+				?piPerson core:hasPrincipalInvestigatorRole ?piRole .
+			}
+		}
+		OPTIONAL
+		{
+			?subject core:relatedRole ?copiRole .
+			?copiRole core:roleIn ?subject .
+			OPTIONAL
+			{
+				?copiRole rdf:type core:CoPrincipalInvestigatorRole .
+				?copiRole core:co-PrincipalInvestigatorRoleOf ?copiPerson .
+
+				?copiPerson rdfs:label ?copiPersonLabel .
+				?copiPerson core:hasCo-PrincipalInvestigatorRole ?copiRole .
+			}
+		}
+	}
+}
+
+
+	</Param>
+</Task>

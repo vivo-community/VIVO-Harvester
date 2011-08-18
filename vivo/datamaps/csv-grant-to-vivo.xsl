@@ -173,7 +173,7 @@
 		<xsl:if test="not( ./db-csv:COPIID = '' or ./db-csv:COPIID = 'null' )">
 		<!--            Creating the CoPI-->
 			<rdf:Description rdf:about="{$baseURI}piRole/inGrant{$grantid}For{./db-csv:COPIID}">
-			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#PrincipalInvestigatorRole"/>
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#CoPrincipalInvestigatorRole"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#InvestigatorRole"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#ResearcherRole"/>
 			<core:roleIn>
@@ -197,3 +197,4 @@
 	</xsl:template>
 	
 </xsl:stylesheet>
+
