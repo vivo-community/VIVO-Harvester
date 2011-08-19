@@ -63,8 +63,8 @@
      -->
 	<Param name="tempJenaDir">data/temp-score-model</Param>
 	<Param name="algorithms">label=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
-	<Param name="weights">label=1.0</Param>
-	<Param name="inputJena-predicates">label=http://vivoweb.org/ontology/core#linkURI</Param>
-	<Param name="vivoJena-predicates">label=http://vivoweb.org/ontology/core#linkURI</Param>
-	<Param name="namespace">http://vivoweb.org/harvest/wos/webpage/</Param>
+	<Param name="weights">label=0.05</Param>
+	<Param name="inputJena-predicates">label=http://www.w3.org/2000/01/rdf-schema#label</Param>
+	<Param name="vivoJena-predicates">label=http://www.w3.org/2000/01/rdf-schema#label</Param>
+	<Param name="namespace">http://vivoweb.org/harvest/wos/author/</Param>
 </Config>

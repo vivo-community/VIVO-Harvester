@@ -4,23 +4,47 @@
 #All rights reserved.
 #This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 
+# set to the directory where the harvester was installed or unpacked
+# HARVESTER_INSTALL_DIR is set to the location of the installed harvester
+#	If the deb file was used to install the harvester then the
+#	directory should be set to /usr/share/vivo/harvester which is the
+#	current location associated with the deb installation.
+#	Since it is also possible the harvester was installed by
+#	uncompressing the tar.gz the setting is available to be changed
+#	and should agree with the installation location
+HARVESTER_INSTALL_DIR=${WORKING_DIRECTORY} #replaced by servlet
+export HARVEST_NAME=csvPerson
+export DATE=`date +%Y-%m-%d'T'%T`
+
+# Add harvester binaries to path for execution
+# The tools within this script refer to binaries supplied within the harvester
+#	Since they can be located in another directory their path should be
+#	included within the classpath and the path environment variables.
+export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
+export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 # Exit on first error
 set -e
 
-# Set working directory
-#HARVESTERDIR=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
-#HARVESTERDIR=$(cd $HARVESTERDIR; cd ..; pwd)
-HARVESTERDIR=${WORKING_DIRECTORY} #replaced by servlet
-cd $HARVESTERDIR
 
-HARVESTER_TASK=csvPerson
+cd $HARVESTER_INSTALL_DIR
 
-if [ -f vivo/scripts/env ]; then
-  . vivo/scripts/env
-else
-  exit 1
-fi
-echo "Full Logging in $HARVESTER_TASK_DATE.log"
+
+#if [ -f vivo/scripts/env ]; then
+#  . vivo/scripts/env
+#else
+#  exit 1
+#fi
+echo "Full Logging in ${HARVEST_NAME}${DATE}.log"
+
+VIVOCONFIG=vivo/config/vivo.xml
+
+NAMESPACE="http://localhost/individual/"
+H2RH="vivo/config/h2-jdbc.xml"
+TFRH="vivo/config/tfrh.xml"
+BACKUPPATH="$HARVESTERDIR/backups"
+LATESTBACKUPPATH="$BACKUPPATH/latest"
+H2MODEL="vivo/config/h2-sdb.xml"
 
 # Setting variables for cleaner script lines.
 #Base data directory
@@ -84,21 +108,17 @@ rm -rf $RAWCSVDIR
 XSLFILE="vivo/datamaps/csv-people-to-vivo.xsl"
 
 # Execute Fetch
-#$CSVtoJDBC -i $CSVFILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
+#harvester-csvtojdbc -i $CSVFILE -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
 
-#$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
+#harvester-jdbcfetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
 
 for CURRENT_FILE in ${UPLOADS_FOLDER}* #UPLOADS_FOLDER variable gets replaced by servlet
 do
-	$CSVtoJDBC -i "$CURRENT_FILE" -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
+	harvester-csvtojdbc -i "$CURRENT_FILE" -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV"
 	
-#	$CSVtoJDBC -i "$CURRENT_FILE" -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -t "CSV2"
-
-#	$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR
 done
-$JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR -n "null"
 
-
+harvester-jdbcfetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=$RAWRHDIR -n "null"
 
 
 # backup fetch
@@ -111,7 +131,7 @@ $JDBCFetch -d "org.h2.Driver" -c $RAWCSVDBURL -u "sa" -p "" -o $TFRH -O fileDir=
 rm -rf $RDFRHDIR
 
 # Execute Translate
-$XSLTranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x $XSLFILE
+harvester-xsltranslator -i $TFRH -IfileDir=$RAWRHDIR -o $TFRH -OfileDir=$RDFRHDIR -x $XSLFILE
 
 # backup translate
 #BACKRDF="rdf"
@@ -124,9 +144,9 @@ rm -rf $MODELDIR
 
 # Execute Transfer to import from record handler into local temp model
 
-$Transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -s $TFRH -SfileDir=$RDFRHDIR -n $NAMESPACE
+harvester-transfer -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MODELDBURL -s $TFRH -SfileDir=$RDFRHDIR 
 
-#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.rdf.xml
+#harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/transfer.rdf.xml
 
 # backup H2 transfer Model
 #BACKMODEL="model"
@@ -142,8 +162,8 @@ rm -rf $SCOREDATADIR
 # The -n flag value is determined by the XLST file
 # The -A -W -F & -P flags need to be internally consistent per call
 
-#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/dumpinput.rdf.xml
-#$Transfer -i $VIVOCONFIG -d $BASEDIR/dumpvivo.rdf.xml
+#harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/dumpinput.rdf.xml
+#harvester-transfer -i $VIVOCONFIG -d $BASEDIR/dumpvivo.rdf.xml
 
 rm -rf $TEMPCOPYDIR
 
@@ -152,54 +172,55 @@ MATCHMODELS="-i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -s $H2MODEL 
 
 
 #smushes in-place(-r) on the person ID
-$Smush $SCOREINPUT -P $PERSONIDNUM -n ${BASEURI} -r
+harvester-smush $SCOREINPUT -P $PERSONIDNUM -n ${BASEURI} -r
 
 #smushes in-place(-r) on the department ID
-$Smush $SCOREINPUT -P $ORGIDNUM -n ${BASEURI} -r
+harvester-smush $SCOREINPUT -P $ORGIDNUM -n ${BASEURI} -r
 
-#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.rdf.xml
+#harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/smushed.rdf.xml
+
+#This section is the matching.
+#Scoring and Matching on either core:email or rdfs:label
+harvester-score $SCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
+
+harvester-score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}person/
+
+#harvester-transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-1.rdf.xml
+
+harvester-match $MATCHMODELS -r -t 0.55   
+#harvester-transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-1.rdf.xml
+
+#A normal score to compare the department names.
+harvester-score $SCOREMODELS -AdeptName=$EQTEST -WdeptName=1.0 -FdeptName=$RDFSLABEL -PdeptName=$RDFSLABEL -n ${BASEURI}org/
+#harvester-transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-2.rdf.xml
+
+harvester-match $MATCHMODELS -r -t 0.55   
+#harvester-transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-2.rdf.xml
+
+#Scoring and matching requiring both the person and org within the position to match
+harvester-score $SCOREMODELS -reloadInput -Aperson=$EQTEST -Wperson=0.5 -Fperson=$POSITIONPERSON -Pperson=$POSITIONPERSON -Aorg=$EQTEST -Worg=0.5 -Forg=$POSITIONORG -Porg=$POSITIONORG -n ${BASEURI}position/
+#harvester-transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-3.rdf.xml
+
+harvester-match $MATCHMODELS -r -t 0.55   
+#harvester-transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-3.rdf.xml
 
 
-$Score $SCOREMODELS -Aemail=$EQTEST -Wemail=1.0 -Femail=$EMAIL -Pemail=$EMAIL -n ${BASEURI}person/
-
-$Score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}person/
-
-#$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-1.rdf.xml
-
-$Match $MATCHMODELS -r -t 0.55   
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-1.rdf.xml
-
-
-$Score $SCOREMODELS -AdeptName=$EQTEST -WdeptName=1.0 -FdeptName=$RDFSLABEL -PdeptName=$RDFSLABEL -n ${BASEURI}org/
-#$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-2.rdf.xml
-
-$Match $MATCHMODELS -r -t 0.55   
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-2.rdf.xml
-
-
-$Score $SCOREMODELS -reloadInput -Aperson=$EQTEST -Wperson=0.5 -Fperson=$POSITIONPERSON -Pperson=$POSITIONPERSON -Aorg=$EQTEST -Worg=0.5 -Forg=$POSITIONORG -Porg=$POSITIONORG -n ${BASEURI}position/
-#$Transfer -i $H2MODEL -ImodelName=$SCOREDATANAME -IdbUrl=$SCOREDATADBURL -d $BASEDIR/score-data-3.rdf.xml
-
-$Match $MATCHMODELS -r -t 0.55   
-#$Transfer -i $H2MODEL -ImodelName=$MATCHEDNAME -IdbUrl=$MATCHEDDBURL -d $BASEDIR/matched-3.rdf.xml
-
-
-$Qualify -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -n "http://vivoweb.org/ontology/score#" -p
+harvester-qualify -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -n "http://vivoweb.org/ontology/score#" -p
 
 
 # Execute ChangeNamespace to get persons into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -u ${BASEURI}person/
+harvester-changenamespace $CNFLAGS -u ${BASEURI}person/
 
 # Execute ChangeNamespace to get positions into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -u ${BASEURI}position/
+harvester-changenamespace $CNFLAGS -u ${BASEURI}position/
 
 # Execute ChangeNamespace to get orgs into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
-$ChangeNamespace $CNFLAGS -u ${BASEURI}org/
+harvester-changenamespace $CNFLAGS -u ${BASEURI}org/
 
-#$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.rdf.xml
+#harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.rdf.xml
 
 # backup H2 matched Model
 #BACKMATCHED="matched"
@@ -220,11 +241,11 @@ PREVHARVESTMODEL="http://vivoweb.org/ingest/csv"
 ADDFILE="$BASEDIR/additions.rdf.xml"
 SUBFILE="$BASEDIR/subtractions.rdf.xml"
 
-VIVOMODELNAME=`$XPathTool -x $VIVOCONFIG -e "//Model/Param[@name='modelName']"`
+VIVOMODELNAME=`harvester-xpathtool -x $VIVOCONFIG -e "//Model/Param[@name='modelName']"`
 VIVOINFMODELNAME="http://vitro.mannlib.cornell.edu/default/vitro-kb-inf"
 
 # Everything harvested will be added to VIVO
-$Transfer -i $H2MODEL -IdbUrl=$MODELDBURL -ImodelName=$MODELNAME -d $ADDFILE
+harvester-transfer -i $H2MODEL -IdbUrl=$MODELDBURL -ImodelName=$MODELNAME -d $ADDFILE
 
 # Anything with a subject and predicate that matches a subject and predicate being added to VIVO will
 #   be removed.  This will be done in two steps.  First, all triples in VIVO that match subjects in the
@@ -233,25 +254,25 @@ $Transfer -i $H2MODEL -IdbUrl=$MODELDBURL -ImodelName=$MODELNAME -d $ADDFILE
 MULTIJENARESULTFILE="$BASEDIR/multijena.rdf.xml"
 MULTIJENAQUERYFILE=vivo/config/personmultijenaquery.xml
 #MULTIJENAQUERY="PREFIX harv: <http://localhost/vivo/> PREFIX vivo: <http://vitro.mannlib.cornell.edu/default/> CONSTRUCT { ?subject ?predicate ?object } FROM NAMED <http://localhost/vivo/harvested-data> FROM NAMED <http://vitro.mannlib.cornell.edu/default/vitro-kb-2> WHERE { GRAPH vivo:vitro-kb-2 { ?subject ?predicate ?object . } GRAPH harv:harvested-data { ?subject ?dummy1 ?dummy2 . } }"
-$Transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MULTIJENADBURL
-$Transfer -i $VIVOCONFIG -o $H2MODEL -OmodelName=$VIVOMODELNAME -OdbUrl=$MULTIJENADBURL
-$Transfer -i $VIVOCONFIG -ImodelName=$VIVOINFMODELNAME -o $H2MODEL -OmodelName=$VIVOMODELNAME -OdbUrl=$MULTIJENADBURL
-$JenaConnect -X $MULTIJENAQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -d -f $MULTIJENARESULTFILE 
+harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -o $H2MODEL -OmodelName=$MODELNAME -OdbUrl=$MULTIJENADBURL
+harvester-transfer -i $VIVOCONFIG -o $H2MODEL -OmodelName=$VIVOMODELNAME -OdbUrl=$MULTIJENADBURL
+harvester-transfer -i $VIVOCONFIG -ImodelName=$VIVOINFMODELNAME -o $H2MODEL -OmodelName=$VIVOMODELNAME -OdbUrl=$MULTIJENADBURL
+harvester-jenaconnect -X $MULTIJENAQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -d -f $MULTIJENARESULTFILE 
 
 # Step 2 of getting the subtractions
 PREDICATESQUERYFILE=vivo/config/personquery.xml
 rm -rf $MULTIJENADIR
-$Transfer -o $H2MODEL -OmodelName=$MULTIJENANAME -OdbUrl=$MULTIJENADBURL -r $MULTIJENARESULTFILE
-#$Transfer -i $H2MODEL -ImodelName=$MULTIJENANAME -IdbUrl=$MULTIJENADBURL -d "$BASEDIR/dumpmultijenamodel.rdf.xml"
-$JenaConnect -X $PREDICATESQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -d -f $SUBFILE 
-#$JenaConnect -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -q "PREFIX harv: <http://localhost/vivo/> CONSTRUCT { ?a ?b ?c } FROM NAMED <http://localhost/vivo/multi-jena> WHERE { GRAPH harv:multi-jena { ?a ?b ?c } }" -d -f $SUBFILE 
+harvester-transfer -o $H2MODEL -OmodelName=$MULTIJENANAME -OdbUrl=$MULTIJENADBURL -r $MULTIJENARESULTFILE
+#harvester-transfer -i $H2MODEL -ImodelName=$MULTIJENANAME -IdbUrl=$MULTIJENADBURL -d "$BASEDIR/dumpmultijenamodel.rdf.xml"
+harvester-jenaconnect -X $PREDICATESQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -d -f $SUBFILE 
+#harvester-jenaconnect -j $H2MODEL -JmodelName=$MULTIJENANAME -JdbUrl=$MULTIJENADBURL -q "PREFIX harv: <http://localhost/vivo/> CONSTRUCT { ?a ?b ?c } FROM NAMED <http://localhost/vivo/multi-jena> WHERE { GRAPH harv:multi-jena { ?a ?b ?c } }" -d -f $SUBFILE 
 
 
 
 # Find Subtractions
-#$Diff -m $H2MODEL -MdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -McheckEmpty=$CHECKEMPTY -MmodelName=$PREVHARVESTMODEL -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
+#harvester-diff -m $H2MODEL -MdbUrl=${PREVHARVDBURLBASE}${HARVEST_NAME}/store -McheckEmpty=$CHECKEMPTY -MmodelName=$PREVHARVESTMODEL -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=$MODELDBURL -SmodelName=$MODELNAME -d $SUBFILE
 # Find Additions
-#$Diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -SmodelName=$PREVHARVESTMODEL  -d $ADDFILE
+#harvester-diff -m $H2MODEL -McheckEmpty=$CHECKEMPTY -MdbUrl=$MODELDBURL -MmodelName=$MODELNAME -s $H2MODEL -ScheckEmpty=$CHECKEMPTY -SdbUrl=${PREVHARVDBURLBASE}${HARVEST_NAME}/store -SmodelName=$PREVHARVESTMODEL  -d $ADDFILE
 
 # Backup adds and subs
 #backup-file $ADDFILE adds.rdf.xml
@@ -260,13 +281,13 @@ $JenaConnect -X $PREDICATESQUERYFILE -j $H2MODEL -JmodelName=$MULTIJENANAME -Jdb
 #restore-file $SUBFILE subs.rdf.xml
 
 # Apply Subtractions to Previous model
-#$Transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
+#harvester-transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVEST_NAME}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $SUBFILE -m
 # Apply Additions to Previous model
-#$Transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVESTER_TASK}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
+#harvester-transfer -o $H2MODEL -OdbUrl=${PREVHARVDBURLBASE}${HARVEST_NAME}/store -OcheckEmpty=$CHECKEMPTY -OmodelName=$PREVHARVESTMODEL -r $ADDFILE
 # Apply Subtractions to VIVO
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
+harvester-transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $SUBFILE -m
 # Apply Additions to VIVO
-$Transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
+harvester-transfer -o $VIVOCONFIG -OcheckEmpty=$CHECKEMPTY -r $ADDFILE
 
 rm -rf $TEMPCOPYDIR
 
@@ -278,7 +299,7 @@ rm -rf $TEMPCOPYDIR
 
 #Restart Tomcat
 #Tomcat must be restarted in order for the harvested data to appear in VIVO
-#echo $HARVESTER_TASK ' completed successfully'
+#echo $HARVEST_NAME ' completed successfully'
 
 #IMPORTANT: This line must exist AS-IS in every File Harvest script.  The server checks the output and uses this line to verify that the harvest completed.
 echo 'File Harvest completed successfully' 

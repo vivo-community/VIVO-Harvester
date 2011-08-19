@@ -19,11 +19,13 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.repo.TDBJenaConnect;
 
 /**
  * Assists in common tasks using Files
@@ -71,8 +73,26 @@ public class FileAide {
 	 */
 	public static boolean delete(String path) throws IOException {
 		FileObject file = getFileObject(path);
+		if(!file.exists()) {
+			return true;
+		}
 		if(isFolder(path)) {
-			file.delete(new AllFileSelector());
+			try {
+				for(FileObject subFile : file.findFiles(new AllFileSelector())) {
+					try {
+						String subPath = subFile.getName().getPath();
+						if(!subPath.equals(path)) {
+							delete(subPath);
+						}
+					} catch(FileSystemException e) {
+						//log.trace(e.getMessage(), e);
+					}
+				}
+				file.delete(new AllFileSelector());
+			} catch(FileSystemException e) {
+				//log.trace(e.getMessage(), e);
+				throw new IOException("Error deleting file!");
+			}
 		}
 		return file.delete();
 	}
@@ -330,11 +350,14 @@ public class FileAide {
 				public void run() {
 					synchronized (FileAide.deleteOnExitSet) {
 						for ( String fpath : FileAide.deleteOnExitSet) {
-							File f = new File(fpath);
-							if (!FileUtils.deleteQuietly(f) ) {
-								log.error("Failed to temporary file space {}, please remove manually  ",f.getAbsolutePath());
-							} else {
-								log.trace("Deleted temporary file space {}  ",f.getAbsolutePath());
+							try {
+								if (!delete(fpath) ) {
+									log.warn("Failed to delete temporary file space {}, please remove manually  ",fpath);
+								} else {
+									log.trace("Deleted temporary file space {}  ",fpath);
+								}
+							} catch(IOException e) {
+								log.warn("Failed to delete unknown temporary file space {}, please remove manually  ",fpath);
 							}
 						}
 						FileAide.deleteOnExitSet.clear();
