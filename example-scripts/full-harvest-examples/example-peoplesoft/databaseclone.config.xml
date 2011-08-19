@@ -82,14 +82,11 @@
 <!-- 
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 <%                                                                                                                    %>
-<%  <Param name="validTableType">  This parameter is used to determine which types of tables are to be harvester from %>
-<%     Possible values (If the parameter is not present it uses the default value):                                   %>
-<%          TABLE - If set to this then the DatabaseClone is expecting a table {DEFAULT}                              %>
-<%          VIEW - this setting expects a view generated from the database.                                           %>
+<%  <Param name="DBUnitFeature">  This parameter is used to set the parameters for the DbUnit library.                %>
+<%     Possible values found here: http://www.dbunit.org/properties.html                                              %>
 <%                                                                                                                    %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
-	<Param name="validTableType">TABLE</Param>
-	<Param name="validTableType">VIEW</Param>
+	<Param name="DBUnitFeature">http://www.dbunit.org/properties/tableType=TABLE,VIEW</Param>
 	<Param name="DBUnitFeature">http://www.dbunit.org/features/caseSensitiveTableNames=true</Param>
 </Config>
