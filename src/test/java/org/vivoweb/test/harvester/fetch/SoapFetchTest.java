@@ -76,7 +76,7 @@ public class SoapFetchTest extends TestCase {
 		this.sesID=null;
 		SOAPMessenger testSubject = null;
 		try{	
-			testSubject = new SOAPMessenger(this.url,this.output, this.xmlFileStream, this.sesID);
+			testSubject = new SOAPMessenger(this.url,this.output, this.xmlFileStream, this.sesID,null);
 		}
 		catch(IllegalArgumentException e){
 			log.error(e.getMessage());
