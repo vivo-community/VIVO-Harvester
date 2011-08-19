@@ -16,7 +16,6 @@ import java.io.OutputStreamWriter;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
@@ -25,7 +24,6 @@ import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.repo.TDBJenaConnect;
 
 /**
  * Assists in common tasks using Files
@@ -357,7 +355,7 @@ public class FileAide {
 									log.trace("Deleted temporary file space {}  ",fpath);
 								}
 							} catch(IOException e) {
-								log.warn("Failed to delete unknown temporary file space {}, please remove manually  ",fpath);
+								log.warn("Failed to delete temporary file space {}, please remove manually  ",fpath);
 							}
 						}
 						FileAide.deleteOnExitSet.clear();
