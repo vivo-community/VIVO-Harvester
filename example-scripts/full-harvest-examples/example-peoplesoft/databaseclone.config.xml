@@ -86,6 +86,7 @@
 <%     Possible values (If the parameter is not present it uses the default value):                                   %>
 <%          TABLE - If set to this then the DatabaseClone is expecting a table {DEFAULT}                              %>
 <%          VIEW - this setting expects a view generated from the database.                                           %>
+<%  <Param name="DBUnitFeature">  See http://www.dbunit.org/properties.html for possible values                       %>
 <%                                                                                                                    %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
