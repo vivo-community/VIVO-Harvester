@@ -186,15 +186,15 @@ harvester-smush $SCOREINPUT -P $GRANTIDNUM -P $PERSONIDNUM -P $DEPTIDNUM -P $DAT
 # The -A -W -F & -P flags need to be internally consistent per call
 
 # Scoring of Grants on GrantNumber
-harvester-score $SCOREMODELS -AGrantNumber=$EQTEST -WGrantNumber=1.0 -FGrantNumber=$GRANTIDNUM -PGrantNumber=$GRANTIDNUM -n ${BASEURI}grant/
+harvester-score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}grant/
 
 # Scoring of people on PERSONIDNUM
-harvester-score $SCOREMODELS -Aufid=$EQTEST -Wufid=1.0 -Fufid=$PERSONIDNUM -Pufid=$PERSONIDNUM -n ${BASEURI}person/
+harvester-score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}person/
 
 
-harvester-smush $SCOREINPUT -P $DEPTIDNUM -n ${BASEURI}org/ -r
+#harvester-smush $SCOREINPUT -P $DEPTIDNUM -n ${BASEURI}org/ -r
 # Scoring of orgs on DeptID
-harvester-score $SCOREMODELS -AdeptID=$EQTEST -WdeptID=1.0 -FdeptID=$DEPTIDNUM -PdeptID=$DEPTIDNUM -n ${BASEURI}org/
+harvester-score $SCOREMODELS -Alabel=$EQTEST -Wlabel=1.0 -Flabel=$RDFSLABEL -Plabel=$RDFSLABEL -n ${BASEURI}org/
 
 
 harvester-smush $SCOREINPUT -P $RDFSLABEL -n ${BASEURI}sponsor/ -r
@@ -234,7 +234,10 @@ harvester-score $SCOREMODELS -Asdate=$EQTEST -Wsdate=0.5 -Fsdate=$STARTTIME -Psd
 # Find matches using scores and rename nodes to matching uri
 harvester-match $SCOREINPUT $SCOREDATA -t 1.0 -r
 
-harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched.rdf.xml
+#removing the score namespace items, largely the items used to condense the data down.
+harvester-qualify -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -n "http://vivoweb.org/ontology/score#" -p
+
+#harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/matched.rdf.xml
 # Execute ChangeNamespace to get grants into current namespace
 # the -o flag value is determined by the XSLT used to translate the data
 harvester-changenamespace $CNFLAGS -u ${BASEURI}grant/
@@ -264,7 +267,7 @@ harvester-changenamespace $CNFLAGS -u ${BASEURI}coPiRole/
 harvester-changenamespace $CNFLAGS -u ${BASEURI}timeInterval/
 
 
-harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.rdf.xml
+#harvester-transfer -i $H2MODEL -ImodelName=$MODELNAME -IdbUrl=$MODELDBURL -d $BASEDIR/changed.rdf.xml
 
 # backup H2 matched Model
 #BACKMATCHED="matched"
