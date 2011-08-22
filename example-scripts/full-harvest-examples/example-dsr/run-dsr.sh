@@ -19,7 +19,7 @@ export DATE=`date +%Y-%m-%d'T'%T`
 # Add harvester binaries to path for execution
 # The tools within this script refer to binaries supplied within the harvester
 #	Since they can be located in another directory their path should be
-#	included within the classpath and the path enviromental variables.
+#	included within the classpath and the path environmental variables.
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
@@ -32,8 +32,8 @@ set -e
 
 # Supply the location of the detailed log file which is generated during the script.
 #	If there is an issue with a harvest, this file proves invaluable in finding
-#	a solution to the problem. I has become common practice in addressing a problem
-#	to request this file. The passwords and user-names are filter out of this file
+#	a solution to the problem. It has become common practice in addressing a problem
+#	to request this file. The passwords and usernames are filtered out of this file
 #	To prevent these logs from containing sensitive information.
 echo "Full Logging in $HARVEST_NAME.$DATE.log"
 if [ ! -d logs ]; then

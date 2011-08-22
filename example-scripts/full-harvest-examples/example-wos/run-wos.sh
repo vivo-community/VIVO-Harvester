@@ -19,7 +19,7 @@ export DATE=`date +%Y-%m-%d'T'%T`
 # Add harvester binaries to path for execution
 # The tools within this script refer to binaries supplied within the harvester
 #	Since they can be located in another directory their path should be
-#	included within the classpath and the path environment variables.
+#	included within the classpath and the path environmental variables.
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
