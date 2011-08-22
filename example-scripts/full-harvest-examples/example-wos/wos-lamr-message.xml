@@ -5,8 +5,9 @@ src="app.id=VIVOHarvester,env.id=Ubuntu Linux,partner.email=jrpence@ctrip.ufl.ed
 		<list>
 	<!-- WHO'S REQUESTING -->
 		<map>
-			<!-- <val name="username">username</val>
-			<val name="password">test</val> -->
+		<!-- If you received a user name and password then use them here.-->
+			<!-- <val name="username">USERNAME</val>
+			<val name="password">PASSWORD</val> -->
 		</map>
 	<!-- WHAT'S REQUESTED -->
 		<map>

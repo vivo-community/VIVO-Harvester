@@ -60,14 +60,6 @@ public class TDBJenaConnect extends JenaConnect {
 		} catch(IOException e) {
 			throw new IllegalArgumentException("Invalid Directory", e);
 		}
-		init(modelName);
-	}
-	
-	/**
-	 * Initialize the tdb jena connect
-	 * @param modelName the model name to use
-	 */
-	private void init(String modelName) {
 		if(modelName != null) {
 			setModelName(modelName);
 		} else {

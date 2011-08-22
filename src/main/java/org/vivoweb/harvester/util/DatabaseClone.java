@@ -57,13 +57,9 @@ public class DatabaseClone {
 	 */
 	private String[] tables;
 	/**
-	 * list of table types to export (null exports 'TABLE' type only)
+	 * map of DBUnit features/properties to objects (Boolean,String,String[])
 	 */
-	private String[] tableTypes;
-	/**
-	 * map of DBUnit features to boolean strings "true"/"false"
-	 */
-	private Map<String, String> dbUnitFeatures;
+	private Map<String, ? extends Object> dbUnitFeatures;
 	/**
 	 * use this database state file as the input database
 	 */
@@ -80,11 +76,10 @@ public class DatabaseClone {
 	 * @param outputConn database to output to
 	 * @param outputFile output the state of the input database in this file
 	 * @param tableNames list of tables to export (null exports all)
-	 * @param tableTypes list of table types to export (null exports 'TABLE' type only)
-	 * @param dbUnitFeatures map of DBUnit features to boolean strings "true"/"false"
+	 * @param dbUnitFeatures map of DBUnit features/properties to objects (Boolean,String,String[])
 	 * @throws IOException error resolving file or connecting to database
 	 */
-	public DatabaseClone(Connection inputConn, String inputFile, Connection outputConn, String outputFile, String[] tableNames, String[] tableTypes, Map<String, String> dbUnitFeatures) throws IOException {
+	public DatabaseClone(Connection inputConn, String inputFile, Connection outputConn, String outputFile, String[] tableNames, Map<String, ? extends Object> dbUnitFeatures) throws IOException {
 		if(inputConn != null) {
 			try {
 				this.db1 = new DatabaseConnection(inputConn);
@@ -106,7 +101,6 @@ public class DatabaseClone {
 		}
 		this.outFile = FileAide.getOutputStream(outputFile, true);
 		this.tables = tableNames;
-		this.tableTypes = tableTypes;
 		this.dbUnitFeatures = dbUnitFeatures;
 		// Add value check info
 		if((this.inFile == null) ^ (this.db1 != null)) {
@@ -146,9 +140,79 @@ public class DatabaseClone {
 			initDBConn("output", argList.get("outputDriver"), argList.get("outputConnection"), argList.get("outputUsername"), argList.get("outputPassword")),
 			argList.get("outputFile"),
 			argList.getAll("tableName").toArray(new String[]{}),
-			argList.getAll("validTableType").toArray(new String[]{}),
-			argList.getValueMap("DBUnitFeature")
+			getDbUnitFeatures(argList.getValueMap("DBUnitFeature"), argList.getAll("validTableType").toArray(new String[]{}))
 		);
+	}
+	
+	/**
+	 * Get the dbUnitFeatures in correct form
+	 * @param dbUnitFeatures the existing features
+	 * @param validTableTypes valid table types
+	 * @return the correct format
+	 */
+	private static Map<String, ? extends Object> getDbUnitFeatures(Map<String, String> dbUnitFeatures, String... validTableTypes) {
+		Map<String, Object> trueFeatures = new HashMap<String, Object>();
+		for(String feature : dbUnitFeatures.keySet()) {
+			String value = dbUnitFeatures.get(feature);
+			if(value == null) {
+				trueFeatures.put(feature, null);
+				continue;
+			}
+			if(value.equalsIgnoreCase("true")) {
+				trueFeatures.put(feature, Boolean.TRUE);
+				continue;
+			}
+			if(value.equalsIgnoreCase("false")) {
+				trueFeatures.put(feature, Boolean.FALSE);
+				continue;
+			}
+			String[] tempArray;
+			if((tempArray = value.split(",")).length > 1) {
+				trueFeatures.put(feature, tempArray);
+				continue;
+			}
+			Integer tempInt = null;
+			try {
+				tempInt = Integer.valueOf(value);
+			} catch(NumberFormatException e) {
+				//ignore
+			}
+			if(tempInt != null) {
+				trueFeatures.put(feature, tempInt);
+				continue;
+			}
+			Float tempFloat = null;
+			try {
+				tempFloat = Float.valueOf(value);
+			} catch(NumberFormatException e) {
+				//ignore
+			}
+			if(tempFloat != null) {
+				trueFeatures.put(feature, tempFloat);
+				continue;
+			}
+			Class<?> tempClass = null;
+			try {
+				tempClass = Class.forName(value);
+			} catch(ClassNotFoundException e) {
+				//ignore
+			}
+			if(tempClass != null) {
+				trueFeatures.put(feature, tempClass);
+				continue;
+			}
+			trueFeatures.put(feature, value);
+		}
+		if(validTableTypes != null && validTableTypes.length > 0) {
+			String tableTypeList = StringUtils.join(validTableTypes, ",");
+			log.warn("validTableTypes Parameter is now deprecated, to reproduce this effect add the following parameter:\n" +
+				"<Param name=\"DBUnitFeature\">http://www.dbunit.org/properties/tableType="+tableTypeList+"</Param>\n" +
+				"  or\n" +
+				"--DBUnitFeature http://www.dbunit.org/properties/tableType="+tableTypeList
+			);
+			trueFeatures.put("http://www.dbunit.org/properties/tableType", tableTypeList);
+		}
+		return trueFeatures;
 	}
 	
 	/**
@@ -197,8 +261,13 @@ public class DatabaseClone {
 	 * @throws IOException error resolving connections
 	 */
 	public void execute() throws SQLException, DatabaseUnitException, IOException {
-		if(this.tableTypes == null || this.tableTypes.length == 0) {
-			this.tableTypes = new String[]{"TABLE"};
+		String[] tableTypes = new String[]{"TABLE"};
+		if(this.dbUnitFeatures != null) {
+			for(String feature : this.dbUnitFeatures.keySet()) {
+				if(feature.trim().equals("http://www.dbunit.org/properties/tableType")) {
+					tableTypes = this.dbUnitFeatures.get(feature).toString().split(",");
+				}
+			}
 		}
 		IDataSet data = getDataSet();
 		if(this.db2 != null) {
@@ -207,7 +276,7 @@ public class DatabaseClone {
 			Connection db2conn = this.db2.getConnection();
 			Map<Integer,Map<String, String>> inputDbTypes = getDbTypes(db1conn, "input");
 			Map<Integer,Map<String, String>> outputDbTypes = getDbTypes(db2conn, "output");
-			ResultSet tableData = db2conn.getMetaData().getTables(db2conn.getCatalog(), null, "%", this.tableTypes);
+			ResultSet tableData = db2conn.getMetaData().getTables(db2conn.getCatalog(), null, "%", tableTypes);
 			while(tableData.next()) {
 				String db2tableName = tableData.getString("TABLE_NAME");
 				for(String db1table : data.getTableNames()) {
@@ -294,11 +363,24 @@ public class DatabaseClone {
 		IDataSet data;
 		if(this.db1 != null) {
 			DatabaseConfig config = this.db1.getConfig();
-			config.setProperty("http://www.dbunit.org/properties/tableType", this.tableTypes);
+			String preEscapePattern = "";
+			String postEscaptePattern = "";
+			String[] tableTypes = new String[]{"TABLE"};
 			if(this.dbUnitFeatures != null) {
 				for(String feature : this.dbUnitFeatures.keySet()) {
-					Boolean b = Boolean.valueOf(this.dbUnitFeatures.get(feature));
-					log.debug("Setting '"+feature+"' to "+b);
+					Object b = this.dbUnitFeatures.get(feature);
+					if(feature.trim().equals("http://www.dbunit.org/properties/escapePattern")) {
+						String[] temp = b.toString().split("?", 2);
+						preEscapePattern = temp[0];
+						if(temp.length > 1) {
+							postEscaptePattern = temp[1];
+						} else {
+							postEscaptePattern = temp[0];
+						}
+					} else if(feature.trim().equals("http://www.dbunit.org/properties/tableType")) {
+						tableTypes = b.toString().split(",");
+					}
+					log.debug("Setting '"+feature+"' to '"+b+"'");
 					config.setProperty(feature, b);
 				}
 			}
@@ -309,9 +391,9 @@ public class DatabaseClone {
 				// full database export
 				log.info("Constructing Full Database Dataset");
 				Set<String> tableSet = new HashSet<String>();
-				ResultSet tableRS = this.db1.getConnection().getMetaData().getTables(null, null, null, this.tableTypes);
+				ResultSet tableRS = this.db1.getConnection().getMetaData().getTables(null, null, null, tableTypes);
 				while(tableRS.next()) {
-					tableSet.add(tableRS.getString("TABLE_NAME"));
+					tableSet.add(preEscapePattern+tableRS.getString("TABLE_NAME")+postEscaptePattern);
 				}
 				this.tables = tableSet.toArray(new String[]{});
 			}
@@ -390,8 +472,8 @@ public class DatabaseClone {
 		parser.addArgument(new ArgDef().setLongOpt("outputPassword").withParameter(true, "PASSWORD").setDescription("database password for output database").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("outputFile").withParameter(true, "FILE_PATH").setDescription("output the state of the input database in this file").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameters(true, "TABLE_NAME").setDescription("a single database table name [have multiple -t flags, one for each table names]").setRequired(false));
-		parser.addArgument(new ArgDef().setLongOpt("validTableType").withParameters(true, "TABLE_TYPE").setDescription("a single table type ('TABLE', 'VIEW', etc) Defaults to just 'TABLE' [have multiple --validTableType flags, one for each table type]").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("DBUnitFeature").withParameterValueMap("FEATURE", "VALUE").setDescription("Use VALUE for the DBUnit FEATURE (should be 'true'/'false')").setRequired(false));
+		parser.addArgument(new ArgDef().setLongOpt("validTableType").withParameters(true, "TABLE_TYPE").setDescription("(deprecated) a single table type ('TABLE', 'VIEW', etc) Defaults to just 'TABLE' [have multiple --validTableType flags, one for each table type]").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("DBUnitFeature").withParameterValueMap("FEATURE", "VALUE").setDescription("Use VALUE for the DBUnit FEATURE (should be (Boolean['true'/'false'] or a comma separated list))").setRequired(false));
 		return parser;
 	}
 	

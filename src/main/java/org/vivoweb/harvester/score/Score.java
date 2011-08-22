@@ -146,9 +146,9 @@ public class Score {
 			log.trace("temp model directory is not specified, using system temp directory");
 			//			tempDir = File.createTempFile("tempVivoInputCopyJena", "db").getAbsolutePath();
 			//			log.debug("temp model is not specifiedhi , using memory jena model");
-			this.tempJena = new MemJenaConnect();
+			this.tempJena = new MemJenaConnect("urn:x-arq:UnionGraph");
 		} else {
-			this.tempJena = new TDBJenaConnect(tempDir);
+			this.tempJena = new TDBJenaConnect(tempDir, "urn:x-arq:UnionGraph");
 		}
 		
 		if(algorithms == null) {
@@ -362,7 +362,7 @@ public class Score {
 		}
 		Dataset ds = this.tempJena.getDataset();
 		log.trace("testing Dataset");
-		if(!this.tempJena.executeAskQuery("ASK { ?s ?p ?o }", true)) {
+		if(!this.tempJena.executeAskQuery("ASK { ?s ?p ?o }")) {
 			log.trace("Empty Dataset");
 		}
 		return ds;

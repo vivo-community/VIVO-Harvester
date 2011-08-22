@@ -38,6 +38,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -100,6 +101,8 @@ public class WOSFetch {
 	 */
 	private String sessionID;
 	
+	private String usernamePassword;
+	
 	/**
 	 * Constructor
 	 * @param authurl 
@@ -108,8 +111,8 @@ public class WOSFetch {
 	 * @param xmlSearchFile 
 	 * @throws IOException error talking with database
 	 */
-	public WOSFetch(URL authurl, URL searchurl, URL lamrurl, RecordHandler outputRH,  String xmlSearchFile, String xmlLamrFile) throws IOException {
-		init(authurl,searchurl,lamrurl, outputRH,null, FileAide.getInputStream( xmlSearchFile ), FileAide.getInputStream( xmlLamrFile ) );
+	public WOSFetch(URL authurl, URL searchurl, URL lamrurl, RecordHandler outputRH,  String xmlSearchFile, String xmlLamrFile, String userPass) throws IOException {
+		init(authurl,searchurl,lamrurl, outputRH,null, FileAide.getInputStream( xmlSearchFile ), FileAide.getInputStream( xmlLamrFile ), userPass );
 	}
 	
 	
@@ -137,7 +140,8 @@ public class WOSFetch {
 				RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")),
 				FileAide.getInputStream(args.get("a")),
 				FileAide.getInputStream(args.get("s")),
-				FileAide.getInputStream(args.get("m"))
+				FileAide.getInputStream(args.get("m")),
+				args.get("p")
 			);
 		}else{
 			init(
@@ -147,7 +151,8 @@ public class WOSFetch {
 				RecordHandler.parseConfig(args.get("o"), args.getValueMap("O")),
 				null,
 				FileAide.getInputStream(args.get("s")),
-				FileAide.getInputStream(args.get("m"))
+				FileAide.getInputStream(args.get("m")),
+				args.get("p")
 			);
 		}
 	}
@@ -160,8 +165,8 @@ public class WOSFetch {
 	 * @param xmlAuthStream 
 	 * @param xmlSearchStream 
 	 */
-	public WOSFetch(URL authorizationUrl, URL searchUrl, URL lamrhUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream) {
-		init(authorizationUrl, searchUrl, lamrhUrl, output,xmlAuthStream, xmlSearchStream, xmlLamrStream);
+	public WOSFetch(URL authorizationUrl, URL searchUrl, URL lamrhUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream,String usernamePassword) {
+		init(authorizationUrl, searchUrl, lamrhUrl, output,xmlAuthStream, xmlSearchStream, xmlLamrStream,usernamePassword);
 		
 	}
 	
@@ -172,7 +177,7 @@ public class WOSFetch {
 	 * @param xmlAuthStream
 	 * @param xmlSearchStream
 	 */
-	private void init(URL authorizationUrl, URL searchUrl, URL lamrUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream) {
+	private void init(URL authorizationUrl, URL searchUrl, URL lamrUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream, String usernamePassword) {
 		String authString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 			"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "+
 			"xmlns:ns2=\"http://auth.cxf.wokmws.thomsonreuters.com\">"+
@@ -185,6 +190,11 @@ public class WOSFetch {
 		
 		this.outputRH = output;
 		this.authUrl = authorizationUrl;
+		if(usernamePassword == null){
+			this.usernamePassword = null;
+		}else{
+			this.usernamePassword = new Base64().encodeBase64URLSafeString(usernamePassword.getBytes());
+		}
 		if(xmlAuthStream == null){
 			this.authMessage = new ByteArrayInputStream(authString.getBytes());
 		}else{
@@ -396,7 +406,7 @@ public class WOSFetch {
 
 			ByteArrayOutputStream lamrResponse = new ByteArrayOutputStream();
 			{
-				SOAPMessenger soapfetch = new SOAPMessenger(this.lamrUrl,lamrResponse,new ByteArrayInputStream(nodeToString(lamrDoc).getBytes()),"");
+				SOAPMessenger soapfetch = new SOAPMessenger(this.lamrUrl,lamrResponse,new ByteArrayInputStream(nodeToString(lamrDoc).getBytes()),"",null);
 				soapfetch.execute();
 			}
 			lamrRespDoc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(lamrResponse.toByteArray()) );
@@ -490,7 +500,11 @@ public class WOSFetch {
 		String searchQuery = IOUtils.toString(this.searchFile);
 		ByteArrayOutputStream authResponse = new ByteArrayOutputStream();
 		{
-			SOAPMessenger soapfetch = new SOAPMessenger(this.authUrl,authResponse,this.authMessage,"");
+			HashMap<String,String> reqProp = new HashMap<String, String>();
+			if(this.usernamePassword != null){
+				reqProp.put("Authorization", "Basic " + this.usernamePassword);
+			}
+			SOAPMessenger soapfetch = new SOAPMessenger(this.authUrl,authResponse,this.authMessage,"",reqProp);
 			soapfetch.execute();
 		}
 		String authCode = XPathTool.getXpathStreamResult(new ByteArrayInputStream(authResponse.toByteArray()), "//return");
@@ -499,7 +513,7 @@ public class WOSFetch {
 			
 			ByteArrayOutputStream searchResponse = new ByteArrayOutputStream();
 			{
-				SOAPMessenger soapfetch = new SOAPMessenger(this.searchUrl,searchResponse,new ByteArrayInputStream(searchQuery.getBytes()),authCode);
+				SOAPMessenger soapfetch = new SOAPMessenger(this.searchUrl,searchResponse,new ByteArrayInputStream(searchQuery.getBytes()),authCode,null);
 				soapfetch.execute();
 			}
 			String recFound = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchResponse.toByteArray()), "//recordsFound");
@@ -530,7 +544,7 @@ public class WOSFetch {
 		
 		ByteArrayOutputStream closeResponse = new ByteArrayOutputStream();
 		{
-			SOAPMessenger soapfetch = new SOAPMessenger(this.authUrl,closeResponse,this.closeMessage,authCode);
+			SOAPMessenger soapfetch = new SOAPMessenger(this.authUrl,closeResponse,this.closeMessage,authCode,null);
 			soapfetch.execute();
 		}
 	}
@@ -547,6 +561,7 @@ public class WOSFetch {
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("searchmessage").withParameter(true, "SEARCHMESSAGE").setDescription("The SEARCHMESSAGE file path.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authmessage").withParameter(true, "AUTHMESSAGE").setDescription("The AUTHMESSAGE file path.").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("lamrmessage").withParameter(true, "LAMRMESSAGE").setDescription("The LAMRMESSAGE file path.").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("usernamepassword").withParameter(true, "USERNAMEPASSWORD").setDescription("The username and password string to be encoded using base64").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		return parser;

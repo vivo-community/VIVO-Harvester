@@ -19,7 +19,7 @@ export DATE=`date +%Y-%m-%d'T'%T`
 # Add harvester binaries to path for execution
 # The tools within this script refer to binaries supplied within the harvester
 #	Since they can be located in another directory their path should be
-#	included within the classpath and the path environment variables.
+#	included within the classpath and the path environmental variables.
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
@@ -126,13 +126,13 @@ harvester-score -X score-journal.config.xml
 
 harvester-score -X score-webpage.config.xml
 
-
+harvester-smush -X smush-author-stubs.config.xml
+harvester-smush -X smush-journal-stub.config.xml
 # Execute ChangeNamespace to get unmatched  into current namespace
 # This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
 #       If there is an issue with uris being in another namespace, this is the phase
 #       which should give some light to the problem.
 # Execute ChangeNamespace for People
-
 
 harvester-changenamespace -X changenamespace-authors.config.xml
 harvester-changenamespace -X changenamespace-authorship.config.xml

@@ -125,7 +125,7 @@ public class DatabaseCloneTest extends TestCase {
 	 * @throws Exception error
 	 */
 	public final void testExecute() throws Exception {
-		new DatabaseClone(this.inputConn, null, this.outputConn, null, null, null, null).execute();
+		new DatabaseClone(this.inputConn, null, this.outputConn, null, null, null).execute();
 		Statement cursor = this.outputConn.createStatement();
 		ResultSet rs = cursor.executeQuery("SELECT * FROM department");
 		assertTrue(rs.next());

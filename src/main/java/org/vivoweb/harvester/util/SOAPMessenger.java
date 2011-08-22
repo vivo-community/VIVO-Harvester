@@ -14,6 +14,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -71,16 +72,20 @@ public class SOAPMessenger {
 	 */
 	private String sessionID;
 	
+	Map<String,String> requestProperties;
+	
 	/**
 	 * Constructor
 	 * @param url address to connect with
 	 * @param output RecordHandler to write data to
 	 * @param xmlFile xml file to POST to the url
+	 * @param reqProperties 
 	 * @throws IOException error talking with database
 	 */
-	public SOAPMessenger(URL url, String output, String xmlFile,String sesID) throws IOException {
-		this(url, FileAide.getOutputStream( output ), FileAide.getInputStream( xmlFile ), sesID );
+	public SOAPMessenger(URL url, String output, String xmlFile,String sesID,Map<String,String> reqProperties) throws IOException {
+		this(url, FileAide.getOutputStream( output ), FileAide.getInputStream( xmlFile ), sesID,  reqProperties);
 	}
+	
 	
 	
 	/**
@@ -103,7 +108,8 @@ public class SOAPMessenger {
 			new URL(args.get("u")), 
 			FileAide.getOutputStream(args.get("o")),
 			FileAide.getInputStream(args.get("m")),
-			args.get("a")
+			args.get("a"),
+			args.getValueMap("p")
 		);
 	}
 	
@@ -114,12 +120,13 @@ public class SOAPMessenger {
 	 * @param xmlFileStream The stream which points to the Soap Message
 	 * @throws IOException problem with opening url connection
 	 */
-	public SOAPMessenger(URL url, OutputStream output, InputStream xmlFileStream, String sesID) throws IOException {
+	public SOAPMessenger(URL url, OutputStream output, InputStream xmlFileStream, String sesID,Map<String,String> reqProprties) throws IOException {
 		
 		this.outputFile = output;
 		this.url = url;
 		this.inputFile = xmlFileStream;
 		this.sessionID = sesID;
+		this.requestProperties = reqProprties;
 		
 		log.debug("Checking for NULL values");
 		if(this.outputFile == null) {
@@ -150,6 +157,15 @@ public class SOAPMessenger {
 			log.debug("SessionID = " + this.sessionID);
 		}
 		
+		if(this.requestProperties == null) {
+			log.debug("Request Properties = null");
+		}else{
+			log.debug("Request Properties:");
+			for(String prop : this.requestProperties.keySet()){
+				log.debug(prop+" = "+ this.requestProperties.get(prop));
+			}
+		}
+		
 	}
 	
 	/**
@@ -174,6 +190,11 @@ public class SOAPMessenger {
 		this.urlCon.setRequestProperty ( "Content-Type", "application/soap+xml; charset=utf-8" );
 		if(this.sessionID != ""){
 			this.urlCon.setRequestProperty ( "Cookie", "SID=\""+this.sessionID + "\"" );
+		}
+		if(this.requestProperties != null){
+			for(String param : this.requestProperties.keySet()){
+				this.urlCon.setRequestProperty ( param, this.requestProperties.get(param) );
+			}
 		}
 		
 		log.debug("getting writer for url connection");
@@ -274,6 +295,7 @@ public class SOAPMessenger {
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("message").withParameter(true, "MESSAGE").setDescription("The MESSAGE file path.").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "OUTPUT_FILE").setDescription("XML result file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("authentication").withParameter(true, "AUTH").setDescription("The authentication session ID").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("requestproperty").withParameterValueMap("PARAM", "VALUE").setDescription("request properties to be associated with the SOAP request").setRequired(false));
 		return parser;
 	}
 	
