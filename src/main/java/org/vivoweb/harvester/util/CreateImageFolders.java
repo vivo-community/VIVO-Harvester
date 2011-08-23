@@ -89,21 +89,21 @@ public class CreateImageFolders {
 		try {			
 			for(File f : this.folder.listFiles()) {
 				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) { //Uncomment this if you need to explicitly check for the mime type of the image 					
-					fileName = f.getName();					
-					if(this.ufidSet.contains(fileName.substring(0,8))) {					
-						p1 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");						
-						p2 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");
+					fileName = f.getName();							
+					if(this.ufidSet.contains(fileName.substring(0,8))) {							
+						p1 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");
+						p2 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");						
 						p1.waitFor();
 						p1.getInputStream().close();
 						p1.getOutputStream().close();
-						p1.getErrorStream().close();						
+						p1.getErrorStream().close();	
 						p2.waitFor();
 						p2.getInputStream().close();
 						p2.getOutputStream().close();
-						p2.getErrorStream().close(); 									
-					} else {																												
+						p2.getErrorStream().close();
+					} else {																
 						p3 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");						
-						p4 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");	
+						p4 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");							
 						p3.waitFor();
 						p3.getInputStream().close();
 						p3.getOutputStream().close();
@@ -111,7 +111,7 @@ public class CreateImageFolders {
 						p4.waitFor();
 						p4.getInputStream().close();
 						p4.getOutputStream().close();
-						p4.getErrorStream().close(); 															
+						p4.getErrorStream().close(); 									
 					} 
 				//}
 			}
