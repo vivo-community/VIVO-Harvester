@@ -31,10 +31,15 @@
 <%      Default value:                                                                                                %>
 <%         <Param name="searchmessage">wos-query-message.xml</Param>                                                  %>
 <%                                                                                                                    %>
-<%   <Param name="lamrconnection">                                                                                    %>
+<%   <Param name="lamrconnection"> this parameter contains the address to send the LAMR query message. If this site   %>
+<%      is incorrect then the soap messenger will not return the correct information and thus the harvest will either %>
+<%      fail, be incorrect, or incomplete.                                                                            %>
 <%                                                                                                                    %>
 <%                                                                                                                    %>
-<%   <Param name="lamrmessage">                                                                                       %>
+<%   <Param name="lamrmessage"> contains the soap message which specifies the query return items which determines     %>
+<%      the fields returned by the harvest calls. The map tag named lookup will be populated with the UT values found %>
+<%      from the search call. If this message is faulty then the harvest will be incorrect or incomplete.             %>
+<%                                                                                                                    %>
 <%                                                                                                                    %>
  -->
 	<Param name="authurl">http://search.isiknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate</Param>
