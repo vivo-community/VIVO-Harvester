@@ -85,8 +85,6 @@ harvester-score -X score-author.config.xml
 #harvester-score -X score-departments.config.xml
 
 
-
-
 ########################################
 # Publication / Journal / Author Stubs #
 ########################################
@@ -95,7 +93,6 @@ harvester-score -X score-author.config.xml
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 #       is created with the values / scores of the data comparisons.
 harvester-score -X score-publication.config.xml
-
 
 
 # Find matches using scores and rename nodes to matching uri
@@ -107,7 +104,6 @@ harvester-match -X match-author.config.xml
 
 # Clear author score data, since we are done with it
 #harvester-jenaconnect -j score-data.model.xml -t
-
 
 
 ##############
@@ -123,11 +119,15 @@ harvester-score -X score-subjectarea.config.xml
 
 harvester-score -X score-journal.config.xml
 
-
 harvester-score -X score-webpage.config.xml
 
+#Smushing the data together based off the author label and 
+# the journals on label.
+
 harvester-smush -X smush-author-stubs.config.xml
+
 harvester-smush -X smush-journal-stub.config.xml
+
 # Execute ChangeNamespace to get unmatched  into current namespace
 # This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
 #       If there is an issue with uris being in another namespace, this is the phase
@@ -135,18 +135,21 @@ harvester-smush -X smush-journal-stub.config.xml
 # Execute ChangeNamespace for People
 
 harvester-changenamespace -X changenamespace-authors.config.xml
+
 harvester-changenamespace -X changenamespace-authorship.config.xml
+
 harvester-changenamespace -X changenamespace-journal.config.xml
 
 harvester-changenamespace -X changenamespace-publication.config.xml
-harvester-changenamespace -X changenamespace-webpage.config.xml
-harvester-changenamespace -X changenamespace-subjectarea.config.xml
 
+harvester-changenamespace -X changenamespace-webpage.config.xml
+
+harvester-changenamespace -X changenamespace-subjectarea.config.xml
 
 harvester-match -X match-author.config.xml
 
-
-harvester-transfer  -i harvested-data.model.xml  -d  data/changednamespace.xml
+#Dumping the data to a file for error checking
+#harvester-transfer  -i harvested-data.model.xml  -d  data/changednamespace.xml
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
