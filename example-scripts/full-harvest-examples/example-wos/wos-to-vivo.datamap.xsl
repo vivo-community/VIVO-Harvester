@@ -154,29 +154,35 @@
 		<rdf:Description rdf:about="{$baseURI}pub/wosid{val[@name='ut']}">
 			<bibo:doi><xsl:value-of select="val[@name='doi']"/></bibo:doi>
 			<bibo:pmid><xsl:value-of select="val[@name='pmid']"/></bibo:pmid>
-			<core:webpage>
-				<rdf:Description rdf:about="{$baseURI}webpage/relatedURLforwosid{val[@name='ut']}">
-					<core:linkAnchorText>Related Records Page</core:linkAnchorText>
-					<core:linkURI><xsl:value-of select="val[@name='relatedRecordsURL']"/></core:linkURI>
-					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
-				</rdf:Description>
-			</core:webpage>
+			<xsl:if test="val[@name='relatedRecordsURL']">
+				<core:webpage>
+					<rdf:Description rdf:about="{$baseURI}webpage/relatedURLforwosid{val[@name='ut']}">
+						<core:linkAnchorText>Related Records Page</core:linkAnchorText>
+						<core:linkURI><xsl:value-of select="val[@name='relatedRecordsURL']"/></core:linkURI>
+						<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
+					</rdf:Description>
+				</core:webpage>
+			</xsl:if>
 			
-			<core:webpage>
-				<rdf:Description rdf:about="{$baseURI}webpage/sourceURLforwosid{val[@name='ut']}">
-					<core:linkAnchorText>Source Page</core:linkAnchorText>
-					<core:linkURI><xsl:value-of select="val[@name='sourceURL']"/></core:linkURI>
-					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
-				</rdf:Description>
-			</core:webpage>
+			<xsl:if test="val[@name='sourceURL']">
+				<core:webpage>
+					<rdf:Description rdf:about="{$baseURI}webpage/sourceURLforwosid{val[@name='ut']}">
+						<core:linkAnchorText>Source Page</core:linkAnchorText>
+						<core:linkURI><xsl:value-of select="val[@name='sourceURL']"/></core:linkURI>
+						<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
+					</rdf:Description>
+				</core:webpage>
+			</xsl:if>
 			
-			<core:webpage>
-				<rdf:Description rdf:about="{$baseURI}webpage/citingURLforwosid{val[@name='ut']}">
-					<core:linkAnchorText>Citing Page</core:linkAnchorText>
-					<core:linkURI><xsl:value-of select="val[@name='citingArticlesURL']"/></core:linkURI>
-					<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
-				</rdf:Description>
-			</core:webpage>
+			<xsl:if test="val[@name='citingArticlesURL']">
+				<core:webpage>
+					<rdf:Description rdf:about="{$baseURI}webpage/citingURLforwosid{val[@name='ut']}">
+						<core:linkAnchorText>Citing Page</core:linkAnchorText>
+						<core:linkURI><xsl:value-of select="val[@name='citingArticlesURL']"/></core:linkURI>
+						<core:webpageOf rdf:resource="{$baseURI}pub/wosid{val[@name='ut']}" />
+					</rdf:Description>
+				</core:webpage>
+			</xsl:if>
 		</rdf:Description>
 	</xsl:template>
 
