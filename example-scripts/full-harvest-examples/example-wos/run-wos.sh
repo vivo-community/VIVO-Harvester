@@ -28,7 +28,7 @@ export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTE
 # The -e flag prevents the script from continuing even though a tool fails.
 #	Continuing after a tool failure is undesirable since the harvested
 #	data could be rendered corrupted and incompatible.
-set -e -x
+set -e
 
 # Supply the location of the detailed log file which is generated during the script.
 #	If there is an issue with a harvest, this file proves invaluable in finding
@@ -180,10 +180,10 @@ harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 #Output some counts
-ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
+ARTICLES=`cat data/vivo-additions.rdf.xml | grep 'http://purl.org/ontology/bibo/AcademicArticle' | wc -l`
 PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
-POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
-echo "Imported $ORGS organizations, $PEOPLE people, and $POSITIONS positions"
+SUBJECTAREAS=`cat data/vivo-additions.rdf.xml | grep 'http://vivoweb.org/ontology/core#SubjectArea' | wc -l`
+echo "Imported $ARTICLES articles, $PEOPLE people, and $SUBJECTAREAS subject areas"
 
 echo 'Harvest completed successfully'
 
