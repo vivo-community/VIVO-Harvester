@@ -27,7 +27,7 @@
 				-->
 			</queryParameters>
 			<retrieveParameters>
-				<count>100</count>
+				<count>25</count>
 				<fields>
 					<name>Date</name>
 					<sort>D</sort>

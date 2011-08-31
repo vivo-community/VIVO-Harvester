@@ -93,22 +93,36 @@ public class WOSFetch {
 	 * Inputstream with SOAP style XML message to perform the search
 	 */
 	private InputStream lamrFile;
+	
+	/**
+	 * The String version of the xml message
+	 */
 	private String lamrMessage;
 	
+	/**
+	 * the set of identifiers which are then requested from the LAMR site.
+	 */
 	private Set<String> lamrSet;
+	
 	/**
 	 * The authentication sessionID
 	 */
 	private String sessionID;
 	
+	/**
+	 * This string is where the base64 encoded user name and password combination is to be stored
+	 */
 	private String usernamePassword;
 	
 	/**
 	 * Constructor
-	 * @param authurl 
-	 * @param searchurl 
-	 * @param outputRH 
-	 * @param xmlSearchFile 
+	 * @param authurl The location of the authorization site
+	 * @param searchurl The location of the search site
+	 * @param lamrurl The location of the links article match retrieval site
+	 * @param outputRH The record handler used for storing the harvested records
+	 * @param xmlSearchFile the file path to the search query message
+	 * @param xmlLamrFile the file path to the links article match retrieval message
+	 * @param userPass the user name password string to be base 64 encoded
 	 * @throws IOException error talking with database
 	 */
 	public WOSFetch(URL authurl, URL searchurl, URL lamrurl, RecordHandler outputRH,  String xmlSearchFile, String xmlLamrFile, String userPass) throws IOException {
@@ -159,11 +173,14 @@ public class WOSFetch {
 	
 	/**
 	 * Library style Constructor
-	 * @param authorizationUrl 
-	 * @param searchUrl 
-	 * @param output The stream to the output file
-	 * @param xmlAuthStream 
-	 * @param xmlSearchStream 
+	 * @param authorizationUrl The location of the authorization site
+	 * @param searchUrl The location of the search site
+	 * @param lamrhUrl The location of the links article match retrieval site
+	 * @param output The record handler used for storing the harvested records
+	 * @param xmlAuthStream the stream to the authorization message
+	 * @param xmlSearchStream the stream to the search query message
+	 * @param xmlLamrStream the stream to the links article match retrieval message
+	 * @param usernamePassword the user name password string to be base 64 encoded
 	 */
 	public WOSFetch(URL authorizationUrl, URL searchUrl, URL lamrhUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream,String usernamePassword) {
 		init(authorizationUrl, searchUrl, lamrhUrl, output,xmlAuthStream, xmlSearchStream, xmlLamrStream,usernamePassword);
@@ -171,11 +188,15 @@ public class WOSFetch {
 	}
 	
 	/**
-	 * @param authorizationUrl
-	 * @param searchUrl
-	 * @param output
-	 * @param xmlAuthStream
-	 * @param xmlSearchStream
+	 * The initializing method called on via the constructors.
+	 * @param authorizationUrl The location of the authorization site
+	 * @param searchUrl The location of the search site
+	 * @param lamrUrl The location of the links article match retrieval site
+	 * @param output The record handler used for storing the harvested records
+	 * @param xmlAuthStream the stream to the authorization message
+	 * @param xmlSearchStream the stream to the search query message
+	 * @param xmlLamrStream the stream to the links article match retrieval message
+	 * @param usernamePassword the user name password string to be base 64 encoded
 	 */
 	private void init(URL authorizationUrl, URL searchUrl, URL lamrUrl, RecordHandler output,InputStream xmlAuthStream, InputStream xmlSearchStream, InputStream xmlLamrStream, String usernamePassword) {
 		String authString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -353,9 +374,6 @@ public class WOSFetch {
 	}
 	
 	/**
-	 * @throws ParserConfigurationException 
-	 * @throws IOException 
-	 * @throws SAXException 
 	 * 
 	 */
 	private void executeLamrQuery(){

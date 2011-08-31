@@ -98,11 +98,6 @@
 	<xsl:template match="authors/values" mode="withinPub">
 		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/wosid{ancestor::records/UT}authorship{position()}" />
 	</xsl:template>
-	
-
-
-
-
 
 
 	<!-- Match keywords and place resulting XML outside of the publication node. -->
@@ -152,8 +147,12 @@
 		<!-- Each publication record is contained in a map name="WOS" node -->
 	<xsl:template match="map[@name='WOS']">
 		<rdf:Description rdf:about="{$baseURI}pub/wosid{val[@name='ut']}">
-			<bibo:doi><xsl:value-of select="val[@name='doi']"/></bibo:doi>
-			<bibo:pmid><xsl:value-of select="val[@name='pmid']"/></bibo:pmid>
+			<xsl:if test="val[@name='doi']">
+				<bibo:doi><xsl:value-of select="val[@name='doi']"/></bibo:doi>
+			</xsl:if>
+			<xsl:if test="val[@name='pmid']">
+				<bibo:pmid><xsl:value-of select="val[@name='pmid']"/></bibo:pmid>
+			</xsl:if>
 			<xsl:if test="val[@name='relatedRecordsURL']">
 				<core:webpage>
 					<rdf:Description rdf:about="{$baseURI}webpage/relatedURLforwosid{val[@name='ut']}">

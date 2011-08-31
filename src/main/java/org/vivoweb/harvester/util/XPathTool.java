@@ -81,10 +81,10 @@ public class XPathTool {
 
 
 	/**
-	 * @param xmlIS
-	 * @param expression
-	 * @return
-	 * @throws IOException
+	 * @param xmlIS input stream of the xml document
+	 * @param expression the expression used in xpath to find the proper location
+	 * @return A string which is the resulting value of the xpath request
+	 * @throws IOException thrown if there is an issue parsing the input stream
 	 */
 	public static String getXpathStreamResult(InputStream xmlIS, String expression) throws IOException{
 		try {

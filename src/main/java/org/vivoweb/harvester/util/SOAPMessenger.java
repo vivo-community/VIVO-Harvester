@@ -79,7 +79,7 @@ public class SOAPMessenger {
 	 * @param url address to connect with
 	 * @param output RecordHandler to write data to
 	 * @param xmlFile xml file to POST to the url
-	 * @param reqProperties 
+	 * @param reqProperties a map of the properties which go into the header of the request
 	 * @throws IOException error talking with database
 	 */
 	public SOAPMessenger(URL url, String output, String xmlFile,String sesID,Map<String,String> reqProperties) throws IOException {
@@ -169,9 +169,9 @@ public class SOAPMessenger {
 	}
 	
 	/**
-	 * @param urlCon
-	 * @param message
-	 * @throws IOException
+	 * @param urlCon the location where the message is to.
+	 * @param message the xml message in the form of a string.
+	 * @throws IOException thrown if there is an issue with the stream.
 	 */
 	private void sendMessage(URLConnection urlCon,String message) throws IOException{
 
@@ -206,9 +206,9 @@ public class SOAPMessenger {
 	}
 	
 	/**
-	 * @param urlCon
-	 * @return
-	 * @throws IOException
+	 * @param urlCon the url connection which the message it comming from.
+	 * @return the string version of the message
+	 * @throws IOException if there is a problem with the source.
 	 */
 	private String readMessage(URLConnection urlCon) throws IOException{
 	    InputStreamReader isReader = new InputStreamReader( this.urlCon.getInputStream() );
