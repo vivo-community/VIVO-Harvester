@@ -11,7 +11,7 @@
 <%      allow the search query to be authorized to get a response. If this address is incorrect then the entire       %>
 <%      harvest run will fail.                                                                                        %>
 <%      Default value:                                                                                                %>
-<%         <Param name="authurl">http://search.isiknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate</Param>             %>
+<%         <Param name="authurl">http://******/WOKMWSAuthenticate</Param>             %>
 <%                                                                                                                    %>
 <%   <Param name="authmessage"> contains the soap message which would provide a username and password authorizing use %>
 <%      of the Web of Science. If the parameter is not present then WOSFetch will construct a message which relies    %>
@@ -23,7 +23,7 @@
 <%      to the contents of that query. If it is not specified or incorrect the search will not function and the       %>
 <%      entire harvest run will fail.                                                                                 %>
 <%      Default value:                                                                                                %>
-<%         <Param name="searchconnection">http://search.isiknowledge.com/esti/wokmws/ws/WokSearchLite</Param>         %>
+<%         <Param name="searchconnection">http://*******/WokSearchLite</Param>         %>
 <%                                                                                                                    %>
 <%   <Param name="searchmessage"> contains the soap message which will specify the query terms and other search       %>
 <%      properties. WOSFetch will automatically attempt to harvest all of the "records found" in batches the size     %>
@@ -42,9 +42,9 @@
 <%                                                                                                                    %>
 <%                                                                                                                    %>
  -->
-	<Param name="authurl">http://search.isiknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate</Param>
-	<Param name="searchconnection">http://search.isiknowledge.com/esti/wokmws/ws/WokSearchLite</Param>
-	<Param name="lamrconnection">https://ws.isiknowledge.com/cps/xrpc</Param>
+	<Param name="authurl">http://*******/WOKMWSAuthenticate</Param>
+	<Param name="searchconnection">http://********/WokSearchLite</Param>
+	<Param name="lamrconnection">https://*********/xrpc</Param>
 	<Param name="searchmessage">wos-query-message.xml</Param>
 	<Param name="lamrmessage">wos-lamr-message.xml</Param>
 	
