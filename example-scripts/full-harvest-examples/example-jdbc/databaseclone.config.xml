@@ -84,7 +84,7 @@
 <%  <Param name="DBUnitFeature">  See http://www.dbunit.org/properties.html for possible values                       %>
 <%                                                                                                                    %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
-	
+-->	
 	<!-- <Param name="validTableType">TABLE</Param> -->
 	<!-- <Param name="validTableType">VIEW</Param> -->
 	<Param name="DBUnitFeature">http://www.dbunit.org/features/caseSensitiveTableNames=true</Param>
