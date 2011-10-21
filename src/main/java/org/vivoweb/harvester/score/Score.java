@@ -52,6 +52,7 @@ public class Score {
 	 * SLF4J Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(Score.class);
+
 	/**
 	 * model containing statements to be scored
 	 */
@@ -80,6 +81,10 @@ public class Score {
 	 * the predicates to look for in vivoJena model
 	 */
 	private Map<String, String> vivoPredicates;
+	/**
+	 * String containing a list of common names separated by ","
+	 */
+	private String commonNames;
 	/**
 	 * limit match Algorithm to only match rdf nodes in inputJena whose URI begin with this namespace
 	 */
@@ -204,6 +209,29 @@ public class Score {
 		log.trace("equalityOnlyMode: " + this.equalityOnlyMode);
 		this.reloadInput = reloadInput;
 		this.reloadVivo = reloadVivo;
+		
+	}
+
+	/**
+	 * Constructor
+	 * @param inputJena
+	 * @param vivoJena
+	 * @param scoreJena
+	 * @param tempJenaDir
+	 * @param algorithms
+	 * @param inputPredicates
+	 * @param vivoPredicates
+	 * @param namespace
+	 * @param weights
+	 * @param matchThreshold
+	 * @param batchSize
+	 * @param reloadInput
+	 * @param reloadVivo
+	 * @param commonNames
+	 */
+	public Score(JenaConnect inputJena, JenaConnect vivoJena, JenaConnect scoreJena, String tempJenaDir, Map<String, Class<? extends Algorithm>> algorithms, Map<String, String> inputPredicates, Map<String, String> vivoPredicates, String namespace, Map<String, Float> weights, Float matchThreshold, int batchSize, boolean reloadInput, boolean reloadVivo, String commonNames) {
+		this(inputJena, vivoJena, scoreJena, tempJenaDir, algorithms, inputPredicates, vivoPredicates, namespace, weights, matchThreshold, batchSize, reloadInput, reloadVivo);
+		this.commonNames = commonNames;
 	}
 	
 	/**
@@ -235,7 +263,8 @@ public class Score {
 			(opts.has("m")?Float.valueOf(opts.get("m")):null), 
 			Integer.parseInt(opts.get("b")), 
 			opts.has("reloadInput"), 
-			opts.has("reloadVivo")
+			opts.has("reloadVivo"),
+			(opts.has("c")?opts.get("c"):null)
 		);
 	}
 	
@@ -326,6 +355,7 @@ public class Score {
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("matchThreshold").withParameter(true, "THRESHOLD").setDescription("match records with a score over THRESHOLD").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("reloadInput").setDescription("reload the temp copy of input, only needed if input has changed since last score").setRequired(false));
 		parser.addArgument(new ArgDef().setLongOpt("reloadVivo").setDescription("reload the temp copy of Vivo, only needed if Vivo has changed since last score").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("common-names").withParameter(true, "COMMON_NAMES").setDescription("use these names to check if the score needs to be modified.").setRequired(false));
 		return parser;
 	}
 	
@@ -683,7 +713,11 @@ public class Score {
 		} else if((osLit != null) && (opLit != null)) {
 			Class<? extends Algorithm> algClass = this.algorithms.get(runName);
 			try {
-				score = algClass.newInstance().calculate(osLit, opLit);
+				if (this.commonNames == null) {
+					score = algClass.newInstance().calculate(osLit, opLit);
+				} else { 
+					score = algClass.newInstance().calculate(osLit, opLit, this.commonNames);
+				}
 			} catch(IllegalAccessException e) {
 				throw new IllegalArgumentException("Unable to create new instance of class <"+algClass+">, does it not have a default (no-params) constructor publically available?", e);
 			} catch(InstantiationException e) {

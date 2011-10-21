@@ -23,5 +23,11 @@ public class NameCompare implements Algorithm {
 		}
 		return new CaseInsensitiveInitialTest().calculate(x, y);
 	}
+
+	@Override
+	public float calculate(CharSequence itemX, CharSequence itemY, String commonNames) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

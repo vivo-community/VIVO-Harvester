@@ -23,5 +23,11 @@ public class NormalizedDoubleMetaphoneDifference implements Algorithm {
 		String dmY = dm.encode(itemY.toString());
 		return new NormalizedLevenshteinDifference().calculate(dmX, dmY);
 	}
+
+	@Override
+	public float calculate(CharSequence itemX, CharSequence itemY, String commonNames) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

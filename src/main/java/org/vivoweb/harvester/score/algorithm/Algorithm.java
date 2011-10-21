@@ -20,4 +20,14 @@ public interface Algorithm {
 	 * @return a float (0.0, 1.0) representing what percent match the given Strings are
 	 */
 	public abstract float calculate(CharSequence itemX, CharSequence itemY);
+	
+	/**
+	 * Perform a calculation to determine what percent match the given Strings are.
+	 * A list of common names are given so that the score can be modified depending on how common the last name is.
+	 * @param itemX compare this with the other String
+	 * @param itemY compare this with the other String
+	 * @param commonNames list of common names for modifying the score as needed
+	 * @return a float (0.0, 1.0, 1.1) representing what percent match the given Strings are
+	 */
+	public abstract float calculate(CharSequence itemX, CharSequence itemY, String commonNames);
 }

@@ -5,23 +5,27 @@
  ******************************************************************************/
 package org.vivoweb.harvester.score.algorithm;
 
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.language.Soundex;
-
 /**
- * Normalized SoundEx Difference Algorithm
- * @author Christopher Haines hainesc@ctrip.ufl.edu
+ * @author Eliza Chan <elc2013@med.cornell.edu>
  */
-public class NormalizedSoundExDifference implements Algorithm {
+public class NameExtraCompare implements Algorithm {
 	
 	@Override
-	public float calculate(CharSequence itemX, CharSequence itemY) {
-		try {
-			int diff = Soundex.US_ENGLISH.difference(itemX.toString(), itemY.toString());
-			return (diff / 4f);
-		} catch(EncoderException e) {
-			throw new IllegalArgumentException(e);
+	public float calculate(CharSequence x, CharSequence y) {
+		if(x == null) {
+			throw new IllegalArgumentException("x cannot be null");
 		}
+		if(y == null) {
+			throw new IllegalArgumentException("y cannot be null");
+		}
+		if(x.length() > 1 && y.length() > 1) {
+			return new NormalizedDamerauLevenshteinDifference().calculate(x, y);
+		}
+		// initial vs initial or initial vs name are less reliable, hence subtract 0.1f
+		// e.g. B vs B or B vs Betty
+		float result  = new CaseInsensitiveInitialTest().calculate(x, y);
+		if (result - 0.1f >= 0) { return (result - 0.1f); }
+		return result;
 	}
 
 	@Override

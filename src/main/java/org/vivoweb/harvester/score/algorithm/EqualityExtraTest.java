@@ -5,13 +5,11 @@
  ******************************************************************************/
 package org.vivoweb.harvester.score.algorithm;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
- * Normalized Levenshtein Difference Score Algorithm
- * @author Christopher Haines hainesc@ctrip.ufl.edu
+ * Equality Test Algorithm
+ * @author Eliza Chan elc2013@med.cornell.edu
  */
-public class NormalizedLevenshteinDifference implements Algorithm {
+public class EqualityExtraTest implements Algorithm {
 	
 	@Override
 	public float calculate(CharSequence itemX, CharSequence itemY) {
@@ -22,17 +20,31 @@ public class NormalizedLevenshteinDifference implements Algorithm {
 			throw new IllegalArgumentException("y cannot be null");
 		}
 		
-		float maxSize = Math.max(itemX.length(), itemY.length()) / 1f;
-		if (maxSize == 0f) {
+		if(itemX.length() == 0 && itemY.length() == 0){
 			return 0f;
 		}
-		return ((maxSize - StringUtils.getLevenshteinDistance(itemX.toString(), itemY.toString())) / maxSize);
+		
+		if(itemX.equals(itemY)) {
+			return 1f;
+		}
+		return 0f;
 	}
 
 	@Override
 	public float calculate(CharSequence itemX, CharSequence itemY, String commonNames) {
-		// TODO Auto-generated method stub
-		return 0;
+		float result = this.calculate(itemX, itemY);
+		if (result == 1f) {
+			boolean isCommonName = false;
+			String[] commonNameList = commonNames.split(",");
+			for (String commonName: commonNameList) {
+				if (itemX.toString().equals(commonName.trim())) {
+					isCommonName = true;
+					break;
+				}
+			}
+			if (!isCommonName) { result = 1.1f; } // gets 0.1f bonus if name is not in the list of common names
+		} 
+		return result;
 	}
 	
 }

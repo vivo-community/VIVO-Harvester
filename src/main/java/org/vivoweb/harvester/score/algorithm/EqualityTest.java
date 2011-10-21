@@ -29,5 +29,11 @@ public class EqualityTest implements Algorithm {
 		}
 		return 0f;
 	}
+
+	@Override
+	public float calculate(CharSequence itemX, CharSequence itemY, String commonNames) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

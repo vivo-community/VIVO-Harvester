@@ -3,8 +3,10 @@ package org.vivoweb.test.harvester.score.algorithm;
 import junit.framework.TestCase;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.CaseInsensitiveInitialTest;
+import org.vivoweb.harvester.score.algorithm.EqualityExtraTest;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
 import org.vivoweb.harvester.score.algorithm.NameCompare;
+import org.vivoweb.harvester.score.algorithm.NameExtraCompare;
 import org.vivoweb.harvester.score.algorithm.NormalizedDamerauLevenshteinDifference;
 import org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference;
 import org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference;
@@ -60,7 +62,33 @@ public class AlgorithmsTest extends TestCase {
 		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("frog", "frig")));
 		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hello", "hallo")));
 	}
-	
+
+	/**
+	 * Test methods for 
+	 * {@link org.vivoweb.harvester.score.algorithm.EqualityExtraTest#calculate(java.lang.CharSequence, java.lang.CharSequence) calculate(CharSequence itemX, CharSequence itemY)}
+	 * {@link org.vivoweb.harvester.score.algorithm.EqualityExtraTest#calculate(java.lang.CharSequence, java.lang.CharSequence, java.lang.String) calculate(CharSequence itemX, CharSequence itemY, String commonNames)}
+	 */
+	public final void testEqualityExtraTestCalculate() {
+		Algorithm calc = new EqualityExtraTest();
+		assertEquals(Float.valueOf(1.1f), Float.valueOf(calc.calculate("hajjar", "hajjar", "smith")));
+		assertEquals(Float.valueOf(1f), Float.valueOf(calc.calculate("smith", "smith", "smith")));
+		assertEquals(Float.valueOf(1f), Float.valueOf(calc.calculate("test", "test")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("", "")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("", "a")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("aaapppp", "")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("frog", "fog")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("frog", "forg")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("fly", "ant")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("elephant", "hippo")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hippo", "elephant")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hippo", "zzzzzzzz")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hallo", "halo")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hallo", "ahlo")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hallo", "ehlo")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("frog", "frig")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hello", "hallo")));
+	}
+
 	/**
 	 * Test method for {@link org.vivoweb.harvester.score.algorithm.CaseInsensitiveInitialTest#calculate(java.lang.CharSequence, java.lang.CharSequence) calculate(CharSequence itemX, CharSequence itemY)}
 	 */
@@ -148,7 +176,31 @@ public class AlgorithmsTest extends TestCase {
 		assertEquals(Float.valueOf(3/4f), Float.valueOf(calc.calculate("frog", "frig")));
 		assertEquals(Float.valueOf(4/5f), Float.valueOf(calc.calculate("hello", "hallo")));
 	}
-	
+
+	/**
+	 * Test method for {@link org.vivoweb.harvester.score.algorithm.NameExtraCompare#calculate(java.lang.CharSequence, java.lang.CharSequence) calculate(CharSequence itemX, CharSequence itemY)}
+	 */
+	public final void testNameExtraCompareCalculate() {
+		Algorithm calc = new NameExtraCompare();
+		assertEquals(Float.valueOf(0.9f), Float.valueOf(calc.calculate("t", "test")));
+		assertEquals(Float.valueOf(0.9f), Float.valueOf(calc.calculate("t", "t")));
+		assertEquals(Float.valueOf(1f), Float.valueOf(calc.calculate("test", "test")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("", "")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("", "a")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("aaapppp", "")));
+		assertEquals(Float.valueOf(3/4f), Float.valueOf(calc.calculate("frog", "fog")));
+		assertEquals(Float.valueOf(3/4f), Float.valueOf(calc.calculate("frog", "forg")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("fly", "ant")));
+		assertEquals(Float.valueOf(1/8f), Float.valueOf(calc.calculate("elephant", "hippo")));
+		assertEquals(Float.valueOf(1/8f), Float.valueOf(calc.calculate("hippo", "elephant")));
+		assertEquals(Float.valueOf(0f), Float.valueOf(calc.calculate("hippo", "zzzzzzzz")));
+		assertEquals(Float.valueOf(4/5f), Float.valueOf(calc.calculate("hallo", "halo")));
+		assertEquals(Float.valueOf(3/5f), Float.valueOf(calc.calculate("hallo", "ahlo")));
+		assertEquals(Float.valueOf(2/5f), Float.valueOf(calc.calculate("hallo", "ehlo")));
+		assertEquals(Float.valueOf(3/4f), Float.valueOf(calc.calculate("frog", "frig")));
+		assertEquals(Float.valueOf(4/5f), Float.valueOf(calc.calculate("hello", "hallo")));
+	}
+
 	/**
 	 * Test method for {@link org.vivoweb.harvester.score.algorithm.NormalizedDoubleMetaphoneDifference#calculate(java.lang.CharSequence, java.lang.CharSequence) calculate(CharSequence itemX, CharSequence itemY)}
 	 */
@@ -192,5 +244,5 @@ public class AlgorithmsTest extends TestCase {
 		assertEquals(Float.valueOf(1f), Float.valueOf(calc.calculate("frog", "frig")));
 		assertEquals(Float.valueOf(1f), Float.valueOf(calc.calculate("hello", "hallo")));
 	}
-	
+
 }

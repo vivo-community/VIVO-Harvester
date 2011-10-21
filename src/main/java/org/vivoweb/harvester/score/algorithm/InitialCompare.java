@@ -24,5 +24,11 @@ public class InitialCompare implements Algorithm {
 		}
 		return 0;
 	}
+
+	@Override
+	public float calculate(CharSequence itemX, CharSequence itemY, String commonNames) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

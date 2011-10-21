@@ -145,4 +145,10 @@ public class NormalizedDamerauLevenshteinDifference implements Algorithm {
 	protected float getAugment() {
 		return 0f;
 	}
+
+	@Override
+	public float calculate(CharSequence itemX, CharSequence itemY, String commonNames) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
