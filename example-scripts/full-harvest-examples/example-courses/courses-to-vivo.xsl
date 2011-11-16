@@ -122,7 +122,7 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role"/>
 			<!-- Relation To Person -->
-			<core:teacherRoleOf rdf:resource=""/>
+			<core:teacherRoleOf rdf:resource="{$baseURI}person/{$ufid}"/>
 			<!-- Relation To Person End-->
 			<!-- Relation TO Course Section -->
 			<core:roleIn rdf:resource="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}"/>
@@ -133,7 +133,7 @@
 	<!-- NOT UNIQUE-->
 	<!--Person Node-->
 	<rdf:Description rdf:about="{$baseURI}person/{$ufid}">
-	<ufVivo:ufid> <xsl:value-of select="$courseName" /></ufVivo:ufid>
+	<ufVivo:ufid> <xsl:value-of select="$ufid" /></ufVivo:ufid>
 	<foaf:firstName><xsl:value-of select="$instructorName" /></foaf:firstName>
 	<!-- Relation to Teacher Role -->
 	<core:hasTeacherRole rdf:resource="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}"/>
