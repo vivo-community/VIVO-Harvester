@@ -1,7 +1,8 @@
 #!/bin/bash
 #===============================================================================
 #
-#	Modified by Yang Li: from line 559 - 573
+#	Modified by YANG LI: 
+#			fix original code bugs, customize the code based on VIVO request
 #
 #          FILE:  xlsx2csv.sh
 # 
@@ -165,7 +166,13 @@ platform=$(uname -s)
 
 #Make a working directory based on the filename
 filtered=$(echo "$filename" | sed -e 's/\.xlsx$//g' -e 's/[[:space:]]/_/g')
+filtered_orig=${filtered}
+filtered=${filtered////_}
 dirname=$(mktemp -d "${tmpdir}/$filtered.XXXXXXXXXXXXXX.tmp")
+
+#echo ${filtered_orig}
+#echo ${filtered}
+
 #copy the source file into it
 cp "$filename" "$dirname"
 #get in there and push
@@ -555,14 +562,34 @@ do
 
   #no single quotes in filename
   csv=${sheet//\'/}
-  csv="${curdir}/${filtered}_${csv// /_}.csv"
+  #csv="${curdir}/${filtered}_${csv// /_}.csv"
+  csv="${curdir}/${filtered_orig}_${csv// /_}.csv"
+  
+  # Always keep the original IFS
+  #oIFS=$IFS
+  #IFS="/"
+  #filter_array=($filtered_orig)
+  #echo ${#filter_array[@]}
+  #echo ${filter_array[0]}
+  #if [[ ${#filter_array[@]} == 2 ]]; then
+	#echo "removing preexisting output file csv files in ${filter_array[0]}/"
+	#rm "${curdir}/${filter_array[0]}/*.csv" # not work for rm *.csv
+  #fi;
+  
+  #if [[ ${#filter_array[@]} == 1 ]]; then
+	#echo "removing preexisting output file csv files in the current directory"
+	#rm "${curdir}/*.csv" # not work for rm *.csv
+  #fi;
+  # put back to original IFS
+  #IFS=$oIFS
+
   #if [[ -e "${csv}" && x"${overwrite}" == "xYes" ]]; then 
   if [[ -e "${csv}" && "x${overwrite}" == "xYes" ]]; then 
-       echo "removing preexisting output file ${csv}"
+       echo "xlsx2csv.sh: removing preexisting output file ${csv}"
        rm "${csv}"
   else
 	if [[ -e "${csv}" && "x${overwrite}" != "xYes" ]]; then 
-       echo "output file ${csv} already exists and --overwrite option not given, exiting ..."
+       echo "xlsx2csv.sh: output file ${csv} already exists and --overwrite option not given, exiting ..."
        #return to the invocation inode
        popd > /dev/null
 
@@ -595,8 +622,12 @@ done
 #return to the invocation inode
 popd > /dev/null
 
+echo "xlsx2csv.sh: created a new csv file: ${csv}"
+
 #clean up the temp folder
 [[ -z $debug ]] && rm -rf "$dirname" 
+
+echo "xlsx2csv.sh: clean up the temp folder"
 
 #clean end
 exit
