@@ -1,8 +1,13 @@
 #!/bin/bash
 
-#Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
-#All rights reserved.
-#This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+# Copyright (c) 2010-2011 Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the new BSD license
+# which accompanies this distribution, and is available at
+# http://www.opensource.org/licenses/bsd-license.html
+# 
+# Contributors:
+#     Christopher Haines, Dale Scheppler, Nicholas Skaggs, Stephen V. Williams, James Pence, Michael Barbieri - initial API and implementation
 
 # set to the directory where the harvester was installed or unpacked
 # HARVESTER_INSTALL_DIR is set to the location of the installed harvester
@@ -195,5 +200,8 @@ else
        mv ./upload/fullImages/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages/
        mv ./upload/thumbnails/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/thumbnails/
 fi
+
+cp ./fullImages/* ./backUp/fullImages/
+cp ./thumbnails/* ./backUp/thumbnails/
 
 echo 'Harvest completed successfully'
