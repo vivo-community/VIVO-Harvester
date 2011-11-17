@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.0="http://vivo.ufl.edu/ontology/vivo-ufl/"
+    xmlns:j.1="http://purl.org/NET/c4dm/event.owl#"
+    xmlns:j.2="http://xmlns.com/foaf/0.1/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:j.3="http://vivoweb.org/ontology/core#"
+    xmlns:j.4="http://vivoweb.org/ontology/score#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/person88374800">
+    <j.0:ufid>88374800</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/person16310040">
+    <j.0:ufid>16310040</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/person/83407240">
+    <j.0:ufid>83407240</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/person99575130">
+    <j.0:ufid>99575130</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/person/8340700">
+    <j.0:ufid>8340700</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/personufVivo:ufid">
+    <j.0:ufid>ufVivo:ufid</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/person/88736225">
+    <j.0:ufid>88736225</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/person/83407220">
+    <j.0:ufid>ACG2021C</j.0:ufid>
+    <j.0:ufid>83407220</j.0:ufid>
+    <j.0:ufid>16310042</j.0:ufid>
+    <j.0:ufid>16310040</j.0:ufid>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/person/66736225">
+    <j.0:ufid>66736225</j.0:ufid>
+  </rdf:Description>
+</rdf:RDF>
