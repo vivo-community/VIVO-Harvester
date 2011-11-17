@@ -244,7 +244,7 @@
 					<rdfs:label>Unknown</rdfs:label>
 				</xsl:otherwise>
 			</xsl:choose>
-			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
+			<bibo:issn><xsl:value-of select="ISSN"/></bibo:issn>
 			<core:publicationVenueFor rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
 	</xsl:template>

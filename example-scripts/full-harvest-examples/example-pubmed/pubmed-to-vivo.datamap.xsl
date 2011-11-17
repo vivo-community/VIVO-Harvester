@@ -231,7 +231,7 @@
 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
 			<core:Title><xsl:value-of select="Title" /></core:Title>
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
-			<bibo:ISSN><xsl:value-of select="ISSN"/></bibo:ISSN>
+			<bibo:issn><xsl:value-of select="ISSN"/></bibo:issn>
 			<core:publicationVenueFor rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
 	</xsl:template>
