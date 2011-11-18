@@ -109,7 +109,11 @@ public class ImageQueueConsumer {
 		//this need to be changed to while (not all messages ) after the final testing
 		
 		Message message = null;
-		for(int i = 0; ((message = consumer.receive(1000)) != null) && (i <= maxnum);) {
+		
+		
+		
+		
+		for(int i = 0; ((message = consumer.receive(10000)) != null) && (i <= maxnum);) {
 			
 			if(maxnum != 0)
 				i++;

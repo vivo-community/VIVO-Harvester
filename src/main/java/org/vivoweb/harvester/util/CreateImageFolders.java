@@ -93,6 +93,9 @@ public class CreateImageFolders {
 					if(this.ufidSet.contains(fileName.substring(0,8))) {							
 						p1 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");
 						p2 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");						
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");
+						
 						p1.waitFor();
 						p1.getInputStream().close();
 						p1.getOutputStream().close();
@@ -111,7 +114,10 @@ public class CreateImageFolders {
 						p4.waitFor();
 						p4.getInputStream().close();
 						p4.getOutputStream().close();
-						p4.getErrorStream().close(); 									
+						p4.getErrorStream().close(); 	
+						
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/backup/fullImages/");
+						System.out.println("mv " + this.pathToImageScriptDirectory + "/thumbnails/" +"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/backup/thumbnails/");
 					} 
 				//}
 			}
@@ -169,6 +175,8 @@ public class CreateImageFolders {
 	 */
 	public void execute() throws IOException
 	{
+		
+		System.out.println("CALLING EXECUTE");
 		getUfids(this.pathToImageScriptDirectory);		
 		transferImages();
 		log.info("Transfered images to upload and backup directories!");
