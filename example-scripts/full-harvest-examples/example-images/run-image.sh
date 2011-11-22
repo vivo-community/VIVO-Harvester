@@ -17,7 +17,7 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
-VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
+VIVO_LOCATION_FOR_IMAGES=/usr/local/vivo/data/uploads
 export HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-images
 export DATE=`date +%Y-%m-%d'T'%T`
@@ -185,10 +185,10 @@ harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 #if there is no harvestedImages dirctory make one in tomcat VIVO
-if [ ! -d "$VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages" ]; then
-	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages
-  	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages
-	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/thumbnails
+if [ ! -d "$VIVO_LOCATION_FOR_IMAGES/harvestedImages" ]; then
+	mkdir $VIVO_LOCATION_FOR_IMAGES/harvestedImages
+  	mkdir $VIVO_LOCATION_FOR_IMAGES/harvestedImages/fullImages
+	mkdir $VIVO_LOCATION_FOR_IMAGES/harvestedImages/thumbnails
 fi
 
 numberOfFiles=`ls -A ./upload/fullImages/ | wc -l`
@@ -197,8 +197,8 @@ if [ "$numberOfFiles" == "0" ]; then
 	echo "There are no images to upload"	        
 else
        echo "Uploading images to VIVO"
-       mv ./upload/fullImages/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages/
-       mv ./upload/thumbnails/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/thumbnails/
+       mv ./upload/fullImages/* $VIVO_LOCATION_FOR_IMAGES/harvestedImages/fullImages/
+       mv ./upload/thumbnails/* $VIVO_LOCATION_FOR_IMAGES/harvestedImages/thumbnails/
 fi
 
 cp ./fullImages/* ./backUp/fullImages/
