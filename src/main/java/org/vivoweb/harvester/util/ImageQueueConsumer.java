@@ -107,19 +107,25 @@ public class ImageQueueConsumer {
 		
 		//this is for testing purpose only.. so that I can test for 5 images at a time
 		//this need to be changed to while (not all messages ) after the final testing
-		
+		int failcount = 0;
 		Message message = null;
+		if(maxnum == 0)
+		{
+			log.info(" Please specify the Non Zero Max count in image.sh");
+			return;
+		}
 		
-		
-		
-		
-		for(int i = 0; ((message = consumer.receive(10000)) != null) && (i <= maxnum);) {
+		for(int i = 1; (i <= maxnum); i++) {
 			
-			if(maxnum != 0)
-				i++;
+			if((message = consumer.receive(15000)) == null)
+			{
+				failcount++;
+				continue;
+			}
 			processMessage(message);
 			
 		}
+		log.info(" End Reading Queue with failcount" + failcount);
 	}
 	
 	/**
@@ -167,10 +173,8 @@ public class ImageQueueConsumer {
 			String id = getCharacterDataFromElement(line3);
 			log.info("Uploading Image Uf ID: " + id + "to Dir :" + imagedir);
 			
-			
 			WriteImageFromBase64(getCharacterDataFromElement(line2), imagedir + id);
 			log.info("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
-			
 			
 		}
 		
@@ -237,7 +241,7 @@ public class ImageQueueConsumer {
 			
 		} catch(JMSException e) {
 			// TODO Auto-generated catch block
-			log.info("Connection Failed"+e.toString());
+			log.info("Connection Failed" + e.toString());
 			
 			return null;
 		}
