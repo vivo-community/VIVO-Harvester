@@ -127,7 +127,7 @@ public class ImageQueueConsumer {
 		}
 		for(int i = 1; (i <= maxnum); i++) {
 			
-			if((message = consumer.receive(15000)) == null)
+			if((message = consumer.receive(30000)) == null)
 			{
 				failcount++;
 				continue;
