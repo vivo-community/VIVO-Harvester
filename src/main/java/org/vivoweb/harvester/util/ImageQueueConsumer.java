@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.Enumeration;
 import java.util.Properties;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -30,6 +31,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.mail.util.ByteArrayDataSource;
@@ -58,11 +60,12 @@ public class ImageQueueConsumer {
 	 */
 	private static Logger log = LoggerFactory.getLogger(ImageQueueConsumer.class);
 	private static ByteArrayDataSource bytearr;
-	
+	private static QueueBrowser queueBrowser;
 	/**
 	 * This is the Image file  written in the local dir after consuming the message
 	 */
 	private static File file;
+	private static int browsecount = 0;
 	/**
 	 * Input steam to the system.property file
 	 */
@@ -109,12 +112,19 @@ public class ImageQueueConsumer {
 		//this need to be changed to while (not all messages ) after the final testing
 		int failcount = 0;
 		Message message = null;
+		
 		if(maxnum == 0)
 		{
 			log.info(" Please specify the Non Zero Max count in image.sh");
 			return;
 		}
-		
+		if(maxnum >	browsecount)
+		{
+			log.info(" Maxfetch count specified is greater then the ActiveMq queue current capacity .");
+			log.info("Setting Maxfetch to "+browsecount);;
+			maxnum=browsecount;
+			
+		}
 		for(int i = 1; (i <= maxnum); i++) {
 			
 			if((message = consumer.receive(15000)) == null)
@@ -230,11 +240,16 @@ public class ImageQueueConsumer {
 		connectionFactory = new ActiveMQConnectionFactory(url);
 		try {
 			connection = connectionFactory.createConnection(userName, password);
-			System.out.println("trying to start connection with username:->" + userName + "password:->" + password);
+		
 			connection.start();
 			
 			session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);// Auto Ack is on
+			queueBrowser = session.createBrowser(session.createQueue(subject));
+			if(queueBrowser == null)
+				log.info("QueueBrowser: Is null");
+			else
+				log.info("QueueBrowser: CREATED");
 			destination = session.createQueue(subject);
 			consumer = session.createConsumer(destination);
 			return consumer;
@@ -305,8 +320,11 @@ public class ImageQueueConsumer {
 		ArgParser parser = new ArgParser("ImageQueueConsumer");
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("pathToImageScriptDirectory").withParameter(true, "PATH").setDescription("path to the Image Script Directory").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("maxFetch").withParameter(true, "MAXFETCH").setDescription("Maximum number if Images that should be fetched from thr queue").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("onlyBrowse").withParameter(true, "onlyBrowse").setDescription("Set this flag to just browse the queue without fetching Images").setRequired(true));
 		return parser;
 	}
+	
+	private String onlyBrowse;
 	
 	/**
 	 * @throws IOException 
@@ -324,8 +342,9 @@ public class ImageQueueConsumer {
 		this(getParser().parse(args));
 	}
 	
-	public ImageQueueConsumer(String pathToImageDir, String maxFetched) {
+	public ImageQueueConsumer(String pathToImageDir, String maxFetched, String onlyBrowse) {
 		maxnum = Integer.parseInt(maxFetched.trim());
+		this.onlyBrowse = onlyBrowse;
 		this.propdir = pathToImageDir;
 		this.imagedir = pathToImageDir + "/images/";
 	}
@@ -335,14 +354,21 @@ public class ImageQueueConsumer {
 	 * @param argList option set of parsed args
 	 */
 	private ImageQueueConsumer(ArgList argList) {
-		this(argList.get("p"), argList.get("m"));
+		this(argList.get("p"), argList.get("m"), argList.get("b"));
 	}
 	
 	public void execute() throws IOException {
 		intializeServer();
 		createConnection();
 		try {
-			getUpdatesFromQueue();
+			if(onlyBrowse.equals("yes"))
+				browseQueue();
+			else
+			{
+				browseQueue();
+				log.info("getting updates from queue");
+				getUpdatesFromQueue();
+			}
 			connection.close();
 		} catch(JMSException e) {
 			// TODO Auto-generated catch block
@@ -352,4 +378,23 @@ public class ImageQueueConsumer {
 		log.info("Pulled Images from Gator one Server");
 	}
 	
+	public static void browseQueue() {
+		try {
+			Enumeration e = queueBrowser.getEnumeration();
+			
+			int dotcount = 0;
+			log.info("Processing Request: ");
+			while(e.hasMoreElements()) {
+				e.nextElement();
+				if((dotcount++ % 50) == 0)
+					System.out.print(".");
+				browsecount++;
+			}
+			log.info("End");
+			log.info("Number of Images in the queue: " + browsecount);
+			
+		} catch(JMSException e) {
+			log.debug("Error while enumerating!");
+		}
+	}
 }
