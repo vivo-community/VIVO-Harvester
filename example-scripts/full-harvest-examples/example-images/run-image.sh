@@ -57,9 +57,9 @@ rm -f model.xml
 rm -f employeeIDs.txt
 #remove upload directory
 #rm -rf upload
-#remove backed uup images
+#remove any unused images
 #	In this directory all the images that are not mapped to people we saved adn these images are used  
-#rm -rf backup
+#rm -rf unUsedImages
 
 
 #Look for fulllImages directory if not present exit the script
@@ -89,28 +89,27 @@ if [ ! -d "upload" ]; then
 	mkdir upload/thumbnails		  
 fi
 
-if [ ! -d "backup" ]; then	
-	mkdir backup
-	mkdir backup/fullImages
-	mkdir backup/thumbnails    
+if [ ! -d "unUsedImages" ]; then	
+	mkdir unUsedImages
+	mkdir unUsedImages/fullImages
+	mkdir unUsedImages/thumbnails    
 fi
-#move any images from the previous harvest stored in backup directory in to images directory
-numberOfFiles=`ls -A ./backup/fullImages/ | wc -l`
+#move any images from the previous harvest stored in unUsedImages directory in to images directory
+numberOfFiles=`ls -A ./unUsedImages/fullImages/ | wc -l`
 
 
 if [ "$numberOfFiles" == "0" ]; then
-	echo "There are no backed up images in backup directory"
+	echo "There are no Un-Used images in unUsedImages directory"
 else
-	echo "Backed up images are used in the new harvest"
-	mv backup/fullImages/* fullImages/
-        mv backup/thumbnails/* thumbnails/
+	echo "Un Used Images of previous harvests are used in the current harvest"
+	mv unUsedImages/fullImages/* fullImages/
+        mv unUsedImages/thumbnails/* thumbnails/
 fi
 
   
-#Generate upload and backup folders 
+#Generate upload and Un Used folders 
 #	For each image in the uplod folder there is corresponding person in VIVO
-#	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
-####java CreateFolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
+#	Un Used directory contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
 harvester-transferImages -p $HARVESTER_INSTALL_DIR/example-scripts/example-images -e $HARVESTER_INSTALL_DIR/example-scripts/example-images/employeeIDs.txt
 
 #If the upload folder is empty then exit the script
