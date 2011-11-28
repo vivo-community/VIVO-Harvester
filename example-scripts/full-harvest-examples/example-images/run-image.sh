@@ -53,8 +53,8 @@ cd ..
 
 #remove previous model
 rm -f model.xml
-#remove previous ufids.txt
-rm -f ufids.txt
+#remove previous employeeIDs.txt
+rm -f employeeIDs.txt
 #remove upload directory
 #rm -rf upload
 #remove backed uup images
@@ -81,7 +81,7 @@ touch model.xml
 harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID  } WHERE { ?URI <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID . NOT EXISTS { ?URI <http://vitro.mannlib.cornell.edu/ns/vitro/public#mainImage> ?y . } }" -Q RDF/XML -f model.xml
 
 #Get the ufids of the people who dont have images using the model generated above
-grep -o "[0-9]\{8\}</...:ufid>$" model.xml  > ufids.txt
+grep -o "[0-9]\{8\}</...:ufid>$" model.xml  > employeeIDs.txt
 
 if [ ! -d "upload" ]; then
 	mkdir upload
@@ -111,14 +111,14 @@ fi
 #	For each image in the uplod folder there is corresponding person in VIVO
 #	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
 ####java CreateFolders $HARVESTER_INSTALL_DIR/example-scripts/example-images
-harvester-createimagefolders -p $HARVESTER_INSTALL_DIR/example-scripts/example-images
+harvester-transferImages -p $HARVESTER_INSTALL_DIR/example-scripts/example-images -e $HARVESTER_INSTALL_DIR/example-scripts/example-images/employeeIDs.txt
 
 #If the upload folder is empty then exit the script
 
 
 
 #Create raw records for all the images
-#	Each xml file contains just the ufid of a person	 
+#	Each xml file contains just the Employee ID of a person	 
 if [ ! -d "data" ]; then
 	mkdir data
         mkdir data/raw-records
