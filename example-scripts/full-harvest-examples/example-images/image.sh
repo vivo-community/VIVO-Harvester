@@ -45,7 +45,7 @@ exit
 fi
 
 #The email address to which the log file will be sent.
-
+DATE=`date +%Y-%m-%d`
 EMAIL_RECIPIENT=ufvivotech-l@lists.ufl.edu
 
 # Add harvester binaries to path for execution
@@ -84,7 +84,7 @@ if [ ! -d images ]; then
 
 fi
 
-DATE=`date +%Y-%m-%d`
+
 IMAGES_LOG_FILE=$IMAGES_LOG_DIR/images_$DATE.log
 touch $IMAGES_LOG_FILE
 
