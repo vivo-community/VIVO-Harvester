@@ -76,6 +76,11 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 #       is created with the values / scores of the data comparisons. 
 harvester-score -X score-courses.config.xml
 
+# Execute Score for People
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+# 	is created with the values / scores of the data comparisons. 
+harvester-score -X score-people.config.xml
+
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
 #       comparison values above the chosen threshold within the xml configuration file.
@@ -87,8 +92,6 @@ harvester-match -X match-roles.config.xml
 # Using a particular predicate as an identifying data element the smush tool will rename those
 #       resources which have matching values of that predicate to be one resource.
 
-
-
 # Smush to remove duplicates
 # Using a particular predicate as an identifying data element the smush tool will rename those
 #       resources which have matching values of that predicate to be one resource.
@@ -98,7 +101,23 @@ harvester-smush -X smush-course.config.xml
 
 harvester-smush -X smush-coursesection.config.xml
 
+# Execute ChangeNamespace to get unmatched People into current name-space
+# This is where the new people from the harvest are given uris within the name-space of Vivo
+# 	If there is an issue with uris being in another name-space, this is the phase
+#	which should give some light to the problem.
+harvester-changenamespace -X changenamespace-people.config.xml
 
+# Execute ChangeNamespace to get unmatched People into current name-space
+# This is where the new people from the harvest are given uris within the name-space of Vivo
+# 	If there is an issue with uris being in another name-space, this is the phase
+#	which should give some light to the problem.
+harvester-changenamespace -X changenamespace-course.config.xml
+
+# Execute ChangeNamespace to get unmatched People into current name-space
+# This is where the new people from the harvest are given uris within the name-space of Vivo
+# 	If there is an issue with uris being in another name-space, this is the phase
+#	which should give some light to the problem.
+harvester-changenamespace -X changenamespace-coursesection.config.xml
 
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the entries that exist in

@@ -201,7 +201,4 @@ else
        mv ./upload/thumbnails/* $VIVO_LOCATION_FOR_IMAGES/harvestedImages/thumbnails/
 fi
 
-cp ./fullImages/* ./backUp/fullImages/
-cp ./thumbnails/* ./backUp/thumbnails/
-
 echo 'Harvest completed successfully'
