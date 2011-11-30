@@ -1,12 +1,11 @@
 ************************************************************************
 ** Install xlsx-to-csv convert on VIVO virtual box
-** Install csv-to-xml convert on VIVO virtual box
 ** Copy course spreadsheet file (.xlsx) to VIVO virtual box
 ************************************************************************
 
 # Download the following four files from "https://dev.ctrip.ufl.edu/yxl/vivo/scripts/" to your host machine
 	xlsx2csv.sh 	- convert xlsx file to csv file
-	csv2xml 		- convert csv file to individual xml files
+	csvtojdbc.config.xml
 	coursevivo.xlsx	- a testing xlsx file with only 5 records
 	RA42VIVO.xlsx	- courses file to be ingested. 
 						It contains one worksheet. The worksheet was already named to "course"
@@ -16,7 +15,7 @@
 # On Windows open up "coursevivo.xlsx" and make sure only one worksheet
 # exists and rename it to "course" (original worksheet name is RA42VIVO)
 
-# copy xlsx2csv.sh, csv2xml, and coursevivo.xlsx to VIVO virtual box
+# copy xlsx2csv.sh, csvtojdbc.config.xml, and coursevivo.xlsx to VIVO virtual box
 (
 	Ubuntu host: scp -P <filename> vitro@localhost:<Destination>
 	Windows host: using winscp
@@ -32,9 +31,6 @@ sudo apt-get install sqlite3
 sudo apt-get install xsltproc
 # if ask "Do you want to continue [Y/n]?", type Y
 
-# change mode of csv2xml file
-sudo chmod 777 csv2xml
-
 # Convert "coursevivo.xlsx" to "coursevivo_coursevivo.csv".
 # The output file name will be "coursevivo_course.csv".
 # Make sure use "-o" to overwrite an existing "coursevivo_course.csv".
@@ -45,11 +41,12 @@ sudo chmod 777 csv2xml
 sudo bash xlsx2csv.sh -o -x course-input/coursevivo.xlsx
 
 # Convert ""coursevivo_course.csv" to individual files xml files
-# The individual file names will be "course1", "course2", ...
+# The individual file names will be 
+# "COURSES_CSV_id_-_0", "COURSES_CSV_id_-_1", ..., "COURSES_CSV_id_-_302632"
 # Based on the currect spreadsheet, there are total 302633 files.
-# will be generated. So the last file name will be "course302633.xml".
+# will be generated. So the last file name will be "COURSES_CSV_id_-_302632".
 # The whole process will be several minutes.
 # Output files will be saved in data/raw-recordes sub folder.
-# Make sure to run the command using the following syntax
-sudo ./csv2xml < course-input/coursevivo_course.csv
+#### We will use Harvester built-in csv-to-xml converter.
+#### The code will be added into run-courses.sh
 
