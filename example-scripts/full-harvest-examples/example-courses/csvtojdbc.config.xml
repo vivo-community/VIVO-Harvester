@@ -6,7 +6,8 @@
 -->
 <Task>
 	<!--INPUT -->
-	<!-- 
+	<Param name="inputFile">course-input/coursevivo_course.csv</Param>	
+<!-- 
 <% ===== PARAMETERS =====                                                                                             %>
 <% The source relational database information:                                                                        %>
 <%                                                                                                                    %>
@@ -31,16 +32,6 @@
 	<Param name="connection">jdbc:h2:data/csv/store</Param>
 	<Param name="username">sa</Param>
 	<Param name="password"></Param>
-	
-	<!--  OUTPUT -->
-<!-- 
-<% The output from JDBCfetch is a recordhandler described by the provided configuration file. The record handler      %>
-<%   is a way of uniformly dealing with data independent of the method it is stored in. It can be either a plain      %>
-<%   folder of text files or a database format.                                                                       %> 
-<%                                                                                                                    %>
-<%                                                                                                                    %>
- -->
-	<Param name="output">raw-records.config.xml</Param>
 		<!-- TABLES -->
 <!--
 <%  In this section the tables harvested from are described.                                                          %>
@@ -72,4 +63,5 @@
 <%                                                                                                                    %>
 <%                                                                                                                    %>
 -->
+	<Param name="tableName">COURSES_CSV</Param>
 </Task>

@@ -13,7 +13,7 @@
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
 HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
-export HARVEST_NAME=example-dsr
+export HARVEST_NAME=example-courses
 export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
@@ -49,10 +49,30 @@ cd ..
 #	If you are continuing a partial run or wish to use the old and already retrieved
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
-#rm -rf data
-#if [ -d data]; then
-#mv -f data data.$DATE
+rm -rf data
+#if [ -d data ]; then
+#	mv -f data data.$DATE
 #fi
+
+# Import XLSX
+# Take xlsx (MS Spreadsheet) file and convert it to CSV format.
+#	Next step is to convert csv to jdbc (H2 database) by using
+#	csvtojdbc
+bash xlsx2csv.sh -o -x course-input/coursevivo.xlsx
+
+# Import CSV
+# Takes the data from a comma-separated-values file and places it in a relational database.  Then
+#   JDBCFetch, in the next step, can use this to generate XML.
+harvester-csvtojdbc -X csvtojdbc.config.xml
+
+# Execute Fetch
+# This stage of the script is where the information is gathered together into one local
+#	place to facilitate the further steps of the harvest. The data is stored locally
+#	in a format based off of the source. The format is a form of RDF but not in the VIVO ontology
+# The JDBCFetch tool in particular takes the data from the chosen source described in its
+#	configuration XML file and places it into record set in the flat RDF directly 
+#	related to the rows, columns and tables described in the target database.
+harvester-jdbcfetch -X jdbcfetch.config.xml
 
 # Execute Translate
 # This is the part of the script where the outside data, in its flat RDF form is used to
@@ -71,7 +91,7 @@ harvester-xsltranslator -X xsltranslator.config.xml
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 
-# Execute Score for Grants
+# Execute Score for Courses
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 #       is created with the values / scores of the data comparisons. 
 harvester-score -X score-courses.config.xml
@@ -107,14 +127,14 @@ harvester-smush -X smush-coursesection.config.xml
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-people.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
-# This is where the new people from the harvest are given uris within the name-space of Vivo
+# Execute ChangeNamespace to get unmatched course into current name-space
+# This is where the new course from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-course.config.xml
 
-# Execute ChangeNamespace to get unmatched People into current name-space
-# This is where the new people from the harvest are given uris within the name-space of Vivo
+# Execute ChangeNamespace to get unmatched course section into current name-space
+# This is where the new course section from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-coursesection.config.xml
@@ -130,9 +150,14 @@ harvester-diff -X diff-subtractions.config.xml
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+# Apply Additions to Previous model
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+
+# Apply Subtractions to Previous model
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
-echo 'Harvest completed successfully'
+echo 'Harvest courses completed successfully'
 
