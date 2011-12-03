@@ -8,9 +8,7 @@
 	xmlns:db-COURSES_CSV="jdbc:h2:data/csv/store/fields/COURSES_CSV/">
 
 	<xsl:output method="xml" indent="yes" />
-	<xsl:variable name="baseURI">
-		http://vivo.ufl.edu/harvested/ufl/
-	</xsl:variable>
+	<xsl:variable name="baseURI">http://vivo.ufl.edu/harvested/ufl/</xsl:variable>
 
 	<xsl:template match="rdf:RDF">
 		<rdf:RDF xmlns:public="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
@@ -77,7 +75,7 @@
 			<ufVivo:mostSpecificType
 				rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course" />
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
-			<rdf:type rdf:resource="http://purl.org/NET/c4dm/event.owl#Event" />
+			<!--  <rdf:type rdf:resource="http://purl.org/NET/c4dm/event.owl#Event" /> -->
 			
 			<rdfs:label xml:lang="en-US">
 				<xsl:value-of select="$courseName" />
@@ -102,7 +100,7 @@
 			<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection" />
 			<ufVivo:mostSpecificType
 				rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection" />
-			<rdf:type rdf:resource="http://purl.org/NET/c4dm/event.owl#Event" />
+			<!--  <rdf:type rdf:resource="http://purl.org/NET/c4dm/event.owl#Event" /> -->
 			
 			<rdfs:label xml:lang="en-US">
 				<xsl:value-of select="$courseName" />
