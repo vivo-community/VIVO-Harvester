@@ -51,6 +51,7 @@
 		</xsl:variable>
 
 		<xsl:variable name="semester">
+		
 			<xsl:choose>
 				<xsl:when test="$month = 1">
 					<xsl:text>Spring</xsl:text>
@@ -83,7 +84,7 @@
 
 			<!-- Relation to Course Section Node -->
 			<ufVivo:courseForSection
-				rdf:resource="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}" />
+				rdf:resource="{$baseURI}courseSection/{$courseName}-{$sectionNumber}-{$semester}-{$year}" />
 			<!-- Relation to Course Section Node End -->
 
 		</rdf:Description>
@@ -92,7 +93,7 @@
 		<!-- UNIQUE -->
 		<!-- Course Section -->
 		<rdf:Description
-			rdf:about="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}">
+			rdf:about="{$baseURI}courseSection/{$courseName}-{$sectionNumber}-{$semester}-{$year}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
@@ -105,6 +106,8 @@
 			<rdfs:label xml:lang="en-US">
 				<xsl:value-of select="$courseName" />
 				<xsl:text> </xsl:text>
+				<xsl:value-of select="$sectionNumber" />
+	        	        <xsl:text> </xsl:text>
 				<xsl:value-of select="$semester" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$year" />
@@ -124,7 +127,7 @@
 
 			<!-- Relation to Teacher Role Node -->
 			<core:relatedRole
-				rdf:resource="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}" />
+				rdf:resource="{$baseURI}teacherRole/{$courseName}-{$sectionNumber}-{$semester}-{$year}" />
 			<!-- Relation to Teacher Role Node End -->
 
 		</rdf:Description>
@@ -177,7 +180,7 @@
 		<!-- NOT UNIQUE -->
 		<!--Teacher Role Node -->
 		<rdf:Description
-			rdf:about="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}">
+			rdf:about="{$baseURI}teacherRole/{$courseName}-{$sectionNumber}-{$semester}-{$year}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
@@ -193,7 +196,7 @@
 
 			<!-- Relation TO Course Section -->
 			<core:roleIn
-				rdf:resource="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}" />
+				rdf:resource="{$baseURI}courseSection/{$courseName}-{$sectionNumber}-{$semester}-{$year}" />
 			<!-- Relation TO Course Section End -->
 
 		</rdf:Description>
@@ -218,7 +221,7 @@
 
 			<!-- Relation to Teacher Role -->
 			<core:hasTeacherRole
-				rdf:resource="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}" />
+				rdf:resource="{$baseURI}teacherRole/{$courseName}-{$sectionNumber}-{$semester}-{$year}" />
 			<!-- Relation to Teacher Role End -->
 		</rdf:Description>
 		<!--Person Node End -->
