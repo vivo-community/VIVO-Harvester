@@ -87,8 +87,36 @@
 				rdf:resource="{$baseURI}courseSection/{$courseName}-{$sectionNumber}-{$semester}-{$year}" />
 			<!-- Relation to Course Section Node End -->
 
+
+			<!-- Relation to Webpage Node -->
+			<core:webpage
+				rdf:resource="{$baseURI}webPage/cdesc.php?crs={$courseName}" />
+			<!-- Relation to Webpage Node End -->
+
+
+
 		</rdf:Description>
 		<!--Course Node End -->
+
+
+
+		<!--  Course Web-page node-->
+
+		<rdf:Description rdf:about="{$baseURI}webPage/cdesc.php?crs={$courseName}">
+			<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>
+			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+			<core:webpageOf rdf:resource="{$baseURI}courses/{$courseName}"/>
+			<core:rank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</core:rank>
+			<core:linkURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">
+                        http://www.registrar.ufl.edu/cdesc.php?crs=<xsl:value-of select="$courseName" />
+
+			</core:linkURI>
+    		</rdf:Description>
+	    <!--  Course Web-page END-->
+	
+	
+
 
 		<!-- UNIQUE -->
 		<!-- Course Section -->
@@ -107,7 +135,7 @@
 				<xsl:value-of select="$courseName" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$sectionNumber" />
-	        	        <xsl:text> </xsl:text>
+	        	<xsl:text> </xsl:text>
 				<xsl:value-of select="$semester" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$year" />
