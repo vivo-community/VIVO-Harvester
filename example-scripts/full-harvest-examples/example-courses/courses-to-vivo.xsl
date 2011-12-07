@@ -101,7 +101,6 @@
 
 
 		<!--  Course Web-page node-->
-
 		<rdf:Description rdf:about="{$baseURI}webPage/cdesc.php?crs={$courseName}">
 			<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>

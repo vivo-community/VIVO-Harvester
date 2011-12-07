@@ -96,6 +96,12 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 #       is created with the values / scores of the data comparisons. 
 harvester-score -X score-courses.config.xml
 
+# Execute Score for Course Section
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+#       is created with the values / scores of the data comparisons. 
+harvester-score -X score-coursesection.config.xml
+
+
 # Execute Score for People
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
@@ -138,6 +144,18 @@ harvester-changenamespace -X changenamespace-course.config.xml
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-coursesection.config.xml
+
+# Execute ChangeNamespace to get unmatched course section into current name-space
+# This is where the new course section from the harvest are given uris within the name-space of Vivo
+# 	If there is an issue with uris being in another name-space, this is the phase
+#	which should give some light to the problem.
+harvester-changenamespace -X changenamespace-academicterm.config.xml
+
+# Execute ChangeNamespace to get unmatched course section into current name-space
+# This is where the new course section from the harvest are given uris within the name-space of Vivo
+# 	If there is an issue with uris being in another name-space, this is the phase
+#	which should give some light to the problem.
+harvester-changenamespace -X changenamespace-teacherRole.config.xml
 
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the entries that exist in

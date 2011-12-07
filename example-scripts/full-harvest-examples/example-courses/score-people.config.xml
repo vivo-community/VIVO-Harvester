@@ -67,5 +67,5 @@
 	<Param name="inputJena-predicates">ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid</Param>
 	<Param name="vivoJena-predicates">ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid</Param>
 	<Param name="namespace">http://vivo.ufl.edu/harvested/ufl/person/</Param>
-	<Param name="reloadInput">true</Param>
+	<!--   <Param name="reloadInput">true</Param> -->
 </Config>
