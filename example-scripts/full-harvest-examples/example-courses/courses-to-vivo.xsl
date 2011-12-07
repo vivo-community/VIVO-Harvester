@@ -243,9 +243,10 @@
 				<xsl:value-of select="$ufid" />
 			</ufVivo:ufid>
 			
-			<rdfs:label>
+			<!--<rdfs:label>
 				<xsl:value-of select="$instructorName" />
 			</rdfs:label>
+			-->
 
 			<!-- Relation to Teacher Role -->
 			<core:hasTeacherRole
