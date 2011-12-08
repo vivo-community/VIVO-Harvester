@@ -36,6 +36,8 @@ set -e
 #	to request this file. The passwords and usernames are filtered out of this file
 #	To prevent these logs from containing sensitive information.
 echo "Full Logging in $HARVEST_NAME.$DATE.log"
+EMAIL_RECIPIENT=m.mayanksaini@gmail.com
+rm -f tmp.txt
 if [ ! -d logs ]; then
   mkdir logs
 fi
@@ -50,6 +52,10 @@ cd ..
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
 rm -rf data
+rm -rf analytics.txt
+touch analytics.txt
+rm -rf courselogfile.txt
+touch courselogfile.txt
 #if [ -d data ]; then
 #	mv -f data data.$DATE
 #fi
@@ -80,6 +86,9 @@ harvester-jdbcfetch -X jdbcfetch.config.xml
 #	The traditional XSL language is used to achieve this part of the work-flow.
 harvester-xsltranslator -X xsltranslator.config.xml
 
+echo "Running Pre Image Ingest Analytics......."
+bash analytics.sh
+
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
 #       data storage structure similar to a database, but is in RDF.
@@ -107,6 +116,22 @@ harvester-score -X score-coursesection.config.xml
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-people.config.xml
 
+# Execute Score for Academic Term
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+# 	is created with the values / scores of the data comparisons. 
+harvester-score -X score-academicTerm.config.xml
+
+# Execute Score for Teacher Role
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+# 	is created with the values / scores of the data comparisons. 
+harvester-score -X score-teacherRole.config.xml
+
+# Execute Score for Term Start
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+# 	is created with the values / scores of the data comparisons. 
+harvester-score -X score-termStart.config.xml
+
+
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
 #       comparison values above the chosen threshold within the xml configuration file.
@@ -127,6 +152,12 @@ harvester-smush -X smush-course.config.xml
 
 harvester-smush -X smush-coursesection.config.xml
 
+harvester-smush -X smush-academicTerm.config.xml
+harvester-smush -X smush-teacherRole.config.xml
+harvester-smush -X smush-termStart.config.xml
+
+
+
 # Execute ChangeNamespace to get unmatched People into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
@@ -145,17 +176,23 @@ harvester-changenamespace -X changenamespace-course.config.xml
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-coursesection.config.xml
 
-# Execute ChangeNamespace to get unmatched course section into current name-space
+# Execute ChangeNamespace to get unmatched Academic Term into current name-space
 # This is where the new course section from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-academicterm.config.xml
 
-# Execute ChangeNamespace to get unmatched course section into current name-space
+# Execute ChangeNamespace to get unmatched Teacher Role into current name-space
 # This is where the new course section from the harvest are given uris within the name-space of Vivo
 # 	If there is an issue with uris being in another name-space, this is the phase
 #	which should give some light to the problem.
 harvester-changenamespace -X changenamespace-teacherRole.config.xml
+
+# Execute ChangeNamespace to get unmatched Term Start into current name-space
+# This is where the new course section from the harvest are given uris within the name-space of Vivo
+# 	If there is an issue with uris being in another name-space, this is the phase
+#	which should give some light to the problem.
+harvester-changenamespace -X changenamespace-termStart.config.xml
 
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the entries that exist in
@@ -177,5 +214,29 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
-echo 'Harvest courses completed successfully'
+echo "Pre Course Ingest Analytics" &>> courselogfile.txt
+echo "================================================================================="  &>> courselogfile.txt
+cat analytics.txt &>> courselogfile.txt
+echo -e "\n" &>>courselogfile.txt
 
+echo "Running Post Course Ingest Analytics......."
+bash analytics.sh
+echo "Post Course Analytics" &>> courselogfile.txt
+echo "================================================================================="  &>> courselogfile.txt
+cat analytics.txt &>> courselogfile.txt
+echo -e "\n" &>> courselogfile.txt
+
+
+echo `get_datetime` "End IMAGES Run"
+
+#Assemble the log files to be emailed
+cat courselogfile.txt > tmp.txt
+##echo "Full Log">>tmp.txt
+
+echo -e "\n"  >> tmp.txt
+echo "Ending full log" >> tmp.txt
+#Mail the assembled log file to the desired person.
+
+mail -s "\"Course Ingest harvest of $DATE\"" "$EMAIL_RECIPIENT" < tmp.txt
+
+echo 'Harvest courses completed successfully'
