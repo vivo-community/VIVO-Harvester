@@ -197,9 +197,13 @@ sdbname="$(pwd)/${filtered}.sdb"
 }
 
 #Create an SQL based string table
+# Yang: original is      value string);"
+# Yang: In sqlite, by default either string or varchar is integer affinity
+# Yang: so this will auto remove leading zeros for course section such as '0001'
+# Yang: Need to use text instead of string or varchar
 sql="CREATE TABLE shared_strings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  value string);"
+  value text);"
 sqlite3 "$sdbname" "$sql"  #The first access of the db will create the file
 
 #turn the starting tags directly into newline
@@ -208,6 +212,11 @@ newline=$(echo -e '\n\r')
 #turn the xml for shared strings into sqlite sql
 cat "xl/sharedStrings.xml" | 
   sed -e "s/<rPr>.*<\/rPr>//g" >  "xl/sharedStrings.sed"
+
+#Yang
+#sql="SELECT * FROM shared_strings"
+#sqlite3 "$sdbname" "$sql"  
+
 #blow away embedded garbage
 $gnused -i -e "s/<r><t>.<\/t><\/r>//g" -e "s/<si>/\\$newline/g" "xl/sharedStrings.sed" 
 $gnused -i -e "s/<\/t>.$//g" -e "s/<t>//g"  -e "/^[:space:]]*$/d" "xl/sharedStrings.sed" 
@@ -220,8 +229,16 @@ $gnused -i -e "s/<\/t>.*$//" -e "/^$/d" "xl/sharedStrings.sed"
 #sed -i '' -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*$//g' "xl/sharedStrings.sed"
 #make a sql statement out of the result
 $gnused -i -e "s/^/INSERT INTO shared_strings (value) VALUES ('/" -e "s/$/');/" "xl/sharedStrings.sed"
+# Yang
+#cat "xl/sharedStrings.sed"
+
 #load the stringtable
 sqlite3 "$sdbname" < "xl/sharedStrings.sed"
+
+#Yang
+#sql="SELECT * FROM shared_strings"
+#sqlite3 "$sdbname" "$sql"
+#sqlite3 "$sdbname" "$sql"
 
 sql="CREATE INDEX idx_ss ON shared_strings(id,value);"
 sqlite3 "$sdbname" "$sql"
@@ -428,6 +445,10 @@ sql="REPLACE INTO cell_data(id,value,sheet,cell,style,type,row,col)
     WHERE cd.type = 's';"
 sqlite3 "$sdbname" "$sql"
 
+#Yang
+#sql="SELECT * FROM cell_data"
+#sqlite3 "$sdbname" "$sql"
+
 #basic data formats with id<=40 that are dates.
 #  these are not supplied in the xlsx file
 sql="UPDATE fmt2cell_data SET numfmtid = 'date'
@@ -609,11 +630,12 @@ do
     sql="SELECT d.value FROM columns c left join cell_data d 
           ON c.title = d.col AND d.sheet='$sheet' AND d.row=$row
           WHERE c.id <= $maxcol;"
+	
     sqlite3 "$sdbname" "$sql" | #extract the data for the row
         sed -e 's/[&]lt;/</g' -e 's/[&]gt;/>/g'   |
         sed -e 's/"/""/g' -e 's/^/"/' -e 's/$/"/' |  #escape embedded quotes
-        tr '\n' ',' | sed "s/,$//" >> "$csv" #convert to csv 
-    echo >> "${csv}"
+        tr '\n' ',' | sed "s/,$//" >> "$csv" #convert to csv  		Yang: comment out before >> to see onscreen output
+    echo >> "${csv}"			# Yang: comment out before echo to see onscreen outpu
   done
 done
 
