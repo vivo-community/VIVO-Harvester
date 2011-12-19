@@ -64,7 +64,7 @@ touch courselogfile.txt
 # Take xlsx (MS Spreadsheet) file and convert it to CSV format.
 #	Next step is to convert csv to jdbc (H2 database) by using
 #	csvtojdbc
-bash xlsx2csv.sh -o -x course-input/coursevivo.xlsx
+########bash xlsx2csv.sh -o -x course-input/coursevivo.xlsx
 
 # Import CSV
 # Takes the data from a comma-separated-values file and places it in a relational database.  Then
@@ -87,7 +87,7 @@ harvester-jdbcfetch -X jdbcfetch.config.xml
 harvester-xsltranslator -X xsltranslator.config.xml
 
 echo "Running Pre Image Ingest Analytics......."
-bash analytics.sh
+####bash analytics.sh
 
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
@@ -153,10 +153,10 @@ harvester-smush -X smush-course.config.xml
 harvester-smush -X smush-coursesection.config.xml
 
 harvester-smush -X smush-academicTerm.config.xml
+
 harvester-smush -X smush-teacherRole.config.xml
+
 harvester-smush -X smush-termStart.config.xml
-
-
 
 # Execute ChangeNamespace to get unmatched People into current name-space
 # This is where the new people from the harvest are given uris within the name-space of Vivo
@@ -220,7 +220,7 @@ cat analytics.txt &>> courselogfile.txt
 echo -e "\n" &>>courselogfile.txt
 
 echo "Running Post Course Ingest Analytics......."
-bash analytics.sh
+####bash analytics.sh
 echo "Post Course Analytics" &>> courselogfile.txt
 echo "================================================================================="  &>> courselogfile.txt
 cat analytics.txt &>> courselogfile.txt

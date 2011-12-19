@@ -284,6 +284,6 @@
 	
 	<!--OPTIONS -->
 	<Param name="rename">true</Param>
-<!--     <Param name="clear-type-and-literals">true</Param> -->
+    	<Param name="clear-type-and-literals">true</Param>
 	<Param name="threshold">1.0</Param>
 </Config>
