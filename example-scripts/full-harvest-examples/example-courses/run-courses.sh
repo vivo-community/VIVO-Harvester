@@ -36,7 +36,7 @@ set -e
 #	to request this file. The passwords and usernames are filtered out of this file
 #	To prevent these logs from containing sensitive information.
 echo "Full Logging in $HARVEST_NAME.$DATE.log"
-EMAIL_RECIPIENT=m.mayanksaini@gmail.com
+EMAIL_RECIPIENT=youremailid
 rm -f tmp.txt
 if [ ! -d logs ]; then
   mkdir logs
