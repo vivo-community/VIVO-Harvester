@@ -213,7 +213,7 @@ echo -e "\n" &>>courselogfile.txt
 
 echo "Running Post Course Ingest Analytics......."
 bash analytics.sh
-echo "Post Course Analytics" &>> courselogfile.txt
+echo "Post Course Ingest Analytics" &>> courselogfile.txt
 echo "================================================================================="  &>> courselogfile.txt
 cat analytics.txt &>> courselogfile.txt
 echo -e "\n" &>> courselogfile.txt
