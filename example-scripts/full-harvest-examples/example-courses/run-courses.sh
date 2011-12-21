@@ -60,12 +60,6 @@ touch courselogfile.txt
 #	mv -f data data.$DATE
 #fi
 
-# Import XLSX
-# Take xlsx (MS Spreadsheet) file and convert it to CSV format.
-#	Next step is to convert csv to jdbc (H2 database) by using
-#	csvtojdbc
-########bash xlsx2csv.sh -o -x course-input/coursevivo.xlsx
-
 # Import CSV
 # Takes the data from a comma-separated-values file and places it in a relational database.  Then
 #   JDBCFetch, in the next step, can use this to generate XML.
@@ -86,8 +80,8 @@ harvester-jdbcfetch -X jdbcfetch.config.xml
 #	The traditional XSL language is used to achieve this part of the work-flow.
 harvester-xsltranslator -X xsltranslator.config.xml
 
-echo "Running Pre Image Ingest Analytics......."
-####bash analytics.sh
+echo "Running Pre Course Ingest Analytics......."
+bash analytics.sh
 
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
@@ -218,14 +212,14 @@ cat analytics.txt &>> courselogfile.txt
 echo -e "\n" &>>courselogfile.txt
 
 echo "Running Post Course Ingest Analytics......."
-####bash analytics.sh
+bash analytics.sh
 echo "Post Course Analytics" &>> courselogfile.txt
 echo "================================================================================="  &>> courselogfile.txt
 cat analytics.txt &>> courselogfile.txt
 echo -e "\n" &>> courselogfile.txt
 
 
-echo `get_datetime` "End IMAGES Run"
+echo `get_datetime` "End Course Run"
 
 #Assemble the log files to be emailed
 cat courselogfile.txt > tmp.txt
@@ -235,6 +229,6 @@ echo -e "\n"  >> tmp.txt
 echo "Ending full log" >> tmp.txt
 #Mail the assembled log file to the desired person.
 
-mail -s "\"Course Ingest harvest of $DATE\"" "$EMAIL_RECIPIENT" < tmp.txt
+mail -a "FROM:Course_Ingest" -s "\"Course Ingest harvest of $DATE\"" "$EMAIL_RECIPIENT" < tmp.txt
 
 echo 'Harvest courses completed successfully'
