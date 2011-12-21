@@ -99,7 +99,6 @@ echo "Running Pre Image Ingest Analytics......."
 # -d means that this call will also produce a text dump file in the specified location 
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
-
 # Execute Score for Courses
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 #       is created with the values / scores of the data comparisons. 
@@ -109,7 +108,6 @@ harvester-score -X score-courses.config.xml
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 #       is created with the values / scores of the data comparisons. 
 harvester-score -X score-coursesection.config.xml
-
 
 # Execute Score for People
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model

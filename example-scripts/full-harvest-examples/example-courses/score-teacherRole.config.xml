@@ -69,10 +69,10 @@
 	<Param name="inputJena-predicates">label=http://www.w3.org/2000/01/rdf-schema#label</Param>
 	<Param name="vivoJena-predicates">label=http://www.w3.org/2000/01/rdf-schema#label</Param> -->
 	<Param name="tempJenaDir">data/temp-score-model</Param>
-	<Param name="algorithms">ufid=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
-	<Param name="weights">ufid=1.0</Param>
-	<Param name="inputJena-predicates">ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid</Param>
-	<Param name="vivoJena-predicates">ufid=http://vivo.ufl.edu/ontology/vivo-ufl/ufid</Param>
+	<Param name="algorithms">label=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
+	<Param name="weights">label=1.0</Param>
+	<Param name="inputJena-predicates">label=http://www.w3.org/1999/02/22-rdf-syntax-ns#label</Param>
+	<Param name="vivoJena-predicates">label=http://www.w3.org/1999/02/22-rdf-syntax-ns#label</Param>
 	<Param name="namespace">http://vivo.ufl.edu/harvested/ufl/teacherRole/</Param>
 	<!--   <Param name="reloadInput">true</Param> -->
 </Config>

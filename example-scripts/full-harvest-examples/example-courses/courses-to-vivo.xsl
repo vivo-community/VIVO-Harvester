@@ -26,6 +26,10 @@
 			<xsl:value-of select="db-COURSES_CSV:TERM" />
 		</xsl:variable>
 		
+		<xsl:variable name="meet_no">
+			<xsl:value-of select="db-COURSES_CSV:MEET_NO" />
+		</xsl:variable>
+		
 		<xsl:variable name="courseName">
 			<xsl:value-of select="db-COURSES_CSV:CRS" />
 		</xsl:variable>
@@ -85,8 +89,7 @@
 			</xsl:choose>																											
 		</xsl:variable>
 
-		<xsl:variable name="semester">
-		
+		<xsl:variable name="semester">		
 			<xsl:choose>
 				<xsl:when test="$month = 1">
 					<xsl:text>Spring</xsl:text>
@@ -174,8 +177,8 @@
 			<!-- Relation to Teacher Role Node End -->
 		</rdf:Description>
 		<!--Course Section ENDS -->
-
 		<!-- NOT UNIQUE -->
+		
 		<!-- Academic Term Node -->
 		<rdf:Description rdf:about="{$baseURI}academicTerm/{$courseName}-{$sectionNumber}-{$semester}-{$year}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
@@ -231,8 +234,7 @@
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$year" />
 				<xsl:text>TS</xsl:text>
-			</rdfs:label>
-			
+			</rdfs:label>			
 		</rdf:Description>
 <!-- Start Node End -->
 
@@ -255,10 +257,22 @@
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role" />
-			<ufVivo:ufid>
+
+			<rdf:label xml:lang="en-US">
+				<xsl:value-of select="$courseName" />
+				<xsl:text> </xsl:text>
+				<xsl:value-of select="$sectionNumber" />
+	        	<xsl:text> </xsl:text>
+				<xsl:value-of select="$semester" />
+				<xsl:text> </xsl:text>
+				<xsl:value-of select="$year" />
+				<xsl:text> </xsl:text>
 				<xsl:value-of select="$ins_ufid" />
+				<!-- <xsl:text> </xsl:text> -->
+				<!-- <xsl:value-of select="$meet_no" /> -->
 				<xsl:text>TR</xsl:text>
-			</ufVivo:ufid>
+			</rdf:label>
+						
 			<!-- Relation To Person -->
 			<core:teacherRoleOf rdf:resource="{$baseURI}person/{$ins_ufid}" />
 			<!-- Relation To Person End -->
@@ -267,8 +281,8 @@
 			<!-- Relation TO Course Section End -->
 		</rdf:Description>
 		<!--Teacher Role Node End -->
-
 		<!-- NOT UNIQUE -->
+		
 		<!--Person Node -->
 		<rdf:Description rdf:about="{$baseURI}person/{$ins_ufid}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
