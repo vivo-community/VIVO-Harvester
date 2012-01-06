@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns2:searchResponse xmlns:ns2="http://woksearchlite.cxf.wokmws.thomsonreuters.com">
+            <return>
+                <queryID>1</queryID>
+                <records>
+                    <authors>
+                        <label>Authors</label>
+                        <values>Vincent, HK</values>
+                        <values>Omli, MR</values>
+                        <values>Day, T</values>
+                        <values>Hodges, M</values>
+                        <values>Vincent, KR</values>
+                        <values>George, SZ</values>
+                    </authors>
+                    <keywords>
+                        <label>Keywords</label>
+                        <values>Body Mass Index</values>
+                        <values>Fear Avoidance</values>
+                        <values>Disability</values>
+                        <values>Quality of Life</values>
+                        <values>Pain</values>
+                    </keywords>
+                    <source>
+                        <label>Issue</label>
+                        <values>1</values>
+                    </source>
+                    <source>
+                        <label>Pages</label>
+                        <values>154-164</values>
+                    </source>
+                    <source>
+                        <label>Published.BiblioYear</label>
+                        <values>2011</values>
+                    </source>
+                    <source>
+                        <label>SourceTitle</label>
+                        <values>PAIN MEDICINE</values>
+                    </source>
+                    <source>
+                        <label>Volume</label>
+                        <values>12</values>
+                    </source>
+                    <title>
+                        <label>Title</label>
+                        <values>Fear of Movement, Quality of Life, and Self-Reported Disability in Obese Patients with Chronic Lumbar Pain</values>
+                    </title>
+                    <UT>000286114400021</UT>
+                </records>
+                <records>
+                    <authors>
+                        <label>Authors</label>
+                        <values>Goyal, G</values>
+                        <values>Nuessly, GS</values>
+                        <values>Steck, GJ</values>
+                        <values>Seal, DR</values>
+                        <values>Capinera, JL</values>
+                        <values>Boote, KJ</values>
+                    </authors>
+                    <keywords>
+                        <label>Keywords</label>
+                        <values>corn</values>
+                        <values>Chaetopsis massyla</values>
+                        <values>Euxesta stigmatias</values>
+                    </keywords>
+                    <source>
+                        <label>Issue</label>
+                        <values>2</values>
+                    </source>
+                    <source>
+                        <label>Pages</label>
+                        <values>198-202</values>
+                    </source>
+                    <source>
+                        <label>Published.BiblioDate</label>
+                        <values>JUN</values>
+                    </source>
+                    <source>
+                        <label>Published.BiblioYear</label>
+                        <values>2010</values>
+                    </source>
+                    <source>
+                        <label>SourceTitle</label>
+                        <values>FLORIDA ENTOMOLOGIST</values>
+                    </source>
+                    <source>
+                        <label>Volume</label>
+                        <values>93</values>
+                    </source>
+                    <title>
+                        <label>Title</label>
+                        <values>NEW REPORT OF CHAETOPSIS MASSYLA (DIPTERA: ULIDIIDAE) AS A PRIMARY PEST OF CORN IN FLORIDA</values>
+                    </title>
+                    <UT>000279580300008</UT>
+                </records>
+                <recordsFound>174</recordsFound>
+                <recordsSearched>24405958</recordsSearched>
+            </return>
+        </ns2:searchResponse>
+    </soap:Body>
+</soap:Envelope>

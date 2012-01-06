@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<!-- 
+
+<%                                                                                                                    %>
+<% CSVtoJDBC - tool for turning csv files into database tables.                                                       %>
+<%                                                                                                                    %>
+<% ======                                                                                                             %>
+<% This tool exposes the power of the h2 database library by turning the given csv (comma separated values) file into %>
+<%     a database table within the given database. The destination database can be any to which the user can connect. %> 
+<%     The resulting database table has fields named for the first row of information in the csv file.                %>
+<%     Note: During the transfer process null fields are given the string value "null".                               %>
+<%                                                                                                                    %>
+<% ===== PARAMETERS =====                                                                                             %>
+<%                                                                                                                    %>
+<%  wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log   %>
+<%          level, the more detailed the messages.                                                                    %>
+<%      Possible Values:                                                                                              %>
+<%          <wordiness>OFF</wordiness> - Results in no messages being displayed.                                      %>
+<%          <wordiness>ERROR</wordiness> - Results in only messages from the ERROR level to be displayed.             %>
+<%              Error messages detail when the tool has experienced an error preventing it from completing its task   %>
+<%          <wordiness>WARN</wordiness> - Results in only messages above and including WARN level messages            %>
+<%              to be displayed. Match does not produce any WARN level messages.                                      %>
+<%          <wordiness>INFO</wordiness> - (Default) Results in all messages above and including INFO level            %>
+<%              messages to be displayed. INFO level messages detail when the tool has started and ended and when it  %>
+<%              begins/ends a phase ('Finding matches' and 'Beginning Rename of matches') and how many matches have   %>
+<%              been found.                                                                                           %>
+<%          <wordiness>DEBUG</wordiness> - Results in all messages above and including DEBUG level messages           %>
+<%              to be displayed. DEBUG level messages detail each matching input URI to its VIVO URI as they are      %>
+<%              processed. Additionally, it will display stacktrace information if an error occurs.                   %>
+<%          <wordiness>ALL</Param> or TRACE<wordiness> - Results in all messages above and including TRACE            %>
+<%              level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.    %>
+<%              TRACE level messages details every matching set as it is processed in each phase along with SPARQL    %>
+<%              queries and start and stop for their execution.                                                       %>
+<%                                                                                                                    %>
+<% The destination relational database information:                                                                   %>
+<%                                                                                                                    %>
+<% <Param name="driver"> - A JDBC driver is a java class which handles the interface between the program and a given  %>
+<%      database.The driver needs to exist within the classpath, for the program to be able to use it.                %>
+<%     EXAMPLES:                                                                                                      %>
+<%            <Param name="driver">org.h2.Driver</Param>                                                              %>
+<%                                                                                                                    %>
+<% <Param name="connection"> - JDBC uses a connection string related to the Driver being used.                        %>
+<%    It is in the general format "jdbc:somejdbcvendor:other data needed"                                             %>
+<%    EXAMPLES :                                                                                                      %>
+<%     Microsoft SQL server : <Param name="connection">jdbc:jtds:sqlserver://127.0.0.1:8080/databasename</Param>      %>
+<%     H2 database ( http://www.h2database.com ) : <Param name="connection">jdbc:h2:directory/location</Param>        %>
+<%                                                                                                                    %>
+<% <Param name="username"> - A valid login with proper permissions                                                    %>
+<% <Param name="password"> - The associated secure password                                                           %>
+<%     These are what the tool uses when accessing the given database. These must be valid otherwise the harvest run  %>
+<%  will not have access to the database. By default we use "sa" for system administrator and a blank password.       %>
+<%                                                                                                                    %>
+<%      <Param name="username">sa</Param>                                                                             %>
+<%      <Param name="password"></Param>                                                                               %>
+<%                                                                                                                    %>
+<% <Param name="tableName"> - This field is the name of the table which will be created and populated with the csv    %>
+<%      file data. The first row is turned into the fields                                                            %>
+<%      <Param name="tableName">Tablename</Param>                                                                     %>
+<%                                                                                                                    %>
+
+ -->
+<Config>
+    <Param name="inputFile">path/Filename.csv</Param>
+    <Param name="driver">org.h2.Driver</Param>
+    <Param name="connection">jdbc:h2:directory/location<</Param>
+    <Param name="username">USERNAME</Param>
+    <Param name="password">PASSWORD</Param>
+    <Param name="tableName">Tablename</Param>
+</Config>

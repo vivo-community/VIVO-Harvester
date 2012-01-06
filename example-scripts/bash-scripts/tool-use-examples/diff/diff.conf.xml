@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<!-- 
+
+<%                                                                                                                    %>
+<% Diff - is a tool for finding the mathematical difference between two models.                                       %>
+<%                                                                                                                    %>
+<% ======                                                                                                             %>
+<% The mathematical difference is found by removing from the source model the contents of another model. This leaves  %>
+<%     in the output model all the triples that are in the source model but not in the removal model.                 %> 
+<%                                                                                                                    %>
+<% ===== PARAMETERS =====                                                                                             %>
+<%                                                                                                                    %>
+<%  wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log   %>
+<%          level, the more detailed the messages.                                                                    %>
+<%      Possible Values:                                                                                              %>
+<%          <wordiness>OFF</wordiness> - Results in no messages being displayed.                                      %>
+<%          <wordiness>ERROR</wordiness> - Results in only messages from the ERROR level to be displayed.             %>
+<%              Error messages detail when the tool has experienced an error preventing it from completing its task   %>
+<%          <wordiness>WARN</wordiness> - Results in only messages above and including WARN level messages            %>
+<%              to be displayed. Match does not produce any WARN level messages.                                      %>
+<%          <wordiness>INFO</wordiness> - (Default) Results in all messages above and including INFO level            %>
+<%              messages to be displayed. INFO level messages detail when the tool has started and ended and when it  %>
+<%              begins/ends a phase ('Finding matches' and 'Beginning Rename of matches') and how many matches have   %>
+<%              been found.                                                                                           %>
+<%          <wordiness>DEBUG</wordiness> - Results in all messages above and including DEBUG level messages           %>
+<%              to be displayed. DEBUG level messages detail each matching input URI to its VIVO URI as they are      %>
+<%              processed. Additionally, it will display stacktrace information if an error occurs.                   %>
+<%          <wordiness>ALL</Param> or TRACE<wordiness> - Results in all messages above and including TRACE            %>
+<%              level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.    %>
+<%              TRACE level messages details every matching set as it is processed in each phase along with SPARQL    %>
+<%              queries and start and stop for their execution.                                                       %>
+<%                                                                                                                    %>
+<%  modelSource - Provides the information needed for the connection to the source data model, which is the model     %>
+<%          that has all the information that will be in the destination model and possibly more if any of it is the  %>
+<%          same as what is in the model remove.                                                                      %>
+<%          <Param name="minuend">model.conf.xml</Param>                                                              %>
+<%          <Param name="minuendOverride">parameter=Value</Param>                                                     %>
+<%                                                                                                                    %>
+<%  modelRemove - Provides the information needed for the connection to the remove data model, which is the model     %>
+<%          that does not have any of the data which will be in the destination model. The data in this model is      %>
+<%          removed from the source model to create the destination model.                                            %>
+<%          <Param name="subtrahend">model.conf.xml</Param>                                                           %>
+<%          <Param name="subtrahendOverride">parameter=Value</Param>                                                  %>
+<%                                                                                                                    %>
+<%  modelDestination - Provides the information needed for the connection to the destination data model, which is the %>
+<%          model generatedarched and possibly modified.                                                              %>
+<%          <Param name="output">model.conf.xml</Param>                                                               %>
+<%          <Param name="outputOverride">parameter=Value</Param>                                                      %>
+<%                                                                                                                    %>
+<%  fileDestinationRDF - This is the information for the destination to be sent to a file rather than to a model.     %>
+<%          This file would be used for debugging or even as a checkable format to then be transferred into a model.  %>
+<%          <Param name="dumptofile">path/Filename</Param>                                                            %>
+<%                                                                                                                    %>
+
+-->
+<Config>
+    <!-- Input -->
+    <Param name="minuend">model.conf.xml</Param>
+    <Param name="minuendOverride">Parameter=value</Param>
+    <Param name="subtrahend">model.conf.xml</Param>
+    <Param name="subtrahendOverride">Parameter=value</Param>
+    <!-- Output -->
+    <Param name="output">model.conf.xml</Param>
+    <Param name="outputOverride">Parameter=value</Param>
+    <Param name="dumptofile">path/Filename</Param>
+</Config>

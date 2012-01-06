@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<Config>
+    <!--INPUT : for more information please see the given config file -->
+    <Param name="inputJena-config">harvested-data.model.xml</Param>
+    
+    <!--VIVO INPUT : for more information please see the given config file -->
+    <Param name="vivoJena-config">vivo.model.xml</Param>
+    
+    <!--SCORING DATA OUTPUT  : for more information please see the given config file-->
+    <Param name="score-config">score-data.model.xml</Param>
+    
+    <!--OPTIONS -->
+    <!--
+<%  Score uses a temporary jena model to store its scoring data. This model is used later by the Match process        %>                                                                                                               %>
+<%     to make the changes                                                                                            %>                                                                                                               %>
+<%  <Param name="tempJenaDir">data/temp-score-model</Param>                                                           %>
+<%                                                                                                                    %>
+<%  The next several parameters have the concept of a run-name embedded within them. The run-name appears before      %>
+<%      the equal sign. In this example the run-name is connumber.                                                    %>
+<%  <Param name="algorithms">  is the parameter which determines the method of determining how much of a match the    %>
+<%     given predicate related string-type objects is. The values returned by the algorithm are between 0 and 1       %>
+<%     inclusively.                                                                                                   %>
+<%  <Param name="weights"> is the parameter to signify how much the weight of the run should be considered. The score %>
+<%     between 0 and 1 is scaled by this number (i.e. a score of 0.5 weighted at 0.5 has a score of 0.25 against the  %>
+<%     threshold used within the match statement. )                                                                   %>
+<%  <Param name="inputJena-predicates"> is the tag which signifies that the value of the object associated with this  %>
+<%     predicate within the input model will be one elements of the comparisons                                       %>
+<%  <Param name="vivoJena-predicates"> is the tag which signifies that the value of the object associated with this   %>
+<%     predicate within the vivo model will be one elements of the comparisons                                        %>
+<%                                                                                                                    %>
+<%  <Param name="algorithms">connumber=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>                     %>
+<%  <Param name="weights">connumber=1.0</Param>                                                                       %>
+<%  <Param name="inputJena-predicates">connumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber</Param>       %>
+<%  <Param name="vivoJena-predicates">connumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber</Param>        %>
+<%                                                                                                                    %>
+<%  <Param name="namespace">  is the tag which determines which name-space the score takes into account for this run. %>
+<%     These scripts use the namespace to score only small sections of the harvested data at a time. Within the       %>
+<%     translation phase namespaces are attributed to each resource based on their logical divisions, specifically    %>
+<%     to make the scoring and matching simpler.                                                                      %>
+<%  <Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/grant/</Param>                                         %>
+<%                                                                                                                    %>
+<%                                                                                                                    %>
+<%  <Param name="reloadInput"> If the input model is expected to have changed and will have an effect on the score    %>
+<%     of compared resources then this should be set to true. Usually used when a combination of connections  to      %>
+<%     other resources, previously matched on, is used to determine a correct comparison.                             %>
+<%  <Param name="reloadInput">true</Param>                                                                            %>
+<%                                                                                                                    %>
+<%  <Param name="reloadVivo"> When the vivo model is expected to have changed since scoring began or the last reload  %>
+<%     then the local vivo, which is the on compared against, should be refreshed.                                    %>
+<%  <Param name="reloadVivo">true</Param>                                                                             %>
+<%                                                                                                                    %>
+     -->
+	<Param name="tempJenaDir">data/temp-score-model</Param>
+	<Param name="algorithms">person=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
+	<Param name="weights">person=0.5</Param>
+	<Param name="inputJena-predicates">person=http://vivoweb.org/ontology/core#principalInvestigatorRoleOf</Param>
+	<Param name="vivoJena-predicates">person=http://vivoweb.org/ontology/core#principalInvestigatorRoleOf</Param>
+	
+    <Param name="algorithms">grant=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
+    <Param name="weights">grant=0.5</Param>
+    <Param name="inputJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
+    <Param name="vivoJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
+	<Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/piRole/</Param>
+</Config>

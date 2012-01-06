@@ -1,0 +1,52 @@
+************************************************************************
+** Install xlsx-to-csv convert on VIVO virtual box
+** Copy course spreadsheet file (.xlsx) to VIVO virtual box
+************************************************************************
+
+# Download the following four files from "https://dev.ctrip.ufl.edu/yxl/vivo/scripts/" to your host machine
+	xlsx2csv.sh 	- convert xlsx file to csv file
+	csvtojdbc.config.xml
+	coursevivo.xlsx	- a testing xlsx file with only 5 records
+	RA42VIVO.xlsx	- courses file to be ingested. 
+						It contains one worksheet. The worksheet was already named to "course"
+						To run on dev/stage/prod, need to rename "RA42VIVO.xlsx" to "coursevivo.xlsx"
+
+# Make sure rename the original spreadsheet to "coursevivo.xlsx" (original file name is RA42VIVO.xlsx)
+# On Windows open up "coursevivo.xlsx" and make sure only one worksheet
+# exists and rename it to "course" (original worksheet name is RA42VIVO)
+
+# copy xlsx2csv.sh, csvtojdbc.config.xml, and coursevivo.xlsx to VIVO virtual box
+(
+	Ubuntu host: scp -P <filename> vitro@localhost:<Destination>
+	Windows host: using winscp
+)
+
+# install unzip on VIVO virtual box (required by xlsx2csv.sh)
+sudo apt-get install unzip
+
+# install sqlite3 on VIVO virtual box (required by xlsx2csv.sh)
+sudo apt-get install sqlite3
+
+# install xsltproc on VIVO virtual box (required by xlsx2csv.sh)
+sudo apt-get install xsltproc
+# if ask "Do you want to continue [Y/n]?", type Y
+
+# Convert "coursevivo.xlsx" to "coursevivo_coursevivo.csv".
+# The output file name will be "coursevivo_course.csv".
+# Make sure use "-o" to overwrite an existing "coursevivo_course.csv".
+# The whole process may take several hours.
+# "coursevivo_course.csv" will be saved in "course-input" sub folder.
+# But do NOT use the following syntax to specify the input file because it will give error
+#WRONG: sudo bash xlsx2csv.sh -o -x ./course-input/coursevivo.xlsx #WRONG
+sudo bash xlsx2csv.sh -o -x course-input/coursevivo.xlsx
+
+# Convert ""coursevivo_course.csv" to individual files xml files
+# The individual file names will be 
+# "COURSES_CSV_id_-_0", "COURSES_CSV_id_-_1", ..., "COURSES_CSV_id_-_302632"
+# Based on the currect spreadsheet, there are total 302633 files.
+# will be generated. So the last file name will be "COURSES_CSV_id_-_302632".
+# The whole process will be several minutes.
+# Output files will be saved in data/raw-recordes sub folder.
+#### We will use Harvester built-in csv-to-xml converter.
+#### The code will be added into run-courses.sh
+

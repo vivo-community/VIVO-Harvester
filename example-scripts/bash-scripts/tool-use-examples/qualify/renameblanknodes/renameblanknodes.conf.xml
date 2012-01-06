@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<Config>
+    <!-- 
+    a - Description and repercussions
+    -----
+    Possible Values:
+    b - Meaning of b
+    c - Meaning of c
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    ModelDestination - The Jena model in which to do the rename.
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    ModelDedup - Model which contains triples whose names we do not want to create duplicates of in the destination model.
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    BaseNamespace - The first part of the namespace we wish to give to the renamed nodes.
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    AddNamespace - The part of the namespace between the base and the ID number
+     -->
+    <Param name="a">b</Param>
+
+    <!-- 
+    PredicateNamespace - The namespace for predicates.
+     -->
+    <Param name="a">b</Param>
+
+</Config>

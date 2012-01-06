@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<Task>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Match ===== 																									%>
+<%	Uses the score-data produced by Score to evaluate pairs of records from the input and VIVO.							%>
+<%	=== 																												%>
+<%	Records that match above a user-specified threshold are considered to be a matching set.  Matching records from		%>
+<%	the input can be renamed to the matching VIVO URI, or can be linked to them via user-specified triples.				%>
+<%	Additionally, the input data can be sanitized to remove all rdf:type statements and all literal value statements,	%>
+<%	preserving only the node relationship triples.																		%>
+<%																														%>
+<%	===== Match Parameters ===== 																						%>
+<%	wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log		%>
+<%			level, the more detailed the messages.																		%>
+<%		Possible Values:																								%>
+<%			<Param name="wordiness">OFF</Param> - Results in no messages being displayed.								%>
+<%			<Param name="wordiness">ERROR</Param> - Results in only messages from the ERROR level to be displayed.		%>
+<%				Error messages detail when the tool has experienced an error preventing it from completing its task		%>
+<%			<Param name="wordiness">WARN</Param> - Results in only messages above and including WARN level messages		%>
+<%				to be displayed. Match does not produce any WARN level messages.										%>
+<%			<Param name="wordiness">INFO</Param> - (Default) Results in all messages above and including INFO level		%>
+<%				messages to be displayed. INFO level messages detail when the tool has started and ended and when it	%>
+<%				begins/ends a phase ('Finding matches' and 'Beginning Rename of matches') and how many matches have		%>
+<%				been found.																								%>
+<%			<Param name="wordiness">DEBUG</Param> - Results in all messages above and including DEBUG level messages	%>
+<%				to be displayed. DEBUG level messages detail each matching input URI to its VIVO URI as they are		%>
+<%				processed. Additionally, it will display stacktrace information if an error occurs.						%>
+<%			<Param name="wordiness">ALL</Param> or TRACE</Param> - Results in all messages above and including TRACE	%>
+<%				level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.		%>
+<%				TRACE level messages details every matching set as it is processed in each phase along with SPARQL		%>
+<%				queries and start and stop for their execution.															%>
+<%	===																													%>
+<%																														%>
+<%	threshold - match records with a cumulative weighted-score over this value											%>
+<%		Example:																										%>
+<%			<Param name="threshold">0.5</Param> - match things whose total weighted-score is greater than 0.5			%>
+<%	===																													%>
+<%																														%>
+<%	link - (optional) link the two matched entities together using two provided predicates								%>
+<%		Example:																										%>
+<%			<Param name="link">http://xmlns.com/foaf/0.1/made=http://xmlns.com/foaf/0.1/maker</Param> - links a			%>
+<%				foaf:Agent from the VIVO model to a foaf:Thing in the input model by adding linking triples				%>
+<%				(<vivo-agent> <foaf:made> <input-thing>) and (<input-thing> <faof:maker> <vivo-agent>) to the input		%>
+<%	===																													%>
+<%																														%>
+<%	rename - (optional) rename the input node to the matching VIVO URI													%>
+<%		Possible Value:																									%>
+<%			(default) <Param name="rename">false</Param> - don't rename nodes											%>
+<%			<Param name="rename">true</Param> - rename nodes															%>
+<%	===																													%>
+<%																														%>
+<%	clear-type-and-literals - (optional) sanitize the input data to remove all rdf:type statements and all literal		%>
+<%			value statements, preserving only the node relationship triples												%>
+<%		Example:																										%>
+<%			(default) <Param name="clear-type-and-literals">false</Param> - don't sanitize input data					%>
+<%			<Param name="clear-type-and-literals">true</Param> - sanitize input data									%>
+<%	===																													%>
+<%																														%>
+<%	batch-size - (optional) number of records to process in batch - default 150 - lower this if getting StackOverflow	%>
+<%			or OutOfMemory Exceptions																					%>
+<%		Example:																										%>
+<%			(default) <Param name="batch-size">150</Param> - process 150 records per batch								%>
+<%			<Param name="batch-size">50</Param> - process 50 records per batch											%>
+<%	===																													%>
+<%																														%>
+<%	input-config - (optional - at least one of this and/or inputOverride) the configuration file that describes the		%>
+<%			input jena model. The parameters for this config file are described in the Models section below.			%>
+<%		Example:																										%>
+<%			<Param name="input-config">/absolute/path/to/file.conf.xml</Param> - An absolute path to a jena model		%>
+<%				config file on linux/unix/macosx operating systems														%>
+<%			<Param name="input-config">C:/absolute/path/to/file.conf.xml</Param> - An absolute path to a jena model		%>
+<%				config file on a windows operating system																%>
+<%			<Param name="input-config">relative/path/to/file.conf.xml</Param> - A path to a jena model config file		%>
+<%				that is relative to the folder the shell was in when this command was executed							%>
+<%	===																													%>
+<%																														%>
+<%	inputOverride - (optional - at least one of this and/or input-config) specify the parameters for the jena model		%>
+<%			without a config file and/or override specific parameters from the given config file. The parameters that	%>
+<%			can be set/overridden are described in the Models section below.											%>
+<%		Example:																										%>
+<%			<Param name="inputOverride">paramName=valueToUse</Param>													%>
+<%	===																													%>
+<%																														%>
+<%	score-config - (optional - at least one of this and/or scoreOverride) the configuration file that describes the		%>
+<%			score jena model. The parameters for this config file are described in the Models section below.			%>
+<%		Example:																										%>
+<%			<Param name="score-config">/absolute/path/to/file.conf.xml</Param> - An absolute path to a jena model		%>
+<%				config file on linux/unix/macosx operating systems														%>
+<%			<Param name="score-config">C:/absolute/path/to/file.conf.xml</Param> - An absolute path to a jena model		%>
+<%				config file on a windows operating system																%>
+<%			<Param name="score-config">relative/path/to/file.conf.xml</Param> - A path to a jena model config file		%>
+<%				that is relative to the folder the shell was in when this command was executed							%>
+<%	===																													%>
+<%																														%>
+<%	scoreOverride - (optional - at least one of this and/or score-config) specify the parameters for the jena model		%>
+<%			without a config file and/or override specific parameters from the given config file. The parameters that	%>
+<%			can be set/overridden are described in the Models section below.											%>
+<%		Example:																										%>
+<%			<Param name="scoreOverride">paramName=valueToUse</Param>													%>
+<%	===																													%>
+<%																														%>
+<%	output-config - (optional - will contain all related nodes for matches) the configuration file that describes the	%>
+<%			output jena model. The parameters for this config file are described in the Models section below.			%>
+<%		Example:																										%>
+<%			<Param name="output-config">/absolute/path/to/file.conf.xml</Param> - An absolute path to a jena model		%>
+<%				config file on linux/unix/macosx operating systems														%>
+<%			<Param name="output-config">C:/absolute/path/to/file.conf.xml</Param> - An absolute path to a jena model	%>
+<%				config file on a windows operating system																%>
+<%			<Param name="output-config">relative/path/to/file.conf.xml</Param> - A path to a jena model config file		%>
+<%				that is relative to the folder the shell was in when this command was executed							%>
+<%	===																													%>
+<%																														%>
+<%	outputOverride - (optional - will contain all related nodes for matches) specify the parameters for the jena model	%>
+<%			without a config file and/or override specific parameters from the given config file. The parameters that	%>
+<%			can be set/overridden are described in the Models section below.											%>
+<%		Example:																										%>
+<%			<Param name="outputOverride">paramName=valueToUse</Param>													%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="rename">true</Param>
+	<Param name="threshold">1.0</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample input Jena model external definition																			%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="input-config">jena-model.conf.xml</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	===== Models ===== 																									%>
+<%	type - defines which type of jena model																				%>
+<%		Possible Values:																								%>
+<%			<Param name="scoreOverride">type=tdb</Param> - defines a tdb jena model										%>
+<%			<Param name="scoreOverride">type=sdb</Param> - defines an sdb jena model									%>
+<%			<Param name="scoreOverride">type=rdb</Param> - defines an rdb jena model									%>
+<%			<Param name="scoreOverride">type=file</Param> - defines an rdf file to use as a model						%>
+<%																														%>
+<%	===== Model Parameters ===== 																						%>
+<%	dbDir - the directory to store a tdb model in 																		%>
+<%			(only needed when type is tdb)	 																			%>
+<%		Example Values:																									%>
+<%			<Param name="scoreOverride">dbDir=/absolute/path/to/dir</Param> - An absolute path to a directory on		%>
+<%				linux/unix/macosx operating systems																		%>
+<%			<Param name="scoreOverride">dbDir=C:/absolute/path/to/dir</Param> - An absolute path to a directory on		%>
+<%				a windows operating system																				%>
+<%			<Param name="scoreOverride">dbDir=relative/path/to/dir</Param> - A path to a directory that is relative		%>
+<%				to the folder the shell was in when this command was executed											%>
+<%	=== 																												%>
+<%																														%>
+<%	file - the path to the file that contains rdf data 																	%>
+<%			(only needed when type is file) 																			%>
+<%		Example Values:																									%>
+<%			<Param name="scoreOverride">file=/absolute/path/to/rdf-data.rdf.xml</Param> - An absolute path to an rdf	%>
+<%				file on linux/unix/macosx operating systems																%>
+<%			<Param name="scoreOverride">file=C:/absolute/path/to/rdf-data.n3</Param> - An absolute path to an rdf		%>
+<%				file on a windows operating system																		%>
+<%			<Param name="scoreOverride">file=relative/path/to/rdf-data.ttl</Param> - A path to an rdf file that is		%>
+<%				relative to the folder the shell was in when this command was executed									%>
+<%	=== 																												%>
+<%																														%>
+<%	rdfLang - the format of the rdf in the file																			%>
+<%			(optional, only used when type is file) 																	%>
+<%		Possible Values:																								%>
+<%			(default) <Param name="scoreOverride">rdfLang=RDF/XML</Param> - rdf/xml format								%>
+<%			<Param name="scoreOverride">rdfLang=N3</Param> - n3 format													%>
+<%			<Param name="scoreOverride">rdfLang=TTL</Param> - turtle/ttl format											%>
+<%			<Param name="scoreOverride">rdfLang=N-TRIPLE</Param> - n-triple format										%>
+<%	=== 																												%>
+<%																														%>
+<%	dbLayout - the layout to use for an sdb model 																		%>
+<%			(optional, only used when type is sdb) 																		%>
+<%		Possible Values:																								%>
+<%			(default) <Param name="scoreOverride">dbLayout=layout2</Param> - layout2									%>
+<%	=== 																												%>
+<%																														%>
+<%	dbType - the name of the database type (as specified by jena) 														%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Examples: 																										%>
+<%			<Param name="scoreOverride">dbType=MySQL</Param> - mysql database											%>
+<%			<Param name="scoreOverride">dbType=H2</Param> - h2 database													%>
+<%	=== 																												%>
+<%																														%>
+<%	dbClass - the JDBC driver class to use 																				%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Examples: 																										%>
+<%			<Param name="scoreOverride">dbClass=com.mysql.jdbc.Driver</Param> - mysql database							%>
+<%			<Param name="scoreOverride">dbClass=org.h2.Driver</Param> - h2 database										%>
+<%	=== 																												%>
+<%																														%>
+<%	dbUrl - the JDBC connection url 																					%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Examples: 																										%>
+<%			<Param name="scoreOverride">dbUrl=jdbc:mysql://127.0.0.1:3306/dbName</Param> - mysql database				%>
+<%				see http://dev.mysql.com/doc/refman/5.6/en/connector-j-reference-configuration-properties.html			%>
+<%			<Param name="scoreOverride">dbUrl=jdbc:h2:path/to/h2/store</Param> - h2 database							%>
+<%				see http://www.h2database.com/html/features.html#database_url											%>
+<%	=== 																												%>
+<%																														%>
+<%	modelName - the named model to use																					%>
+<%			(optional, uses default model if not specified, only used when type is rdb, tdb, or sdb )					%>
+<%		Examples: 																										%>
+<%			<Param name="scoreOverride">modelName=http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>			%>
+<%			<Param name="scoreOverride">modelName=mySimpleModelName</Param>												%>
+<%			<Param name="scoreOverride">modelName=http://vivo.localinstitution.edu/models/my-uri-model</Param>			%>
+<%	=== 																												%>
+<%																														%>
+<%	dbUser - the DB username to use 																					%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Example: 																										%>
+<%			<Param name="scoreOverride">dbUser=sa</Param> - used for h2 database (the default h2 system admin login		%>
+<%			<Param name="scoreOverride">dbUser=myUser</Param>															%>
+<%	=== 																												%>
+<%																														%>
+<%	dbPass - the DB password to use 																					%>
+<%			(only needed when type is rdb or sdb)																		%>
+<%		Example: 																										%>
+<%			<Param name="scoreOverride">dbPass=</Param> - used for h2 database (the default h2 system admin login		%>
+<%			<Param name="scoreOverride">dbPass=myPass</Param>															%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample score Jena model inline definition - using an internally defined tdb model									%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="scoreOverride">type=tdb</Param>
+	<Param name="scoreOverride">dbDir=data/tdb-jena</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample score Jena model inline definition - using an internally defined file model									%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="scoreOverride">type=file</Param>
+	<Param name="scoreOverride">file=data/file-jena.rdf.n3</Param>
+	<Param name="scoreOverride">rdfLang=N3</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample output Jena model inline definition - using an internally defined rdb model									%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="outputOverride">type=rdb</Param>
+	<Param name="outputOverride">dbType=H2</Param>
+	<Param name="outputOverride">dbClass=org.h2.Driver</Param>
+	<Param name="outputOverride">dbUrl=jdbc:h2:data/jena-model/store</Param>
+	<Param name="outputOverride">modelName=mySimpleModelName</Param>
+	<Param name="outputOverride">dbUser=sa</Param>
+	<Param name="outputOverride">dbPass=</Param>
+-->
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample input Jena model inline definition - using an internally defined sdb model									%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+<!--
+	<Param name="inputOverride">type=sdb</Param>
+	<Param name="inputOverride">dbLayout=layout2</Param>
+	<Param name="inputOverride">dbType=H2</Param>
+	<Param name="inputOverride">dbClass=org.h2.Driver</Param>
+	<Param name="inputOverride">dbUrl=jdbc:h2:data/jena-model/store</Param>
+	<Param name="inputOverride">modelName=mySimpleModelName</Param>
+	<Param name="inputOverride">dbUser=sa</Param>
+	<Param name="inputOverride">dbPass=</Param>
+-->
+	<!--INPUT -->
+	<Param name="input-config">harvested-data.model.xml</Param>
+	
+	<!--SCORING DATA OUTPUT -->
+	<Param name="score-config">score-data.model.xml</Param>
+	
+	<!--OPTIONS -->
+	<Param name="rename">true</Param>
+	<Param name="threshold">1.0</Param>
+</Task>
