@@ -395,7 +395,7 @@ public class ScoreTest extends TestCase {
 		String namespace = "http://vivoweb.org/harvester/org/";
 		// run org score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 0, false, false).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 1, false, false).execute();
 		log.info("Score: End");
 		// run org match
 		log.info("Match: Start");
@@ -449,7 +449,7 @@ public class ScoreTest extends TestCase {
 		namespace = "http://vivoweb.org/harvester/position/";
 		// run position score
 		log.info("Score: Start");
-		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 50, false, false).execute();
+		new Score(this.input, this.vivo, this.score, null, algorithms, inputPredicates, vivoPredicates, namespace, weights, null, 50, true, false).execute();
 		log.info("Score: End");
 		// run position match
 		log.info("Match: Start");
