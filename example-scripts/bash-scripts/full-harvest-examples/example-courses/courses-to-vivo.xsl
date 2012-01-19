@@ -142,7 +142,7 @@
                         http://www.registrar.ufl.edu/cdesc.php?crs=<xsl:value-of select="$courseName" />
 			</core:linkURI>
     		</rdf:Description>
-	    <!--  Course Web-page END-->
+		<!--  Course Web-page END-->
 	
 		<!-- UNIQUE -->
 		<!-- Course Section -->
@@ -188,25 +188,29 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicTerm" />
 
 			<rdfs:label xml:lang="en-US">
+				<!-- COMMENTED OUT VJS 120109
 				<xsl:value-of select="$courseName" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$sectionNumber" />
-	        	<xsl:text> </xsl:text>
+	        		<xsl:text> </xsl:text> 
+				-->
 				<xsl:value-of select="$semester" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$year" />
-				<xsl:text>AT</xsl:text>
+				<!-- COMMENTED OUT VJS 120109 <xsl:text>AT</xsl:text> -->
 			</rdfs:label>
 			
 			<!-- Relation to Start Node -->
-			<core:start rdf:resource="{$baseURI}academicTerm/start/{$courseName}-{$sectionNumber}-{$semester}-{$year}" />
+			<!-- COMMENTED OUT VJS 120109 <core:start rdf:resource="{$baseURI}academicTerm/start/{$courseName}-{$sectionNumber}-{$semester}-{$year}" /> -->
 			<!-- Relation to Start Node End -->
 
 		</rdf:Description>
 		<!-- Academic Term Node End -->
 
+		
 		<!-- NOT UNIQUE -->
 		<!-- Start Node -->
+		<!--  COMMENTED OUT VJS 120109
 		<rdf:Description rdf:about="{$baseURI}academicTerm/start/{$courseName}-{$sectionNumber}-{$semester}-{$year}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
 			<ufVivo:dateHarvested>
@@ -218,11 +222,12 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue" />
 			<core:dateTimePrecision	rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision" />
 			
-			<core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
+			<core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"> -->
 				<!-- <xsl:value-of select="$semester" /> -->
-				<xsl:value-of select="$year" /><xsl:text>-</xsl:text><xsl:value-of select="$month" /><xsl:text>-01T16:45:00</xsl:text>
-                <!-- <xsl:text> </xsl:text>
-                <xsl:value-of select="$year" /> -->
+				<!-- COMMENTED OUT VJS 120109 <xsl:value-of select="$year" /><xsl:text>-</xsl:text><xsl:value-of select="$month" /><xsl:text>-01T16:45:00</xsl:text> -->
+                		<!-- <xsl:text> </xsl:text>
+                		<xsl:value-of select="$year" /> -->
+			<!-- COMMENTED OUT VJS 120109
 			</core:dateTime>
 			
 			<rdfs:label xml:lang="en-US">
@@ -235,15 +240,16 @@
 				<xsl:value-of select="$year" />
 				<xsl:text>TS</xsl:text>
 			</rdfs:label>			
-		</rdf:Description>
-<!-- Start Node End -->
+		</rdf:Description> -->
+		<!-- Start Node End -->
 
-<!--  Date Time Precision Node -->
+		<!--  Date Time Precision Node -->
+		<!-- COMMENTED OUT VJS 120109
 		<rdf:Description rdf:about="http://vivoweb.org/ontology/core#yearMonthDayPrecision">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
 			<rdfs:label xml:lang="en-US">yearMonthDayPrecision</rdfs:label>
-		</rdf:Description>
-<!--  Date Time Precision Node END -->
+		</rdf:Description> -->
+		<!--  Date Time Precision Node END -->
 
 		<!-- NOT UNIQUE -->
 		<!--Teacher Role Node -->
