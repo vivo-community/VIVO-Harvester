@@ -134,6 +134,20 @@
 					<!-- <core:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber" />-<xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Day"/></core:date> -->
 				</xsl:when>
 			</xsl:choose>
+			<!-- parse page numbers: START -->
+			<bibo:pageStart><xsl:value-of select="substring-before(MedlineCitation/Article/Pagination/MedlinePgn, '-')" /></bibo:pageStart>
+			<xsl:variable name="pageStart"><xsl:value-of select="substring-before(MedlineCitation/Article/Pagination/MedlinePgn, '-')" /></xsl:variable>
+			<xsl:variable name="pageEnd"><xsl:value-of select="substring-after(MedlineCitation/Article/Pagination/MedlinePgn, '-')" /></xsl:variable>
+			<xsl:choose>
+				<xsl:when test="string-length($pageStart) &gt; string-length($pageEnd)">
+					<xsl:variable name="cutoff"><xsl:value-of select="(string-length($pageStart))-(string-length($pageEnd))+1" /></xsl:variable>
+					<bibo:pageEnd><xsl:value-of select="concat(substring($pageStart,0,$cutoff),$pageEnd)"/></bibo:pageEnd>
+				</xsl:when>
+				<xsl:when test="string-length($pageStart) &lt;= string-length($pageEnd)">
+					<bibo:pageEnd><xsl:value-of select="$pageEnd"/></bibo:pageEnd>
+				</xsl:when>
+			</xsl:choose>
+			<!-- parse page numbers: END -->
 			<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
 			<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="journalRef"/>
 		</rdf:Description>
