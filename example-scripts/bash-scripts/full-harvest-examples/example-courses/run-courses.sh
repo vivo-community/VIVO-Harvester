@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
+HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
 export HARVEST_NAME=example-courses
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -232,3 +232,4 @@ echo "Ending full log" >> tmp.txt
 mail -a "FROM:Course_Ingest" -s "\"Course Ingest harvest of $DATE\"" "$EMAIL_RECIPIENT" < tmp.txt
 
 echo 'Harvest courses completed successfully'
+
