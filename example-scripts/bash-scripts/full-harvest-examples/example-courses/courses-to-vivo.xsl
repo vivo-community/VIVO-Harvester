@@ -185,6 +185,11 @@
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
 			</ufVivo:dateHarvested>
+			
+			<!-- Relation to Course Section Node -->
+                        <ufVivo:dateTimeIntervalFor rdf:resource="{$baseURI}courseSection/{$courseName}-{$sectionNumber}-{$semester}-{$year}" />
+            <!-- Relation to Course Section Node End -->
+			
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicTerm" />
 
 			<rdfs:label xml:lang="en-US">
