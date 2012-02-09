@@ -34,6 +34,9 @@
 			<xsl:value-of select="db-COURSES_CSV:CRS" />
 		</xsl:variable>
 		
+		<xsl:variable name="title">
+			<xsl:value-of select="db-COURSES_CSV:CRS_TITLE" />
+		</xsl:variable>
 		<xsl:variable name="sectionNumber">
 			<xsl:value-of select="db-COURSES_CSV:SECT" />
 		</xsl:variable>
@@ -109,7 +112,12 @@
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
 			</ufVivo:dateHarvested>
-			<core:description>Hi I am a description</core:description>
+
+			 <core:description>
+                                <xsl:value-of select="$title" />
+                        </core:description>
+
+
 			<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course" />
 			<ufVivo:mostSpecificType
 				rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course" />
