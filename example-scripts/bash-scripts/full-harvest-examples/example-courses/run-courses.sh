@@ -65,7 +65,7 @@ touch courselogfile.txt
 
 # Set the input delimeter /output delimeter to be ','. For every line in coursevivo_course.csv set if the column number 6 doest not start with a '"' pad the id value with leading zero to make it a 8 digit number
 #BEGIN {FS=OFS=","} ->> setting delimeter
-#if( $6 !~ /^"/) ->> doest not begin with '"'
+#if( $6 !~ /^"/&& NR >1) ->> doest not begin with '"' and Skip the header
 
 #$4=sprintf("%04d", $4) Section number ->pad with missing zero to make it 8 digit
 #sub($4,"\""$4"\"")- >> Section Number ->add '"' around it
@@ -74,8 +74,10 @@ touch courselogfile.txt
 #sub($6,"\""$6"\"")- >> Ufid -> add '"' around it
 
 #print  to the wellformated.csv file
+#else print to wellformated without any changes 
 
-cat course-input/coursevivo_course.csv | awk 'BEGIN {FS=OFS=","}{ if( $6 !~ /^"/) { $4=sprintf("%04d", $4); sub($4,"\""$4"\""); $6=sprintf("%08d", $6);sub($6,"\""$6"\"");print }}' > course-input/wellformated.csv
+
+cat  course-input/coursevivo_course.csv  | awk 'BEGIN {FS=OFS=","}{ if( $6 !~ /^"/ && NR >1) {$4=sprintf("%04d", $4); sub($4,"\""$4"\""); $6=sprintf("%08d", $6);sub($6,"\""$6"\""); print }else print;}' >  course-input/wellformated.csv
 
 #move course-input/wellformated.csv to course-input/coursevivo_course.csv
 mv course-input/wellformated.csv  course-input/coursevivo_course.csv
