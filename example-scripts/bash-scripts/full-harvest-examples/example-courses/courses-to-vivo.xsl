@@ -178,7 +178,7 @@
 			<ufVivo:sectionForCourse rdf:resource="{$baseURI}courses/{$courseName}" />
 			<!-- Relation to Course Node End -->
 			<!-- Relation to Academic Term -->
-			<core:dateTimeInterval rdf:resource="{$baseURI}academicTerm/{$courseName}-{$semester}-{$year}-{$sectionNumber}" />
+			<core:dateTimeInterval rdf:resource="{$baseURI}academicTerm/{$semester}-{$year}" />
 			<!-- Relation to Academic Term End -->
 			<!-- Relation to Teacher Role Node -->
 			<core:relatedRole rdf:resource="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}-{$sectionNumber}-{$ins_ufid}" />
@@ -188,7 +188,7 @@
 		<!-- NOT UNIQUE -->
 		
 		<!-- Academic Term Node -->
-		<rdf:Description rdf:about="{$baseURI}academicTerm/{$courseName}-{$semester}-{$year}-{$sectionNumber}">
+		<rdf:Description rdf:about="{$baseURI}academicTerm/{$semester}-{$year}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
