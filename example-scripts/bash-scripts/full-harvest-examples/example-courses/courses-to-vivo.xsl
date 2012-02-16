@@ -113,9 +113,9 @@
 				<xsl:value-of select="current-date()" />
 			</ufVivo:dateHarvested>
 
-			 <core:description>
-                                <xsl:value-of select="$title" />
-                        </core:description>
+                        <ufVivo:courseNum>
+                                <xsl:value-of select="$courseName" />
+                        </ufVivo:courseNum>
 
 
 			<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course" />
@@ -125,7 +125,10 @@
 			<!--  <rdf:type rdf:resource="http://purl.org/NET/c4dm/event.owl#Event" /> -->
 			
 			<rdfs:label xml:lang="en-US">
-				<xsl:value-of select="$courseName" />
+				<xsl:value-of select="$courseName"/>
+				 <xsl:text> </xsl:text>
+                                <xsl:value-of select="$title" />
+
 			</rdfs:label>
 
 			<!-- Relation to Course Section Node -->
@@ -187,7 +190,7 @@
 		<!--Course Section ENDS -->
 		<!-- NOT UNIQUE -->
 		
-		<!-- Academic Term Node -->
+	<!--me Academic Term Node -->
 		<rdf:Description rdf:about="{$baseURI}academicTerm/{$semester}-{$year}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
 			<ufVivo:dateHarvested>
