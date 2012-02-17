@@ -5,13 +5,15 @@
  ******************************************************************************/
 package org.vivoweb.harvester.diff;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.FileAide;
+import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -47,6 +49,9 @@ public class Diff {
 	 */
 	private String dumpFile;
 	
+	private String dumpNTriple;
+	private String dumpN3;
+	
 	/**
 	 * Constructor
 	 * @param mJC minuend jenaconnect
@@ -54,11 +59,13 @@ public class Diff {
 	 * @param oJC output jenaconnect
 	 * @param dF dump file path
 	 */
-	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) {
+	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF, String dTF, String n3) {
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
 		this.output = oJC;
 		this.dumpFile = dF;
+		this.dumpNTriple = dTF;
+		this.dumpN3=n3;
 		if(this.minuendJC == null) {
 			throw new IllegalArgumentException("Must provide a minuend jena model");
 		}
@@ -87,11 +94,13 @@ public class Diff {
 	 */
 	private Diff(ArgList argList) throws IOException {
 		this(
-			JenaConnect.parseConfig(argList.get("m"), argList.getValueMap("M")), 
-			JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S")), 
-			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")), 
-			argList.get("d")
-		);
+			JenaConnect.parseConfig(argList.get("m"), argList.getValueMap("M")),
+			JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S")),
+			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")),
+			
+			argList.get("d"),
+			argList.get("t"),
+			argList.get("n"));
 	}
 	
 	/**
@@ -110,7 +119,8 @@ public class Diff {
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
-		
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("dumpntripletofile").withParameter(true, "FILENAME").setDescription("filename for N triple output").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("dumpn3tofile").withParameter(true, "FILENAME").setDescription("filename for N 3 output").setRequired(false));
 		return parser;
 	}
 	
@@ -122,11 +132,12 @@ public class Diff {
 	 * @param dF dump file path
 	 * @throws IOException error accessing file
 	 */
-	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF) throws IOException {
+	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF, String dTF, String dNTF) throws IOException {
 		// c - b = a
 		// minuend - subtrahend = difference
 		// minuend.diff(subtrahend) = differenece
 		// c.diff(b) = a
+		
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();
 		Model subtrahendModel = sJC.getJenaModel();
@@ -141,7 +152,24 @@ public class Diff {
 			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(dF), Charset.availableCharsets().get("UTF-8"));
 			fasterWriter.write(diffModel, osw, "");
 			log.debug("RDF/XML Data was exported");
+			
 		}
+		
+		if(dTF != null) {
+			RDFWriter tripplewriter = diffModel.getWriter("N-TRIPLE");
+			FileWriter fstream = new FileWriter(dTF);
+			BufferedWriter out = new BufferedWriter(fstream);
+			tripplewriter.write(diffModel, out, "");
+			out.close();
+		}
+		if(dNTF != null) {
+			RDFWriter tripplewriter = diffModel.getWriter("N3");
+			FileWriter fstream = new FileWriter(dNTF);
+			BufferedWriter out = new BufferedWriter(fstream);
+			tripplewriter.write(diffModel, out, "");
+			out.close();
+		}
+		
 		if(oJC != null) {
 			oJC.getJenaModel().add(diffModel);
 			oJC.sync();
@@ -153,7 +181,7 @@ public class Diff {
 	 * @throws IOException error accessing file
 	 */
 	public void execute() throws IOException {
-		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile);
+		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile, this.dumpNTriple, this.dumpN3);
 	}
 	
 	/**
@@ -162,13 +190,13 @@ public class Diff {
 	 */
 	public static void main(String... args) {
 		Exception error = null;
-		try {
+			try {
 			InitLog.initLogger(args, getParser());
 			log.info(getParser().getAppName() + ": Start");
 			new Diff(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
-			log.debug("Stacktrace:",e);
+			log.debug("Stacktrace:", e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(UsageException e) {
@@ -177,7 +205,7 @@ public class Diff {
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
-			log.debug("Stacktrace:",e);
+			log.debug("Stacktrace:", e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

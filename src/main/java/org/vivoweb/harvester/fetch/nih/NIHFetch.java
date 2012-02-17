@@ -143,7 +143,10 @@ public abstract class NIHFetch implements RecordStreamOrigin {
 				env[3] = ids.getId()[0];
 				log.trace("top id: "+env[3]);
 			} else {
-				throw new IllegalArgumentException("Query Has No Results: "+term);
+				// Eliza: comment out the following line
+				// throw new IllegalArgumentException("Query Has No Results: "+term);
+				// Eliza: added this log trace instead
+				log.trace("Query Has No Results: "+term);
 			}
 			if(logMessage) {
 				log.info("Query resulted in a total of " + env[2] + " records.");
@@ -171,7 +174,11 @@ public abstract class NIHFetch implements RecordStreamOrigin {
 		String[] env = null;
 		env = runESearch(this.searchTerm);
 
-		if(env != null) {
+		// Eliza: comment out this line
+		// if(env != null) {
+		// Eliza: use this instead
+		int resultsCount = Integer.parseInt(env[2]);
+		if(env != null && resultsCount > 0) {
 			if(recToFetch <= intBatchSize) {
 				fetchRecords(env, "0", "" + recToFetch);
 			} else {

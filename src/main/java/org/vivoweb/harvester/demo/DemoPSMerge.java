@@ -250,7 +250,7 @@ public class DemoPSMerge {
 		InitLog.initLogger(null, null);
 		// Find matches for people and departments using scores and rename nodes to matching uri
 		log.trace("Running Match for People and Departments");
-		Match psPeopleOrgMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false,200);
+		Match psPeopleOrgMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false, 200);
 		psPeopleOrgMatch.execute();
 		
 		System.setProperty("process-task", "Score.Positions");
@@ -282,7 +282,7 @@ public class DemoPSMerge {
 		InitLog.initLogger(null, null);
 		// Find matches for positions using scores and rename nodes to matching uri
 		log.trace("Running Match for Positions");
-		Match psPosMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false,200);
+		Match psPosMatch = new Match(psInput, scoreJena, null, true, 1.0f, null, false, 200);
 		psPosMatch.execute();
 		
 		System.setProperty("process-task", "ChangeNamespace.People");
@@ -323,14 +323,14 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Diff.Subs");
 		InitLog.initLogger(null, null);
 		// Find Subtractions
-		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel, null);
+		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel, null, null, null);
 		log.trace("Finding subtractions");
 		psDiffSubs.execute();
 		
 		System.setProperty("process-task", "Diff.Adds");
 		InitLog.initLogger(null, null);
 		// Find Additions
-		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel, null);
+		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel, null, null, null);
 		log.trace("Finding additions");
 		psDiffAdds.execute();
 		
