@@ -55,8 +55,13 @@ public class Diff {
 	 * dump model to file option - language
 	 */
 	private Map<String, String> dumpLanguage;
-	
+	/**
+	 * dump model to a ntriple file
+	 */
 	private String dumpNTriple;
+	/**
+	 * dump model to a n3 file
+	 */
 	private String dumpN3;
 	
 	/**
@@ -65,6 +70,9 @@ public class Diff {
 	 * @param sJC subtrahend jenaconnect
 	 * @param oJC output jenaconnect
 	 * @param dF dump file path
+	 * @param dL dump language
+	 * @param dTF dump ntriple
+	 * @param n3 dump n3 
 	 */
 	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, Map<String,String> dF, Map<String,String> dL, String dTF, String n3) {
 		this.minuendJC = mJC;
@@ -80,16 +88,10 @@ public class Diff {
 		if(this.subtrahendJC == null) {
 			throw new IllegalArgumentException("Must provide a subtrahend jena model");
 		}
-		if(this.output == null && (this.dumpFile == null || this.dumpFile.trim().isEmpty())) {
+		if(this.output == null && (this.dumpFile == null )) { // TODO: check the contents of the dumpFiles if any is empty error || this.dumpFile.trim().isEmpty())) 
 			throw new IllegalArgumentException("Must provide at least one of an output jena model or a dump file");
 		}
-		
-		Map<String, Map<String, ? extends Object>> maps = new HashMap<String, Map<String, ? extends Object>>();
-		maps.put("vivoJena predicates", this.vivoPredicates);
-		maps.put("inputJena predicates", this.inputPredicates);
-		maps.put("algorithms", this.algorithms);
-		maps.put("weights", this.weights);
-		verifyRunNames(maps);
+		checkFileName();
 	}
 	
 	/**
@@ -113,7 +115,8 @@ public class Diff {
 			JenaConnect.parseConfig(argList.get("s"), argList.getValueMap("S")),
 			JenaConnect.parseConfig(argList.get("o"), argList.getValueMap("O")),
 			
-			argList.get("d"),
+			argList.getValueMap("d"),
+			argList.getValueMap("l"),
 			argList.get("t"),
 			argList.get("n"));
 	}
@@ -144,14 +147,33 @@ public class Diff {
 	}
 	
 	/**
+	 * Make sure that every dumpLanguage Key,Value pair has an identical key in
+	 * the dumpFile map.
+	 * @return - false if 1 language definition does not have a path to a file defined
+	 */
+	private boolean checkFileName(){
+		boolean valid = true;
+		for(String fileName : this.dumpLanguage.keySet()){
+			if (!this.dumpFile.containsKey(fileName)){
+				valid = false;
+				throw new IllegalArgumentException("file name '" + fileName + "' found in languages but not in paths");
+			}
+		}
+		return valid;
+	}
+	
+	/**
 	 * Perform diff of mJC and sJC and put result in oJC and/or dF
 	 * @param mJC minuend jenaconnect
 	 * @param sJC subtrahend jenaconnect
 	 * @param oJC output jenaconnect
 	 * @param dF dump file path
+	 * @param dL dump language
+	 * @param dTF dumpfile ntriple
+	 * @param dNTF dumpfile n3
 	 * @throws IOException error accessing file
 	 */
-	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF, String dTF, String dNTF) throws IOException {
+	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, Map<String,String> dF, Map<String,String> dL, String dTF, String dNTF) throws IOException {
 		// c - b = a
 		// minuend - subtrahend = difference
 		// minuend.diff(subtrahend) = differenece
@@ -163,7 +185,29 @@ public class Diff {
 		
 		diffModel = minuendModel.difference(subtrahendModel);
 		
-		if(dF != null) {
+		for(String filename : dF.keySet()) {
+			String filepath = dF.get(filename);
+			String filelanguage = "";
+			if (dL.containsKey(filename)){
+				filelanguage = dL.get(filename);
+			} else {
+				filelanguage = "RDF/XML";
+			}
+			
+			RDFWriter fasterWriter = diffModel.getWriter(filelanguage);
+			if (filelanguage.equals("RDF/XML")){
+				fasterWriter.setProperty("showXmlDeclaration", "true");
+				fasterWriter.setProperty("allowBadURIs", "true");
+				fasterWriter.setProperty("relativeURIs", "");
+			}
+			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(filepath), Charset.availableCharsets().get("UTF-8"));
+			fasterWriter.write(diffModel, osw, "");
+			log.debug(filelanguage + " Data was exported to " + filepath);
+			
+		}
+		
+		//Deprecated code (see new format using Map above)
+		/*if(dF != null) {
 			RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
 			fasterWriter.setProperty("showXmlDeclaration", "true");
 			fasterWriter.setProperty("allowBadURIs", "true");
@@ -171,8 +215,7 @@ public class Diff {
 			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(dF), Charset.availableCharsets().get("UTF-8"));
 			fasterWriter.write(diffModel, osw, "");
 			log.debug("RDF/XML Data was exported");
-			
-		}
+		}*/
 		
 		if(dTF != null) {
 			RDFWriter tripplewriter = diffModel.getWriter("N-TRIPLE");
@@ -200,7 +243,7 @@ public class Diff {
 	 * @throws IOException error accessing file
 	 */
 	public void execute() throws IOException {
-		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile, this.dumpNTriple, this.dumpN3);
+		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile, this.dumpLanguage, this.dumpNTriple, this.dumpN3);
 	}
 	
 	/**

@@ -98,9 +98,10 @@ public class DiffTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
 	 * @throws IOException error
 	 */
+	@SuppressWarnings("javadoc")
 	public final void testDiffAdds() throws IOException {
 		log.info("BEGIN testDiffAdds");
-		Diff.diff(this.incomming, this.original, this.output, null);
+		Diff.diff(this.incomming, this.original, this.output, null, null, null, null);
 		assertFalse(this.output.isEmpty());
 		for(Statement sub : this.subStatements) {
 			assertFalse(this.output.getJenaModel().contains(sub));
@@ -118,9 +119,10 @@ public class DiffTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
 	 * @throws IOException error
 	 */
+	@SuppressWarnings("javadoc")
 	public final void testDiffSubs() throws IOException {
 		log.info("BEGIN testDiffSubs");
-		Diff.diff(this.original, this.incomming, this.output, null);
+		Diff.diff(this.original, this.incomming, this.output, null, null, null, null);
 		assertFalse(this.output.isEmpty());
 		for(Statement sub : this.subStatements) {
 			assertTrue(this.output.getJenaModel().contains(sub));
@@ -138,9 +140,10 @@ public class DiffTest extends TestCase {
 	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
 	 * @throws IOException error
 	 */
+	@SuppressWarnings("javadoc")
 	public final void testDiffSame() throws IOException {
 		log.info("BEGIN testDiffSame");
-		Diff.diff(this.original, this.original, this.output, null);
+		Diff.diff(this.original, this.original, this.output, null, null, null, null);
 		assertTrue(this.output.isEmpty());
 		for(Statement sub : this.subStatements) {
 			assertFalse(this.output.getJenaModel().contains(sub));
@@ -152,6 +155,17 @@ public class DiffTest extends TestCase {
 			assertFalse(this.output.getJenaModel().contains(shared));
 		}
 		log.info("END testDiffSame");
+	}
+	
+	/**
+	 * Testing Output to XML/RDF
+	 * @throws IOException
+	 */
+	public final void testDiffDumpFile() throws IOException {
+		log.info("Begin testDiffDumpFile");
+		Diff.diff(this.original, this.incomming, this.output, null, null, null, null);
+		//TODO:  Test Ouput File Creation for all three types
+		log.info("End testDiffDumpFile");
 	}
 	
 }
