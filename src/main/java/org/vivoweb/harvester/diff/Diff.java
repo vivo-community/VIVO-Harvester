@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
@@ -44,10 +46,15 @@ public class Diff {
 	 * Model to write records to
 	 */
 	private JenaConnect output;
+	
 	/**
-	 * dump model option
+	 * dump model to file option - filename
 	 */
-	private String dumpFile;
+	private Map<String, String> dumpFile;
+	/**
+	 * dump model to file option - language
+	 */
+	private Map<String, String> dumpLanguage;
 	
 	private String dumpNTriple;
 	private String dumpN3;
@@ -59,11 +66,12 @@ public class Diff {
 	 * @param oJC output jenaconnect
 	 * @param dF dump file path
 	 */
-	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, String dF, String dTF, String n3) {
+	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, Map<String,String> dF, Map<String,String> dL, String dTF, String n3) {
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
 		this.output = oJC;
 		this.dumpFile = dF;
+		this.dumpLanguage = dL;
 		this.dumpNTriple = dTF;
 		this.dumpN3=n3;
 		if(this.minuendJC == null) {
@@ -75,6 +83,13 @@ public class Diff {
 		if(this.output == null && (this.dumpFile == null || this.dumpFile.trim().isEmpty())) {
 			throw new IllegalArgumentException("Must provide at least one of an output jena model or a dump file");
 		}
+		
+		Map<String, Map<String, ? extends Object>> maps = new HashMap<String, Map<String, ? extends Object>>();
+		maps.put("vivoJena predicates", this.vivoPredicates);
+		maps.put("inputJena predicates", this.inputPredicates);
+		maps.put("algorithms", this.algorithms);
+		maps.put("weights", this.weights);
+		verifyRunNames(maps);
 	}
 	
 	/**
@@ -118,7 +133,11 @@ public class Diff {
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameter(true, "FILENAME").setDescription("filename for output").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('A').setLongOpt("algorithms").withParameterValueMap("RUN_NAME", "CLASS_NAME").setDescription("for RUN_NAME, use this CLASS_NAME (must implement Algorithm) to evaluate matches").setRequired(true));
+
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("dumptolanguage").withParameterValueMap("FILE_NAME", "LANGUAGE").setDescription("language for output").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameterValueMap("FILE_NAME", "FILENAME").setDescription("filename for output").setRequired(false));
+		
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("dumpntripletofile").withParameter(true, "FILENAME").setDescription("filename for N triple output").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("dumpn3tofile").withParameter(true, "FILENAME").setDescription("filename for N 3 output").setRequired(false));
 		return parser;
