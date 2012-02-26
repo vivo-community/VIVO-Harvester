@@ -323,14 +323,14 @@ public class DemoPSMerge {
 		System.setProperty("process-task", "Diff.Subs");
 		InitLog.initLogger(null, null);
 		// Find Subtractions
-		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel, null, null, null);
+		Diff psDiffSubs = new Diff(psPrevHarvest, psInput, psSubsModel, null, null, null, null);
 		log.trace("Finding subtractions");
 		psDiffSubs.execute();
 		
 		System.setProperty("process-task", "Diff.Adds");
 		InitLog.initLogger(null, null);
 		// Find Additions
-		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel, null, null, null);
+		Diff psDiffAdds = new Diff(psInput, psPrevHarvest, psAddsModel, null, null, null, null);
 		log.trace("Finding additions");
 		psDiffAdds.execute();
 		
