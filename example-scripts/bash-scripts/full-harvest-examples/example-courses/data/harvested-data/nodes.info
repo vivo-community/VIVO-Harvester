@@ -1,6 +1,0 @@
-#Metadata: Fileset: nodes
-#Tue Feb 28 13:04:15 EST 2012
-tdb.object.encoding=sse
-tdb.file.type=object
-tdb.file.impl.version=dat-v1
-tdb.file.impl=dat
