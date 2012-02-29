@@ -456,8 +456,8 @@ public class ScoreTest extends TestCase {
 		new Match(this.input, this.score, null, true, 1f, null, false, 500).execute();
 		log.info("Match: End");
 		
-		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/position/posFor7821299012in019283start20091203> ?p ?o }"));
 		assertTrue(this.input.executeAskQuery("ASK { <http://vivo.mydomain.edu/individual/n675720185> ?p ?o }"));
+		assertFalse(this.input.executeAskQuery("ASK { <http://vivoweb.org/harvester/position/posFor7821299012in019283start20091203> ?p ?o }"));
 		
 		log.info("END testURIEqualityTest");
 	}
