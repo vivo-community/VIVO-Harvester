@@ -15,9 +15,8 @@
 <%    Neither the minend nor the subtrahend are altered.                                                              %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
-<Task>
-	<!--INPUT -->
-	<!--MINUEND : for more information please see the given config file -->
+<Config>
+    <!--MINUEND : for more information please see the given config file -->
 <!-- 
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 <%  <Param name="minuend"> The model described by this config file is the model which has the data which will be in   %>
@@ -27,7 +26,7 @@
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
 	<Param name="minuend">previous-harvest.model.xml</Param>
-	
+    
     <!--SUBTRAHEND : for more information please see the given config file -->
 <!-- 
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
@@ -37,7 +36,7 @@
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
 	<Param name="subtrahend">harvested-data.model.xml</Param>
-	
+    
     <!--DUMPFILE -->
 <!-- 
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
@@ -47,7 +46,8 @@
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
 	<Param name="dumptofile">data/vivo-subtractions.rdf.xml</Param>
-	    <!--OUTPUT : for more information please see the given config file -->
+    
+    <!--OUTPUT : for more information please see the given config file -->
 <!-- 
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 <%  <Param name="output"> The model described by this config file is the model that will be produced which will       %>
@@ -57,4 +57,4 @@
 -->
     
 <!--     <Param name="output">diff-output.model.xml</Param> -->
-</Task>
+</Config>
