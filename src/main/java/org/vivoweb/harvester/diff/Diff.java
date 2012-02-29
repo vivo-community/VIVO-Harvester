@@ -184,25 +184,26 @@ public class Diff {
 		
 		diffModel = minuendModel.difference(subtrahendModel);
 		
-		for(String filename : dF.keySet()) {
-			String filepath = dF.get(filename);
-			String filelanguage = "";
-			if (dL.containsKey(filename)){
-				filelanguage = dL.get(filename);
-			} else {
-				filelanguage = "RDF/XML";
+		if (dF != null) {
+			for(String filename : dF.keySet()) {
+				String filepath = dF.get(filename);
+				String filelanguage = "";
+				if (dL.containsKey(filename)){
+					filelanguage = dL.get(filename);
+				} else {
+					filelanguage = "RDF/XML";
+				}
+				
+				RDFWriter fasterWriter = diffModel.getWriter(filelanguage);
+				if (filelanguage.equals("RDF/XML")){
+					fasterWriter.setProperty("showXmlDeclaration", "true");
+					fasterWriter.setProperty("allowBadURIs", "true");
+					fasterWriter.setProperty("relativeURIs", "");
+				}
+				OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(filepath), Charset.availableCharsets().get("UTF-8"));
+				fasterWriter.write(diffModel, osw, "");
+				log.debug(filelanguage + " Data was exported to " + filepath);	
 			}
-			
-			RDFWriter fasterWriter = diffModel.getWriter(filelanguage);
-			if (filelanguage.equals("RDF/XML")){
-				fasterWriter.setProperty("showXmlDeclaration", "true");
-				fasterWriter.setProperty("allowBadURIs", "true");
-				fasterWriter.setProperty("relativeURIs", "");
-			}
-			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(filepath), Charset.availableCharsets().get("UTF-8"));
-			fasterWriter.write(diffModel, osw, "");
-			log.debug(filelanguage + " Data was exported to " + filepath);
-			
 		}
 		
 		//Deprecated code (see new format using Map above)
