@@ -36,7 +36,8 @@ set -e
 #	to request this file. The passwords and usernames are filtered out of this file
 #	To prevent these logs from containing sensitive information.
 echo "Full Logging in $HARVEST_NAME.$DATE.log"
-EMAIL_RECIPIENT=youremailid
+EMAIL_RECIPIENT=vsposato@ufl.edu
+
 rm -f tmp.txt
 if [ ! -d logs ]; then
   mkdir logs
@@ -77,7 +78,7 @@ touch courselogfile.txt
 #else print to wellformated without any changes 
 
 
-cat  course-input/coursevivo_course.csv  | awk 'BEGIN {FS=OFS=","}{ if( $6 !~ /^"/ && NR >1) {$4=sprintf("%04d", $4); sub($4,"\""$4"\""); $6=sprintf("%08d", $6);sub($6,"\""$6"\""); print }else print;}' >  course-input/wellformated.csv
+cat  course-input/coursevivo_course.csv  | awk 'BEGIN {FS=OFS=","}{ if( $4 !~ /^"/ && NR >1) {$2=sprintf("%04d", $2); sub($2,"\""$2"\""); $4=sprintf("%08d", $4);sub($4,"\""$4"\""); print }else print;}' >  course-input/wellformated.csv 
 
 #move course-input/wellformated.csv to course-input/coursevivo_course.csv
 mv course-input/wellformated.csv  course-input/coursevivo_course.csv
@@ -252,7 +253,7 @@ echo -e "\n"  >> tmp.txt
 echo "Ending full log" >> tmp.txt
 #Mail the assembled log file to the desired person.
 
-mail -a "FROM:Course_Ingest" -s "\"Course Ingest harvest of $DATE\"" "$EMAIL_RECIPIENT" < tmp.txt
+mail -a "FROM:Course_Ingest" -s "Course Ingest harvest of $DATE" "$EMAIL_RECIPIENT" < tmp.txt
 
 echo 'Harvest courses completed successfully'
 

@@ -45,8 +45,7 @@
 <%                                                                                                                    %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
-	<Param name="dumptofile">xmlrdf=data/vivo-additions.rdf.xml</Param>
-	<Param name="dumptoLanguage">xmlrdf=XML/RDF</Parm>
+	<Param name="dumptofile">data/vivo-additions.rdf.xml</Param>
     
     <!--OUTPUT : for more information please see the given config file -->
 <!-- 
@@ -59,3 +58,4 @@
 	
 <!--     <Param name="output">diff-output.model.xml</Param> -->
 </Config>
+
