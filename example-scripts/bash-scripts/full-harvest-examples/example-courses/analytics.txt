@@ -1,0 +1,5 @@
+Total number of Courses in VIVO:   | 2392 |
+Total number of CoursesSecton in VIVO:   | 5143 |
+Total number of people in VIVO:   | 50583 |
+Total number of people with UFIDs:   | 21696 |
+Total number of people without UFIDs:   | 28887 |

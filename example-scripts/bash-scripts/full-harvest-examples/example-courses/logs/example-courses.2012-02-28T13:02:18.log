@@ -1,0 +1,50 @@
+2012-02-28 13:02:24.696 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: Start
+2012-02-28 13:02:24.699 DEBUG [o.v.h.u.a.ArgList] running JenaConnect
+2012-02-28 13:02:24.700 DEBUG [o.v.h.u.a.ArgList] command line args: -j vivo.model.xml -q SELECT  count(?URI)  WHERE  {?URI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://vivo.ufl.edu/ontology/vivo-ufl/Course>. }
+2012-02-28 13:02:24.708 TRACE [o.v.h.u.r.JenaConnect] 'dbLayout' - 'layout2'
+2012-02-28 13:02:24.708 TRACE [o.v.h.u.r.JenaConnect] 'modelName' - 'http://vitro.mannlib.cornell.edu/default/vitro-kb-2'
+2012-02-28 13:02:24.708 TRACE [o.v.h.u.r.JenaConnect] 'dbUrl' - 'jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo'
+2012-02-28 13:02:24.708 TRACE [o.v.h.u.r.JenaConnect] 'dbClass' - 'com.mysql.jdbc.Driver'
+2012-02-28 13:02:24.708 TRACE [o.v.h.u.r.JenaConnect] 'dbType' - 'MySQL'
+2012-02-28 13:02:24.708 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'sdb'
+2012-02-28 13:02:25.724 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: End
+2012-02-28 13:02:30.148 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: Start
+2012-02-28 13:02:30.151 DEBUG [o.v.h.u.a.ArgList] running JenaConnect
+2012-02-28 13:02:30.152 DEBUG [o.v.h.u.a.ArgList] command line args: -j vivo.model.xml -q SELECT  count(?URI)  WHERE  {?URI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection>. }
+2012-02-28 13:02:30.177 TRACE [o.v.h.u.r.JenaConnect] 'dbLayout' - 'layout2'
+2012-02-28 13:02:30.177 TRACE [o.v.h.u.r.JenaConnect] 'modelName' - 'http://vitro.mannlib.cornell.edu/default/vitro-kb-2'
+2012-02-28 13:02:30.177 TRACE [o.v.h.u.r.JenaConnect] 'dbUrl' - 'jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo'
+2012-02-28 13:02:30.177 TRACE [o.v.h.u.r.JenaConnect] 'dbClass' - 'com.mysql.jdbc.Driver'
+2012-02-28 13:02:30.177 TRACE [o.v.h.u.r.JenaConnect] 'dbType' - 'MySQL'
+2012-02-28 13:02:30.177 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'sdb'
+2012-02-28 13:02:31.204 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: End
+2012-02-28 13:02:35.568 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: Start
+2012-02-28 13:02:35.571 DEBUG [o.v.h.u.a.ArgList] running JenaConnect
+2012-02-28 13:02:35.572 DEBUG [o.v.h.u.a.ArgList] command line args: -j vivo.model.xml -q SELECT count(?person) where { ?person <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>. }
+2012-02-28 13:02:35.580 TRACE [o.v.h.u.r.JenaConnect] 'dbLayout' - 'layout2'
+2012-02-28 13:02:35.580 TRACE [o.v.h.u.r.JenaConnect] 'modelName' - 'http://vitro.mannlib.cornell.edu/default/vitro-kb-2'
+2012-02-28 13:02:35.580 TRACE [o.v.h.u.r.JenaConnect] 'dbUrl' - 'jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo'
+2012-02-28 13:02:35.580 TRACE [o.v.h.u.r.JenaConnect] 'dbClass' - 'com.mysql.jdbc.Driver'
+2012-02-28 13:02:35.580 TRACE [o.v.h.u.r.JenaConnect] 'dbType' - 'MySQL'
+2012-02-28 13:02:35.580 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'sdb'
+2012-02-28 13:02:37.701 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: End
+2012-02-28 13:02:42.180 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: Start
+2012-02-28 13:02:42.184 DEBUG [o.v.h.u.a.ArgList] running JenaConnect
+2012-02-28 13:02:42.185 DEBUG [o.v.h.u.a.ArgList] command line args: -j vivo.model.xml -q SELECT  count(?URI) WHERE { ?URI  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>. ?URI <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID . }
+2012-02-28 13:02:42.198 TRACE [o.v.h.u.r.JenaConnect] 'dbLayout' - 'layout2'
+2012-02-28 13:02:42.198 TRACE [o.v.h.u.r.JenaConnect] 'modelName' - 'http://vitro.mannlib.cornell.edu/default/vitro-kb-2'
+2012-02-28 13:02:42.198 TRACE [o.v.h.u.r.JenaConnect] 'dbUrl' - 'jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo'
+2012-02-28 13:02:42.198 TRACE [o.v.h.u.r.JenaConnect] 'dbClass' - 'com.mysql.jdbc.Driver'
+2012-02-28 13:02:42.198 TRACE [o.v.h.u.r.JenaConnect] 'dbType' - 'MySQL'
+2012-02-28 13:02:42.198 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'sdb'
+2012-02-28 13:03:23.309 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: End
+2012-02-28 13:03:27.688 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: Start
+2012-02-28 13:03:27.692 DEBUG [o.v.h.u.a.ArgList] running JenaConnect
+2012-02-28 13:03:27.693 DEBUG [o.v.h.u.a.ArgList] command line args: -j vivo.model.xml -q SELECT  count(?u) WHERE { ?u <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . OPTIONAL {?u <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?y . } FILTER (!bound(?y)) }
+2012-02-28 13:03:27.704 TRACE [o.v.h.u.r.JenaConnect] 'dbLayout' - 'layout2'
+2012-02-28 13:03:27.705 TRACE [o.v.h.u.r.JenaConnect] 'modelName' - 'http://vitro.mannlib.cornell.edu/default/vitro-kb-2'
+2012-02-28 13:03:27.705 TRACE [o.v.h.u.r.JenaConnect] 'dbUrl' - 'jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo'
+2012-02-28 13:03:27.705 TRACE [o.v.h.u.r.JenaConnect] 'dbClass' - 'com.mysql.jdbc.Driver'
+2012-02-28 13:03:27.705 TRACE [o.v.h.u.r.JenaConnect] 'dbType' - 'MySQL'
+2012-02-28 13:03:27.705 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'sdb'
+2012-02-28 13:04:10.902 INFO  [o.v.h.u.r.JenaConnect] JenaConnect: End

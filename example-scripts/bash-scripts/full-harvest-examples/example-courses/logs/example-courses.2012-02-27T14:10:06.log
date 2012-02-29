@@ -1,0 +1,83 @@
+2012-02-27 14:10:25.963 INFO  [o.v.h.u.CSVtoJDBC] CSVtoJDBC: Start
+2012-02-27 14:10:25.967 DEBUG [o.v.h.u.a.ArgList] running CSVtoJDBC
+2012-02-27 14:10:25.968 DEBUG [o.v.h.u.a.ArgList] command line args: -X csvtojdbc.config.xml
+2012-02-27 14:10:25.981 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --connection jdbc:h2:data/csv/store --tableName COURSES_CSV --inputFile course-input/coursevivo_course.csv --driver org.h2.Driver --password ******
+2012-02-27 14:10:27.039 DEBUG [o.v.h.u.CSVtoJDBC] Create table command: 
+CREATE TABLE COURSES_CSV( ROWID int NOT NULL, 
+20105 TEXT ,
+4473 TEXT ,
+1 TEXT ,
+93408710 TEXT ,
+Baldwin,Rebecca W TEXT ,
+ENY2040 TEXT ,
+THE INSECTS TEXT )
+2012-02-27 14:10:27.048 ERROR [o.v.h.u.CSVtoJDBC] org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE COURSES_CSV( ROWID INT NOT NULL, 
+20105[*] TEXT ,
+4473 TEXT ,
+1 TEXT ,
+93408710 TEXT ,
+BALDWIN,REBECCA W TEXT ,
+ENY2040 TEXT ,
+THE INSECTS TEXT ) "; expected "identifier"; SQL statement:
+CREATE TABLE COURSES_CSV( ROWID int NOT NULL, 
+20105 TEXT ,
+4473 TEXT ,
+1 TEXT ,
+93408710 TEXT ,
+Baldwin,Rebecca W TEXT ,
+ENY2040 TEXT ,
+THE INSECTS TEXT ) [42001-140]
+2012-02-27 14:10:27.052 DEBUG [o.v.h.u.CSVtoJDBC] Stacktrace:
+java.io.IOException: org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE COURSES_CSV( ROWID INT NOT NULL, 
+20105[*] TEXT ,
+4473 TEXT ,
+1 TEXT ,
+93408710 TEXT ,
+BALDWIN,REBECCA W TEXT ,
+ENY2040 TEXT ,
+THE INSECTS TEXT ) "; expected "identifier"; SQL statement:
+CREATE TABLE COURSES_CSV( ROWID int NOT NULL, 
+20105 TEXT ,
+4473 TEXT ,
+1 TEXT ,
+93408710 TEXT ,
+Baldwin,Rebecca W TEXT ,
+ENY2040 TEXT ,
+THE INSECTS TEXT ) [42001-140]
+	at org.vivoweb.harvester.util.CSVtoJDBC.execute(CSVtoJDBC.java:194) ~[harvester.jar:na]
+	at org.vivoweb.harvester.util.CSVtoJDBC.main(CSVtoJDBC.java:231) ~[harvester.jar:na]
+Caused by: org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE COURSES_CSV( ROWID INT NOT NULL, 
+20105[*] TEXT ,
+4473 TEXT ,
+1 TEXT ,
+93408710 TEXT ,
+BALDWIN,REBECCA W TEXT ,
+ENY2040 TEXT ,
+THE INSECTS TEXT ) "; expected "identifier"; SQL statement:
+CREATE TABLE COURSES_CSV( ROWID int NOT NULL, 
+20105 TEXT ,
+4473 TEXT ,
+1 TEXT ,
+93408710 TEXT ,
+Baldwin,Rebecca W TEXT ,
+ENY2040 TEXT ,
+THE INSECTS TEXT ) [42001-140]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:327) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.message.DbException.get(DbException.java:167) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.message.DbException.getSyntaxError(DbException.java:192) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.readColumnIdentifier(Parser.java:2639) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.parseCreateTable(Parser.java:4916) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.parseCreate(Parser.java:3653) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.parsePrepared(Parser.java:311) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.parse(Parser.java:275) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.parse(Parser.java:247) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.prepare(Parser.java:201) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.command.Parser.prepareCommand(Parser.java:214) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.engine.Session.prepareLocal(Session.java:434) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.engine.Session.prepareCommand(Session.java:384) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1071) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:163) ~[h2-1.2.140.jar:1.2.140]
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:151) ~[h2-1.2.140.jar:1.2.140]
+	at org.vivoweb.harvester.util.CSVtoJDBC.execute(CSVtoJDBC.java:172) ~[harvester.jar:na]
+	... 1 common frames omitted
+2012-02-27 14:10:27.053 INFO  [o.v.h.u.CSVtoJDBC] CSVtoJDBC: End

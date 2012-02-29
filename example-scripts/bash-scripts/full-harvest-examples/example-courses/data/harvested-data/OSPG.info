@@ -1,0 +1,9 @@
+#Metadata: Fileset: OSPG
+#Tue Feb 28 13:08:54 EST 2012
+tdb.file.type=rangeindex
+tdb.file.indexorder=OSPG
+tdb.file.impl.version=bplustree-v1
+tdb.file.impl=bplustree
+tdb.bplustree.record=32,0
+tdb.bplustree.order=113
+tdb.bplustree.blksize=8192

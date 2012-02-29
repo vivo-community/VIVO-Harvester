@@ -1,0 +1,224 @@
+2012-02-28 12:43:12.599 INFO  [o.v.h.u.CSVtoJDBC] CSVtoJDBC: Start
+2012-02-28 12:43:12.603 DEBUG [o.v.h.u.a.ArgList] running CSVtoJDBC
+2012-02-28 12:43:12.604 DEBUG [o.v.h.u.a.ArgList] command line args: -X csvtojdbc.config.xml
+2012-02-28 12:43:12.610 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --connection jdbc:h2:data/csv/store --tableName COURSES_CSV --inputFile course-input/coursevivo_course.csv --driver org.h2.Driver --password ******
+2012-02-28 12:43:12.856 DEBUG [o.v.h.u.CSVtoJDBC] Create table command: 
+CREATE TABLE COURSES_CSV( ROWID int NOT NULL, 
+TERM TEXT ,
+SECT TEXT ,
+MEET_NO TEXT ,
+INS_UFID TEXT ,
+INSTRUCTOR TEXT ,
+CRS TEXT ,
+CRS_TITLE TEXT )
+2012-02-28 12:43:12.863 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (0, '20088', '0571', '1', '00001060', 'Gordon,Melliss''a Sasha', 'SLS2301', 'CAREER PLANNING')
+2012-02-28 12:43:12.868 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (1, '20088', '0574', '1', '00008133', 'Nghiem,Khanh Ngoc', 'SLS2301', 'CAREER PLANNING')
+2012-02-28 12:43:12.869 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (2, '20088', '0592', '1', '00000390', 'Dey,Farouk', 'SLS2301', 'CAREER PLANNING')
+2012-02-28 12:43:12.870 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (3, '20088', '0600', '1', '00007197', 'Lee,Krystal O', 'SLS2302', 'JOB SEARCH STRATEGIES')
+2012-02-28 12:43:12.870 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (4, '20088', '0636', '1', '00007991', 'Hall,Eric Travis', 'SLS2302', 'JOB SEARCH STRATEGIES')
+2012-02-28 12:43:12.871 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (5, '20088', '0667', '1', '00007230', 'Titus,Kali Lynn', 'SLS2302', 'JOB SEARCH STRATEGIES')
+2012-02-28 12:43:12.871 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (6, '20088', '7621', '1', '00005830', 'Duval,Charles I,Jr', 'SLS2301', 'CAREER PLANNING')
+2012-02-28 12:43:12.872 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (7, '20088', '7682', '1', '00009809', 'White,Heather Bengtso', 'IDS4949', 'CO-OP WORK EXPERIENCE')
+2012-02-28 12:43:12.872 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (8, '20088', '9824', '1', '00009820', 'Oliveri''o,James Charle', 'DIG5930', 'SPECIAL TOPICS')
+2012-02-28 12:43:12.879 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (9, '20088', '0213', '1', '00008270', 'Miller,Sean Owen', 'ART1803C', 'WRKSHP RES/PRA STUDIO')
+2012-02-28 12:43:12.880 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (10, '20088', '0213', '1', '00028070', 'Taylor,Bethany Leigha', 'ART1803C', 'WRKSHP RES/PRA STUDIO')
+2012-02-28 12:43:12.880 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (11, '20088', '0217', '1', '00008270', 'Miller,Sean Owen', 'ART1803C', 'WRKSHP RES/PRA STUDIO')
+2012-02-28 12:43:12.881 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (12, '20088', '0217', '1', '00008070', 'Taylor,Bethany Leigha', 'ART1803C', 'WRKSHP RES/PRA STUDIO')
+2012-02-28 12:43:12.881 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (13, '20088', '0430', '1', '00000697', 'Fenton,Jordan A', 'ARH2002', 'INTRO TO ART: ART EXP')
+2012-02-28 12:43:12.882 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (14, '20088', '0430', '1', '00009129', 'Macpherson,Stacey L', 'ARH2002', 'INTRO TO ART: ART EXP')
+2012-02-28 12:43:12.883 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (15, '20088', '0433', '1', '00007939', 'Ross,Elizabeth', 'ARH2050', 'INTRO HIST OF ART 1')
+2012-02-28 12:43:12.883 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (16, '20088', '0433', '2', '00059417', 'Wade,Lauren E', 'ARH2050', 'INTRO HIST OF ART 1')
+2012-02-28 12:43:12.884 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (17, '20088', '0434', '2', '17197939', 'Ross,Elizabeth', 'ARH2050', 'INTRO HIST OF ART 1')
+2012-02-28 12:43:12.884 DEBUG [o.v.h.u.CSVtoJDBC] Insert command: 
+INSERT INTO COURSES_CSV ( ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE )
+VALUES (18, '20088', '1509', '1', '02439075', 'Martinkus,Benjamin', 'PGY2101', 'VISUAL LITERACY PHOTO')
+2012-02-28 12:43:12.886 INFO  [o.v.h.u.CSVtoJDBC] CSVtoJDBC: End
+2012-02-28 12:43:13.721 INFO  [o.v.h.f.JDBCFetch] JDBCFetch: Start
+2012-02-28 12:43:13.727 DEBUG [o.v.h.u.a.ArgList] running JDBCFetch
+2012-02-28 12:43:13.728 DEBUG [o.v.h.u.a.ArgList] command line args: -X jdbcfetch.config.xml
+2012-02-28 12:43:13.734 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --connection jdbc:h2:data/csv/store --driver org.h2.Driver --output raw-records.config.xml --password ******
+2012-02-28 12:43:13.739 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/raw-records'
+2012-02-28 12:43:13.739 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:13.739 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:13.741 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/raw-records' Does Not Exist, attempting to create
+2012-02-28 12:43:13.742 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/raw-records/.metadata' Does Not Exist, attempting to create
+2012-02-28 12:43:14.480 DEBUG [o.v.h.f.JDBCFetch] Finding data column names for table: COURSES_CSV
+2012-02-28 12:43:14.485 TRACE [o.v.h.f.JDBCFetch] Found data column: ROWID
+2012-02-28 12:43:14.486 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.488 TRACE [o.v.h.f.JDBCFetch] Found data column: TERM
+2012-02-28 12:43:14.488 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.491 TRACE [o.v.h.f.JDBCFetch] Found data column: SECT
+2012-02-28 12:43:14.491 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.493 TRACE [o.v.h.f.JDBCFetch] Found data column: MEET_NO
+2012-02-28 12:43:14.493 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.495 TRACE [o.v.h.f.JDBCFetch] Found data column: INS_UFID
+2012-02-28 12:43:14.495 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.499 TRACE [o.v.h.f.JDBCFetch] Found data column: INSTRUCTOR
+2012-02-28 12:43:14.499 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.501 TRACE [o.v.h.f.JDBCFetch] Found data column: CRS
+2012-02-28 12:43:14.501 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.516 TRACE [o.v.h.f.JDBCFetch] Found data column: CRS_TITLE
+2012-02-28 12:43:14.516 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.517 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.519 DEBUG [o.v.h.f.JDBCFetch] Finding id column names for table: COURSES_CSV
+2012-02-28 12:43:14.521 TRACE [o.v.h.f.JDBCFetch] Found id column: ROWID
+2012-02-28 12:43:14.521 TRACE [o.v.h.f.JDBCFetch] Generated SQL Query:
+SELECT ROWID, TERM, SECT, MEET_NO, INS_UFID, INSTRUCTOR, CRS, CRS_TITLE, ROWID FROM COURSES_CSV
+2012-02-28 12:43:14.528 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.529 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_0
+2012-02-28 12:43:14.665 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.666 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_1
+2012-02-28 12:43:14.673 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.674 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_2
+2012-02-28 12:43:14.690 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.691 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_3
+2012-02-28 12:43:14.707 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.708 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_4
+2012-02-28 12:43:14.725 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.726 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_5
+2012-02-28 12:43:14.732 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.733 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_6
+2012-02-28 12:43:14.741 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.742 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_7
+2012-02-28 12:43:14.751 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.752 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_8
+2012-02-28 12:43:14.758 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.759 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_9
+2012-02-28 12:43:14.764 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.765 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_10
+2012-02-28 12:43:14.771 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.772 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_11
+2012-02-28 12:43:14.778 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.779 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_12
+2012-02-28 12:43:14.785 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.786 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_13
+2012-02-28 12:43:14.792 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.792 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_14
+2012-02-28 12:43:14.799 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.800 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_15
+2012-02-28 12:43:14.806 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.807 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_16
+2012-02-28 12:43:14.813 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.814 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_17
+2012-02-28 12:43:14.822 DEBUG [o.v.h.f.JDBCFetch] Finding relation column names for table: COURSES_CSV
+2012-02-28 12:43:14.823 TRACE [o.v.h.f.JDBCFetch] Adding record: COURSES_CSV_id_-_18
+2012-02-28 12:43:14.827 INFO  [o.v.h.f.JDBCFetch] Added 19 Records
+2012-02-28 12:43:14.829 INFO  [o.v.h.f.JDBCFetch] JDBCFetch: End
+2012-02-28 12:43:16.053 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: Start
+2012-02-28 12:43:16.057 DEBUG [o.v.h.u.a.ArgList] running XSLTranslator
+2012-02-28 12:43:16.057 DEBUG [o.v.h.u.a.ArgList] command line args: -X xsltranslator.config.xml
+2012-02-28 12:43:16.069 DEBUG [o.v.h.u.a.ArgList] config file args: --input raw-records.config.xml --xslFile courses-to-vivo.xsl --force --output translated-records.config.xml
+2012-02-28 12:43:16.079 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/raw-records'
+2012-02-28 12:43:16.079 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:16.079 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:16.083 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-02-28 12:43:16.083 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:16.083 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:16.083 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records' Does Not Exist, attempting to create
+2012-02-28 12:43:16.086 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records/.metadata' Does Not Exist, attempting to create
+2012-02-28 12:43:16.092 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-02-28 12:43:16.096 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-02-28 12:43:16.097 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_0
+2012-02-28 12:43:16.536 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_1
+2012-02-28 12:43:16.585 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_10
+2012-02-28 12:43:16.631 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_11
+2012-02-28 12:43:16.675 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_12
+2012-02-28 12:43:16.719 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_13
+2012-02-28 12:43:16.761 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_14
+2012-02-28 12:43:16.802 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_15
+2012-02-28 12:43:16.890 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_16
+2012-02-28 12:43:16.974 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_17
+2012-02-28 12:43:17.049 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_18
+2012-02-28 12:43:17.133 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_2
+2012-02-28 12:43:17.167 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_3
+2012-02-28 12:43:17.201 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_4
+2012-02-28 12:43:17.233 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_5
+2012-02-28 12:43:17.264 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_6
+2012-02-28 12:43:17.297 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_7
+2012-02-28 12:43:17.351 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_8
+2012-02-28 12:43:17.379 TRACE [o.v.h.t.XSLTranslator] Translating Record COURSES_CSV_id_-_9
+2012-02-28 12:43:17.407 INFO  [o.v.h.t.XSLTranslator] 19 records translated.
+2012-02-28 12:43:17.407 INFO  [o.v.h.t.XSLTranslator] 0 records did not need translation
+2012-02-28 12:43:17.408 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: End
+2012-02-28 12:43:18.167 INFO  [o.v.h.t.Transfer] Transfer: Start
+2012-02-28 12:43:18.171 DEBUG [o.v.h.u.a.ArgList] running Transfer
+2012-02-28 12:43:18.173 DEBUG [o.v.h.u.a.ArgList] command line args: -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
+2012-02-28 12:43:18.192 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-02-28 12:43:18.192 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-02-28 12:43:18.873 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-02-28 12:43:18.873 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:18.873 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-02-28 12:43:18.876 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-02-28 12:43:18.879 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-02-28 12:43:18.881 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_0
+2012-02-28 12:43:19.216 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_1
+2012-02-28 12:43:19.254 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_10
+2012-02-28 12:43:19.310 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_11
+2012-02-28 12:43:19.350 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_12
+2012-02-28 12:43:19.384 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_13
+2012-02-28 12:43:19.425 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_14
+2012-02-28 12:43:19.468 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_15
+2012-02-28 12:43:19.511 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_16
+2012-02-28 12:43:19.535 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_17
+2012-02-28 12:43:19.559 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_18
+2012-02-28 12:43:19.586 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_2
+2012-02-28 12:43:19.618 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_3
+2012-02-28 12:43:19.657 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_4
+2012-02-28 12:43:19.688 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_5
+2012-02-28 12:43:19.715 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_6
+2012-02-28 12:43:19.743 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_7
+2012-02-28 12:43:19.775 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_8
+2012-02-28 12:43:19.811 TRACE [o.v.h.u.r.JenaConnect] loading record: COURSES_CSV_id_-_9
+2012-02-28 12:43:20.041 INFO  [o.v.h.t.Transfer] Transfer: End
+2012-02-28 12:43:20.995 INFO  [o.v.h.s.Score] Score: Start
+2012-02-28 12:43:21.000 DEBUG [o.v.h.u.a.ArgList] running Score
+2012-02-28 12:43:21.000 DEBUG [o.v.h.u.a.ArgList] command line args: -X score-courses.config.xml
+2012-02-28 12:43:21.007 DEBUG [o.v.h.u.a.ArgList] config file args: --score-config score-data.model.xml --inputJena-predicates courseNum=http://vivo.ufl.edu/ontology/vivo-ufl/courseNum --weights courseNum=1.0 --tempJenaDir data/temp-score-model --vivoJena-config vivo.model.xml --vivoJena-predicates courseNum=http://vivo.ufl.edu/ontology/vivo-ufl/courseNum --algorithms courseNum=org.vivoweb.harvester.score.algorithm.EqualityTest --inputJena-config harvested-data.model.xml --namespace http://vivo.ufl.edu/harvested/ufl/courses/
+2012-02-28 12:43:21.016 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-02-28 12:43:21.016 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-02-28 12:43:21.669 TRACE [o.v.h.u.r.JenaConnect] 'dbLayout' - 'layout2'
+2012-02-28 12:43:21.669 TRACE [o.v.h.u.r.JenaConnect] 'modelName' - 'http://vitro.mannlib.cornell.edu/default/vitro-kb-2'
+2012-02-28 12:43:21.670 TRACE [o.v.h.u.r.JenaConnect] 'dbUrl' - 'jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo'
+2012-02-28 12:43:21.670 TRACE [o.v.h.u.r.JenaConnect] 'dbClass' - 'com.mysql.jdbc.Driver'
+2012-02-28 12:43:21.670 TRACE [o.v.h.u.r.JenaConnect] 'dbType' - 'MySQL'
+2012-02-28 12:43:21.670 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'sdb'
+2012-02-28 12:43:21.946 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-02-28 12:43:21.947 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-02-28 12:43:21.968 TRACE [o.v.h.s.Score] equalityOnlyMode: true
+2012-02-28 12:43:22.040 DEBUG [o.v.h.s.Score] Loading VIVO model into temp copy model

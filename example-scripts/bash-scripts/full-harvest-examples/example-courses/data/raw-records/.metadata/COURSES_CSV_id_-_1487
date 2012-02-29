@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataRecordList>
+<MetaDataRecord>
+<Date>1330452055142</Date>
+<DateReadable>2012-02-28 13:00:55.142</DateReadable>
+<Operation>written</Operation>
+<Operator>org.vivoweb.harvester.fetch.JDBCFetch</Operator>
+<MD5>bc8ee86a14aff1ce69ccc030d9b184ca</MD5>
+</MetaDataRecord>
+<MetaDataRecord>
+<Date>1330452084397</Date>
+<DateReadable>2012-02-28 13:01:24.397</DateReadable>
+<Operation>processed</Operation>
+<Operator>org.vivoweb.harvester.translate.XSLTranslator</Operator>
+<MD5>bc8ee86a14aff1ce69ccc030d9b184ca</MD5>
+</MetaDataRecord>
+</MetaDataRecordList>

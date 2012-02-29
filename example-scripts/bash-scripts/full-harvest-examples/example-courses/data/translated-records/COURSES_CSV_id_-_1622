@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:score="http://vivoweb.org/ontology/score#"
+         xmlns:public="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
+         xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#"
+         xmlns:db-COURSES_CSV="jdbc:h2:data/csv/store/fields/COURSES_CSV/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:datetime="http://exslt.org/dates-and-times"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:core="http://vivoweb.org/ontology/core#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/courses/IDH4917">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <ufVivo:courseNum>IDH4917</ufVivo:courseNum>
+      <rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course"/>
+      <ufVivo:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <rdfs:label xml:lang="en-US">IDH4917 UNDERGRAD RESEARCH</rdfs:label>
+      <ufVivo:courseForSection rdf:resource="http://vivo.ufl.edu/harvested/ufl/courseSection/IDH4917-Fall-2008-3468"/>
+      <core:webpage rdf:resource="http://vivo.ufl.edu/harvested/ufl/webPage/cdesc.php?crs=IDH4917"/>
+      <core:relatedRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/IDH4917-27965720"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/webPage/cdesc.php?crs=IDH4917">
+      <ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <core:webpageOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/courses/IDH4917"/>
+      <core:rank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</core:rank>
+      <core:linkURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">
+                        http://www.registrar.ufl.edu/cdesc.php?crs=IDH4917</core:linkURI>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/courseSection/IDH4917-Fall-2008-3468">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection"/>
+      <ufVivo:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection"/>
+      <rdfs:label xml:lang="en-US">IDH4917 Fall 2008 3468</rdfs:label>
+      <ufVivo:sectionNum>3468</ufVivo:sectionNum>
+      <ufVivo:sectionForCourse rdf:resource="http://vivo.ufl.edu/harvested/ufl/courses/IDH4917"/>
+      <core:dateTimeInterval rdf:resource="http://vivo.ufl.edu/harvested/ufl/academicTerm/Fall-2008"/>
+      <core:relatedRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/IDH4917-Fall-2008-3468-27965720"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/academicTerm/Fall-2008">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <ufVivo:dateTimeIntervalFor rdf:resource="http://vivo.ufl.edu/harvested/ufl/courseSection/IDH4917-Fall-2008-3468"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicTerm"/>
+      <rdfs:label xml:lang="en-US">Fall 2008</rdfs:label>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/teacherRole/IDH4917-Fall-2008-3468-27965720">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <core:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role"/>
+      <rdf:label xml:lang="en-US">IDH4917 3468 Fall 2008 27965720TR</rdf:label>
+      <core:teacherRoleOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/person/27965720"/>
+      <core:roleIn rdf:resource="http://vivo.ufl.edu/harvested/ufl/courseSection/IDH4917-Fall-2008-3468"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/teacherRole/IDH4917-27965720">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <core:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role"/>
+      <rdf:label xml:lang="en-US">IDH4917 27965720TR</rdf:label>
+      <ufVivo:hasCourseRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/person/27965720"/>
+      <core:roleIn rdf:resource="http://vivo.ufl.edu/harvested/ufl/courses/IDH4917"/>
+      <core:teacherRoleOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/person/27965720"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/person/27965720">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+      <ufVivo:ufid>27965720</ufVivo:ufid>
+      <rdfs:label>Maupin,Julie A</rdfs:label>
+      <ufVivo:courseRoleOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/IDH4917-27965720"/>
+      <core:hasTeacherRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/IDH4917-Fall-2008-3468-27965720"/>
+   </rdf:Description>
+</rdf:RDF>

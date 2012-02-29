@@ -102,8 +102,8 @@
     <Param name="dbLayout">layout2</Param>
     <Param name="dbClass">com.mysql.jdbc.Driver</Param>
     <Param name="dbType">MySQL</Param>
-    <Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vivo</Param>
+    <Param name="dbUrl">jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo</Param>
     <Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
-    <Param name="dbUser">vitro</Param>
-    <Param name="dbPass">vitro123</Param>
+    <Param name="dbUser">vivo</Param>
+    <Param name="dbPass">D5ev4wvpNzRZPmyB4zmt</Param>
 </Model>

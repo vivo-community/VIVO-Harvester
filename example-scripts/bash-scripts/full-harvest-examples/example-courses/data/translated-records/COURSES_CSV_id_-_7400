@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:score="http://vivoweb.org/ontology/score#"
+         xmlns:public="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
+         xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#"
+         xmlns:db-COURSES_CSV="jdbc:h2:data/csv/store/fields/COURSES_CSV/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:datetime="http://exslt.org/dates-and-times"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:core="http://vivoweb.org/ontology/core#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/courses/REE6315">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <ufVivo:courseNum>REE6315</ufVivo:courseNum>
+      <rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course"/>
+      <ufVivo:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <rdfs:label xml:lang="en-US">REE6315 REAL EST MARKET TRANS</rdfs:label>
+      <ufVivo:courseForSection rdf:resource="http://vivo.ufl.edu/harvested/ufl/courseSection/REE6315-Fall-2008-2802"/>
+      <core:webpage rdf:resource="http://vivo.ufl.edu/harvested/ufl/webPage/cdesc.php?crs=REE6315"/>
+      <core:relatedRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/REE6315-75456805"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/webPage/cdesc.php?crs=REE6315">
+      <ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#URLLink"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <core:webpageOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/courses/REE6315"/>
+      <core:rank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</core:rank>
+      <core:linkURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">
+                        http://www.registrar.ufl.edu/cdesc.php?crs=REE6315</core:linkURI>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/courseSection/REE6315-Fall-2008-2802">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection"/>
+      <ufVivo:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection"/>
+      <rdfs:label xml:lang="en-US">REE6315 Fall 2008 2802</rdfs:label>
+      <ufVivo:sectionNum>2802</ufVivo:sectionNum>
+      <ufVivo:sectionForCourse rdf:resource="http://vivo.ufl.edu/harvested/ufl/courses/REE6315"/>
+      <core:dateTimeInterval rdf:resource="http://vivo.ufl.edu/harvested/ufl/academicTerm/Fall-2008"/>
+      <core:relatedRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/REE6315-Fall-2008-2802-75456805"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/academicTerm/Fall-2008">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <ufVivo:dateTimeIntervalFor rdf:resource="http://vivo.ufl.edu/harvested/ufl/courseSection/REE6315-Fall-2008-2802"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicTerm"/>
+      <rdfs:label xml:lang="en-US">Fall 2008</rdfs:label>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/teacherRole/REE6315-Fall-2008-2802-75456805">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <core:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role"/>
+      <rdf:label xml:lang="en-US">REE6315 2802 Fall 2008 75456805TR</rdf:label>
+      <core:teacherRoleOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/person/75456805"/>
+      <core:roleIn rdf:resource="http://vivo.ufl.edu/harvested/ufl/courseSection/REE6315-Fall-2008-2802"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/teacherRole/REE6315-75456805">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <core:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole"/>
+      <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role"/>
+      <rdf:label xml:lang="en-US">REE6315 75456805TR</rdf:label>
+      <ufVivo:hasCourseRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/person/75456805"/>
+      <core:roleIn rdf:resource="http://vivo.ufl.edu/harvested/ufl/courses/REE6315"/>
+      <core:teacherRoleOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/person/75456805"/>
+   </rdf:Description>
+   <rdf:Description rdf:about="http://vivo.ufl.edu/harvested/ufl/person/75456805">
+      <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+      <ufVivo:dateHarvested>2012-02-28-05:00</ufVivo:dateHarvested>
+      <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+      <ufVivo:ufid>75456805</ufVivo:ufid>
+      <rdfs:label>Strickland,Hunter B</rdfs:label>
+      <ufVivo:courseRoleOf rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/REE6315-75456805"/>
+      <core:hasTeacherRole rdf:resource="http://vivo.ufl.edu/harvested/ufl/teacherRole/REE6315-Fall-2008-2802-75456805"/>
+   </rdf:Description>
+</rdf:RDF>
