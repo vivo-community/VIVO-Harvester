@@ -61,18 +61,18 @@ touch courselogfile.txt
 #	mv -f data data.$DATE
 #fi
 
-#Follwing bash one liner is to padd the Ufid and section number with leading zeros, ie to make it a 8 digit & 4 digit number respt.
+#Follwing bash one liner is to padd the Ufid and section number with leading zeros, ie to make them 8 digit & 4 digit number respt.
 
 
-# Set the input delimeter /output delimeter to be ','. For every line in coursevivo_course.csv set if the column number 6 doest not start with a '"' pad the id value with leading zero to make it a 8 digit number
+# Set the input delimeter /output delimeter to be ','. For every line in coursevivo_course.csv , if the column number 4 doest not start with a '"' pad the id value with leading zero to make it a 8 digit number
 #BEGIN {FS=OFS=","} ->> setting delimeter
-#if( $6 !~ /^"/&& NR >1) ->> doest not begin with '"' and Skip the header
+#if( $2 !~ /^"/&& NR >1) ->> doest not begin with '"' and Skip the header
 
-#$4=sprintf("%04d", $4) Section number ->pad with missing zero to make it 8 digit
-#sub($4,"\""$4"\"")- >> Section Number ->add '"' around it
+#$2=sprintf("%04d", $2) Section number ->pad with missing zero to make it 4 digit
+#sub($2,"\""$2"\"")- >> Section Number ->add '"' around it
 
-#$6=sprintf("%08d", $6) Ufid- > pad with missing zero to make it 8 digit
-#sub($6,"\""$6"\"")- >> Ufid -> add '"' around it
+#$4=sprintf("%08d", $4) Ufid- > pad with missing zero to make it 8 digit
+#sub($4,"\""$4"\"")- >> Ufid -> add '"' around it
 
 #print  to the wellformated.csv file
 #else print to wellformated without any changes 
