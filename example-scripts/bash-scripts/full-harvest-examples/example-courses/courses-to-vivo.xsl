@@ -300,9 +300,6 @@
 			<core:roleIn rdf:resource="{$baseURI}courses/{$courseName}" />
 			<!-- Relation TO Course Section End -->
 	
-			<!-- Relation To Person -->
-			<core:teacherRoleOf rdf:resource="{$baseURI}person/{$ins_ufid}" />
-			<!-- Relation To Person End -->
 
         </rdf:Description>
 		<!--COURSE Teacher Role Node End -->
