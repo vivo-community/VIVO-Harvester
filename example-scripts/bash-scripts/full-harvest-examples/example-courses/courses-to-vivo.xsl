@@ -113,10 +113,9 @@
 				<xsl:value-of select="current-date()" />
 			</ufVivo:dateHarvested>
 
-                        <ufVivo:courseNum>
-                                <xsl:value-of select="$courseName" />
-                        </ufVivo:courseNum>
-
+			<ufVivo:courseNum>
+			        <xsl:value-of select="$courseName" />
+			</ufVivo:courseNum>
 
 			<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Course" />
 			<ufVivo:mostSpecificType
@@ -126,9 +125,8 @@
 			
 			<rdfs:label xml:lang="en-US">
 				<xsl:value-of select="$courseName"/>
-				 <xsl:text> </xsl:text>
-                                <xsl:value-of select="$title" />
-
+				<xsl:text> </xsl:text>
+				<xsl:value-of select="$title" />
 			</rdfs:label>
 
 			<!-- Relation to Course Section Node -->
@@ -138,6 +136,7 @@
 			<!-- Relation to Webpage Node -->
 			<core:webpage rdf:resource="{$baseURI}webPage/cdesc.php?crs={$courseName}" />
 			<!-- Relation to Webpage Node End -->
+
 			<!-- Relation to Course Teacher Role Node -->
 			<core:relatedRole rdf:resource="{$baseURI}teacherRole/{$courseName}-{$ins_ufid}" />
 			<!-- Relation to Course Teacher Role Node End -->
@@ -155,74 +154,72 @@
 			<core:linkURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">
                         http://www.registrar.ufl.edu/cdesc.php?crs=<xsl:value-of select="$courseName" />
 			</core:linkURI>
-    		</rdf:Description>
+   		</rdf:Description>
 		<!--  Course Web-page END-->
 	
 		<!-- UNIQUE -->
 		<!-- Course Section -->
 		<rdf:Description rdf:about="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}-{$sectionNumber}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
 			</ufVivo:dateHarvested>
+
 			<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection" />
+
 			<ufVivo:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/CourseSection" />
-			<!--  <rdf:type rdf:resource="http://purl.org/NET/c4dm/event.owl#Event" /> -->
+
 			<rdfs:label xml:lang="en-US">
 				<xsl:value-of select="$courseName" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$semester" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$year" />
-		        	<xsl:text> </xsl:text>
+	        	<xsl:text> </xsl:text>
 				<xsl:value-of select="$sectionNumber" />
 			</rdfs:label>
+
 			<ufVivo:sectionNum>
 				<xsl:value-of select="$sectionNumber" />
 			</ufVivo:sectionNum>
+
 			<!-- Relation to Course Node -->
 			<ufVivo:sectionForCourse rdf:resource="{$baseURI}courses/{$courseName}" />
 			<!-- Relation to Course Node End -->
+
 			<!-- Relation to Academic Term -->
 			<core:dateTimeInterval rdf:resource="{$baseURI}academicTerm/{$semester}-{$year}" />
 			<!-- Relation to Academic Term End -->
+
 			<!-- Relation to Teacher Role Node -->
 			<core:relatedRole rdf:resource="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}-{$sectionNumber}-{$ins_ufid}" />
 			<!-- Relation to Teacher Role Node End -->
+
 		</rdf:Description>
 		<!--Course Section ENDS -->
 		<!-- NOT UNIQUE -->
 		
-	<!--me Academic Term Node -->
+		<!--Academic Term Node -->
 		<rdf:Description rdf:about="{$baseURI}academicTerm/{$semester}-{$year}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
 			</ufVivo:dateHarvested>
 			
-			<!-- Relation to Course Section Node -->
-                        <ufVivo:dateTimeIntervalFor rdf:resource="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}-{$sectionNumber}" />
-       			 <!-- Relation to Course Section Node End -->
-			
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicTerm" />
 
 			<rdfs:label xml:lang="en-US">
-				<!-- COMMENTED OUT VJS 120109
-				<xsl:value-of select="$courseName" />
-				<xsl:text> </xsl:text>
-				<xsl:value-of select="$sectionNumber" />
-	        		<xsl:text> </xsl:text> 
-				-->
 				<xsl:value-of select="$semester" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$year" />
-				<!-- COMMENTED OUT VJS 120109 <xsl:text>AT</xsl:text> -->
 			</rdfs:label>
 			
-			<!-- Relation to Start Node -->
-			<!-- COMMENTED OUT VJS 120109 <core:start rdf:resource="{$baseURI}academicTerm/start/{$courseName}-{$sectionNumber}-{$semester}-{$year}" /> -->
-			<!-- Relation to Start Node End -->
-
+			<!-- Relation to Course Section Node -->
+			<ufVivo:dateTimeIntervalFor rdf:resource="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}-{$sectionNumber}" />
+       		<!-- Relation to Course Section Node End -->
+			
 		</rdf:Description>
 		<!-- Academic Term Node End -->
 
@@ -233,10 +230,13 @@
 		<rdf:Description
 			rdf:about="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}-{$sectionNumber}-{$ins_ufid}">
 			<ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
+
 			<ufVivo:dateHarvested>
 				<xsl:value-of select="current-date()" />
 			</ufVivo:dateHarvested>
+
 			<core:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#TeacherRole" />
+
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole" />
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role" />
@@ -251,56 +251,58 @@
 				<xsl:value-of select="$year" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$ins_ufid" />
-				<!-- <xsl:text> </xsl:text> -->
-				<!-- <xsl:value-of select="$meet_no" /> -->
 				<xsl:text>TR</xsl:text>
 			</rdf:label>
 						
 			<!-- Relation To Person -->
 			<core:teacherRoleOf rdf:resource="{$baseURI}person/{$ins_ufid}" />
 			<!-- Relation To Person End -->
+
 			<!-- Relation TO Course Section -->
 			<core:roleIn rdf:resource="{$baseURI}courseSection/{$courseName}-{$semester}-{$year}-{$sectionNumber}" />
 			<!-- Relation TO Course Section End -->
+
 		</rdf:Description>
 		<!--Teacher Role Node End -->
 		<!-- NOT UNIQUE -->
-    <!-- NOT UNIQUE -->
-                <!--COURSE Teacher Role Node -->
-                <rdf:Description
-                        rdf:about="{$baseURI}teacherRole/{$courseName}-{$ins_ufid}">
-                        <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
-                        <ufVivo:dateHarvested>
-                                <xsl:value-of select="current-date()" />
-                        </ufVivo:dateHarvested>
-                        <core:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#TeacherRole" />
-                        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
-                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole" />
-                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role" />
 
-                        <rdf:label xml:lang="en-US">
-                                <xsl:value-of select="$courseName" />
-                                <xsl:text> </xsl:text>
-                                <xsl:value-of select="$ins_ufid" />
-                                <xsl:text>TR</xsl:text>
-                        </rdf:label>
+    	<!-- NOT UNIQUE -->
+		<!--COURSE Teacher Role Node -->
+		<rdf:Description rdf:about="{$baseURI}teacherRole/{$courseName}-{$ins_ufid}">
+	        <ufVivo:harvestedBy>Course-Harvester</ufVivo:harvestedBy>
 
-                        <!-- Relation To Person -->
-                        <ufVivo:hasCourseRole rdf:resource="{$baseURI}person/{$ins_ufid}" />
-                        <!-- Relation To Person End -->
-                        <!-- Relation TO Course Section -->
-                        <core:roleIn rdf:resource="{$baseURI}courses/{$courseName}" />
-                        <!-- Relation TO Course Section End -->
-        
-			<!-- Relation To Person -->
-			<core:teacherRoleOf rdf:resource="{$baseURI}person/{$ins_ufid}" />
-			<!-- Relation To Person End -->
-	        </rdf:Description>
-       
-	         <!--Teacher Role Node End -->
-                <!-- NOT UNIQUE -->
+	        <ufVivo:dateHarvested>
+	                <xsl:value-of select="current-date()" />
+	        </ufVivo:dateHarvested>
+
+	        <core:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#TeacherRole" />
+
+	        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
+	        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#TeacherRole" />
+	        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Role" />
+	
+	        <rdf:label xml:lang="en-US">
+	                <xsl:value-of select="$courseName" />
+	                <xsl:text> </xsl:text>
+	                <xsl:value-of select="$ins_ufid" />
+	                <xsl:text>TR</xsl:text>
+	        </rdf:label>
 		
-
+			<!-- Relation To Person -->
+			<ufVivo:courseRoleOf rdf:resource="{$baseURI}person/{$ins_ufid}" />
+			<!-- Relation To Person End -->
+	
+			<!-- Relation TO Course Section -->
+			<core:roleIn rdf:resource="{$baseURI}courses/{$courseName}" />
+			<!-- Relation TO Course Section End -->
+				       
+			<!-- Relation To Person -->
+			<!--  <core:teacherRoleOf rdf:resource="{$baseURI}person/{$ins_ufid}" /> -->
+			<!-- Relation To Person End -->
+	
+        </rdf:Description>
+		<!--COURSE Teacher Role Node End -->
+		<!-- NOT UNIQUE -->
 
 		<!--Person Node -->
 		<rdf:Description rdf:about="{$baseURI}person/{$ins_ufid}">
@@ -315,15 +317,15 @@
 			<rdfs:label>
 				<xsl:value-of select="$instructorName" />
 			</rdfs:label>
-
-			  <!-- Relation to Course Role Node-->
-                        <ufVivo:courseRoleOf rdf:resource="{$baseURI}teacherRole/{$courseName}-{$ins_ufid}" />
-                        <!-- Relation to Teacher Role Node End -->
-
-
+			
+			<!-- Relation to Course Role Node-->
+			<ufVivo:hasCourseRole rdf:resource="{$baseURI}teacherRole/{$courseName}-{$ins_ufid}" />
+			<!-- Relation to Teacher Role Node End -->
+			
 			<!-- Relation to Teacher Role Node-->
 			<core:hasTeacherRole rdf:resource="{$baseURI}teacherRole/{$courseName}-{$semester}-{$year}-{$sectionNumber}-{$ins_ufid}" />
 			<!-- Relation to Teacher Role Node End -->
+	
 		</rdf:Description>
 		<!--Person Node End -->
 	</xsl:template>
