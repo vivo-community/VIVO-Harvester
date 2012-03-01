@@ -154,6 +154,10 @@
 			<core:linkURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">
                         http://www.registrar.ufl.edu/cdesc.php?crs=<xsl:value-of select="$courseName" />
 			</core:linkURI>
+			<!-- Relation to Course Node -->
+			<core:webpageOf rdf:resource="{$baseURI}courses/{$courseName}" />
+			<!-- Relation to Course Node End -->
+
    		</rdf:Description>
 		<!--  Course Web-page END-->
 	
@@ -295,10 +299,6 @@
 			<!-- Relation TO Course Section -->
 			<core:roleIn rdf:resource="{$baseURI}courses/{$courseName}" />
 			<!-- Relation TO Course Section End -->
-				       
-			<!-- Relation To Person -->
-			<!--  <core:teacherRoleOf rdf:resource="{$baseURI}person/{$ins_ufid}" /> -->
-			<!-- Relation To Person End -->
 	
         </rdf:Description>
 		<!--COURSE Teacher Role Node End -->
