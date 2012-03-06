@@ -61,14 +61,11 @@
 <%                                                                                                                    %>
 <% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
      -->
-		<Param name="tempJenaDir">data/temp-score-model</Param>
+	<Param name="tempJenaDir">data/temp-score-model</Param>
 	<Param name="algorithms">courseNum=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
 	<Param name="weights">courseNum=1.0</Param>
-	<!--  <Param name="inputJena-predicates">label=http://vivo.ufl.edu/ontology/vivo-ufl/Course</Param>-->
-	<!-- <Param name="vivoJena-predicates">label=http://vivo.ufl.edu/ontology/vivo-ufl/Course</Param>-->
 	<Param name="inputJena-predicates">courseNum=http://vivo.ufl.edu/ontology/vivo-ufl/courseNum</Param>
 	<Param name="vivoJena-predicates">courseNum=http://vivo.ufl.edu/ontology/vivo-ufl/courseNum</Param>
 	<Param name="namespace">http://vivo.ufl.edu/harvested/ufl/courses/</Param>
-	<!--   <Param name="reloadInput">true</Param> -->
 	
 </Config>

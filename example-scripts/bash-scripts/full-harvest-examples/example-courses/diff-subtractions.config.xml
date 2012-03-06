@@ -46,6 +46,9 @@
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
 	<Param name="dumptofile">data/vivo-subtractions.rdf.xml</Param>
+	<Param name="dumptolanguage">RDF/XML</Param>
+    <Param name="dumptofile">data/vivo-ntriple-subtractions.xml</Param>
+	<Param name="dumptolanguage">N-TRIPLE</Param>
     
     <!--OUTPUT : for more information please see the given config file -->
 <!-- 

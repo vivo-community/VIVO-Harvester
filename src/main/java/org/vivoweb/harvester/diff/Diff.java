@@ -215,8 +215,7 @@ public class Diff {
 			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(dF), Charset.availableCharsets().get("UTF-8"));
 			fasterWriter.write(diffModel, osw, "");
 			log.debug("RDF/XML Data was exported");
-		}*/
-		
+		}
 		if(dTF != null) {
 			RDFWriter tripplewriter = diffModel.getWriter("N-TRIPLE");
 			FileWriter fstream = new FileWriter(dTF);
@@ -231,7 +230,7 @@ public class Diff {
 			tripplewriter.write(diffModel, out, "");
 			out.close();
 		}
-		
+		*/
 		if(oJC != null) {
 			oJC.getJenaModel().add(diffModel);
 			oJC.sync();
