@@ -41,7 +41,7 @@ if [ "$LOCAL" = "y" ]; then
 		exit
 	fi
 
-	cd bin
+	cd build
 	ar -x harvester*.deb
 
 	#rename tarball
@@ -64,15 +64,15 @@ else
 fi
 
 #test tarball
-mv usr/share/vivo/harvester/config/models/vivo.xml usr/share/vivo/harvester/config/models/vivo.xml.bck
-cp vivo.xml usr/share/vivo/harvester/config/models/vivo.xml
+mv usr/share/vivo/harvester/vivo/config/vivo.xml usr/share/vivo/harvester/vivo/config/vivo.xml.bck
+cp vivo.xml usr/share/vivo/harvester/vivo/config/vivo.xml
 cp vivotest.h2.db usr/share/vivo/harvester
-cp run-pubmed.sh usr/share/vivo/harvester/scripts
-cp example.pubmedfetch.xml usr/share/vivo/harvester/config/tasks/example.pubmedfetch.xml
+cp run-pubmed.sh usr/share/vivo/harvester/example-scripts/example-pubmed
+cp example.pubmedfetch.xml usr/share/vivo/harvester/example-scripts/example-pubmed/pubmedfetch.config.xml
 
 #run example scripts
-cd usr/share/vivo/harvester
-bash scripts/run-pubmed.sh
+cd usr/share/vivo/harvester/example-scripts/example-pubmed
+bash run-pubmed.sh
 
 #check for failure
 if [ "$?" = "1" ]; then
