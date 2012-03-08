@@ -13,4 +13,6 @@
 
 	<!--DATAMAP -->
 	<Param name="xslFile">ctsaip-to-vivo.datamap.xsl</Param>
+
+	<Param name="force">True</Param>
 </Task>

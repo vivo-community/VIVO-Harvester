@@ -1,0 +1,8 @@
+#Metadata: Fileset: node2id
+#Wed Mar 07 19:38:48 EST 2012
+tdb.file.type=rangeindex
+tdb.file.impl.version=bplustree-v1
+tdb.file.impl=bplustree
+tdb.bplustree.record=16,8
+tdb.bplustree.order=146
+tdb.bplustree.blksize=8192
