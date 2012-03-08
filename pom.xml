@@ -159,7 +159,7 @@
 									</mapper>
 								</data>
 								<data>
-									<src>${project.basedir}/example-scripts/full-harvest-examples</src>
+									<src>${project.basedir}/example-scripts/bash-scripts/full-harvest-examples</src>
 									<type>directory</type>
 									<excludes>**/*.svn*/**,**/data/**,**/previous-harvest/**</excludes>
 									<mapper>
