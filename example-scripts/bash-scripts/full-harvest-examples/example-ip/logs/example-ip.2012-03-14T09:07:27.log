@@ -1,0 +1,28 @@
+2012-03-14 09:07:28.760 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: Start
+2012-03-14 09:07:28.765 DEBUG [o.v.h.u.a.ArgList] running XSLTranslator
+2012-03-14 09:07:28.766 DEBUG [o.v.h.u.a.ArgList] command line args: -X xsltranslator.config.xml
+2012-03-14 09:07:28.771 DEBUG [o.v.h.u.a.ArgList] config file args: --input raw-records.config.xml --xslFile ctsaip-to-vivo.datamap.xsl --force --output translated-records.config.xml
+2012-03-14 09:07:28.800 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - '/home/drspeedo/VIVO/ctsaip-data'
+2012-03-14 09:07:28.800 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:07:28.800 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:07:28.806 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-03-14 09:07:28.806 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:07:28.806 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:07:28.807 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records' Does Not Exist, attempting to create
+2012-03-14 09:07:28.812 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records/.metadata' Does Not Exist, attempting to create
+2012-03-14 09:07:28.822 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-03-14 09:07:28.825 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-03-14 09:07:29.108 TRACE [o.v.h.t.XSLTranslator] Translating Record ctsai-data-file.xml
+2012-03-14 09:07:29.413 ERROR [o.v.h.t.XSLTranslator] javax.xml.transform.TransformerConfigurationException: Failed to compile stylesheet. 1 error detected.
+2012-03-14 09:07:29.417 DEBUG [o.v.h.t.XSLTranslator] Stacktrace:
+java.io.IOException: javax.xml.transform.TransformerConfigurationException: Failed to compile stylesheet. 1 error detected.
+	at org.vivoweb.harvester.translate.XSLTranslator.xmlTranslate(XSLTranslator.java:178) ~[harvester.jar:na]
+	at org.vivoweb.harvester.translate.XSLTranslator.execute(XSLTranslator.java:146) ~[harvester.jar:na]
+	at org.vivoweb.harvester.translate.XSLTranslator.main(XSLTranslator.java:209) ~[harvester.jar:na]
+Caused by: javax.xml.transform.TransformerConfigurationException: Failed to compile stylesheet. 1 error detected.
+	at net.sf.saxon.PreparedStylesheet.prepare(PreparedStylesheet.java:140) ~[saxon-8.7.jar:na]
+	at net.sf.saxon.TransformerFactoryImpl.newTemplates(TransformerFactoryImpl.java:135) ~[saxon-8.7.jar:na]
+	at net.sf.saxon.TransformerFactoryImpl.newTransformer(TransformerFactoryImpl.java:86) ~[saxon-8.7.jar:na]
+	at org.vivoweb.harvester.translate.XSLTranslator.xmlTranslate(XSLTranslator.java:176) ~[harvester.jar:na]
+	... 2 common frames omitted
+2012-03-14 09:07:29.418 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: End

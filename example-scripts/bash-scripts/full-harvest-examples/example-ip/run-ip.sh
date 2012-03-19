@@ -75,7 +75,7 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 # Clean up the data going into VIVO using Qualify to fix some of the content
 #
 #
-harvester-qualify -X qualify.conf.xml
+#harvester-qualify -X qualify.conf.xml
 
 
 # Transfer Data Out

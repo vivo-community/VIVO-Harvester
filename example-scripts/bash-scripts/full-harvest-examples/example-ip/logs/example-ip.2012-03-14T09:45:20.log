@@ -1,0 +1,41 @@
+2012-03-14 09:45:21.404 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: Start
+2012-03-14 09:45:21.409 DEBUG [o.v.h.u.a.ArgList] running XSLTranslator
+2012-03-14 09:45:21.410 DEBUG [o.v.h.u.a.ArgList] command line args: -X xsltranslator.config.xml
+2012-03-14 09:45:21.414 DEBUG [o.v.h.u.a.ArgList] config file args: --input raw-records.config.xml --xslFile ctsaip-to-vivo.datamap.xsl --force --output translated-records.config.xml
+2012-03-14 09:45:21.423 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - '/home/drspeedo/VIVO/ctsaip-data'
+2012-03-14 09:45:21.423 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:45:21.423 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:45:21.430 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-03-14 09:45:21.430 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:45:21.430 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:45:21.431 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records' Does Not Exist, attempting to create
+2012-03-14 09:45:21.433 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records/.metadata' Does Not Exist, attempting to create
+2012-03-14 09:45:21.439 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-03-14 09:45:21.442 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-03-14 09:45:21.715 TRACE [o.v.h.t.XSLTranslator] Translating Record ctsai-data-file.xml
+2012-03-14 09:45:24.432 INFO  [o.v.h.t.XSLTranslator] 1 records translated.
+2012-03-14 09:45:24.432 INFO  [o.v.h.t.XSLTranslator] 0 records did not need translation
+2012-03-14 09:45:24.432 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: End
+2012-03-14 09:45:25.273 INFO  [o.v.h.t.Transfer] Transfer: Start
+2012-03-14 09:45:25.278 DEBUG [o.v.h.u.a.ArgList] running Transfer
+2012-03-14 09:45:25.280 DEBUG [o.v.h.u.a.ArgList] command line args: -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
+2012-03-14 09:45:25.295 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-03-14 09:45:25.296 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-03-14 09:45:26.146 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-03-14 09:45:26.146 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:45:26.146 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-14 09:45:26.149 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-03-14 09:45:26.151 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-03-14 09:45:26.344 TRACE [o.v.h.u.r.JenaConnect] loading record: ctsai-data-file.xml
+2012-03-14 09:45:34.776 INFO  [o.v.h.t.Transfer] Transfer: End
+2012-03-14 09:45:35.671 INFO  [o.v.h.t.Transfer] Transfer: Start
+2012-03-14 09:45:35.676 DEBUG [o.v.h.u.a.ArgList] running Transfer
+2012-03-14 09:45:35.677 DEBUG [o.v.h.u.a.ArgList] command line args: -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
+2012-03-14 09:45:35.694 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-03-14 09:45:35.694 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-03-14 09:45:36.533 TRACE [o.v.h.u.r.MemJenaConnect] attempting to create temp file for: DEFAULT174377750
+2012-03-14 09:45:36.534 TRACE [o.v.h.u.FileAide] Allocating temporary file space /tmp/DEFAULT1743777502090271381065802208.tdb  
+2012-03-14 09:45:36.534 TRACE [o.v.h.u.r.MemJenaConnect] created: /tmp/DEFAULT1743777502090271381065802208.tdb
+2012-03-14 09:45:36.563 DEBUG [o.v.h.t.Transfer] No Output Specified, Using In-Memory Jena Model As Temporary Model
+2012-03-14 09:45:41.644 INFO  [o.v.h.t.Transfer] Transfer: End
+2012-03-14 09:45:41.678 WARN  [o.v.h.u.FileAide] Failed to delete temporary file space /tmp/DEFAULT1743777502090271381065802208.tdb, please remove manually  

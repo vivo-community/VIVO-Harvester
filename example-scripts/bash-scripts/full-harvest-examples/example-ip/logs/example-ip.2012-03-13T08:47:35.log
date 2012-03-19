@@ -1,0 +1,49 @@
+2012-03-13 08:47:36.032 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: Start
+2012-03-13 08:47:36.037 DEBUG [o.v.h.u.a.ArgList] running XSLTranslator
+2012-03-13 08:47:36.038 DEBUG [o.v.h.u.a.ArgList] command line args: -X xsltranslator.config.xml
+2012-03-13 08:47:36.042 DEBUG [o.v.h.u.a.ArgList] config file args: --input raw-records.config.xml --xslFile ctsaip-to-vivo.datamap.xsl --force --output translated-records.config.xml
+2012-03-13 08:47:36.059 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - '/home/drspeedo/VIVO/ctsaip-data'
+2012-03-13 08:47:36.059 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 08:47:36.059 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 08:47:36.065 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-03-13 08:47:36.066 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 08:47:36.066 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 08:47:36.066 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records' Does Not Exist, attempting to create
+2012-03-13 08:47:36.070 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records/.metadata' Does Not Exist, attempting to create
+2012-03-13 08:47:36.076 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-03-13 08:47:36.080 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-03-13 08:47:36.326 TRACE [o.v.h.t.XSLTranslator] Translating Record ctsai-data-file.xml
+2012-03-13 08:47:38.898 INFO  [o.v.h.t.XSLTranslator] 1 records translated.
+2012-03-13 08:47:38.898 INFO  [o.v.h.t.XSLTranslator] 0 records did not need translation
+2012-03-13 08:47:38.899 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: End
+2012-03-13 08:47:39.742 INFO  [o.v.h.t.Transfer] Transfer: Start
+2012-03-13 08:47:39.747 DEBUG [o.v.h.u.a.ArgList] running Transfer
+2012-03-13 08:47:39.748 DEBUG [o.v.h.u.a.ArgList] command line args: -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
+2012-03-13 08:47:39.765 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-03-13 08:47:39.765 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-03-13 08:47:40.609 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-03-13 08:47:40.609 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 08:47:40.609 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 08:47:40.612 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-03-13 08:47:40.614 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-03-13 08:47:40.796 TRACE [o.v.h.u.r.JenaConnect] loading record: ctsai-data-file.xml
+2012-03-13 08:47:48.032 INFO  [o.v.h.t.Transfer] Transfer: End
+2012-03-13 08:47:48.904 INFO  [o.v.h.q.Qualify] Qualify: Start
+2012-03-13 08:47:48.908 DEBUG [o.v.h.u.a.ArgList] running Qualify
+2012-03-13 08:47:48.909 DEBUG [o.v.h.u.a.ArgList] command line args: -X qualify.conf.xml
+2012-03-13 08:47:48.914 DEBUG [o.v.h.u.a.ArgList] config file args: --dataType http://purl.org/ontology/bibo/abstract --value   --regexMatch (<br>) --jenaConfig harvested-data.model.xml --wordiness ALL
+2012-03-13 08:47:48.925 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-03-13 08:47:48.926 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-03-13 08:47:49.756 INFO  [o.v.h.q.Qualify] Beginning Execution
+2012-03-13 08:47:49.760 INFO  [o.v.h.q.Qualify] Qualify: End
+2012-03-13 08:47:50.574 INFO  [o.v.h.t.Transfer] Transfer: Start
+2012-03-13 08:47:50.579 DEBUG [o.v.h.u.a.ArgList] running Transfer
+2012-03-13 08:47:50.580 DEBUG [o.v.h.u.a.ArgList] command line args: -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
+2012-03-13 08:47:50.596 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-03-13 08:47:50.596 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-03-13 08:47:51.411 TRACE [o.v.h.u.r.MemJenaConnect] attempting to create temp file for: DEFAULT1293184730
+2012-03-13 08:47:51.411 TRACE [o.v.h.u.FileAide] Allocating temporary file space /tmp/DEFAULT12931847305056825394626336337.tdb  
+2012-03-13 08:47:51.412 TRACE [o.v.h.u.r.MemJenaConnect] created: /tmp/DEFAULT12931847305056825394626336337.tdb
+2012-03-13 08:47:51.433 DEBUG [o.v.h.t.Transfer] No Output Specified, Using In-Memory Jena Model As Temporary Model
+2012-03-13 08:47:56.536 INFO  [o.v.h.t.Transfer] Transfer: End
+2012-03-13 08:47:56.582 WARN  [o.v.h.u.FileAide] Failed to delete temporary file space /tmp/DEFAULT12931847305056825394626336337.tdb, please remove manually  

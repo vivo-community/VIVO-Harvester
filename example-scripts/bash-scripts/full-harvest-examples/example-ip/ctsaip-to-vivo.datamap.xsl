@@ -10,6 +10,7 @@
 
 <xsl:stylesheet version = "2.0"
 	xmlns:xsl = 'http://www.w3.org/1999/XSL/Transform'
+        xmlns:fn="http://www.w3.org/2005/xpath-functions"
 	xmlns:rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 	xmlns:rdfs = 'http://www.w3.org/2000/01/rdf-schema#'
 	xmlns:core = 'http://vivoweb.org/ontology/core#'
@@ -42,11 +43,12 @@
                                 </xsl:analyze-string>
                         </xsl:if>
 		</xsl:variable>
+		<xsl:variable name="summary-var" select="summary" />
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
 			<rdfs:label><xsl:value-of select="title" /></rdfs:label>
 			<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
 			<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
-			<bibo:abstract><xsl:value-of select="summary" /></bibo:abstract>
+			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
 
 			<!-- Listed as assignees for now are organizations and people assigned to this project -->
