@@ -14,6 +14,6 @@
 	<!--DATAMAP -->
 	<Param name="xslFile">courses-to-vivo.xsl</Param>
 	
-		<Param name="force">true</Param>
+	<Param name="force">true</Param>
 </Config>
  

@@ -35,8 +35,13 @@
 		</xsl:variable>
 		
 		<xsl:variable name="title">
-			<xsl:value-of select="db-COURSES_CSV:CRS_TITLE" />
+			<xsl:call-template name="ToUpperLowerCase">
+				<xsl:with-param name="inputString" select="db-COURSES_CSV:CRS_TITLE"/>
+				<xsl:with-param name="index" select="0"/>
+				<xsl:with-param name="loopCount" select="string-length(db-COURSES_CSV:CRS_TITLE)+1"/>
+			</xsl:call-template>
 		</xsl:variable>
+		
 		<xsl:variable name="sectionNumber">
 			<xsl:value-of select="db-COURSES_CSV:SECT" />
 		</xsl:variable>
@@ -330,4 +335,48 @@
 		</rdf:Description>
 		<!--Person Node End -->
 	</xsl:template>
+
+	<xsl:template name="ToUpperLowerCase">
+                <xsl:param name="inputString"/>
+                <xsl:param name="index"/>
+                <xsl:param name="loopCount"/>
+                <xsl:if test="$index &lt; $loopCount">
+                        <xsl:choose>
+                                <xsl:when test="substring($inputString, ($index)-1,1) = ' ' or $index = 1">
+                                        <xsl:call-template name="ToUpper">
+                                                <xsl:with-param name="inputString" select="substring($inputString,$index,1)"/>
+                                        </xsl:call-template>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                        <xsl:call-template name="ToLower">
+                                                <xsl:with-param name="inputString" select="substring($inputString,$index,1)"/>
+                                        </xsl:call-template>
+                                </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:call-template name="ToUpperLowerCase">
+                                <xsl:with-param name="inputString" select="$inputString"/>
+                                <xsl:with-param name="index" select="($index)+1"/>
+                                <xsl:with-param name="loopCount" select="$loopCount"/>
+                        </xsl:call-template>
+                </xsl:if>
+        </xsl:template>
+ 
+        <xsl:template name="ToLower">
+                <xsl:param name="inputString"/>
+                <xsl:variable name="smallCase" select="'abcdefghijklmnopqrstuvwxyz'"/>
+ 
+                <xsl:variable name="upperCase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+ 
+                <xsl:value-of select="translate($inputString,$upperCase,$smallCase)"/>
+        </xsl:template>
+ 
+        <xsl:template name="ToUpper">
+                <xsl:param name="inputString"/>
+                <xsl:variable name="smallCase" select="'abcdefghijklmnopqrstuvwxyz'"/>
+ 
+                <xsl:variable name="upperCase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+ 
+                <xsl:value-of select="translate($inputString,$smallCase,$upperCase)"/>
+ 
+        </xsl:template>
 </xsl:stylesheet>
