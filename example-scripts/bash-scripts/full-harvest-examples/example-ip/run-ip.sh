@@ -104,24 +104,12 @@ harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-r
 #   we need to clear out all that old data before we add more
 #harvester-jenaconnect -j score-data.model.xml -t
 
-# Execute Score for Positions
-#harvester-score -X score-positions.config.xml
-
-# Execute Match for Positions
-#harvester-match -X match-positions.config.xml
-
 # Execute ChangeNamespace to get unmatched  into current namespace
 # This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
 # 	If there is an issue with uris being in another namespace, this is the phase
 #	which should give some light to the problem.
 # Execute ChangeNamespace for People
 #harvester-changenamespace -X changenamespace-people.config.xml
-
-# Execute ChangeNamespace for Departments
-#harvester-changenamespace -X changenamespace-departments.config.xml
-
-# Execute ChangeNamespace for Positions
-#harvester-changenamespace -X changenamespace-positions.config.xml
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
