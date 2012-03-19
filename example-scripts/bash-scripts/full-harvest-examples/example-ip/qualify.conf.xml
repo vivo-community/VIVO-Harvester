@@ -72,6 +72,6 @@
     <Param name="wordiness">ALL</Param>
     <Param name="jenaConfig">harvested-data.model.xml</Param>
     <Param name="dataType">http://purl.org/ontology/bibo/abstract</Param>
-    <Param name="regexMatch">(&lt;br&gt;)</Param>
-    <Param name="value"></Param>
+    <Param name="regexMatch">(&gt;*&lt;)</Param>
+    <Param name="value">' '</Param>
 </Config>

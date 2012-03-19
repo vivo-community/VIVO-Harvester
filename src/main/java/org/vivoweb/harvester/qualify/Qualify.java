@@ -171,7 +171,12 @@ public class Qualify {
 		log.debug(query);
 		StringBuilder insertQ = new StringBuilder("INSERT DATA {\n");
 		StringBuilder deleteQ = new StringBuilder("DELETE DATA {\n");
+		int modifyCounter = 0;
 		for(QuerySolution s : IterableAdaptor.adapt(this.model.executeSelectQuery(query))) {
+			modifyCounter++;
+			//if (modifyCounter > 291){
+			//	break;
+			//}
 			Literal obj = s.getLiteral("o");
 			RDFDatatype datatype = obj.getDatatype();
 			String lang = obj.getLanguage();
@@ -182,11 +187,12 @@ public class Qualify {
 			String newStr = encodeString(objStr.replaceAll(regexMatch, newValue), datatype, lang);
 			String sUri = s.getResource("s").getURI();
 			log.debug("newValue: " + newStr);
-			deleteQ.append("  <" + sUri + "> <" + predicate + "> " + oldStr + " .\n");
-			insertQ.append("  <" + sUri + "> <" + predicate + "> " + newStr + " .\n");
+			deleteQ.append("  <" + sUri + "> <" + predicate + "> '''" + oldStr + "''' . \n");
+			insertQ.append("  <" + sUri + "> <" + predicate + "> '''" + newStr + "''' . \n");
 		}
-		insertQ.append("}");
-		deleteQ.append("}");
+		log.debug("Modifying " + Integer.toString(modifyCounter) + " Records.");
+		insertQ.append("} \n");
+		deleteQ.append("} \n");
 		log.debug("Removing old data:\n" + deleteQ);
 		this.model.executeUpdateQuery(deleteQ.toString());
 		log.debug("Inserting updated data:\n" + insertQ);
@@ -241,6 +247,7 @@ public class Qualify {
 	 * @throws IOException error connecting
 	 */
 	public void execute() throws IOException {
+		log.debug(Integer.toString(this.model.size()));
 		if(StringUtils.isNotBlank(this.namespace)) {
 			if(this.cleanPredicates) {
 				log.info("Running clean predicates for " + this.namespace);
@@ -251,7 +258,8 @@ public class Qualify {
 				cleanResources(this.namespace);
 			}
 		}
-		if(StringUtils.isNotBlank(this.matchTerm) && StringUtils.isNotBlank(this.dataPredicate) && StringUtils.isNotBlank(this.newVal)) {
+//		if(StringUtils.isNotBlank(this.matchTerm) && StringUtils.isNotBlank(this.dataPredicate) && StringUtils.isNotBlank(this.newVal)) {
+		if(StringUtils.isNotBlank(this.matchTerm) && StringUtils.isNotBlank(this.dataPredicate)) {
 			if(this.regex) {
 				log.info("Running Regex replace '" + this.dataPredicate + "': '" + this.matchTerm + "' with '" + this.newVal + "'");
 				regexReplace(this.dataPredicate, this.matchTerm, this.newVal);

@@ -1,0 +1,56 @@
+2012-03-13 10:35:14.002 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: Start
+2012-03-13 10:35:14.007 DEBUG [o.v.h.u.a.ArgList] running XSLTranslator
+2012-03-13 10:35:14.008 DEBUG [o.v.h.u.a.ArgList] command line args: -X xsltranslator.config.xml
+2012-03-13 10:35:14.012 DEBUG [o.v.h.u.a.ArgList] config file args: --input raw-records.config.xml --xslFile ctsaip-to-vivo.datamap.xsl --force --output translated-records.config.xml
+2012-03-13 10:35:14.019 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - '/home/drspeedo/VIVO/ctsaip-data'
+2012-03-13 10:35:14.019 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 10:35:14.019 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 10:35:14.027 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-03-13 10:35:14.027 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 10:35:14.027 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 10:35:14.028 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records' Does Not Exist, attempting to create
+2012-03-13 10:35:14.030 DEBUG [o.v.h.u.r.TextFileRecordHandler] Directory 'data/translated-records/.metadata' Does Not Exist, attempting to create
+2012-03-13 10:35:14.036 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-03-13 10:35:14.040 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-03-13 10:35:14.317 TRACE [o.v.h.t.XSLTranslator] Translating Record ctsai-data-file.xml
+2012-03-13 10:35:16.814 INFO  [o.v.h.t.XSLTranslator] 1 records translated.
+2012-03-13 10:35:16.815 INFO  [o.v.h.t.XSLTranslator] 0 records did not need translation
+2012-03-13 10:35:16.815 INFO  [o.v.h.t.XSLTranslator] XSLTranslator: End
+2012-03-13 10:35:17.673 INFO  [o.v.h.t.Transfer] Transfer: Start
+2012-03-13 10:35:17.678 DEBUG [o.v.h.u.a.ArgList] running Transfer
+2012-03-13 10:35:17.679 DEBUG [o.v.h.u.a.ArgList] command line args: -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
+2012-03-13 10:35:17.706 TRACE [o.v.h.u.r.JenaConnect] 'dbDir' - 'data/harvested-data/'
+2012-03-13 10:35:17.707 TRACE [o.v.h.u.r.JenaConnect] 'type' - 'tdb'
+2012-03-13 10:35:18.552 DEBUG [o.v.h.u.r.RecordHandler] 'fileDir' - 'data/translated-records'
+2012-03-13 10:35:18.552 DEBUG [o.v.h.u.r.RecordHandler] 'rhClass' - 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 10:35:18.552 DEBUG [o.v.h.u.r.RecordHandler] Using class: 'org.vivoweb.harvester.util.repo.TextFileRecordHandler'
+2012-03-13 10:35:18.555 DEBUG [o.v.h.u.r.TextFileRecordHandler] Compiling list of records
+2012-03-13 10:35:18.557 DEBUG [o.v.h.u.r.TextFileRecordHandler] List compiled
+2012-03-13 10:35:18.742 TRACE [o.v.h.u.r.JenaConnect] loading record: ctsai-data-file.xml
+2012-03-13 10:35:25.792 INFO  [o.v.h.t.Transfer] Transfer: End
+2012-03-13 10:35:26.601 ERROR [o.v.h.q.Qualify] org.xml.sax.SAXParseException: The content of elements must consist of well-formed character data or markup.
+2012-03-13 10:35:26.610 DEBUG [o.v.h.q.Qualify] Stacktrace:
+java.io.IOException: org.xml.sax.SAXParseException: The content of elements must consist of well-formed character data or markup.
+	at org.vivoweb.harvester.util.args.ArgList$ConfigParser.parseConfig(ArgList.java:374) ~[harvester.jar:na]
+	at org.vivoweb.harvester.util.args.ArgList.<init>(ArgList.java:85) ~[harvester.jar:na]
+	at org.vivoweb.harvester.util.args.ArgParser.parse(ArgParser.java:125) ~[harvester.jar:na]
+	at org.vivoweb.harvester.util.InitLog.initLogger(InitLog.java:130) ~[harvester.jar:na]
+	at org.vivoweb.harvester.qualify.Qualify.main(Qualify.java:292) ~[harvester.jar:na]
+Caused by: org.xml.sax.SAXParseException: The content of elements must consist of well-formed character data or markup.
+	at org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.util.ErrorHandlerWrapper.fatalError(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.impl.XMLScanner.reportFatalError(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at org.apache.xerces.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source) ~[xercesImpl-2.7.1.jar:na]
+	at javax.xml.parsers.SAXParser.parse(SAXParser.java:395) ~[na:1.6.0_26]
+	at javax.xml.parsers.SAXParser.parse(SAXParser.java:198) ~[na:1.6.0_26]
+	at org.vivoweb.harvester.util.args.ArgList$ConfigParser.parseConfig(ArgList.java:370) ~[harvester.jar:na]
+	... 4 common frames omitted
+2012-03-13 10:35:26.612 INFO  [o.v.h.q.Qualify] Qualify: End
