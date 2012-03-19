@@ -6,7 +6,7 @@
 -->
 <Task>
 	<Param name="email">hoatrang@ufl.edu</Param>
-	<Param name="termSearch">18511843[uid]</Param>
+	<Param name="termSearch">wbolch@ufl.edu[Affiliation]</Param>
 	<Param name="numRecords">ALL</Param>
 	<Param name="batchSize">1000</Param>
 	<Param name="output">raw-records.config.xml</Param>
