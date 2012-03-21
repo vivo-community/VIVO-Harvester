@@ -9,17 +9,9 @@
 
 	<!--VIVO -->
 	<Param name="subtrahend">matched-data.model.xml</Param>
-<<<<<<< HEAD
-	
-	<!--  OPTIONS -->
-	<Param name="dumptofile">dumptofile=data/vivo-subtractions.rdf.xml</Param>
-=======
 
 	<!-- OPTIONS -->
-	<!-- <Param name="dumptofile">data/vivo-subtractions.rdf.xml</Param> -->
-
 	<Param name="dumptofile">xmlrdf=data/vivo-subtractions.rdf.xml</Param>
 	<Param name="dumptofile">ntriple=data/vivo-ntriple-subtractions.xml</Param>
 	<Param name="dumptolanguage">ntriple=N-TRIPLE</Param>
->>>>>>> pubMedResearchpubMedResearch
 </Task>
