@@ -133,9 +133,9 @@ public abstract class NIHFetch implements RecordStreamOrigin {
 			log.trace("webenv: "+env[0]);
 			env[1] = res.getQueryKey();
 			log.trace("querykey: "+env[1]);
-			env[2] = "" + res.getCount();//getIdList().getId().length;
-			log.trace("count: "+env[2]);
-			if(env[2] == null) {
+        	env[2] = "" + res.getCount();//getIdList().getId().length;
+        	
+ 			if(env[2] == null) {
 				throw new IllegalArgumentException("Query Has No Results: "+term);
 			}
 			IdListType ids = res.getIdList();
@@ -174,10 +174,24 @@ public abstract class NIHFetch implements RecordStreamOrigin {
 		String[] env = null;
 		env = runESearch(this.searchTerm);
 
+    	// eliza: handles null value that may be returned from the getCount() method
+		boolean isNumeric = true;
+        for (int i = 0; i < env[2].length(); i++) {
+            if (!Character.isDigit(env[2].charAt(i))) {
+            	isNumeric = false;
+            	break;
+            }
+        }
+        if (!isNumeric) { 
+        	env[2] = "0";
+        }
+        // ends
+
+		int resultsCount = Integer.parseInt(env[2]);
+
 		// Eliza: comment out this line
 		// if(env != null) {
 		// Eliza: use this instead
-		int resultsCount = Integer.parseInt(env[2]);
 		if(env != null && resultsCount > 0) {
 			if(recToFetch <= intBatchSize) {
 				fetchRecords(env, "0", "" + recToFetch);
