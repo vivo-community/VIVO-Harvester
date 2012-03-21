@@ -41,9 +41,11 @@
     <!--DUMPFILE -->
 <!-- 
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
-<%  <Param name="dumptofile"> This denotes the place for a text dump file to be produced. The format of the dumpfile  %>
-<%     is RDF/XML and is able to be added or removed from another model through the use of the transfer tool.         %>
-<%                                                                                                                    %>
+<%  <Param name="dumptofile"> This denotes the place for a text dump file to be produced. The default format of the   %>
+<%  dumpfile is RDF/XML and is able to be added or removed from another model through the use of the transfer tool.   %>
+<%	<Param name="dumptolanguage"> This denotes the language the rdf is in.  Predefined values for lang are "RDF/XML", %>
+<% 	   "N-TRIPLE", "TURTLE" (or "TTL") and "N3". * null represents the default language, "RDF/XML". "RDF/XML-ABBREV"  %>
+<%     is a synonym for "RDF/XML" 																					  %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
 	<Param name="dumptofile">data/vivo-additions.rdf.xml</Param>
