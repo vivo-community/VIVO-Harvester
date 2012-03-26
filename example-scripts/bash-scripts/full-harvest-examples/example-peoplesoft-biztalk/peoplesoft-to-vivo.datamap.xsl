@@ -19,7 +19,9 @@
 	xmlns:db-positions="http://vivo.ufl.edu/ingested/peoplesoft/fields/positions/"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
-	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'>
+	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+	xmlns:ns0="http://uf.biztalk.shibperson" >
+	
 <!--
 	xmlns:db-people="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/people/"
 	xmlns:db-positions="jdbc:jtds:sqlserver://erp-prod-odbc.ad.ufl.edu:1433/ODBCWH;domain=UFAD/fields/positions/"
@@ -31,7 +33,7 @@
 	<!-- The main node of the record loaded 
 		This serves as the header of the RDF file produced
 	 -->
-	<xsl:template match="Person">
+	<xsl:template match="ns0:PERSON">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
 			xmlns:ufl="http://vivo.ufl.edu/ontology/vivo-ufl/"
