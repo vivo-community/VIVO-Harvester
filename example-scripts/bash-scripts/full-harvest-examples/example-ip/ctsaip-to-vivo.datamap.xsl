@@ -62,21 +62,27 @@
 					<vitroApp:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Material" />
 				</xsl:when>
 				<xsl:otherwise>
-					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Thing" />
-					<vitroApp:mostSpecificType rdf:resource="http://xmlns.com/foaf/0.1/Thing" />
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Innovation" />
+					<vitroApp:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Innovation" />
 				</xsl:otherwise>
 			</xsl:choose>
+
 			<rdfs:label><xsl:value-of select="title" /></rdfs:label>
+			<ctsaip:internalCaseNo><xsl:value-of select="institution-tech-id" /></ctsaip:internalCaseNo>
+
 			<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
 			<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
-			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>
-			<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Innovation" />
+
+			<bibo:status><xsl:value-of select="status" /></bibo:status>
+			
+			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>	
+			
 
 			<!-- Listed as assignees for now are organizations and people assigned to this project -->
 			<core:assignee rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
-
+			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$ctsai_id}" />
 		</rdf:Description>
-		<rdf:Description>
+		<rdf:Description rdf:about="{$baseURI}institution/{$ctsai_id}">
 			<rdf:label><xsl:value-of select="instituion" /></rdf:label>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 		</rdf:Description>
