@@ -47,6 +47,7 @@
                         </xsl:if>
 		</xsl:variable>
 		<xsl:variable name="summary-var" select="summary" />
+		
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
 			<xsl:choose>
 				<xsl:when test='type="Technology"'>
@@ -68,12 +69,24 @@
 			</xsl:choose>
 
 			<rdfs:label><xsl:value-of select="title" /></rdfs:label>
-			<ctsaip:internalCaseNo><xsl:value-of select="institution-tech-id" /></ctsaip:internalCaseNo>
+			
 
-			<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
-			<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
-
-			<bibo:status><xsl:value-of select="status" /></bibo:status>
+			<!-- We test on normalize space to keep from adding blank properties where there is no information present -->	
+			<xsl:if test="normalize-space( institution-tech-id )">
+				<ctsaip:internalCaseNo><xsl:value-of select="institution-tech-id" /></ctsaip:internalCaseNo>
+			</xsl:if>
+			<xsl:if test="normalize-space( insitution-link )">
+				<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
+			</xsl:if>
+			<xsl:if test="normalize-space( ctsaip-link )">
+				<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
+			</xsl:if>
+			<xsl:if test="normalize-space( advantage )">
+				<ctsaip:advantages><xsl:value-of select="advantage" /></ctsaip:advantages>
+			</xsl:if>
+			<xsl:if test="normalize-space( status )">
+				<bibo:status><xsl:value-of select="status" /></bibo:status>
+			</xsl:if>
 			
 			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>	
 			
@@ -82,10 +95,14 @@
 			<core:assignee rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
 			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$ctsai_id}" />
 		</rdf:Description>
+		
+		<!-- The Institution which we will smush together later in the process based on Label and the type Organization -->
 		<rdf:Description rdf:about="{$baseURI}institution/{$ctsai_id}">
 			<rdf:label><xsl:value-of select="instituion" /></rdf:label>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 		</rdf:Description>
+		
+		<!-- Case Manager (also smushed later in the process) -->
 		<rdf:Description rdf:about="{$baseURI}casemngr/{$ctsai_id}" >
 			<rdfs:label><xsl:value-of select="contact-name" /></rdfs:label>		
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
