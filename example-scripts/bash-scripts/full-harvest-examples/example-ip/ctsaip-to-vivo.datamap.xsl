@@ -17,7 +17,8 @@
 	xmlns:score = 'http://vivoweb.org/ontology/score#'
 	xmlns:foaf = 'http://xmlns.com/foaf/0.1/'
 	xmlns:bibo = 'http://purl.org/ontology/bibo/'
-	xmlns:db-CSV='jdbc:h2:data/csv/store/fields/CSV2/'>
+	xmlns:ctsaip = 'http://vivo.ufl.edu/ontology/ctsaip/'
+	xmlns:vitroApp = 'http://vitro.mannlib.cornell.edu/ns/vitro/0.7#'>
 	
 	<xsl:output method = "xml" indent = "yes"/>
 	<xsl:variable name = "baseURI">http://vivoweb.org/harvest/ip/</xsl:variable>
@@ -25,10 +26,12 @@
 	<xsl:template match = "all-technology">
 		<rdf:RDF xmlns:rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
             		xmlns:rdfs = 'http://www.w3.org/2000/01/rdf-schema#'
-    			xmlns:core = 'http://vivoweb.org/ontology/core#'
+    				xmlns:core = 'http://vivoweb.org/ontology/core#'
             		xmlns:score = 'http://vivoweb.org/ontology/score#'
             		xmlns:foaf = 'http://xmlns.com/foaf/0.1/'
-            		xmlns:bibo = 'http://purl.org/ontology/bibo/'>
+            		xmlns:bibo = 'http://purl.org/ontology/bibo/'
+            		xmlns:ctsaip = 'http://vivo.ufl.edu/ontology/ctsaip/'
+            		xmlns:vitroApp = 'http://vitro.mannlib.cornell.edu/ns/vitro/0.7#'>
 			<xsl:apply-templates select = "technology" />		
 		</rdf:RDF>
 	</xsl:template>
@@ -46,24 +49,28 @@
 		<xsl:variable name="summary-var" select="summary" />
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
 			<xsl:choose>
-				<xsl:when test='equals(type,"Technology")'>
+				<xsl:when test='type="Technology"'>
 					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Technology" />
+					<vitroApp:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Technology" />
 				</xsl:when>
-				<xsl:when test='equals(type,"Research Tool")'>
+				<xsl:when test='type="Research Tool"'>
 					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/ResearchTool" />
+					<vitroApp:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/ResearchTool" />
 				</xsl:when>
-				<xsl:when test='equals(type,"Material")'>
+				<xsl:when test='type="Material"'>
 					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Material" />
+					<vitroApp:mostSpecificType rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Material" />
 				</xsl:when>
 				<xsl:otherwise>
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Thing" />
+					<vitroApp:mostSpecificType rdf:resource="http://xmlns.com/foaf/0.1/Thing" />
 				</xsl:otherwise>
 			</xsl:choose>
 			<rdfs:label><xsl:value-of select="title" /></rdfs:label>
 			<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
 			<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
 			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>
-			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent" />
+			<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Innovation" />
 
 			<!-- Listed as assignees for now are organizations and people assigned to this project -->
 			<core:assignee rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
