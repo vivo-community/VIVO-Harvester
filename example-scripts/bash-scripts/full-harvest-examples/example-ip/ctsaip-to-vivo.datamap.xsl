@@ -10,7 +10,7 @@
 
 <xsl:stylesheet version = "2.0"
 	xmlns:xsl = 'http://www.w3.org/1999/XSL/Transform'
-        xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions"
 	xmlns:rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 	xmlns:rdfs = 'http://www.w3.org/2000/01/rdf-schema#'
 	xmlns:core = 'http://vivoweb.org/ontology/core#'
@@ -45,6 +45,20 @@
 		</xsl:variable>
 		<xsl:variable name="summary-var" select="summary" />
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
+			<xsl:choose>
+				<xsl:when test='equals(type,"Technology")'>
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Technology" />
+				</xsl:when>
+				<xsl:when test='equals(type,"Research Tool")'>
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/ResearchTool" />
+				</xsl:when>
+				<xsl:when test='equals(type,"Material")'>
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/ctsaip/Material" />
+				</xsl:when>
+				<xsl:otherwise>
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Thing" />
+				</xsl:otherwise>
+			</xsl:choose>
 			<rdfs:label><xsl:value-of select="title" /></rdfs:label>
 			<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
 			<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
@@ -54,6 +68,10 @@
 			<!-- Listed as assignees for now are organizations and people assigned to this project -->
 			<core:assignee rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
 
+		</rdf:Description>
+		<rdf:Description>
+			<rdf:label><xsl:value-of select="instituion" /></rdf:label>
+			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 		</rdf:Description>
 		<rdf:Description rdf:about="{$baseURI}casemngr/{$ctsai_id}" >
 			<rdfs:label><xsl:value-of select="contact-name" /></rdfs:label>		
