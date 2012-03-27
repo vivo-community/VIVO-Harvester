@@ -47,12 +47,12 @@ echo "addition node count to be removed: " `grep -c "<rdf:Description" data/vivo
 
 echo "subtraction node count to be added: " `grep -c "<rdf:Description" data/vivo-subtractions.rdf.xml`
 
-
 # During the reverse process the previous harvest model needs to be adjusted when the
 #	vivo model is also adjusted. This keeps the previous model as a mirror of the changes
 #	the the harvester has ever done to the vivo model. 
 # Remove Additions from Previous model
 harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml -R RDF/XML -m
+
 # Remove Subtractions from Previous model
 harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML 
 
@@ -60,6 +60,7 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.x
 #	should agree with the previous harvest, the changes are now applied to the vivo model.
 # Remove Additions from VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml -R RDF/XML -m
+
 # Remove Subtractions from VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML
 

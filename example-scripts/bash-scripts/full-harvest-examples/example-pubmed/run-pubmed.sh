@@ -77,8 +77,28 @@ harvester-xsltranslator -X xsltranslator.config.xml
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 ##########
+# E-mail #
+##########
+
+# Execute E-mail Scoring and Matching
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+# 	is created with the values / scores of the data comparisons.
+# We execute scores in 2 different steps, known as "tiered scoring". The initial score limits our input set to speed up performance 
+harvester-score -X score-email.config.xml
+
+# Find matches using scores and rename nodes to matching uri
+# Using the data model created by the score phase, the match process changes the harvested uris for
+# 	comparison values above the chosen threshold within the xml configuration file.
+harvester-match -X match-exact.config.xml
+
+# Clear email score data, since we are done with it
+harvester-jenaconnect -j score-data.model.xml -t
+
+
+##########
 # Author #
 ##########
+
 # Execute Author Scoring and Matching
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons.
@@ -142,6 +162,7 @@ harvester-jenaconnect -j score-data.model.xml -t
 # Clear out any statements with predicates in the temporary 'score' namespace
 harvester-qualify -X qualify-clear-score-predicates.config.xml
 
+
 # Execute ChangeNamespace to get unmatched publications into current namespace
 # This is where the new people from the harvest are given uris within the namespace of Vivo
 # 	If there is an issue with uris being in another namespace after import, make sure this step
@@ -171,6 +192,8 @@ harvester-changenamespace -X changenamespace-authors.config.xml
 # 	If there is an issue with uris being in another namespace after import, make sure this step
 #   was completed for those uris.
 harvester-changenamespace -X changenamespace-journal.config.xml
+
+
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
