@@ -22,7 +22,7 @@
 	
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
-	<xsl:variable name="baseURI">http://vivo.ufl.edu/translated/peoplesoft/</xsl:variable>
+	<xsl:variable name="baseURI">http://vivo.ufl.edu/harvested/</xsl:variable>
 
 	<!-- This is the main person being translated - will serve as the primary import -->
 	<xsl:template match="ns0:PERSON">
@@ -35,7 +35,7 @@
 			xmlns:score="http://vivoweb.org/ontology/score#"
 			xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" >
 		<xsl:variable name="ufid" select="UFID"/>
-		<rdf:Description rdf:about="{$baseURI}person/ufid{$ufid}">
+		<rdf:Description rdf:about="{$baseURI}person/{$ufid}">
 			<ufVivo:ufid><xsl:value-of select="$ufid"/></ufVivo:ufid>
 			<ufVivo:harvestedBy>PeopleSoft-BizTalk-Harvester</ufVivo:harvestedBy>
 			<xsl:if test="normalize-space( NAME[@type=35] )">
