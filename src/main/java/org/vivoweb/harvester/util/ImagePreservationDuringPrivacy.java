@@ -14,6 +14,10 @@ import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.Record;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 
+/**
+ * @author drspeedo
+ *
+ */
 public class ImagePreservationDuringPrivacy {
 
 	
@@ -57,6 +61,9 @@ public class ImagePreservationDuringPrivacy {
 	}
 	
 	//TODO: Implement Execution
+	/**
+	 * 
+	 */
 	public void execute(){
 		
 		//union private model and inrecord set and query for ufid / old private flag / new privacy flag
@@ -115,23 +122,23 @@ public class ImagePreservationDuringPrivacy {
 		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());
-			log.info("PubmedFetch: Start");
+			log.info("ImagePreservationDuringPrivacy: Start");
 			new ImagePreservationDuringPrivacy(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
-			System.out.println(getParser("ImagePreservationDuringPrivacy", database).getUsage());
+			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(UsageException e) {
 			log.info("Printing Usage:");
-			System.out.println(getParser("ImagePreservationDuringPrivacy", database).getUsage());
+			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
 			log.debug("Stacktrace:",e);
 			error = e;
 		} finally {
-			log.info("PubmedFetch: End");
+			log.info("ImagePreservationDuringPrivacy: End");
 			if(error != null) {
 				System.exit(1);
 			}
