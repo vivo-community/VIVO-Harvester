@@ -65,20 +65,21 @@
 					<core:preferredTitle><xsl:value-of select="WORKINGTITLE" /></core:preferredTitle>
 				</xsl:if>
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-				<ufVivo:Deceased><xsl:value-of select="DECEASED" /></ufVivo:Deceased>			
+				<ufVivo:Deceased><xsl:value-of select="DECEASED" /></ufVivo:Deceased>
+				<ufVivo:HomeDeptid><xsl:value-of select="DEPTID" /></ufVivo:HomeDeptid>			
 				<xsl:choose>
 					<xsl:when test='PROTECT="N"'>
-						<core:email><xsl:value-of select="EMAIL[@type=1]" /></core:email>
-						<core:phoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:phoneNumber>
-						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
 						<ufVivo:privacy><xsl:value-of select="PROTECT"/></ufVivo:privacy>
+						<core:primaryEmail><xsl:value-of select="EMAIL[@type=1]" /></core:primaryEmail>
+						<core:primaryPhoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:primaryPhoneNumber>
+						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
 					</xsl:when>
 					<xsl:otherwise>
 						<ufVivo:privacy><xsl:value-of select="PROTECT"/></ufVivo:privacy>
-						<core:email />
-						<core:phoneNumber />
+						<core:primaryEmail />
+						<core:primaryPhoneNumber />
 						<core:faxNumber />
-					 	<public:mainImage rdf:resource="{$baseURI}mainImg/ufid{$ufid}"/>	
+					 <!--<public:mainImage rdf:resource="{$baseURI}mainImg/ufid{$ufid}"/>	
 						
 						<rdf:Description rdf:about="{$baseURI}mainImg/ufid{$ufid}">
 							<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
@@ -108,7 +109,7 @@
 				  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
 				 			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
 						</rdf:Description>	
-	
+	  -->	
 					</xsl:otherwise>
 				</xsl:choose>
 				<xsl:choose>
@@ -134,6 +135,7 @@
 						<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Consultant"/>
 					</xsl:when>
 				</xsl:choose>
+				
 			</rdf:Description>
 		</rdf:RDF>
 	</xsl:template>
