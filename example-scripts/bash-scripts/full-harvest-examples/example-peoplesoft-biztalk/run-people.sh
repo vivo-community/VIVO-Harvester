@@ -56,6 +56,11 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 #       is created with the values / scores of the data comparisons. 
 harvester-score -X score-people.config.xml
 
+# Execute Score for People
+# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
+#       is created with the values / scores of the data comparisons. 
+harvester-score -X score-departments.config.xml
+
 # Find matches using scores and rename nodes to matching uri
 # Using the data model created by the score phase, the match process changes the harvested uris for
 #       comparison values above the chosen threshold within the xml configuration file.
@@ -67,6 +72,11 @@ harvester-match -X match-people-departments.config.xml
 # When making the previous harvest model agree with the current harvest, the entries that exist in
 #       the previous harvest but not in the current harvest need to be identified for removal.
 harvester-changenamespace -X changenamespace-people.config.xml
+
+# Find Subtractions
+# When making the previous harvest model agree with the current harvest, the entries that exist in
+#       the previous harvest but not in the current harvest need to be identified for removal.
+harvester-changenamespace -X changenamespace-departments.config.xml
 
 harvester-diff -X diff-subtractions.config.xml
 
