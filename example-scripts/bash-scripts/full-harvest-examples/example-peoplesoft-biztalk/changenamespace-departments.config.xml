@@ -12,6 +12,6 @@
 	<Param name="vivoModel">vivo.model.xml</Param>
 	
 	<!--  OPTIONS -->
-	<Param name="oldNamespace">http://vivo.ufl.edu/translated/peoplesoft/org/</Param>
+	<Param name="oldNamespace">http://vivo.ufl.edu/harvested/dept/</Param>
 	<Param name="newNamespace">http://vivo.ufl.edu/individual/</Param>
 </Config>
