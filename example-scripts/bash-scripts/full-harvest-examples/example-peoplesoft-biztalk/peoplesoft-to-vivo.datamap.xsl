@@ -84,88 +84,79 @@
 						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
 
 						<!-- Relation to department node start -->
-						<ufVivo:homeDept rdf:resource="{$baseURI}dept/{$deptID}" />			
+						<ufVivo:homeDept>
+							<!-- Department stub node start -->
+							<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
+					
+								<!-- Relation to Person Node Start -->
+								<ufVivo:homeDeptFor rdf:resource="{$baseURI}person/{$ufid}" />
+								<!-- Relation to Person Node End -->
+					
+								<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
+								<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+								<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+								<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
+								<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+					   		</rdf:Description>
+							<!-- Department stub node end -->
+						</ufVivo:homeDept>			
 						<!-- Relation to department node end -->
 
-						<!-- Department stub node start -->
-						<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
-				
-							<!-- Relation to Person Node Start -->
-							<ufVivo:homeDeptFor rdf:resource="{$baseURI}person/{$ufid}" />
-							<!-- Relation to Person Node End -->
-				
-							<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
-							<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
-							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
-				   		</rdf:Description>
-						<!-- Department stub node end -->
 
 					</xsl:when>
 					<xsl:otherwise>
+
 					<!-- Person is a protected entity so blank out standard information -->
 						<ufVivo:privacy><xsl:value-of select="PROTECT"/></ufVivo:privacy>
 						<core:primaryEmail />
 						<core:primaryPhoneNumber />
 						<core:faxNumber />
 
-						<!-- Relation to department node start -->
-						<ufVivo:homeDept />			
-						<!-- Relation to department node end -->
-
-						<!-- Department stub node start -->
-						<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
-				
-							<!-- Relation to Person Node Start -->
-							<ufVivo:homeDeptFor />
-							<!-- Relation to Person Node End -->
-				
-							<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
-							<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
-							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
-				   		</rdf:Description>
-						<!-- Department stub node end -->
-	
 						<!-- Apply the template for the image for a blank person -->
-						<public:mainImage rdf:resource="{$baseURI}mainImg/ufid{$ufid}"/>
+						<!-- Entire picture node start -->
+						<public:mainImage>
+							<!-- Create the image information for a blank picture -->
+							<rdf:Description rdf:about="{$baseURI}mainImg/ufid{$ufid}">
+								<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+					  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#File"/>
 	
-						<!-- Create the image information for a blank picture -->
-						<rdf:Description rdf:about="{$baseURI}mainImg/ufid{$ufid}">
-							<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-				  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#File"/>
-				  			<public:downloadLocation rdf:resource="{$baseURI}fullDirDownload/ufid{$ufid}"/>
-				  			<public:thumbnailImage rdf:resource="{$baseURI}thumbImg/ufid{$ufid}"/>
-				  			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">person.thumbnail.jpg</public:filename>
-				  			<public:mimeType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">image/jpeg</public:mimeType>
-						</rdf:Description>
-						
-						<!-- Create the thumbnail link portion of the image -->
-						<rdf:Description rdf:about="{$baseURI}thumbImg/ufid{$ufid}">
-							<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-				 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#File"/>
-							<public:downloadLocation rdf:resource="{$baseURI}thumbDirDownload/ufid{$ufid}"/>
-							<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">person.thumbnail.jpg</public:filename>
-							<public:mimeType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">image/jpeg</public:mimeType>
-						</rdf:Description>
-						
-						<!-- Create the public download link for the image thumbnail -->
-						<rdf:Description rdf:about="{$baseURI}thumbDirDownload/ufid{$ufid}">
-				  			<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
-				  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
-				  			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
-						</rdf:Description>
-						
-						<!-- Create the public download link for the image full -->
-						<rdf:Description rdf:about="{$baseURI}fullDirDownload/ufid{$ufid}">
-							<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
-				  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
-				 			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
-						</rdf:Description>	
+					  			<public:downloadLocation>
+									<!-- Create the public download link for the image full -->
+									<rdf:Description rdf:about="{$baseURI}fullDirDownload/ufid{$ufid}">
+										<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
+							  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
+							 			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
+									</rdf:Description>	
+					  			</public:downloadLocation>
+	
+					  			<!-- Thumbnail Image Node Start -->
+					  			<public:thumbnailImage>
+									<!-- Create the thumbnail link portion of the image -->
+									<rdf:Description rdf:about="{$baseURI}thumbImg/ufid{$ufid}">
+										<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+							 			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#File"/>
+										<public:downloadLocation>
+											<!-- Create the public download link for the image thumbnail -->
+											<rdf:Description rdf:about="{$baseURI}thumbDirDownload/ufid{$ufid}">
+									  			<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
+									  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
+									  			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
+											</rdf:Description>
+										</public:downloadLocation>
+										<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">person.thumbnail.jpg</public:filename>
+										<public:mimeType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">image/jpeg</public:mimeType>
+									</rdf:Description>
+					  			</public:thumbnailImage>
+					  			<!-- Thumbnail Image Node End -->
+
+					  			<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">person.thumbnail.jpg</public:filename>
+					  			<public:mimeType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">image/jpeg</public:mimeType>
+							</rdf:Description>
+						</public:mainImage>
+						<!-- Entire picture node end -->
 					</xsl:otherwise>
 				</xsl:choose>
+
 				<!-- Determine which VIVO class to assign this person to based upon hierarchy provided by PI -->
 				<xsl:choose>
 					<xsl:when test="RELATIONSHIP[@type=200]">
@@ -192,8 +183,6 @@
 				</xsl:choose>
 			</rdf:Description>
 			<!-- Person node end -->
-			
-
 		</rdf:RDF>
 	</xsl:template>
 
