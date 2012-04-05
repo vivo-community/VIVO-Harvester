@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<Task>
+	<!-- Required: VIVO Jena model -->
+	<Param name="vivoJena-config">vivo.model.xml</Param>
+
+	<!-- Required: Scopus access info -->
+	<Param name="scopus-apikey">EnterAPIKeyHere</Param>
+	<Param name="scopus-accept">text/xml, application/atom+xml</Param>
+	<Param name="scopus-pubyear-start">1990</Param>
+	<Param name="scopus-pubyear-end">2012</Param>
+
+	<!--
+		Required: SPARQL query to retrieve people with Scopus ID  
+	-->
+	<Param name="sparql">sparql.txt</Param>
+
+	<!-- 
+		Pubmed termSearch is populated during runtime 
+	-->
+	<Param name="email">YOUEMAIL@EMAIL</Param>
+	<Param name="termSearch">IgnoreThisField</Param>
+	<Param name="numRecords">ALL</Param>
+	<Param name="batchSize">1000</Param>
+	<Param name="output">raw-records.config.xml</Param>
+
+
+	<!-- 
+		Affiliation list and scopus-affiliation-linked.
+		If scopus-affiliation-linked is set to true, get only publications that are
+		linked to the affiliation list.
+		If scopus-affiliation-linked is set to false, get publications that are not tied to the 
+		affiliation list. 
+		Un-comment if needed. 
+		*** Both scopus-affiliation and scopus-affiliation-linked need to
+		be un-commented to be useful. ***
+	-->
+	<!--
+	<Param name="scopus-affiliation">60007997,60019868,60072750,60025849,60018043,60071570,60026978,60072750</Param>
+	<Param name="scopus-affiliation-linked">true</Param>
+	-->
+
+</Task>
