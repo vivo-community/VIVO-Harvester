@@ -73,9 +73,6 @@
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
 				<ufVivo:Deceased><xsl:value-of select="DECEASED" /></ufVivo:Deceased>
 	
-				<!-- Relation to department node start -->
-				<ufVivo:homeDept rdf:resource="{$baseURI}dept/{$deptID}" />			
-				<!-- Relation to department node end -->
 				
 				<!-- Need to determine person's PROTECT status to make sure we don't display protected information -->
 				<xsl:choose>
@@ -85,6 +82,26 @@
 						<core:primaryEmail><xsl:value-of select="EMAIL[@type=1]" /></core:primaryEmail>
 						<core:primaryPhoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
+
+						<!-- Relation to department node start -->
+						<ufVivo:homeDept rdf:resource="{$baseURI}dept/{$deptID}" />			
+						<!-- Relation to department node end -->
+
+						<!-- Department stub node start -->
+						<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
+				
+							<!-- Relation to Person Node Start -->
+							<ufVivo:homeDeptFor rdf:resource="{$baseURI}person/{$ufid}" />
+							<!-- Relation to Person Node End -->
+				
+							<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
+							<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+				   		</rdf:Description>
+						<!-- Department stub node end -->
+
 					</xsl:when>
 					<xsl:otherwise>
 					<!-- Person is a protected entity so blank out standard information -->
@@ -92,6 +109,25 @@
 						<core:primaryEmail />
 						<core:primaryPhoneNumber />
 						<core:faxNumber />
+
+						<!-- Relation to department node start -->
+						<ufVivo:homeDept />			
+						<!-- Relation to department node end -->
+
+						<!-- Department stub node start -->
+						<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
+				
+							<!-- Relation to Person Node Start -->
+							<ufVivo:homeDeptFor />
+							<!-- Relation to Person Node End -->
+				
+							<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
+							<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+							<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
+							<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+				   		</rdf:Description>
+						<!-- Department stub node end -->
 	
 						<!-- Apply the template for the image for a blank person -->
 						<public:mainImage rdf:resource="{$baseURI}mainImg/ufid{$ufid}"/>
@@ -157,20 +193,6 @@
 			</rdf:Description>
 			<!-- Person node end -->
 			
-			<!-- Department stub node start -->
-			<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
-	
-				<!-- Relation to Person Node Start -->
-				<ufVivo:homeDeptFor rdf:resource="{$baseURI}person/{$ufid}" />
-				<!-- Relation to Person Node End -->
-	
-				<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
-				<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
-				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
-	   		</rdf:Description>
-			<!-- Department stub node end -->
 
 		</rdf:RDF>
 	</xsl:template>
