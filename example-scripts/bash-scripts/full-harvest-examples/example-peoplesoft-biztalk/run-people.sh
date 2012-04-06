@@ -53,6 +53,10 @@ bash fetch.filter.sh
 
 
 harvester-xsltranslator -X xsltranslator.config.xml
+
+bash translate-filter.sh
+ 
+exit
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
 #       data torage structure similar to a database, but is in RDF.
