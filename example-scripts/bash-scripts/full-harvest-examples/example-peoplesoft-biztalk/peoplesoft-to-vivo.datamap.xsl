@@ -180,6 +180,10 @@
 					<xsl:when test="RELATIONSHIP[@type=221]">
 						<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Consultant"/>
 					</xsl:when>
+					<xsl:otherwise>
+						<!-- If the person is not in our scope - mark him for removal -->
+						<Ignore />
+					</xsl:otherwise>
 				</xsl:choose>
 			</rdf:Description>
 			<!-- Person node end -->
