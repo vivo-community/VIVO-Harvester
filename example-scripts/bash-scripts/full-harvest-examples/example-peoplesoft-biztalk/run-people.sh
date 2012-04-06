@@ -40,6 +40,18 @@ ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
 
 
+# Execute Fetch
+# This stage of the script is where the information is gathered together into one local
+#       place to facilitate the further steps of the harvest. The data is stored locally
+#       in a format based off of the source. The format is a form of RDF yet its ontology
+#       too simple to be put into a model and be useful.
+#  The fetch-filter.sh  in particular takes the data from the chosen source described, filter and places it into 
+#  different destination directory.
+
+bash fetch.filter.sh
+
+
+
 harvester-xsltranslator -X xsltranslator.config.xml
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a

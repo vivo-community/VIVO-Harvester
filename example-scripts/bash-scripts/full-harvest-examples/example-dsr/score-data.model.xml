@@ -107,5 +107,5 @@
 -->
 <Config>
 	<Param name="type">tdb</Param>
-	<Param name="dbDir">data/harvested-data/</Param>
+	<Param name="dbDir">data/scored-data/</Param>
 </Config>
