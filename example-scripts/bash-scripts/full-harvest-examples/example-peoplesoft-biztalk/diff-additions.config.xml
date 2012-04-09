@@ -66,5 +66,5 @@
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
 	
-<!--     <Param name="output">diff-output.model.xml</Param> -->
+		<Param name="output">diff-output.model.xml</Param>
 </Config>
