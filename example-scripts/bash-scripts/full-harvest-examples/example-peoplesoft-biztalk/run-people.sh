@@ -3,6 +3,7 @@
 #Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
 #All rights reserved.
 #This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+# AUTHORS Vincent Sposato, Mayank Saini, Stephen Williams, Rene Ziede
 
 # set to the directory where the harvester was installed or unpacked
 # HARVESTER_INSTALL_DIR is set to the location of the installed harvester
@@ -14,7 +15,7 @@
 #       and should agree with the installation location
 VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
 export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
-export HARVEST_NAME=example-images
+export HARVEST_NAME=example-peoplesoft-biztalk
 export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
@@ -30,10 +31,34 @@ export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTE
 #       a solution to the problem. It has become common practice in addressing a problem
 #       to request this file. The passwords and usernames are filtered out of this file
 #       to prevent these logs from containing sensitive information.
-echo "Full Logging in image-harvest-$DATE.log"
+echo "Full Logging in peoplesoft-biztalk-harvest-$DATE.log"
+
+# Check to see if the logs directory exists, and if it doesn't create it
 if [ ! -d logs ]; then
   mkdir logs
 fi
+
+# Check to see if the data directory exists, and if it doesn't create it
+if [ ! -d data ]; then
+  mkdir data
+fi
+
+# Check to see if data/translated-records exists, and if so delete it
+# This will prevent translation errors when running the harvest over the same set of data
+# more than once
+if { -d data/translated-records ]; then
+  rm -rf data/translated-records
+fi
+
+# Check to see if there is a harvested-data model directory, and if so delete it
+# This is important for subtractions and additions to work correctly, because if data changes
+# between harvests for an individual then this will aggregate the data as opposed to treating it
+# as an update
+if { -d data/harvested-data ]; then
+  rm -rf data/harvested-data
+fi
+
+# Change directory to the logs director and touch the file
 cd logs
 touch $HARVEST_NAME.$DATE.log
 ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
