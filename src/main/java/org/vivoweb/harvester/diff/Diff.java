@@ -179,18 +179,25 @@ public class Diff {
 		// c.diff(b) = a
 		
 		Model diffModel = ModelFactory.createDefaultModel();
+		Model oppDiffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();
 		Model subtrahendModel = sJC.getJenaModel();
 		
 		diffModel = minuendModel.difference(subtrahendModel);
+		oppDiffModel = subtrahendModel.difference(minuendModel);
 		boolean testDiff = diffModel.isEmpty();
 		boolean testMinuend = minuendModel.isEmpty();
 		boolean testSubtrahend = subtrahendModel.isEmpty();
+		boolean testOpposite = oppDiffModel.isEmpty();
 		log.debug("testDiff boolean - " + Boolean.toString(testDiff));
+		diffModel.write(System.out);
+		log.debug("testOpposite boolean - " + Boolean.toString(testOpposite));
+		oppDiffModel.write(System.out);
+		
 		log.debug("testMinuend boolean - " + Boolean.toString(testMinuend) + " Model " + Boolean.toString(mJC.isEmpty()));
 		log.debug("testSubtrahend boolean - " + Boolean.toString(testSubtrahend) + " Model " + Boolean.toString(sJC.isEmpty()));
-		mJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/minuendJena.rdf.xml");
-		sJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/subtrahendJena.rdf.xml");
+		//mJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/minuendJena.rdf.xml");
+		//sJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/subtrahendJena.rdf.xml");
 
 		if (dF != null) {
 			for(String filename : dF.keySet()) {

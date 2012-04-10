@@ -64,7 +64,7 @@ public class DiffTest extends TestCase {
 			"xmlns:swvocab=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
 			"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
 			"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
-			"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
+			"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\"> " +
 		"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n1836184267\">"+
 			"<j.4:faxNumber></j.4:faxNumber>" +
 			"<j.1:Deceased>N</j.1:Deceased>" +
@@ -107,7 +107,7 @@ public class DiffTest extends TestCase {
 			"xmlns:swvocab=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
 			"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
 			"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
-			"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\" " +
+			"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\"> " +
 		"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n1836184267\">"+
 			"<j.4:faxNumber></j.4:faxNumber>" +
 			"<j.1:Deceased>N</j.1:Deceased>" +
@@ -168,11 +168,12 @@ public class DiffTest extends TestCase {
 
 		// load input models
 		this.input = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "input");
-		//this.input.loadRdfFromString(inputRDF, null, null);
+		//System.out.println(this.inputRDF.subSequence(730, 820));
+		this.input.loadRdfFromString(inputRDF, null, null);
 		
 		// load previous harvest model
 		this.prevHarvest = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "prevHarvest");
-		//this.prevHarvest.loadRdfFromString(prevHarvestRDF, null, null);
+		this.prevHarvest.loadRdfFromString(prevHarvestRDF, null, null);
 	}
 	
 	@Override
@@ -219,6 +220,12 @@ public class DiffTest extends TestCase {
 		log.info("BEGIN testDiffPrevHarvest");
 		Diff.diff(this.input, this.prevHarvest, this.output, null, null, null, null);
 		assertFalse(this.output.isEmpty());
+		this.output.exportRdfToStream(System.out);
+		
+		this.output.truncate();
+		Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
+		assertFalse(this.output.isEmpty());
+		this.output.exportRdfToStream(System.out);
 		
 		/*for(Statement sub : this.subStatements) {
 			assertFalse(this.output.getJenaModel().contains(sub));
