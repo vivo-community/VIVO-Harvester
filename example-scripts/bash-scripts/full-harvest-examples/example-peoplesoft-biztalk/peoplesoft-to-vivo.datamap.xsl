@@ -31,7 +31,7 @@
 	<!-- Person node start -->
 	<xsl:template match="ns0:PERSON">
 		<xsl:variable name="ufid" select="UFID"/>
-		<xsl:variable name="deptID" select="DEPTID"/>
+		<xsl:variable name="deptID" select="normalize-space(DEPTID)"/>
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
 			xmlns:foaf="http://xmlns.com/foaf/0.1/"
@@ -82,26 +82,27 @@
 						<core:primaryEmail><xsl:value-of select="EMAIL[@type=1]" /></core:primaryEmail>
 						<core:primaryPhoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
-
-						<!-- Relation to department node start -->
-						<ufVivo:homeDept>
-							<!-- Department stub node start -->
-							<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
-					
-								<!-- Relation to Person Node Start -->
-								<ufVivo:homeDeptFor rdf:resource="{$baseURI}person/{$ufid}" />
-								<!-- Relation to Person Node End -->
-					
-								<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
-								<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-								<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-								<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
-								<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
-					   		</rdf:Description>
-							<!-- Department stub node end -->
-						</ufVivo:homeDept>			
-						<!-- Relation to department node end -->
-
+						
+						<xsl:if test='$deptID'>
+							<!-- Relation to department node start -->
+							<ufVivo:homeDept>
+								<!-- Department stub node start -->
+								<rdf:Description rdf:about="{$baseURI}dept/{$deptID}">
+						
+									<!-- Relation to Person Node Start -->
+									<ufVivo:homeDeptFor rdf:resource="{$baseURI}person/{$ufid}" />
+									<!-- Relation to Person Node End -->
+						
+									<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
+									<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+									<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
+									<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
+									<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+						   		</rdf:Description>
+								<!-- Department stub node end -->
+							</ufVivo:homeDept>			
+							<!-- Relation to department node end -->
+						</xsl:if>
 
 					</xsl:when>
 					<xsl:otherwise>
@@ -125,7 +126,9 @@
 									<rdf:Description rdf:about="{$baseURI}fullDirDownload/ufid{$ufid}">
 										<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
 							  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
+							  			<!-- Removed to prevent duplicate date/times on photos 
 							 			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
+										 -->
 									</rdf:Description>	
 					  			</public:downloadLocation>
 	
@@ -140,7 +143,9 @@
 											<rdf:Description rdf:about="{$baseURI}thumbDirDownload/ufid{$ufid}">
 									  			<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
 									  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
+									  			<!-- Removed to prevent duplicate date/times on photos 
 									  			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
+												 -->
 											</rdf:Description>
 										</public:downloadLocation>
 										<public:filename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">person.thumbnail.jpg</public:filename>

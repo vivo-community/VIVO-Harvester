@@ -50,13 +50,10 @@ cd ..
 
 bash fetch.filter.sh
 
-
-
 harvester-xsltranslator -X xsltranslator.config.xml
 
 bash translate-filter.sh
  
-exit
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
 #       data torage structure similar to a database, but is in RDF.
@@ -102,14 +99,14 @@ harvester-diff -X diff-subtractions.config.xml
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #       should agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
