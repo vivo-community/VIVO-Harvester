@@ -3,6 +3,7 @@
 #Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
 #All rights reserved.
 #This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+# AUTHORS Vincent Sposato, Mayank Saini, Stephen Williams, Rene Ziede
 
 # set to the directory where the harvester was installed or unpacked
 # HARVESTER_INSTALL_DIR is set to the location of the installed harvester
@@ -14,7 +15,7 @@
 #       and should agree with the installation location
 VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
 export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
-export HARVEST_NAME=example-images
+export HARVEST_NAME=example-peoplesoft-biztalk
 export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
@@ -23,36 +24,61 @@ export DATE=`date +%Y-%m-%d'T'%T`
 #       included within the classpath and the path environment variables.
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
-
-
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
+
+# Set the email address of the person receiving the email
+export EMAIL_RECIPIENT="vsposato@ufl.edu"
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
 #       a solution to the problem. It has become common practice in addressing a problem
 #       to request this file. The passwords and usernames are filtered out of this file
 #       to prevent these logs from containing sensitive information.
-echo "Full Logging in image-harvest-$DATE.log"
+echo "Full Logging in peoplesoft-biztalk-harvest-$DATE.log"
+
+# Check to see if the logs directory exists, and if it doesn't create it
 if [ ! -d logs ]; then
   mkdir logs
 fi
+
+# Check to see if the data directory exists, and if it doesn't create it
+if [ ! -d data ]; then
+  mkdir data
+fi
+
+# Check to see if data/translated-records exists, and if so delete it
+# This will prevent translation errors when running the harvest over the same set of data
+# more than once
+if { -d data/translated-records ]; then
+  rm -rf data/translated-records
+fi
+
+# Check to see if there is a harvested-data model directory, and if so delete it
+# This is important for subtractions and additions to work correctly, because if data changes
+# between harvests for an individual then this will aggregate the data as opposed to treating it
+# as an update
+if [ -d data/harvested-data ]; then
+  rm -rf data/harvested-data
+fi
+
+# Check to see if previous harvest's full analytics file is there, and delete it
+if [ -f logfile.txt ]; then
+  rm -rf logfile.txt
+fi
+
+# Create the logfile.txt now to capture all of the analytics
+touch logfile.txt
+
+# Change directory to the logs director and touch the file
 cd logs
 touch $HARVEST_NAME.$DATE.log
 ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
 
 
-rm -rf data
-rm -rf analytics.txt
-touch analytics.txt
-rm -rf logfile.txt
-touch logfile.txt
-
-
 # Execute Fetch
 # This stage of the script is where the information is gathered together into one local
 #       place to facilitate the further steps of the harvest. The data is stored locally
-
 #       in a format based off of the source. The format is a form of RDF yet its ontology
 #       too simple to be put into a model and be useful.
 #  The fetch-filter.sh  in particular takes the data from the chosen source described, filter and places it into 
@@ -60,11 +86,10 @@ touch logfile.txt
 
 #bash fetch.filter.sh
 
-
-
 harvester-xsltranslator -X xsltranslator.config.xml
 
-echo "Running Pre Course Ingest Analytics......."
+# Run pre-harvest analytics
+echo "Running Pre Peoplesoft Ingest Analytics......."
 bash analytics.sh
 
 
@@ -79,7 +104,6 @@ bash analytics.sh
 # -o refers to the destination model for harvested data
 # -d means that this call will also produce a text dump file in the specified location 
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
-
 
 # Execute Score for People
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
@@ -105,28 +129,25 @@ harvester-changenamespace -X changenamespace-people.config.xml
 
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the entries that exist in
-
-
-
-#       the previous harvest but not in the current harvest need to be identifi$
+#       the previous harvest but not in the current harvest need to be identified for removal.
 harvester-changenamespace -X changenamespace-departments.config.xml
 
 harvester-diff -X diff-subtractions.config.xml
 
 # Find Additions
-# When making the previous harvest model agree with the current harvest, the en$
-#       the current harvest but not in the previous harvest need to be identifi$
+# When making the previous harvest model agree with the current harvest, the entries that exist in
+#       the current harvest but not in the previous harvest need to be identified for addition.
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf$
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
-# Now that the changes have been applied to the previous harvest and the harves$
-#       should agree with the previous harvest, the changes are now applied to $
+# Now that the changes have been applied to the previous harvest and the harvested data in vivo
+#       should agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
@@ -142,6 +163,7 @@ echo "=========================================================================$
 cat analytics.txt &>> logfile.txt
 echo -e "\n" &>> logfile.txt
 
+# Send analytics email out to group
+mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT" < logfile.txt
 
 echo 'Harvest completed successfully'
-
