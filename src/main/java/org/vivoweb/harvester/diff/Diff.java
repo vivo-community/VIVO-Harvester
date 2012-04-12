@@ -179,11 +179,13 @@ public class Diff {
 		// c.diff(b) = a
 		
 		Model diffModel = ModelFactory.createDefaultModel();
-		Model oppDiffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();
 		Model subtrahendModel = sJC.getJenaModel();
 		
 		diffModel = minuendModel.difference(subtrahendModel);
+		/*
+		 * Code removed after testing of additions / subtractions figured out
+		Model oppDiffModel = ModelFactory.createDefaultModel();
 		oppDiffModel = subtrahendModel.difference(minuendModel);
 		boolean testDiff = diffModel.isEmpty();
 		boolean testMinuend = minuendModel.isEmpty();
@@ -196,8 +198,8 @@ public class Diff {
 		
 		log.debug("testMinuend boolean - " + Boolean.toString(testMinuend) + " Model " + Boolean.toString(mJC.isEmpty()));
 		log.debug("testSubtrahend boolean - " + Boolean.toString(testSubtrahend) + " Model " + Boolean.toString(sJC.isEmpty()));
-		//mJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/minuendJena.rdf.xml");
-		//sJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/subtrahendJena.rdf.xml");
+		mJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/minuendJena.rdf.xml");
+		sJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/subtrahendJena.rdf.xml");*/
 
 		if (dF != null) {
 			for(String filename : dF.keySet()) {
