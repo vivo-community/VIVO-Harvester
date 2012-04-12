@@ -92,7 +92,9 @@
 			
 
 			<!-- Listed as assignees for now are organizations and people assigned to this project -->
-			<core:assignee rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
+			<xsl:if test="normalize-space(contact-name)">
+				<core:assignee rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
+			</csl:if>
 			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$ctsai_id}" />
 		</rdf:Description>
 		
@@ -103,12 +105,14 @@
 		</rdf:Description>
 		
 		<!-- Case Manager (also smushed later in the process) -->
-		<rdf:Description rdf:about="{$baseURI}casemngr/{$ctsai_id}" >
-			<rdfs:label><xsl:value-of select="contact-name" /></rdfs:label>		
-			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-			<core:email><xsl:value-of select="contact-email" /></core:email>
-			<core:assigneeFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
-		</rdf:Description>
+		<xsl:if test="normalize-space(contact-name)">
+			<rdf:Description rdf:about="{$baseURI}casemngr/{$ctsai_id}" >
+				<rdfs:label><xsl:value-of select="contact-name" /></rdfs:label>		
+				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+				<core:email><xsl:value-of select="contact-email" /></core:email>
+				<core:assigneeFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
+			</rdf:Description>
+		</xsl:if>
 	</xsl:template>
 		
 </xsl:stylesheet>
