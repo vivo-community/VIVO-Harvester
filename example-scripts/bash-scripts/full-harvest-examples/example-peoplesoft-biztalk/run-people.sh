@@ -26,6 +26,9 @@ export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
+# Set the email address of the person receiving the email
+export EMAIL_RECIPIENT="vsposato@ufl.edu"
+
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
 #       a solution to the problem. It has become common practice in addressing a problem
@@ -54,9 +57,17 @@ fi
 # This is important for subtractions and additions to work correctly, because if data changes
 # between harvests for an individual then this will aggregate the data as opposed to treating it
 # as an update
-if { -d data/harvested-data ]; then
+if [ -d data/harvested-data ]; then
   rm -rf data/harvested-data
 fi
+
+# Check to see if previous harvest's full analytics file is there, and delete it
+if [ -f logfile.txt ]; then
+  rm -rf logfile.txt
+fi
+
+# Create the logfile.txt now to capture all of the analytics
+touch logfile.txt
 
 # Change directory to the logs director and touch the file
 cd logs
@@ -73,11 +84,16 @@ cd ..
 #  The fetch-filter.sh  in particular takes the data from the chosen source described, filter and places it into 
 #  different destination directory.
 
-bash fetch.filter.sh
+#bash fetch.filter.sh
 
 harvester-xsltranslator -X xsltranslator.config.xml
 
-bash translate-filter.sh
+# Run pre-harvest analytics
+echo "Running Pre Peoplesoft Ingest Analytics......."
+bash analytics.sh
+
+
+#bash translate-filter.sh
  
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
@@ -134,5 +150,20 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+
+echo "Pre Course Ingest Analytics" &>> logfile.txt
+echo "=========================================================================$
+cat analytics.txt &>> logfile.txt
+echo -e "\n" &>>logfile.txt
+
+echo "Running Post Course Ingest Analytics......."
+bash analytics.sh
+echo "Post Course Ingest Analytics" &>> logfile.txt
+echo "=========================================================================$
+cat analytics.txt &>> logfile.txt
+echo -e "\n" &>> logfile.txt
+
+# Send analytics email out to group
+mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT" < logfile.txt
 
 echo 'Harvest completed successfully'
