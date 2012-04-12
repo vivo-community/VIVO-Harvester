@@ -75,8 +75,8 @@
 			<xsl:if test="normalize-space( institution-tech-id )">
 				<ctsaip:internalCaseNo><xsl:value-of select="institution-tech-id" /></ctsaip:internalCaseNo>
 			</xsl:if>
-			<xsl:if test="normalize-space( insitution-link )">
-				<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
+			<xsl:if test="normalize-space( institution-link )">
+				<core:webpage><xsl:value-of select="institution-link" /></core:webpage>
 			</xsl:if>
 			<xsl:if test="normalize-space( ctsaip-link )">
 				<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
@@ -98,7 +98,7 @@
 		
 		<!-- The Institution which we will smush together later in the process based on Label and the type Organization -->
 		<rdf:Description rdf:about="{$baseURI}institution/{$ctsai_id}">
-			<rdf:label><xsl:value-of select="instituion" /></rdf:label>
+			<rdf:label><xsl:value-of select="institution" /></rdf:label>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 		</rdf:Description>
 		
