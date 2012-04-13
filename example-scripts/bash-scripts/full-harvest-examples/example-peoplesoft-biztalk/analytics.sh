@@ -28,12 +28,16 @@ export DATE=`date +%Y-%m-%d'T'%T`
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
-rm -rf analytics.txt
+
+# Check to see if analytics.txt already exists
+if [ -f analytics.txt ]; then
+   rm -rf analytics.txt
+fi
+
+# Create the analytics.txt file
+touch analytics.txt
 
 #return total number of people in Consultant class
-
-
-
 echo "Total number of people in Consultant class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type ufVivo:Consultant .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people in Consultant class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type ufVivo:Consultant .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people in EmeritusProfessor class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:EmeritusProfessor .}" | sed -n '4,4p'`  >>analytics.txt
@@ -41,7 +45,6 @@ echo "Total number of people in CourseFaculty class : " `harvester-jenaconnect -
 echo "Total number of people in nonAcademic class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:NonAcademic .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people with facultyMember class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:FacultyMember .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of persons with gator link : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type foaf:Person .?x ufVivo:ufid ?y .}" | sed -n '4,4p'`  >>analytics.txt
-
 echo "Total number of persons with gator link : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type foaf:Person .?x ufVivo:gatorlink ?y .}" | sed -n '4,4p'`  >>analytics.txt       $
 echo "Total number of Courses in VIVO:  " `harvester-jenaconnect -j vivo.model.xml -q "SELECT  count(?URI)  WHERE  {?URI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://vivo.ufl.edu/ontology/vivo-ufl/C$
 echo "Total number of CoursesSecton in VIVO:  " `harvester-jenaconnect -j vivo.model.xml -q "SELECT  count(?URI)  WHERE  {?URI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://vivo.ufl.edu/ontology/vivo$
