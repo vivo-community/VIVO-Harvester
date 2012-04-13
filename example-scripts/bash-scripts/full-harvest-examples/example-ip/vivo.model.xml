@@ -102,8 +102,8 @@
     <Param name="dbLayout">layout2</Param>
     <Param name="dbClass">com.mysql.jdbc.Driver</Param>
     <Param name="dbType">MySQL</Param>
-    <Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vivo</Param>
+    <Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vitrodb</Param>
     <Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
-    <Param name="dbUser">phuong</Param>
-    <Param name="dbPass">ph010689</Param>
+    <Param name="dbUser">vitro</Param>
+    <Param name="dbPass">vitro123</Param>
 </Model>
