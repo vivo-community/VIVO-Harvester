@@ -120,24 +120,24 @@ harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-r
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the statements that exist in
 #	the previous harvest but not in the current harvest need to be identified for removal.
-#harvester-diff -X diff-subtractions.config.xml
+harvester-diff -X diff-subtractions.config.xml
 
 # Find Additions
 # When making the previous harvest model agree with the current harvest, the statements that exist in
 #	the current harvest but not in the previous harvest need to be identified for addition.
-#harvester-diff -X diff-additions.config.xml
+harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 # agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 # ---------------------------------------------------------------------------------------------------------
 # Transfer Into VIVO
@@ -147,9 +147,9 @@ harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-r
 
 
 #Output some counts
-#ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
-#PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
+ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
+PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
 #POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
-#echo "Imported $ORGS organizations, $PEOPLE people, and $POSITIONS positions"
+echo "Imported $ORGS organizations, $PEOPLE people"
 
 echo 'Harvest completed successfully'
