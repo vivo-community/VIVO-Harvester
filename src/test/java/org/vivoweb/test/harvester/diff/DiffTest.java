@@ -14,6 +14,7 @@ import org.vivoweb.harvester.diff.Diff;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -32,7 +33,7 @@ public class DiffTest extends TestCase {
 	/** */
 	private JenaConnect original;
 	/** */
-	private JenaConnect incomming;
+	private JenaConnect incoming;
 	/** */
 	private JenaConnect output;
 	/** */
@@ -41,7 +42,92 @@ public class DiffTest extends TestCase {
 	private List<Statement> subStatements;
 	/** */
 	private List<Statement> addStatements;
+	private SDBJenaConnect input;
+	private SDBJenaConnect prevHarvest;
 	
+	/**
+	 * previousHarvest model will be stored here
+	 */
+	protected static final String prevHarvestRDF = "" +
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+		"<rdf:RDF xmlns:j.0=\"http://vitro.mannlib.cornell.edu/ns/vitro/public#\" " +
+			"xmlns:j.1=\"http://vivo.ufl.edu/ontology/vivo-ufl/\" " + 
+			"xmlns:j.2=\"http://purl.org/ontology/bibo/\" " +
+			"xmlns:j.3=\"http://xmlns.com/foaf/0.1/\" " +
+			"xmlns:j.4=\"http://vivoweb.org/ontology/core#\" " +
+			"xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " +
+			"xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" " +
+			"xmlns:owlPlus=\"http://www.w3.org/2006/12/owl2-xml#\" " +
+			"xmlns:xs=\"http://www.w3.org/2001/XMLSchema#\" " +
+			"xmlns:skos=\"http://www.w3.org/2008/05/skos#\" " +
+			"xmlns:vocab=\"http://purl.org/vocab/vann/\" " +
+			"xmlns:swvocab=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
+			"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+			"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
+			"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\"> " +
+		"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n1836184267\">"+
+			"<j.4:faxNumber></j.4:faxNumber>" +
+			"<j.1:Deceased>N</j.1:Deceased>" +
+			"<j.4:middleName>J</j.4:middleName>" +
+			"<j.1:harvestedBy>PeopleSoft-BizTalk-Harvester</j.1:harvestedBy>" +
+			"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+			"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#NonAcademic\"/>" +
+			"<j.4:primaryEmail>vincent.sposato@ufl.edu</j.4:primaryEmail>" +
+			"<j.4:primaryEmail>vincent.sposato@gmail.com</j.4:primaryEmail>" +
+			"<j.4:primaryEmail>vincent.sposato.jr@gmail.com</j.4:primaryEmail>" +
+			"<j.1:gatorlink rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">vsposato</j.1:gatorlink>" +
+			"<j.3:firstName>Vincent</j.3:firstName>" +
+			"<j.3:lastName>Sposato</j.3:lastName>" +
+			"<j.1:ufid>83117145</j.1:ufid>" +
+			"<j.1:privacy>N</j.1:privacy>" +
+			"<rdfs:label>Sposato,Vincent J</rdfs:label>"+
+			"<j.4:primaryPhoneNumber>(904) 716-3289</j.4:primaryPhoneNumber>" +
+			"<j.4:primaryPhoneNumber>(123) 456-7890</j.4:primaryPhoneNumber>" +
+			"<j.4:primaryPhoneNumber>(123) 456-7890 7890</j.4:primaryPhoneNumber>" +
+			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
+			"<j.4:preferredTitle>IT Expert, Sr. Software Engineer</j.4:preferredTitle>" +
+		"</rdf:Description>" +
+		"</rdf:RDF>";
+	/**
+	 * previousHarvest model will be stored here
+	 */
+	protected static final String inputRDF = "" +
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+		"<rdf:RDF xmlns:j.0=\"http://vitro.mannlib.cornell.edu/ns/vitro/public#\" " +
+			"xmlns:j.1=\"http://vivo.ufl.edu/ontology/vivo-ufl/\" " + 
+			"xmlns:j.2=\"http://purl.org/ontology/bibo/\" " +
+		    "xmlns:j.3=\"http://xmlns.com/foaf/0.1/\" " +
+		    "xmlns:j.4=\"http://vivoweb.org/ontology/core#\" " +
+		    "xmlns:owl=\"http://www.w3.org/2002/07/owl#\" " + 
+		    "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" " +
+			"xmlns:owlPlus=\"http://www.w3.org/2006/12/owl2-xml#\" " +
+			"xmlns:xs=\"http://www.w3.org/2001/XMLSchema#\" " +
+			"xmlns:skos=\"http://www.w3.org/2008/05/skos#\" " +
+			"xmlns:vocab=\"http://purl.org/vocab/vann/\" " +
+			"xmlns:swvocab=\"http://www.w3.org/2003/06/sw-vocab-status/ns#\" " +
+			"xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " +
+			"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " +
+			"xmlns:vitro=\"http://vitro.mannlib.cornell.edu/ns/vitro/0.7#\"> " +
+		"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n1836184267\">"+
+			"<j.4:faxNumber></j.4:faxNumber>" +
+			"<j.1:Deceased>N</j.1:Deceased>" +
+			"<j.4:middleName>J</j.4:middleName>" +
+			"<j.1:harvestedBy>PeopleSoft-BizTalk-Harvester</j.1:harvestedBy>" +
+			"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+			"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#NonAcademic\"/>" +
+			"<j.4:primaryEmail>vsposato@ufl.edu</j.4:primaryEmail>" +
+			"<j.1:gatorlink rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">vsposato</j.1:gatorlink>" +
+			"<j.3:firstName>Vincent</j.3:firstName>" +
+			"<j.3:lastName>Sposato</j.3:lastName>" +
+			"<j.1:ufid>83117145</j.1:ufid>" +
+			"<j.1:privacy>N</j.1:privacy>" +
+			"<rdfs:label>Sposato,Vincent J</rdfs:label>"+
+			"<j.4:primaryPhoneNumber>(352) 294-5274   45274</j.4:primaryPhoneNumber>" +
+			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
+			"<j.4:preferredTitle>IT Expert, Sr. Software Engineer</j.4:preferredTitle>" +
+		"</rdf:Description>" +
+		"</rdf:RDF>";
+
 	@Override
 	protected void setUp() throws Exception {
 		InitLog.initLogger(null, null);
@@ -75,23 +161,37 @@ public class DiffTest extends TestCase {
 		this.original = new MemJenaConnect("original");
 		this.original.getJenaModel().add(this.shareStatements);
 		this.original.getJenaModel().add(this.subStatements);
-		this.incomming = new MemJenaConnect("incomming");
-		this.incomming.getJenaModel().add(this.shareStatements);
-		this.incomming.getJenaModel().add(this.addStatements);
+		this.incoming = new MemJenaConnect("incomming");
+		this.incoming.getJenaModel().add(this.shareStatements);
+		this.incoming.getJenaModel().add(this.addStatements);
 		this.output = new MemJenaConnect("output");
+
+		// load input models
+		this.input = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "input");
+		//System.out.println(this.inputRDF.subSequence(730, 820));
+		this.input.loadRdfFromString(inputRDF, null, null);
+		
+		// load previous harvest model
+		this.prevHarvest = new SDBJenaConnect("jdbc:h2:mem:test", "sa", "", "H2", "org.h2.Driver", "layout2", "prevHarvest");
+		this.prevHarvest.loadRdfFromString(prevHarvestRDF, null, null);
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
 		this.original.truncate();
 		this.original.close();
-		this.incomming.truncate();
-		this.incomming.close();
+		this.incoming.truncate();
+		this.incoming.close();
 		this.output.truncate();
 		this.output.close();
 		this.shareStatements.clear();
 		this.addStatements.clear();
 		this.subStatements.clear();
+		this.input.truncate();
+		this.input.close();
+		this.prevHarvest.truncate();
+		this.prevHarvest.close();
+		
 	}
 	
 	/**
@@ -101,7 +201,7 @@ public class DiffTest extends TestCase {
 	@SuppressWarnings("javadoc")
 	public final void testDiffAdds() throws IOException {
 		log.info("BEGIN testDiffAdds");
-		Diff.diff(this.incomming, this.original, this.output, null, null, null, null);
+		Diff.diff(this.incoming, this.original, this.output, null, null, null, null);
 		assertFalse(this.output.isEmpty());
 		for(Statement sub : this.subStatements) {
 			assertFalse(this.output.getJenaModel().contains(sub));
@@ -114,7 +214,31 @@ public class DiffTest extends TestCase {
 		}
 		log.info("END testDiffAdds");
 	}
-	
+
+	@SuppressWarnings("javadoc")
+	public final void testDiffPrevHarvest() throws IOException {
+		log.info("BEGIN testDiffPrevHarvest");
+		Diff.diff(this.input, this.prevHarvest, this.output, null, null, null, null);
+		assertFalse(this.output.isEmpty());
+		this.output.exportRdfToStream(System.out);
+		
+		this.output.truncate();
+		Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
+		assertFalse(this.output.isEmpty());
+		this.output.exportRdfToStream(System.out);
+		
+		/*for(Statement sub : this.subStatements) {
+			assertFalse(this.output.getJenaModel().contains(sub));
+		}
+		for(Statement add : this.addStatements) {
+			assertTrue(this.output.getJenaModel().contains(add));
+		}
+		for(Statement shared : this.shareStatements) {
+			assertFalse(this.output.getJenaModel().contains(shared));
+		}*/
+		log.info("END testDiffPrevHarvest");
+	}
+
 	/**
 	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
 	 * @throws IOException error
@@ -122,7 +246,7 @@ public class DiffTest extends TestCase {
 	@SuppressWarnings("javadoc")
 	public final void testDiffSubs() throws IOException {
 		log.info("BEGIN testDiffSubs");
-		Diff.diff(this.original, this.incomming, this.output, null, null, null, null);
+		Diff.diff(this.original, this.incoming, this.output, null, null, null, null);
 		assertFalse(this.output.isEmpty());
 		for(Statement sub : this.subStatements) {
 			assertTrue(this.output.getJenaModel().contains(sub));
@@ -163,7 +287,7 @@ public class DiffTest extends TestCase {
 	 */
 	public final void testDiffDumpFile() throws IOException {
 		log.info("Begin testDiffDumpFile");
-		Diff.diff(this.original, this.incomming, this.output, null, null, null, null);
+		Diff.diff(this.original, this.incoming, this.output, null, null, null, null);
 		//TODO:  Test Ouput File Creation for all three types
 		log.info("End testDiffDumpFile");
 	}
