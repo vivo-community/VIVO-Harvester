@@ -75,8 +75,8 @@
 			<xsl:if test="normalize-space( institution-tech-id )">
 				<ctsaip:internalCaseNo><xsl:value-of select="institution-tech-id" /></ctsaip:internalCaseNo>
 			</xsl:if>
-			<xsl:if test="normalize-space( insitution-link )">
-				<core:webpage><xsl:value-of select="insitution-link" /></core:webpage>
+			<xsl:if test="normalize-space( institution-link )">
+				<core:webpage><xsl:value-of select="institution-link" /></core:webpage>
 			</xsl:if>
 			<xsl:if test="normalize-space( ctsaip-link )">
 				<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
@@ -93,15 +93,16 @@
 
 			<!-- Listed as assignees for now are organizations and people assigned to this project -->
 			<xsl:if test="normalize-space(contact-name)">
-				<core:assignee rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
-			</csl:if>
+				<ctsaip:caseManager rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
+			</xsl:if>
 			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$ctsai_id}" />
 		</rdf:Description>
 		
 		<!-- The Institution which we will smush together later in the process based on Label and the type Organization -->
 		<rdf:Description rdf:about="{$baseURI}institution/{$ctsai_id}">
-			<rdf:label><xsl:value-of select="instituion" /></rdf:label>
+			<rdfs:label><xsl:value-of select="instituion" /></rdfs:label>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+			<ctsaip:originatingInstitutionFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
 		</rdf:Description>
 		
 		<!-- Case Manager (also smushed later in the process) -->
@@ -110,7 +111,7 @@
 				<rdfs:label><xsl:value-of select="contact-name" /></rdfs:label>		
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 				<core:email><xsl:value-of select="contact-email" /></core:email>
-				<core:assigneeFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
+				<ctsaip:caseManagerFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
 			</rdf:Description>
 		</xsl:if>
 	</xsl:template>

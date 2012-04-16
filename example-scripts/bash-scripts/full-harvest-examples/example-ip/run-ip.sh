@@ -72,6 +72,12 @@ harvester-xsltranslator -X xsltranslator.config.xml
 # -d means that this call will also produce a text dump file in the specified location 
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
+#Smush data together based off the organization label and the person's email
+harvester-smush -X smush-org.config.xml
+harvester-smush -X smush-person.config.xml
+
+
+
 # Clean up the data going into VIVO using Qualify to fix some of the content
 #
 #
@@ -81,7 +87,7 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 # Transfer Data Out
 #
 #
-harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
+#harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
 
 # Execute Score
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
@@ -109,7 +115,7 @@ harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-r
 # 	If there is an issue with uris being in another namespace, this is the phase
 #	which should give some light to the problem.
 # Execute ChangeNamespace for People
-#harvester-changenamespace -X changenamespace-people.config.xml
+harvester-changenamespace -X changenamespace-people.config.xml
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
@@ -120,24 +126,24 @@ harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-r
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the statements that exist in
 #	the previous harvest but not in the current harvest need to be identified for removal.
-#harvester-diff -X diff-subtractions.config.xml
+harvester-diff -X diff-subtractions.config.xml
 
 # Find Additions
 # When making the previous harvest model agree with the current harvest, the statements that exist in
 #	the current harvest but not in the previous harvest need to be identified for addition.
-#harvester-diff -X diff-additions.config.xml
+harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 # agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
-#harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 # ---------------------------------------------------------------------------------------------------------
 # Transfer Into VIVO
@@ -145,11 +151,13 @@ harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-r
 # ---------------------------------------------------------------------------------------------------------
 
 
-
 #Output some counts
-#ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
-#PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
-#POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
-#echo "Imported $ORGS organizations, $PEOPLE people, and $POSITIONS positions"
+ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
+PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
+TECH=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Technology' | wc -l`
+MAT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Material' | wc -l`
+INNOV=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Innovation' | wc -l`
+RT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/ResearchTool' | wc -l`
+echo "Imported $ORGS organizations, $PEOPLE people, $TECH technologies, $MAT materials, $INNOV innovations, $RT research tools"
 
 echo 'Harvest completed successfully'
