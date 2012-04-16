@@ -140,6 +140,10 @@ public class Diff {
 		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("dumptolanguage").withParameterValueMap("FILE_NAME", "LANGUAGE").setDescription("language for output").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameterValueMap("FILE_NAME", "FILENAME").setDescription("filename for output").setRequired(false));
 		
+		//Stubbed out new argument
+		//parser.addArgument(new ArgDef().setShortOption('g').setLongOpt("ignoreMissingEntities").withParameter(true, "BOOLEAN").setDescription("should we ignore entities that are not in the subtrahend").setRequired(false));
+		
+		// DEPRECEATE
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("dumpntripletofile").withParameter(true, "FILENAME").setDescription("filename for N triple output").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("dumpn3tofile").withParameter(true, "FILENAME").setDescription("filename for N 3 output").setRequired(false));
 		return parser;
@@ -181,6 +185,28 @@ public class Diff {
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();
 		Model subtrahendModel = sJC.getJenaModel();
+		
+		//newLogic TODO: remove comments and complete code
+		//if(ignoreMissingEntities)
+		//{ 	use sparql minus or sparql not exists to 
+		//		compare the two models.
+		//		ignoring entities that are not in the subtrahend
+		//		and produce statements that are not in the subtrahend
+		//		for the entities it does know
+		//		ie 
+		//		select ?s ?p ?o
+		//		where
+		//			graph a minendModel { 
+		//				?s1 ?p ?o
+		//			}
+		//			graph b subtrahendModel {
+		//				?s2 ?p ?o
+		//			}
+		//			?s1 = ?s2
+		//			filter (minus/not exists) {?s ?p ?o)}
+		//
+		
+		//} else { jena difference
 		
 		diffModel = minuendModel.difference(subtrahendModel);
 		/*
