@@ -18,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
@@ -71,28 +70,19 @@ public class FileAide {
 	 */
 	public static boolean delete(String path) throws IOException {
 		FileObject file = getFileObject(path);
+		
 		if(!file.exists()) {
 			return true;
 		}
-		if(isFolder(path)) {
-			try {
-				for(FileObject subFile : file.findFiles(new AllFileSelector())) {
-					try {
-						String subPath = subFile.getName().getPath();
-						if(!subPath.equals(path)) {
-							delete(subPath);
-						}
-					} catch(FileSystemException e) {
-						//log.trace(e.getMessage(), e);
-					}
-				}
-				file.delete(new AllFileSelector());
-			} catch(FileSystemException e) {
-				//log.trace(e.getMessage(), e);
-				throw new IOException("Error deleting file!");
-			}
-		}
-		return file.delete();
+		
+		int numFiles = file.findFiles(new AllFileSelector()).length;
+		int numFilesDeleted = file.delete(new AllFileSelector());
+		
+		log.debug("numFiles: " + numFiles);
+		log.debug("numFilesDeleted: " + numFilesDeleted);
+		
+		return numFilesDeleted == numFiles ? true : false;
+		
 	}
 	
 	/**
@@ -121,7 +111,7 @@ public class FileAide {
 	 */
 	public static boolean isFolder(String path) throws IOException {
 		FileType type = getFileObject(path).getType();
-		return (type == FileType.FOLDER || type == FileType.FILE_OR_FOLDER);
+		return (type == FileType.FOLDER );
 	}
 	
 	/**
