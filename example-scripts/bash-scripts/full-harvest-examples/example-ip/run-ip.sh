@@ -76,18 +76,15 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 harvester-smush -X smush-org.config.xml
 harvester-smush -X smush-person.config.xml
 
-
-
 # Clean up the data going into VIVO using Qualify to fix some of the content
 #
 #
 #harvester-qualify -X qualify.conf.xml
 
-
 # Transfer Data Out
 #
 #
-#harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
+harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
 
 # Execute Score
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
@@ -110,12 +107,21 @@ harvester-smush -X smush-person.config.xml
 #   we need to clear out all that old data before we add more
 #harvester-jenaconnect -j score-data.model.xml -t
 
+
 # Execute ChangeNamespace to get unmatched  into current namespace
 # This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
 # 	If there is an issue with uris being in another namespace, this is the phase
 #	which should give some light to the problem.
 # Execute ChangeNamespace for People
 harvester-changenamespace -X changenamespace-people.config.xml
+
+
+# Execute ChangeNamespace to get unmatched  into current namespace
+# This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
+# 	If there is an issue with uris being in another namespace, this is the phase
+#	which should give some light to the problem.
+# Execute ChangeNamespace for Organizations
+harvester-changenamespace -X changenamespace-orgs.config.xml
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
