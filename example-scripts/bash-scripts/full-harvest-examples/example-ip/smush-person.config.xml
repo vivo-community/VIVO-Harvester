@@ -29,7 +29,7 @@
 <%     not replacing the values, can create a new model with the alterations that would otherwise be done to the      %>
 <%     input model.                                                                                                   %>
 -->
-    <Param name="inputJena-predicates">http://vivoweb.org/ontology/core#primaryEmail</Param>
+    <Param name="inputJena-predicates">http://vivoweb.org/ontology/core#email</Param>
     <Param name="namespace">http://vivoweb.org/harvest/ip/casemngr/</Param>
     <Param name="replace">true</Param>
 </Config>

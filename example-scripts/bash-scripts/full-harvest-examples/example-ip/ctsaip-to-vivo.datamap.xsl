@@ -114,7 +114,7 @@
 			<rdf:Description rdf:about="{$baseURI}casemngr/{$email}" >
 				<rdfs:label><xsl:value-of select="contact-name" /></rdfs:label>	
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />				
-				<core:primaryEmail><xsl:value-of select="contact-email" /></core:primaryEmail>
+				<core:email><xsl:value-of select="contact-email" /></core:email>
 				<ctsaip:caseManagerFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
 			</rdf:Description>
 		</xsl:if>
