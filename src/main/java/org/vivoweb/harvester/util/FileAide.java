@@ -78,8 +78,8 @@ public class FileAide {
 		int numFiles = file.findFiles(new AllFileSelector()).length;
 		int numFilesDeleted = file.delete(new AllFileSelector());
 		
-		log.debug("numFiles: " + numFiles);
-		log.debug("numFilesDeleted: " + numFilesDeleted);
+		//log.debug("numFiles: " + numFiles);
+		//log.debug("numFilesDeleted: " + numFilesDeleted);
 		
 		return numFilesDeleted == numFiles ? true : false;
 		
