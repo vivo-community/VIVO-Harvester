@@ -537,6 +537,8 @@ public class ScopusFetch extends NIHFetch {
 			
 			if (resp.length() > 0) {
 				Document doc = loadXMLFromString(resp);
+				//NodeList feedNodes = doc.getElementsByTagName("feed");
+				//feedNodes.item(0).getFirstChild();
 				NodeList entryNodes = doc.getElementsByTagName("entry");
 
 				// populate ScopusBean map
@@ -925,8 +927,26 @@ public class ScopusFetch extends NIHFetch {
 			Iterator<String> scopusIter = scopusMap.keySet().iterator();
 			while (scopusIter.hasNext()) {
 				String scopusDocId = scopusIter.next();
+				//String scopusHeader = "<?xml version=\"1.0\"?>\n<feed>\n";
+				//String scopusFooter = "\n</feed>";
+				String oriEntry = "<entry>";
+				String modEntry = "<entry xmlns:dc=\"http://purl.org/dc/elements/1.1/\" \n" +
+						"xmlns:atom=\"http://www.w3.org/2005/Atom\" \n" +
+						"xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" \n" +
+						"xmlns:prism=\"http://prismstandard.org/namespaces/basic/2.0/\">\n";
+				//String sanitizedXml = scopusMap.get(scopusDocId).replaceAll("<\\?xml version=\".*?>", "");
+				//sanitizedXml = sanitizedXml.replace(oriEntry, modEntry);
+				//String scopusHeader = "<?xml version=\"1.0\"?>\n";
+				
+				//String scopusHeader = "<?xml version=\"1.0\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\" \n" +
+				//		"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" \n" +
+				//		"xmlns:atom=\"http://www.w3.org/2005/Atom\" \n" +
+				//		"xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" \n" +
+				//		"xmlns:prism=\"http://prismstandard.org/namespaces/basic/2.0/\">\n";
 				log.trace("Scopus Writing to output");
-				writeRecord(authid + "_" + scopusDocId, scopusMap.get(scopusDocId));
+				writeRecord(authid + "_" + scopusDocId, scopusMap.get(scopusDocId).replace(oriEntry, modEntry));
+				//writeRecord(authid + "_" + scopusDocId, scopusMap.get(scopusDocId));
+				//writeRecord(authid + "_" + scopusDocId, scopusHeader + sanitizedXml.trim());
 				log.trace("Scopus Writing complete");
 			}
 		} catch (MalformedURLException e) {
@@ -1041,7 +1061,6 @@ public class ScopusFetch extends NIHFetch {
 	}
 	
 	private Document loadXMLFromString(String xml) throws Exception {
-		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setIgnoringComments(true);
 		DocumentBuilder builder = factory.newDocumentBuilder();

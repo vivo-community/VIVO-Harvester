@@ -166,4 +166,5 @@ INNOV=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsa
 RT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/ResearchTool' | wc -l`
 echo "Imported $ORGS organizations, $PEOPLE people, $TECH technologies, $MAT materials, $INNOV innovations, $RT research tools"
 
+
 echo 'Harvest completed successfully'

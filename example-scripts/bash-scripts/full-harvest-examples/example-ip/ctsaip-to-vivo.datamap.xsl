@@ -102,6 +102,7 @@
 		</rdf:Description>
 		
 		<!-- The Institution which we will smush together later in the process based on Label and the type Organization -->
+
 		<rdf:Description rdf:about="{$baseURI}institution/{$institution}">
 			<rdfs:label><xsl:value-of select="instituion" /></rdfs:label>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
