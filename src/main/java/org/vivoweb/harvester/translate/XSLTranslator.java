@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -55,6 +56,11 @@ public class XSLTranslator {
 	 * force process records
 	 */
 	private boolean force;
+	
+	/**
+	 * force decode input as UTF-8 to clean XML
+	 */
+	private boolean cleanXML;
 	
 	/**
 	 * Constructor
@@ -138,12 +144,14 @@ public class XSLTranslator {
 		// get from the in record and translate
 		int translated = 0;
 		int passed = 0;
+		String recordData;
 		
 		for(Record r : this.inStore) {
 			if(this.force || r.needsProcessed(this.getClass())) {
 				log.trace("Translating Record " + r.getID());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				xmlTranslate(new ByteArrayInputStream(r.getData().getBytes("UTF-8")), baos, new ByteArrayInputStream(this.translationString.getBytes()));
+				recordData = (this.cleanXML) ?URLDecoder.decode(r.getData(), "UTF-8") : r.getData();
+				xmlTranslate(new ByteArrayInputStream(recordData.getBytes("UTF-8")), baos, new ByteArrayInputStream(this.translationString.getBytes()));
 				this.outStore.addRecord(r.getID(), baos.toString(), this.getClass());
 				r.setProcessed(this.getClass());
 				baos.close();
