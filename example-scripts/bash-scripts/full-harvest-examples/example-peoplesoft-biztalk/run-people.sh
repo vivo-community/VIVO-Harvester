@@ -122,6 +122,13 @@ harvester-score -X score-departments.config.xml
 #       resources in the incoming model for those that are considered a match.
 harvester-match -X match-people-departments.config.xml 
 
+# Image Preservation
+# Using the input model, vivo model, and a private model we will determine if a person has been set to
+# protected that was previously not protected. If this person has a photo, we are going to save said photo
+# information in the private model. If a person is set to not protected, but were previously protected
+# then we will restore their photo from the private model
+harvester-imagepresduringprivacy -X image-pres.config.xml
+
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the entries that exist in
 #       the previous harvest but not in the current harvest need to be identified for removal.

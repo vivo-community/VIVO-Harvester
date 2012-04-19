@@ -10,7 +10,7 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 
 /**
- * @author kuppuraj
+ * @author kuppuraj, Mayank Saini
  *
  */
 public class XMLGrep {
@@ -26,7 +26,8 @@ public class XMLGrep {
 	/**
 	 * Input dest directory
 	 */
-	private String dest;
+	private String dest = "";
+	
 	/**
 	 * xpath expression to filter files
 	 */
@@ -38,10 +39,12 @@ public class XMLGrep {
 	 * @param dest directory to move files from
 	 * @param xpath expression to filter
 	 */
-	public XMLGrep(String src, String dest, String exp) {
+	public XMLGrep(String src, String dest, String value, String name) {
 		this.src = src;
 		this.dest = dest;
-		this.exp = exp;
+		this.exp = (name == null) ? "" : "//" + name;
+		this.exp = (value == null) ? exp : exp + "[. = '" + value + "']";
+		
 	}
 	
 	/**
@@ -59,7 +62,7 @@ public class XMLGrep {
 	 * @param argList arguments
 	 */
 	private XMLGrep(ArgList argList) {
-		this(argList.get("s"), argList.get("d"),argList.get("e"));
+		this(argList.get("s"), argList.get("d"), argList.get("v"), argList.get("n"));
 	}
 	
 	/**
@@ -68,36 +71,34 @@ public class XMLGrep {
 	 * @param xpathExpression
 	 */
 	@SuppressWarnings("javadoc")
-	public static void grepXML(String src, String dest, String xpathExpression){
+	public static void grepXML(String src, String dest, String xpathExpression) {
+		String newpath = "";
 		try {
-			if(FileAide.isFolder(src)){
+			if(FileAide.isFolder(src)) {
 				File dir = new File(src);
 				File[] files = dir.listFiles();
-				
-				for(File file : files){
-					//String result = XPathTool.getXPathResult(file.getPath(),"//action[. = 'rename']");
-					String result = XPathTool.getXPathResult(file.getPath(),xpathExpression);
-					if(result!=null && !result.isEmpty()){
-						
-						if(!FileAide.exists(dest)){
+				for(File file : files) {
+					String result = XPathTool.getXPathResult(file.getPath(), xpathExpression);
+					if(result != null && !result.isEmpty()) {
+						if(!FileAide.exists(dest)) {
 							FileAide.createFolder(dest);
 						}
 						if(!dest.endsWith("/")) {
 							dest.concat("/").concat(file.getName());
 						}
 						else {
-							dest.concat(file.getName());
+							newpath = dest.concat(file.getName());
 						}
-						FileAide.createFile(dest);
-						FileAide.setTextContent(dest, FileAide.getTextContent(file.getPath()));
+						FileAide.createFile(newpath);
+						FileAide.setTextContent(newpath, FileAide.getTextContent(file.getPath()));
 						FileAide.delete(file.getPath());
 					}
 				}
 				
-			} else if(FileAide.isFile(src)){
-				String result = XPathTool.getXPathResult(src,xpathExpression);
-				if(result!=null && !result.isEmpty()){
-					if(!FileAide.exists(dest)){
+			} else if(FileAide.isFile(src)) {
+				String result = XPathTool.getXPathResult(src, xpathExpression);
+				if(result != null && !result.isEmpty()) {
+					if(!FileAide.exists(dest)) {
 						FileAide.createFile(dest);
 					}
 					FileAide.setTextContent(dest, FileAide.getTextContent(src));
@@ -105,18 +106,10 @@ public class XMLGrep {
 				}
 			}
 		} catch(IOException e) {
+			System.out.println(e);
 			log.error(e.getMessage());
 		}
 	}
-	
-	/*public static void main(String args[]){
-		try {
-			moveMatchingXML("/home/kuppuraj/src/","/home/kuppuraj/dest/","//author[. = 'Kurt Cagle']");
-			//System.out.println(XPathTool.getXPathResult("/home/kuppuraj/test.xml","//author[. = 'Kurt Cagle']"));
-		} catch(Exception e) {
-			log.error(e.getMessage());
-		}
-	}*/
 	
 	/**
 	 * Runs the XMLGrep
@@ -137,7 +130,9 @@ public class XMLGrep {
 		// dest
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dest-dir").withParameter(true, "DEST_DIRECTORY").setDescription("DEST directory to write files to").setRequired(true));
 		// exp
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("xpath-exp").withParameter(true, "XPATH_EXPRESSION").setDescription("XPATH expression to filter files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("tag-name").withParameter(true, "TAG_NAME").setDescription("TAG Name to Search for").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(false));
+		
 		return parser;
 	}
 	
@@ -160,7 +155,7 @@ public class XMLGrep {
 			new XMLGrep(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
-			log.debug("Stacktrace:",e);
+			log.debug("Stacktrace:", e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(UsageException e) {
@@ -169,7 +164,7 @@ public class XMLGrep {
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
-			log.debug("Stacktrace:",e);
+			log.debug("Stacktrace:", e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");
