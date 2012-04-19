@@ -87,7 +87,8 @@ public class XSLTranslator {
 			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
 			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),  
 			FileAide.getInputStream(argList.get("x")), 
-			argList.has("f")
+			argList.has("f"),
+			argList.has("c")
 		);
 	}
 	
@@ -97,9 +98,11 @@ public class XSLTranslator {
 	 * @param inRecordHandler the files/records that require translation
 	 * @param outRecordHandler the output record for the translated files
 	 * @param force translate all input records, even if previously processed
+	 * @param clXML if we should decode XML to clean it
 	 * @throws IOException error reading files
 	 */
-	public XSLTranslator(RecordHandler inRecordHandler, RecordHandler outRecordHandler, InputStream translationStream, boolean force) throws IOException {
+	public XSLTranslator(RecordHandler inRecordHandler, RecordHandler outRecordHandler, InputStream translationStream, 
+							boolean force, boolean clXML) throws IOException {
 		// set Translation file
 		setTranslation(translationStream);
 		
@@ -107,6 +110,7 @@ public class XSLTranslator {
 		this.inStore = inRecordHandler;
 		this.outStore = outRecordHandler;
 		this.force = force;
+		this.cleanXML = clXML;
 		if(this.inStore == null) {
 			throw new IllegalArgumentException("Must provide an input record handler");
 		}
@@ -202,6 +206,7 @@ public class XSLTranslator {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force").setDescription("force translation of all input records, even if previously processed").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("cleanXML").setDescription("Decode and sanitize XML").setRequired(false));
 		return parser;
 	}
 	
