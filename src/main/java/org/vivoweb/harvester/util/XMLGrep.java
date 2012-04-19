@@ -42,8 +42,13 @@ public class XMLGrep {
 	public XMLGrep(String src, String dest, String value, String name) {
 		this.src = src;
 		this.dest = dest;
-		this.exp = (name == null) ? "" : "//" + name;
-		this.exp = (value == null) ? exp : exp + "[. = '" + value + "']";
+		//"//author[. = 'Kurt Cagle']"
+		if(name == null && value == null) this.exp = "";
+		if(name == null && value != null) this.exp = "//*[*='"+ value + "']";
+		if(name != null && value == null) this.exp = "//" + name + "[. = '']";
+		if(name != null && value != null) this.exp = "//" + name + "[. = '" + value + "']";
+		//this.exp = (name == null ) ? "" : "//" + name;
+		//this.exp = (value == null) ? exp : exp + "[. = '" + value + "']";
 		
 	}
 	
