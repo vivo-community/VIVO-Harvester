@@ -7,5 +7,6 @@
 <Config>
 	<Param name="src-dir">data/</Param>
 	<Param name="dest-dir">data/</Param>
-	<Param name="xpath-exp">//action[. = 'rename']</Param>
+	<Param name="tag-name">action</Param>
+	<Param name="tag-value">rename</Param>
 </Config>
