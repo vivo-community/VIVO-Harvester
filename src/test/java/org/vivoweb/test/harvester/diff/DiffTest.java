@@ -86,6 +86,24 @@ public class DiffTest extends TestCase {
 			"<j.4:primaryPhoneNumber>(123) 456-7890 7890</j.4:primaryPhoneNumber>" +
 			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
 			"<j.4:preferredTitle>IT Expert, Sr. Software Engineer</j.4:preferredTitle>" +
+			"</rdf:Description>" +
+		"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n78212990\">"+
+			"<j.4:faxNumber></j.4:faxNumber>" +
+			"<j.1:Deceased>N</j.1:Deceased>" +
+			"<j.4:middleName>J</j.4:middleName>" +
+			"<j.1:harvestedBy>PeopleSoft-BizTalk-Harvester</j.1:harvestedBy>" +
+			"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+			"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#NonAcademic\"/>" +
+			"<j.4:primaryEmail>svwilliams@gmail.com</j.4:primaryEmail>" +
+			"<j.1:gatorlink rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">drspeedo</j.1:gatorlink>" +
+			"<j.3:firstName>Stephen</j.3:firstName>" +
+			"<j.3:lastName>Williams</j.3:lastName>" +
+			"<j.1:ufid>78212990</j.1:ufid>" +
+			"<j.1:privacy>N</j.1:privacy>" +
+			"<rdfs:label>Williams,Stephen V</rdfs:label>"+
+			"<j.4:primaryPhoneNumber>(352) 256-2529</j.4:primaryPhoneNumber>" +
+			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
+			"<j.4:preferredTitle>IT Senior, Sr. Software Engineer and Team Lead</j.4:preferredTitle>" +
 		"</rdf:Description>" +
 		"</rdf:RDF>";
 	/**
@@ -215,15 +233,10 @@ public class DiffTest extends TestCase {
 		log.info("END testDiffAdds");
 	}
 
-	@SuppressWarnings("javadoc")
-	public final void testDiffPrevHarvest() throws IOException {
-		log.info("BEGIN testDiffPrevHarvest");
+	@SuppressWarnings("javadoc") //TODO Replace with JavaDoc
+	public final void testDiffPrevHarvestAdditions() throws IOException {
+		log.info("BEGIN testDiffPrevHarvestAdditions");
 		Diff.diff(this.input, this.prevHarvest, this.output, null, null, null, null);
-		assertFalse(this.output.isEmpty());
-		this.output.exportRdfToStream(System.out);
-		
-		this.output.truncate();
-		Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
 		assertFalse(this.output.isEmpty());
 		this.output.exportRdfToStream(System.out);
 		
@@ -236,9 +249,30 @@ public class DiffTest extends TestCase {
 		for(Statement shared : this.shareStatements) {
 			assertFalse(this.output.getJenaModel().contains(shared));
 		}*/
-		log.info("END testDiffPrevHarvest");
+		log.info("END testDiffPrevHarvestAdditions");
 	}
-
+	
+	@SuppressWarnings("javadoc") //TODO Replace with JavaDoc
+	public final void testDiffPrevHarvestSubtractions() throws IOException {
+		log.info("BEGIN testDiffPrevHarvestSubtractions");
+		Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
+		assertFalse(this.output.isEmpty());
+		this.output.exportRdfToStream(System.out);
+		log.info("END testDiffPrevHarvestSubtractions");
+	}
+	
+	@SuppressWarnings("javadoc") //TODO Replace with JavaDoc
+	public final void testDiffPrevHarvestSubtractionsIgnore() throws IOException {
+		log.info("BEGIN testDiffPrevHarvestSubtractionsIgnore");
+		Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
+		assertFalse(this.output.isEmpty());
+		assertTrue(this.output.containsURI("http://vivo.ufl.edu/individual/n1836184267"));
+		//assertFalse(this.output.containsURI("http://vivo.ufl.edu/individual/n78212990"));
+		log.info("END testDiffPrevHarvestSubtractionsIgnore");
+	}
+	
+	
+	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
 	 * @throws IOException error
