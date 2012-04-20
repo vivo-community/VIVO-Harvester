@@ -160,11 +160,12 @@ harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 #Output some counts
 ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
 PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
+INV=`cat data/vivo-additions.rdf.xml | grep 'http://vivoweb.org/ontology/core#Authorship' | wc -l`
 TECH=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Technology' | wc -l`
 MAT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Material' | wc -l`
 INNOV=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Innovation' | wc -l`
 RT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/ResearchTool' | wc -l`
-echo "Imported $ORGS organizations, $PEOPLE people, $TECH technologies, $MAT materials, $INNOV innovations, $RT research tools"
+echo "Imported $ORGS organizations, $PEOPLE people, $INV inventors, $TECH technologies, $MAT materials, $INNOV innovations, $RT research tools"
 
 
 echo 'Harvest completed successfully'
