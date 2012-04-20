@@ -43,12 +43,28 @@ public class XMLGrep {
 		this.src = src;
 		this.dest = dest;
 		//"//author[. = 'Kurt Cagle']"
-		if(name == null && value == null) this.exp = "";
-		if(name == null && value != null) this.exp = "//*[*='"+ value + "']";
-		if(name != null && value == null) this.exp = "//" + name + "[. = '']";
-		if(name != null && value != null) this.exp = "//" + name + "[. = '" + value + "']";
 		//this.exp = (name == null ) ? "" : "//" + name;
+		//if(name != null && value == null) this.exp = "//" + name + "[. = '']";
 		//this.exp = (value == null) ? exp : exp + "[. = '" + value + "']";
+		if(value == null) 
+		{
+			this.exp = "";
+			log.error("Value is required");
+			System.exit(0);
+		}
+		else 
+		{
+			if(name == null)
+			{
+				this.exp = "//*[. ='"+ value + "']";
+			} 
+			else 
+			{
+				this.exp = "//" + name + "[. = '" + value + "']";
+			}
+			
+		}
+		
 		
 	}
 	
@@ -136,7 +152,7 @@ public class XMLGrep {
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dest-dir").withParameter(true, "DEST_DIRECTORY").setDescription("DEST directory to write files to").setRequired(true));
 		// exp
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("tag-name").withParameter(true, "TAG_NAME").setDescription("TAG Name to Search for").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(true));
 		
 		return parser;
 	}
