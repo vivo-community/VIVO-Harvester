@@ -107,7 +107,7 @@ public class DiffTest extends TestCase {
 		"</rdf:Description>" +
 		"</rdf:RDF>";
 	/**
-	 * previousHarvest model will be stored here
+	 * inputModel will be stored here
 	 */
 	protected static final String inputRDF = "" +
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
