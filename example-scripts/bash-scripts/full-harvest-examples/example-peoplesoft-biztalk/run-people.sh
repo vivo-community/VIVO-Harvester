@@ -49,7 +49,7 @@ fi
 # Check to see if data/translated-records exists, and if so delete it
 # This will prevent translation errors when running the harvest over the same set of data
 # more than once
-if { -d data/translated-records ]; then
+if [ -d data/translated-records ]; then
   rm -rf data/translated-records
 fi
 
