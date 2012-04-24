@@ -133,9 +133,17 @@ public class ScopusFetch extends NIHFetch {
 	 * Scopus publications linked to affiliation list.
 	 */
 	private String scopusAffilLinked = null;
-
 	
+	/**
+	 * List to store pubmed documents.
+	 */
 	private ArrayList<Document> pubmedDocList = new ArrayList<Document>();
+	
+	/**
+	 * List to make sure there are no duplications of Scopus Doc Ids in the ScopusBean maps
+	 * across all authors.
+	 */
+	private ArrayList<String> scopusDocIdList = new ArrayList<String>();
 	
 	/**
 	 * Constructor: Primary method for running a PubMed Fetch. The email address of the person responsible for this
@@ -282,19 +290,6 @@ public class ScopusFetch extends NIHFetch {
 					uri = qs.getResource(key).getURI();
 				} else if (qs.get(key).isLiteral()) { // scopusId
 					scopusId = qs.getLiteral(key).getString().replace("<p>", "").replace("</p>", "");
-					/*
-					String[] split = scopusId.split("authorId=");
-					if (split.length == 2) {
-						String secondHalf = split[1];
-						for (int i = 0; i < secondHalf.length(); i++){
-						    char c = secondHalf.charAt(i);        
-						    
-						}
-					}
-					*/
-					
-
-				
 				}
 			}
 
@@ -373,8 +368,9 @@ public class ScopusFetch extends NIHFetch {
 	private String scopusQueryByAuthorId(String scopusId) {
 		
 		int totalResults = 0;
-		StringBuffer respBuf = new StringBuffer();
 		String pubYearStr = null;
+		StringBuffer completeRespBuf = new StringBuffer();
+		
 		if (this.scopusPubYearS != null && this.scopusPubYearE != null) {
 			pubYearStr = constructPubYearQStr(this.scopusPubYearS, this.scopusPubYearE);
 		}
@@ -385,21 +381,10 @@ public class ScopusFetch extends NIHFetch {
 			if (pubYearStr != null) {
 				queryStr += "+AND+(" + pubYearStr + ")";
 			}
-			URL url = new URL(queryStr);
-			URLConnection conn = url.openConnection();
-			conn.setRequestProperty("X-ELS-APIKey", this.scopusApiKey);
-			conn.setRequestProperty("X-ELS-Authtoken", this.scopusAuthtoken);
-			conn.setRequestProperty("Accept", this.scopusAccept);
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String inputLine;
-
-			while ((inputLine = in.readLine()) != null) {
-				respBuf.append(inputLine);
-			}
-			in.close();
-
-			if (respBuf.length() > 0) {
-				Document doc = loadXMLFromString(respBuf.toString());
+			String respStr = urlConnect(queryStr);
+			
+			if (respStr.length() > 0) {
+				Document doc = loadXMLFromString(respStr);
 				NodeList nodes = doc.getChildNodes();
 				NodeList resultsNodes = doc.getElementsByTagName("opensearch:totalResults");
 				if (resultsNodes != null) {
@@ -407,29 +392,28 @@ public class ScopusFetch extends NIHFetch {
 					totalResults = Integer.parseInt(resultsNodeVal);
 					log.info("Total results for " + scopusId + " is " + totalResults);
 				}
-				
+			}
+
+			if (totalResults > 0) { 
 				// query by counts
 				int start = 0;
 				int count = 200;
+				int countList = 0;
 				ArrayList<String> qStrList = constructCompleteQStr(queryStr, count, start, totalResults);
-				
-				respBuf = new StringBuffer();
 				for (String queryCompleteStr: qStrList) {
 					log.info("Scopus query: " + queryCompleteStr);
-					url = new URL(queryCompleteStr);
-					conn = url.openConnection();
-					conn.setRequestProperty("X-ELS-APIKey", this.scopusApiKey);
-					conn.setRequestProperty("X-ELS-Authtoken", this.scopusAuthtoken);
-					conn.setRequestProperty("Accept", this.scopusAccept);
-					in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-					inputLine = null;
-					while ((inputLine = in.readLine()) != null) {
-						respBuf.append(inputLine);
+					String eachRespStr = urlConnect(queryCompleteStr);
+					if (countList > 0) {
+						int entryIndex = eachRespStr.indexOf("<entry>");
+						if (entryIndex > -1) {
+							eachRespStr = eachRespStr.substring(entryIndex);
+						}
 					}
-					in.close();
+					completeRespBuf.append(eachRespStr.replace("</feed>", ""));
+					countList++;
 				}
+				completeRespBuf.append("</feed>");
 			}
-		
 		} catch (MalformedURLException e) {
 			log.error("scopusQueryByAuthorId MalformedURLException: ", e);
 		} 
@@ -439,9 +423,36 @@ public class ScopusFetch extends NIHFetch {
 		catch (Exception e) {
 			log.error("scopusQueryByAuthorId Exception: ", e);
 		}
-		return respBuf.toString();
+		return completeRespBuf.toString();
 	}
 	
+	private String urlConnect(String queryStr) {
+		StringBuffer respBuf = new StringBuffer();
+		try {
+			URL url = new URL(queryStr);
+			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("X-ELS-APIKey", this.scopusApiKey);
+			conn.setRequestProperty("X-ELS-Authtoken", this.scopusAuthtoken);
+			conn.setRequestProperty("Accept", this.scopusAccept);
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String inputLine;
+	
+			while ((inputLine = in.readLine()) != null) {
+				respBuf.append(inputLine);
+			}
+			in.close();
+		} catch (MalformedURLException e) {
+			log.error("urlConnect MalformedURLException: ", e);
+		} 
+		catch (IOException e) {
+			log.error("urlConnect IOException: ", e);
+		} 
+		catch (Exception e) {
+			log.error("urlConnect Exception: ", e);
+		}
+		return respBuf.toString();
+	}
+
 	/**
 	 * Constructs publication year String
 	 * Method declared public for test purposes
@@ -553,8 +564,6 @@ public class ScopusFetch extends NIHFetch {
 			
 			if (resp.length() > 0) {
 				Document doc = loadXMLFromString(resp);
-				//NodeList feedNodes = doc.getElementsByTagName("feed");
-				//feedNodes.item(0).getFirstChild();
 				NodeList entryNodes = doc.getElementsByTagName("entry");
 
 				// populate ScopusBean map
@@ -631,9 +640,12 @@ public class ScopusFetch extends NIHFetch {
 					}
 					
 					// add ScopusBean to map for Pubmed queries
-					if (addToMap && !existsInVivo) {
-						sbMap.put(sb.getScopusDocId(), sb);
-					} 
+					if (!this.scopusDocIdList.contains(sb.getScopusDocId())) {
+						if (addToMap && !existsInVivo) {
+							sbMap.put(sb.getScopusDocId(), sb);
+						}
+						this.scopusDocIdList.add(sb.getScopusDocId());
+					}
 				}
 			}
 		} catch (MalformedURLException e) {
@@ -951,26 +963,13 @@ public class ScopusFetch extends NIHFetch {
 			Iterator<String> scopusIter = scopusMap.keySet().iterator();
 			while (scopusIter.hasNext()) {
 				String scopusDocId = scopusIter.next();
-				//String scopusHeader = "<?xml version=\"1.0\"?>\n<feed>\n";
-				//String scopusFooter = "\n</feed>";
 				String oriEntry = "<entry>";
 				String modEntry = "<entry xmlns:dc=\"http://purl.org/dc/elements/1.1/\" \n" +
 						"xmlns:atom=\"http://www.w3.org/2005/Atom\" \n" +
 						"xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" \n" +
 						"xmlns:prism=\"http://prismstandard.org/namespaces/basic/2.0/\">\n";
-				//String sanitizedXml = scopusMap.get(scopusDocId).replaceAll("<\\?xml version=\".*?>", "");
-				//sanitizedXml = sanitizedXml.replace(oriEntry, modEntry);
-				//String scopusHeader = "<?xml version=\"1.0\"?>\n";
-				
-				//String scopusHeader = "<?xml version=\"1.0\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\" \n" +
-				//		"xmlns:dc=\"http://purl.org/dc/elements/1.1/\" \n" +
-				//		"xmlns:atom=\"http://www.w3.org/2005/Atom\" \n" +
-				//		"xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" \n" +
-				//		"xmlns:prism=\"http://prismstandard.org/namespaces/basic/2.0/\">\n";
 				log.trace("Scopus Writing to output");
 				writeRecord(authid + "_" + scopusDocId, scopusMap.get(scopusDocId).replace(oriEntry, modEntry));
-				//writeRecord(authid + "_" + scopusDocId, scopusMap.get(scopusDocId));
-				//writeRecord(authid + "_" + scopusDocId, scopusHeader + sanitizedXml.trim());
 				log.trace("Scopus Writing complete");
 			}
 		} catch (MalformedURLException e) {
