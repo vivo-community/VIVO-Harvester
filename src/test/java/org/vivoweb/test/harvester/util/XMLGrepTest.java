@@ -1,6 +1,6 @@
 package org.vivoweb.test.harvester.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*; 
 import java.io.IOException;
 import org.junit.Test;
 import org.vivoweb.harvester.util.FileAide;
@@ -12,68 +12,174 @@ public class XMLGrepTest {
 	@Test
 	public void testExecute() {
 		
-		String src = "/src/";
-		String dest = "/dest/";
-		String srcFile = src+"test";
-		String name = "year";
-		String value = "2003";
+		String renamedest = "rename/";
+		String ignoredest = "igonore/";
+		String src = "soapsrc/";
 		
-		String xmlContent = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" +
-			"<bookstore>" +
-			"<book category=\"COOKING\">" +
-			"<title lang=\"en\">Everyday Italian</title>" +
-			"<author>Giada De Laurentiis</author>" +
-			"<year>2005</year>" +
-			"<price>30.00</price>" +
-			"</book>" +
-			"<book category=\"CHILDREN\">" +
-			"<title lang=\"en\">Harry Potter</title>" +
-			"<author>J K. Rowling</author>" +
-			"<year>2005</year>" +
-			"<price>29.99</price>" +
-			"</book>" +
-			"<book category=\"WEB\">" +
-			"<title lang=\"en\">XQuery Kick Start</title>" +
-			"<author>James McGovern</author>" +
-			"<author>Per Bothner</author>" +
-			"<author>Kurt Cagle</author>" +
-			"<author>James Linn</author>" +
-			"<author>Vaidyanathan Nagarajan</author>" +
-			"<year>2003</year>" +
-			"<price>49.99</price>" +
-			"</book>" +
-			"<book category=\"WEB\">" +
-			"<title lang=\"en\">Learning XML</title>" +
-			"<author>Erik T. Ray</author>" +
-			"<year>2007</year>" +
-			"<price>39.95</price>" +
-			"</book>" +
-			"</bookstore>";
+		String srcFile ="test";
 		
+		String xmlContent1 ="<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">"+
+		"<UFID>83117145</UFID>"+
+		"<GLID>vsposato</GLID>"+
+		"<UFID2 />"+
+		"<GLID2 />"+
+		"<ACTIVE>A</ACTIVE>"+
+		"<PROTECT>N</PROTECT>"+
+		"<AFFILIATION>T</AFFILIATION>"+
+		"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>"+
+		"<NAME type=\"33\">Sposato,Vincent J</NAME>"+
+		"<NAME type=\"35\">Vincent</NAME>"+
+		"<NAME type=\"36\">Sposato</NAME>"+
+		"<NAME type=\"37\">J</NAME>"+
+		"<NAME type=\"232\">Sposato,Vincent</NAME>"+
+		"<ADDRESS>"+
+		"<ADDRESS1 />"+
+		"<ADDRESS2 />"+
+		"<ADDRESS3>PO BOX 100152</ADDRESS3>"+
+		"<CITY>GAINESVILLE</CITY>"+
+		"<STATE>FL</STATE>"+
+		"<ZIP>326100152</ZIP>"+
+		"</ADDRESS>"+
+		"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>"+
+		"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>"+
+		"<DEPTID>27010707</DEPTID>"+
+		"<RELATIONSHIP type=\"195\">"+
+		"<DEPTID>27010707</DEPTID>"+
+		"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
+		"</RELATIONSHIP>"+
+		"<RELATIONSHIP type=\"203\">"+
+		"<DEPTID>27010707</DEPTID>"+
+		"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
+		"</RELATIONSHIP>"+
+		"<RELATIONSHIP type=\"223\">"+
+		"<DEPTID>27010707</DEPTID>"+
+		"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>"+
+		"</RELATIONSHIP>"+
+		"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>"+
+		"<DECEASED>N</DECEASED>"+
+		"<LOA>Bronze</LOA>"+
+		"<ACTION>RENAME</ACTION>"+
+		"</ns0:PERSON>";
+		
+		String xmlContent2 ="<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">"+
+			"<UFID>83117145</UFID>"+
+			"<GLID>vsposato</GLID>"+
+			"<UFID2 />"+
+			"<GLID2 />"+
+			"<ACTIVE>A</ACTIVE>"+
+			"<PROTECT>N</PROTECT>"+
+			"<AFFILIATION>T</AFFILIATION>"+
+			"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>"+
+			"<NAME type=\"33\">Sposato,Vincent J</NAME>"+
+			"<NAME type=\"35\">Vincent</NAME>"+
+			"<NAME type=\"36\">Sposato</NAME>"+
+			"<NAME type=\"37\">J</NAME>"+
+			"<NAME type=\"232\">Sposato,Vincent</NAME>"+
+			"<ADDRESS>"+
+			"<ADDRESS1 />"+
+			"<ADDRESS2 />"+
+			"<ADDRESS3>PO BOX 100152</ADDRESS3>"+
+			"<CITY>GAINESVILLE</CITY>"+
+			"<STATE>FL</STATE>"+
+			"<ZIP>326100152</ZIP>"+
+			"</ADDRESS>"+
+			"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>"+
+			"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<RELATIONSHIP type=\"195\">"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
+			"</RELATIONSHIP>"+
+			"<RELATIONSHIP type=\"203\">"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
+			"</RELATIONSHIP>"+
+			"<RELATIONSHIP type=\"223\">"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>"+
+			"</RELATIONSHIP>"+
+			"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>"+
+			"<DECEASED>N</DECEASED>"+
+			"<LOA>Bronze</LOA>"+
+			"<ACTION>CREATE</ACTION>"+
+			"</ns0:PERSON>";
+
+		String xmlContent3 ="<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">"+
+			"<UFID>83117145</UFID>"+
+			"<GLID>vsposato</GLID>"+
+			"<UFID2 />"+
+			"<GLID2 />"+
+			"<ACTIVE>A</ACTIVE>"+
+			"<PROTECT>N</PROTECT>"+
+			"<AFFILIATION>T</AFFILIATION>"+
+			"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>"+
+			"<NAME type=\"33\">Sposato,Vincent J</NAME>"+
+			"<NAME type=\"35\">Vincent</NAME>"+
+			"<NAME type=\"36\">Sposato</NAME>"+
+			"<NAME type=\"37\">J</NAME>"+
+			"<NAME type=\"232\">Sposato,Vincent</NAME>"+
+			"<ADDRESS>"+
+			"<ADDRESS1 />"+
+			"<ADDRESS2 />"+
+			"<ADDRESS3>PO BOX 100152</ADDRESS3>"+
+			"<CITY>GAINESVILLE</CITY>"+
+			"<STATE>FL</STATE>"+
+			"<ZIP>326100152</ZIP>"+
+			"</ADDRESS>"+
+			"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>"+
+			"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<RELATIONSHIP type=\"195\">"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
+			"</RELATIONSHIP>"+
+			"<RELATIONSHIP type=\"203\">"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
+			"</RELATIONSHIP>"+
+			"<RELATIONSHIP type=\"223\">"+
+			"<DEPTID>27010707</DEPTID>"+
+			"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>"+
+			"</RELATIONSHIP>"+
+			"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>"+
+			"<DECEASED>N</DECEASED>"+
+			"<LOA>Bronze</LOA>"+
+			"<IGNORE>YES</IGNORE>"+
+			"</ns0:PERSON>";
 		try {
-			//Test Case 1
-			createSrcFile(src, dest, srcFile+"1.xml", xmlContent);
-			XMLGrep xmlGrep1 = new XMLGrep(src, dest, name, value);
-			xmlGrep1.execute();
-			assertTrue(FileAide.exists(src));
+			//Test Case 1 Only On tag value
 			
-			//Test Case 2
-			createSrcFile(src, dest, srcFile+"2.xml", xmlContent);
-			XMLGrep xmlGrep2 = new XMLGrep(src, dest, null, value);
+			createSrcFile(src, renamedest, srcFile+"1.xml", xmlContent1);
+			XMLGrep xmlGrep1 = new XMLGrep(src, renamedest, "RENAME",null );
+		    xmlGrep1.execute();
+			assertTrue(FileAide.exists(renamedest+"/"+srcFile+"1.xml"));
+			FileAide.delete(renamedest);
+			FileAide.delete(src);
+			
+			
+			
+			
+			//Test Case 2  tag name and Value
+			
+			createSrcFile(src, ignoredest, srcFile+"2.xml", xmlContent3);
+			XMLGrep xmlGrep2 = new XMLGrep(src, ignoredest, "YES","IGNORE" );
 			xmlGrep2.execute();
-			assertTrue(FileAide.exists(src));
+			assertTrue(FileAide.exists(ignoredest+"/"+srcFile+"2.xml"));
+			FileAide.delete(ignoredest);
+			FileAide.delete(src);
 			
+			/*
 			//Test Case 3
 			createSrcFile(src, dest, srcFile+"3.xml", xmlContent);
 			XMLGrep xmlGrep3 = new XMLGrep(src, dest, name, null);
 			xmlGrep3.execute();
-			assertFalse(FileAide.exists(src));
+			assertFalse(FileAide.exists(src));*/
 			
-			//Test Case 4
+			/*//Test Case 4
 			createSrcFile(src, dest, srcFile+"4.xml", xmlContent);
 			XMLGrep xmlGrep4 = new XMLGrep(src, dest, null, null);
 			xmlGrep4.execute();
-			assertFalse(FileAide.exists(src));
+			assertFalse(FileAide.exists(src));*/
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -84,10 +190,11 @@ public class XMLGrepTest {
 	@SuppressWarnings("javadoc")
 	public void createSrcFile(String src, String dest, String srcFile, String xmlContent){
 		try {
+			System.out.println(System.getProperty("user.dir"));
 			FileAide.createFolder(src);
 			FileAide.createFolder(dest);
-			FileAide.createFile(srcFile);
-			FileAide.setTextContent(srcFile, xmlContent);
+			FileAide.createFile(src+srcFile);
+			FileAide.setTextContent(src+srcFile, xmlContent);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}

@@ -111,6 +111,7 @@ public class XMLGrep {
 							newpath = dest.concat(file.getName());
 						}
 						FileAide.createFile(newpath);
+						System.out.println("Moved to"+newpath);
 						FileAide.setTextContent(newpath, FileAide.getTextContent(file.getPath()));
 						FileAide.delete(file.getPath());
 					}
