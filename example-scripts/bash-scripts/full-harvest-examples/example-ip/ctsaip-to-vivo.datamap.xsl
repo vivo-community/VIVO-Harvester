@@ -96,6 +96,7 @@
 					<xsl:value-of select="status" />
 				</bibo:status>
 			</xsl:if>
+			</xsl:if>
 
 			<bibo:abstract>
 				<xsl:value-of
@@ -149,13 +150,14 @@
 					<xsl:when test="inventor-first-name !=''">
 						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
 					</xsl:when>
-					<xsl:otherwise>
+					<xsl:otherwise>						
 						<xsl:analyze-string select="description"
-							regex="Lead Inventors:\s*([^&lt;]*)">
-							<xsl:matching-substring>
-									<xsl:value-of select="regex-group(1)" />
-							</xsl:matching-substring>			
-						</xsl:analyze-string>	
+							regex="Lead Inventors:\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*))">											
+								<xsl:matching-substring>
+									<xsl:value-of select="regex-group(4)" />
+									<xsl:value-of select="regex-group(5)" />										
+								</xsl:matching-substring>									
+						</xsl:analyze-string>										
 					</xsl:otherwise>
 				</xsl:choose>	
 			</rdfs:label>
@@ -171,16 +173,11 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:analyze-string select="description"
-							regex="(Lead Inventors:\s*)([^&lt;]*)">
-							<xsl:choose>
-								<xsl:when test="regex-group(1) !=''">							
-									<xsl:matching-substring>
-											<xsl:value-of select="regex-group(2)" />
-									</xsl:matching-substring>	
-								</xsl:when>	
-								<xsl:otherwise>
-								</xsl:otherwise>
-							</xsl:choose>
+							regex="Lead Inventors:\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*))">											
+								<xsl:matching-substring>
+									<xsl:value-of select="regex-group(4)" />
+									<xsl:value-of select="regex-group(5)" />										
+								</xsl:matching-substring>									
 						</xsl:analyze-string>	
 					</xsl:otherwise>
 				</xsl:choose>				
