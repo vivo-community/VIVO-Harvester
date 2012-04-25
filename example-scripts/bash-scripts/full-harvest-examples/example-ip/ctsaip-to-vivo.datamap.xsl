@@ -144,13 +144,20 @@
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<core:linkedAuthor rdf:resource="{$baseURI}author/{$ctsai_id}"/>
 			<core:linkedInformationResource rdf:resource="{$baseURI}tech/{$ctsai_id}"/>
-			<rdfs:label>Authorship for <xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
-			<!-- 	<xsl:analyze-string select="description"
-					regex="(Lead Inventors:\s*)([^&lt;br/&gt;]*)">
-					<xsl:matching-substring>
-							<xsl:value-of select="regex-group(2)" />
-					</xsl:matching-substring>			
-				</xsl:analyze-string>	 -->
+			<rdfs:label>Authorship for 
+			<xsl:choose>
+					<xsl:when test="inventor-first-name !=''">
+						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:analyze-string select="description"
+							regex="Lead Inventors:\s*([^&lt;]*)">
+							<xsl:matching-substring>
+									<xsl:value-of select="regex-group(1)" />
+							</xsl:matching-substring>			
+						</xsl:analyze-string>	
+					</xsl:otherwise>
+				</xsl:choose>	
 			</rdfs:label>
 		</rdf:Description>
 
@@ -158,8 +165,25 @@
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 			<rdfs:label>
-				<xsl:value-of select="inventor-first-name" />
-				<xsl:value-of select="inventor-last-name" />
+				<xsl:choose>
+					<xsl:when test="inventor-first-name !=''">
+						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:analyze-string select="description"
+							regex="(Lead Inventors:\s*)([^&lt;]*)">
+							<xsl:choose>
+								<xsl:when test="regex-group(1) !=''">							
+									<xsl:matching-substring>
+											<xsl:value-of select="regex-group(2)" />
+									</xsl:matching-substring>	
+								</xsl:when>	
+								<xsl:otherwise>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:analyze-string>	
+					</xsl:otherwise>
+				</xsl:choose>				
 			</rdfs:label>
 			<foaf:firstName>
 				<xsl:value-of select="inventor-first-name" />
