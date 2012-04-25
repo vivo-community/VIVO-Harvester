@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ImagePres>
+<Task>
 
 <!--
 <%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
@@ -33,4 +33,4 @@
   <Param name="privateJena-config">private-data.model.xml</Param>
   <Param name="dTransfer">True</Param>
   <Param name="dDelete">True</Param>
-</ImagePres>
+</Task>

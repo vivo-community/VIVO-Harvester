@@ -42,10 +42,7 @@ public class XMLGrep {
 	public XMLGrep(String src, String dest, String value, String name) {
 		this.src = src;
 		this.dest = dest;
-		//"//author[. = 'Kurt Cagle']"
-		//this.exp = (name == null ) ? "" : "//" + name;
-		//if(name != null && value == null) this.exp = "//" + name + "[. = '']";
-		//this.exp = (value == null) ? exp : exp + "[. = '" + value + "']";
+
 		if(value == null) 
 		{
 			this.exp = "";
@@ -87,50 +84,49 @@ public class XMLGrep {
 	}
 	
 	/**
+	 * 
+	 * @param myFile
+	 * @param expression
+	 * @return boolean
+	 * @throws IOException
+	 */
+	public static boolean findInFile(File myFile, String expression) throws IOException {
+		
+		String result = XPathTool.getXPathResult(myFile.getPath(), expression);
+		
+		if(result != null && !result.isEmpty()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * @param src
 	 * @param dest
 	 * @param xpathExpression
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("javadoc")
-	public static void grepXML(String src, String dest, String xpathExpression) {
+	public static void moveFile(File src, String dest) throws IOException {
 		String newpath = "";
-		try {
-			if(FileAide.isFolder(src)) {
-				File dir = new File(src);
-				File[] files = dir.listFiles();
-				for(File file : files) {
-					String result = XPathTool.getXPathResult(file.getPath(), xpathExpression);
-					if(result != null && !result.isEmpty()) {
-						if(!FileAide.exists(dest)) {
-							FileAide.createFolder(dest);
-						}
-						if(!dest.endsWith("/")) {
-							dest.concat("/").concat(file.getName());
-						}
-						else {
-							newpath = dest.concat(file.getName());
-						}
-						FileAide.createFile(newpath);
-						System.out.println("Moved to"+newpath);
-						FileAide.setTextContent(newpath, FileAide.getTextContent(file.getPath()));
-						FileAide.delete(file.getPath());
-					}
-				}
-				
-			} else if(FileAide.isFile(src)) {
-				String result = XPathTool.getXPathResult(src, xpathExpression);
-				if(result != null && !result.isEmpty()) {
-					if(!FileAide.exists(dest)) {
-						FileAide.createFile(dest);
-					}
-					FileAide.setTextContent(dest, FileAide.getTextContent(src));
-					FileAide.delete(src);
-				}
-			}
-		} catch(IOException e) {
-			System.out.println(e);
-			log.error(e.getMessage());
+		
+		if(! FileAide.exists(dest)) {
+			FileAide.createFolder(dest);
 		}
+		
+		if(! dest.endsWith("/")) {
+			newpath = dest.concat("/").concat(src.getName());
+		}
+		else {
+			newpath = dest.concat(src.getName());
+		}
+		
+		FileAide.createFile(newpath);
+		System.out.println("Moved to " + newpath);
+		FileAide.setTextContent(newpath, FileAide.getTextContent(src.getPath()));
+		FileAide.delete(src.getPath());
+
 	}
 	
 	/**
@@ -138,7 +134,28 @@ public class XMLGrep {
 	 * @throws IOException error executing
 	 */
 	public void execute() {
-		grepXML(this.src, this.dest, this.exp);
+		//grepXML(this.src, this.dest, this.exp);
+		String newpath = "";
+		try {
+			if(FileAide.isFolder(this.src)) {
+				File dir = new File(this.src);
+				File[] files = dir.listFiles();
+				for(File file : files) {
+					if (findInFile(file,this.exp)) {
+						moveFile(file,this.dest);
+					}
+				}
+			} else if(FileAide.isFile(this.src)) {
+				File file = new File(this.src);
+				if(findInFile(file,this.exp)) {
+					moveFile(file,this.dest);
+				}
+			}
+		} catch(IOException e) {
+			System.out.println(e);
+			log.error(e.getMessage());
+		}
+
 	}
 	
 	/**

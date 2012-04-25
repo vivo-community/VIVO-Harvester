@@ -149,24 +149,14 @@ public class XMLGrepTest {
 		try {
 			//Test Case 1 Only On tag value
 			
-			createSrcFile(src, renamedest, srcFile+"1.xml", xmlContent1);
-			XMLGrep xmlGrep1 = new XMLGrep(src, renamedest, "RENAME",null );
-		    xmlGrep1.execute();
-			assertTrue(FileAide.exists(renamedest+"/"+srcFile+"1.xml"));
-			FileAide.delete(renamedest);
-			FileAide.delete(src);
+			testValueOnly(renamedest, src, srcFile, xmlContent1);
 			
 			
 			
 			
 			//Test Case 2  tag name and Value
 			
-			createSrcFile(src, ignoredest, srcFile+"2.xml", xmlContent3);
-			XMLGrep xmlGrep2 = new XMLGrep(src, ignoredest, "YES","IGNORE" );
-			xmlGrep2.execute();
-			assertTrue(FileAide.exists(ignoredest+"/"+srcFile+"2.xml"));
-			FileAide.delete(ignoredest);
-			FileAide.delete(src);
+			testValueAndTag(ignoredest, src, srcFile, xmlContent3);
 			
 			/*
 			//Test Case 3
@@ -184,6 +174,26 @@ public class XMLGrepTest {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	private void testValueAndTag(String ignoredest, String src, String srcFile, String xmlContent3) throws IOException {
+		createSrcFile(src, ignoredest, srcFile+"2.xml", xmlContent3);
+		XMLGrep xmlGrep2 = new XMLGrep(src, ignoredest, "YES","IGNORE" );
+		xmlGrep2.execute();
+		assertTrue(FileAide.exists(ignoredest+"/"+srcFile+"2.xml"));
+		FileAide.delete(ignoredest);
+		FileAide.delete(src);
+	}
+
+
+	private void testValueOnly(String renamedest, String src, String srcFile, String xmlContent1) throws IOException {
+		createSrcFile(src, renamedest, srcFile+"1.xml", xmlContent1);
+		XMLGrep xmlGrep1 = new XMLGrep(src, renamedest, "RENAME",null );
+		xmlGrep1.execute();
+		assertTrue(FileAide.exists(renamedest+"/"+srcFile+"1.xml"));
+		FileAide.delete(renamedest);
+		FileAide.delete(src);
 	}
 	
 	
