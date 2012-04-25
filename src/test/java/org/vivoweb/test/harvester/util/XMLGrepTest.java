@@ -1,210 +1,185 @@
 package org.vivoweb.test.harvester.util;
 
-import static org.junit.Assert.*; 
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
+import junit.framework.TestCase;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
+import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.XMLGrep;
+import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import org.vivoweb.test.harvester.score.ScoreTest;
 
-public class XMLGrepTest {
-		
+public class XMLGrepTest extends TestCase {
+	
 	@SuppressWarnings("javadoc")
-	@Test
-	public void testExecute() {
-		
-		String renamedest = "rename/";
-		String ignoredest = "igonore/";
-		String src = "soapsrc/";
-		
-		String srcFile ="test";
-		
-		String xmlContent1 ="<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">"+
-		"<UFID>83117145</UFID>"+
-		"<GLID>vsposato</GLID>"+
-		"<UFID2 />"+
-		"<GLID2 />"+
-		"<ACTIVE>A</ACTIVE>"+
-		"<PROTECT>N</PROTECT>"+
-		"<AFFILIATION>T</AFFILIATION>"+
-		"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>"+
-		"<NAME type=\"33\">Sposato,Vincent J</NAME>"+
-		"<NAME type=\"35\">Vincent</NAME>"+
-		"<NAME type=\"36\">Sposato</NAME>"+
-		"<NAME type=\"37\">J</NAME>"+
-		"<NAME type=\"232\">Sposato,Vincent</NAME>"+
-		"<ADDRESS>"+
-		"<ADDRESS1 />"+
-		"<ADDRESS2 />"+
-		"<ADDRESS3>PO BOX 100152</ADDRESS3>"+
-		"<CITY>GAINESVILLE</CITY>"+
-		"<STATE>FL</STATE>"+
-		"<ZIP>326100152</ZIP>"+
-		"</ADDRESS>"+
-		"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>"+
-		"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>"+
-		"<DEPTID>27010707</DEPTID>"+
-		"<RELATIONSHIP type=\"195\">"+
-		"<DEPTID>27010707</DEPTID>"+
-		"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
-		"</RELATIONSHIP>"+
-		"<RELATIONSHIP type=\"203\">"+
-		"<DEPTID>27010707</DEPTID>"+
-		"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
-		"</RELATIONSHIP>"+
-		"<RELATIONSHIP type=\"223\">"+
-		"<DEPTID>27010707</DEPTID>"+
-		"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>"+
-		"</RELATIONSHIP>"+
-		"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>"+
-		"<DECEASED>N</DECEASED>"+
-		"<LOA>Bronze</LOA>"+
-		"<ACTION>RENAME</ACTION>"+
+	private static Logger log = LoggerFactory.getLogger(XMLGrepTest.class);
+	
+	protected static final String xmlContent1 = "<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">" +
+		"<UFID>83117145</UFID>" +
+		"<GLID>vsposato</GLID>" +
+		"<UFID2 />" +
+		"<GLID2 />" +
+		"<ACTIVE>A</ACTIVE>" +
+		"<PROTECT>N</PROTECT>" +
+		"<AFFILIATION>T</AFFILIATION>" +
+		"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>" +
+		"<NAME type=\"33\">Sposato,Vincent J</NAME>" +
+		"<NAME type=\"35\">Vincent</NAME>" +
+		"<NAME type=\"36\">Sposato</NAME>" +
+		"<NAME type=\"37\">J</NAME>" +
+		"<NAME type=\"232\">Sposato,Vincent</NAME>" +
+		"<ADDRESS>" +
+		"<ADDRESS1 />" +
+		"<ADDRESS2 />" +
+		"<ADDRESS3>PO BOX 100152</ADDRESS3>" +
+		"<CITY>GAINESVILLE</CITY>" +
+		"<STATE>FL</STATE>" +
+		"<ZIP>326100152</ZIP>" +
+		"</ADDRESS>" +
+		"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>" +
+		"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<RELATIONSHIP type=\"195\">" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<DEPTNAME>HA-AHC ESE</DEPTNAME>" +
+		"</RELATIONSHIP>" +
+		"<RELATIONSHIP type=\"203\">" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<DEPTNAME>HA-AHC ESE</DEPTNAME>" +
+		"</RELATIONSHIP>" +
+		"<RELATIONSHIP type=\"223\">" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>" +
+		"</RELATIONSHIP>" +
+		"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>" +
+		"<DECEASED>N</DECEASED>" +
+		"<LOA>Bronze</LOA>" +
+		"<ACTION>RENAME</ACTION>" +
 		"</ns0:PERSON>";
+	
+	protected static final String xmlContent3 = "<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">" +
+		"<UFID>83117145</UFID>" +
+		"<GLID>vsposato</GLID>" +
+		"<UFID2 />" +
+		"<GLID2 />" +
+		"<ACTIVE>A</ACTIVE>" +
+		"<PROTECT>N</PROTECT>" +
+		"<AFFILIATION>T</AFFILIATION>" +
+		"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>" +
+		"<NAME type=\"33\">Sposato,Vincent J</NAME>" +
+		"<NAME type=\"35\">Vincent</NAME>" +
+		"<NAME type=\"36\">Sposato</NAME>" +
+		"<NAME type=\"37\">J</NAME>" +
+		"<NAME type=\"232\">Sposato,Vincent</NAME>" +
+		"<ADDRESS>" +
+		"<ADDRESS1 />" +
+		"<ADDRESS2 />" +
+		"<ADDRESS3>PO BOX 100152</ADDRESS3>" +
+		"<CITY>GAINESVILLE</CITY>" +
+		"<STATE>FL</STATE>" +
+		"<ZIP>326100152</ZIP>" +
+		"</ADDRESS>" +
+		"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>" +
+		"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<RELATIONSHIP type=\"195\">" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<DEPTNAME>HA-AHC ESE</DEPTNAME>" +
+		"</RELATIONSHIP>" +
+		"<RELATIONSHIP type=\"203\">" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<DEPTNAME>HA-AHC ESE</DEPTNAME>" +
+		"</RELATIONSHIP>" +
+		"<RELATIONSHIP type=\"223\">" +
+		"<DEPTID>27010707</DEPTID>" +
+		"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>" +
+		"</RELATIONSHIP>" +
+		"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>" +
+		"<DECEASED>N</DECEASED>" +
+		"<LOA>Bronze</LOA>" +
+		"<IGNORE>YES</IGNORE>" +
+		"</ns0:PERSON>";
+	/**
+	 * Destination dir for all files having <Action>RENAME</Action> tag
+	 * 
+	 */
+	private String renamedest;
+	
+	/**
+	 * Destination dir for all files having <Ignore>Yes</Ignore> tag
+	 */
+	private String ignoredest;
+	
+	/**
+	 * Source dir for input xml messages 
+	 */
+	private String src;
+	
+	/**
+	 * Source xml file name 
+	 */
+	private String srcFile;
+	
+	protected void setUp() throws Exception {
+		InitLog.initLogger(null, null);
+		// load input models
+		this.src = "soapsrc/";
+		this.srcFile = "test";
+		FileAide.createFolder(src);
 		
-		String xmlContent2 ="<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">"+
-			"<UFID>83117145</UFID>"+
-			"<GLID>vsposato</GLID>"+
-			"<UFID2 />"+
-			"<GLID2 />"+
-			"<ACTIVE>A</ACTIVE>"+
-			"<PROTECT>N</PROTECT>"+
-			"<AFFILIATION>T</AFFILIATION>"+
-			"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>"+
-			"<NAME type=\"33\">Sposato,Vincent J</NAME>"+
-			"<NAME type=\"35\">Vincent</NAME>"+
-			"<NAME type=\"36\">Sposato</NAME>"+
-			"<NAME type=\"37\">J</NAME>"+
-			"<NAME type=\"232\">Sposato,Vincent</NAME>"+
-			"<ADDRESS>"+
-			"<ADDRESS1 />"+
-			"<ADDRESS2 />"+
-			"<ADDRESS3>PO BOX 100152</ADDRESS3>"+
-			"<CITY>GAINESVILLE</CITY>"+
-			"<STATE>FL</STATE>"+
-			"<ZIP>326100152</ZIP>"+
-			"</ADDRESS>"+
-			"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>"+
-			"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<RELATIONSHIP type=\"195\">"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
-			"</RELATIONSHIP>"+
-			"<RELATIONSHIP type=\"203\">"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
-			"</RELATIONSHIP>"+
-			"<RELATIONSHIP type=\"223\">"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>"+
-			"</RELATIONSHIP>"+
-			"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>"+
-			"<DECEASED>N</DECEASED>"+
-			"<LOA>Bronze</LOA>"+
-			"<ACTION>CREATE</ACTION>"+
-			"</ns0:PERSON>";
-
-		String xmlContent3 ="<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\">"+
-			"<UFID>83117145</UFID>"+
-			"<GLID>vsposato</GLID>"+
-			"<UFID2 />"+
-			"<GLID2 />"+
-			"<ACTIVE>A</ACTIVE>"+
-			"<PROTECT>N</PROTECT>"+
-			"<AFFILIATION>T</AFFILIATION>"+
-			"<NAME type=\"21\">SPOSATO,VINCENT J</NAME>"+
-			"<NAME type=\"33\">Sposato,Vincent J</NAME>"+
-			"<NAME type=\"35\">Vincent</NAME>"+
-			"<NAME type=\"36\">Sposato</NAME>"+
-			"<NAME type=\"37\">J</NAME>"+
-			"<NAME type=\"232\">Sposato,Vincent</NAME>"+
-			"<ADDRESS>"+
-			"<ADDRESS1 />"+
-			"<ADDRESS2 />"+
-			"<ADDRESS3>PO BOX 100152</ADDRESS3>"+
-			"<CITY>GAINESVILLE</CITY>"+
-			"<STATE>FL</STATE>"+
-			"<ZIP>326100152</ZIP>"+
-			"</ADDRESS>"+
-			"<PHONE type=\"10\">(352) 294-5274   45274</PHONE>"+
-			"<EMAIL type=\"1\">vsposato@ufl.edu</EMAIL>"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<RELATIONSHIP type=\"195\">"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
-			"</RELATIONSHIP>"+
-			"<RELATIONSHIP type=\"203\">"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<DEPTNAME>HA-AHC ESE</DEPTNAME>"+
-			"</RELATIONSHIP>"+
-			"<RELATIONSHIP type=\"223\">"+
-			"<DEPTID>27010707</DEPTID>"+
-			"<DEPTNAME>CREATEHA-AHC ESE</DEPTNAME>"+
-			"</RELATIONSHIP>"+
-			"<WORKINGTITLE>IT Expert, Sr. Software Engineer</WORKINGTITLE>"+
-			"<DECEASED>N</DECEASED>"+
-			"<LOA>Bronze</LOA>"+
-			"<IGNORE>YES</IGNORE>"+
-			"</ns0:PERSON>";
+	}
+	
+	protected void tearDown() {
 		try {
-			//Test Case 1 Only On tag value
-			
-			testValueOnly(renamedest, src, srcFile, xmlContent1);
-			
-			
-			
-			
-			//Test Case 2  tag name and Value
-			
-			testValueAndTag(ignoredest, src, srcFile, xmlContent3);
-			
-			/*
-			//Test Case 3
-			createSrcFile(src, dest, srcFile+"3.xml", xmlContent);
-			XMLGrep xmlGrep3 = new XMLGrep(src, dest, name, null);
-			xmlGrep3.execute();
-			assertFalse(FileAide.exists(src));*/
-			
-			/*//Test Case 4
-			createSrcFile(src, dest, srcFile+"4.xml", xmlContent);
-			XMLGrep xmlGrep4 = new XMLGrep(src, dest, null, null);
-			xmlGrep4.execute();
-			assertFalse(FileAide.exists(src));*/
-			
-		} catch(Exception e) {
+		FileAide.delete(src);
+	} catch(IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-
-	private void testValueAndTag(String ignoredest, String src, String srcFile, String xmlContent3) throws IOException {
-		createSrcFile(src, ignoredest, srcFile+"2.xml", xmlContent3);
-		XMLGrep xmlGrep2 = new XMLGrep(src, ignoredest, "YES","IGNORE" );
+	
+//	private void testValueAndTag(String ignoredest, String src, String srcFile, String xmlContent3) throws IOException {
+	
+	/**
+	 * This the test case to test the Xml grep functionality on the bases of a Tagname and value.  All files with <tag> value<tag> will be moved to specified destination dir
+	 * @throws IOException
+	 */
+	@SuppressWarnings("javadoc")
+	public void testValueAndTag() throws IOException {
+		this.ignoredest = "ignore/";
+		createSrcFile(ignoredest, srcFile, xmlContent3);
+		XMLGrep xmlGrep2 = new XMLGrep(src, ignoredest, "YES", "IGNORE");
 		xmlGrep2.execute();
-		assertTrue(FileAide.exists(ignoredest+"/"+srcFile+"2.xml"));
+		assertTrue(FileAide.exists(ignoredest + "/" + srcFile));
 		FileAide.delete(ignoredest);
 		FileAide.delete(src);
 	}
-
-
-	private void testValueOnly(String renamedest, String src, String srcFile, String xmlContent1) throws IOException {
-		createSrcFile(src, renamedest, srcFile+"1.xml", xmlContent1);
-		XMLGrep xmlGrep1 = new XMLGrep(src, renamedest, "RENAME",null );
+	
+	//private void testValueOnly(String renamedest, String src, String srcFile, String xmlContent1) throws IOException {
+	
+	/**
+	 * This the test case to test the Xml grep functionality on the bases of only tag value.  All files with specified Tag value will be moved to specified destination dir.
+	 * @throws IOException
+	 */
+	@SuppressWarnings("javadoc")
+	public void testValueOnly() throws IOException {
+		this.renamedest = "rename/";
+		createSrcFile(renamedest, srcFile, xmlContent1);
+		XMLGrep xmlGrep1 = new XMLGrep(src, renamedest, "RENAME", null);
 		xmlGrep1.execute();
-		assertTrue(FileAide.exists(renamedest+"/"+srcFile+"1.xml"));
-		FileAide.delete(renamedest);
-		FileAide.delete(src);
+		assertTrue(FileAide.exists(renamedest + "/" + srcFile));
 	}
 	
-	
 	@SuppressWarnings("javadoc")
-	public void createSrcFile(String src, String dest, String srcFile, String xmlContent){
+	private void createSrcFile(String dest, String srcFile, String xmlContent) {
 		try {
 			System.out.println(System.getProperty("user.dir"));
-			FileAide.createFolder(src);
 			FileAide.createFolder(dest);
-			FileAide.createFile(src+srcFile);
-			FileAide.setTextContent(src+srcFile, xmlContent);
+			FileAide.createFile(src + srcFile);
+			FileAide.setTextContent(src + srcFile, xmlContent);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
