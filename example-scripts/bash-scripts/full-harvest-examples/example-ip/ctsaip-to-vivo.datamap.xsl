@@ -96,6 +96,10 @@
 					<xsl:value-of select="status" />
 				</bibo:status>
 			</xsl:if>
+			<xsl:if test="normalize-space( inventor-first-name )">
+				<bibo:status>
+					<xsl:value-of select="inventor-first-name" />
+				</bibo:status>
 			</xsl:if>
 
 			<bibo:abstract>
@@ -115,8 +119,7 @@
 		
 		</rdf:Description>
 
-		<!-- The Institution which we will smush together later in the process 
-			based on Label and the type Organization -->
+		<!-- The Institution -->
 		<rdf:Description rdf:about="{$baseURI}institution/{$institution}">
 			<rdfs:label>
 				<xsl:value-of select="instituion" />
@@ -126,7 +129,7 @@
 				rdf:resource="{$baseURI}tech/{$ctsai_id}" />
 		</rdf:Description>
 
-		<!-- Case Manager (also smushed later in the process) -->
+		<!-- Case Manager -->
 		<xsl:if test="normalize-space(contact-name)">
 			<rdf:Description rdf:about="{$baseURI}casemngr/{$email}">
 				<rdfs:label>
@@ -140,7 +143,7 @@
 			</rdf:Description>
 		</xsl:if>
 		
-		<!-- Inventor -->		
+		<!-- Inventor (Authorship) -->		
 		<rdf:Description rdf:about="{$baseURI}authorship/{$ctsai_id}">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<core:linkedAuthor rdf:resource="{$baseURI}author/{$ctsai_id}"/>
@@ -152,7 +155,7 @@
 					</xsl:when>
 					<xsl:otherwise>						
 						<xsl:analyze-string select="description"
-							regex="Lead Inventors:\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*))">											
+							regex="(Lead |Name of (the |)(principal |primary |))inventor(|s):\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*|[^&apos;]*))">											
 								<xsl:matching-substring>
 									<xsl:value-of select="regex-group(4)" />
 									<xsl:value-of select="regex-group(5)" />										
@@ -162,7 +165,8 @@
 				</xsl:choose>	
 			</rdfs:label>
 		</rdf:Description>
-
+		
+		<!-- Inventor (Author) -->
 		<rdf:Description rdf:about="{$baseURI}author/{$ctsai_id}">	
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
 			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
