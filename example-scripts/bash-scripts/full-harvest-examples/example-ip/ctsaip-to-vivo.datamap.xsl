@@ -149,22 +149,20 @@
 			<core:linkedAuthor rdf:resource="{$baseURI}author/{$ctsai_id}"/>
 			<core:linkedInformationResource rdf:resource="{$baseURI}tech/{$ctsai_id}"/>
 			<rdfs:label>Authorship for 
-			<xsl:choose>
+				<xsl:choose>
 					<xsl:when test="inventor-first-name !=''">
 						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
 					</xsl:when>
 					<xsl:otherwise>						
-						<xsl:analyze-string select="description"
-							regex="(Lead |Name of (the |)(principal |primary |))inventor(|s):\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*|[^&apos;]*))">											
-								<xsl:matching-substring>
-									<xsl:value-of select="regex-group(4)" />
-									<xsl:value-of select="regex-group(5)" />										
-								</xsl:matching-substring>									
-						</xsl:analyze-string>										
+						<xsl:call-template name ="extractInventors">
+							<xsl:with-param name ="text" select="description"/>
+							<xsl:with-param name ="org" select="instituion"/>
+						</xsl:call-template>					
 					</xsl:otherwise>
 				</xsl:choose>	
 			</rdfs:label>
-		</rdf:Description>
+		</rdf:Description>		
+		
 		
 		<!-- Inventor (Author) -->
 		<rdf:Description rdf:about="{$baseURI}author/{$ctsai_id}">	
@@ -176,15 +174,15 @@
 						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:analyze-string select="description"
+				<!-- 		<xsl:analyze-string select="description"
 							regex="Lead Inventors:\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*))">											
 								<xsl:matching-substring>
-									<xsl:value-of select="regex-group(4)" />
-									<xsl:value-of select="regex-group(5)" />										
+									<xsl:value-of select="regex-group(0)" />
+								<xsl:value-of select="regex-group(5)" />										
 								</xsl:matching-substring>									
-						</xsl:analyze-string>	
+						</xsl:analyze-string>	-->	
 					</xsl:otherwise>
-				</xsl:choose>				
+				</xsl:choose>	 		
 			</rdfs:label>
 			<foaf:firstName>
 				<xsl:value-of select="inventor-first-name" />
@@ -196,6 +194,23 @@
 				rdf:resource="{$baseURI}tech/{$ctsai_id}" />
 			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>
 		</rdf:Description>
-
-	</xsl:template>
+	</xsl:template>	
+	
+	<!-- Template to Extract Inventors -->
+	<xsl:template name="extractInventors">
+		<xsl:param name ="text"/>
+		<xsl:param name ="org"/>
+		<xsl:choose>
+			<xsl:when test="$org = 'Columbia University'">		
+			<xsl:analyze-string select="$text"
+				regex="[I|i]nventor(|s):\s*(&lt;a href=&quot;(.*)(/&lt;br&gt;/|Tech|Problem))">
+				<!-- (.*)&lt;br&gt;)|[^&lt;]*)">
+			(Tech|Description|Reference|Circuits|Problem|The|Technology)">	 --> 									
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(0)" />										
+					</xsl:matching-substring>									
+			</xsl:analyze-string>	
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>	
 </xsl:stylesheet>
