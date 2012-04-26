@@ -6,8 +6,10 @@
 package org.vivoweb.test.harvester.diff;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.diff.Diff;
@@ -15,6 +17,7 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
+import org.vivoweb.harvester.util.repo.TDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -42,8 +45,13 @@ public class DiffTest extends TestCase {
 	private List<Statement> subStatements;
 	/** */
 	private List<Statement> addStatements;
-	private SDBJenaConnect input;
-	private SDBJenaConnect prevHarvest;
+	/** */
+	//private SDBJenaConnect input;
+	private JenaConnect input;
+	/** */
+	private JenaConnect prevHarvest;
+	/** */
+	//private TDBJenaConnect temp;
 	
 	/**
 	 * previousHarvest model will be stored here
@@ -209,7 +217,6 @@ public class DiffTest extends TestCase {
 		this.input.close();
 		this.prevHarvest.truncate();
 		this.prevHarvest.close();
-		
 	}
 	
 	/**
@@ -264,7 +271,14 @@ public class DiffTest extends TestCase {
 	@SuppressWarnings("javadoc") //TODO Replace with JavaDoc
 	public final void testDiffPrevHarvestSubtractionsIgnore() throws IOException {
 		log.info("BEGIN testDiffPrevHarvestSubtractionsIgnore");
-		Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
+		//Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
+		List<String> preserveTypes = new ArrayList<String>();
+		preserveTypes.add("<http://xmlns.com/foaf/0.1/Person>");
+		
+		Diff differ = new Diff(this.prevHarvest, this.input, this.output, null, null, null, 
+			null, preserveTypes);
+		differ.execute();
+
 		assertFalse(this.output.isEmpty());
 		assertTrue(this.output.containsURI("http://vivo.ufl.edu/individual/n1836184267"));
 		//assertFalse(this.output.containsURI("http://vivo.ufl.edu/individual/n78212990"));
