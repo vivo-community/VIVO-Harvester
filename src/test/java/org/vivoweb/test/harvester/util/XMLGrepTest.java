@@ -148,16 +148,27 @@ public class XMLGrepTest extends TestCase {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("javadoc")
-	public void testValueAndTag() throws IOException {
+	public void testValueAndTagPositiveTest() throws IOException {
 		this.ignoredest = "ignore/";
 		createSrcFile(ignoredest, srcFile, xmlContent3);
-		XMLGrep xmlGrep2 = new XMLGrep(src, ignoredest, "YES", "IGNORE");
-		xmlGrep2.execute();
+		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, "YES", "IGNORE");
+		xmlGrep.execute();
 		assertTrue(FileAide.exists(ignoredest + "/" + srcFile));
+		assertTrue(!FileAide.exists(src + "/" + srcFile));
 		FileAide.delete(ignoredest);
 		FileAide.delete(src);
 	}
 	
+	public void testValueAndTagNegativeTest() throws IOException {
+		this.ignoredest = "ignore/";
+		createSrcFile(ignoredest, srcFile, xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, "YES", "IGNORE");
+		xmlGrep.execute();
+		assertTrue(!FileAide.exists(ignoredest + "/" + srcFile));
+		assertTrue(FileAide.exists(src + "/" + srcFile));
+		FileAide.delete(ignoredest);
+		FileAide.delete(src);
+	}
 	//private void testValueOnly(String renamedest, String src, String srcFile, String xmlContent1) throws IOException {
 	
 	/**
@@ -165,15 +176,48 @@ public class XMLGrepTest extends TestCase {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("javadoc")
-	public void testValueOnly() throws IOException {
+	public void testValueOnlyPositiveTest() throws IOException {
 		this.renamedest = "rename/";
-		createSrcFile(renamedest, srcFile, xmlContent1);
-		XMLGrep xmlGrep1 = new XMLGrep(src, renamedest, "RENAME", null);
-		xmlGrep1.execute();
-		assertTrue(FileAide.exists(renamedest + "/" + srcFile));
+		createSrcFile(renamedest, srcFile, xmlContent3);
+		XMLGrep xmlGrep = new XMLGrep(src, renamedest, "RENAME", null);
+		xmlGrep.execute();
+		assertTrue(!FileAide.exists(renamedest + "/" + srcFile));
+		assertTrue(FileAide.exists(src + "/" + srcFile));
 	}
 	
 	@SuppressWarnings("javadoc")
+	public void testValueOnlyNegativeTest() throws IOException {
+		this.renamedest = "rename/";
+		createSrcFile(renamedest, srcFile, xmlContent3);
+		XMLGrep xmlGrep = new XMLGrep(src, renamedest, "RENAME", null);
+		xmlGrep.execute();
+		assertTrue(!FileAide.exists(renamedest + "/" + srcFile));
+		assertTrue(FileAide.exists(src + "/" + srcFile));
+	}
+
+	public void testTagOnlyPositiveTest() throws IOException {
+		this.ignoredest = "ignore/";
+		createSrcFile(ignoredest, srcFile, xmlContent3);
+		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, null, "IGNORE");
+		xmlGrep.execute();
+		assertTrue(FileAide.exists(ignoredest + "/" + srcFile));
+		assertTrue(!FileAide.exists(src + "/" + srcFile));
+		FileAide.delete(ignoredest);
+		FileAide.delete(src);
+	}
+	
+	public void testTagOnlyNegativeTest() throws IOException {
+		this.ignoredest = "ignore/";
+		createSrcFile(ignoredest, srcFile, xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, null, "IGNORE");
+		xmlGrep.execute();
+		assertTrue(!FileAide.exists(ignoredest + "/" + srcFile));
+		assertTrue(FileAide.exists(src + "/" + srcFile));
+		FileAide.delete(ignoredest);
+		FileAide.delete(src);
+	}
+	
+	
 	private void createSrcFile(String dest, String srcFile, String xmlContent) {
 		try {
 			System.out.println(System.getProperty("user.dir"));

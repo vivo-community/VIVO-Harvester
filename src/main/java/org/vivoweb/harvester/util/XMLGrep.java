@@ -45,9 +45,8 @@ public class XMLGrep {
 
 		if(value == null) 
 		{
-			this.exp = "";
-			log.error("Value is required");
-			System.exit(0);
+			this.exp ="//"+name;
+			
 		}
 		else 
 		{
@@ -123,7 +122,6 @@ public class XMLGrep {
 		}
 		
 		FileAide.createFile(newpath);
-		System.out.println("Moved to " + newpath);
 		FileAide.setTextContent(newpath, FileAide.getTextContent(src.getPath()));
 		FileAide.delete(src.getPath());
 
