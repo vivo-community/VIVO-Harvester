@@ -38,19 +38,16 @@ fi
 touch analytics.txt
 
 #return total number of people in Consultant class
-echo "Total number of people in Consultant class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type ufVivo:Consultant .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of people in Consultant class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type ufVivo:Consultant .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of people in EmeritusProfessor class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:EmeritusProfessor .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of people in CourseFaculty class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:CourtesyFaculty .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of people in nonAcademic class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:NonAcademic .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of people with facultyMember class : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:FacultyMember .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of persons with gator link : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type foaf:Person .?x ufVivo:ufid ?y .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of persons with gator link : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type foaf:Person .?x ufVivo:gatorlink ?y .}" | sed -n '4,4p'`  >>analytics.txt       $
-echo "Total number of Courses in VIVO:  " `harvester-jenaconnect -j vivo.model.xml -q "SELECT  count(?URI)  WHERE  {?URI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://vivo.ufl.edu/ontology/vivo-ufl/C$
-echo "Total number of CoursesSecton in VIVO:  " `harvester-jenaconnect -j vivo.model.xml -q "SELECT  count(?URI)  WHERE  {?URI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://vivo.ufl.edu/ontology/vivo$
-echo "Total number of people in VIVO:  " `harvester-jenaconnect -j vivo.model.xml -q "SELECT count(?person) where { ?person <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>. }"$
-echo "Total number of people with UFIDs:  " `harvester-jenaconnect -j vivo.model.xml -q "SELECT  count(?URI) WHERE { ?URI  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>. ?UR$
-echo "Total number of people without UFIDs:  " `harvester-jenaconnect -j vivo.model.xml -q "SELECT  count(?u) WHERE { ?u <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . OPTI$
+echo "Total number of persons with Gatorlink : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type foaf:Person .?x ufVivo:gatorlink ?y .}" | sed -n '4,4p'`  >>analytics.txt       $
+echo "Total number of persons with UFID : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type foaf:Person .?x ufVivo:ufid ?y .}" | sed -n '4,4p'`  >>analytics.txt
+
+echo "Total number of people marked Faculty : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:FacultyMember .}" | sed -n '4,4p'`  >>analytics.txt
+echo "Total number of people marked nonAcademic : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:NonAcademic .}" | sed -n '4,4p'`  >>analytics.txt
+echo "Total number of people marked Courtesy Faculty : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:CourtesyFaculty .}" | sed -n '4,4p'`  >>analytics.txt
+echo "Total number of people marked Emeritus : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type core:EmeritusProfessor .}" | sed -n '4,4p'`  >>analytics.txt
+echo "Total number of people marked Consultant : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type ufVivo:Consultant .}" | sed -n '4,4p'`  >>analytics.txt
+echo "Total number of people marked Recent Employee : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type ufVivo:RecentEmployee .}" | sed -n '4,4p'`  >>analytics.txt
+echo "Total number of people marked Deceased : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x rdf:type ufVivo:Deceased .}" | sed -n '4,4p'`  >>analytics.txt
 
 
 
