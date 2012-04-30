@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.ImagePreservationDuringPrivacy;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.TDBJenaConnect;
 
 /**
@@ -405,8 +406,9 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception
 	{
-		//TODO: Parameterize this file path/directory from a config file, rather than hard-coded!
-		this.temp = new TDBJenaConnect("PrivTestModel", "test");
+		//TODO: This step may not even be needed, as tempModel unioning is done in ImagePres itself. Clean up later!
+		//this.temp = new TDBJenaConnect("PrivTestModel", "test");
+		this.temp = new MemJenaConnect("test");
 		
 		this.inputModel = this.temp.neighborConnectClone("input");
 		this.inputModel.loadRdfFromString(inputRDF, null, "RDF/XML");

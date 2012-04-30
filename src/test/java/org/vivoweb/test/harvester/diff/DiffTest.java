@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.diff.Diff;
@@ -17,7 +16,6 @@ import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
-import org.vivoweb.harvester.util.repo.TDBJenaConnect;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -113,6 +111,40 @@ public class DiffTest extends TestCase {
 			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
 			"<j.4:preferredTitle>IT Senior, Sr. Software Engineer and Team Lead</j.4:preferredTitle>" +
 		"</rdf:Description>" +
+		"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n44444321\">"+
+			"<j.4:faxNumber></j.4:faxNumber>" +
+			"<j.1:Deceased>N</j.1:Deceased>" +
+			"<j.4:middleName>J</j.4:middleName>" +
+			"<j.1:harvestedBy>PeopleSoft-BizTalk-Harvester</j.1:harvestedBy>" +
+			"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Faculty\"/>" +
+			"<j.4:primaryEmail>tlogan@ufl.edu</j.4:primaryEmail>" +
+			"<j.1:gatorlink rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">tlogan</j.1:gatorlink>" +
+			"<j.3:firstName>Theodore</j.3:firstName>" +
+			"<j.3:lastName>Logan</j.3:lastName>" +
+			"<j.1:ufid>44444321</j.1:ufid>" +
+			"<j.1:privacy>N</j.1:privacy>" +
+			"<rdfs:label>Logan Esq,Theodore </rdfs:label>"+
+			"<j.4:primaryPhoneNumber>(423) 867-5309</j.4:primaryPhoneNumber>" +
+			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
+			"<j.4:preferredTitle>High Broseph</j.4:preferredTitle>" +
+		"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n55555321\">"+
+			"<j.4:faxNumber></j.4:faxNumber>" +
+			"<j.1:Deceased>N</j.1:Deceased>" +
+			"<j.4:middleName>S</j.4:middleName>" +
+			"<j.1:harvestedBy>PeopleSoft-BizTalk-Harvester</j.1:harvestedBy>" +
+			"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Faculty\"/>" +
+			"<j.4:primaryEmail>bpreston@ufl.edu</j.4:primaryEmail>" +
+			"<j.1:gatorlink rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">bpreston</j.1:gatorlink>" +
+			"<j.3:firstName>William</j.3:firstName>" +
+			"<j.3:lastName>Preston</j.3:lastName>" +
+			"<j.1:ufid>55555321</j.1:ufid>" +
+			"<j.1:privacy>N</j.1:privacy>" +
+			"<rdfs:label>Preston, William</rdfs:label>"+
+			"<j.4:primaryPhoneNumber>(423) 867-4444</j.4:primaryPhoneNumber>" +
+			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
+			"<j.4:preferredTitle>King Broseph</j.4:preferredTitle>" +
+		"</rdf:Description>" +
 		"</rdf:RDF>";
 	/**
 	 * inputModel will be stored here
@@ -151,6 +183,24 @@ public class DiffTest extends TestCase {
 			"<j.4:primaryPhoneNumber>(352) 294-5274   45274</j.4:primaryPhoneNumber>" +
 			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
 			"<j.4:preferredTitle>IT Expert, Sr. Software Engineer</j.4:preferredTitle>" +
+		"</rdf:Description>" +
+			"<rdf:Description rdf:about=\"http://vivo.ufl.edu/individual/n44444321\">"+
+			"<j.4:faxNumber></j.4:faxNumber>" +
+			"<j.1:Deceased>N</j.1:Deceased>" +
+			"<j.4:middleName>J</j.4:middleName>" +
+			"<j.1:harvestedBy>PeopleSoft-BizTalk-Harvester</j.1:harvestedBy>" +
+			//"<rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>" +
+			"<rdf:type rdf:resource=\"http://vivoweb.org/ontology/core#Faculty\"/>" +
+			"<j.4:primaryEmail>tlogan@ufl.edu</j.4:primaryEmail>" +
+			"<j.1:gatorlink rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">tlogan</j.1:gatorlink>" +
+			"<j.3:firstName>Theodore</j.3:firstName>" +
+			"<j.3:lastName>Logan</j.3:lastName>" +
+			"<j.1:ufid>44444321</j.1:ufid>" +
+			"<j.1:privacy>N</j.1:privacy>" +
+			"<rdfs:label>Logan Esq,Theodore </rdfs:label>"+
+			//"<j.4:primaryPhoneNumber>(423) 867-5309</j.4:primaryPhoneNumber>" +
+			"<j.1:homeDept rdf:resource=\"http://vivo.ufl.edu/individual/n1581870954\"/>" +
+			"<j.4:preferredTitle>High Broseph</j.4:preferredTitle>" +
 		"</rdf:Description>" +
 		"</rdf:RDF>";
 
@@ -273,7 +323,8 @@ public class DiffTest extends TestCase {
 		log.info("BEGIN testDiffPrevHarvestSubtractionsIgnore");
 		//Diff.diff(this.prevHarvest, this.input, this.output, null, null, null, null);
 		List<String> preserveTypes = new ArrayList<String>();
-		preserveTypes.add("<http://xmlns.com/foaf/0.1/Person>");
+		preserveTypes.add("http://xmlns.com/foaf/0.1/Person");
+		preserveTypes.add("http://vivoweb.org/ontology/core#Faculty");
 		
 		Diff differ = new Diff(this.prevHarvest, this.input, this.output, null, null, null, 
 			null, preserveTypes);
@@ -284,8 +335,6 @@ public class DiffTest extends TestCase {
 		assertFalse(this.output.containsURI("http://vivo.ufl.edu/individual/n78212990"));
 		log.info("END testDiffPrevHarvestSubtractionsIgnore");
 	}
-	
-	
 	
 	/**
 	 * Test method for {@link org.vivoweb.harvester.diff.Diff#diff(org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, org.vivoweb.harvester.util.repo.JenaConnect, java.lang.String)}.
@@ -331,7 +380,7 @@ public class DiffTest extends TestCase {
 	
 	/**
 	 * Testing Output to XML/RDF
-	 * @throws IOException
+	 * @throws IOException JenaConnect
 	 */
 	public final void testDiffDumpFile() throws IOException {
 		log.info("Begin testDiffDumpFile");

@@ -66,4 +66,16 @@
 	
 <!--     <Param name="output">diff-output.model.xml</Param> -->
 
+<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%  <Param name="update-types"> Each update-types entry specifies a type allowed to be updated in the process of      %>
+<%     a diff, meant primarily for creating subtraction models. Untested for addition models!		      	      %>
+<%														      %>
+<%     Specifying any type at all will cause Diff to use the selectiveDiff() method, leading to unspecified types     %>
+<%     being preserved.                                  							      %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+    
+	<!-- <Param name="update-types">http://xmlns.com/foaf/0.1/Person</Param> -->
+
 </Task>
