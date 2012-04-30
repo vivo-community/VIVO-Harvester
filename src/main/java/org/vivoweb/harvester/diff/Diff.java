@@ -475,10 +475,6 @@ public class Diff {
 	private void unionModels() throws IOException
 	{
 		this.tempModel = new MemJenaConnect("urn:x-arq:UnionGraph");
-//		JenaConnect vivoClone = this.tempModel.neighborConnectClone("http://vivoweb.org/harvester/model/imagepres#vivoClone");
-//		vivoClone.loadRdfFromJC(this.vivoModel);
-//		JenaConnect inputClone = this.tempModel.neighborConnectClone("http://vivoweb.org/harvester/model/imagepres#inputClone");
-//		inputClone.loadRdfFromJC(this.incomingModel);
 		
 		JenaConnect subtractionClone = this.tempModel.neighborConnectClone("http://vivoweb.org/harvester/model/diff#subtractionModel");
 		subtractionClone.loadRdfFromJC(this.diffModel);
