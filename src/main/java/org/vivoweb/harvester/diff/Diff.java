@@ -357,10 +357,10 @@ public class Diff {
 		for(String objType : this.preservationPredicates)
 		{
 			String preservationQuery = buildPreservationQuery(objType);
+			log.trace(preservationQuery);
 			
 			//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
 			appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
-			
 			traceModel("An appendModel: ", appendModel);
 			
 			newSubtractionJC.loadRdfFromJC(appendModel);
@@ -414,7 +414,8 @@ public class Diff {
 		StringBuilder pQBuilder = new StringBuilder();
 		
 		pQBuilder.append("PREFIX diff: <http://vivoweb.org/harvester/model/diff#>\n");
-//		pQBuilder.append("PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n");
+		pQBuilder.append("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n");
+		pQBuilder.append("PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n");
 		pQBuilder.append("CONSTRUCT {\n");
 		pQBuilder.append("	?s ?p ?o .\n");
 //		pQBuilder.append("	?newSub ?newPred ?newObj .\n");
@@ -424,15 +425,15 @@ public class Diff {
 		pQBuilder.append("WHERE {\n");
 		pQBuilder.append("	GRAPH diff:newModel {\n");
 //		pQBuilder.append("  	?s ?p ?o .\n");
-		pQBuilder.append("		?newSub a " + objectType + ".\n");
+//		pQBuilder.append("		?newSub rdf:type " + objectType + ".\n");
 		pQBuilder.append("		?newSub ?newPred ?newObj .\n");
 //		pQBuilder.append("		?newSub a foaf:Person");
 		pQBuilder.append("	} .\n");
 		pQBuilder.append("	GRAPH diff:subtractionModel {\n");
 		pQBuilder.append("		?s ?p ?o .\n");
-//		pQBuilder.append("		FILTER(?s != ?newSub) .\n");
-//		pQBuilder.append("		FILTER(?o != ?newSub) .\n");
+//		pQBuilder.append("		FILTER(str(?o) != str(?newSub)) .\n");
 		pQBuilder.append("	} .\n");
+		pQBuilder.append("		FILTER((str(?s) = str(?newSub)) || (str(?o) = str(?newSub)) ) .\n");
 		pQBuilder.append("}");
 		
 		return pQBuilder.toString();

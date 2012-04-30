@@ -281,7 +281,7 @@ public class DiffTest extends TestCase {
 
 		assertFalse(this.output.isEmpty());
 		assertTrue(this.output.containsURI("http://vivo.ufl.edu/individual/n1836184267"));
-		//assertFalse(this.output.containsURI("http://vivo.ufl.edu/individual/n78212990"));
+		assertFalse(this.output.containsURI("http://vivo.ufl.edu/individual/n78212990"));
 		log.info("END testDiffPrevHarvestSubtractionsIgnore");
 	}
 	
