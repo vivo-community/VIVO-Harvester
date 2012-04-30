@@ -155,8 +155,8 @@
 					</xsl:when>
 					<xsl:otherwise>						
 						<xsl:call-template name ="extractInventors">
-							<xsl:with-param name ="text" select="description"/>
 							<xsl:with-param name ="org" select="instituion"/>
+							<xsl:with-param name ="text" select="summary"/>
 						</xsl:call-template>					
 					</xsl:otherwise>
 				</xsl:choose>	
@@ -174,13 +174,13 @@
 						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
 					</xsl:when>
 					<xsl:otherwise>
-				<!-- 		<xsl:analyze-string select="description"
-							regex="Lead Inventors:\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*))">											
+				 	<!--	<xsl:analyze-string select="description"
+				  			regex="Lead Inventors:\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*))">											
 								<xsl:matching-substring>
 									<xsl:value-of select="regex-group(0)" />
 								<xsl:value-of select="regex-group(5)" />										
 								</xsl:matching-substring>									
-						</xsl:analyze-string>	-->	
+						</xsl:analyze-string>	-->
 					</xsl:otherwise>
 				</xsl:choose>	 		
 			</rdfs:label>
@@ -203,11 +203,27 @@
 		<xsl:choose>
 			<xsl:when test="$org = 'Columbia University'">		
 			<xsl:analyze-string select="$text"
-				regex="[I|i]nventor(|s):\s*(&lt;a href=&quot;(.*)(/&lt;br&gt;/|Tech|Problem))">
+				regex="[I|i]nventor(|s):\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))(Tech|Problem))">
 				<!-- (.*)&lt;br&gt;)|[^&lt;]*)">
 			(Tech|Description|Reference|Circuits|Problem|The|Technology)">	 --> 									
 					<xsl:matching-substring>
-						<xsl:value-of select="regex-group(0)" />										
+						<xsl:value-of select="regex-group(5)" />										
+					</xsl:matching-substring>									
+			</xsl:analyze-string>	
+			</xsl:when>
+			<xsl:when test="$org = 'Tufts University'">		
+			<xsl:analyze-string select="summary"
+				regex="[I|i]nventor(|s):\s*((.*)(Problem|Background|Opportunity|Intellectual))">
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(5)" />										
+					</xsl:matching-substring>									
+			</xsl:analyze-string>	
+			</xsl:when>
+			<xsl:when test="$org = 'Medical University of South Carolina'">		
+			<xsl:analyze-string select="$text"
+				regex="[I|i]nventor(|s):\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*)(Patent|Relevant)))">
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(5)" />										
 					</xsl:matching-substring>									
 			</xsl:analyze-string>	
 			</xsl:when>
