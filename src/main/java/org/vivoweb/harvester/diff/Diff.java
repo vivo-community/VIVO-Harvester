@@ -361,8 +361,8 @@ public class Diff {
 			for(String filename : this.dumpFile.keySet()) {
 				String filepath = this.dumpFile.get(filename);
 				String filelanguage = "";
-				if (this.dumpFile.containsKey(filename)){
-					filelanguage = this.dumpFile.get(filename);
+				if (this.dumpLanguage.containsKey(filename)){
+					filelanguage = this.dumpLanguage.get(filename);
 				} else {
 					filelanguage = "RDF/XML";
 				}
