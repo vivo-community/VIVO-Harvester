@@ -185,14 +185,14 @@ harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 echo "Pre Course Ingest Analytics" &>> logfile.txt
-echo "=========================================================================$
+echo "========================================================================="
 cat analytics.txt &>> logfile.txt
 echo -e "\n" &>>logfile.txt
 
 echo "Running Post Course Ingest Analytics......."
 bash analytics.sh
 echo "Post Course Ingest Analytics" &>> logfile.txt
-echo "=========================================================================$
+echo "========================================================================="
 cat analytics.txt &>> logfile.txt
 echo -e "\n" &>> logfile.txt
 
