@@ -72,6 +72,11 @@ public class Diff {
 	private boolean bHasUpdateTypes;
 	
 	/**
+	 * Are we using selectiveDiff?
+	 */
+	private boolean bUsingSelectiveDiff;
+	
+	/**
 	 * dump model to file option - filename
 	 */
 	private Map<String, String> dumpFile;
@@ -131,10 +136,11 @@ public class Diff {
 	 * @param dL  The dump-file language.
 	 * @param dTF The dump N Triple
 	 * @param n3  The dump N3
+	 * @param bSelectiveDiff If we're using selective diff.
 	 * @param updateTypes The types this diff is allowed to affect.
 	 */
 	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, Map<String,String> dF, Map<String,String> dL, String dTF, 
-				String n3, List<String> updateTypes) {
+				String n3, boolean bSelectiveDiff, List<String> updateTypes) {
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
 		this.outputJC = oJC;
@@ -154,7 +160,11 @@ public class Diff {
 		}
 
 		this.updateTypes = updateTypes;
+		this.bUsingSelectiveDiff = bSelectiveDiff;
 		this.bHasUpdateTypes = (!this.updateTypes.isEmpty());
+		// Note: If the user specifies updateTypes but forgot to set the bUsingSelectiveDiff flag, they probably wanted to use s.Diff.
+		if( this.bHasUpdateTypes ) this.bUsingSelectiveDiff = true;
+		
 		
 		checkFileName();
 	}
@@ -186,6 +196,7 @@ public class Diff {
 			argList.getValueMap("l"),
 			argList.get("t"),
 			argList.get("n"),
+			argList.has("e"),
 			argList.getAll("U"));
 	}
 	
@@ -200,7 +211,8 @@ public class Diff {
 		parser.addArgument(new ArgDef().setShortOption('M').setLongOpt("minuendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of source jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("subtrahend").withParameter(true, "CONFIG_FILE").setDescription("config file for removemode jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("subtrahendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of remove jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("update-types").withParameterValueMap("NAME", "TYPE").setDescription(" ").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("selective-diff").setDescription("Use selective diff").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("update-types").withParameterValueMap("NAME", "TYPE").setDescription("Type to be updated").setRequired(false));
 		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
@@ -305,33 +317,42 @@ public class Diff {
 		this.diffModel = new MemJenaConnect("subtractionJC");
 		JenaConnect newSubtractionJC = new MemJenaConnect("newSubJC");
 		this.diffModel.getJenaModel().add(subtractionModel);
-		Model newSubtractionModel;
+		Model newSubtractionModel = ModelFactory.createDefaultModel();
 		JenaConnect appendModel;
 
 		// Trace preconditions.
-		traceModel( "OldModel (minuend)", this.minuendJC);
-		traceModel( "NewModel (subtrahend)", this.subtrahendJC);
-		traceModel( "Subtraction Model", this.diffModel);
+		//traceModel( "OldModel (minuend)", this.minuendJC);
+		//traceModel( "NewModel (subtrahend)", this.subtrahendJC);
+		traceModel( "Default Subtraction Model", this.diffModel);
 	
 		//Load newModel and subtractionModel JCs into a joined model for multi-graph query.
 		unionModels();
 
-		log.debug("Preserving? " + this.bHasUpdateTypes);
-		log.debug("How many types? " + this.updateTypes.size());
-		
-		for(String objType : this.updateTypes)
+		if( this.bHasUpdateTypes )
 		{
-			String preservationQuery = buildPreservationQuery(objType);
-			//log.trace(preservationQuery);
+			for(String objType : this.updateTypes)
+			{
+				String preservationQuery = buildPreservationQuery(objType);
+				//log.trace(preservationQuery);
+				
+				//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
+				appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
+				//traceModel("An appendModel: ", appendModel);
+				
+				newSubtractionJC.loadRdfFromJC(appendModel);
+			}
 			
-			//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
+			traceModel( "New SubtractionModel", newSubtractionJC );
+		}
+		else
+		{
+			String preservationQuery = buildPreservationQuery();
 			appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
-			traceModel("An appendModel: ", appendModel);
+			//traceModel("An appendModel: ", appendModel);
 			
 			newSubtractionJC.loadRdfFromJC(appendModel);
 		}
 		
-		traceModel( "New SubtractionModel", newSubtractionJC );
 		
 		// Dump subtractionModel to RDF/XML file.
 		if (this.dumpFile != null) {
@@ -402,6 +423,36 @@ public class Diff {
 	}
 	
 	/**
+	 * This version is called when bUsingSelectiveDiff is true but no types are specified.
+	 * @return The query string to be executed.
+	 */
+	public static String buildPreservationQuery()
+	{
+		// Preservation Query Builder
+		StringBuilder pQBuilder = new StringBuilder();
+		
+		pQBuilder.append("PREFIX diff: <http://vivoweb.org/harvester/model/diff#>\n");
+		pQBuilder.append("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n");
+		pQBuilder.append("CONSTRUCT {\n");
+		pQBuilder.append("	?s ?p ?o .\n");
+		pQBuilder.append("}\n");
+		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#newModel>\n");
+		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#subtractionModel>\n");
+		pQBuilder.append("WHERE {\n");
+		pQBuilder.append("	GRAPH diff:newModel {\n");
+		pQBuilder.append("		?newSub ?newPred ?newObj .\n");
+		pQBuilder.append("	} .\n");
+		pQBuilder.append("	GRAPH diff:subtractionModel {\n");
+		pQBuilder.append("		?s ?p ?o .\n");
+		pQBuilder.append("	} .\n");
+		pQBuilder.append("  FILTER((str(?s) = str(?newSub)) || (str(?o) = str(?newSub))) .\n");
+		pQBuilder.append("}");
+		
+		return pQBuilder.toString();
+	
+	}
+	
+	/**
 	 * Traces the contents of an entire model for testing/logging.
 	 * @param traceLabel Preceding label.
 	 * @param model The model to trace.
@@ -422,7 +473,7 @@ public class Diff {
 	 * @throws IOException error accessing file
 	 */
 	public void execute() throws IOException {
-		if(this.bHasUpdateTypes)
+		if(this.bUsingSelectiveDiff)
 		{
 			selectiveDiff();
 		}

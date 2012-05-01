@@ -327,7 +327,7 @@ public class DiffTest extends TestCase {
 		preserveTypes.add("http://vivoweb.org/ontology/core#Faculty");
 		
 		Diff differ = new Diff(this.prevHarvest, this.input, this.output, null, null, null, 
-			null, preserveTypes);
+			null, true, preserveTypes);
 		differ.execute();
 
 		assertFalse(this.output.isEmpty());
