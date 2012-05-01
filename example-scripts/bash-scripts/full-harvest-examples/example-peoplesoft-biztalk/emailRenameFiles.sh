@@ -6,8 +6,8 @@
 # AUTHORS Vincent Sposato
 
 # Target Directory To Review
-export TARGET_DIR=/data/vivo/harvester/vivo-auto-harvest/people/people-ingest/data/renamed-records
-export INGEST_DIR=/data/vivo/harvester/vivo-auto-harvest/people/people-ingest
+export TARGET_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/renamed-records
+export INGEST_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest
 export CURRENT_DIR=`pwd`
 
 echo $CURRENT_DIR

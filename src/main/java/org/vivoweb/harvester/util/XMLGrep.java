@@ -139,8 +139,11 @@ public class XMLGrep {
 				File dir = new File(this.src);
 				File[] files = dir.listFiles();
 				for(File file : files) {
-					if (findInFile(file,this.exp)) {
-						moveFile(file,this.dest);
+					// If the current file is not a directory skip it
+					if (! FileAide.isFolder(file.toString())) {
+						if (findInFile(file,this.exp)) {
+							moveFile(file,this.dest);
+						}
 					}
 				}
 			} else if(FileAide.isFile(this.src)) {
