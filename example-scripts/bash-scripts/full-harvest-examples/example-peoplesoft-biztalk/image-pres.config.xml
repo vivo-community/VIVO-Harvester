@@ -29,7 +29,7 @@
 -->
 
   <Param name="inputJena-config">harvested-data.model.xml</Param>
-  <Param name="vivoJena-config">vivo-data.model.xml</Param>
+  <Param name="vivoJena-config">vivo.model.xml</Param>
   <Param name="privateJena-config">private-data.model.xml</Param>
   <Param name="dTransfer">True</Param>
   <Param name="dDelete">True</Param>
