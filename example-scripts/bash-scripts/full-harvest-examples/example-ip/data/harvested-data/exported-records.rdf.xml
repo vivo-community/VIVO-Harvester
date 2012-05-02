@@ -185,7 +185,7 @@ In addition to licensing, the technology is available for further development th
   <rdf:Description rdf:about="http://vivoweb.org/harvest/ip/authorship/24499788">
     <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship"/>
     <rdfs:label>Authorship for 
-				Angelos D. Keromytis, PhD.&lt;/a&gt;&lt;br&gt; &lt;br&gt;Tech Ventures Reference:	IR M04-065, IR M05-081, IR M05-082&lt;br&gt;&lt;br&gt;</rdfs:label>
+				Angelos D. Keromytis, PhD.&lt;/a&gt;&lt;br&gt; &lt;br&gt;</rdfs:label>
     <j.3:linkedAuthor rdf:resource="http://vivoweb.org/harvest/ip/author/24499788"/>
     <j.3:linkedInformationResource rdf:resource="http://vivoweb.org/harvest/ip/tech/24499788"/>
   </rdf:Description>

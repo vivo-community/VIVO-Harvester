@@ -1,5 +1,5 @@
 #Metadata: Location: previous-harvest
-#Mon Apr 30 12:05:32 EDT 2012
+#Wed May 02 09:50:00 EDT 2012
 tdb.type=standalone
 tdb.record.triple=24
 tdb.record.quad=32
@@ -19,5 +19,5 @@ tdb.indexes.triples.primary=SPO
 tdb.indexes.triples=SPO,POS,OSP
 tdb.indexes.quads.primary=GSPO
 tdb.indexes.quads=GSPO,GPOS,GOSP,POSG,OSPG,SPOG
-tdb.created=2012-04-30T12\:05\:32.335-04\:00
+tdb.created=2012-05-02T09\:50\:00.86-04\:00
 tdb.create.version=0.8.9

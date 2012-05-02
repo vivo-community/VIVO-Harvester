@@ -203,12 +203,21 @@
 		<xsl:choose>
 			<xsl:when test="$org = 'Columbia University'">		
 			<xsl:analyze-string select="$text"
-				regex="[I|i]nventor(|s):\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))(Tech|Problem))">
+				regex="[I|i]nventor(|s):\s*(((&lt;a href=&quot;((.*)&quot;&gt;(.*)))|(.*))(Tech|Problem$))">
 				<!-- (.*)&lt;br&gt;)|[^&lt;]*)">
-			(Tech|Description|Reference|Circuits|Problem|The|Technology)">	 --> 									
-					<xsl:matching-substring>
-						<xsl:value-of select="regex-group(5)" />										
-					</xsl:matching-substring>									
+			(Tech|Description|Reference|Circuits|Problem|The|Technology)">	 -->
+
+	<xsl:matching-substring>
+	<xsl:choose>
+		<xsl:when test="regex-group(8) != ''">
+			<xsl:value-of select="regex-group(8)" />
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="regex-group(7)" />
+		</xsl:otherwise>
+		</xsl:choose>
+	</xsl:matching-substring>	
+	<!--  -->				
 			</xsl:analyze-string>	
 			</xsl:when>
 			<xsl:when test="$org = 'Tufts University'">		
