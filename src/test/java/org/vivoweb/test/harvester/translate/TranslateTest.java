@@ -565,7 +565,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("Article", inputDataArticle, this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
+		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false, false).execute();
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());
@@ -588,7 +588,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("Book", inputDataBook, this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
+		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false, false).execute();
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());
@@ -611,7 +611,7 @@ public class TranslateTest extends TestCase {
 		this.inRH.addRecord("ArticleNoAffiliation", inputDataArticle.replaceAll("<Affiliation.*?/Affiliation>", ""), this.getClass());
 		
 		// call the xlsTranslate
-		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false).execute();
+		new XSLTranslator(this.inRH, this.outRH, FileAide.getInputStream(mapFilePath), false, false).execute();
 		
 		// verify that output record handler has some records
 		assertTrue(this.outRH.iterator().hasNext());

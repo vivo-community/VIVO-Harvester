@@ -176,7 +176,7 @@ public class DemoPSMerge {
 		InputStream xsl = FileAide.getInputStream("config/datamaps/PeopleSoftToVivo.xsl");
 		RecordHandler transRH = new JDBCRecordHandler("org.h2.Driver", "jdbc:h2:harvested-data/demoTransPS/store", "sa", "", "transData", "transID");
 		log.trace("Translating Merged Records");
-		XSLTranslator psTranslate = new XSLTranslator(mergedRH, transRH, xsl, true);
+		XSLTranslator psTranslate = new XSLTranslator(mergedRH, transRH, xsl, true, false);
 		psTranslate.execute();
 		
 		System.setProperty("process-task", "Transfer");

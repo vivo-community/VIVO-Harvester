@@ -116,8 +116,7 @@
 			<ctsaip:originatingInstitution
 				rdf:resource="{$baseURI}institution/{$institution}" />
 			<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>
-		
-		</rdf:Description>
+	</rdf:Description>
 
 		<!-- The Institution -->
 		<rdf:Description rdf:about="{$baseURI}institution/{$institution}">
