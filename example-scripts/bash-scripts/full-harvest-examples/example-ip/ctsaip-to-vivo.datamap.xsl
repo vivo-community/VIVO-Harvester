@@ -37,6 +37,7 @@
 		</xsl:variable>
 
 		<xsl:variable name="summary-var" select="summary" />
+		<xsl:variable name="description-var" select="description" />
 		<xsl:variable name="institution" select="instituion" />
 		<xsl:variable name="email" select="contact-email" />
 
@@ -102,11 +103,8 @@
 				</bibo:status>
 			</xsl:if>
 
-			<bibo:abstract>
-				<xsl:value-of
-					select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" />
-			</bibo:abstract>
-
+			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>
+			<core:description><xsl:value-of select="replace($description-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></core:description>
 
 			<!-- Link organization, case manager, and inventor assigned 
 				to this project -->
