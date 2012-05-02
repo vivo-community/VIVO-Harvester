@@ -153,7 +153,8 @@
 					<xsl:otherwise>						
 						<xsl:call-template name ="extractInventors">
 							<xsl:with-param name ="org" select="instituion"/>
-							<xsl:with-param name ="text" select="summary"/>
+							<xsl:with-param name ="description" select="description"/>
+							<xsl:with-param name ="summary" select="summary"/>
 						</xsl:call-template>					
 					</xsl:otherwise>
 				</xsl:choose>	
@@ -195,18 +196,11 @@
 
 	<!-- Template to Extract Inventors -->
 	<xsl:template name="extractInventors">
-		<xsl:param name="text" />
 		<xsl:param name="org" />
+		<xsl:param name="summary" />
+		<xsl:param name="description" />
 
 	<xsl:choose>
-		<xsl:when test="$org = 'Washington University in St. Louis'">
-			<xsl:analyze-string select="$text"
-				regex="[I|i]nventor[|s]:\s*(.*)Technology">
-				<xsl:matching-substring>
-					<xsl:value-of select="regex-group(1)" />
-				</xsl:matching-substring>
-			</xsl:analyze-string>
-		</xsl:when>
 		<xsl:when test="$org = 'Tufts University'">
 			<xsl:analyze-string select="summary"
 				regex="[I|i]nventor(|s):\s*((.*)(Problem|Background|Opportunity|Intellectual))">
