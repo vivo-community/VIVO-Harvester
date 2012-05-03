@@ -124,7 +124,7 @@
 					  			<public:downloadLocation>
 									<!-- Create the public download link for the image full -->
 									<rdf:Description rdf:about="{$baseURI}fullDirDownload/ufid{$ufid}">
-										<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
+										<public:directDownloadUrl>/harvestedImages/fullImages/person.thumbnail.jpg</public:directDownloadUrl>
 							  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
 							  			<!-- Removed to prevent duplicate date/times on photos 
 							 			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
@@ -141,7 +141,7 @@
 										<public:downloadLocation>
 											<!-- Create the public download link for the image thumbnail -->
 											<rdf:Description rdf:about="{$baseURI}thumbDirDownload/ufid{$ufid}">
-									  			<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
+									  			<public:directDownloadUrl>/harvestedImages/thumbnails/person.thumbnail.jpg</public:directDownloadUrl>
 									  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
 									  			<!-- Removed to prevent duplicate date/times on photos 
 									  			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
@@ -292,7 +292,7 @@
 					  			<public:downloadLocation>
 									<!-- Create the public download link for the image full -->
 									<rdf:Description rdf:about="{$baseURI}fullDirDownload/ufid{$ufid}">
-										<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
+										<public:directDownloadUrl>/harvestedImages/fullImages/person.thumbnail.jpg</public:directDownloadUrl>
 							  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
 							  			<!-- Removed to prevent duplicate date/times on photos 
 							 			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
@@ -309,7 +309,7 @@
 										<public:downloadLocation>
 											<!-- Create the public download link for the image thumbnail -->
 											<rdf:Description rdf:about="{$baseURI}thumbDirDownload/ufid{$ufid}">
-									  			<public:directDownloadUrl>/file/person.thumbnail.jpg</public:directDownloadUrl>
+									  			<public:directDownloadUrl>/harvestedImages/thumbnails/person.thumbnail.jpg</public:directDownloadUrl>
 									  			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"/>
 									  			<!-- Removed to prevent duplicate date/times on photos 
 									  			<vitro:modTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="datetime:dateTime()" /></vitro:modTime>
