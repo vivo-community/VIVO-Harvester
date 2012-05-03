@@ -21,11 +21,28 @@
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
 	xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:public='http://vitro.mannlib.cornell.edu/ns/vitro/public#'
+	xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
 	xmlns:ns0="http://uf.biztalk.shibperson">
 	
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:variable name="baseURI">http://vivo.ufl.edu/harvested/</xsl:variable>
+
+	<xsl:template match="dataroot">
+		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
+			xmlns:foaf="http://xmlns.com/foaf/0.1/"
+			xmlns:owl="http://www.w3.org/2002/07/owl#"
+			xmlns:bibo='http://purl.org/ontology/bibo/'
+			xmlns:core="http://vivoweb.org/ontology/core#"
+			xmlns:score="http://vivoweb.org/ontology/score#"
+			xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
+			xmlns:public='http://vitro.mannlib.cornell.edu/ns/vitro/public#'
+			xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" >
+		
+		<xsl:apply-templates select="qryCreatePeopleImportSpreadsheet" />
+		</rdf:RDF>
+	</xsl:template>
 
 	<!-- This is the main person being translated - will serve as the primary import -->
 	<!-- Person node start -->
@@ -199,16 +216,6 @@
 	<xsl:template match="qryCreatePeopleImportSpreadsheet">
 		<xsl:variable name="ufid" select="PRSN_UFID"/>
 		<xsl:variable name="deptID" select="normalize-space(PRSN_HOME_DEPT_ID)"/>
-		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-			xmlns:vitro="http://vitro.mannlib.cornell.edu/ns/vitro/public#"
-			xmlns:foaf="http://xmlns.com/foaf/0.1/"
-			xmlns:owl="http://www.w3.org/2002/07/owl#"
-			xmlns:bibo='http://purl.org/ontology/bibo/'
-			xmlns:core="http://vivoweb.org/ontology/core#"
-			xmlns:score="http://vivoweb.org/ontology/score#"
-			xmlns:ufVivo="http://vivo.ufl.edu/ontology/vivo-ufl/"
-			xmlns:public='http://vitro.mannlib.cornell.edu/ns/vitro/public#'
-			xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" >
 		
 			<rdf:Description rdf:about="{$baseURI}person/{$ufid}">
 				<ufVivo:ufid><xsl:value-of select="$ufid"/></ufVivo:ufid>
@@ -231,10 +238,9 @@
 				<xsl:if test="normalize-space( DisplayName )">
 					<rdfs:label><xsl:value-of select="DisplayName"/></rdfs:label>
 				</xsl:if>
-				<!-- Commented out due to ES not providing this data 
-				<xsl:if test="normalize-space( GLID )">
-					<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="GLID" /></ufVivo:gatorlink>
-				</xsl:if> -->
+				<xsl:if test="normalize-space( PRSN_GLID )">
+					<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="PRSN_GLID" /></ufVivo:gatorlink>
+				</xsl:if>
 				<xsl:if test="normalize-space( PRSN_WORKING_TITLE )">
 					<core:preferredTitle><xsl:value-of select="PRSN_WORKING_TITLE" /></core:preferredTitle>
 				</xsl:if>
@@ -360,8 +366,6 @@
 				</xsl:choose>
 			</rdf:Description>
 			<!-- Person node end -->
-		</rdf:RDF>
-	
 	</xsl:template>
 	<!-- End Template for Initial Load - from Database Compilation -->
 </xsl:stylesheet>
