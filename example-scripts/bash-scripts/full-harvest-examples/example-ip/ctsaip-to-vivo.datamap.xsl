@@ -40,6 +40,7 @@
 		<xsl:variable name="description-var" select="description" />
 		<xsl:variable name="institution" select="instituion" />
 		<xsl:variable name="email" select="contact-email" />
+		<xsl:variable name="avantage-var" select="advantage" />
 
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
 			<xsl:choose>
@@ -78,9 +79,7 @@
 				</ctsaip:internalCaseNo>
 			</xsl:if>
 			<xsl:if test="normalize-space( institution-link )">
-				<core:webpage>
-					<xsl:value-of select="institution-link" />
-				</core:webpage>
+				<core:webpage rdf:resource="{baseURI}tech/{$ctsai_id}/inslink" />
 			</xsl:if>
 			<xsl:if test="normalize-space( ctsaip-link )">
 				<core:webpage>
@@ -89,7 +88,7 @@
 			</xsl:if>
 			<xsl:if test="normalize-space( advantage )">
 				<ctsaip:advantages>
-					<xsl:value-of select="advantage" />
+					<xsl:value-of select="replace($advantage-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" />
 				</ctsaip:advantages>
 			</xsl:if>
 			<xsl:if test="normalize-space( status )">
@@ -116,6 +115,17 @@
 			<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>
 		
 		</rdf:Description>
+		
+		<!-- Web Links (new Structure in VIVO) -->
+		<xsl:if test="normalize-space( institution-link )">
+			<rdf:Description rdf:about="{baseURI}tech/{$ctsai_id}/inslink>
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#URLLink" />
+				<core:linkAnchorText><xsl:value-of select="instituion" /> Page</core:linkAnchorText>
+				<core:linkURI><xsl:value-of select="institution-link" /></core:linkURI>
+				<core:rank>1</core:rank>
+				<core:webpageOf rdf:resource="{baseURI}tech/{$ctsai_id}"/>
+			</rdf:Description>
+		</xsl:if>
 
 		<!-- The Institution -->
 		<rdf:Description rdf:about="{$baseURI}institution/{$institution}">
