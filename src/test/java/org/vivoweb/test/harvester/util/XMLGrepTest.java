@@ -102,16 +102,16 @@ public class XMLGrepTest extends TestCase {
 		"<LOA>Bronze</LOA>" +
 		"<IGNORE>YES</IGNORE>" +
 		"</ns0:PERSON>";
+
 	/**
-	 * Destination dir for all files having <Action>RENAME</Action> tag
-	 * 
+	 * Destination dir for all files matching expression
 	 */
-	private String renamedest;
+	private String destination;
 	
 	/**
-	 * Destination dir for all files having <Ignore>Yes</Ignore> tag
+	 * Alternate destination directory for files that do not match
 	 */
-	private String ignoredest;
+	private String altDest;
 	
 	/**
 	 * Source dir for input xml messages 
@@ -128,14 +128,19 @@ public class XMLGrepTest extends TestCase {
 		// load input models
 		this.src = "soapsrc/";
 		this.srcFile = "test";
-		FileAide.createFolder(src);
-		
+		FileAide.createFolder(this.src);
+		this.altDest = "altDest/";
+		FileAide.createFolder(this.altDest);
+		this.destination = "desination/";
+		FileAide.createFolder(this.destination);
 	}
 	
 	protected void tearDown() {
 		try {
-		FileAide.delete(src);
-	} catch(IOException e) {
+			FileAide.delete(this.src);
+			FileAide.delete(this.altDest);
+			FileAide.delete(this.destination);
+		} catch(IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -149,25 +154,22 @@ public class XMLGrepTest extends TestCase {
 	 */
 	@SuppressWarnings("javadoc")
 	public void testValueAndTagPositiveTest() throws IOException {
-		this.ignoredest = "ignore/";
-		createSrcFile(ignoredest, srcFile, xmlContent2);
-		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, "YES", "IGNORE");
+		createSrcFile(XMLGrepTest.xmlContent2);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, this.altDest, "YES", "IGNORE");
 		xmlGrep.execute();
-		assertTrue(FileAide.exists(ignoredest + "/" + srcFile));
-		assertTrue(!FileAide.exists(src + "/" + srcFile));
-		FileAide.delete(ignoredest);
-		FileAide.delete(src);
+		assertTrue(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
 	}
+	
 	@SuppressWarnings("javadoc")
 	public void testValueAndTagNegativeTest() throws IOException {
-		this.ignoredest = "ignore/";
-		createSrcFile(ignoredest, srcFile, xmlContent1);
-		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, "YES", "IGNORE");
+		createSrcFile(XMLGrepTest.xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, this.altDest, "YES", "IGNORE");
 		xmlGrep.execute();
-		assertTrue(!FileAide.exists(ignoredest + "/" + srcFile));
-		assertTrue(FileAide.exists(src + "/" + srcFile));
-		FileAide.delete(ignoredest);
-		FileAide.delete(src);
+		assertFalse(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertTrue(FileAide.exists(this.altDest + this.srcFile));
 	}
 	//private void testValueOnly(String renamedest, String src, String srcFile, String xmlContent1) throws IOException {
 	
@@ -177,54 +179,140 @@ public class XMLGrepTest extends TestCase {
 	 */
 	@SuppressWarnings("javadoc")
 	public void testValueOnlyPositiveTest() throws IOException {
-		this.renamedest = "rename/";
-		createSrcFile(renamedest, srcFile, xmlContent2);
-		XMLGrep xmlGrep = new XMLGrep(src, renamedest, "RENAME", null);
+		createSrcFile(XMLGrepTest.xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination,this.altDest,"RENAME", null);
 		xmlGrep.execute();
-		assertTrue(!FileAide.exists(renamedest + "/" + srcFile));
-		assertTrue(FileAide.exists(src + "/" + srcFile));
+		assertTrue(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
 	}
 	
 	@SuppressWarnings("javadoc")
 	public void testValueOnlyNegativeTest() throws IOException {
-		this.renamedest = "rename/";
-		createSrcFile(renamedest, srcFile, xmlContent2);
-		XMLGrep xmlGrep = new XMLGrep(src, renamedest, "RENAME", null);
+		createSrcFile(XMLGrepTest.xmlContent2);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, this.altDest,"RENAME", null);
 		xmlGrep.execute();
-		assertTrue(!FileAide.exists(renamedest + "/" + srcFile));
-		assertTrue(FileAide.exists(src + "/" + srcFile));
+		assertFalse(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertTrue(FileAide.exists(this.altDest + this.srcFile));
 	}
 
 	@SuppressWarnings("javadoc")
 	public void testTagOnlyPositiveTest() throws IOException {
-		this.ignoredest = "ignore/";
-		createSrcFile(ignoredest, srcFile, xmlContent2);
-		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, null, "IGNORE");
+		createSrcFile(XMLGrepTest.xmlContent2);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, this.altDest, null, "IGNORE");
 		xmlGrep.execute();
-		assertTrue(FileAide.exists(ignoredest + "/" + srcFile));
-		assertTrue(!FileAide.exists(src + "/" + srcFile));
-		FileAide.delete(ignoredest);
-		FileAide.delete(src);
+		assertTrue(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
 	}
 	@SuppressWarnings("javadoc")
 	public void testTagOnlyNegativeTest() throws IOException {
-		this.ignoredest = "ignore/";
-		createSrcFile(ignoredest, srcFile, xmlContent1);
-		XMLGrep xmlGrep = new XMLGrep(src, ignoredest, null, "IGNORE");
+		createSrcFile(XMLGrepTest.xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, this.altDest, null, "IGNORE");
 		xmlGrep.execute();
-		assertTrue(!FileAide.exists(ignoredest + "/" + srcFile));
-		assertTrue(FileAide.exists(src + "/" + srcFile));
-		FileAide.delete(ignoredest);
-		FileAide.delete(src);
+		assertFalse(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertTrue(FileAide.exists(this.altDest + this.srcFile));
+	}
+
+	/**
+	 * This will test a tag and a value being passed without an alternate destination, and is
+	 * expected to be matched
+	 * @throws IOException
+	 */
+	@SuppressWarnings("javadoc")
+	public void testValueAndTagPositiveTestNoAltDestination() throws IOException {
+		createSrcFile(XMLGrepTest.xmlContent2);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, null, "YES", "IGNORE");
+		xmlGrep.execute();
+		assertTrue(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
 	}
 	
+	/**
+	 * This will test a tag and a value being passed without an alternate destination, and is
+	 * expected to NOT be matched
+	 * @throws IOException
+	 */
 	@SuppressWarnings("javadoc")
-	private void createSrcFile(String dest, String srcFile, String xmlContent) {
+	public void testValueAndTagNegativeTestNoAltDestination() throws IOException {
+		createSrcFile(XMLGrepTest.xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, null, "YES", "IGNORE");
+		xmlGrep.execute();
+		assertFalse(FileAide.exists(this.destination + this.srcFile));
+		assertTrue(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
+	}
+	//private void testValueOnly(String renamedest, String src, String srcFile, String xmlContent1) throws IOException {
+	
+	/**
+	 * This will test a value being passed without an alternate destination, and is
+	 * expected to be matched
+	 * @throws IOException
+	 */
+	@SuppressWarnings("javadoc")
+	public void testValueOnlyPositiveTestNoAltDestination() throws IOException {
+		createSrcFile(XMLGrepTest.xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination,null,"RENAME", null);
+		xmlGrep.execute();
+		assertTrue(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
+	}
+	
+	/**
+	 * This will test a value being passed without an alternate destination, and is
+	 * expected to NOT be matched
+	 * @throws IOException
+	 */
+	@SuppressWarnings("javadoc")
+	public void testValueOnlyNegativeTestNoAltDestination() throws IOException {
+		createSrcFile(XMLGrepTest.xmlContent2);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, null,"RENAME", null);
+		xmlGrep.execute();
+		assertFalse(FileAide.exists(this.destination + this.srcFile));
+		assertTrue(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
+	}
+
+	/**
+	 * This will test a tag being passed without an alternate destination, and is
+	 * expected to be matched
+	 * @throws IOException
+	 */
+	@SuppressWarnings("javadoc")
+	public void testTagOnlyPositiveTestNoAltDestination() throws IOException {
+		createSrcFile(XMLGrepTest.xmlContent2);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, null, null, "IGNORE");
+		xmlGrep.execute();
+		assertTrue(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
+	}
+	/**
+	 * This will test a tag being passed without an alternate destination, and is
+	 * expected to NOT be matched
+	 * @throws IOException
+	 */
+	@SuppressWarnings("javadoc")
+	public void testTagOnlyNegativeTestNoAltDestination() throws IOException {
+		createSrcFile(XMLGrepTest.xmlContent1);
+		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, null, null, "IGNORE");
+		xmlGrep.execute();
+		assertFalse(FileAide.exists(this.destination + this.srcFile));
+		assertTrue(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
+	}
+
+	@SuppressWarnings("javadoc")
+	private void createSrcFile(String xmlContent) {
 		try {
 			System.out.println(System.getProperty("user.dir"));
-			FileAide.createFolder(dest);
-			FileAide.createFile(src + srcFile);
-			FileAide.setTextContent(src + srcFile, xmlContent);
+			//FileAide.createFolder(this.src);
+			FileAide.createFile(this.src + this.srcFile);
+			FileAide.setTextContent(this.src + this.srcFile, xmlContent);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}

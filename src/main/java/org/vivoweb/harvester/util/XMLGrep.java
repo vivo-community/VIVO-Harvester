@@ -29,9 +29,14 @@ public class XMLGrep {
 	private String dest = "";
 	
 	/**
+	 * Input alternate destination for items that do not match the expression
+	 */
+	private String altDest = "";
+	
+	/**
 	 * xpath expression to filter files
 	 */
-	private String exp;
+	private String expression;
 	
 	/**
 	 * Constructor
@@ -39,24 +44,28 @@ public class XMLGrep {
 	 * @param dest directory to move files from
 	 * @param xpath expression to filter
 	 */
-	public XMLGrep(String src, String dest, String value, String name) {
+	public XMLGrep(String src, String dest, String altDest, String value, String name) {
 		this.src = src;
 		this.dest = dest;
-
+		
+		if (altDest != null) {
+			this.altDest = altDest;
+		}
+		
 		if(value == null) 
 		{
-			this.exp ="//"+name;
+			this.expression ="//"+name;
 			
 		}
 		else 
 		{
 			if(name == null)
 			{
-				this.exp = "//*[. ='"+ value + "']";
+				this.expression = "//*[. ='"+ value + "']";
 			} 
 			else 
 			{
-				this.exp = "//" + name + "[. = '" + value + "']";
+				this.expression = "//" + name + "[. = '" + value + "']";
 			}
 			
 		}
@@ -79,7 +88,7 @@ public class XMLGrep {
 	 * @param argList arguments
 	 */
 	private XMLGrep(ArgList argList) {
-		this(argList.get("s"), argList.get("d"), argList.get("v"), argList.get("n"));
+		this(argList.get("s"), argList.get("d"), argList.get("a"), argList.get("v"), argList.get("n"));
 	}
 	
 	/**
@@ -141,14 +150,22 @@ public class XMLGrep {
 				for(File file : files) {
 					// If the current file is not a directory skip it
 					if (! FileAide.isFolder(file.toString())) {
-						if (findInFile(file,this.exp)) {
+						if (findInFile(file,this.expression)) {
+							//If the current file matches the xpath expression then move it
 							moveFile(file,this.dest);
+						} else {
+							//If the current file does not match the xpath expression then
+							//check to see if there is an alternate destination defined
+							if (this.altDest != null) {
+								//Alternate destination defined so move file to alternat destination
+								moveFile(file,this.altDest);
+							}
 						}
 					}
 				}
 			} else if(FileAide.isFile(this.src)) {
 				File file = new File(this.src);
-				if(findInFile(file,this.exp)) {
+				if(findInFile(file,this.expression)) {
 					moveFile(file,this.dest);
 				}
 			}
@@ -165,11 +182,9 @@ public class XMLGrep {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("XMLGrep");
-		// src
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("src-dir").withParameter(true, "SRC_DIRECTORY").setDescription("SRC directory to read files from").setRequired(true));
-		// dest
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dest-dir").withParameter(true, "DEST_DIRECTORY").setDescription("DEST directory to write files to").setRequired(true));
-		// exp
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("alt-dest").withParameter(true, "ALT_DESTINATION_DIRECTORY").setDescription("Alternate destination for files that failed to match expression").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("tag-name").withParameter(true, "TAG_NAME").setDescription("TAG Name to Search for").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(true));
 		
