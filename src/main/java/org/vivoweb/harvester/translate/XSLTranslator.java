@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -57,6 +58,11 @@ public class XSLTranslator {
 	private boolean force;
 	
 	/**
+	 * force decode input as UTF-8 to clean XML
+	 */
+	private boolean cleanXML;
+	
+	/**
 	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error creating task
@@ -81,7 +87,8 @@ public class XSLTranslator {
 			RecordHandler.parseConfig(argList.get("i"), argList.getValueMap("I")), 
 			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),  
 			FileAide.getInputStream(argList.get("x")), 
-			argList.has("f")
+			argList.has("f"),
+			argList.has("c")
 		);
 	}
 	
@@ -91,9 +98,11 @@ public class XSLTranslator {
 	 * @param inRecordHandler the files/records that require translation
 	 * @param outRecordHandler the output record for the translated files
 	 * @param force translate all input records, even if previously processed
+	 * @param clXML if we should decode XML to clean it
 	 * @throws IOException error reading files
 	 */
-	public XSLTranslator(RecordHandler inRecordHandler, RecordHandler outRecordHandler, InputStream translationStream, boolean force) throws IOException {
+	public XSLTranslator(RecordHandler inRecordHandler, RecordHandler outRecordHandler, InputStream translationStream, 
+							boolean force, boolean clXML) throws IOException {
 		// set Translation file
 		setTranslation(translationStream);
 		
@@ -101,6 +110,7 @@ public class XSLTranslator {
 		this.inStore = inRecordHandler;
 		this.outStore = outRecordHandler;
 		this.force = force;
+		this.cleanXML = clXML;
 		if(this.inStore == null) {
 			throw new IllegalArgumentException("Must provide an input record handler");
 		}
@@ -138,12 +148,14 @@ public class XSLTranslator {
 		// get from the in record and translate
 		int translated = 0;
 		int passed = 0;
+		String recordData;
 		
 		for(Record r : this.inStore) {
 			if(this.force || r.needsProcessed(this.getClass())) {
 				log.trace("Translating Record " + r.getID());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				xmlTranslate(new ByteArrayInputStream(r.getData().getBytes("UTF-8")), baos, new ByteArrayInputStream(this.translationString.getBytes()));
+				recordData = (this.cleanXML) ? URLDecoder.decode(r.getData(), "UTF-8") : r.getData();
+				xmlTranslate(new ByteArrayInputStream(recordData.getBytes("UTF-8")), baos, new ByteArrayInputStream(this.translationString.getBytes()));
 				this.outStore.addRecord(r.getID(), baos.toString(), this.getClass());
 				r.setProcessed(this.getClass());
 				baos.close();
@@ -194,6 +206,7 @@ public class XSLTranslator {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('x').setLongOpt("xslFile").withParameter(true, "XSL_FILE").setDescription("xsl file").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("force").setDescription("force translation of all input records, even if previously processed").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("cleanXML").setDescription("Decode and sanitize XML").setRequired(false));
 		return parser;
 	}
 	

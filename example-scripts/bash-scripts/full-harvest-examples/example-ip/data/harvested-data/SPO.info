@@ -1,9 +1,0 @@
-#Metadata: Fileset: SPO
-#Wed May 02 12:51:46 EDT 2012
-tdb.file.type=rangeindex
-tdb.file.indexorder=SPO
-tdb.file.impl.version=bplustree-v1
-tdb.file.impl=bplustree
-tdb.bplustree.record=24,0
-tdb.bplustree.order=146
-tdb.bplustree.blksize=8192
