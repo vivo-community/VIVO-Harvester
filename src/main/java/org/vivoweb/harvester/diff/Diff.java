@@ -300,34 +300,48 @@ public class Diff {
 		}
 	}
 	
+	
+	/**
+	 * Pulled into a separate method to force a change in scope for dropping heavy-weight temporary variables.
+	 * selecticeDiff Optimization.
+	 */
+	private void prepareDiffModels()
+	{
+		// Use Jena to construct a subtractionModel from oldModel - newModel.
+		Model subtractionModel = ModelFactory.createDefaultModel();
+		Model minuendModel = this.minuendJC.getJenaModel();
+		Model subtrahendModel = this.subtrahendJC.getJenaModel();
+		subtractionModel = minuendModel.difference(subtrahendModel);
+				
+		// Load subtractionModel into a temporary MemJena.
+		this.diffModel = new MemJenaConnect("subtractionJC");
+		this.diffModel.getJenaModel().add(subtractionModel);
+		
+	}
+	
 	/**
 	 * A selectiveDiff preserves certain types from the previous model by removing them from the subtraction model.
 	 * Non-static, unlike regular 'diff'. 
 	 * @throws IOException JC
 	 */
 	public void selectiveDiff() throws IOException {
-		
-		// Use Jena to construct a subtractionModel from oldModel - newModel.
-		Model subtractionModel = ModelFactory.createDefaultModel();
-		Model minuendModel = this.minuendJC.getJenaModel();
-		Model subtrahendModel = this.subtrahendJC.getJenaModel();
-		subtractionModel = minuendModel.difference(subtrahendModel);
-		
-		// Load subtractionModel into a temporary MemJena.
-		this.diffModel = new MemJenaConnect("subtractionJC");
-		JenaConnect newSubtractionJC = new MemJenaConnect("newSubJC");
-		this.diffModel.getJenaModel().add(subtractionModel);
-		Model newSubtractionModel = ModelFactory.createDefaultModel();
-		JenaConnect appendModel;
 
-		// Trace preconditions.
-		//traceModel( "OldModel (minuend)", this.minuendJC);
-		//traceModel( "NewModel (subtrahend)", this.subtrahendJC);
-		traceModel( "Default Subtraction Model", this.diffModel);
+		prepareDiffModels();
+		//JenaConnect appendModel = new MemJenaConnect("appendJC");
 	
+		//JVM 'suggestion' to garbage collect at its next reasonable opportunity.
+		//TODO: May have no benefit, need to test.
+		System.gc();
+		
 		//Load newModel and subtractionModel JCs into a joined model for multi-graph query.
 		unionModels();
 
+		//JenaConnect newSubtractionJC = new MemJenaConnect("newSubJC");
+		//Model newSubtractionModel = ModelFactory.createDefaultModel();
+		
+		//Unload diff model and re-use as new-diff model to save memory.
+		this.diffModel.truncate();
+		
 		if( this.bHasUpdateTypes )
 		{
 			for(String objType : this.updateTypes)
@@ -336,27 +350,29 @@ public class Diff {
 				//log.trace(preservationQuery);
 				
 				//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
-				appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
+				//appendModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
 				//traceModel("An appendModel: ", appendModel);
 				
-				newSubtractionJC.loadRdfFromJC(appendModel);
+				//TODO: Explain less readable but optimized code.
+				this.diffModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
 			}
 			
-			traceModel( "New SubtractionModel", newSubtractionJC );
+			traceModel( "New SubtractionModel", this.diffModel );
 		}
 		else
 		{
 			String preservationQuery = buildPreservationQuery();
-			appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
+			//appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
 			//traceModel("An appendModel: ", appendModel);
 			
-			newSubtractionJC.loadRdfFromJC(appendModel);
+			//TODO: Explain less readable but optimized code.
+			this.diffModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
 		}
 		
 		
 		// Dump subtractionModel to RDF/XML file.
 		if (this.dumpFile != null) {
-			newSubtractionModel = newSubtractionJC.getJenaModel();
+			Model newSubtractionModel = this.diffModel.getJenaModel();
 			
 			for(String filename : this.dumpFile.keySet()) {
 				String filepath = this.dumpFile.get(filename);
@@ -381,7 +397,7 @@ public class Diff {
 
 		// Load subtractionModel into outputModel and update.
 		if(this.outputJC != null) {
-			this.outputJC.getJenaModel().add(newSubtractionJC.getJenaModel());
+			this.outputJC.getJenaModel().add(this.diffModel.getJenaModel());
 			this.outputJC.sync();
 		}
 	}
@@ -407,8 +423,8 @@ public class Diff {
 		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#subtractionModel>\n");
 		pQBuilder.append("WHERE {\n");
 		pQBuilder.append("	GRAPH diff:newModel {\n");
-		pQBuilder.append("		?newSub ?newPred ?newObj .\n");
 		pQBuilder.append("		?newSub rdf:type <" + objectType + "> .\n");
+		pQBuilder.append("		?newSub ?newPred ?newObj .\n");
 		pQBuilder.append("	} .\n");
 		pQBuilder.append("	GRAPH diff:subtractionModel {\n");
 		pQBuilder.append("		?s ?p ?o .\n");

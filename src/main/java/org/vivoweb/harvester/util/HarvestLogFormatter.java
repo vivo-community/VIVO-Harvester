@@ -2,7 +2,14 @@ package org.vivoweb.harvester.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import org.apache.commons.vfs.FileObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -10,6 +17,7 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 
 /**
  * @author Rene Ziede (rziede@ufl.edu)
@@ -72,19 +80,88 @@ public class HarvestLogFormatter {
 	
 	/**
 	 * Runs the HarvestLogFormatter
+	 * @throws IOException 
 	 */
-	public void execute() {
+	public void execute() throws IOException {
+		// TODO: Potentially bad Juju! Using Java Scanner without 100% knowledge of how N-Triple files are delimited.
+		// TODO: Alternative method if needed: Load N-Tripple into a model and output model into log file.
 		
-		//StringBuilder sb = new StringBuilder();
+		log.trace("Begin HarvestLogFormatter execute.");
+	
+		StringBuilder stringBuilder;
+		FileObject fileObject;
+		String fileContents;
+		Scanner fileScanner, dateScanner;
+		Set<Map.Entry<String,String>> set = this.inputFiles.entrySet();
+		Date logDate = new Date();
+		DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
 		
-		//for (Map.Entry<String,String> entry : data.entrySet()) {
+		// For each key/value pair in inputFiles map.
+		for (Map.Entry<String,String> me : set ) {
+			log.trace(me.getKey() + " : " + me.getValue());
+	
+			stringBuilder = new StringBuilder();
+			
+			// Check for file existing.
+			if( FileAide.exists(me.getValue()) ) {
 
-		//}
-		
+				//Grab the file's date. BAD JUJU - going around VFS!
+				File tempFile = new File(me.getValue());
+				logDate = new Date(tempFile.lastModified());
+				
+				log.trace("Date Modified: " + df.format(logDate));
+				
+				fileContents = FileAide.getTextContent(me.getValue());
+				fileScanner = new Scanner(fileContents);
+				
+				log.trace("File Contents: \n" + fileContents );
+				
+				// TODO: Can regex scanner tokens.
+				while( fileScanner.hasNext() )
+				{
+					// [DATE], [CATEGORY], [USER], [TYPE], ["S"], ["P"], ["O"]
+					stringBuilder.append(logDate + ", ");
+					stringBuilder.append(this.category + ", ");
+					stringBuilder.append(this.targetHarvestName + ", ");
+					stringBuilder.append(me.getKey() + ", ");
+					
+					//TODO: need to check for 3 patterns existing before grabbing them. HACKEE YOU NOOBLORD
+					if (fileScanner.hasNext()) stringBuilder.append(fileScanner.next() + ", ");
+					if (fileScanner.hasNext()) stringBuilder.append(fileScanner.next() + ", ");
+					if (fileScanner.hasNext()) stringBuilder.append(fileScanner.next() + "\n");
+				}
+				
+				log.trace(stringBuilder.toString());
+				
+			}
+			else
+			{
+				new IOException("Invalid file path, file not found! " + me.getValue() );
+			}
+			
+		}
+
 		//For each file in inputFiles
 			// Create a text file containing a table in the format:
 			// [DATE], [CATEGORY], [USER], [TYPE], ["S"], ["P"], ["O"]
 			// Write file to output directory as a log.
+				
+		/*
+		 * if(! FileAide.exists(dest)) {
+			FileAide.createFolder(dest);
+		}
+		
+		if(! dest.endsWith("/")) {
+			newpath = dest.concat("/").concat(src.getName());
+		}
+		else {
+			newpath = dest.concat(src.getName());
+		}
+		
+		FileAide.createFile(newpath);
+		FileAide.setTextContent(newpath, FileAide.getTextContent(src.getPath()));
+		FileAide.delete(src.getPath());
+		*/
 		
 		/* Notes from reformat.sh!
 			
@@ -115,6 +192,19 @@ public class HarvestLogFormatter {
 			awk -v username=$USERNAME -v date="$ADDDATEFORLOGFILE" -v category=$CATEGORY ' { print date",",category",",username ", ADD, \"" $1,"\",\""$2"\",\"",$3"\"" }' 
 			$HARVESTER_INSTALL_DIR$HARVEST_NAME/data/vivo-ntriple-additions.xml >  $TOMCAT_INSTALL_DIR/logs/all_harvest_logs/$HARVEST_NAME/vivo-ntriple-additions.$ADDLOGDATE.xml
 		*/
+		
+		//StringBuilder sb = new StringBuilder();
+		//JenaConnect jc;
+		//InputStream is;
+//		StringBuilder stringBuilder = new StringBuilder();
+//		FileObject fileObject;
+//		String fileContents;
+//		Scanner fileScanner;
+		//is = FileAide.getInputStream(me.getValue());
+		//jc = new MemJenaConnect(is, null, "N-TRIPLE");
+		
+		//Determine the date the file was last modified.
+		//fileObject = FileAide.getFil
 		
 	}
 	
