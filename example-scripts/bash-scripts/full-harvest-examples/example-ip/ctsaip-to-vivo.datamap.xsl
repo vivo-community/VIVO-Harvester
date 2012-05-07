@@ -41,6 +41,21 @@
 		<xsl:variable name="institution" select="instituion" />
 		<xsl:variable name="email" select="contact-email" />
 		<xsl:variable name="advantage-var" select="advantage" />
+		
+		<xsl:variable name="inventor-var">
+			<xsl:choose>
+				<xsl:when test="inventor-first-name !=''">			
+					<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
+				</xsl:when>
+				<xsl:otherwise>					
+					<xsl:call-template name ="extractInventors">
+						<xsl:with-param name ="org" select="instituion"/>
+						<xsl:with-param name ="summary" select="summary"/>
+						<xsl:with-param name ="description" select="description"/>
+					</xsl:call-template>					
+				</xsl:otherwise>
+			</xsl:choose>	
+		</xsl:variable>	
 
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
 			<xsl:choose>
@@ -66,41 +81,26 @@
 				</xsl:otherwise>
 			</xsl:choose>
 
-			<rdfs:label>
-				<xsl:value-of select="title" />
-			</rdfs:label>
-
+			<rdfs:label><xsl:value-of select="title" /></rdfs:label>
 
 			<!-- We test on normalize space to keep from adding blank properties where 
 				there is no information present -->
 			<xsl:if test="normalize-space( institution-tech-id )">
-				<ctsaip:internalCaseNo>
-					<xsl:value-of select="institution-tech-id" />
-				</ctsaip:internalCaseNo>
+				<ctsaip:internalCaseNo><xsl:value-of select="institution-tech-id" /></ctsaip:internalCaseNo>
 			</xsl:if>
 			<xsl:if test="normalize-space( institution-link )">
 				<core:webpage rdf:resource="{baseURI}tech/{$ctsai_id}/inslink" />
 			</xsl:if>
 			<xsl:if test="normalize-space( ctsaip-link )">
-				<core:webpage>
-					<xsl:value-of select="ctsaip-link" />
-				</core:webpage>
+				<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
 			</xsl:if>
 			<xsl:if test="normalize-space( advantage )">
-				<ctsaip:advantages>
-					<xsl:value-of select="replace($advantage-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" />
-				</ctsaip:advantages>
+				<ctsaip:advantages><xsl:value-of select="replace($advantage-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></ctsaip:advantages>
 			</xsl:if>
 			<xsl:if test="normalize-space( status )">
-				<bibo:status>
-					<xsl:value-of select="status" />
-				</bibo:status>
+				<bibo:status><xsl:value-of select="status" /></bibo:status>
 			</xsl:if>
-			<xsl:if test="normalize-space( inventor-first-name )">
-				<bibo:status>
-					<xsl:value-of select="inventor-first-name" />
-				</bibo:status>
-			</xsl:if>
+			
 
 			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>
 			<core:description><xsl:value-of select="replace($description-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></core:description>
@@ -110,8 +110,7 @@
 			<xsl:if test="normalize-space(contact-name)">
 				<ctsaip:caseManager rdf:resource="{$baseURI}casemngr/{$email}" />
 			</xsl:if>
-			<ctsaip:originatingInstitution
-				rdf:resource="{$baseURI}institution/{$institution}" />
+			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$institution}" />
 			<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>		
 		</rdf:Description>
 		
@@ -125,7 +124,6 @@
 				<core:webpageOf rdf:resource="{baseURI}tech/{$ctsai_id}"/>
 			</rdf:Description>
 		</xsl:if>
-
 
 		<!-- The Institution -->
 		<rdf:Description rdf:about="{$baseURI}institution/{$institution}">
@@ -151,58 +149,32 @@
 			</rdf:Description>
 		</xsl:if>
 		
-		<!-- Inventor (Authorship) -->		
-		<rdf:Description rdf:about="{$baseURI}authorship/{$ctsai_id}">
-			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
-			<core:linkedAuthor rdf:resource="{$baseURI}author/{$ctsai_id}"/>
-			<core:linkedInformationResource rdf:resource="{$baseURI}tech/{$ctsai_id}"/>
-			<rdfs:label>Authorship for 
-				<xsl:choose>
-					<xsl:when test="inventor-first-name !=''">
-						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
-					</xsl:when>
-					<xsl:otherwise>						
-						<xsl:call-template name ="extractInventors">
-							<xsl:with-param name ="org" select="instituion"/>
-							<xsl:with-param name ="summary" select="summary"/>
-							<xsl:with-param name ="description" select="description"/>
-						</xsl:call-template>					
-					</xsl:otherwise>
-				</xsl:choose>	
-			</rdfs:label>
-		</rdf:Description>		
-		
-		
-		<!-- Inventor (Author) -->
-		<rdf:Description rdf:about="{$baseURI}author/{$ctsai_id}">	
-			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
-			<rdfs:label>
-				<xsl:choose>
-					<xsl:when test="inventor-first-name !=''">
-						<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
-					</xsl:when>
-					<xsl:otherwise>
-				 	<!--	<xsl:analyze-string select="description"
-				  			regex="Lead Inventors:\s*(&lt;a href=&quot;((.*)&quot;&gt;(.*))Problem|([^&lt;]*))">											
-								<xsl:matching-substring>
-									<xsl:value-of select="regex-group(0)" />
-								<xsl:value-of select="regex-group(5)" />										
-								</xsl:matching-substring>									
-						</xsl:analyze-string>	-->
-					</xsl:otherwise>
-				</xsl:choose>	 		
-			</rdfs:label>
-			<foaf:firstName>
-				<xsl:value-of select="inventor-first-name" />
-			</foaf:firstName>
-			<foaf:lastName>
-				<xsl:value-of select="inventor-last-name" />
-			</foaf:lastName>
-			<core:linkedInformationResourceInAuthorship
-				rdf:resource="{$baseURI}tech/{$ctsai_id}" />
-			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>
-		</rdf:Description>
+		<xsl:if test="normalize-space( $inventor-var )">
+		<!-- Inventor (Authorship) -->	
+			<rdf:Description rdf:about="{$baseURI}authorship/{$ctsai_id}">
+				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+				<core:linkedAuthor rdf:resource="{$baseURI}author/{$ctsai_id}"/>
+				<core:linkedInformationResource rdf:resource="{$baseURI}tech/{$ctsai_id}"/>
+				<rdfs:label>Authorship for <xsl:value-of select="$inventor-var" />
+				</rdfs:label>
+			</rdf:Description>		
+			
+			<!-- Inventor (Author) -->
+			<rdf:Description rdf:about="{$baseURI}author/{$ctsai_id}">	
+				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+				<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
+				<rdfs:label><xsl:value-of select="$inventor-var" /></rdfs:label>
+				<foaf:firstName>
+					<xsl:value-of select="inventor-first-name" />
+				</foaf:firstName>
+				<foaf:lastName>
+					<xsl:value-of select="inventor-last-name" />
+				</foaf:lastName>
+				<core:linkedInformationResourceInAuthorship
+					rdf:resource="{$baseURI}tech/{$ctsai_id}" />
+				<core:authorInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>
+			</rdf:Description>
+		</xsl:if>
 	</xsl:template>
 
 	<!-- Template to Extract Inventors -->
@@ -210,23 +182,23 @@
 		<xsl:param name="org" />
 		<xsl:param name="summary" />
 		<xsl:param name="description" />
-
+		 
 	<xsl:choose>
-		<!-- Tufts University -->
+	<!-- Tufts University -->
 		<xsl:when test="$org = 'Tufts University'">
 			<xsl:analyze-string select="$summary"
 				regex="[I|i]nventor(s)?:([&lt;]BR[&gt;])?\s*([^&lt;]*)">
 				<xsl:matching-substring>
 					<xsl:value-of select="regex-group(3)" />
 				</xsl:matching-substring>
-			</xsl:analyze-string>
+			</xsl:analyze-string>		
 		</xsl:when>		
 		<!-- Columbia University -->
 		 <xsl:when test="$org = 'Columbia University'"> 
 			 <xsl:analyze-string 
 				select="$description" regex="[I|i]nventor[s]?:\s*(.*?)[&lt;]br"> 
 				<xsl:matching-substring>
-					<xsl:value-of select="regex-group(1)" /> 
+					<xsl:value-of select="regex-group(1)" />
 				</xsl:matching-substring>
 			</xsl:analyze-string>
 		</xsl:when>		
