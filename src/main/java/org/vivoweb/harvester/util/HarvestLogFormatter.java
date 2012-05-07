@@ -5,11 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import org.apache.commons.vfs.FileObject;
+import org.apache.xalan.xsltc.compiler.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -28,7 +32,7 @@ public class HarvestLogFormatter {
 	/**
 	 * Logger for debug and trace output to console.
 	 */
-	protected static Logger log = LoggerFactory.getLogger(XMLGrep.class);
+	protected static Logger log = LoggerFactory.getLogger(HarvestLogFormatter.class);
 
 	/**
 	 * Input file types and paths
@@ -89,12 +93,16 @@ public class HarvestLogFormatter {
 		log.trace("Begin HarvestLogFormatter execute.");
 	
 		StringBuilder stringBuilder;
-		FileObject fileObject;
+		//FileObject fileObject;
 		String fileContents;
-		Scanner fileScanner, dateScanner;
+		Scanner fileScanner;//, dateScanner;
 		Set<Map.Entry<String,String>> set = this.inputFiles.entrySet();
 		Date logDate = new Date();
-		DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
+		//Calendar calend = new GregorianCalendar();
+		//DateFormat df = DateFormat.getDateInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat();
+		String simpleDateFormatString = "yyyy-MM-dd-'T'HH:mm:ssZ";
+		sdf.applyPattern(simpleDateFormatString);
 		
 		// For each key/value pair in inputFiles map.
 		for (Map.Entry<String,String> me : set ) {
@@ -108,11 +116,12 @@ public class HarvestLogFormatter {
 				//Grab the file's date. BAD JUJU - going around VFS!
 				File tempFile = new File(me.getValue());
 				logDate = new Date(tempFile.lastModified());
-				
-				log.trace("Date Modified: " + df.format(logDate));
-				
+		
 				fileContents = FileAide.getTextContent(me.getValue());
 				fileScanner = new Scanner(fileContents);
+				//Pattern p = new Pattern();
+				//p.compile("[\s]");
+				fileScanner.useDelimiter("\\s\\.|\\s");
 				
 				log.trace("File Contents: \n" + fileContents );
 				
@@ -120,7 +129,9 @@ public class HarvestLogFormatter {
 				while( fileScanner.hasNext() )
 				{
 					// [DATE], [CATEGORY], [USER], [TYPE], ["S"], ["P"], ["O"]
-					stringBuilder.append(logDate + ", ");
+					
+					// 2012-05-04-T17:15:23-04:00
+					stringBuilder.append(sdf.format(logDate) + ", ");
 					stringBuilder.append(this.category + ", ");
 					stringBuilder.append(this.targetHarvestName + ", ");
 					stringBuilder.append(me.getKey() + ", ");

@@ -336,6 +336,8 @@ public class Diff {
 		//Load newModel and subtractionModel JCs into a joined model for multi-graph query.
 		unionModels();
 
+		System.gc();
+		
 		//JenaConnect newSubtractionJC = new MemJenaConnect("newSubJC");
 		//Model newSubtractionModel = ModelFactory.createDefaultModel();
 		
@@ -353,7 +355,7 @@ public class Diff {
 				//appendModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
 				//traceModel("An appendModel: ", appendModel);
 				
-				//TODO: Explain less readable but optimized code.
+				//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
 				this.diffModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
 			}
 			
@@ -365,7 +367,7 @@ public class Diff {
 			//appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
 			//traceModel("An appendModel: ", appendModel);
 			
-			//TODO: Explain less readable but optimized code.
+			//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
 			this.diffModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
 		}
 		
@@ -423,6 +425,7 @@ public class Diff {
 		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#subtractionModel>\n");
 		pQBuilder.append("WHERE {\n");
 		pQBuilder.append("	GRAPH diff:newModel {\n");
+		// Changed order for potential faster culling.
 		pQBuilder.append("		?newSub rdf:type <" + objectType + "> .\n");
 		pQBuilder.append("		?newSub ?newPred ?newObj .\n");
 		pQBuilder.append("	} .\n");
@@ -431,7 +434,8 @@ public class Diff {
 //		pQBuilder.append("		FILTER(str(?o2) = str(" + objectType + ")) .\n");
 		pQBuilder.append("	} .\n");
 //		pQBuilder.append("	FILTER( ((str(?s) = str(?newSub)) || (str(?o) = str(?newSub))) && (str(?o2) = str( \"" + objectType + "\"))) .\n");
-		pQBuilder.append("  FILTER((str(?s) = str(?newSub)) || (str(?o) = str(?newSub))) .\n");
+		// Changed order for potential faster culling.
+		pQBuilder.append("  FILTER( (str(?s) = str(?newSub)) || (str(?o) = str(?newSub)) ) .\n");
 //		pQBuilder.append("		FILTER(str(?o2) != str(" + objectType + ")) .\n");
 		pQBuilder.append("}");
 		
