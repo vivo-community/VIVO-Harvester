@@ -157,7 +157,7 @@ public class XMLGrep {
 							//If the current file does not match the xpath expression then
 							//check to see if there is an alternate destination defined
 							if (this.altDest != null) {
-								//Alternate destination defined so move file to alternat destination
+								//Alternate destination defined so move file to alternate destination
 								moveFile(file,this.altDest);
 							}
 						}
@@ -186,7 +186,7 @@ public class XMLGrep {
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dest-dir").withParameter(true, "DEST_DIRECTORY").setDescription("DEST directory to write files to").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("alt-dest").withParameter(true, "ALT_DESTINATION_DIRECTORY").setDescription("Alternate destination for files that failed to match expression").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("tag-name").withParameter(true, "TAG_NAME").setDescription("TAG Name to Search for").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(false));
 		
 		return parser;
 	}

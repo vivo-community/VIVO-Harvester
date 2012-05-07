@@ -38,7 +38,7 @@ fi
 touch analytics.txt
 
 #return total number of people in Consultant class
-echo "Total number of persons with Gatorlink : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .?x <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?y .}" | sed -n '4,4p'`  >>analytics.txt       $
+echo "Total number of persons with Gatorlink : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .?x <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?y .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of persons with UFID : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .?x <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?y .}" | sed -n '4,4p'`  >>analytics.txt
 
 echo "Total number of people marked Faculty : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#FacultyMember> .}" | sed -n '4,4p'`  >>analytics.txt
@@ -48,7 +48,3 @@ echo "Total number of people marked Emeritus : " `harvester-jenaconnect -j vivo.
 echo "Total number of people marked Consultant : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivo.ufl.edu/ontology/vivo-ufl/Consultant> .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people marked Recent Employee : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivo.ufl.edu/ontology/vivo-ufl/RecentEmployee> .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people marked Deceased : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivo.ufl.edu/ontology/vivo-ufl/Deceased> .}" | sed -n '4,4p'`  >>analytics.txt
-
-
-
-

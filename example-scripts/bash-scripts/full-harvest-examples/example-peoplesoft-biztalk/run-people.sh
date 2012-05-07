@@ -90,17 +90,19 @@ ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
 
 
-# Execute Fetch
-# This stage of the script is where the information is gathered together into one local
-#       place to facilitate the further steps of the harvest. The data is stored locally
-#       in a format based off of the source. The format is a form of RDF yet its ontology
-#       too simple to be put into a model and be useful.
-#  The fetch-filter.sh  in particular takes the data from the chosen source described, filter and places it into 
-#  different destination directory.
-
-# TODO - We need a fetch process here
+# Preseed of Previous Harvest
+# Most ingests are built assuming there are currently none of the data items in VIVO, in UF's case we do have
+# people in the VIVO system. We will need to account for that by pre-seeding the previous harvest with data from 
+# VIVO. We do this by running a series of SPARQL queries, and then transferring them in. However, we will only
+# do this if there is no Previous Harvest model already there.
+if [ ! -d previous-harvest ]; then
+	echo "ALERT ALERT ALERT Running Pre-Seed script due to no Previous Harvest directory being there"
+	bash peopleexport.sh
+fi 
 
 # Execute XMLGrep to remove any person that is marked for renaming by ES - this will prevent issues later
+# Also, this will handle fetching the XML files from the WEBSERVICE directory, so that we do not need to create
+# a separate fetch process
 harvester-xmlgrep -X xmlgrep-rename.config.xml
 
 # Execute the translation to convert all input records into RDF
