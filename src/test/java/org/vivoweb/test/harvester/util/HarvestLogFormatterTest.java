@@ -51,7 +51,6 @@ public class HarvestLogFormatterTest {
 		
 		if(	FileAide.exists("/tmp/all_harvest_logs/") )
 		{
-			log.debug("Folder exists in teardown!!");
 			FileAide.delete("/tmp/all_harvest_logs/");
 		}
 	}
