@@ -186,16 +186,30 @@
 		<xsl:param name="org" />
 		<xsl:param name="summary" />
 		<xsl:param name="description" />
-			 
+
 		<xsl:choose>
 		<!-- Tufts University -->
 			<xsl:when test="$org = 'Tufts University'">
-				<xsl:analyze-string select="$summary"
-					regex="[I|i]nventor(s)?:([&lt;]BR[&gt;])?\s*([^&lt;]*)">
-					<xsl:matching-substring>
-						<xsl:value-of select="regex-group(3)" />
-					</xsl:matching-substring>
-				</xsl:analyze-string>		
+				<xsl:variable name="match" >
+					<xsl:analyze-string select="$summary"
+						regex="[I|i]nventor(s)?:\s*([^&lt;]*)">
+						<xsl:matching-substring>	
+						<xsl:value-of select="regex-group(2)" />
+						</xsl:matching-substring>
+					</xsl:analyze-string>
+				</xsl:variable>		
+							
+				<xsl:if test="$match != ''">
+					<xsl:value-of select="$match"/>
+				</xsl:if>	
+				 <xsl:if test="$match = ''">
+					<xsl:analyze-string select="$summary"
+					regex="[I|i]nventor(s)?:[&lt;]BR[&gt;]\s*([^&lt;]*)">
+						<xsl:matching-substring>
+						<xsl:value-of select="regex-group(2)" />
+						</xsl:matching-substring>
+					</xsl:analyze-string>
+				</xsl:if>
 			</xsl:when>		
 			<!-- Columbia University -->
 			 <xsl:when test="$org = 'Columbia University'"> 
