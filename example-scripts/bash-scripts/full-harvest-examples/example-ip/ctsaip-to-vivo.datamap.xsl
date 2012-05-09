@@ -89,7 +89,7 @@
 				<ctsaip:internalCaseNo><xsl:value-of select="institution-tech-id" /></ctsaip:internalCaseNo>
 			</xsl:if>
 			<xsl:if test="normalize-space( institution-link )">
-				<core:webpage rdf:resource="{baseURI}tech/{$ctsai_id}/inslink" />
+				<core:webpage rdf:resource="{$baseURI}tech/{$ctsai_id}/inslink" />
 			</xsl:if>
 			<xsl:if test="normalize-space( ctsaip-link )">
 				<core:webpage><xsl:value-of select="ctsaip-link" /></core:webpage>
@@ -102,9 +102,7 @@
 			</xsl:if>
 			<xsl:if test="normalize-space( keywords )">			
 				<xsl:for-each select="tokenize(keywords, ',')">				
-					<core:freetextKeyword>
-						<xsl:value-of select="."/>
-					</core:freetextKeyword>
+					<core:freetextKeyword><xsl:value-of select="."/></core:freetextKeyword>
 				</xsl:for-each>
 			</xsl:if>
 						
@@ -122,12 +120,12 @@
 		
 		<!-- Web Links (new Structure in VIVO) -->
 		<xsl:if test="normalize-space( institution-link )">
-			<rdf:Description rdf:about="{baseURI}tech/{$ctsai_id}/inslink">
+			<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}/inslink">
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#URLLink" />
 				<core:linkAnchorText><xsl:value-of select="instituion" /> Page</core:linkAnchorText>
 				<core:linkURI><xsl:value-of select="institution-link" /></core:linkURI>
 				<core:rank>1</core:rank>
-				<core:webpageOf rdf:resource="{baseURI}tech/{$ctsai_id}"/>
+				<core:webpageOf rdf:resource="{$baseURI}tech/{$ctsai_id}"/>
 			</rdf:Description>
 		</xsl:if>
 
