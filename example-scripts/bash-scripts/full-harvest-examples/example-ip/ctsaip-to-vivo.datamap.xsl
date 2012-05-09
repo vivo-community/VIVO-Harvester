@@ -100,8 +100,14 @@
 			<xsl:if test="normalize-space( status )">
 				<bibo:status><xsl:value-of select="status" /></bibo:status>
 			</xsl:if>
-			
-
+			<xsl:if test="normalize-space( keywords )">			
+				<xsl:for-each select="tokenize(keywords, ',')">				
+					<core:freetextKeyword>
+						<xsl:value-of select="."/>
+					</core:freetextKeyword>
+				</xsl:for-each>
+			</xsl:if>
+						
 			<bibo:abstract><xsl:value-of select="replace($summary-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></bibo:abstract>
 			<core:description><xsl:value-of select="replace($description-var,'&lt;/? ?[a-xA-X0-9]*/?&gt;','')" /></core:description>
 
@@ -111,7 +117,7 @@
 				<ctsaip:caseManager rdf:resource="{$baseURI}casemngr/{$email}" />
 			</xsl:if>
 			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$institution}" />
-			<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>		
+			<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>				
 		</rdf:Description>
 		
 		<!-- Web Links (new Structure in VIVO) -->
@@ -149,8 +155,8 @@
 			</rdf:Description>
 		</xsl:if>
 		
-		<xsl:if test="normalize-space( $inventor-var )">
 		<!-- Inventor (Authorship) -->	
+		<xsl:if test="normalize-space( $inventor-var )">
 			<rdf:Description rdf:about="{$baseURI}authorship/{$ctsai_id}">
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 				<core:linkedAuthor rdf:resource="{$baseURI}author/{$ctsai_id}"/>
@@ -182,26 +188,26 @@
 		<xsl:param name="org" />
 		<xsl:param name="summary" />
 		<xsl:param name="description" />
-		 
-	<xsl:choose>
-	<!-- Tufts University -->
-		<xsl:when test="$org = 'Tufts University'">
-			<xsl:analyze-string select="$summary"
-				regex="[I|i]nventor(s)?:([&lt;]BR[&gt;])?\s*([^&lt;]*)">
-				<xsl:matching-substring>
-					<xsl:value-of select="regex-group(3)" />
-				</xsl:matching-substring>
-			</xsl:analyze-string>		
-		</xsl:when>		
-		<!-- Columbia University -->
-		 <xsl:when test="$org = 'Columbia University'"> 
-			 <xsl:analyze-string 
-				select="$description" regex="[I|i]nventor[s]?:\s*(.*?)[&lt;]br"> 
-				<xsl:matching-substring>
-					<xsl:value-of select="regex-group(1)" />
-				</xsl:matching-substring>
-			</xsl:analyze-string>
-		</xsl:when>		
-	</xsl:choose>
+			 
+		<xsl:choose>
+		<!-- Tufts University -->
+			<xsl:when test="$org = 'Tufts University'">
+				<xsl:analyze-string select="$summary"
+					regex="[I|i]nventor(s)?:([&lt;]BR[&gt;])?\s*([^&lt;]*)">
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(3)" />
+					</xsl:matching-substring>
+				</xsl:analyze-string>		
+			</xsl:when>		
+			<!-- Columbia University -->
+			 <xsl:when test="$org = 'Columbia University'"> 
+				 <xsl:analyze-string 
+					select="$description" regex="[I|i]nventor[s]?:\s*(.*?)[&lt;]br"> 
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(1)" />
+					</xsl:matching-substring>
+				</xsl:analyze-string>
+			</xsl:when>		
+		</xsl:choose>
 	</xsl:template>	
 </xsl:stylesheet>
