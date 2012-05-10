@@ -45,7 +45,7 @@
 		<xsl:variable name="inventor-var">
 			<xsl:choose>
 				<xsl:when test="inventor-first-name !=''">			
-					<xsl:value-of select="inventor-first-name" /> <xsl:value-of select="inventor-last-name" />
+					<xsl:value-of select="inventor-first-name" /><xsl:text> </xsl:text><xsl:value-of select="inventor-last-name" />
 				</xsl:when>
 				<xsl:otherwise>					
 					<xsl:call-template name ="extractInventors">
@@ -229,7 +229,7 @@
 						<xsl:value-of select="regex-group(1)" />
 					</xsl:matching-substring>
 				</xsl:analyze-string>
-			</xsl:when>	
+			</xsl:when>					
 		</xsl:choose>
 	</xsl:template>	
 </xsl:stylesheet>
