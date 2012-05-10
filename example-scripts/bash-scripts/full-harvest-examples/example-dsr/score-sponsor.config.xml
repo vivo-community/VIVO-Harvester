@@ -58,8 +58,8 @@
 	<Param name="tempJenaDir">data/temp-score-model</Param>
 	<Param name="algorithms">lbl=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
 	<Param name="weights">lbl=1.0</Param>
-	<Param name="inputJena-predicates">lbl=http://www.w3.org/2000/01/rdf-schema#label</Param>
-	<Param name="vivoJena-predicates">lbl=http://www.w3.org/2000/01/rdf-schema#label</Param>
+	<Param name="inputJena-predicates">lbl=http://vivo.ufl.edu/ontology/vivo-ufl/sponsorID</Param>
+	<Param name="vivoJena-predicates">lbl=http://vivo.ufl.edu/ontology/vivo-ufl/sponsorID</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/sponsor/</Param>
 	<Param name="reloadInput">true</Param>
 </Config>
