@@ -13,7 +13,7 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
-VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo-onefour
+VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
 export HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-peoplesoft-biztalk
 export DATE=`date +%Y-%m-%d'T'%T`

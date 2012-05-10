@@ -219,7 +219,17 @@
 						<xsl:value-of select="regex-group(1)" />
 					</xsl:matching-substring>
 				</xsl:analyze-string>
-			</xsl:when>		
+			</xsl:when>	
+					
+			<!-- Vanderbilt University -->
+			 <xsl:when test="$org = 'Vanderbilt University'"> 
+				 <xsl:analyze-string 
+					select="$summary" regex="Inventors[&lt;]/b[&gt;][&lt;]br[&gt;](.*?)[&lt;]br[&gt;][&lt;]/span"> 
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(1)" />
+					</xsl:matching-substring>
+				</xsl:analyze-string>
+			</xsl:when>	
 		</xsl:choose>
 	</xsl:template>	
 </xsl:stylesheet>
