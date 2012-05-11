@@ -41,11 +41,34 @@
 		<xsl:variable name="institution" select="instituion" />
 		<xsl:variable name="email" select="contact-email" />
 		<xsl:variable name="advantage-var" select="advantage" />
+						
+		<!-- Parse Inventor -->			
+		<xsl:variable name="firstName">
+			<xsl:call-template name ="parseFirstName">						
+				<xsl:with-param name ="first" select="inventor-first-name"/>				
+				<xsl:with-param name ="last" select="inventor-last-name"/>
+			</xsl:call-template>					
+		</xsl:variable>	
+		
+		<xsl:variable name="middleName">
+			<xsl:call-template name ="parseMiddleName">						
+				<xsl:with-param name ="first" select="inventor-first-name"/>				
+				<xsl:with-param name ="last" select="inventor-last-name"/>
+			</xsl:call-template>					
+		</xsl:variable>	
+		
+		<xsl:variable name="lastName">
+				<xsl:call-template name ="parseLastName">						
+				<xsl:with-param name ="first" select="inventor-first-name"/>				
+				<xsl:with-param name ="last" select="inventor-last-name"/>
+			</xsl:call-template>					
+		</xsl:variable>	 
 		
 		<xsl:variable name="inventor-var">
 			<xsl:choose>
-				<xsl:when test="inventor-first-name !=''">			
-					<xsl:value-of select="inventor-first-name" /><xsl:text> </xsl:text><xsl:value-of select="inventor-last-name" />
+				<xsl:when test="$firstName !=''">
+					<xsl:value-of select="$lastName" />,<xsl:value-of select="$firstName" />
+					<xsl:text> </xsl:text><xsl:value-of select="$middleName" />		
 				</xsl:when>
 				<xsl:otherwise>					
 					<xsl:call-template name ="extractInventors">
@@ -56,7 +79,8 @@
 				</xsl:otherwise>
 			</xsl:choose>	
 		</xsl:variable>	
-
+		
+		<!-- Innovations -->
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
 			<xsl:choose>
 				<xsl:when test='type="Technology"'>
@@ -169,10 +193,15 @@
 				<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
 				<rdfs:label><xsl:value-of select="$inventor-var" /></rdfs:label>
 				<foaf:firstName>
-					<xsl:value-of select="inventor-first-name" />
+					<xsl:value-of select="$firstName" />
 				</foaf:firstName>
+				<xsl:if test="$middleName != ''">
+				<core:middleName>
+					<xsl:value-of select="$middleName" />
+				</core:middleName>
+				</xsl:if>
 				<foaf:lastName>
-					<xsl:value-of select="inventor-last-name" />
+					<xsl:value-of select="$lastName" />
 				</foaf:lastName>
 				<core:linkedInformationResourceInAuthorship
 					rdf:resource="{$baseURI}tech/{$ctsai_id}" />
@@ -180,6 +209,7 @@
 			</rdf:Description>
 		</xsl:if>
 	</xsl:template>
+
 
 	<!-- Template to Extract Inventors -->
 	<xsl:template name="extractInventors">
@@ -232,4 +262,89 @@
 			</xsl:when>					
 		</xsl:choose>
 	</xsl:template>	
+	
+	<!-- Template to Parse First Name -->
+	<xsl:template name="parseFirstName">
+		<xsl:param name="first" />
+		<xsl:param name="last" />
+		
+		<!-- remove parenthesized words -->
+		<xsl:variable name="first" select="replace($first,' \(.*\)','')"/> 
+		<!-- remove "et al." -->
+		<xsl:variable name="first" select="replace($first, ' et al.','')"/>
+		<!-- remove a href links -->
+		<xsl:variable name="first" select="replace($first,'&lt;(.*)','')"/>
+		
+		
+		<xsl:if test="($first != '') and not(contains($first, ',')) and not(contains($first, 'and'))">
+			<xsl:choose>
+				<xsl:when test="$last != ''">
+					<xsl:value-of select="$first" />
+				</xsl:when>
+				<xsl:otherwise>
+				 <xsl:analyze-string select="$first" regex="(\w+)\s(\w+[.]?)(\s(\w+))?"> 
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(1)" />
+					</xsl:matching-substring>
+				</xsl:analyze-string>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>	
+	</xsl:template>
+	
+		
+	<!-- Template to Parse Middle Name -->
+	<xsl:template name="parseMiddleName">
+		<xsl:param name="first" />
+		<xsl:param name="last" />
+		
+		<!-- remove parenthesized words -->
+		<xsl:variable name="first" select="replace($first,' \(.*\)','')"/> 
+		<!-- remove "et al." -->
+		<xsl:variable name="first" select="replace($first, ' et al.','')"/>
+		<!-- remove a href links -->
+		<xsl:variable name="first" select="replace($first,'&lt;(.*)','')"/>
+		
+		<xsl:if test="($first != '') and not(contains($first, ',')) and not(contains($first, 'and'))">
+			<xsl:if test="$last = ''">
+				 <xsl:analyze-string select="$first" regex="(\w+)\s(\w+[.]?)(\s(\w+))?"> 
+					<xsl:matching-substring>
+						<xsl:if test="regex-group(4) != ''">
+							<xsl:value-of select="regex-group(2)" />
+						</xsl:if>
+					</xsl:matching-substring>
+				</xsl:analyze-string>
+			</xsl:if>
+		</xsl:if>	
+	</xsl:template>						
+	
+	<!-- Template to Parse Last Name -->
+	<xsl:template name="parseLastName">
+		<xsl:param name="last" />
+		<xsl:param name="first"/>
+		
+		<!-- remove parenthesized words -->
+		<xsl:variable name="first" select="replace($first,' \(.*\)','')"/> 
+		<!-- remove "et al." -->
+		<xsl:variable name="first" select="replace($first, ' et al.','')"/>
+		<!-- remove a href links -->
+		<xsl:variable name="first" select="replace($first,'&lt;(.*)','')"/>
+		
+		<xsl:if test="($first != '') and not(contains($first, ',')) and not(contains($first, 'and'))">
+			<xsl:choose>
+				<xsl:when test="$last != ''">
+					<xsl:value-of select="$last" />
+				</xsl:when>
+				<xsl:otherwise>
+				 <xsl:analyze-string select="$first" regex=".*?\s([^ ]*)$"> 
+					<xsl:matching-substring>
+						<xsl:value-of select="regex-group(1)" />
+					</xsl:matching-substring>
+				</xsl:analyze-string>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>	
+	</xsl:template>
+
+
 </xsl:stylesheet>
