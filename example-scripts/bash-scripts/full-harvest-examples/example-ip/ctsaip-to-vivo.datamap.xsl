@@ -70,6 +70,13 @@
 					<xsl:value-of select="$lastName" />,<xsl:value-of select="$firstName" />
 					<xsl:text> </xsl:text><xsl:value-of select="$middleName" />		
 				</xsl:when>
+				<xsl:when test="($firstName = null) and (inventor-first-name !='') and (inventor-last-name !='')">
+					<xsl:value-of select="inventor-last-name" />,
+					<xsl:text> </xsl:text><xsl:value-of select="inventor-first-name" />		
+				</xsl:when>
+				<xsl:when test="($firstName = null) and (inventor-first-name !='') and (inventor-last-name =null)">
+					<xsl:value-of select="inventor-first-name" />	
+				</xsl:when>				
 				<xsl:otherwise>					
 					<xsl:call-template name ="extractInventors">
 						<xsl:with-param name ="org" select="instituion"/>
