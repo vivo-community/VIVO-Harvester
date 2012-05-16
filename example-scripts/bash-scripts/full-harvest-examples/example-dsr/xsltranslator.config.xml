@@ -13,4 +13,8 @@
 
 	<!--DATAMAP -->
 	<Param name="xslFile">dsr-to-vivo.xsl</Param>
+	
+	<!--FORCE -->
+	<Param name="force">True</Param>
+
 </Config>
