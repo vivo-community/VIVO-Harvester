@@ -29,7 +29,7 @@
 <%     not replacing the values, can create a new model with the alterations that would otherwise be done to the      %>
 <%     input model.                                                                                                   %>
 -->
-    <Param name="inputJena-predicates">http://www.w3.org/2000/01/rdf-schema#label</Param>
+    <Param name="inputJena-predicates">http://vivo.ufl.edu/ontology/vivo-ufl/sponsorID</Param>
     <Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/sponsor/</Param>
     <Param name="replace">true</Param>
 </Config>

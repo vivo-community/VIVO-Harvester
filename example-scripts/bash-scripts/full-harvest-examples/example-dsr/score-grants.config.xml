@@ -67,4 +67,6 @@
 	<Param name="inputJena-predicates">connumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber</Param>
 	<Param name="vivoJena-predicates">connumber=http://vivo.ufl.edu/ontology/vivo-ufl/psContractNumber</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/grant/</Param>
+	<Param name="reloadInput">true</Param>
+	<Param name="reloadVivo">true</Param>
 </Config>
