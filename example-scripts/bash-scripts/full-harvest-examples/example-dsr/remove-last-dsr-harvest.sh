@@ -68,7 +68,7 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.x
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #	should agree with the previous harvest, the changes are now applied to the vivo model.
 # Remove Additions from VIVO for pre-1.2 versions
-harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml -R RDF/XML -m
+harvester-transfer -o vivo.model.xml -r data/reverse-harvest-additions.xml -R RDF/XML -m
 # Remove Subtractions from VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML
 
