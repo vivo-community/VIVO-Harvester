@@ -44,6 +44,9 @@ touch $HARVEST_NAME.$DATE.log
 ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
 
+echo 'Running Pre-Ingest Analytics. Writing to: analytics.txt'
+bash analytics.sh
+
 #clear old data
 # For a fresh harvest, the removal of the previous information maintains data integrity.
 #	If you are continuing a partial run or wish to use the old and already retrieved
@@ -236,5 +239,8 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+
+echo 'Running Post-Ingest Analytics. Writing to: post-ingest-analytics.txt'
+bash post-ingest-analytics.sh
 
 echo 'Harvest completed successfully'

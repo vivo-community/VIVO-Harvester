@@ -78,8 +78,8 @@ echo "subtraction node count to be added: " `grep -c "<rdf:Description" data/viv
 # Remove Subtractions from VIVO for pre-1.2 versions
 #harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML
 
-echo 'Running Post-Reversal DSR Analytics. Writing to analytics.txt'
-bash analytics.sh
+echo 'Running Post-Reversal DSR Analytics. Writing to post-reversal-analytics.txt'
+bash post-reversal-analytics.sh
 
 echo 'Harvest reversal completed successfully'
 
