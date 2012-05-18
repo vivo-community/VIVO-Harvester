@@ -46,10 +46,17 @@ if [ -d data/reverse-harvest-qualify ]; then
 rm -rf data/reverse-harvest-qualify
 fi
 
+echo "Running Pre-Reversal DSR Analytics. Writing to pre-reversal-analytics.txt"
+bash pre-reversal-analytics.sh
+
+# Load additions file into a reverse-harvest specific model.
 harvester-transfer -r data/vivo-additions.rdf.xml -o reverse-harvest-qualify.model.xml
+
+# Qualify to remove ufid and deptID triples.
 harvester-qualify -i reverse-harvest-qualify.model.xml -n "http://vivo.ufl.edu/ontology/vivo-ufl/ufid" -p
 harvester-qualify -i reverse-harvest-qualify.model.xml -n "http://vivo.ufl.edu/ontology/vivo-ufl/deptID" -p
 
+# Transfer into a modified additions file to be subtracted from vivo to complete the reversal.
 harvester-transfer -i reverse-harvest-qualify.model.xml -d data/reverse-harvest-additions.rdf.xml
 
 echo "addition node count to be removed: " `grep -c "<rdf:Description" data/reverse-harvest-additions.rdf.xml`
@@ -60,16 +67,19 @@ echo "subtraction node count to be added: " `grep -c "<rdf:Description" data/viv
 #       vivo model is also adjusted. This keeps the previous model as a mirror of the changes
 #       the the harvester has ever done to the vivo model.
 # Remove Additions from Previous model
-harvester-transfer -o previous-harvest.model.xml -r data/reverse-harvest-additions.rdf.xml -R RDF/XML -m
+#harvester-transfer -o previous-harvest.model.xml -r data/reverse-harvest-additions.rdf.xml -R RDF/XML -m
 # Remove Subtractions from Previous model
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML
+#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #       should agree with the previous harvest, the changes are now applied to the vivo model.
 # Remove Additions from VIVO for pre-1.2 versions
-harvester-transfer -o vivo.model.xml -r data/reverse-harvest-additions.rdf.xml -R RDF/XML -m
+#harvester-transfer -o vivo.model.xml -r data/reverse-harvest-additions.rdf.xml -R RDF/XML -m
 # Remove Subtractions from VIVO for pre-1.2 versions
-harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML
+#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -R RDF/XML
+
+echo 'Running Post-Reversal DSR Analytics. Writing to analytics.txt'
+bash analytics.sh
 
 echo 'Harvest reversal completed successfully'
 
