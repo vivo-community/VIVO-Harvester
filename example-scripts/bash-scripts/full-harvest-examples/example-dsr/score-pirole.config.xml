@@ -66,4 +66,5 @@
     <Param name="inputJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
     <Param name="vivoJena-predicates">grant=http://vivoweb.org/ontology/core#roleIn</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/ufl/dsr/piRole/</Param>
+	<Param name="reloadInput">true</Param>
 </Config>

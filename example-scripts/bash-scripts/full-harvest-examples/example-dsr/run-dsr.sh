@@ -54,6 +54,17 @@ cd ..
 #mv -f data data.$DATE
 #fi
 
+# Check to see if data/scored-data exists, and if so delete it
+# This will prevent match errors when running the harvest multiple times.
+if [ -d data/scored-data ]; then
+  rm -rf data/scored-data
+fi
+
+# Check to see if harvested data exists, and if so delete it
+# This will prevent an accumulation of old data
+if [ -d data/harvested-data ]; then
+  rm -rf data/harvested-data
+fi
 
 # Execute Fetch
 # This stage of the script is where the information is gathered together into one local
@@ -96,6 +107,12 @@ harvester-score -X score-sponsor.config.xml
 # 	comparison values above the chosen threshold within the xml configuration file.
 harvester-match -X match-grants.config.xml
 
+# Check to see if data/scored-data exists, and if so delete it
+# This will prevent match errors when running the harvest multiple times.
+if [ -d data/scored-data ]; then
+  rm -rf data/scored-data
+fi
+
 # Execute Score for People
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
@@ -105,6 +122,14 @@ harvester-score -X score-people.config.xml
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 # 	is created with the values / scores of the data comparisons. 
 harvester-score -X score-dept.config.xml
+
+harvester-match -X match-people.config.xml
+
+# Check to see if data/scored-data exists, and if so delete it
+# This will prevent match errors when running the harvest multiple times.
+if [ -d data/scored-data ]; then
+  rm -rf data/scored-data
+fi
 
 # Execute Score for Primary investigator roles
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
@@ -122,6 +147,20 @@ harvester-score -X score-copirole.config.xml
 # This config differs from the previous match config, in that it removes types and literals from the 
 #       resources in the incoming model for those that are considered a match.
 harvester-match -X match-roles.config.xml
+
+# Check to see if data/scored-data exists, and if so delete it
+# This will prevent match errors when running the harvest multiple times.
+if [ -d data/scored-data ]; then
+  rm -rf data/scored-data
+fi
+
+harvester-score -X score-datetimeinterval.config.xml
+
+harvester-match -X match-time.config.xml
+
+harvester-score -X score-datetime.config.xml
+
+harvester-match -X match-time.config.xml
 
 # Smush to remove duplicates
 # Using a particular predicate as an identifying data element the smush tool will rename those

@@ -110,7 +110,7 @@
             <xsl:choose>
                 <xsl:when test="string($this/db-vwContracts:FlowThruSponsor) = ''">
                     <core:grantAwardedBy>
-                        <rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-vwContracts:SponsorID}For{$grantid}">
+                        <rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-vwContracts:SponsorID}">
                             <ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
                             <ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
                             <rdfs:label><xsl:value-of select="$this/db-vwContracts:Sponsor"/></rdfs:label>
@@ -123,7 +123,7 @@
                 <xsl:otherwise>
 <!--            Creating a sponsor and a subcontracting sponsor attached to the grant-->
                     <core:grantSubcontractedThrough>
-                        <rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-vwContracts:SponsorID}For{$grantid}">
+                        <rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-vwContracts:SponsorID}">
                             <ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
                             <ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
                             <rdfs:label><xsl:value-of select="$this/db-vwContracts:Sponsor"/></rdfs:label>
@@ -133,7 +133,7 @@
                         </rdf:Description>
                     </core:grantSubcontractedThrough>
                     <core:grantAwardedBy>
-                        <rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-vwContracts:FlowThruSponsorID}For{$grantid}">
+                        <rdf:Description rdf:about="{$baseURI}sponsor/sponsor{$this/db-vwContracts:FlowThruSponsorID}">
                             <ufVivo:harvestedBy>DSR-Harvester</ufVivo:harvestedBy>
                             <ufVivo:dateHarvested><xsl:value-of select="current-date()" /></ufVivo:dateHarvested>
                             <rdfs:label><xsl:value-of select="$this/db-vwContracts:FlowThruSponsor"/></rdfs:label>
