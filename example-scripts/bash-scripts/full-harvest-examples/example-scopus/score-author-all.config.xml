@@ -73,7 +73,7 @@
 	<Param name="vivoJena-predicates">scopusid=http://vivoweb.org/ontology/core#scopusId</Param>
 
 	<!--FIRST NAME-->
-	<Param name="algorithms">fname=org.vivoweb.harvester.score.algorithm.NameCompare</Param>
+	<Param name="algorithms">fname=org.vivoweb.harvester.score.algorithm.NameExtraCompare</Param>
 	<Param name="weights">fname=0.20</Param>
 	<Param name="inputJena-predicates">fname=http://xmlns.com/foaf/0.1/firstName</Param>
 	<Param name="vivoJena-predicates">fname=http://xmlns.com/foaf/0.1/firstName</Param>

@@ -606,6 +606,7 @@ public class ScopusFetch extends NIHFetch {
 					}
 	
 					// check if the article already exists in VIVO
+					/* comment out
 					boolean existsInVivo = false;
 					if (sb.getDoi() != null) { // try doi
 						existsInVivo = isDoiInVivo(sb.getDoi());
@@ -613,11 +614,19 @@ public class ScopusFetch extends NIHFetch {
 					if (!existsInVivo) { // try Scopus Doc ID
 						existsInVivo = isScopusDocIdInVivo(sb.getScopusDocId());
 					}
-					
+					*/
 					// add ScopusBean to map for Pubmed queries
-					if (addToMap && !existsInVivo) {
-						sbMap.put(sb.getScopusDocId(), sb);
-					} 
+					if (!this.scopusDocIdList.contains(sb.getScopusDocId())) {
+						/*
+						if (addToMap && !existsInVivo) {
+							sbMap.put(sb.getScopusDocId(), sb);
+						}
+						*/
+						if (addToMap && sb.getScopusDocId() != null) {
+							sbMap.put(sb.getScopusDocId(), sb);
+						}
+						this.scopusDocIdList.add(sb.getScopusDocId());
+					}
 				}
 			}
 		} catch (MalformedURLException e) {
@@ -643,7 +652,8 @@ public class ScopusFetch extends NIHFetch {
 			while (sbIter.hasNext()) {
 				String key = sbIter.next();
 				ScopusBean sb = sbMap.get(key);
-				if (sb.getDoi() != null && !isDoiInVivo(sb.getDoi())) {
+				//if (sb.getDoi() != null && !isDoiInVivo(sb.getDoi())) {
+				if (sb.getDoi() != null) {
 					String searchDoi = "(" + sb.getDoi().replaceAll("[()]", "") + "[doi])";
 					if (searchTermBuf.length() > 0) { searchTermBuf.append(" OR "); }
 					searchTermBuf.append(searchDoi);
@@ -1015,6 +1025,7 @@ public class ScopusFetch extends NIHFetch {
 	 * @param doi
 	 * @return
 	 */
+	/*
 	private boolean isDoiInVivo(String doi) throws IOException {
 		String query = "PREFIX bibo: <http://purl.org/ontology/bibo/doi> ASK  { ?x bibo:doi  \"" + doi + "\" }";
 		boolean doiInVivo = this.vivoJena.executeAskQuery(query);
@@ -1023,6 +1034,7 @@ public class ScopusFetch extends NIHFetch {
 		}
 		return doiInVivo;
 	}
+	*/
 
 	/**
 	 * Check if publication has already been ingested.
@@ -1030,6 +1042,7 @@ public class ScopusFetch extends NIHFetch {
 	 * @param doi
 	 * @return
 	 */
+	/*
 	private boolean isScopusDocIdInVivo(String scopusDocId) throws IOException {
 		String query = "PREFIX wcmc: <http://weill.cornell.edu/vivo/ontology/wcmc#> ASK  { ?x wcmc:scopusDocId  \"" + scopusDocId + "\" }";
 		boolean idInVivo = this.vivoJena.executeAskQuery(query);
@@ -1038,6 +1051,7 @@ public class ScopusFetch extends NIHFetch {
 		}
 		return idInVivo;
 	}
+	*/
 
 	/**
 	 * Extract DOI from Scopus feed
@@ -1195,6 +1209,7 @@ public class ScopusFetch extends NIHFetch {
 			
 			try {
 
+				/*
 				String askQuery = "PREFIX bibo: <http://purl.org/ontology/bibo/> ASK  { ?x bibo:pmid  \"" + pmid + "\" }";
 				
 				// look up pmid
@@ -1206,6 +1221,9 @@ public class ScopusFetch extends NIHFetch {
 				} else {
 					log.trace("Record " + id + " already exists in VIVO. No further action is needed.");
 				}
+				*/
+				log.trace("Adding Record "+id);
+				getRh().addRecord(id, data, getClass());
 
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block

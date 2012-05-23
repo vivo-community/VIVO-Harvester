@@ -22,6 +22,7 @@
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/pubmed/</xsl:variable>
+	<xsl:variable name="customURI">[Enter your institutional namespace here]</xsl:variable>
 
 	<!-- The main Article Set of all pubmed citations loaded 
 		This serves as the header of the RDF file produced
@@ -68,14 +69,12 @@
 				</xsl:analyze-string>
 			</xsl:if>
 		</xsl:variable>
-		<rdf:Description rdf:about="{$baseURI}pub/pubid{child::MedlineCitation/PMID}">
+		<rdf:Description rdf:about="{$customURI}pubid{child::MedlineCitation/PMID}">
 			<xsl:variable name="up" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ '"/>
 			<xsl:variable name="lo" select="'abcdefghijklmnopqrstuvwxyz '"/>
-			<xsl:variable name="status"><xsl:value-of select="MedlineCitation/@Status" /></xsl:variable>
-			<xsl:apply-templates select="MedlineCitation/Article/PublicationTypeList/PublicationType">
-				<xsl:with-param name="pubList" select="translate(MedlineCitation/Article/PublicationTypeList,$up,$lo)" />
-				<xsl:with-param name="pbStatus" select="translate(string($status),$up,$lo)" />
-				<xsl:with-param name="numPubTypes" select="count(MedlineCitation/Article/PublicationTypeList/*)" />
+			<xsl:variable name="status"><xsl:value-of select="translate(MedlineCitation/@Status,$up,$lo)" /></xsl:variable>
+			<xsl:apply-templates select="MedlineCitation/Article/PublicationTypeList/PublicationType" mode="supportRef">
+				<xsl:with-param name="pbStatus" select="$status" />
 			</xsl:apply-templates>
 
 			<xsl:variable name="lastPubType">
@@ -84,14 +83,24 @@
 			
 			<!-- Determine if it's multiple journal types or simply a journal article  -->
 			<xsl:choose>
-				<xsl:when test="translate($lastPubType,$up,$lo)!='journal article' and not(contains(translate(string($lastPubType),$up,$lo), 'research support'))">
-					<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+				<xsl:when test="$status!='in-process' and $status!='publisher' and $status!='in-data-review'">
+					<xsl:choose>
+						<xsl:when test="translate(string($lastPubType),$up,$lo)!='introductory journal article' and (translate(string($lastPubType),$up,$lo)='journal article' or contains(translate(string($lastPubType),$up,$lo), 'research support'))">
+							<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+							<vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+						</xsl:when>
+					<!-- 
+						<xsl:when test="translate(string($lastPubType),$up,$lo)='introductory journal article' or (translate(string($lastPubType),$up,$lo)!='journal article' and not(contains(translate(string($lastPubType),$up,$lo), 'research support')))">
+							<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+						</xsl:when>
+						<xsl:otherwise>
+							<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+							<vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+						</xsl:otherwise>
+						-->
+					</xsl:choose>
 				</xsl:when>
-				<xsl:otherwise>
-					<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-					<vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
-				</xsl:otherwise>
-			</xsl:choose>			
+			</xsl:choose>
 
 			<ufVivo:harvestedBy>Scopus-Pubmed-Harvester</ufVivo:harvestedBy>
 			<score:pubId><xsl:value-of select="MedlineCitation/PMID" /></score:pubId>
@@ -224,11 +233,14 @@
 		<xsl:apply-templates select="MedlineCitation/MeshHeadingList/MeshHeading" mode="fullSubjectArea">
 			<xsl:with-param name="pubId" select="MedlineCitation/PMID" />
 		</xsl:apply-templates>
+		<xsl:apply-templates select="MedlineCitation/Article/PublicationTypeList/PublicationType" mode="supportFull">
+			<xsl:with-param name="pubId" select="MedlineCitation/PMID" />
+		</xsl:apply-templates>
 	</xsl:template>
 	
 	<!-- The Book Article -->
 	<xsl:template match="PubmedBookArticle">
-		<rdf:Description rdf:about="{$baseURI}pub/pubid{child::BookDocument/PMID}">
+		<rdf:Description rdf:about="{$customURI}pubid{child::BookDocument/PMID}">
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
 			<ufVivo:harvestedBy>Scopus-Pubmed-Harvester</ufVivo:harvestedBy>
 			<score:pubId><xsl:value-of select="BookDocument/PMID" /></score:pubId>
@@ -325,39 +337,39 @@
 	</xsl:template>
 
 	<xsl:template match="MedlineCitation/Article/Journal" mode="journalRef">
-		<core:hasPublicationVenue rdf:resource="{$baseURI}journal/journal{child::ISSN}" />
+		<core:hasPublicationVenue rdf:resource="{$customURI}journal{child::ISSN}" />
 	</xsl:template>
 
 <!-- The Main Journal Entity -->
 	<xsl:template match="MedlineCitation/Article/Journal" mode="fullJournal">
-		<rdf:Description rdf:about="{$baseURI}journal/journal{child::ISSN}" >
+		<rdf:Description rdf:about="{$customURI}journal{child::ISSN}" >
 			<ufVivo:harvestedBy>Scopus-Pubmed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
 			<core:Title><xsl:value-of select="Title" /></core:Title>
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
 			<bibo:issn><xsl:value-of select="ISSN"/></bibo:issn>
-			<core:publicationVenueFor rdf:resource="{$baseURI}pub/pubid{ancestor::MedlineCitation/PMID}"/>
+			<core:publicationVenueFor rdf:resource="{$customURI}pubid{ancestor::MedlineCitation/PMID}"/>
 		</rdf:Description>	
 	</xsl:template>
 
 	<!-- Scopus Linked Author List Navigation --> 
 	<xsl:template match="scopusAuthorList/author" mode="authorRef">
 		<xsl:param name='pubId' />
-		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pubid{$pubId}authorship{position()}" />
+		<core:informationResourceInAuthorship rdf:resource="{$customURI}pubid{$pubId}authorship{position()}" />
 	</xsl:template>
 	<xsl:template match="author" mode="authorRef">
 		<xsl:param name='pubId' />
-		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pubid{$pubId}authorship{position()}" />
+		<core:informationResourceInAuthorship rdf:resource="{$customURI}pubid{$pubId}authorship{position()}" />
 	</xsl:template>
 
 	<!-- Scopus Author List Navigation --> 
 	<xsl:template match="author" mode="fullAuthor">
 		<xsl:param name='pubId' />
-		<rdf:Description rdf:about="{$baseURI}authorship/pubid{$pubId}authorship{position()}">
+		<rdf:Description rdf:about="{$customURI}pubid{$pubId}authorship{position()}">
 			<ufVivo:harvestedBy>Scopus-Pubmed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<core:linkedAuthor rdf:resource="{$baseURI}author/pubid{$pubId}author{position()}" />
-			<core:linkedInformationResource rdf:resource="{$baseURI}pub/pubid{$pubId}"/>
+			<core:linkedInformationResource rdf:resource="{$customURI}pubid{$pubId}"/>
 			<rdfs:label>Authorship for <xsl:value-of select="authname" /></rdfs:label>
 			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
@@ -368,7 +380,7 @@
 			<rdfs:label><xsl:value-of select="authname" /></rdfs:label>
 			<foaf:lastName><xsl:value-of select="substring-before(authname, ',')" /></foaf:lastName>
 			<core:scopusId><xsl:value-of select="authid" /></core:scopusId>
-			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pubid{$pubId}authorship{position()}" />
+			<core:authorInAuthorship rdf:resource="{$customURI}pubid{$pubId}authorship{position()}" />
 		</rdf:Description>
 	</xsl:template>
 
@@ -378,18 +390,18 @@
 			<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month)=Jan">
 			</xsl:when>
 	</xsl:choose>		
-		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pubid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+		<core:informationResourceInAuthorship rdf:resource="{$customURI}pubid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 	</xsl:template>
 
 	
 	<!-- Article Author List Navigation --> 
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="fullAuthor">
 			<xsl:param name='email' />
-		<rdf:Description rdf:about="{$baseURI}authorship/pubid{ancestor::MedlineCitation/PMID}authorship{position()}">
+		<rdf:Description rdf:about="{$customURI}pubid{ancestor::MedlineCitation/PMID}authorship{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<core:linkedAuthor rdf:resource="{$baseURI}author/pubid{ancestor::MedlineCitation/PMID}author{position()}" />
-			<core:linkedInformationResource rdf:resource="{$baseURI}pub/pubid{ancestor::MedlineCitation/PMID}"/>
+			<core:linkedInformationResource rdf:resource="{$customURI}pubid{ancestor::MedlineCitation/PMID}"/>
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
@@ -452,22 +464,22 @@
 				</xsl:when>
 			</xsl:choose>
 			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
-			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pubid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+			<core:authorInAuthorship rdf:resource="{$customURI}pubid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 		</rdf:Description>
 	</xsl:template>
 
 	<!-- Links to From the Book to the Terms and Authors -->
 	<xsl:template match="BookDocument/Book/AuthorList/Author" mode="authorRef">
-		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pubid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+		<core:informationResourceInAuthorship rdf:resource="{$customURI}pubid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 	</xsl:template>
 
 	<!-- Book Author List Navigation --> 
 	<xsl:template match="BookDocument/Book/AuthorList/Author" mode="fullAuthor">
-			<rdf:Description rdf:about="{$baseURI}authorship/pubid{ancestor::BookDocument/PMID}authorship{position()}">
+			<rdf:Description rdf:about="{$customURI}pubid{ancestor::BookDocument/PMID}authorship{position()}">
 			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
 			<core:linkedAuthor rdf:resource="{$baseURI}author/pubid{ancestor::BookDocument/PMID}author{position()}" />
-			<core:linkedInformationResource rdf:resource="{$baseURI}pub/pubid{ancestor::BookDocument/PMID}"/>
+			<core:linkedInformationResource rdf:resource="{$customURI}pubid{ancestor::BookDocument/PMID}"/>
 			<xsl:choose>
 				<xsl:when test="string(ForeName)">
 					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
@@ -528,7 +540,7 @@
 				</xsl:when>
 			</xsl:choose>
 			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
-			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pubid{ancestor::BookDocument/PMID}authorship{position()}" />
+			<core:authorInAuthorship rdf:resource="{$customURI}pubid{ancestor::BookDocument/PMID}authorship{position()}" />
 		</rdf:Description>
 	</xsl:template>
 
@@ -539,7 +551,7 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(DescriptorName),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<core:hasSubjectArea rdf:resource="{$baseURI}concept/concept-{$subjectId}"/>
+				<core:hasSubjectArea rdf:resource="http://vivo.med.cornell.edu/individual/concept-{$subjectId}"/>
 			</xsl:when>
 		</xsl:choose>	
 	</xsl:template>	
@@ -551,13 +563,13 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(DescriptorName),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<rdf:Description rdf:about="{$baseURI}concept/concept-{$subjectId}">
+				<rdf:Description rdf:about="http://vivo.med.cornell.edu/individual/concept-{$subjectId}">
 					<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 					<vitro:mostSpecificType rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     				<rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">
     					<xsl:value-of select="string(DescriptorName)"/>
     				</rdfs:label>
- 					<core:subjectAreaFor rdf:resource="{$baseURI}pub/pubid{$pubId}"/> 				
+ 					<core:subjectAreaFor rdf:resource="{$customURI}pubid{$pubId}"/> 				
   				</rdf:Description>
 			</xsl:when>
 		</xsl:choose>
@@ -570,7 +582,7 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<core:hasSubjectArea rdf:resource="{$baseURI}concept/concept-{$subjectId}"/>
+				<core:hasSubjectArea rdf:resource="http://vivo.med.cornell.edu/individual/concept-{$subjectId}"/>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
@@ -582,13 +594,13 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<rdf:Description rdf:about="{$baseURI}concept/concept-{$subjectId}">
+				<rdf:Description rdf:about="http://vivo.med.cornell.edu/individual/concept-{$subjectId}">
 					<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 					<vitro:mostSpecificType rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     				<rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">
     					<xsl:value-of select="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)"/>
     				</rdfs:label>
- 					<core:subjectAreaFor rdf:resource="{$baseURI}pub/pubid{$pubId}"/> 				
+ 					<core:subjectAreaFor rdf:resource="{$customURI}pubid{$pubId}"/> 				
   				</rdf:Description>
 			</xsl:when>
 		</xsl:choose>
@@ -601,7 +613,7 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(MedlineCitation/KeywordList/Keyword),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<core:hasSubjectArea rdf:resource="{$baseURI}concept/concept-{$subjectId}"/>
+				<core:hasSubjectArea rdf:resource="http://vivo.med.cornell.edu/individual/concept-{$subjectId}"/>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
@@ -613,13 +625,13 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(MedlineCitation/KeywordList/Keyword),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<rdf:Description rdf:about="{$baseURI}concept/concept-{$subjectId}">
+				<rdf:Description rdf:about="http://vivo.med.cornell.edu/individual/concept-{$subjectId}">
 					<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 					<vitro:mostSpecificType rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     				<rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">
     					<xsl:value-of select="string(MedlineCitation/KeywordList/Keyword)"/>
     				</rdfs:label>
- 					<core:subjectAreaFor rdf:resource="{$baseURI}pub/pubid{$pubId}"/> 				
+ 					<core:subjectAreaFor rdf:resource="{$customURI}pubid{$pubId}"/> 				
   				</rdf:Description>
 			</xsl:when>
 		</xsl:choose>
@@ -632,7 +644,7 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(BookDocument/KeywordList/Keyword),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<core:hasSubjectArea rdf:resource="{$baseURI}concept/concept-{$subjectId}"/>
+				<core:hasSubjectArea rdf:resource="http://vivo.med.cornell.edu/individual/concept-{$subjectId}"/>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
@@ -644,22 +656,40 @@
 				<xsl:variable name="subjectId">
 					<xsl:value-of select="replace(string(BookDocument/KeywordList/Keyword),'[^a-zA-Z0-9]','')"/>
 				</xsl:variable>
-				<rdf:Description rdf:about="{$baseURI}concept/concept-{$subjectId}">
+				<rdf:Description rdf:about="http://vivo.med.cornell.edu/individual/concept-{$subjectId}">
 					<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 					<vitro:mostSpecificType rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     				<rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">
     					<xsl:value-of select="string(BookDocument/KeywordList/Keyword)"/>
     				</rdfs:label>
- 					<core:subjectAreaFor rdf:resource="{$baseURI}pub/pubid{$pubId}"/> 				
+ 					<core:subjectAreaFor rdf:resource="{$customURI}pubid{$pubId}"/> 				
   				</rdf:Description>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 
+	<!-- Supported by -->
+	<xsl:template match="MedlineCitation/Article/PublicationTypeList/PublicationType" mode="supportFull">
+		<xsl:param name='pubId' />
+		<xsl:variable name="up" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ '"/>
+		<xsl:variable name="lo" select="'abcdefghijklmnopqrstuvwxyz '"/>
+		<xsl:variable name="pbType" select="string(self::PublicationType)" />
+		<xsl:choose>
+			<xsl:when test="contains(translate(string($pbType),$up,$lo), 'research support')">
+				<xsl:variable name="supportedByLink" select="replace(translate(string($pbType),$up,$lo),'[^a-zA-Z0-9]','')" />
+				<rdf:Description rdf:about="http://vivo.med.cornell.edu/individual/org-{$supportedByLink}">
+					<vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#FundingOrganization"/>
+					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#FundingOrganization"/>
+					<core:supportedInformationResource rdf:resource="{$customURI}pubid{$pubId}"/>
+    				<rdfs:label><xsl:value-of select="$pbType"/></rdfs:label>
+				</rdf:Description>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
 	<!-- Types -->
-	<xsl:template match="MedlineCitation/Article/PublicationTypeList/PublicationType">
+	<xsl:template match="MedlineCitation/Article/PublicationTypeList/PublicationType" mode="supportRef">
 		<xsl:param name='pbStatus' />
-		<xsl:param name='numPubTypes' />
 		<xsl:variable name="up" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ '"/>
 		<xsl:variable name="lo" select="'abcdefghijklmnopqrstuvwxyz '"/>
 		<xsl:variable name="pbType" select="string(self::PublicationType)" />
@@ -713,7 +743,7 @@
 					<rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 					<vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 				</xsl:when>
-
+				
 				<!-- Reviews -->
 				<xsl:when test="translate(string($pbType),$up,$lo)='meta-analysis'">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
@@ -899,18 +929,30 @@
 					<vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Report" />
 				</xsl:when>
 
+				<!-- informationResourceSupportedBy -->
+				<xsl:when test="contains(translate(string($pbType),$up,$lo), 'research support')">
+					<xsl:variable name="supportedByLink" select="replace(translate(string($pbType),$up,$lo),'[^a-zA-Z0-9]','')" />
+					<core:informationResourceSupportedBy rdf:resource="http://vivo.med.cornell.edu/individual/org-{$supportedByLink}"/>
+				</xsl:when>
+
 				<!-- Does not belong to journal article or any of the above  -->
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="translate($pbType,$up,$lo)!='journal article' and not(contains(translate(string($pbType),$up,$lo), 'research support'))">
+						<xsl:when test="not(contains(translate($pbType,$up,$lo), 'journal article')) and not(contains(translate(string($pbType),$up,$lo), 'research support'))">
 							<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
 							<vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Article" />
 						</xsl:when>
 					</xsl:choose>
 				</xsl:otherwise>
 				
-				</xsl:choose>
-				<core:freetextKeyword><xsl:value-of select="$pbType"/></core:freetextKeyword>
+			</xsl:choose>
+				
+			<xsl:choose>
+				<xsl:when test="not(contains(translate(string($pbType),$up,$lo), 'research support'))">
+					<core:freetextKeyword><xsl:value-of select="$pbType"/></core:freetextKeyword>
+				</xsl:when>
+			</xsl:choose>
+
 			</xsl:when>
 			
 			<!-- In press article -->
@@ -946,7 +988,7 @@
 			<xsl:variable name="modIssn"><xsl:value-of select="concat(substring(prism:issn, 0, 5), '-', substring(prism:issn, 5))" /></xsl:variable>
 			
 			<!-- Publication -->
-			<rdf:Description rdf:about="{$baseURI}pub/pubid{$scopusId}">
+			<rdf:Description rdf:about="{$customURI}pubid{$scopusId}">
 				<ufVivo:harvestedBy>Scopus-Pubmed-Harvester</ufVivo:harvestedBy>
 				<!-- publication type: START -->
 				<xsl:variable name="pbType" select="subtype"/>
@@ -1035,12 +1077,13 @@
 				<!-- publication type: END -->
 				<score:pubId><xsl:value-of select="$scopusId" /></score:pubId>
 				<wcmc:scopusDocId><xsl:value-of select="$scopusId" /></wcmc:scopusDocId>
+				<bibo:doi><xsl:value-of select="prism:doi" /></bibo:doi>
 				<rdfs:label><xsl:value-of select="dc:title" /></rdfs:label>
 				<core:Title><xsl:value-of select="dc:title" /></core:Title>
 				<bibo:volume><xsl:value-of select="prism:volume"/></bibo:volume>
 				<bibo:pageStart><xsl:value-of select="substring-before(prism:pageRange, '-')" /></bibo:pageStart>
 				<bibo:pageEnd><xsl:value-of select="substring-after(prism:pageRange, '-')" /></bibo:pageEnd>
-				<core:hasPublicationVenue rdf:resource="{$baseURI}journal/journal{$modIssn}" />
+				<core:hasPublicationVenue rdf:resource="{$customURI}journal{$modIssn}" />
 				<!-- scopus author ref: START -->
 				<xsl:apply-templates select="author" mode="authorRef">
 					<xsl:with-param name="pubId" select="$scopusId" />
@@ -1057,13 +1100,13 @@
 			</rdf:Description>
 			
 			<!-- Journal -->
-			<rdf:Description rdf:about="{$baseURI}journal/journal{$modIssn}" >
+			<rdf:Description rdf:about="{$customURI}journal{$modIssn}" >
 				<ufVivo:harvestedBy>Scopus-Pubmed-Harvester</ufVivo:harvestedBy>
 				<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
 				<core:Title><xsl:value-of select="prism:publicationName" /></core:Title>
 				<rdfs:label><xsl:value-of select="prism:publicationName" /></rdfs:label>
 				<bibo:issn><xsl:value-of select="$modIssn"/></bibo:issn>
-				<core:publicationVenueFor rdf:resource="{$baseURI}pub/pubid{$scopusId}"/>
+				<core:publicationVenueFor rdf:resource="{$customURI}pubid{$scopusId}"/>
 			</rdf:Description>	
 			
 			<!-- scopus author full: START -->
