@@ -14,7 +14,7 @@
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
 VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+export HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-peoplesoft-biztalk
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -27,7 +27,7 @@ export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
 # Set the email address of the person receiving the email
-export EMAIL_RECIPIENT="vsposato@ufl.edu"
+export EMAIL_RECIPIENT="phuongvo.uf@gmail.com"
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
