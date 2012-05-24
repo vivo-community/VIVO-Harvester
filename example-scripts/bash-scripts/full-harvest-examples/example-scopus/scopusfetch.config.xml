@@ -11,8 +11,12 @@
 	<!-- Required: Scopus access info -->
 	<Param name="scopus-apikey">EnterAPIKeyHere</Param>
 	<Param name="scopus-accept">text/xml, application/atom+xml</Param>
-	<Param name="scopus-pubyear-start">1990</Param>
-	<Param name="scopus-pubyear-end">2012</Param>
+
+	<!-- Optional: Either none or all of the following start and end dates need to be filled to have an effect -->
+	<!-- 
+	<Param name="scopus-pubyear-start">1960</Param>
+	<Param name="scopus-pubyear-end">2011</Param>
+	-->
 
 	<!--
 		Required: SPARQL query to retrieve people with Scopus ID  
@@ -30,6 +34,7 @@
 
 
 	<!-- 
+		Optional:
 		Affiliation list and scopus-affiliation-linked.
 		If scopus-affiliation-linked is set to true, get only publications that are
 		linked to the affiliation list.

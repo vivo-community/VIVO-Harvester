@@ -47,7 +47,7 @@
 <%  dumpfile is RDF/XML and is able to be added or removed from another model through the use of the transfer tool.   %>
 <%  <Param name="dumptolanguage"> This denotes the language the rdf is in. Predefined values for lang are "RDF/XML",  %>
 <%  "N-TRIPLE", "TURTLE" (or "TTL") and "N3". * null represents the default language, "RDF/XML". "RDF/XML-ABBREV" is  %>
-<%  a synonym for "RDF/XML".					  																	  %>
+<%  a synonym for "RDF/XML".					  						      %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
         <Param name="dumptofile">xmlrdf=data/vivo-subtractions.rdf.xml</Param>
@@ -60,9 +60,31 @@
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 <%  <Param name="output"> The model described by this config file is the model that will be produced which will       %>
 <%     contain the data which is in the minuend but not in the subtrahend.                                            %>
-<%                                                                                                                    %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
     
 	<!-- <Param name="output">diff-output.model.xml</Param> -->
+
+<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%  <Param name="selective-diff"> Tells Diff to use the selectiveDiff method in execute. If any "update-types"	      %>
+<%  parameters (below) are set, this flag is implicitly set. This flag exists mostly for the case where one wishes    %>
+<%  to use selectiveDiff without specifying update types.                       				      %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+	
+	<Param name="selective-diff">True</Param>
+
+<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%  <Param name="update-types"> Each update-types entry specifies a type allowed to be updated in the process of      %>
+<%     a diff, meant primarily for creating subtraction models. Untested for addition models!		      	      %>
+<%														      %>
+<%     Specifying any type at all will cause Diff to use the selectiveDiff() method, leading to unspecified types     %>
+<%     being preserved.                                  							      %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+    
+	<Param name="update-types">http://xmlns.com/foaf/0.1/Person</Param>
+	
 </Config>

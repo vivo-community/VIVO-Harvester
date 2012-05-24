@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: inputJena-config  
+
+		Config file containing args for constructing incoming Jena model.
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: vivoJena-config  
+
+		Config file containing args for constructing vivo Jena model.
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: privateJena-config 
+
+		Config file containing args for private storage Jena model.
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: dTransfer 
+
+		This flag states whether or not image data should be copied between models; either bringing user images into the 
+		private store, or recovering private images once the privacy flag is removed.
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: dDelete 
+
+	This flag states whether or not image data should be deleted from the origin model when the transfer criteria are met. 
+	NOTE: You can set dDelete true and dTransfer false, but then image data will be lost without storage. A warning is in place 
+	to reflect this. The most common usage of these flags will be TRUE/TRUE.
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+
+  <Param name="inputJena-config">harvested-data.model.xml</Param>
+  <Param name="vivoJena-config">vivo.model.xml</Param>
+  <Param name="privateJena-config">private-data.model.xml</Param>
+  <Param name="dTransfer">True</Param>
+  <Param name="dDelete">True</Param>
+</Task>

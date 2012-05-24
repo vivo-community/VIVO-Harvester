@@ -5,22 +5,24 @@
  ******************************************************************************/
 package org.vivoweb.harvester.diff;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
@@ -28,6 +30,7 @@ import com.hp.hpl.jena.rdf.model.RDFWriter;
 /**
  * Set math to find difference (subtraction) of one model from another
  * @author Stephen Williams
+ * @author Rene Ziede (rziede@ufl.edu)
  */
 public class Diff {
 	/**
@@ -45,7 +48,33 @@ public class Diff {
 	/**
 	 * Model to write records to
 	 */
-	private JenaConnect output;
+	private JenaConnect outputJC;
+	
+	/**
+	 * Temporary model containing two graphs, used for entity-preserving Diff behavior.
+	 */
+	private JenaConnect tempModel;
+	
+	/**
+	 * Model for the diff.
+	 */
+	private JenaConnect diffModel;
+	
+	/**
+	 * If using Diff to create a subtraction model, these types can be used to restrict updates
+	 * to properties of these types, preventing unwanted deletion.
+	 */
+	private List<String> updateTypes;
+	
+	/**
+	 * Are we preserving any entities on this diff?
+	 */
+	private boolean bHasUpdateTypes;
+	
+	/**
+	 * Are we using selectiveDiff?
+	 */
+	private boolean bUsingSelectiveDiff;
 	
 	/**
 	 * dump model to file option - filename
@@ -77,22 +106,70 @@ public class Diff {
 	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, Map<String,String> dF, Map<String,String> dL, String dTF, String n3) {
 		this.minuendJC = mJC;
 		this.subtrahendJC = sJC;
-		this.output = oJC;
+		this.outputJC = oJC;
 		this.dumpFile = dF;
 		this.dumpLanguage = dL;
 		this.dumpNTriple = dTF;
 		this.dumpN3=n3;
+		
 		if(this.minuendJC == null) {
 			throw new IllegalArgumentException("Must provide a minuend jena model");
 		}
 		if(this.subtrahendJC == null) {
 			throw new IllegalArgumentException("Must provide a subtrahend jena model");
 		}
-		if(this.output == null && (this.dumpFile == null )) { // TODO: check the contents of the dumpFiles if any is empty error || this.dumpFile.trim().isEmpty())) 
+		if(this.outputJC == null && (this.dumpFile == null )) { // TODO: check the contents of the dumpFiles if any is empty error || this.dumpFile.trim().isEmpty())) 
 			throw new IllegalArgumentException("Must provide at least one of an output jena model or a dump file");
 		}
+		
+		this.bHasUpdateTypes = false;
+		
 		checkFileName();
 	}
+	
+	/**
+	 * Constructor
+	 * @param mJC The minuend Jena Connect
+	 * @param sJC The subtrahend Jena Connect
+	 * @param oJC The output Jena Connect
+	 * @param dF  The dump-file path.
+	 * @param dL  The dump-file language.
+	 * @param dTF The dump N Triple
+	 * @param n3  The dump N3
+	 * @param bSelectiveDiff If we're using selective diff.
+	 * @param updateTypes The types this diff is allowed to affect.
+	 */
+	public Diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, Map<String,String> dF, Map<String,String> dL, String dTF, 
+				String n3, boolean bSelectiveDiff, List<String> updateTypes) {
+		this.minuendJC = mJC;
+		this.subtrahendJC = sJC;
+		this.outputJC = oJC;
+		this.dumpFile = dF;
+		this.dumpLanguage = dL;
+		this.dumpNTriple = dTF;
+		this.dumpN3=n3;
+		
+		if(this.minuendJC == null) {
+			throw new IllegalArgumentException("Must provide a minuend jena model");
+		}
+		if(this.subtrahendJC == null) {
+			throw new IllegalArgumentException("Must provide a subtrahend jena model");
+		}
+		if(this.outputJC == null && (this.dumpFile == null )) { // TODO: check the contents of the dumpFiles if any is empty error || this.dumpFile.trim().isEmpty())) 
+			throw new IllegalArgumentException("Must provide at least one of an output jena model or a dump file");
+		}
+
+		this.updateTypes = updateTypes;
+		this.bUsingSelectiveDiff = bSelectiveDiff;
+		this.bHasUpdateTypes = (!this.updateTypes.isEmpty());
+		// Note: If the user specifies updateTypes but forgot to set the bUsingSelectiveDiff flag, they probably wanted to use s.Diff.
+		if( this.bHasUpdateTypes ) this.bUsingSelectiveDiff = true;
+		
+		
+		checkFileName();
+	}
+	
+	
 	
 	/**
 	 * Constructor
@@ -118,7 +195,9 @@ public class Diff {
 			argList.getValueMap("d"),
 			argList.getValueMap("l"),
 			argList.get("t"),
-			argList.get("n"));
+			argList.get("n"),
+			argList.has("e"),
+			argList.getAll("U"));
 	}
 	
 	/**
@@ -132,6 +211,8 @@ public class Diff {
 		parser.addArgument(new ArgDef().setShortOption('M').setLongOpt("minuendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of source jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("subtrahend").withParameter(true, "CONFIG_FILE").setDescription("config file for removemode jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("subtrahendOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of remove jena model config using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("selective-diff").setDescription("Use selective diff").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("update-types").withParameterValueMap("NAME", "TYPE").setDescription("Type to be updated").setRequired(false));
 		
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
@@ -140,10 +221,6 @@ public class Diff {
 		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("dumptolanguage").withParameterValueMap("FILE_NAME", "LANGUAGE").setDescription("language for output").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dumptofile").withParameterValueMap("FILE_NAME", "FILENAME").setDescription("filename for output").setRequired(false));
 		
-		//Stubbed out new argument
-		//parser.addArgument(new ArgDef().setShortOption('g').setLongOpt("ignoreMissingEntities").withParameter(true, "BOOLEAN").setDescription("should we ignore entities that are not in the subtrahend").setRequired(false));
-		
-		// DEPRECEATE
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("dumpntripletofile").withParameter(true, "FILENAME").setDescription("filename for N triple output").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("dumpn3tofile").withParameter(true, "FILENAME").setDescription("filename for N 3 output").setRequired(false));
 		return parser;
@@ -155,6 +232,12 @@ public class Diff {
 	 * @return - false if 1 language definition does not have a path to a file defined
 	 */
 	private boolean checkFileName(){
+		
+		if( this.dumpLanguage == null)
+		{
+			return false;
+		}
+		
 		boolean valid = true;
 		for(String fileName : this.dumpLanguage.keySet()){
 			if (!this.dumpFile.containsKey(fileName)){
@@ -176,56 +259,18 @@ public class Diff {
 	 * @param dNTF dumpfile n3
 	 * @throws IOException error accessing file
 	 */
+	@SuppressWarnings("unused")
 	public static void diff(JenaConnect mJC, JenaConnect sJC, JenaConnect oJC, Map<String,String> dF, Map<String,String> dL, String dTF, String dNTF) throws IOException {
 		// c - b = a
 		// minuend - subtrahend = difference
-		// minuend.diff(subtrahend) = differenece
+		// minuend.diff(subtrahend) = difference
 		// c.diff(b) = a
 		
 		Model diffModel = ModelFactory.createDefaultModel();
 		Model minuendModel = mJC.getJenaModel();
 		Model subtrahendModel = sJC.getJenaModel();
 		
-		//newLogic TODO: remove comments and complete code
-		//if(ignoreMissingEntities)
-		//{ 	use sparql minus or sparql not exists to 
-		//		compare the two models.
-		//		ignoring entities that are not in the subtrahend
-		//		and produce statements that are not in the subtrahend
-		//		for the entities it does know
-		//		ie 
-		//		select ?s ?p ?o
-		//		where
-		//			graph a minendModel { 
-		//				?s1 ?p ?o
-		//			}
-		//			graph b subtrahendModel {
-		//				?s2 ?p ?o
-		//			}
-		//			?s1 = ?s2
-		//			filter (minus/not exists) {?s ?p ?o)}
-		//
-		
-		//} else { jena difference
-		
 		diffModel = minuendModel.difference(subtrahendModel);
-		/*
-		 * Code removed after testing of additions / subtractions figured out
-		Model oppDiffModel = ModelFactory.createDefaultModel();
-		oppDiffModel = subtrahendModel.difference(minuendModel);
-		boolean testDiff = diffModel.isEmpty();
-		boolean testMinuend = minuendModel.isEmpty();
-		boolean testSubtrahend = subtrahendModel.isEmpty();
-		boolean testOpposite = oppDiffModel.isEmpty();
-		log.debug("testDiff boolean - " + Boolean.toString(testDiff));
-		diffModel.write(System.out);
-		log.debug("testOpposite boolean - " + Boolean.toString(testOpposite));
-		oppDiffModel.write(System.out);
-		
-		log.debug("testMinuend boolean - " + Boolean.toString(testMinuend) + " Model " + Boolean.toString(mJC.isEmpty()));
-		log.debug("testSubtrahend boolean - " + Boolean.toString(testSubtrahend) + " Model " + Boolean.toString(sJC.isEmpty()));
-		mJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/minuendJena.rdf.xml");
-		sJC.exportRdfToFile("/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/subtrahendJena.rdf.xml");*/
 
 		if (dF != null) {
 			for(String filename : dF.keySet()) {
@@ -248,35 +293,198 @@ public class Diff {
 				log.debug(filelanguage + " Data was exported to " + filepath);	
 			}
 		}
-		
-		//Deprecated code (see new format using Map above)
-		/*if(dF != null) {
-			RDFWriter fasterWriter = diffModel.getWriter("RDF/XML");
-			fasterWriter.setProperty("showXmlDeclaration", "true");
-			fasterWriter.setProperty("allowBadURIs", "true");
-			fasterWriter.setProperty("relativeURIs", "");
-			OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(dF), Charset.availableCharsets().get("UTF-8"));
-			fasterWriter.write(diffModel, osw, "");
-			log.debug("RDF/XML Data was exported");
-		}
-		if(dTF != null) {
-			RDFWriter tripplewriter = diffModel.getWriter("N-TRIPLE");
-			FileWriter fstream = new FileWriter(dTF);
-			BufferedWriter out = new BufferedWriter(fstream);
-			tripplewriter.write(diffModel, out, "");
-			out.close();
-		}
-		if(dNTF != null) {
-			RDFWriter tripplewriter = diffModel.getWriter("N3");
-			FileWriter fstream = new FileWriter(dNTF);
-			BufferedWriter out = new BufferedWriter(fstream);
-			tripplewriter.write(diffModel, out, "");
-			out.close();
-		}
-		*/
+
 		if(oJC != null) {
 			oJC.getJenaModel().add(diffModel);
 			oJC.sync();
+		}
+	}
+	
+	
+	/**
+	 * Pulled into a separate method to force a change in scope for dropping heavy-weight temporary variables.
+	 * selecticeDiff Optimization.
+	 */
+	private void prepareDiffModels()
+	{
+		// Use Jena to construct a subtractionModel from oldModel - newModel.
+		Model subtractionModel = ModelFactory.createDefaultModel();
+		Model minuendModel = this.minuendJC.getJenaModel();
+		Model subtrahendModel = this.subtrahendJC.getJenaModel();
+		subtractionModel = minuendModel.difference(subtrahendModel);
+				
+		// Load subtractionModel into a temporary MemJena.
+		this.diffModel = new MemJenaConnect("subtractionJC");
+		this.diffModel.getJenaModel().add(subtractionModel);
+		
+	}
+	
+	/**
+	 * A selectiveDiff preserves certain types from the previous model by removing them from the subtraction model.
+	 * Non-static, unlike regular 'diff'. 
+	 * @throws IOException JC
+	 */
+	public void selectiveDiff() throws IOException {
+
+		prepareDiffModels();
+		//JenaConnect appendModel = new MemJenaConnect("appendJC");
+	
+		//JVM 'suggestion' to garbage collect at its next reasonable opportunity.
+		//TODO: May have no benefit, need to test.
+		System.gc();
+		
+		//Load newModel and subtractionModel JCs into a joined model for multi-graph query.
+		unionModels();
+
+		System.gc();
+		
+		//JenaConnect newSubtractionJC = new MemJenaConnect("newSubJC");
+		//Model newSubtractionModel = ModelFactory.createDefaultModel();
+		
+		//Unload diff model and re-use as new-diff model to save memory.
+		this.diffModel.truncate();
+		
+		if( this.bHasUpdateTypes )
+		{
+			for(String objType : this.updateTypes)
+			{
+				String preservationQuery = buildPreservationQuery(objType);
+				//log.trace(preservationQuery);
+				
+				//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
+				//appendModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
+				//traceModel("An appendModel: ", appendModel);
+				
+				//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
+				this.diffModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
+			}
+			
+			traceModel( "New SubtractionModel", this.diffModel );
+		}
+		else
+		{
+			String preservationQuery = buildPreservationQuery();
+			//appendModel = this.tempModel.executeConstructQuery(preservationQuery, true);
+			//traceModel("An appendModel: ", appendModel);
+			
+			//Construct triples we wish to keep from the subtraction graph copy in tempModel and append.
+			this.diffModel.loadRdfFromJC(this.tempModel.executeConstructQuery(preservationQuery, true));
+		}
+		
+		
+		// Dump subtractionModel to RDF/XML file.
+		if (this.dumpFile != null) {
+			Model newSubtractionModel = this.diffModel.getJenaModel();
+			
+			for(String filename : this.dumpFile.keySet()) {
+				String filepath = this.dumpFile.get(filename);
+				String filelanguage = "";
+				if (this.dumpLanguage.containsKey(filename)){
+					filelanguage = this.dumpLanguage.get(filename);
+				} else {
+					filelanguage = "RDF/XML";
+				}
+				
+				RDFWriter fasterWriter = newSubtractionModel.getWriter(filelanguage);
+				if (filelanguage.equals("RDF/XML")){
+					fasterWriter.setProperty("showXmlDeclaration", "true");
+					fasterWriter.setProperty("allowBadURIs", "true");
+					fasterWriter.setProperty("relativeURIs", "");
+				}
+				OutputStreamWriter osw = new OutputStreamWriter(FileAide.getOutputStream(filepath), Charset.availableCharsets().get("UTF-8"));
+				fasterWriter.write(newSubtractionModel, osw, "");
+				log.debug(filelanguage + " Data was exported to " + filepath);	
+			}
+		}
+
+		// Load subtractionModel into outputModel and update.
+		if(this.outputJC != null) {
+			this.outputJC.getJenaModel().add(this.diffModel.getJenaModel());
+			this.outputJC.sync();
+		}
+	}
+	
+	/**
+	 * @param objectType The type of object to preserve
+	 * @return The query string to be executed.
+	 */
+	public static String buildPreservationQuery(String objectType)
+	{
+		//DEBUG
+		log.trace("objectType in Query Builder: " + objectType);
+		
+		// Preservation Query Builder
+		StringBuilder pQBuilder = new StringBuilder();
+		
+		pQBuilder.append("PREFIX diff: <http://vivoweb.org/harvester/model/diff#>\n");
+		pQBuilder.append("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n");
+		pQBuilder.append("CONSTRUCT {\n");
+		pQBuilder.append("	?s ?p ?o .\n");
+		pQBuilder.append("}\n");
+		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#newModel>\n");
+		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#subtractionModel>\n");
+		pQBuilder.append("WHERE {\n");
+		pQBuilder.append("	GRAPH diff:newModel {\n");
+		// Changed order for potential faster culling.
+		pQBuilder.append("		?newSub rdf:type <" + objectType + "> .\n");
+		pQBuilder.append("		?newSub ?newPred ?newObj .\n");
+		pQBuilder.append("	} .\n");
+		pQBuilder.append("	GRAPH diff:subtractionModel {\n");
+		pQBuilder.append("		?s ?p ?o .\n");
+//		pQBuilder.append("		FILTER(str(?o2) = str(" + objectType + ")) .\n");
+		pQBuilder.append("	} .\n");
+//		pQBuilder.append("	FILTER( ((str(?s) = str(?newSub)) || (str(?o) = str(?newSub))) && (str(?o2) = str( \"" + objectType + "\"))) .\n");
+		// Changed order for potential faster culling.
+		pQBuilder.append("  FILTER( (str(?s) = str(?newSub)) || (str(?o) = str(?newSub)) ) .\n");
+//		pQBuilder.append("		FILTER(str(?o2) != str(" + objectType + ")) .\n");
+		pQBuilder.append("}");
+		
+		return pQBuilder.toString();
+	}
+	
+	/**
+	 * This version is called when bUsingSelectiveDiff is true but no types are specified.
+	 * @return The query string to be executed.
+	 */
+	public static String buildPreservationQuery()
+	{
+		// Preservation Query Builder
+		StringBuilder pQBuilder = new StringBuilder();
+		
+		pQBuilder.append("PREFIX diff: <http://vivoweb.org/harvester/model/diff#>\n");
+		pQBuilder.append("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n");
+		pQBuilder.append("CONSTRUCT {\n");
+		pQBuilder.append("	?s ?p ?o .\n");
+		pQBuilder.append("}\n");
+		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#newModel>\n");
+		pQBuilder.append("FROM NAMED <http://vivoweb.org/harvester/model/diff#subtractionModel>\n");
+		pQBuilder.append("WHERE {\n");
+		pQBuilder.append("	GRAPH diff:newModel {\n");
+		pQBuilder.append("		?newSub ?newPred ?newObj .\n");
+		pQBuilder.append("	} .\n");
+		pQBuilder.append("	GRAPH diff:subtractionModel {\n");
+		pQBuilder.append("		?s ?p ?o .\n");
+		pQBuilder.append("	} .\n");
+		pQBuilder.append("  FILTER((str(?s) = str(?newSub)) || (str(?o) = str(?newSub))) .\n");
+		pQBuilder.append("}");
+		
+		return pQBuilder.toString();
+	
+	}
+	
+	/**
+	 * Traces the contents of an entire model for testing/logging.
+	 * @param traceLabel Preceding label.
+	 * @param model The model to trace.
+	 * @throws IOException Jena query.
+	 */
+	private static void traceModel(String traceLabel, JenaConnect model) throws IOException
+	{
+		log.trace(traceLabel);
+		
+		ResultSet traceSet = model.executeSelectQuery("SELECT ?s ?p ?o WHERE { ?s ?p ?o .}");
+		for(QuerySolution soln : IterableAdaptor.adapt(traceSet)){
+			log.trace(soln.toString());
 		}
 	}
 	
@@ -285,12 +493,32 @@ public class Diff {
 	 * @throws IOException error accessing file
 	 */
 	public void execute() throws IOException {
-		diff(this.minuendJC, this.subtrahendJC, this.output, this.dumpFile, this.dumpLanguage, this.dumpNTriple, this.dumpN3);
+		if(this.bUsingSelectiveDiff)
+		{
+			selectiveDiff();
+		}
+		else
+			diff(this.minuendJC, this.subtrahendJC, this.outputJC, this.dumpFile, this.dumpLanguage, this.dumpNTriple, this.dumpN3);
+	}
+	
+	/**
+	 * @throws IOException JenaConnect
+	 */
+//	private void unionModels(JenaConnect modelA, JenaConnect modelB, JenaConnect unionModel,
+//									String labelA, String labelB) throws IOException
+	private void unionModels() throws IOException
+	{
+		this.tempModel = new MemJenaConnect("urn:x-arq:UnionGraph");
+		
+		JenaConnect subtractionClone = this.tempModel.neighborConnectClone("http://vivoweb.org/harvester/model/diff#subtractionModel");
+		subtractionClone.loadRdfFromJC(this.diffModel);
+		JenaConnect newModelClone = this.tempModel.neighborConnectClone("http://vivoweb.org/harvester/model/diff#newModel");
+		newModelClone.loadRdfFromJC(this.subtrahendJC);
 	}
 	
 	/**
 	 * Main Method
-	 * @param args commandline arguments
+	 * @param args command-line arguments
 	 */
 	public static void main(String... args) {
 		Exception error = null;

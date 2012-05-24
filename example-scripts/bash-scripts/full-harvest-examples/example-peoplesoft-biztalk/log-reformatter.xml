@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: input-files  
+
+		Key/Value pairs of model type (e.g. ADD/SUB) and input N-Triple file path.
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: output-dest 
+
+		Destination root directory to write translated logs to. 
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+	Param: target-harvest
+
+		The name of the harvest we are processing.
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+
+<!-- Examples
+  <Param name="input-files">ADD=vivo-ntriple-additions.xml</Param>
+  <Param name="input-files">SUB=vivo-ntriple-subtractions.xml</Param>
+  <Param name="output-dest">all_harvest_logs/peoplesoft-biztalk/</Param>
+  <Param name="target-harvest">peoplesoft-biztalk</Param>
+-->
+
+</Task>

@@ -10,7 +10,7 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 
 /**
- * @author kuppuraj
+ * @author kuppuraj, Mayank Saini
  *
  */
 public class XMLGrep {
@@ -26,11 +26,17 @@ public class XMLGrep {
 	/**
 	 * Input dest directory
 	 */
-	private String dest;
+	private String dest = "";
+	
+	/**
+	 * Input alternate destination for items that do not match the expression
+	 */
+	private String altDest = "";
+	
 	/**
 	 * xpath expression to filter files
 	 */
-	private String exp;
+	private String expression;
 	
 	/**
 	 * Constructor
@@ -38,10 +44,33 @@ public class XMLGrep {
 	 * @param dest directory to move files from
 	 * @param xpath expression to filter
 	 */
-	public XMLGrep(String src, String dest, String exp) {
+	public XMLGrep(String src, String dest, String altDest, String value, String name) {
 		this.src = src;
 		this.dest = dest;
-		this.exp = exp;
+		
+		if (altDest != null) {
+			this.altDest = altDest;
+		}
+		
+		if(value == null) 
+		{
+			this.expression ="//"+name;
+			
+		}
+		else 
+		{
+			if(name == null)
+			{
+				this.expression = "//*[. ='"+ value + "']";
+			} 
+			else 
+			{
+				this.expression = "//" + name + "[. = '" + value + "']";
+			}
+			
+		}
+		
+		
 	}
 	
 	/**
@@ -59,71 +88,92 @@ public class XMLGrep {
 	 * @param argList arguments
 	 */
 	private XMLGrep(ArgList argList) {
-		this(argList.get("s"), argList.get("d"),argList.get("e"));
+		this(argList.get("s"), argList.get("d"), argList.get("a"), argList.get("v"), argList.get("n"));
+	}
+	
+	/**
+	 * 
+	 * @param myFile
+	 * @param expression
+	 * @return boolean
+	 * @throws IOException
+	 */
+	public static boolean findInFile(File myFile, String expression) throws IOException {
+		
+		String result = XPathTool.getXPathResult(myFile.getPath(), expression);
+		
+		if(result != null && !result.isEmpty()) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
 	 * @param src
 	 * @param dest
 	 * @param xpathExpression
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("javadoc")
-	public static void grepXML(String src, String dest, String xpathExpression){
-		try {
-			if(FileAide.isFolder(src)){
-				File dir = new File(src);
-				File[] files = dir.listFiles();
-				
-				for(File file : files){
-					//String result = XPathTool.getXPathResult(file.getPath(),"//action[. = 'rename']");
-					String result = XPathTool.getXPathResult(file.getPath(),xpathExpression);
-					if(result!=null && !result.isEmpty()){
-						
-						if(!FileAide.exists(dest)){
-							FileAide.createFolder(dest);
-						}
-						if(!dest.endsWith("/")) {
-							dest.concat("/").concat(file.getName());
-						}
-						else {
-							dest.concat(file.getName());
-						}
-						FileAide.createFile(dest);
-						FileAide.setTextContent(dest, FileAide.getTextContent(file.getPath()));
-						FileAide.delete(file.getPath());
-					}
-				}
-				
-			} else if(FileAide.isFile(src)){
-				String result = XPathTool.getXPathResult(src,xpathExpression);
-				if(result!=null && !result.isEmpty()){
-					if(!FileAide.exists(dest)){
-						FileAide.createFile(dest);
-					}
-					FileAide.setTextContent(dest, FileAide.getTextContent(src));
-					FileAide.delete(src);
-				}
-			}
-		} catch(IOException e) {
-			log.error(e.getMessage());
+	public static void moveFile(File src, String dest) throws IOException {
+		String newpath = "";
+		
+		if(! FileAide.exists(dest)) {
+			FileAide.createFolder(dest);
 		}
+		
+		if(! dest.endsWith("/")) {
+			newpath = dest.concat("/").concat(src.getName());
+		}
+		else {
+			newpath = dest.concat(src.getName());
+		}
+		
+		FileAide.createFile(newpath);
+		FileAide.setTextContent(newpath, FileAide.getTextContent(src.getPath()));
+		FileAide.delete(src.getPath());
+
 	}
-	
-	/*public static void main(String args[]){
-		try {
-			moveMatchingXML("/home/kuppuraj/src/","/home/kuppuraj/dest/","//author[. = 'Kurt Cagle']");
-			//System.out.println(XPathTool.getXPathResult("/home/kuppuraj/test.xml","//author[. = 'Kurt Cagle']"));
-		} catch(Exception e) {
-			log.error(e.getMessage());
-		}
-	}*/
 	
 	/**
 	 * Runs the XMLGrep
 	 * @throws IOException error executing
 	 */
 	public void execute() {
-		grepXML(this.src, this.dest, this.exp);
+		//grepXML(this.src, this.dest, this.exp);
+		String newpath = "";
+		try {
+			if(FileAide.isFolder(this.src)) {
+				File dir = new File(this.src);
+				File[] files = dir.listFiles();
+				for(File file : files) {
+					// If the current file is not a directory skip it
+					if (! FileAide.isFolder(file.toString())) {
+						if (findInFile(file,this.expression)) {
+							//If the current file matches the xpath expression then move it
+							moveFile(file,this.dest);
+						} else {
+							//If the current file does not match the xpath expression then
+							//check to see if there is an alternate destination defined
+							if (this.altDest != null) {
+								//Alternate destination defined so move file to alternate destination
+								moveFile(file,this.altDest);
+							}
+						}
+					}
+				}
+			} else if(FileAide.isFile(this.src)) {
+				File file = new File(this.src);
+				if(findInFile(file,this.expression)) {
+					moveFile(file,this.dest);
+				}
+			}
+		} catch(IOException e) {
+			System.out.println(e);
+			log.error(e.getMessage());
+		}
+
 	}
 	
 	/**
@@ -132,12 +182,12 @@ public class XMLGrep {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("XMLGrep");
-		// src
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("src-dir").withParameter(true, "SRC_DIRECTORY").setDescription("SRC directory to read files from").setRequired(true));
-		// dest
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dest-dir").withParameter(true, "DEST_DIRECTORY").setDescription("DEST directory to write files to").setRequired(true));
-		// exp
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("xpath-exp").withParameter(true, "XPATH_EXPRESSION").setDescription("XPATH expression to filter files").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("alt-dest").withParameter(true, "ALT_DESTINATION_DIRECTORY").setDescription("Alternate destination for files that failed to match expression").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("tag-name").withParameter(true, "TAG_NAME").setDescription("TAG Name to Search for").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(false));
+		
 		return parser;
 	}
 	
@@ -160,7 +210,7 @@ public class XMLGrep {
 			new XMLGrep(args).execute();
 		} catch(IllegalArgumentException e) {
 			log.error(e.getMessage());
-			log.debug("Stacktrace:",e);
+			log.debug("Stacktrace:", e);
 			System.out.println(getParser().getUsage());
 			error = e;
 		} catch(UsageException e) {
@@ -169,7 +219,7 @@ public class XMLGrep {
 			error = e;
 		} catch(Exception e) {
 			log.error(e.getMessage());
-			log.debug("Stacktrace:",e);
+			log.debug("Stacktrace:", e);
 			error = e;
 		} finally {
 			log.info(getParser().getAppName() + ": End");

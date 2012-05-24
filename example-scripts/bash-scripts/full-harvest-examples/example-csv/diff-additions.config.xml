@@ -61,4 +61,26 @@
 -->
 	
 <!--     <Param name="output">diff-output.model.xml</Param> -->
+
+<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%  <Param name="selective-diff"> Tells Diff to use the selectiveDiff method in execute. If any "update-types"	      %>
+<%  parameters (below) are set, this flag is implicitly set. This flag exists mostly for the case where one wishes    %>
+<%  to use selectiveDiff without specifying update types.                       				      %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+	
+<!--     <Param name="selective-diff">T</Param> -->
+
+<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%  <Param name="update-types"> Each update-types entry specifies a type allowed to be updated in the process of      %>
+<%     a diff, meant primarily for creating subtraction models. Untested for addition models!		      	      %>
+<%														      %>
+<%     Specifying any type at all will cause Diff to use the selectiveDiff() method, leading to unspecified types     %>
+<%     being preserved.                                  							      %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+    
+	<!-- <Param name="update-types">http://xmlns.com/foaf/0.1/Person</Param> -->
 </Task>
