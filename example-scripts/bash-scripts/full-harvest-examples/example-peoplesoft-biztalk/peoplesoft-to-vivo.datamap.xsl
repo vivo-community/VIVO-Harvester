@@ -42,7 +42,7 @@
 		<xsl:for-each select="qryCreatePeopleImportSpreadsheet">		
 			<xsl:variable name="ufid" select="PRSN_UFID"/>
 			<xsl:variable name="deptID" select="normalize-space(PRSN_HOME_DEPT_ID)"/>
-			<xsl:result-document method="xml" indent="yes" href="/home/vsposato/web_service/translated-records/{$ufid}.xml">
+			<xsl:result-document method="xml" indent="yes" href="data/translated-records/{$ufid}.xml">
 				<rdf:Description rdf:about="{$baseURI}person/{$ufid}">
 					<ufVivo:ufid><xsl:value-of select="$ufid"/></ufVivo:ufid>
 					<ufVivo:harvestedBy>PeopleSoft-BizTalk-Harvester</ufVivo:harvestedBy>

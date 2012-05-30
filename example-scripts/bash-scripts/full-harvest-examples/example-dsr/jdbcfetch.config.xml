@@ -28,9 +28,9 @@
 <%                                                                                                                    %>
 -->
 	<Param name="driver">net.sourceforge.jtds.jdbc.Driver</Param>
-	<Param name="connection">jdbc:jtds:sqlserver://12.123.12.12:8080/DATA</Param>
-	<Param name="username">USERNAME</Param>
-	<Param name="password">PASSWORD</Param>
+	<Param name="connection">jdbc:jtds:sqlserver://10.241.46.60:1433/DSR</Param>
+	<Param name="username">*********</Param>
+	<Param name="password">*********</Param>
 	
 	<!--  OUTPUT -->
 <!-- 

@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
+HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
 export HARVEST_NAME=example-dsr
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -24,7 +24,15 @@ export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
-# Exit on first error
+export OPENCONNECT_LOG=logs/openconnect.log
+
+############### OPENCONNECT CONNECTION SCRIPT ###############
+rm -f $OPENCONNECT_LOG
+date >>$OPENCONNECT_LOG
+echo -e "\n" >>$OPENCONNECT_LOG
+sudo bash /etc/init.d/openconnect start >>$OPENCONNECT_LOG
+############### OPENCONNECT CONNECTION SCRIPT ###############
+
 # The -e flag prevents the script from continuing even though a tool fails.
 #	Continuing after a tool failure is undesirable since the harvested
 #	data could be rendered corrupted and incompatible.
@@ -44,26 +52,17 @@ touch $HARVEST_NAME.$DATE.log
 ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
 
+echo 'Running Pre-Ingest Analytics. Writing to: analytics.txt'
+bash analytics.sh
+
 #clear old data
 # For a fresh harvest, the removal of the previous information maintains data integrity.
 #	If you are continuing a partial run or wish to use the old and already retrieved
-#	data, you will want to comment out this line since it could prevent you from having
-# 	the required harvest data.  
-#rm -rf data
-#if [ -d data]; then
-#mv -f data data.$DATE
-#fi
-
-# Check to see if data/scored-data exists, and if so delete it
-# This will prevent match errors when running the harvest multiple times.
-if [ -d data/scored-data ]; then
-  rm -rf data/scored-data
-fi
-
-# Check to see if harvested data exists, and if so delete it
-# This will prevent an accumulation of old data
-if [ -d data/harvested-data ]; then
-  rm -rf data/harvested-data
+#	data, you will want to comment out these lines since it could prevent you from having
+# 	the required harvest data.
+rm -rf data
+if [ ! -d data]; then
+  mkdir data
 fi
 
 # Execute Fetch
@@ -236,5 +235,14 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+
+echo 'Running Post-Ingest Analytics. Writing to: post-ingest-analytics.txt'
+bash post-ingest-analytics.sh
+
+############### OPENCONNECT CONNECTION SCRIPT ###############
+date >>$OPENCONNECT_LOG
+echo -e "\n" >>$OPENCONNECT_LOG
+sudo bash /etc/init.d/openconnect stop >>$OPENCONNECT_LOG
+############### OPENCONNECT CONNECTION SCRIPT ###############
 
 echo 'Harvest completed successfully'

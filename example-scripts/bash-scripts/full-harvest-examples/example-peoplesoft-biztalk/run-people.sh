@@ -14,7 +14,7 @@
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
 VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
-export HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
+export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
 export HARVEST_NAME=example-peoplesoft-biztalk
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -27,7 +27,8 @@ export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
 # Set the email address of the person receiving the email
-export EMAIL_RECIPIENT="phuongvo.uf@gmail.com"
+export EMAIL_RECIPIENT="*****@***.edu"
+export EMAIL_RECIPIENT2="*****@***.edu"
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
@@ -35,6 +36,12 @@ export EMAIL_RECIPIENT="phuongvo.uf@gmail.com"
 #       to request this file. The passwords and usernames are filtered out of this file
 #       to prevent these logs from containing sensitive information.
 echo "Full Logging in peoplesoft-biztalk-harvest-$DATE.log"
+
+# Exit on first error
+# The -e flag prevents the script from continuing even though a tool fails.
+#	Continuing after a tool failure is undesirable since the harvested
+#	data could be rendered corrupted and incompatible.
+set -e
 
 # Check to see if the logs directory exists, and if it doesn't create it
 if [ ! -d logs ]; then
@@ -103,17 +110,21 @@ fi
 # Execute XMLGrep to remove any person that is marked for renaming by ES - this will prevent issues later
 # Also, this will handle fetching the XML files from the WEBSERVICE directory, so that we do not need to create
 # a separate fetch process
+echo "XMLGREP Rename"
 harvester-xmlgrep -X xmlgrep-rename.config.xml
 
 # Execute the translation to convert all input records into RDF
+echo "Translate"
 harvester-xsltranslator -X xsltranslator.config.xml
 
 # Execute XMLGrep to remove non-targeted people from the group of raw-records
-harvester-xmlgrep -X xmlgrep-ignore-students.config.xml
+echo "XMLGrep Ignore"
+#harvester-xmlgrep -X xmlgrep-ignore-students.config.xml
 
 # Execute Email script for sending email with all renamed records to CTSI@vivo.ufl.edu
 # This is so the complicated one off records can be handled by the Ontologists, and not
 # handled programmatically
+echo "Rename Files Email"
 bash emailRenameFiles.sh
 
 # Run pre-harvest analytics
@@ -128,16 +139,33 @@ bash analytics.sh
 # -s refers to the source translated records file, which was just produced by the translator step
 # -o refers to the destination model for harvested data
 # -d means that this call will also produce a text dump file in the specified location 
+echo "Transfer"
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 # Execute Score for People
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 #       is created with the values / scores of the data comparisons. 
+echo "Score People"
 harvester-score -X score-people.config.xml
+
+# Find matches using scores and rename nodes to matching uri
+# Using the data model created by the score phase, the match process changes the harvested uris for
+#       comparison values above the chosen threshold within the xml configuration file.
+# This config differs from the previous match config, in that it removes types and literals from the 
+#       resources in the incoming model for those that are considered a match.
+echo "Match People"
+harvester-match -X match-people-departments.config.xml 
+
+# Check to for previous score model and remove it.
+if [ -f data/score-data ]; then
+  echo "Remove Score Data"
+  rm -rf data/score-data
+fi
 
 # Execute Score for Departments
 # In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
 #       is created with the values / scores of the data comparisons. 
+echo "Score Departments"
 harvester-score -X score-departments.config.xml
 
 # Find matches using scores and rename nodes to matching uri
@@ -145,48 +173,64 @@ harvester-score -X score-departments.config.xml
 #       comparison values above the chosen threshold within the xml configuration file.
 # This config differs from the previous match config, in that it removes types and literals from the 
 #       resources in the incoming model for those that are considered a match.
+echo "Match Departments"
 harvester-match -X match-people-departments.config.xml 
+
+# Check to for previous score model and remove it.
+if [ -f data/score-data ]; then
+  echo "Remove Score Data"
+  rm -rf data/score-data
+fi
 
 # Image Preservation
 # Using the input model, vivo model, and a private model we will determine if a person has been set to
 # protected that was previously not protected. If this person has a photo, we are going to save said photo
 # information in the private model. If a person is set to not protected, but were previously protected
 # then we will restore their photo from the private model
+echo "Image Preservation"
 harvester-imagepresduringprivacy -X image-pres.config.xml
 
 # Change Namespace - People
 # Once all nodes have been scored and matched, any 'new' nodes will need to have a node number in the 
 #       target namespace created
+echo "Change People Namespace"
 harvester-changenamespace -X changenamespace-people.config.xml
 
 # Change Namespace - Departments
 # Once all nodes have been scored and matched, any 'new' nodes will need to have a node number in the 
 #       target namespace created
+echo "Change Department Namespace"
 harvester-changenamespace -X changenamespace-departments.config.xml
 
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the entries that exist in
 #       the previous harvest but not in the current harvest need to be identified for removal.
+echo "Diff Subtractions"
 harvester-diff -X diff-subtractions.config.xml
 
 # Find Additions
 # When making the previous harvest model agree with the current harvest, the entries that exist in
 #       the current harvest but not in the previous harvest need to be identified for addition.
+echo "Diff Additions"
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
+echo "Apply Subtractions to Previous"
 harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
+echo "Apply Additions to Previous"
 harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #       should agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
+echo "Apply Subtractions to VIVO"
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
+echo "Apply Additions to VIVO"
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
-echo "Pre Course Ingest Analytics" &>> logfile.txt
+echo "Pre People Ingest Analytics" &>> logfile.txt
 echo "========================================================================="
 cat analytics.txt &>> logfile.txt
 echo -e "\n" &>>logfile.txt
@@ -200,5 +244,6 @@ echo -e "\n" &>> logfile.txt
 
 # Send analytics email out to group
 mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT" < logfile.txt
+mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT2" < logfile.txt
 
 echo 'Harvest completed successfully'
