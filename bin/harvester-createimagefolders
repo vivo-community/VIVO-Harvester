@@ -26,4 +26,4 @@ HARVESTER_DIAGNOSTIC_OPTS=""
 OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM $HARVESTER_JAVA_OPTS $HARVESTER_DIAGNOSTIC_OPTS -Dharvester-task=$HARVEST_NAME.$DATE"
 
 #pass incoming params to java program
-java $OPTS -Dprocess-task=Transfer org.vivoweb.harvester.transfer.Transfer "$@"
+java $OPTS -Dprocess-task=RecordHandler org.vivoweb.harvester.util.CreateImageFolders "$@"
