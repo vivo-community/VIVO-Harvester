@@ -65,7 +65,7 @@
 						<rdfs:label><xsl:value-of select="DisplayName"/></rdfs:label>
 					</xsl:if>
 					<xsl:if test="normalize-space( PRSN_GLID )">
-						<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="PRSN_GLID" /></ufVivo:gatorlink>
+						<ufVivo:gatorlink><xsl:value-of select="PRSN_GLID" /></ufVivo:gatorlink>
 					</xsl:if>
 					<xsl:if test="normalize-space( PRSN_WORKING_TITLE )">
 						<core:preferredTitle><xsl:value-of select="PRSN_WORKING_TITLE" /></core:preferredTitle>
@@ -236,7 +236,7 @@
 					<rdfs:label><xsl:value-of select="NAME[@type=33]"/></rdfs:label>
 				</xsl:if>
 				<xsl:if test="normalize-space( GLID )">
-					<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="GLID" /></ufVivo:gatorlink>
+					<ufVivo:gatorlink><xsl:value-of select="GLID" /></ufVivo:gatorlink>
 				</xsl:if>
 				<xsl:if test="normalize-space( WORKINGTITLE )">
 					<core:preferredTitle><xsl:value-of select="WORKINGTITLE" /></core:preferredTitle>
@@ -393,7 +393,7 @@
 					<rdfs:label><xsl:value-of select="DisplayName"/></rdfs:label>
 				</xsl:if>
 				<xsl:if test="normalize-space( PRSN_GLID )">
-					<ufVivo:gatorlink rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="PRSN_GLID" /></ufVivo:gatorlink>
+					<ufVivo:gatorlink><xsl:value-of select="PRSN_GLID" /></ufVivo:gatorlink>
 				</xsl:if>
 				<xsl:if test="normalize-space( PRSN_WORKING_TITLE )">
 					<core:preferredTitle><xsl:value-of select="PRSN_WORKING_TITLE" /></core:preferredTitle>
