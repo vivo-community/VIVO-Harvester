@@ -93,7 +93,7 @@
 							<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 							<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
 							
-							<xsl:if test='$deptID'>
+							<xsl:if test="$deptID!='(null)'">
 								<!-- Relation to department node start -->
 								<ufVivo:homeDept>
 									<!-- Department stub node start -->
@@ -264,7 +264,7 @@
 						<core:primaryPhoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
 						
-						<xsl:if test='$deptID'>
+						<xsl:if test="$deptID!='(null)'">
 							<!-- Relation to department node start -->
 							<ufVivo:homeDept>
 								<!-- Department stub node start -->
@@ -421,7 +421,7 @@
 						<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
 						
-						<xsl:if test='$deptID'>
+						<xsl:if test="$deptID!='(null)'">
 							<!-- Relation to department node start -->
 							<ufVivo:homeDept>
 								<!-- Department stub node start -->
