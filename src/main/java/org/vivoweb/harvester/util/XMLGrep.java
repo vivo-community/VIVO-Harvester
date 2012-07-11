@@ -154,12 +154,18 @@ public class XMLGrep {
 							//If the current file matches the xpath expression then move it
 							moveFile(file,this.dest);
 						} else {
+							//Check for case where no altDest provided, or altDest = srcDest
+							if (this.src.equals(this.altDest) || this.altDest.equals("") )
+							{
+								// Ignore the file, as we wish to leave it in place.
+							}
 							//If the current file does not match the xpath expression then
 							//check to see if there is an alternate destination defined
-							if (this.altDest != null) {
+							else if (this.altDest != null) {
 								//Alternate destination defined so move file to alternate destination
 								moveFile(file,this.altDest);
 							}
+							
 						}
 					}
 				}
