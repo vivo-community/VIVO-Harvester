@@ -35,11 +35,10 @@
 				</xsl:analyze-string>
 			</xsl:if>
 		</xsl:variable>
-<<<<<<< HEAD
 
 		<xsl:variable name="summary-var" select="summary" />
 		<xsl:variable name="description-var" select="description" />
-		<xsl:variable name="institution" select="instituion" />
+		<xsl:variable name="institution" select="institution" />
 		<xsl:variable name="email" select="contact-email" />
 		<xsl:variable name="advantage-var" select="advantage" />
 						
@@ -80,19 +79,13 @@
 				</xsl:when>				
 				<xsl:otherwise>					
 					<xsl:call-template name ="extractInventors">
-						<xsl:with-param name ="org" select="instituion"/>
+						<xsl:with-param name ="org" select="institution"/>
 						<xsl:with-param name ="summary" select="summary"/>
 						<xsl:with-param name ="description" select="description"/>
 					</xsl:call-template>					
 				</xsl:otherwise>
 			</xsl:choose>	
 		</xsl:variable>	
-=======
-		
-		<xsl:variable name="summary-var" select="summary" />
-		<xsl:variable name="institution" select="instituion" />
-		<xsl:variable name="email" select="contact-email" />
->>>>>>> parent of fce9b15... Merge branch 'develop' of git@github.com:vivo-project/VIVO-Harvester.git
 		
 		<!-- Innovations -->
 		<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}">
@@ -150,10 +143,9 @@
 			<!-- Link organization, case manager, and inventor assigned 
 				to this project -->
 			<xsl:if test="normalize-space(contact-name)">
-<<<<<<< HEAD
 				<ctsaip:caseManager rdf:resource="{$baseURI}casemngr/{$email}" />
 			</xsl:if>
-			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$institution}" />
+			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{replace($institution,' ','')}" />
 			<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>				
 		</rdf:Description>
 		
@@ -161,7 +153,7 @@
 		<xsl:if test="normalize-space( institution-link )">
 			<rdf:Description rdf:about="{$baseURI}tech/{$ctsai_id}/inslink">
 				<rdf:type rdf:resource="http://vivoweb.org/ontology/core#URLLink" />
-				<core:linkAnchorText><xsl:value-of select="instituion" /> Page</core:linkAnchorText>
+				<core:linkAnchorText><xsl:value-of select="institution" /> Page</core:linkAnchorText>
 				<core:linkURI><xsl:value-of select="institution-link" /></core:linkURI>
 				<core:rank>1</core:rank>
 				<core:webpageOf rdf:resource="{$baseURI}tech/{$ctsai_id}"/>
@@ -169,9 +161,9 @@
 		</xsl:if>
 
 		<!-- The Institution -->
-		<rdf:Description rdf:about="{$baseURI}institution/{$institution}">
+		<rdf:Description rdf:about="{$baseURI}institution/{replace($institution,' ','')}">
 			<rdfs:label>
-				<xsl:value-of select="instituion" />
+				<xsl:value-of select="institution" />
 			</rdfs:label>
 			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 			<ctsaip:originatingInstitutionFor
@@ -221,28 +213,6 @@
 				<core:linkedInformationResourceInAuthorship
 					rdf:resource="{$baseURI}tech/{$ctsai_id}" />
 				<core:authorInAuthorship rdf:resource="{$baseURI}authorship/{$ctsai_id}"/>
-=======
-				<ctsaip:caseManager rdf:resource="{$baseURI}casemngr/{$ctsai_id}" />
-			</xsl:if>
-			<ctsaip:originatingInstitution rdf:resource="{$baseURI}institution/{$ctsai_id}" />
-		</rdf:Description>
-		
-		<!-- The Institution which we will smush together later in the process based on Label and the type Organization -->
-		<rdf:Description rdf:about="{$baseURI}institution/{$institution}">
-			<rdfs:label><xsl:value-of select="instituion" /></rdfs:label>
-			<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
-			<ctsaip:originatingInstitutionFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
-		</rdf:Description>
-		
-		
-		<!-- Case Manager (also smushed later in the process) -->
-		<xsl:if test="normalize-space(contact-name)">
-			<rdf:Description rdf:about="{$baseURI}casemngr/{$email}" >
-				<rdfs:label><xsl:value-of select="contact-name" /></rdfs:label>	
-				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />				
-				<core:email><xsl:value-of select="contact-email" /></core:email>
-				<ctsaip:caseManagerFor rdf:resource="{$baseURI}tech/{$ctsai_id}" />
->>>>>>> parent of fce9b15... Merge branch 'develop' of git@github.com:vivo-project/VIVO-Harvester.git
 			</rdf:Description>
 		</xsl:if>
 	</xsl:template>

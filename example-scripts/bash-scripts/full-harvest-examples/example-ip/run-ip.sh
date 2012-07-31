@@ -51,7 +51,6 @@ cd ..
 # 	the required harvest data.  
 rm -rf data
 
-
 # Import XML
 # For now we are working directly with XML files instead of working with a data feed.  Eventually
 # a process will replace the read in file from the XSLT translator with a downloaded file
@@ -76,42 +75,12 @@ harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml 
 harvester-smush -X smush-org.config.xml
 harvester-smush -X smush-person.config.xml
 
-# Clean up the data going into VIVO using Qualify to fix some of the content
-#
-#
-#harvester-qualify -X qualify.conf.xml
-
-# Transfer Data Out
-#
-#
-harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
-
-# Execute Score
-# In the scoring phase the data in the harvest is compared to the data within Vivo and a new model
-# 	is created with the values / scores of the data comparsions. 
-
-# Execute Score for People
-#harvester-score -X score-people.config.xml
-
-# Execute Score for Departments
-#harvester-score -X score-departments.config.xml
-
-# Find matches using scores and rename nodes to matching uri
-# Using the data model created by the score phase, the match process changes the harvested uris for
-# 	comparsion values above the chosen threshold within the xml configuration file.
-# Execute Match for People and Departments
-#harvester-match -X match-people-departments.config.xml
-
-#Truncate Score Data model
-# Since we are finished with the scoring data for people and departments,
-#   we need to clear out all that old data before we add more
-#harvester-jenaconnect -j score-data.model.xml -t
-
+# Transfer Data Out - used for debugging issues with VIVO
+# harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-records.rdf.xml
 
 # Execute ChangeNamespace to get unmatched  into current namespace
 # This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
-# 	If there is an issue with uris being in another namespace, this is the phase
-#	which should give some light to the problem.
+# If there is an issue with uris being in another namespace, this is the phase which should give some light to the problem.
 # Execute ChangeNamespace for People
 harvester-changenamespace -X changenamespace-people.config.xml
 
@@ -160,19 +129,11 @@ harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 #Output some counts
 ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
 PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
-<<<<<<< HEAD
 INV=`cat data/vivo-additions.rdf.xml | grep 'http://vivoweb.org/ontology/core#Authorship' | wc -l`
-=======
->>>>>>> parent of fce9b15... Merge branch 'develop' of git@github.com:vivo-project/VIVO-Harvester.git
 TECH=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Technology' | wc -l`
 MAT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Material' | wc -l`
 INNOV=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Innovation' | wc -l`
 RT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/ResearchTool' | wc -l`
-<<<<<<< HEAD
 echo "Imported $ORGS organizations, $PEOPLE people, $INV inventors, $TECH technologies, $MAT materials, $INNOV innovations, $RT research tools"
-
-=======
-echo "Imported $ORGS organizations, $PEOPLE people, $TECH technologies, $MAT materials, $INNOV innovations, $RT research tools"
->>>>>>> parent of fce9b15... Merge branch 'develop' of git@github.com:vivo-project/VIVO-Harvester.git
 
 echo 'Harvest completed successfully'
