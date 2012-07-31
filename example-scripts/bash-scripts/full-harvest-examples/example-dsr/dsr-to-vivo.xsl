@@ -201,7 +201,7 @@
                             <!--<rdfs:label><xsl:value-of select="$this/db-vwProjectTeam:Investigator"/></rdfs:label> -->
                             <!--<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" /> -->
                             <ufVivo:ufid ><xsl:value-of select="$this/db-vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
-                            <!--<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>-->
+                            <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
                             <core:hasPrincipalInvestigatorRole rdf:resource="{$baseURI}piRole/inGrant{$grantid}For{$this/db-vwProjectTeam:InvestigatorID}"/>
                         </rdf:Description>
                     </core:principalInvestigatorRoleOf>
@@ -231,7 +231,7 @@
                             <!--<rdfs:label><xsl:value-of select="$this/db-vwProjectTeam:Investigator"/></rdfs:label>-->
                             <!--<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />-->
                             <ufVivo:ufid ><xsl:value-of select="$this/db-vwProjectTeam:InvestigatorID"/></ufVivo:ufid>
-                            <!--<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>-->
+                            <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
                             <core:hasCo-PrincipalInvestigatorRole rdf:resource="{$baseURI}coPiRole/inGrant{$grantid}For{$this/db-vwProjectTeam:InvestigatorID}"/>
                         </rdf:Description>
                     </core:co-PrincipalInvestigatorRoleOf>

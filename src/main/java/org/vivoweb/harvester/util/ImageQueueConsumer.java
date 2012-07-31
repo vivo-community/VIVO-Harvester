@@ -1,5 +1,6 @@
 package org.vivoweb.harvester.util;
 
+// TODO: Resolve warnings and inconsistent static/member declarations.
 /**
 @author Mayank Saini*/
 
@@ -121,7 +122,7 @@ public class ImageQueueConsumer {
 		if(maxnum >	browsecount)
 		{
 			log.info(" Maxfetch count specified is greater then the ActiveMq queue current capacity .");
-			log.info("Setting Maxfetch to "+browsecount);;
+			log.info("Setting Maxfetch to "+browsecount);
 			maxnum=browsecount;
 			
 		}
@@ -147,6 +148,7 @@ public class ImageQueueConsumer {
 		
 		String jmsType = message.getStringProperty("type");
 		TextMessage text = (TextMessage)message;
+		//TODO: Always false, fix! Unreachable code.
 		if(text == null)
 			log.info("No Text Message Found");
 		
@@ -183,7 +185,7 @@ public class ImageQueueConsumer {
 			String id = getCharacterDataFromElement(line3);
 			log.info("Uploading Image Uf ID: " + id + "to Dir :" + imagedir);
 			
-			WriteImageFromBase64(getCharacterDataFromElement(line2), imagedir + id);
+			WriteImageFromBase64(Image_base_64, imagedir + id);
 			log.info("Image Fetched for UFID:		" + id + "	Uploded Date:		" + date);
 			
 		}
@@ -194,6 +196,7 @@ public class ImageQueueConsumer {
 	}
 	
 	/**
+	 * TODO: Fix this documentation to match actual method.
 	 * This function get the XML tag values  for example : for Tag "DateUpdated" it will give you the updatedate, for Image Tag it will give 
 	 * you the encoded Image String
 	 * @param base64String text encoded Image ,path Path to store the Image,This process repeats for every received message
@@ -216,11 +219,12 @@ public class ImageQueueConsumer {
 	 */
 	
 	public static void WriteImageFromBase64(String base64String, String path) throws IOException {
-		
+		//TODO: Resolve access issues and libraries.
 		BASE64Decoder decoder = new BASE64Decoder();
 		byte[] buf = decoder.decodeBuffer(base64String);
 		bytearr = new ByteArrayDataSource(buf, "image/jpeg");
 		InputStream in = bytearr.getInputStream();
+		// TODO: Member hiding and unused variables.
 		File file = new File(path);
 		byte buf1[] = new byte[1024];
 		int len;
@@ -345,8 +349,8 @@ public class ImageQueueConsumer {
 	public ImageQueueConsumer(String pathToImageDir, String maxFetched, String onlyBrowse) {
 		maxnum = Integer.parseInt(maxFetched.trim());
 		this.onlyBrowse = onlyBrowse;
-		this.propdir = pathToImageDir;
-		this.imagedir = pathToImageDir + "/images/";
+		propdir = pathToImageDir;
+		imagedir = pathToImageDir + "/images/";
 	}
 	
 	/**
@@ -380,6 +384,7 @@ public class ImageQueueConsumer {
 	
 	public static void browseQueue() {
 		try {
+			//TODO: Type the Enum
 			Enumeration e = queueBrowser.getEnumeration();
 			
 			int dotcount = 0;

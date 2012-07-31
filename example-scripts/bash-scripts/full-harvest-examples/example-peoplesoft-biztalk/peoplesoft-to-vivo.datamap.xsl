@@ -70,9 +70,19 @@
 					<xsl:if test="normalize-space( PRSN_WORKING_TITLE )">
 						<core:preferredTitle><xsl:value-of select="PRSN_WORKING_TITLE" /></core:preferredTitle>
 					</xsl:if>
+					
+					<!-- All Super-classes -->
 					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-					<ufVivo:Deceased><xsl:value-of select="PRSN_DECEASED" /></ufVivo:Deceased>
-		
+					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+					<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+					<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/UFEntity"/>
+					
+					<!-- <ufVivo:Deceased><xsl:value-of select="PRSN_DECEASED" /></ufVivo:Deceased> -->
+					<xsl:choose>
+						<xsl:when test="PRSN_DECEASED='Y'">
+							<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Deceased"/>					
+						</xsl:when>
+					</xsl:choose>
 					
 					<!-- Need to determine person's PROTECT status to make sure we don't display protected information -->
 					<xsl:choose>
@@ -83,7 +93,7 @@
 							<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 							<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
 							
-							<xsl:if test='$deptID'>
+							<xsl:if test="$deptID!='(null)'">
 								<!-- Relation to department node start -->
 								<ufVivo:homeDept>
 									<!-- Department stub node start -->
@@ -254,7 +264,7 @@
 						<core:primaryPhoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
 						
-						<xsl:if test='$deptID'>
+						<xsl:if test="$deptID!='(null)'">
 							<!-- Relation to department node start -->
 							<ufVivo:homeDept>
 								<!-- Department stub node start -->
@@ -411,7 +421,7 @@
 						<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
 						
-						<xsl:if test='$deptID'>
+						<xsl:if test="$deptID!='(null)'">
 							<!-- Relation to department node start -->
 							<ufVivo:homeDept>
 								<!-- Department stub node start -->

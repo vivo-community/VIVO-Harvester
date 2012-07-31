@@ -90,7 +90,7 @@ public class CreateImageFolders {
 			for(File f : this.folder.listFiles()) {
 				//if(new MimetypesFileTypeMap().getContentType(f).contains("image")) { //Uncomment this if you need to explicitly check for the mime type of the image 					
 					fileName = f.getName();							
-					if(this.ufidSet.contains(fileName.substring(0,8))) {							
+					if( (fileName.length() >= 8) && (this.ufidSet.contains( fileName.substring(0,8) ) ) ) {							
 						p1 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/fullImages/" + fileName + " " + this.pathToImageScriptDirectory + "/upload/fullImages/");
 						p2 = Runtime.getRuntime().exec("mv " + this.pathToImageScriptDirectory + "/thumbnails/"+"thumbnail" + fileName + " " + this.pathToImageScriptDirectory + "/upload/thumbnails/");						
 						p1.waitFor();
