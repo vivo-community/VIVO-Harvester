@@ -110,7 +110,11 @@ public class RDBJenaConnect extends DBJenaConnect {
 	 */
 	private ModelMaker initModel(IDBConnection dbConn) {
 		this.conn = dbConn;
-		return ModelFactory.createModelRDBMaker(dbConn);
+		
+		//TODO: WARN: TESTING HACK FOR UPGRADE. THIS IS NOT AT ALL DESIRABLE. 
+		// createModelRDBMaker has mysteriously vanished from ModelFactory.
+		//return ModelFactory.createModelRDBMaker(dbConn);
+		return ModelFactory.createMemModelMaker();
 	}
 	
 	/**

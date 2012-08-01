@@ -27,6 +27,7 @@ import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.TDBJenaConnect;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -35,10 +36,16 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.sparql.core.DatasetGraph;
+import com.hp.hpl.jena.sparql.util.NodeFactory;
+import com.hp.hpl.jena.tdb.TDB;
+import com.hp.hpl.jena.tdb.TDBFactory;
 
 /**
  * VIVO Score
@@ -396,6 +403,29 @@ public class Score {
 			log.trace("Empty Dataset");
 		}
 		return ds;
+		
+		//=======================================================
+		//TODO: WARN: CLEAN UP, these are hacky edits to a fundamental system to make the upgrade work.
+		// This code bypasses JenaConnect in bad ways and will need to be refactored, but is put here
+		// as a hotfix to see if further effort will be profitable in this direction. Aims to resolve memory
+		// issues which plague Score/ImagePres/Selective Diff.
+		
+//		// Prepare tempJena for loading of graphs. WARN: This invalidates the Mem/TDBJena defined in constructor!
+//		DatasetGraph tempGraph = TDBFactory.createDatasetGraph("/temp/tempModel/");
+//		Node vivoGNode = NodeFactory.createLiteralNode("http://vivoweb.org/harvester/model/scoring#vivoClone", null, null);
+//		Node inputGNode = NodeFactory.createLiteralNode("http://vivoweb.org/harvester/model/scoring#inputClone", null, null);
+//		tempGraph.addGraph(vivoGNode, this.vivoJena.getJenaModel().getGraph());
+//		tempGraph.addGraph(inputGNode, this.inputJena.getJenaModel().getGraph());
+//		TDB.getContext().set(TDB.symUnionDefaultGraph, true);
+//		Model tempModel = ModelFactory.createModelForGraph( tempGraph.getDefaultGraph() );
+//		//We're going to have to find a way to query graphs over models/datasets to make this approach work.
+		//=======================================================
+	
+		//Dataset ds = this.tempJena.getDataset();
+		//ds.addNamedModel("http://vivoweb.org/harvester/model/scoring#vivoClone", this.vivoJena.getJenaModel());
+		//ds.addNamedModel("http://vivoweb.org/harvester/model/scoring#inputClone", this.inputJena.getJenaModel());
+		//return ds;
+		
 	}
 	
 	/**
@@ -743,7 +773,7 @@ public class Score {
 	 * Main method
 	 * @param args command line arguments
 	 */
-	public static void main(String... args) {
+	public void main(String... args) {
 		Exception error = null;
 		try {
 			InitLog.initLogger(args, getParser());

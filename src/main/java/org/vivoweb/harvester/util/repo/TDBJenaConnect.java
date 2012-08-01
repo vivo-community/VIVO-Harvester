@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.tdb.TDBFactory;
+//import org.apache.jena.*;
 
 /**
  * Connection Helper for TDB Jena Models

@@ -46,6 +46,7 @@ import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateFactory;
 
@@ -653,11 +654,15 @@ public abstract class JenaConnect {
 				qe = QueryExecutionFactory.create(query, getJenaModel());
 			}
 			if(query.isSelectType()) {
+				//TODO: WARN: CLEAN UP, these are hacky edits to a fundamental system to make the upgrade work.
 				ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
+				//ResultsFormat rsf = ResultsFormat.FMT_TEXT;
+				
 				if(rsf == null) {
+					//TODO: WARN: CLEAN UP, these are hacky edits to a fundamental system to make the upgrade work.
 					rsf = ResultSetFormat.syntaxText;
 				}
-				ResultSetFormatter.output(out, qe.execSelect(), rsf);
+				//ResultSetFormatter.output(out, qe.execSelect(), rsf);
 			} else if(query.isAskType()) {
 				out.write((Boolean.toString(qe.execAsk())+"\n").getBytes());
 			} else {
