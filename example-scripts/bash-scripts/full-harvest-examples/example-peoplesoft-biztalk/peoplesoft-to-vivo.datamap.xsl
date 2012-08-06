@@ -64,7 +64,7 @@
 					<xsl:if test="normalize-space( DisplayName )">
 						<rdfs:label><xsl:value-of select="DisplayName"/></rdfs:label>
 					</xsl:if>
-					<xsl:if test="normalize-space( PRSN_GLID )">
+					<xsl:if test="(normalize-space( PRSN_GLID )) and (PRSN_GLID!='(null)')">
 						<ufVivo:gatorlink><xsl:value-of select="PRSN_GLID" /></ufVivo:gatorlink>
 					</xsl:if>
 					<xsl:if test="normalize-space( PRSN_WORKING_TITLE )">
@@ -104,9 +104,10 @@
 										<!-- Relation to Person Node End -->
 							
 										<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
-										<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-										<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-										<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
+										<!-- <ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/> -->
+										<!-- <rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/> --> 
+										<!-- <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/> -->
+										<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/UFEntity"/>
 										<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 							   		</rdf:Description>
 									<!-- Department stub node end -->
@@ -245,7 +246,7 @@
 				<xsl:if test="normalize-space( NAME[@type=33] )">
 					<rdfs:label><xsl:value-of select="NAME[@type=33]"/></rdfs:label>
 				</xsl:if>
-				<xsl:if test="normalize-space( GLID )">
+				<xsl:if test="(normalize-space( GLID )) and (GLID!='(null)')">
 					<ufVivo:gatorlink><xsl:value-of select="GLID" /></ufVivo:gatorlink>
 				</xsl:if>
 				<xsl:if test="normalize-space( WORKINGTITLE )">
@@ -275,9 +276,10 @@
 									<!-- Relation to Person Node End -->
 						
 									<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
-									<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-									<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-									<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
+									<!-- <ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/> -->
+									<!-- <rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/> -->
+									<!-- <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/> -->
+									<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/UFEntity"/>
 									<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 						   		</rdf:Description>
 								<!-- Department stub node end -->
@@ -402,7 +404,7 @@
 				<xsl:if test="normalize-space( DisplayName )">
 					<rdfs:label><xsl:value-of select="DisplayName"/></rdfs:label>
 				</xsl:if>
-				<xsl:if test="normalize-space( PRSN_GLID )">
+				<xsl:if test="(normalize-space( PRSN_GLID )) and (PRSN_GLID!='(null)')">
 					<ufVivo:gatorlink><xsl:value-of select="PRSN_GLID" /></ufVivo:gatorlink>
 				</xsl:if>
 				<xsl:if test="normalize-space( PRSN_WORKING_TITLE )">
@@ -432,9 +434,10 @@
 									<!-- Relation to Person Node End -->
 						
 									<ufVivo:deptID><xsl:value-of select="$deptID"/></ufVivo:deptID>
-									<ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-									<rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/>
-									<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/>
+									<!-- <ufVivo:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/> -->
+									<!-- <rdf:type rdf:resource="http://vivoweb.org/ontology/core#AcademicDepartment"/> --> 
+									<!-- <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Department"/> -->
+									<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/UFEntity"/>
 									<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
 						   		</rdf:Description>
 								<!-- Department stub node end -->
