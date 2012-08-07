@@ -244,7 +244,6 @@ public class ImagePreservationDuringPrivacy
 	 */
 	private String getPrivacyFlagChangeQuery()
 	{
-		// TODO Consider namespace check for performance tuning. 
 		// This multi-graph query finds matched UFIDs with changed privacy flags between incomingModel and vivoModel. 
 		String privacyFlagChangeQuery = 	
 			"PREFIX imagepres: <http://vivoweb.org/harvester/model/imagepres#>" 	+'\n'+
@@ -257,14 +256,12 @@ public class ImagePreservationDuringPrivacy
 			"WHERE {"																+'\n'+
 			"	GRAPH imagepres:vivoClone {"										+'\n'+
 			"		?s ufvivo:ufid ?ufid ."											+'\n'+
-			"		OPTIONAL {?s ufvivo:privacy ?vivoPriv .}"						+'\n'+
-			//"		?s ufvivo:privacy ?vivoPriv ."									+'\n'+
+			"		OPTIONAL {?s ufvivo:privacyFlag ?vivoPriv .}"					+'\n'+
 			"	} ."																+'\n'+
 			"	GRAPH imagepres:inputClone {"										+'\n'+
 			"		?s ufvivo:ufid ?ufid ."											+'\n'+
-			"		OPTIONAL {?s ufvivo:privacy ?incomingPriv .}"					+'\n'+
+			"		OPTIONAL {?s ufvivo:privacyFlag ?incomingPriv .}"				+'\n'+
 			"	} ."																+'\n'+
-			//"	FILTER ( str(?vivoPriv) != str(?incomingPriv) ) ."					+'\n'+
 			"}";
 		
 		return privacyFlagChangeQuery;
@@ -388,12 +385,12 @@ public class ImagePreservationDuringPrivacy
 		
 		String setPrivacy =
 			"PREFIX ufvivo:<http://vivo.ufl.edu/ontology/vivo-ufl/>" 				+'\n'+
-			"DELETE{ ?s ufvivo:privacy ?priv . }"									+'\n'+
+			"DELETE{ ?s ufvivo:privacyFlag ?priv . }"								+'\n'+
 			"WHERE{ "																+'\n'+
 			"	?s ufvivo:ufid"	+ "\""+ufid+"\" ."									+'\n'+
-			"	?s ufvivo:privacy ?priv ." 											+'\n'+
+			"	?s ufvivo:privacyFlag ?priv ." 										+'\n'+
 			"}"																		+'\n'+
-			"INSERT{ ?s ufvivo:privacy \"" + newFlag + "\" }"						+'\n'+
+			"INSERT{ ?s ufvivo:privacyFlag \"" + newFlag + "\" }"					+'\n'+
 			"WHERE{ ?s ufvivo:ufid"	+ "\""+ufid+"\" . }";
 		
 		return setPrivacy;
@@ -414,9 +411,9 @@ public class ImagePreservationDuringPrivacy
 			"PREFIX public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#>" 	+'\n'+
 			"SELECT DISTINCT ?ufid ?name ?priv ?img"								+'\n'+
 			"WHERE {" 																+'\n'+
-			"	?s 	ufvivo:ufid 	?ufid ." 										+'\n'+
-			"	?s 	foaf:lastName 	?name ." 										+'\n'+
-			"	?s 	ufvivo:privacy 	?priv ."										+'\n'+
+			"	?s 	ufvivo:ufid 		?ufid ." 									+'\n'+
+			"	?s 	foaf:lastName 		?name ." 									+'\n'+
+			"	?s 	ufvivo:privacyFlag 	?priv ."									+'\n'+
 			"	OPTIONAL {?s public:mainImage ?img .}"								+'\n'+
 			"}";
 		
