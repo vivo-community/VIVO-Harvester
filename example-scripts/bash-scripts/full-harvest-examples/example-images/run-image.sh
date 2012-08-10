@@ -17,10 +17,13 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
-VIVO_LOCATION_FOR_IMAGES=/usr/local/vivo/data/uploads
-export HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
+VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
+export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
 export HARVEST_NAME=example-images
 export DATE=`date +%Y-%m-%d'T'%T`
+export IMG_HARVESTER_HOME_DIR=/data/vivo/harvester/vivo-auto-harvest/images/image-ingest
+export HARVESTER_LOG_DIR=/data/vivo/harvester/vivo-auto-harvest/images/log
+export HARVESTER_BACKUP_DIR=/data/vivo/harvester/vivo-auto-harvest/images/backup
 
 # Add harvester binaries to path for execution
 # The tools within this script refer to binaries supplied within the harvester
@@ -29,6 +32,8 @@ export DATE=`date +%Y-%m-%d'T'%T`
 export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
+
+cd $IMG_HARVESTER_HOME_DIR
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
@@ -39,28 +44,33 @@ echo "Full Logging in image-harvest-$DATE.log"
 if [ ! -d logs ]; then
   mkdir logs
 fi
+
 cd logs
 touch $HARVEST_NAME.$DATE.log
 ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
+
+# Check to see if the harvester log directory exists or not
+if [ ! -d $HARVESTER_LOG_DIR ]; then
+	mkdir $HARVESTER_LOG_DIR
+fi
+
+# Check to see if the harvester backup directory exists or not
+if [ ! -d $HARVESTER_BACKUP_DIR ]; then
+	mkdir $HARVESTER_BACKUP_DIR
+fi
 
 #clear old data
 # For a fresh harvest, the removal of the previous information maintains data integrity.
 #	If you are continuing a partial run or wish to use the old and already retrieved
 #	data, you will want to comment out this line since it could prevent you from having
 # 	the required harvest data.  
-#rm -rf data
+rm -rf data
 
 #remove previous model
 rm -f model.xml
-#remove previous employeeIDs.txt
-rm -f employeeIDs.txt
-#remove upload directory
-#rm -rf upload
-#remove any unused images
-#	In this directory all the images that are not mapped to people we saved adn these images are used  
-#rm -rf unUsedImages
-
+#remove previous ufids.txt
+rm -f ufids.txt
 
 #Look for fulllImages directory if not present exit the script
 if [ ! -d "fullImages" ]; then
@@ -68,20 +78,18 @@ if [ ! -d "fullImages" ]; then
 	exit
 fi
 
-
 #Look for  if they are not present exit the script
 if [ ! -d "thumbnails" ]; then
         echo "Missing thumbnails directory, please create thumbnails directory and put all thumbnails in this directory"
         exit
 fi
 
-
 #Get a model of the people who dont have images 
 touch model.xml
 harvester-jenaconnect -j vivo.model.xml -q "CONSTRUCT { ?URI  <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID  } WHERE { ?URI <http://vivo.ufl.edu/ontology/vivo-ufl/ufid> ?UFID . NOT EXISTS { ?URI <http://vitro.mannlib.cornell.edu/ns/vitro/public#mainImage> ?y . } }" -Q RDF/XML -f model.xml
 
 #Get the ufids of the people who dont have images using the model generated above
-grep -o "[0-9]\{8\}</...:ufid>$" model.xml  > employeeIDs.txt
+grep -o "[0-9]\{8\}</.*:ufid>$" model.xml  > ufids.txt
 
 if [ ! -d "upload" ]; then
 	mkdir upload
@@ -89,42 +97,40 @@ if [ ! -d "upload" ]; then
 	mkdir upload/thumbnails		  
 fi
 
-if [ ! -d "unUsedImages" ]; then	
-	mkdir unUsedImages
-	mkdir unUsedImages/fullImages
-	mkdir unUsedImages/thumbnails    
+if [ ! -d "backup" ]; then	
+	mkdir backup
+	mkdir backup/fullImages
+	mkdir backup/thumbnails    
 fi
-#move any images from the previous harvest stored in unUsedImages directory in to images directory
-numberOfFiles=`ls -A ./unUsedImages/fullImages/ | wc -l`
+#move any images from the previous harvest stored in backup directory in to images directory
+numberOfFiles=`ls -A ./backup/fullImages/ | wc -l`
 
 
 if [ "$numberOfFiles" == "0" ]; then
-	echo "There are no Un-Used images in unUsedImages directory"
+	echo "There are no backed up images in backup directory"
 else
-	echo "Un Used Images of previous harvests are used in the current harvest"
-	mv unUsedImages/fullImages/* fullImages/
-        mv unUsedImages/thumbnails/* thumbnails/
+	echo "Backed up images are used in the new harvest"
+	mv backup/fullImages/* fullImages/
+        mv backup/thumbnails/* thumbnails/
 fi
 
-  
-#Generate upload and Un Used folders 
+#Generate upload and backup folders 
 #	For each image in the uplod folder there is corresponding person in VIVO
-#	Un Used directory contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
-harvester-transferImages -p $HARVESTER_INSTALL_DIR/example-scripts/example-images -e $HARVESTER_INSTALL_DIR/example-scripts/example-images/employeeIDs.txt
-
-#If the upload folder is empty then exit the script
-
-
+#	Back up folder contains images for which there is no corresponding people in VIVO or there is a coreesponding person and already have an image
+harvester-createimagefolders -p $IMG_HARVESTER_HOME_DIR
 
 #Create raw records for all the images
-#	Each xml file contains just the Employee ID of a person	 
+#Each xml file contains just the ufid of a person
 if [ ! -d "data" ]; then
 	mkdir data
         mkdir data/raw-records
 fi
+if [ ! -d "data/raw-records" ]; then
+	mkdir data/raw-records
+fi
 cd data
 cd raw-records
-FOLDER="$HARVESTER_INSTALL_DIR/example-scripts/example-images/upload/fullImages/*"
+FOLDER="$IMG_HARVESTER_HOME_DIR/upload/fullImages/*"
 for file in $FOLDER
 do
         imageName=`echo $file | grep -o "[0-9]\{8\}.*"`
@@ -164,7 +170,7 @@ harvester-match -X match-roles.config.xml
 # Find Subtractions
 # When making the previous harvest model agree with the current harvest, the entries that exist in
 #	the previous harvest but not in the current harvest need to be identified for removal.
-harvester-diff -X diff-subtractions.config.xml
+#harvester-diff -X diff-subtractions.config.xml
 
 # Find Additions
 # When making the previous harvest model agree with the current harvest, the entries that exist in
@@ -172,32 +178,35 @@ harvester-diff -X diff-subtractions.config.xml
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #	should agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 #if there is no harvestedImages dirctory make one in tomcat VIVO
-if [ ! -d "$VIVO_LOCATION_FOR_IMAGES/harvestedImages" ]; then
-	mkdir $VIVO_LOCATION_FOR_IMAGES/harvestedImages
-  	mkdir $VIVO_LOCATION_FOR_IMAGES/harvestedImages/fullImages
-	mkdir $VIVO_LOCATION_FOR_IMAGES/harvestedImages/thumbnails
+if [ ! -d "$VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages" ]; then
+	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages
+  	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages
+	mkdir $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/thumbnails
 fi
 
 numberOfFiles=`ls -A ./upload/fullImages/ | wc -l`
 #move all the files in upload directory to  harvestedImages only if there are images in upload directory
 if [ "$numberOfFiles" == "0" ]; then
-	echo "There are no images to upload"	        
+	echo "There are no images to upload"
 else
        echo "Uploading images to VIVO"
-       mv ./upload/fullImages/* $VIVO_LOCATION_FOR_IMAGES/harvestedImages/fullImages/
-       mv ./upload/thumbnails/* $VIVO_LOCATION_FOR_IMAGES/harvestedImages/thumbnails/
+       mv ./upload/fullImages/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/fullImages/
+       mv ./upload/thumbnails/* $VIVO_LOCATION_IN_TOMCAT_DIR/harvestedImages/thumbnails/
 fi
+
+cp ./fullImages/* ./backUp/fullImages/
+cp ./thumbnails/* ./backUp/thumbnails/
 
 echo 'Harvest completed successfully'
