@@ -9,7 +9,7 @@
 	<Param name="inputModel">harvested-data.model.xml</Param>
 	
 	<!--  VIVO -->
-	<Param name="vivoModel">vivo.model.xml</Param>
+	<Param name="vivoModel">proxy-vivo.model.xml</Param>
 	
 	<!--  OPTIONS -->
 	<Param name="oldNamespace">http://vivo.ufl.edu/harvested/dept/</Param>

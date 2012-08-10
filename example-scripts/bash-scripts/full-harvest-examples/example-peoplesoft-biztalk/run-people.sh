@@ -14,7 +14,7 @@
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
 VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester
 export HARVEST_NAME=example-peoplesoft-biztalk
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -27,8 +27,12 @@ export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
 # Set the email address of the person receiving the email
-export EMAIL_RECIPIENT="*****@***.edu"
-export EMAIL_RECIPIENT2="*****@***.edu"
+export EMAIL_RECIPIENT="vsposato@ufl.edu"
+export EMAIL_RECIPIENT2="rziede@ufl.edu"
+
+export HARVESTER_LOG_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/log
+export HARVESTER_BACKUP_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/backup
+export PEOPLE_HARVEST_HOME=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/peoplesoft-ingest
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
@@ -43,6 +47,8 @@ echo "Full Logging in peoplesoft-biztalk-harvest-$DATE.log"
 #	data could be rendered corrupted and incompatible.
 set -e
 
+cd $PEOPLE_HARVEST_HOME
+
 # Check to see if the logs directory exists, and if it doesn't create it
 if [ ! -d logs ]; then
   mkdir logs
@@ -51,6 +57,16 @@ fi
 # Check to see if the data directory exists, and if it doesn't create it
 if [ ! -d data ]; then
   mkdir data
+fi
+
+# Check to see if the harvester log directory exists or not
+if [ ! -d $HARVESTER_LOG_DIR ]; then
+	mkdir $HARVESTER_LOG_DIR
+fi
+
+# Check to see if the harvester backup directory exists or not
+if [ ! -d $HARVESTER_BACKUP_DIR ]; then
+	mkdir $HARVESTER_BACKUP_DIR
 fi
 
 # Check to see if data/translated-records exists, and if so delete it
@@ -87,6 +103,27 @@ if [ -f logfile.txt ]; then
   rm -rf logfile.txt
 fi
 
+# Check to see if raw-records/.metadata exists, and if so, delete it.
+if [ -d data/raw-records/.metadata ]; then
+  rm -rf data/raw-records/.metadata
+fi
+
+# Check to see if previous-data-state exists, and if so, delete it.
+if [ -d previous-data-state ]; then
+  rm -rf previous-data-state
+fi
+
+# Check to see if proxy-vivo exists, and if so delete it.
+if [ -d data/proxy-vivo ]; then
+  rm -rf data/proxy-vivo
+fi
+
+# Check to see if raw-records exists, and if so, delete it.
+if [ -d data/raw-records ]; then
+  echo "ALERT! raw-records is being deleted PRIOR to any harvest activities. If you wish to manually place records here for harvesting, comment out this block."
+  rm -rf data/raw-records
+fi
+
 # Create the logfile.txt now to capture all of the analytics
 touch logfile.txt
 
@@ -95,17 +132,6 @@ cd logs
 touch $HARVEST_NAME.$DATE.log
 ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
-
-
-# Preseed of Previous Harvest
-# Most ingests are built assuming there are currently none of the data items in VIVO, in UF's case we do have
-# people in the VIVO system. We will need to account for that by pre-seeding the previous harvest with data from 
-# VIVO. We do this by running a series of SPARQL queries, and then transferring them in. However, we will only
-# do this if there is no Previous Harvest model already there.
-if [ ! -d previous-harvest ]; then
-	echo "ALERT ALERT ALERT Running Pre-Seed script due to no Previous Harvest directory being there"
-	bash peopleexport.sh
-fi 
 
 # Execute XMLGrep to remove any person that is marked for renaming by ES - this will prevent issues later
 # Also, this will handle fetching the XML files from the WEBSERVICE directory, so that we do not need to create
@@ -119,17 +145,29 @@ harvester-xsltranslator -X xsltranslator.config.xml
 
 # Execute XMLGrep to remove non-targeted people from the group of raw-records
 echo "XMLGrep Ignore"
-#harvester-xmlgrep -X xmlgrep-ignore-students.config.xml
+harvester-xmlgrep -X xmlgrep-ignore-students.config.xml
 
 # Execute Email script for sending email with all renamed records to CTSI@vivo.ufl.edu
 # This is so the complicated one off records can be handled by the Ontologists, and not
 # handled programmatically
 echo "Rename Files Email"
+cd $PEOPLE_HARVEST_HOME
 bash emailRenameFiles.sh
 
 # Run pre-harvest analytics
 echo "Running Pre Peoplesoft Ingest Analytics......."
+cd $PEOPLE_HARVEST_HOME
 bash analytics.sh
+
+# Preseed of Previous-Data-State
+# Most ingests are built assuming there are currently none of the data items in VIVO, in UF's case we do have
+# people in the VIVO system. We will need to account for that by pre-seeding a model with data from 
+# VIVO. We do this by running a series of SPARQL queries, and then transferring them in.
+if [ ! -d previous-data-state ]; then
+	echo "ALERT: Running Pre-Seed script for previous-data-state. Pulling down relevant UFIDs/deptIDs!"
+	cd $PEOPLE_HARVEST_HOME
+	bash peopleexport.sh
+fi 
 
 # Execute Transfer to import from record handler into local temp model
 # From this stage on the script places the data into a Jena model. A model is a
@@ -215,19 +253,19 @@ echo "Diff Additions"
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-echo "Apply Subtractions to Previous"
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+#echo "Apply Subtractions to Previous"
+#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-echo "Apply Additions to Previous"
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+#echo "Apply Additions to Previous"
+#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #       should agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-echo "Apply Subtractions to VIVO"
+#echo "Apply Subtractions to VIVO"
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
-echo "Apply Additions to VIVO"
+#echo "Apply Additions to VIVO"
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 echo "Pre People Ingest Analytics" &>> logfile.txt
@@ -236,6 +274,7 @@ cat analytics.txt &>> logfile.txt
 echo -e "\n" &>>logfile.txt
 
 echo "Running Post Course Ingest Analytics......."
+cd $PEOPLE_HARVEST_HOME
 bash analytics.sh
 echo "Post Course Ingest Analytics" &>> logfile.txt
 echo "========================================================================="
@@ -246,4 +285,12 @@ echo -e "\n" &>> logfile.txt
 mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT" < logfile.txt
 mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT2" < logfile.txt
 
+# Backup logs and deltas into their respective directories.
+mv ./logs/* $HARVESTER_LOG_DIR
+mv ./data/vivo-additions.rdf.xml $HARVESTER_BACKUP_DIR/vivo-additions.$DATE.rdf.xml
+mv ./data/vivo-subtractions.rdf.xml $HARVESTER_BACKUP_DIR/vivo-subtractions.$DATE.rdf.xml
+
 echo 'Harvest completed successfully'
+
+# Reformat ntriple additions / subtractions to make a logfile
+sudo bash /data/vivo/manual-edits/reformat.sh people $PEOPLE_HARVEST_HOME

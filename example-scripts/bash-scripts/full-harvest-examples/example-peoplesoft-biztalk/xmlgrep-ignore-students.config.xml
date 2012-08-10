@@ -7,6 +7,7 @@
 <Config>
 	<Param name="src-dir">data/translated-records/</Param>
 	<Param name="dest-dir">data/ignored-records/</Param>
+	<Param name="alt-dest">data/translated-records/</Param>
 	<Param name="tag-name">Ignore</Param>
 	<Param name="tag-value">Y</Param>
 </Config>

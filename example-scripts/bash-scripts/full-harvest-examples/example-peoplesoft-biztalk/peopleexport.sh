@@ -17,7 +17,7 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester
 export HARVEST_NAME=people-seeding
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -29,86 +29,118 @@ export PATH=$PATH:$HARVESTER_INSTALL_DIR/bin
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_INSTALL_DIR/bin/dependency/*
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
-# Faculty Member Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type core:FacultyMember. ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf:type core:FacultyMember. OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >> FacultyMember.xml
-# Non-Academic Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type core:NonAcademic. ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf:type core:NonAcademic. OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >>Non-academic.xml
-# Emeritus Professor Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type core:EmeritusProfessor . ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf:type core:EmeritusProfessor . OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >> EmeritusProfessor.xml
-# Consultant Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type ufVivo:Consultant . ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf:type  ufVivo:Consultant . OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >>ConsultantExport.xml
-# Recent Employee Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type ufVivo:RecentEmployee . ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf: ufVivo:RecentEmployee . OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >>RecentEmployeeExport.xml
-# Deceased Employee Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type ufVivo:Deceased . ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf: ufVivo:Deceased . OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >>DeceasedEmployeeExport.xml
-# Courtesy Faculty Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type ufVivo:CourtesyFaculty . ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf: ufVivo:CourtesyFaculty . OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >>CourtesyFacultyExport.xml
-# All Others Export
-harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x rdf:type foaf:Person . ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:ufid ?ufid . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x rdf:type foaf:Person . FILTER NOT EXISTS { ?x rdf:type core:FacultyMember . } FILTER NOT EXISTS { ?x rdf:type core:NonAcademic . } FILTER NOT EXISTS { ?x rdf:type ufVivo:CourtesyFaculty . } FILTER NOT EXISTS { ?x rdf:type core:EmeritusProfessor . } FILTER NOT EXISTS { ?x rdf:type ufVivo:Consultant . } FILTER NOT EXISTS { ?x rdf:type ufVivo:RecentEmployee . } FILTER NOT EXISTS { ?x rdf:type ufVivo:Deceased . } OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:ufid ?ufid . } OPTIONAL{?x ufVivo:gatorlink ?gliD . } OPTIONAL{?x core:preferredTitle ?preftitle .} OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" >> AllOthersExport.xml
-
-
-# Check size of Faculty Member Export, if 513b then skip it
-FILESIZE=$(stat -c %s "FacultyMember.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r FacultyMember.xml -R RDF/XML
-	rm FacultyMember.xml
+# Create ufids.txt if it does not exist.
+if [ ! -d ufids.txt ]; then
+  touch ufids.txt
 fi
 
-# Check size of Non-Academic Export, if 513b then skip it
-FILESIZE=$(stat -c %s "Non-academic.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r Non-academic.xml -R RDF/XML
-	rm Non-academic.xml
+# Create deptids.txt if it does not exist.
+if [ ! -d deptids.txt ]; then
+  touch deptids.txt
 fi
 
-# Check size of Emeritus Professor Export, if 513b then skip it
-FILESIZE=$(stat -c %s "EmeritusProfessor.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r EmeritusProfessor.xml -R RDF/XML
-	rm EmeritusProfessor.xml
+# Create temp RDF/XML directory if it does not exist.
+if [ ! -d data/temp-rdfxml ]; then
+  mkdir data/temp-rdfxml
 fi
 
-# Check size of Consultant Export, if 513b then skip it
-FILESIZE=$(stat -c %s "ConsultantExport.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r ConsultantExport.xml -R RDF/XML
-	rm ConsultantExport.xml
+# Pull UFIDs from translated records.
+grep -ho "ufid>[0-9]\{8\}" data/translated-records/* | grep -ho "[0-9]\{8\}" > ufids.txt
+
+# Pull DeptIDs from translated records.
+grep -ho "deptID>[0-9]\{8\}" data/translated-records/* | grep -ho "[0-9]\{8\}" > deptids.txt
+
+# For each UFID in ufids.txt
+for line in $(< ufids.txt); do
+   # Person Export from VIVO with that UFID
+   echo "Exporting Person UFID $line"
+   harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> PREFIX public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#> CONSTRUCT { ?x ufVivo:ufid \"$line\" . ?x a foaf:Person . ?x core:primaryEmail ?email . ?x core:primaryPhoneNumber ?phone . ?x core:faxNumber ?fax . ?x foaf:firstName ?fname . ?x foaf:lastName ?lname . ?x core:middleName ?mname . ?x bibo:prefixName ?prename . ?x bibo:suffixName ?suffname . ?x rdfs:label ?label . ?x ufVivo:gatorlink ?glid . ?x core:preferredTitle ?preftitle . ?x ufVivo:homeDept ?dept . ?x ufVivo:privacyFlag ?flag . } WHERE { ?x ufVivo:ufid \"$line\" . OPTIONAL{?x core:primaryEmail ?email .} OPTIONAL{?x core:primaryPhoneNumber ?phone . } OPTIONAL{?x core:faxNumber ?fax . } OPTIONAL{?x foaf:firstName ?fname . } OPTIONAL{?x foaf:lastName ?lname . } OPTIONAL{?x core:middleName ?mname . } OPTIONAL{?x bibo:prefixName ?prename . } OPTIONAL{?x bibo:suffixName ?suffname . } OPTIONAL{?x rdfs:label ?label . } OPTIONAL{?x ufVivo:gatorlink ?glid . } OPTIONAL{?x core:preferredTitle ?preftitle . } OPTIONAL{?x ufVivo:homeDept ?dept . } OPTIONAL{?x ufVivo:privacyFlag ?flag . } }" > data/temp-rdfxml/People_$line.xml
+done
+
+# For each deptID in deptids.txt
+for line in $(< deptids.txt); do
+  # Department Export from VIVO with that deptID
+  echo "Exporting Department deptID $line"
+  harvester-jenaconnect -j vivo.model.xml -q "PREFIX core: <http://vivoweb.org/ontology/core#> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX bibo: <http://purl.org/ontology/bibo/> PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> CONSTRUCT { ?x ufVivo:deptID \"$line\" . } WHERE { ?x ufVivo:deptID \"$line\" . }" > data/temp-rdfxml/Departments_$line.xml 
+done
+
+# Person Export
+# ===========================================
+#PREFIX core: <http://vivoweb.org/ontology/core#> 
+#PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+#PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
+#PREFIX bibo: <http://purl.org/ontology/bibo/> 
+#PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> 
+#PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/>
+#PREFIX public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#>
+#CONSTRUCT { 
+#    ?x ufVivo:ufid ?ufid .
+#    ?x rdf:type foaf:Person . 
+#    ?x core:primaryEmail ?email . 
+#    ?x core:primaryPhoneNumber ?phone . 
+#    ?x core:faxNumber ?fax . 
+#    ?x foaf:firstName ?fname . 
+#    ?x foaf:lastName ?lname . 
+#    ?x core:middleName ?mname . 
+#    ?x bibo:prefixName ?prename . 
+#    ?x bibo:suffixName ?suffname . 
+#    ?x rdfs:label ?label . 
+#    ?x ufVivo:gatorlink ?glid . 
+#    ?x core:preferredTitle ?preftitle . 
+#    ?x ufVivo:homeDept ?dept . 
+#    ?x ufVivo:privacyFlag ?flag .
+#    ?x public:mainImage ?img .
+#} 
+#WHERE { 
+#    ?x ufVivo:ufid ?ufid .
+#    OPTIONAL{?x core:primaryEmail ?email .} 
+#    OPTIONAL{?x core:primaryPhoneNumber ?phone . } 
+#    OPTIONAL{?x core:faxNumber ?fax . } 
+#    OPTIONAL{?x foaf:firstName ?fname . } 
+#    OPTIONAL{?x foaf:lastName ?lname . } 
+#    OPTIONAL{?x core:middleName ?mname . } 
+#    OPTIONAL{?x bibo:prefixName ?prename . } 
+#    OPTIONAL{?x bibo:suffixName ?suffname . } 
+#    OPTIONAL{?x rdfs:label ?label . } 
+#    OPTIONAL{?x ufVivo:gatorlink ?glid . } 
+#    OPTIONAL{?x core:preferredTitle ?preftitle .} 
+#    OPTIONAL{?x ufVivo:homeDept ?dept . } 
+#    OPTIONAL{?x ufVivo:privacyFlag ?flag . }
+#}
+
+# Department Export
+# =================
+#PREFIX core: <http://vivoweb.org/ontology/core#> 
+#PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+#PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
+#PREFIX bibo: <http://purl.org/ontology/bibo/> 
+#PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> 
+#PREFIX ufVivo: <http://vivo.ufl.edu/ontology/vivo-ufl/> 
+#CONSTRUCT { 
+#    ?x ufVivo:deptID ?y .
+#} 
+#WHERE { 
+#    ?x ufVivo:deptID ?y .
+#}
+
+# Load RDF/XML into Model
+for f in data/temp-rdfxml/*; do
+   # Check size of People Export, if 513b then skip it
+   FILESIZE=$(stat -c %s "$f")
+   #echo $FILESIZE
+   if [ $FILESIZE -ne 513 ]; then
+      harvester-transfer -o previous-data-state.model.xml -r $f -R RDF/XML
+   fi
+done
+
+# Clean up temp data.
+if [ -d data/temp-rdfxml ]; then
+   rm -rf data/temp-rdfxml
 fi
 
-# Check size of Recent Employee Export, if 513b then skip it
-FILESIZE=$(stat -c %s "RecentEmployeeExport.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r RecentEmployeeExport.xml -R RDF/XML
-	rm RecentEmployeeExport.xml
-fi
+#rm -rf ufids.txt
+#rm -rf deptids.txt
 
-# Check size of Deceased Employee Export, if 513b then skip it
-FILESIZE=$(stat -c %s "DeceasedEmployeeExport.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r DeceasedEmployeeExport.xml -R RDF/XML
-	rm DeceasedEmployeeExport.xml
-fi
+harvester-transfer -i previous-data-state.model.xml -d data/completeOutput.xml
+harvester-transfer -i previous-data-state.model.xml -o proxy-vivo.model.xml
 
-# Check size of Courtesy Faculty Member Export, if 513b then skip it
-FILESIZE=$(stat -c %s "CourtesyFacultyExport.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r CourtesyFacultyExport.xml -R RDF/XML
-	rm CourtesyFacultyExport.xml
-fi
-
-# Check size of Faculty Member Export, if 513b then skip it
-FILESIZE=$(stat -c %s "AllOthersExport.xml")
-echo $FILESIZE
-if [ $FILESIZE -ne 513 ]; then
-	harvester-transfer -o previous-harvest.model.xml -r AllOthersExport.xml -R RDF/XML
-	rm AllOthersExport.xml
-fi
-
-harvester-transfer -i previous-harvest.model.xml -d data/completeOutput.xml

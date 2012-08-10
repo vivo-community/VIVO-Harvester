@@ -6,14 +6,14 @@
 # AUTHORS Vincent Sposato
 
 # Target Directory To Review
-export TARGET_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest/data/renamed-records
-export INGEST_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft/peoplesoft-ingest
+export TARGET_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/peoplesoft-ingest/data/renamed-records
+export INGEST_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/peoplesoft-ingest
 export CURRENT_DIR=`pwd`
 
 echo $CURRENT_DIR
 
 # Email Address to Send List
-export EMAIL_RECIPIENT="*****@***.edu"
+export EMAIL_RECIPIENT="vsposato@ufl.edu"
 
 # Current Date & Time
 export DATE=`date +%Y-%m-%d'T'%T`

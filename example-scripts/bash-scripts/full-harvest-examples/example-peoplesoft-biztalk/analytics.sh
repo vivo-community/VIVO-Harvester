@@ -17,7 +17,7 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester
 export HARVEST_NAME=example-scripts
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -43,7 +43,7 @@ echo "Total number of persons with UFID : " `harvester-jenaconnect -j vivo.model
 
 echo "Total number of people marked Faculty : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#FacultyMember> .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people marked nonAcademic : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#NonAcademic> .}" | sed -n '4,4p'`  >>analytics.txt
-echo "Total number of people marked Courtesy Faculty : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#CourtesyFaculty> .}" | sed -n '4,4p'`  >>analytics.txt
+echo "Total number of people marked Courtesy Faculty : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivo.ufl.edu/ontology/vivo-ufl/CourtesyFaculty> .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people marked Emeritus : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#EmeritusProfessor> .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people marked Consultant : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivo.ufl.edu/ontology/vivo-ufl/Consultant> .}" | sed -n '4,4p'`  >>analytics.txt
 echo "Total number of people marked Recent Employee : " `harvester-jenaconnect -j vivo.model.xml -q "SELECT COUNT(?x) WHERE { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivo.ufl.edu/ontology/vivo-ufl/RecentEmployee> .}" | sed -n '4,4p'`  >>analytics.txt

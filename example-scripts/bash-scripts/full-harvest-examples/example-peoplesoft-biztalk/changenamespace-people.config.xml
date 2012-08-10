@@ -25,7 +25,7 @@
 <%   <Param name="vivoModel"> The vivo model points to the model within vivo which is used as a reference to ensure   %>
 <%      the new uri doesn't exist already and cause an issue if imported to that vivo instance.                       %>
 -->    
-	<Param name="vivoModel">vivo.model.xml</Param>
+	<Param name="vivoModel">proxy-vivo.model.xml</Param>
 	
 	<!--  OPTIONS -->
 <!-- 

@@ -93,7 +93,7 @@
 							<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 							<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
 							
-							<xsl:if test="$deptID!='(null)'">
+							<xsl:if test="$deptID!='(null)' and $deptID!=''">
 								<!-- Relation to department node start -->
 								<ufVivo:homeDept>
 									<!-- Department stub node start -->
@@ -253,8 +253,13 @@
 					<core:preferredTitle><xsl:value-of select="WORKINGTITLE" /></core:preferredTitle>
 				</xsl:if>
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-				<ufVivo:Deceased><xsl:value-of select="DECEASED" /></ufVivo:Deceased>
-	
+				
+				<!-- <ufVivo:Deceased><xsl:value-of select="DECEASED" /></ufVivo:Deceased> -->
+				<xsl:choose>
+					<xsl:when test="DECEASED='Y'">
+						<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Deceased"/>					
+					</xsl:when>
+				</xsl:choose>	
 				
 				<!-- Need to determine person's PROTECT status to make sure we don't display protected information -->
 				<xsl:choose>
@@ -265,7 +270,7 @@
 						<core:primaryPhoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
 						
-						<xsl:if test="$deptID!='(null)'">
+						<xsl:if test="$deptID!='(null)' and $deptID!=''">
 							<!-- Relation to department node start -->
 							<ufVivo:homeDept>
 								<!-- Department stub node start -->
@@ -411,8 +416,13 @@
 					<core:preferredTitle><xsl:value-of select="PRSN_WORKING_TITLE" /></core:preferredTitle>
 				</xsl:if>
 				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
-				<ufVivo:Deceased><xsl:value-of select="PRSN_DECEASED" /></ufVivo:Deceased>
-	
+				
+				<!-- <ufVivo:Deceased><xsl:value-of select="PRSN_DECEASED" /></ufVivo:Deceased> -->
+				<xsl:choose>
+					<xsl:when test="PRSN_DECEASED='Y'">
+						<rdf:type rdf:resource="http://vivo.ufl.edu/ontology/vivo-ufl/Deceased"/>					
+					</xsl:when>
+				</xsl:choose>
 				
 				<!-- Need to determine person's PROTECT status to make sure we don't display protected information -->
 				<xsl:choose>
@@ -423,7 +433,7 @@
 						<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
 						
-						<xsl:if test="$deptID!='(null)'">
+						<xsl:if test="$deptID!='(null)' and $deptID!=''">
 							<!-- Relation to department node start -->
 							<ufVivo:homeDept>
 								<!-- Department stub node start -->

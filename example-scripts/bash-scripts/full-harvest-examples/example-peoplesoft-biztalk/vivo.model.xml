@@ -104,6 +104,6 @@
     <Param name="dbType">MySQL</Param>
     <Param name="dbUrl">jdbc:mysql://vivodevdb.cnqapw798fdt.us-east-1.rds.amazonaws.com:3306/vivo</Param>
     <Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
-    <Param name="dbUser">*******</Param>
-    <Param name="dbPass">*************</Param>
+    <Param name="dbUser">****</Param>
+    <Param name="dbPass">****</Param>
 </Model>

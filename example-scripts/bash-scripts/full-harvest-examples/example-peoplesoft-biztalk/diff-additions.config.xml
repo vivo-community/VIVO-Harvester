@@ -37,7 +37,7 @@
 <%     than the minuend.                                                                                              %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
-	<Param name="subtrahend">previous-harvest.model.xml</Param>
+	<Param name="subtrahend">previous-data-state.model.xml</Param>
 	
 	<!--  OPTIONS -->
 	    <!--DUMPFILE -->

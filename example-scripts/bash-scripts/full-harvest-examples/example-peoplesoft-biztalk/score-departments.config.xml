@@ -9,7 +9,7 @@
 	<Param name="inputJena-config">harvested-data.model.xml</Param>
 	
 	<!--VIVO INPUT -->
-	<Param name="vivoJena-config">vivo.model.xml</Param>
+	<Param name="vivoJena-config">proxy-vivo.model.xml</Param>
 	
 	<!--SCORING DATA OUTPUT -->
 	<Param name="score-config">score-data.model.xml</Param>

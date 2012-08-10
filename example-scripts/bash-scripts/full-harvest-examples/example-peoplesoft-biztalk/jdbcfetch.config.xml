@@ -8,9 +8,9 @@
 	
 	<!--INPUT -->
 	<Param name="driver">com.mysql.jdbc.Driver</Param>
-	<Param name="connection">jdbc:mysql://127.0.0.1/psclone</Param>
-	<Param name="username">**********</Param>
-	<Param name="password">**********</Param>
+    <Param name="connection">jdbc:mysql://127.0.0.1/psclone</Param>
+    <Param name="username">****</Param>
+    <Param name="password">****</Param>
 <!--	<Param name="driver">org.h2.Driver</Param>
 	<Param name="connection">jdbc:h2:data/databaseclone/database</Param>
 	<Param name="username">sa</Param>
