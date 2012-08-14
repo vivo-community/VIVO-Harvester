@@ -395,11 +395,28 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	 */
 	private TDBJenaConnect temp;
 	
+	/**
+	 * Path to output additions file to.
+	 */
+	private String vivoAddsPath = "data/privacy-vivo-additions.rdf.xml";
+	
+	/**
+	 * Path to output subtractions file to.
+	 */
+	private String vivoSubsPath = "data/privacy-vivo-subtractions.rdf.xml";
+	
+	/**
+	 * Language to Output
+	 */
+	private String diffLanguage = "RDF/XML";
+	
 	@SuppressWarnings("javadoc")
 	public void testExecute() throws IOException 
 	{
 		log.trace("BEGIN ImagePreservationDuringPrivacy test:");
-		ImagePreservationDuringPrivacy ipdp = new ImagePreservationDuringPrivacy(this.inputModel, this.privModel, this.vivoModel, true, true);
+		ImagePreservationDuringPrivacy ipdp = new ImagePreservationDuringPrivacy(this.inputModel, this.privModel, this.vivoModel, 
+																				this.vivoSubsPath, this.vivoAddsPath, this.diffLanguage,
+																				true, true);
 		ipdp.execute();
 	}
 	

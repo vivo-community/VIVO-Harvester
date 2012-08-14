@@ -6,6 +6,8 @@
 package org.vivoweb.harvester.util;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -17,6 +19,8 @@ import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFWriter;
 import java.util.*;
 
 /**
@@ -44,7 +48,7 @@ public class ImagePreservationDuringPrivacy
 	/**
 	 * Temporary multi-graph JenaModel for querying.
 	 */
-	private JenaConnect tempModel;
+	protected JenaConnect tempModel;
 	/**
 	 * Should we save image node to private model or restore it from the private model?
 	 */
@@ -53,17 +57,45 @@ public class ImagePreservationDuringPrivacy
 	 * Should we delete image node from Vivo or private models?
 	 */
 	protected boolean bDeleteImg;
-
+	
+	/**
+	 * JenaModel containing resultant additions to VIVO.
+	 */
+	protected JenaConnect vivoAdditions;
+	
+	/**
+	 * JenaModel containing resultant subtractions to VIVO.
+	 */
+	protected JenaConnect vivoSubtractions;
+	
+	/**
+	 * Path to dump the privacy additions to.
+	 */
+	protected String vivoAdditionsFile;
+	
+	/**
+	 * Path to dump the privacy subtractions to.
+	 */
+	protected String vivoSubtractionsFile;
+	
+	/**
+	 * Language to dump diff files in.
+	 */
+	protected String vivoDiffLanguage;
 	
 	/**
 	 * Constructor
 	 * @param inModel Incoming model.
 	 * @param privModel Private model.
 	 * @param vivoModel Vivo model.
+	 * @param vivoSubsFile Path to output the resulting subtractions file.
+	 * @param vivoAddsFile Path to output the resulting additions file.
+	 * @param fileLanguage Language to use when outputting diff files.
 	 * @param bTransferImg If we transfer img data between models.
 	 * @param bDeleteImg If we delete img data from models.
 	 */
 	public ImagePreservationDuringPrivacy(JenaConnect inModel, JenaConnect privModel, JenaConnect vivoModel, 
+											String vivoSubsFile, String vivoAddsFile, String fileLanguage,
 											boolean bTransferImg, boolean bDeleteImg )
 	{
 		// Check for null models.
@@ -72,10 +104,21 @@ public class ImagePreservationDuringPrivacy
 			throw new IllegalArgumentException("A model cannot be null!");
 		}
 		
+		// Check for empty output file paths.
+		if(	( vivoAddsFile == null	|| vivoAddsFile.isEmpty() ) ||
+			( vivoSubsFile == null	|| vivoSubsFile.isEmpty())  )
+		{
+			throw new IllegalArgumentException("Output file paths must be provided!");			
+		}
+		
 		this.incomingModel = inModel;
 		this.privateModel = privModel;
 		this.vivoModel = vivoModel;
-		
+		this.vivoAdditions = new MemJenaConnect("vivoAdditions");
+		this.vivoSubtractions = new MemJenaConnect("vivoSubtractions");
+		this.vivoAdditionsFile = vivoAddsFile;
+		this.vivoSubtractionsFile = vivoSubsFile;
+		this.vivoDiffLanguage = fileLanguage;
 		this.bTransferImg = bTransferImg;
 		this.bDeleteImg = bDeleteImg;
 	}
@@ -137,6 +180,9 @@ public class ImagePreservationDuringPrivacy
 			}
 		}
 		
+		// Write additions/subtractions files.
+		writeDiffFiles();
+		
 		// Ensure that tempModel is torn down before next execution.
 		// TODO Put in try-catch.
 		this.tempModel.truncate();
@@ -150,11 +196,14 @@ public class ImagePreservationDuringPrivacy
 	 */
 	private void transitionToPrivacy(String transferQuery, String ufid) throws IOException
 	{
-		log.trace("Operating on UFID: " + ufid);
+		log.trace("Operating on UFID: " + ufid + " ... Transitioning TO private.");
 		
 		String removeImgDataFromVivo = getRemoveImgFromVivoQuery(ufid);
-		String setPrivacyTrue = getPrivacyFlagQuery(ufid, true);
-		JenaConnect appendModel;
+		
+		// NOTE: Changed to remove direct VIVO model operations. Flags are now carried through via Diff. -RPZ 08/14/2012
+		//String setPrivacyTrue = getPrivacyFlagQuery(ufid, true);
+		
+		JenaConnect appendModel, subtractModel;
 		
 		// Construct a model of changes to append to privateModel. Remove same data from vivoModel.
 		if( this.bTransferImg )
@@ -171,8 +220,9 @@ public class ImagePreservationDuringPrivacy
 			
 			if( this.bDeleteImg )
 			{
-				this.vivoModel.executeUpdateQuery(removeImgDataFromVivo);
-				
+				subtractModel = this.vivoModel.executeConstructQuery(removeImgDataFromVivo);
+				this.vivoSubtractions.loadRdfFromJC(subtractModel);
+				subtractModel.truncate();
 				// Trace the contents of the updated vivoModel. Testing only.
 				//traceModel("New Vivo Model contents: " + new Boolean(this.vivoModel.executeAskQuery("ASK { ?s ?p ?o .}")).toString(), this.vivoModel);
 			}
@@ -182,14 +232,16 @@ public class ImagePreservationDuringPrivacy
 			if( this.bDeleteImg )
 			{
 				log.warn("Image data being deleted without being stored in privateModel!");
-				this.vivoModel.executeUpdateQuery(removeImgDataFromVivo);
-				
+				subtractModel = this.vivoModel.executeConstructQuery(removeImgDataFromVivo);
+				this.vivoSubtractions.loadRdfFromJC(subtractModel);
+				subtractModel.truncate();
 				// Trace the contents of the updated vivoModel. Testing only.
 				//traceModel("New Vivo Model contents: " + new Boolean(this.vivoModel.executeAskQuery("ASK { ?s ?p ?o .}")).toString(), this.vivoModel);
 			}
 		}
 		
-		this.vivoModel.executeUpdateQuery(setPrivacyTrue);
+		// NOTE: Changed to remove direct VIVO model operations. Flags are now carried through via Diff. -RPZ 08/14/2012
+		//this.vivoModel.executeUpdateQuery(setPrivacyTrue);
 
 	}
 	
@@ -200,21 +252,28 @@ public class ImagePreservationDuringPrivacy
 	 */
 	private void transitionFromPrivacy(String transferQuery, String ufid) throws IOException
 	{
-		log.trace("Operating on UFID: " + ufid);
+		log.trace("Operating on UFID: " + ufid + " ... Transitioning FROM private.");
 		
 		String removePersonFromPrivate = getRemoveImgFromPrivateQuery(ufid);
-		String setPrivacyFalse = getPrivacyFlagQuery(ufid, false);
+		
+		// NOTE: Changed to remove direct VIVO model operations. Flags are now carried through via Diff. -RPZ 08/14/2012
+		//String setPrivacyFalse = getPrivacyFlagQuery(ufid, false);
+		
 		JenaConnect appendModel;
 		
 		// Construct a model of changes to append to vivoModel. Remove person from privateModel.
 		if( this.bTransferImg )
 		{
 			appendModel = this.privateModel.executeConstructQuery(transferQuery);
-			this.vivoModel.loadRdfFromJC(appendModel);
+			
+			// NOTE: Refactored to operate on ADD/SUBS instead of on models directly. -RPZ 08/14/2012
+			//this.vivoModel.loadRdfFromJC(appendModel);
+			this.vivoAdditions.loadRdfFromJC(appendModel);			
 			
 			// Trace the contents of the appendModel. Testing only.
 			//traceModel("appendModel Contents: ", appendModel);
-
+			appendModel.truncate();
+			
 			// Trace the contents of the updated vivoModel. Testing only.
 			//traceModel("New Vivo Model contents: " + new Boolean(this.vivoModel.executeAskQuery("ASK { ?s ?p ?o .}")).toString(), this.vivoModel);
 			
@@ -232,10 +291,12 @@ public class ImagePreservationDuringPrivacy
 			if( this.bDeleteImg )
 			{
 				log.warn("Image data being deleted without being stored back in vivoModel!");
+				this.privateModel.executeUpdateQuery(removePersonFromPrivate);
 			}
 		}
 
-		this.vivoModel.executeUpdateQuery(setPrivacyFalse);
+		// NOTE: Changed to remove direct VIVO model operations. Flags are now carried through via Diff. -RPZ 08/14/2012
+		//this.vivoModel.executeUpdateQuery(setPrivacyFalse);
 		
 	}
 	
@@ -316,7 +377,7 @@ public class ImagePreservationDuringPrivacy
 			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"				+'\n'+
 			"PREFIX vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#>"		+'\n'+
 			"PREFIX public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#>"	+'\n'+
-			"DELETE { " 															+'\n'+
+			"CONSTRUCT { " 															+'\n'+
 			"	 ?uri	public:mainImage			?img ."							+'\n'+
 			"	 ?img   ?p							?o ."							+'\n'+
 			"    ?o   	?p2							?o2 ."							+'\n'+
@@ -378,7 +439,8 @@ public class ImagePreservationDuringPrivacy
 	 * @param newPrivacy Desired new privacy flag.
 	 * @return Completed query.
 	 */
-	private String getPrivacyFlagQuery(String ufid, boolean newPrivacy)
+	// NOTE: Changed to remove direct VIVO model operations. Flag changes are now carried through via Diff. -RPZ 08/14/2012
+	/*private String getPrivacyFlagQuery(String ufid, boolean newPrivacy)
 	{
 		String newFlag;
 		newFlag = (newPrivacy) ? "Y" : "N";
@@ -394,7 +456,7 @@ public class ImagePreservationDuringPrivacy
 			"WHERE{ ?s ufvivo:ufid"	+ "\""+ufid+"\" . }";
 		
 		return setPrivacy;
-	}
+	}*/
 		
 	/**
 	 * This method outputs the contents of relevant models and runs simple queries to establish the
@@ -428,8 +490,9 @@ public class ImagePreservationDuringPrivacy
 		incomingQueryResult = this.incomingModel.executeSelectQuery(privacyFlagQuery);
 		traceResultSet("ResultSet for privacyFlagQuery on incomingModel. " + "Has results?: " + incomingQueryResult.hasNext(), incomingQueryResult);
 		
-		traceModel("Pre-Alteration vivomodel Contents: ", this.vivoModel);
-		traceModel("Pre-Alteration privateModel Contents: ", this.privateModel);
+		//Debug Traces
+		//traceModel("Pre-Alteration vivomodel Contents: ", this.vivoModel);
+		//traceModel("Pre-Alteration privateModel Contents: ", this.privateModel);
 	}
 	
 	/**
@@ -438,6 +501,7 @@ public class ImagePreservationDuringPrivacy
 	 * @param model The model to trace.
 	 * @throws IOException Jena query.
 	 */
+	@SuppressWarnings("unused")
 	private void traceModel(String traceLabel, JenaConnect model) throws IOException
 	{
 		log.trace(traceLabel);
@@ -502,10 +566,54 @@ public class ImagePreservationDuringPrivacy
 		}
 		
 		// Check for triples in tempModel.
-		if(!this.tempModel.executeAskQuery("ASK { ?s ?p ?o }")) 
+		if(this.tempModel.isEmpty()) 
 		{
 			log.debug("Empty Dataset: Temp");
 		}
+	}
+	
+	/**
+	 * Outputs the contents of the Additions and Subtractions models to 
+	 * @throws IOException Possible exception from file writer.
+	 */
+	private void writeDiffFiles() throws IOException
+	{
+		// Dump subtractionModel to RDF/XML file.
+		
+		Model additionModel = this.vivoAdditions.getJenaModel();
+		Model subtractionModel = this.vivoSubtractions.getJenaModel();
+		String writeLanguage;
+			
+		// Check to see if language is provided.
+		if ( this.vivoDiffLanguage != null && !this.vivoDiffLanguage.isEmpty() )
+		{
+			writeLanguage = this.vivoDiffLanguage;
+		}
+		else
+		{
+			writeLanguage = "RDF/XML";
+		}
+		
+		RDFWriter addWriter = additionModel.getWriter(writeLanguage);
+		RDFWriter subWriter = subtractionModel.getWriter(writeLanguage);
+		
+		if (writeLanguage.equals("RDF/XML"))
+		{
+			addWriter.setProperty("showXmlDeclaration", "true");
+			addWriter.setProperty("allowBadURIs", "true");
+			addWriter.setProperty("relativeURIs", "");
+			subWriter.setProperty("showXmlDeclaration", "true");
+			subWriter.setProperty("allowBadURIs", "true");
+			subWriter.setProperty("relativeURIs", "");
+		}
+		
+		OutputStreamWriter addOSW = new OutputStreamWriter(FileAide.getOutputStream(this.vivoAdditionsFile), Charset.availableCharsets().get("UTF-8"));
+		addWriter.write(additionModel, addOSW, "");
+		log.debug(writeLanguage + " Data was exported to " + this.vivoAdditionsFile);
+		
+		OutputStreamWriter subOSW = new OutputStreamWriter(FileAide.getOutputStream(this.vivoSubtractionsFile), Charset.availableCharsets().get("UTF-8"));
+		subWriter.write(subtractionModel, subOSW, "");
+		log.debug(writeLanguage + " Data was exported to " + this.vivoSubtractionsFile);
 	}
 	
 	/**
@@ -519,12 +627,11 @@ public class ImagePreservationDuringPrivacy
 			JenaConnect.parseConfig(argList.get("i"), argList.getValueMap("I")), 
 			JenaConnect.parseConfig(argList.get("p"), argList.getValueMap("P")),
 			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")),
+			argList.get("m"), argList.get("a"), argList.get("l"),
 			argList.has("s"), argList.has("d")
 			);
 	}
-	
-	
-	
+
 	/**
 	 * Get the ArgParser for this task.
 	 * @return the ArgParser
@@ -538,6 +645,10 @@ public class ImagePreservationDuringPrivacy
 		parser.addArgument(new ArgDef().setShortOption('V').setLongOpt("vivoOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of vivoJena jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("privateJena-config").withParameter(true, "CONFIG_FILE").setDescription("private entries data JENA configuration filename").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('P').setLongOpt("privateOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of private entries jena model config using VALUE").setRequired(false));
+		
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("privacy-vivo-subs").withParameter(true, "VIVO_SUBS").setDescription("VIVO privacy subtractions file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("privacy-vivo-adds").withParameter(true, "VIVO_ADDS").setDescription("VIVO privacy additions file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("language").setDescription("Language for addition/subtraction files.").setRequired(false));
 		
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("dTransfer").setDescription("Transfer img between models.").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dDelete").setDescription("Delete img from models.").setRequired(false));
