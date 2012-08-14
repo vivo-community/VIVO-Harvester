@@ -34,19 +34,25 @@ public class XMLGrep {
 	private String altDest = "";
 	
 	/**
+	 * Destination for items with malformed XML or which generate errors.
+	 */
+	private String errorDest = "";
+	
+	/**
 	 * xpath expression to filter files
 	 */
 	private String expression;
-	
+		
 	/**
 	 * Constructor
 	 * @param src directory to read files from
 	 * @param dest directory to move files from
 	 * @param xpath expression to filter
 	 */
-	public XMLGrep(String src, String dest, String altDest, String value, String name) {
+	public XMLGrep(String src, String dest, String altDest, String errorDest, String value, String name) {
 		this.src = src;
 		this.dest = dest;
+		this.errorDest = errorDest;
 		
 		if (altDest != null) {
 			this.altDest = altDest;
@@ -88,20 +94,35 @@ public class XMLGrep {
 	 * @param argList arguments
 	 */
 	private XMLGrep(ArgList argList) {
-		this(argList.get("s"), argList.get("d"), argList.get("a"), argList.get("v"), argList.get("n"));
+		this(argList.get("s"), argList.get("d"), argList.get("a"), argList.get("e"), argList.get("v"), argList.get("n"));
 	}
 	
 	/**
 	 * 
 	 * @param myFile
-	 * @param expression
+	 * @param exp
 	 * @return boolean
 	 * @throws IOException
 	 */
-	public static boolean findInFile(File myFile, String expression) throws IOException {
+	public boolean findInFile(File myFile, String exp) throws IOException {
 		
-		String result = XPathTool.getXPathResult(myFile.getPath(), expression);
+		String result = null;
 		
+		try
+		{
+			result = XPathTool.getXPathResult(myFile.getPath(), exp);
+		}
+		catch (IOException e)
+		{
+			log.error("Exception in XPathTool: Malformed XML, or bad Parser Configuration");
+			log.debug("Moving offending file: " + myFile.getPath() + " to error destination: " + this.errorDest);
+			moveFile(myFile, this.errorDest);
+		}
+		catch (IllegalArgumentException e)
+		{
+			log.error("Exception in XPathTool: Invalid XPath Expression.");
+		}
+			
 		if(result != null && !result.isEmpty()) {
 			return true;
 		}
@@ -191,9 +212,9 @@ public class XMLGrep {
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("src-dir").withParameter(true, "SRC_DIRECTORY").setDescription("SRC directory to read files from").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dest-dir").withParameter(true, "DEST_DIRECTORY").setDescription("DEST directory to write files to").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("alt-dest").withParameter(true, "ALT_DESTINATION_DIRECTORY").setDescription("Alternate destination for files that failed to match expression").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("err-dest").withParameter(true, "ERROR_DESTINATION_DIR").setDescription("Destination for malformed or exception generating files").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("tag-name").withParameter(true, "TAG_NAME").setDescription("TAG Name to Search for").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("tag-value").withParameter(true, "TAG_VALUE").setDescription("TAG value to Search for").setRequired(false));
-		
 		return parser;
 	}
 	
