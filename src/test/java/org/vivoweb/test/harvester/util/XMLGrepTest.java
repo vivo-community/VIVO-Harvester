@@ -145,7 +145,9 @@ public class XMLGrepTest extends TestCase {
 		"<LOA>Bronze</LOA>" +
 		"<IGNORE>YES</IGNORE>" +
 		"</ns0:PERSON>";
-
+	
+	protected static final String xmlContent4 =
+		"<ns0:PERSON xmlns:ns0=\"http://uf.biztalk.shibperson\"><UFID>73218810</UFID><GLID>npeacock</GLID><ACTIVE>A</ACTIVE><PROTECT>N</PROTECT><AFFILIATION>A</AFFILIATION><NAME type=\"21\">PEACOCK,NEAL JOSEPH</NAME><NAME type=\"33\">Peacock,Neal Joseph</NAME><NAME type=\"35\">Neal</NAME><NAME type=\"36\">Peacock</NAME><NAME type=\"37\">Joseph</NAME><NAME type=\"232\">Peacock,Neal Joseph</NAME><ADDRESS><ADDRESS1 /><ADDRESS2 /><ADDRESS3 /><CITY /><STATE /><ZIP /></ADDRESS><EMAIL type=\"1\">npeacock@ufl.edu</EMAIL><DEPTID>ST010000</DEPTID><RELATIONSHIP type=\"208\"><DEPTID>ST010000</DEPTID><DEPTNAME>REGISTRAR STUDENTS</DEPTNAME></RELATIONSHIP><RELATIONSHIP type=\"215\"><DEPTID>ST010000</DEPTID><DEPTNAME>REGISTRAR STUDENTS</DEPTNAME></RELATIONSHIP><RELATIONSHIP type=\"223\"><DEPTID>ST010000</DEPTID><DEPTNAME>REGISTRAR STUDENTS</DEPTNAME></RELATIONSHIP><WORKINGTITLE>(=o)<--<</WORKINGTITLE><DECEASED>N</DECEASED><LOA>Invalid</LOA><ACTION>CREATE</ACTION></ns0:PERSON>";
 	/**
 	 * Destination dir for all files matching expression
 	 */
@@ -358,10 +360,29 @@ public class XMLGrepTest extends TestCase {
 
 	@SuppressWarnings("javadoc")
 	public void testMalformedXMLSource() throws IOException {
-		createSrcFile(XMLGrepTest.xmlContent3);
+//		createSrcFile(XMLGrepTest.xmlContent3);
+//		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, null, this.errDest, null, "IGNORE");
+//		xmlGrep.execute();
+//		assertTrue(FileAide.exists(this.errDest + this.srcFile));
+//		assertFalse(FileAide.exists(this.src + this.srcFile));
+//		assertFalse(FileAide.exists(this.destination + this.srcFile));
+//		assertFalse(FileAide.exists(this.altDest + this.srcFile));
+		
+		createSrcFile(XMLGrepTest.xmlContent4);
+		XMLGrep xmlGrep2 = new XMLGrep(this.src, this.destination, null, this.errDest, null, "IGNORE");
+		xmlGrep2.execute();
+		assertTrue(FileAide.exists(this.errDest + this.srcFile));
+		assertFalse(FileAide.exists(this.src + this.srcFile));
+		assertFalse(FileAide.exists(this.destination + this.srcFile));
+		assertFalse(FileAide.exists(this.altDest + this.srcFile));
+		
+	}
+	
+	@SuppressWarnings("javadoc")
+	public void testEmptyFile() throws IOException {
+		createEmptyFile();
 		XMLGrep xmlGrep = new XMLGrep(this.src, this.destination, null, this.errDest, null, "IGNORE");
 		xmlGrep.execute();
-		assertTrue(FileAide.exists(this.errDest + this.srcFile));
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -372,6 +393,16 @@ public class XMLGrepTest extends TestCase {
 			FileAide.createFile(this.src + this.srcFile);
 			FileAide.setTextContent(this.src + this.srcFile, xmlContent);
 		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("javadoc")
+	private void createEmptyFile()
+	{
+		try{
+			FileAide.createFile(this.src + this.srcFile);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
