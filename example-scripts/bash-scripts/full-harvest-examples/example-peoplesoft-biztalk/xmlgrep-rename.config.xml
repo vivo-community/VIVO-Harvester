@@ -8,6 +8,7 @@
 	<Param name="src-dir">/data/vivo/web_service/incoming/</Param>
 	<Param name="dest-dir">data/renamed-records/</Param>
 	<Param name="alt-dest">data/raw-records/</Param>
+	<Param name="err-dest">data/malformed-records/</Param>
 	<Param name="tag-name">ACTION</Param>
 	<Param name="tag-value">RENAME</Param>
 </Config>

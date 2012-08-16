@@ -88,7 +88,7 @@
 					<xsl:choose>
 						<xsl:when test="PRSN_PROTECT='N' or PRSN_PROTECT=''">
 						<!-- Person is not a protected entity so populate standard information -->
-							<ufVivo:privacy>N</ufVivo:privacy>
+							<ufVivo:privacyFlag>N</ufVivo:privacyFlag>
 							<core:primaryEmail><xsl:value-of select="UFEmail" /></core:primaryEmail>
 							<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 							<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
@@ -119,7 +119,7 @@
 						<xsl:when test='PRSN_PROTECT="Y"'>
 	
 						<!-- Person is a protected entity so blank out standard information -->
-							<ufVivo:privacy><xsl:value-of select="PRSN_PROTECT"/></ufVivo:privacy>
+							<ufVivo:privacyFlag><xsl:value-of select="PRSN_PROTECT"/></ufVivo:privacyFlag>
 							<core:primaryEmail />
 							<core:primaryPhoneNumber />
 							<core:faxNumber />
@@ -265,7 +265,7 @@
 				<xsl:choose>
 					<xsl:when test="PROTECT='N' or PROTECT=''">
 					<!-- Person is not a protected entity so populate standard information -->
-						<ufVivo:privacy>N</ufVivo:privacy>
+						<ufVivo:privacyFlag>N</ufVivo:privacyFlag>
 						<core:primaryEmail><xsl:value-of select="EMAIL[@type=1]" /></core:primaryEmail>
 						<core:primaryPhoneNumber><xsl:value-of select="PHONE[@type=10]" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="PHONE[@type=11]" /></core:faxNumber>
@@ -296,7 +296,7 @@
 					<xsl:when test='PROTECT="Y"'>
 
 					<!-- Person is a protected entity so blank out standard information -->
-						<ufVivo:privacy><xsl:value-of select="PROTECT"/></ufVivo:privacy>
+						<ufVivo:privacyFlag><xsl:value-of select="PROTECT"/></ufVivo:privacyFlag>
 						<core:primaryEmail />
 						<core:primaryPhoneNumber />
 						<core:faxNumber />
@@ -428,7 +428,7 @@
 				<xsl:choose>
 					<xsl:when test="PRSN_PROTECT='N' or PRSN_PROTECT=''">
 					<!-- Person is not a protected entity so populate standard information -->
-						<ufVivo:privacy>N</ufVivo:privacy>
+						<ufVivo:privacyFlag>N</ufVivo:privacyFlag>
 						<core:primaryEmail><xsl:value-of select="UFEmail" /></core:primaryEmail>
 						<core:primaryPhoneNumber><xsl:value-of select="PhoneNumber" /></core:primaryPhoneNumber>
 						<core:faxNumber><xsl:value-of select="FaxNumber" /></core:faxNumber>
@@ -459,7 +459,7 @@
 					<xsl:when test='PRSN_PROTECT="Y"'>
 
 					<!-- Person is a protected entity so blank out standard information -->
-						<ufVivo:privacy><xsl:value-of select="PRSN_PROTECT"/></ufVivo:privacy>
+						<ufVivo:privacyFlag><xsl:value-of select="PRSN_PROTECT"/></ufVivo:privacyFlag>
 						<core:primaryEmail />
 						<core:primaryPhoneNumber />
 						<core:faxNumber />

@@ -29,8 +29,11 @@
 -->
 
   <Param name="inputJena-config">harvested-data.model.xml</Param>
-  <Param name="vivoJena-config">vivo.model.xml</Param>
+  <Param name="vivoJena-config">proxy-vivo.model.xml</Param>
   <Param name="privateJena-config">private-data.model.xml</Param>
+  <Param name="privacy-vivo-subs">data/privacy-vivo-subtractions.rdf.xml</Param>
+  <Param name="privacy-vivo-adds">data/privacy-vivo-additions.rdf.xml</Param>
+  <Param name="language">RDF/XML</Param>
   <Param name="dTransfer">True</Param>
   <Param name="dDelete">True</Param>
 </Task>

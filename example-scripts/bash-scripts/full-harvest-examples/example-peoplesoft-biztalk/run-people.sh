@@ -13,8 +13,8 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
-VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester
+export VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
+export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
 export HARVEST_NAME=example-peoplesoft-biztalk
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -27,12 +27,13 @@ export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/bin/harvester.jar:$HARVESTER_
 export CLASSPATH=$CLASSPATH:$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 
 # Set the email address of the person receiving the email
-export EMAIL_RECIPIENT="vsposato@ufl.edu"
-export EMAIL_RECIPIENT2="rziede@ufl.edu"
+export EMAIL_RECIPIENT="ufvivotech-l@lists.ufl.edu"
 
 export HARVESTER_LOG_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/log
 export HARVESTER_BACKUP_DIR=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/backup
 export PEOPLE_HARVEST_HOME=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/peoplesoft-ingest
+export WEBSERVICE_DIR=/data/vivo/web_service
+export WEBSERVICE_ARCHIVE_DIR=$WEBSERVICE_DIR/archive/$DATE
 
 # Supply the location of the detailed log file which is generated during the script.
 #       If there is an issue with a harvest, this file proves invaluable in finding
@@ -40,12 +41,6 @@ export PEOPLE_HARVEST_HOME=/data/vivo/harvester/vivo-auto-harvest/peoplesoft-biz
 #       to request this file. The passwords and usernames are filtered out of this file
 #       to prevent these logs from containing sensitive information.
 echo "Full Logging in peoplesoft-biztalk-harvest-$DATE.log"
-
-# Exit on first error
-# The -e flag prevents the script from continuing even though a tool fails.
-#	Continuing after a tool failure is undesirable since the harvested
-#	data could be rendered corrupted and incompatible.
-set -e
 
 cd $PEOPLE_HARVEST_HOME
 
@@ -124,6 +119,8 @@ if [ -d data/raw-records ]; then
   rm -rf data/raw-records
 fi
 
+echo "Cleanup complete - moving to logs"
+
 # Create the logfile.txt now to capture all of the analytics
 touch logfile.txt
 
@@ -133,11 +130,35 @@ touch $HARVEST_NAME.$DATE.log
 ln -sf $HARVEST_NAME.$DATE.log $HARVEST_NAME.latest.log
 cd ..
 
+echo "Log creation done - moving to archive files"
+
+# Copy all current incoming files to arvhice
+if [ ! -d $WEBSERVICE_ARCHIVE_DIR ]; then
+	mkdir $WEBSERVICE_ARCHIVE_DIR
+fi
+cp $WEBSERVICE_DIR/incoming/* $WEBSERVICE_ARCHIVE_DIR
+
+echo "Archive done - moving to sed"
+
+# Stopgap measure to ensure valid XML reaches the translator. TEMPORARY.
+perl -pi -e 's/(&amp;|&)/&amp;/g' $WEBSERVICE_DIR/incoming/*
+
+# Exit on first error
+# The -e flag prevents the script from continuing even though a tool fails.
+#	Continuing after a tool failure is undesirable since the harvested
+#	data could be rendered corrupted and incompatible.
+set -e
+
+echo "Sed complete - moving to xmlgrep"
+
 # Execute XMLGrep to remove any person that is marked for renaming by ES - this will prevent issues later
 # Also, this will handle fetching the XML files from the WEBSERVICE directory, so that we do not need to create
 # a separate fetch process
 echo "XMLGREP Rename"
 harvester-xmlgrep -X xmlgrep-rename.config.xml
+
+# Stopgap measure to ensure valid XML reaches the translator. TEMPORARY.
+#sed -i 's/&/&amp;/g' ./data/raw-records/*
 
 # Execute the translation to convert all input records into RDF
 echo "Translate"
@@ -252,21 +273,17 @@ harvester-diff -X diff-subtractions.config.xml
 echo "Diff Additions"
 harvester-diff -X diff-additions.config.xml
 
-# Apply Subtractions to Previous model
-#echo "Apply Subtractions to Previous"
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
-# Apply Additions to Previous model
-#echo "Apply Additions to Previous"
-#harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
-
-# Now that the changes have been applied to the previous harvest and the harvested data in vivo
-#       should agree with the previous harvest, the changes are now applied to the vivo model.
-# Apply Subtractions to VIVO for pre-1.2 versions
-#echo "Apply Subtractions to VIVO"
+# Apply People Diffs to Actual VIVO
+echo "Apply Subtractions to Actual VIVO"
 harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
-# Apply Additions to VIVO for pre-1.2 versions
-#echo "Apply Additions to VIVO"
+echo "Apply Additions to Actual VIVO"
 harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+
+# Apply Privacy-Generated Diffs to Actual VIVO
+echo "Apply Privacy Subtractions to Actual VIVO"
+harvester-transfer -o vivo.model.xml -r data/privacy-vivo-subtractions.rdf.xml -m
+echo "Apply Privacy Additions to Actual VIVO"
+harvester-transfer -o vivo.model.xml -r data/privacy-vivo-additions.rdf.xml
 
 echo "Pre People Ingest Analytics" &>> logfile.txt
 echo "========================================================================="
@@ -283,12 +300,13 @@ echo -e "\n" &>> logfile.txt
 
 # Send analytics email out to group
 mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT" < logfile.txt
-mail -a "FROM:PeopleSoft_Ingest" -s "PeopleSoft Ingest harvest of $DATE" "$EMAIL_RECIPIENT2" < logfile.txt
 
 # Backup logs and deltas into their respective directories.
 mv ./logs/* $HARVESTER_LOG_DIR
 mv ./data/vivo-additions.rdf.xml $HARVESTER_BACKUP_DIR/vivo-additions.$DATE.rdf.xml
 mv ./data/vivo-subtractions.rdf.xml $HARVESTER_BACKUP_DIR/vivo-subtractions.$DATE.rdf.xml
+mv ./data/privacy-vivo-subtractions.rdf.xml $HARVESTER_BACKUP_DIR/privacy-vivo-subtractions.$DATE.rdf.xml
+mv ./data/privacy-vivo-additions.rdf.xml $HARVESTER_BACKUP_DIR/privacy-vivo-additions.$DATE.rdf.xml
 
 echo 'Harvest completed successfully'
 
