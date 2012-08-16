@@ -648,7 +648,7 @@ public class ImagePreservationDuringPrivacy
 		
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("privacy-vivo-subs").withParameter(true, "VIVO_SUBS").setDescription("VIVO privacy subtractions file path").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("privacy-vivo-adds").withParameter(true, "VIVO_ADDS").setDescription("VIVO privacy additions file path").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("language").setDescription("Language for addition/subtraction files.").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("language").withParameter(true, "LANGUAGE").setDescription("Language for addition/subtraction files.").setRequired(false));
 		
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("dTransfer").setDescription("Transfer img between models.").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dDelete").setDescription("Delete img from models.").setRequired(false));
