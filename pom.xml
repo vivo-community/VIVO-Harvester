@@ -473,5 +473,12 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.skife.csv</groupId>
+			<artifactId>csv</artifactId>
+			<version>1.0</version>
+			<systemPath>${basedir}/lib/csv-1.0.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
 	</dependencies>
 </project>
