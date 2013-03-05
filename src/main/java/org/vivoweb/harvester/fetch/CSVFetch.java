@@ -138,7 +138,7 @@ public class CSVFetch {
 			args.get("f"),
 			args.get("s"),
 			args.get("n"),
-			args.get("l"), 
+			args.get("t"), 
 			args.get("u"),
 			args.get("b"),
 			args.get("p"),
@@ -301,11 +301,11 @@ public class CSVFetch {
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("file").withParameter(true, "CSV_FILE").setDescription("csv file to import").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("seperated").withParameter(true, "SEP_VARIABLE").setDescription("seperation method, automatically set to ',' ").setRequired(false));
 		
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceBase").withParameter(true, "NAMESPACE_BASE").setDescription("the base namespace to use for each node created").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("localClass").withParameter(true, "LOCAL_CLASS").setDescription("local name of the class that all rows will be set as").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespace").withParameter(true, "NAMESPACE_BASE").setDescription("the base namespace to use for each node created").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("type").withParameter(true, "LOCAL_CLASS").setDescription("local name of the class that all rows will be set as").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("uriPrefix").withParameter(true, "URI_PREFIX").setDescription("the prefix to add infront of the uri").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("uriPatternBase").withParameter(true, "URI_PATTERN_BASE").setDescription("the field to base the URI on").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("patternPrefix").withParameter(true, "URI_PATTERN_BASE").setDescription("the ur pattern base").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("propertyPrefix").withParameter(true, "URI_PATTERN_BASE").setDescription("the field to base the URI on").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("uriParameter").withParameter(true, "URI_PATTERN_BASE").setDescription("the ur pattern base").setRequired(false));
 		
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
 	
