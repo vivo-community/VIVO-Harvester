@@ -6,6 +6,9 @@
 package org.vivoweb.harvester.translate;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
@@ -15,9 +18,18 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.RecordHandler;
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.sparql.function.library.e;
 
 /**
  * Takes XML Files and uses an XSL file to translate the data into the desired ontology
@@ -73,17 +85,20 @@ public class SPARQLTranslator {
 	 * @throws IOException error reading files
 	 */
 	private SPARQLTranslator(ArgList argumentList) throws IOException {
+	
+		
 		this(
-			JenaConnect.parseConfig(argumentList.get("i"), argumentList.getValueMap("I")), 
+			prepDataset(argumentList.getAll("i")), 
 			JenaConnect.parseConfig(argumentList.get("o"), argumentList.getValueMap("O")), 
 			RecordHandler.parseConfig(argumentList.get("h"), argumentList.getValueMap("H")), 
 			FileAide.getTextContent(argumentList.get("s"))
 		);
 	}
 	
+
 	/**
 	 * Constructor
-	 * @param inputJC the input model
+	 * @param inputDS the input models
 	 * @param outputJC the output model
 	 * @param outputRH the output recordhandler
 	 * @param sparqlQuery the sparql query
@@ -102,23 +117,59 @@ public class SPARQLTranslator {
 	public void execute() throws IOException {
 		// checking for valid input parameters
 		log.trace(this.sparqlQuery);
-		ResultSet rs = this.inputJC.executeSelectQuery(this.sparqlQuery);
+		log.trace("Input Jena's Total Size: " + this.inputJC.size());
 		
-		if(!rs.hasNext()) {
-			log.info("No Results");
-		} else {
-			log.info("Processing Results");
+		log.debug("Executing Query");
+		if (this.sparqlQuery.toLowerCase().contains("construct")){
+			this.outputJC.loadRdfFromJC(this.inputJC.executeConstructQuery(this.sparqlQuery));
+			log.debug(this.outputJC.exportRdfToString());
+			log.trace("Total Size of Constructed Output: " + this.outputJC.size());
+			log.trace("Total Number of Elements: " + this.outputJC.getJenaModel().listSubjects().toList().size());
 		}
+		else {
+			ResultSet rs = this.inputJC.executeSelectQuery(this.sparqlQuery);
+			
+			if(!rs.hasNext()) {
+				log.info("No Results");
+			} else {
+				log.info("Processing Results");
+			}
 		
-		while(rs.hasNext()) {
-			QuerySolution qs = rs.next();
-			log.info(qs.toString());
+			while(rs.hasNext()) {
+				QuerySolution qs = rs.next();
+				log.info(qs.toString());
+			}
+			this.outputJC.sync();
 		}
-		this.inputJC.sync();
-		this.outputJC.sync();
-		
 		log.info("Translation: End");
 	}
+	
+	/**
+	 * @param jenas
+	 * @return
+	 * @throws IOException
+	 */
+	private static JenaConnect prepDataset(List<String> jenas) throws IOException {
+		// Bring all models into a single Dataset
+		JenaConnect fullJena = new MemJenaConnect("urn:x-arq:UnionGraph");
+		JenaConnect[] arrayJena = new JenaConnect[jenas.size()];
+		for (ListIterator<String> i = jenas.listIterator(); i.hasNext();){
+			int indexOf = i.nextIndex();
+			String config = i.next();
+			arrayJena[indexOf] = fullJena.neighborConnectClone("http://vivoweb.org/harvester/model/translate/model"+i.nextIndex());
+			arrayJena[indexOf].loadRdfFromJC(JenaConnect.parseConfig(config));
+			
+			log.trace("Input Model " + arrayJena[indexOf].getModelName() + " with " + arrayJena[indexOf].size() + " statements");
+		}
+		
+		if(!fullJena.executeAskQuery("ASK { ?s ?p ?o }")) {
+			log.trace("Empty Dataset");
+		}
+		return fullJena;
+	}
+	
+	
+	
 	
 	/**
 	 * Get the ArgParser for this task
@@ -126,7 +177,7 @@ public class SPARQLTranslator {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SPARQLTranslator");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameter(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameters(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
