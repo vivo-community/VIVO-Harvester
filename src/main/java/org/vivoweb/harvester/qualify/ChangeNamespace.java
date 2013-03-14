@@ -18,9 +18,11 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * Changes the namespace for all matching uris
@@ -121,6 +123,35 @@ public class ChangeNamespace {
 			for(JenaConnect model : models) {
 				boolean modelContains = model.containsURI(uri);
 				log.trace("model <" + model.getModelName() + "> contains this uri?: " + modelContains);
+				if(modelContains) {
+					uri = null;
+					break;
+				}
+			}
+		}
+		log.debug("Using new URI: <" + uri + ">");
+		return uri;
+	}
+	
+	/**
+	 * Gets an unused URI in the the given namespace for the given models
+	 * @param namespace the namespace
+	 * @param models models to check in
+	 * @return the uri
+	 * @throws IOException error connecting
+	 */
+	public static String getUnusedURI(String namespace, OntModel... models) throws IOException {
+		if((namespace == null) || namespace.equals("")) {
+			throw new IllegalArgumentException("namespace cannot be empty");
+		}
+		String uri = null;
+		Random random = new Random();
+		while(uri == null) {
+			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
+			log.trace("evaluating uri <" + uri + ">");
+			for(OntModel model : models) {
+				boolean modelContains = model.contains(ResourceFactory.createResource(uri), null);
+				log.trace("model contains this uri?: " + modelContains);
 				if(modelContains) {
 					uri = null;
 					break;

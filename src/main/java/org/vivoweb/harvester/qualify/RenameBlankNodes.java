@@ -26,6 +26,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.util.iterator.ClosableIterator;
 
@@ -87,7 +88,12 @@ public class RenameBlankNodes {
 		this.outJC = outJC;
 		this.namespaceEtc = namespaceEtc;
 		this.dedupJC = dedupJC;
-		this.pattern = pattern;
+		if(pattern == null){
+			this.pattern = "";
+		} else {
+			this.pattern = pattern;
+		}
+		
 		this.property = property;
 		if(this.inJC == null) {
 			throw new IllegalArgumentException("Must provide an input jena model");
@@ -125,7 +131,6 @@ public class RenameBlankNodes {
 	public static void renameBNodes(JenaConnect inJC, JenaConnect outJC, String namespaceEtc, JenaConnect dedupJC, String pattern, String property) {
 		Model inModel = inJC.getJenaModel();
 		Model outModel = outJC.getJenaModel();
-		Property propertyRes = ResourceFactory.createProperty(property);
 		OntModel dedupUnionModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM); // we're not using OWL here, just the OntModel submodel infrastructure
 		dedupUnionModel.addSubModel(outModel);
 		if (dedupJC != null) {
@@ -141,27 +146,51 @@ public class RenameBlankNodes {
 		
 		try {
 			outJC.loadRdfFromJC(inJC);
+			
+			
+			//for (Iterator<Statement> stmtIt = inModel.listStatements(); stmtIt.hasNext();){
+			//	Statement stmt = stmtIt.next();
+			//	System.out.println(stmt.toString());
+			//}
+			
 			ClosableIterator<Resource> closeIt = inModel.listSubjects();
 			try {
 				for (Iterator<Resource> it = closeIt; it.hasNext();) {
 					Resource res = it.next();
 					if (res.isAnon() && !(doneSet.contains(res.getId()))) {
-						// now we do something hacky to get the same resource in the outModel, since there's no getResourceById();
-						ClosableIterator<Statement> closfIt = outModel.listStatements(res,propertyRes,(RDFNode)null);
-						Statement stmt = null;
-						try {
-							if (closfIt.hasNext()) {
-								stmt = closfIt.next();
+						// now we do alot of hacky (svw added alot) to get the same resource in the outModel, since there's no getResourceById();
+												
+						if (property == null) {
+							StmtIterator stmtOut = outModel.listStatements(res, null, (RDFNode)null);
+							Resource outRes = stmtOut.next().getSubject();
+						
+							//System.out.println(outRes.getLocalName());
+							try {
+								RenameResources.renameResource(outRes, ChangeNamespace.getUnusedURI(namespaceEtc+pattern+"_",dedupUnionModel));
+							} catch(IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-						} finally {
-							closfIt.close();
-						}
-						if (stmt != null) {
-							Resource outRes = stmt.getSubject();
-							if(stmt.getObject().isLiteral()){
-								RenameResources.renameResource(outRes,namespaceEtc+pattern+"_"+stmt.getObject().toString());
-							}
+					
 							doneSet.add(res.getId().toString());
+						} else {
+							Property propertyRes = ResourceFactory.createProperty(property);
+							ClosableIterator<Statement> closfIt = outModel.listStatements(res,propertyRes,(RDFNode)null);
+							Statement stmt = null;
+							try {
+								if (closfIt.hasNext()) {
+									stmt = closfIt.next();
+								}
+							} finally {
+								closfIt.close();
+							}
+							if (stmt != null) {
+								Resource outRes = stmt.getSubject();
+								if(stmt.getObject().isLiteral()){
+									RenameResources.renameResource(outRes,namespaceEtc+pattern+"_"+stmt.getObject().toString());
+								}
+								doneSet.add(res.getId().toString());
+							}
 						}
 					}
 				}
@@ -175,11 +204,13 @@ public class RenameBlankNodes {
 
 	/**
 	 * Rename blank nodes
+	 * @throws IOException 
 	 */
-	public void execute() {
+	public void execute() throws IOException {
 		renameBNodes(this.inJC, this.outJC, this.namespaceEtc, this.dedupJC, this.pattern, this.property);
 		this.inJC.sync();
 		this.outJC.sync();
+		log.debug(this.outJC.exportRdfToString());
 	}
 	
 	/**
@@ -195,8 +226,8 @@ public class RenameBlankNodes {
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dedupModel").withParameter(true, "CONFIG_FILE").setDescription("optional: config file for deduplication test jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("dedupModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of deduplication test jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceEtc").withParameter(true, "NAMESPACE_ETC").setDescription("part of the namespace between the base and the ID number").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("pattern").withParameter(true, "PATTERN").setDescription("pattern").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("property").withParameter(true, "PROPERTY").setDescription("property").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("pattern").withParameter(true, "PATTERN").setDescription("pattern to add between the namespace and the uniqueid").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("property").withParameter(true, "PROPERTY").setDescription("property that contains the unique id to use for the new namespace").setRequired(false));
 		return parser;
 	}
 	
