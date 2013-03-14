@@ -125,12 +125,14 @@ public class RenameBlankNodes {
 	public static void renameBNodes(JenaConnect inJC, JenaConnect outJC, String namespaceEtc, JenaConnect dedupJC, String pattern, String property) {
 		Model inModel = inJC.getJenaModel();
 		Model outModel = outJC.getJenaModel();
-		Model dedupModel = dedupJC.getJenaModel();
 		Property propertyRes = ResourceFactory.createProperty(property);
 		OntModel dedupUnionModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM); // we're not using OWL here, just the OntModel submodel infrastructure
 		dedupUnionModel.addSubModel(outModel);
-		if (dedupModel != null) {
-			dedupUnionModel.addSubModel(dedupModel);
+		if (dedupJC != null) {
+			Model dedupModel = dedupJC.getJenaModel();
+			if (dedupModel != null) {
+				dedupUnionModel.addSubModel(dedupModel);
+			}
 		}
 		// the dedupUnionModel is so we can guard against reusing a URI in an 
 		// existing model, as well as in the course of running this process
