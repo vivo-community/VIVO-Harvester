@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.qualify.ChangeNamespace;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.SpecialEntities;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -169,7 +170,11 @@ public class CSVFetch {
 		this.tboxNamespace = namespace;
 		this.file = fileName;
 		this.typeName = localClass;
-		this.individualNameBase = uriPrefix;
+		if (uriPrefix == null) {
+			this.individualNameBase = "";
+		} else {
+			this.individualNameBase = uriPrefix;
+		}
 		this.propertyNameBase = uriPattern;
 		this.uriProperty = uriField;
 	}
@@ -205,7 +210,7 @@ public class CSVFetch {
             dpArray[i] = tboxOntModel.createDatatypeProperty(this.tboxNamespace+this.propertyNameBase+columnHeaders[i].replaceAll("\\W",""));
 
             //setting the column id to generate URI
-            if (this.uriProperty.equals(columnHeaders[i].toString())){
+            if (this.uriProperty != null && this.uriProperty.equals(columnHeaders[i].toString())){
             	this.indexOfURIProp = i;
             }
             System.out.println(dpArray[i].toString());
@@ -214,16 +219,14 @@ public class CSVFetch {
         
         Individual ind = null;
         for (int row=1; row<fileRows.size(); row++) {    	
-        	//String uri = uriGen.getNextURI();
-        	//if(uri!=null)
-        	//	ind = ontModel.createIndividual(uri,theClass);
-        	//else
+        	
         	String[] cols = fileRows.get(row);
 	        if (this.indexOfURIProp != -1){
 	        	String uri = this.namespace+this.individualNameBase+cols[this.indexOfURIProp].trim();
 	        	ind = ontModel.createIndividual(uri, theClass);
 	        } else {
-	        	ind = ontModel.createIndividual(theClass);
+	        	String uri = ChangeNamespace.getUnusedURI(this.namespace+"/individual/n", ontModel);
+	        	ind = ontModel.createIndividual(uri, theClass);
 	        }
 	        for (int col=0; col<cols.length; col++) {
 				String value = cols[col].trim();
@@ -245,52 +248,9 @@ public class CSVFetch {
 		//return resultModels;
 	}
 	
-	/*private interface URIGenerator {
-		public String getNextURI();
-	}
+
 	
-	private class RandomURIGenerator implements URIGenerator {
-		
-		private WebappDaoFactory wadf;
-		private Model destination;
-		private Random random = new Random(System.currentTimeMillis());
-		
-		public RandomURIGenerator(WebappDaoFactory webappDaoFactory, Model destination) {
-			this.wadf = webappDaoFactory;
-			this.destination = destination;
-		}
-		
-		public String getNextURI() {
-			boolean uriIsGood = false;
-			boolean inDestination = false;
-			String uri = null;
-	        int attempts = 0;
-			if(namespace!=null && !namespace.isEmpty()){
-        		while( uriIsGood == false && attempts < 30 ){	
-        			uri = namespace+individualNameBase+random.nextInt( Math.min(Integer.MAX_VALUE,(int)Math.pow(2,attempts + 13)) );
-        			String errMsg = wadf.checkURI(uri);
-        			Resource res = ResourceFactory.createResource(uri);
-        			inDestination = destination.contains(res, null);
-        			if( errMsg != null && !inDestination)
-        				uri = null;
-        			else
-        				uriIsGood = true;				
-        			attempts++;
-        		}
-        	}
-        	return uri;
-		}
-		
-	}
-	
-	private class SequentialURIGenerator implements URIGenerator {
-		private int index = 0;
-		
-		public String getNextURI() {
-			index++;
-			return namespace + individualNameBase + Integer.toString(index); 
-		}
-	}*/
+
 	
 	/**
 	 * Get the ArgParser for this task
@@ -342,4 +302,64 @@ public class CSVFetch {
 			}
 		}
 	}
+	
+	/**
+	 * @author stwi5210
+	 *
+	 */
+	private interface URIGenerator {
+		public String getNextURI();
+	}
+	
+//	private class RandomURIGenerator implements URIGenerator {
+//		
+//		//private WebappDaoFactory wadf;
+//		
+//		//private Random random = new Random(System.currentTimeMillis());
+//		
+//		//public RandomURIGenerator(WebappDaoFactory webappDaoFactory, Model destination) {
+//		public RandomURIGenerator(Model destination) {
+//		
+//			//this.wadf = webappDaoFactory;
+//			//this.destination = destination;
+//		}
+//		
+////		public String getNextURI() {
+////			boolean uriIsGood = false;
+////			boolean inDestination = false;
+////			String uri = null;
+////	        int attempts = 0;
+////	        Model destination = new Model();
+////	        Random random = new Random(System.currentTimeMillis());
+////			if(namespace!=null && !namespace.isEmpty()){
+////        		while( uriIsGood == false && attempts < 30 ){	
+////        			uri = namespace+individualNameBase+random.nextInt( Math.min(Integer.MAX_VALUE,(int)Math.pow(2,attempts + 13)) );
+////        			//String errMsg = wadf.checkURI(uri);
+////        			Resource res = ResourceFactory.createResource(uri);
+////        			inDestination = destination.contains(res, null);
+////        			//if( errMsg != null && !inDestination)
+////        			if(!inDestination)
+////        				uri = null;
+////        			else
+////        				uriIsGood = true;				
+////        			attempts++;
+////        		}
+////        	}
+////        	return uri;
+////		}
+//		
+//	}
+	
+	/**
+	 * @author stwi5210
+	 *
+	 */
+	//private class SequentialURIGenerator implements URIGenerator {
+	//	private int index = 0;
+	//	
+	//	public String getNextURI() {
+	//		index++;
+	//		return namespace + individualNameBase + Integer.toString(index); 
+	//	}
+	//}
 }

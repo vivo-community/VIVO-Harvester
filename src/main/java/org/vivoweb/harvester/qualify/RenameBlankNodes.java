@@ -88,13 +88,14 @@ public class RenameBlankNodes {
 		this.outJC = outJC;
 		this.namespaceEtc = namespaceEtc;
 		this.dedupJC = dedupJC;
+		
 		if(pattern == null){
 			this.pattern = "";
 		} else {
 			this.pattern = pattern;
 		}
-		
 		this.property = property;
+		
 		if(this.inJC == null) {
 			throw new IllegalArgumentException("Must provide an input jena model");
 		}
@@ -145,8 +146,7 @@ public class RenameBlankNodes {
 		Set<String> doneSet = new HashSet<String>();
 		
 		try {
-			outJC.loadRdfFromJC(inJC);
-			
+			outJC.loadRdfFromJC(inJC);			
 			
 			//for (Iterator<Statement> stmtIt = inModel.listStatements(); stmtIt.hasNext();){
 			//	Statement stmt = stmtIt.next();
@@ -219,13 +219,13 @@ public class RenameBlankNodes {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("RenameBlankNodes");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("inputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for input jena model (REQUIRED)").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of input jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("outputModel").withParameter(true, "CONFIG_FILE").setDescription("config file for output jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of output jena model config using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('d').setLongOpt("dedupModel").withParameter(true, "CONFIG_FILE").setDescription("optional: config file for deduplication test jena model").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('D').setLongOpt("dedupModelOverride").withParameterValueMap("JENA_PARAM", "VALUE").setDescription("override the JENA_PARAM of deduplication test jena model config using VALUE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceEtc").withParameter(true, "NAMESPACE_ETC").setDescription("part of the namespace between the base and the ID number").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceEtc").withParameter(true, "NAMESPACE_ETC").setDescription("the namespace before to use for the unique URI").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("pattern").withParameter(true, "PATTERN").setDescription("pattern to add between the namespace and the uniqueid").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("property").withParameter(true, "PROPERTY").setDescription("property that contains the unique id to use for the new namespace").setRequired(false));
 		return parser;
