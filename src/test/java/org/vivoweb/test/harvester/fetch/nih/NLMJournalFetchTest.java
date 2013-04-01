@@ -116,7 +116,7 @@ public class NLMJournalFetchTest extends TestCase {
 			log.debug("record ID: "+r.getID());
 			count++;
 		}
-		assertEquals(1200, count);
+		assertEquals(1200, count, 50);
 		log.info("END testNLMJournalFetchManyRecords");
 	}
 	
