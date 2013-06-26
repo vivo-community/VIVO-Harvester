@@ -6,11 +6,15 @@
 package org.vivoweb.harvester.translate;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -51,6 +55,7 @@ public class SPARQLTranslator {
 	 * @TODO possibly remove and switch to passing streams to xmlTranslate
 	 */
 	protected JenaConnect inputJC;
+	
 	/**
 	 * out stream is the stream that the controller will be handling and were we will dump the translation
 	 * @TODO possibly remove and switch to passing streams to xmlTranslate
@@ -85,10 +90,9 @@ public class SPARQLTranslator {
 	 * @throws IOException error reading files
 	 */
 	private SPARQLTranslator(ArgList argumentList) throws IOException {
-	
 		
 		this(
-			prepDataset(argumentList.getAll("i")), 
+			prepDataset(argumentList.getValueMap("i"), argumentList.getMultiValueMap("I")), 
 			JenaConnect.parseConfig(argumentList.get("o"), argumentList.getValueMap("O")), 
 			RecordHandler.parseConfig(argumentList.get("h"), argumentList.getValueMap("H")), 
 			FileAide.getTextContent(argumentList.get("s"))
@@ -104,6 +108,7 @@ public class SPARQLTranslator {
 	 * @param sparqlQuery the sparql query
 	 */
 	public SPARQLTranslator(JenaConnect inputJC, JenaConnect outputJC, RecordHandler outputRH, String sparqlQuery) {
+	
 		this.inputJC = inputJC;
 		this.outputJC = outputJC;
 		this.outputRH = outputRH;
@@ -169,7 +174,35 @@ public class SPARQLTranslator {
 	}
 	
 	
-	
+	/**
+	 * @param inputs
+	 * @param overrides
+	 * @return
+	 * @throws IOException
+	 */
+	private static JenaConnect prepDataset(Map<String, String> inputs, Map<String, Map<String, String>> overrides) throws IOException {
+		// Bring all models into a single Dataset
+		JenaConnect fullJena = new MemJenaConnect("urn:x-arq:UnionGraph");
+		JenaConnect[] arrayJena = new JenaConnect[inputs.size()];
+		int indexOf = 0;
+		for (Iterator<Entry<String, String>> mapi = inputs.entrySet().iterator(); mapi.hasNext();){
+			Entry<String, String> element = mapi.next();
+			String config = element.getValue();
+			
+			Map<String, String> overrideMap = overrides.get(element.getKey());
+						
+			arrayJena[indexOf] = fullJena.neighborConnectClone("http://vivoweb.org/harvester/model/translate/model"+indexOf);
+			arrayJena[indexOf].loadRdfFromJC(JenaConnect.parseConfig(config, overrideMap));
+			
+			log.trace("Input Model " + arrayJena[indexOf].getModelName() + " with " + arrayJena[indexOf].size() + " statements");
+			indexOf++;
+		}
+		
+		if(!fullJena.executeAskQuery("ASK { ?s ?p ?o }")) {
+			log.error("Empty Dataset");
+		}
+		return fullJena;
+	}	
 	
 	/**
 	 * Get the ArgParser for this task
@@ -177,8 +210,8 @@ public class SPARQLTranslator {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("SPARQLTranslator");
-		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameters(true, "CONFIG_FILE").setDescription("config file for input record handler").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("input").withParameterValueMap("NAME", "CONFIG_FILE").setDescription("config file for input record handler").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("inputOverride").withParameterValueMap("NAME", "RH_PARAM_VALUE").setDescription("override the RH_PARAM of input recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("config file for output record handler").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("sparqlConstruct").withParameter(true, "SPARQL_CONSTRUCT_FILE").setDescription("the sparql construct to run").setRequired(true));
