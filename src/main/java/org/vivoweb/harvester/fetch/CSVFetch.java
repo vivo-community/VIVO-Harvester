@@ -143,7 +143,7 @@ public class CSVFetch {
 			args.get("u"),
 			args.get("b"),
 			args.get("p"),
-			JenaConnect.parseConfig(args.get("o"))
+			JenaConnect.parseConfig(args.get("o"), args.getValueMap("O"))
 		);
 	}
 	
@@ -268,6 +268,7 @@ public class CSVFetch {
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("uriParameter").withParameter(true, "URI_PATTERN_BASE").setDescription("the ur pattern base").setRequired(false));
 		
 		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").withParameter(true, "CONFIG_FILE").setDescription("RecordHandler config file path").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 	
 		return parser;
 	}
