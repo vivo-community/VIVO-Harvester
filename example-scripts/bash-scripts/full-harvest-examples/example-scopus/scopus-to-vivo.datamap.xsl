@@ -172,7 +172,7 @@
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
 					<core:dateTimeValue>
 						<xsl:variable name="modDay" select='format-number(MedlineCitation/Article/Journal/JournalIssue/PubDate/Day, "00")'/>
-                        <rdf:Description rdf:about="{$baseURI}pub/daymonthyear{$modDay}{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
+                        <rdf:Description rdf:about="{$customURI}daymonthyear{$modDay}{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
 	                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
 	                        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
 	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-<xsl:value-of select="$modDay"/>T00:00:00</core:dateTime>
@@ -182,7 +182,7 @@
 				</xsl:when>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Month) and string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
                     <core:dateTimeValue>
-                        <rdf:Description rdf:about="{$baseURI}pub/monthyear{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
+                        <rdf:Description rdf:about="{$customURI}monthyear{$MonthNumber}{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
 	                        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
 	                        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision"/>
 	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-01T00:00:00</core:dateTime>
@@ -192,7 +192,7 @@
 				</xsl:when>
 				<xsl:when test="string(MedlineCitation/Article/Journal/JournalIssue/PubDate/Year)">
 				    <core:dateTimeValue>
-                        <rdf:Description rdf:about="{$baseURI}pub/year{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
+                        <rdf:Description rdf:about="{$customURI}year{MedlineCitation/Article/Journal/JournalIssue/PubDate/Year}">
 					        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
 					        <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision"/>
 	                        <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/PubDate/Year"/>-01-01T00:00:00</core:dateTime>
@@ -298,7 +298,7 @@
 			<xsl:choose>
 				<xsl:when test="string(BookDocument/Book/PubDate/Year)">
                     <core:dateTimeValue>
-                        <rdf:Description rdf:about="{$baseURI}pub/year{BookDocument/Book/PubDate/Year}">
+                        <rdf:Description rdf:about="{$customURI}year{BookDocument/Book/PubDate/Year}">
                             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
                             <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision"/>
                             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-01-01T00:00:00</core:dateTime>
@@ -308,7 +308,7 @@
 				</xsl:when>
 				<xsl:when test="string(BookDocument/Book/PubDate/Month) and string(BookDocument/Book/PubDate/Year)">
                     <core:dateTimeValue>
-                        <rdf:Description rdf:about="{$baseURI}pub/monthyear{$MonthNumber}{BookDocument/Book/PubDate/Year}">
+                        <rdf:Description rdf:about="{$customURI}monthyear{$MonthNumber}{BookDocument/Book/PubDate/Year}">
                             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
                             <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision"/>
                             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-01T00:00:00</core:dateTime>
@@ -318,7 +318,7 @@
 				</xsl:when>
 				<xsl:when test="string(BookDocument/Book/PubDate/Day) and string(BookDocument/Book/PubDate/Month) and string(BookDocument/Book/PubDate/Year)">
                     <core:dateTimeValue>
-                        <rdf:Description rdf:about="{$baseURI}pub/daymonthyear{MedlineCitation/Article/Journal/JournalIssue/PubDate/Day}{$MonthNumber}{BookDocument/Book/PubDate/Year}">
+                        <rdf:Description rdf:about="{$customURI}daymonthyear{MedlineCitation/Article/Journal/JournalIssue/PubDate/Day}{$MonthNumber}{BookDocument/Book/PubDate/Year}">
                             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
                             <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
                             <core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="BookDocument/Book/PubDate/Year"/>-<xsl:copy-of select="$MonthNumber"/>-<xsl:value-of select="BookDocument/Book/PubDate/Day"/>T00:00:00</core:dateTime>
@@ -744,6 +744,12 @@
 					<vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 				</xsl:when>
 				
+				<!-- Letters -->
+				<xsl:when test="translate(string($pbType),$up,$lo)='letter'">
+					<rdf:type rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#Letter" />
+					<vitro:mostSpecificType rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#Letter" />
+				</xsl:when>
+
 				<!-- Reviews -->
 				<xsl:when test="translate(string($pbType),$up,$lo)='meta-analysis'">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Review" />
@@ -957,8 +963,8 @@
 			
 			<!-- In press article -->
 			<xsl:otherwise>
-				<rdf:type rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InPress" />
-				<vitro:mostSpecificType rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InPress" />
+				<rdf:type rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InProcess" />
+				<vitro:mostSpecificType rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InProcess" />
 			</xsl:otherwise>
 
 		</xsl:choose>
@@ -996,8 +1002,8 @@
 				<xsl:variable name="lo" select="'abcdefghijklmnopqrstuvwxyz '"/>
 				<xsl:choose>
 					<xsl:when test="translate($pbType,$up,$lo)='ip'">
-						<rdf:type rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InPress" />
-						<vitro:mostSpecificType rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InPress" />
+						<rdf:type rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InProcess" />
+						<vitro:mostSpecificType rdf:resource="http://weill.cornell.edu/vivo/ontology/wcmc#InProcess" />
 						<bibo:status rdf:resource="http://vivoweb.org/ontology/core#inPress"/>
 					</xsl:when>
 					<xsl:when test="translate($pbType,$up,$lo)='ar'">
@@ -1091,7 +1097,7 @@
 				<!-- scopus author ref: END -->
 				<core:dateTimeValue>
 				<xsl:variable name="pubdate"><xsl:value-of select="translate(prism:coverDate, '-', '')" /></xsl:variable>
-				<rdf:Description rdf:about="{$baseURI}pub/datetime{$pubdate}">
+				<rdf:Description rdf:about="{$customURI}datetime{$pubdate}">
 					<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue"/>
 					<core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthDayPrecision"/>
 					<core:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="prism:coverDate"/>T00:00:00</core:dateTime>
