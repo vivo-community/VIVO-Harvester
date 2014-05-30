@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.vfs.AllFileSelector;
+import org.apache.commons.vfs.FileContent;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.Selectors;
@@ -151,12 +152,16 @@ public class FileAide {
 	 * @return the InputStream
 	 * @throws IOException error resolving
 	 */
-	public static InputStream getInputStream(String path) throws IOException {
-		if(path == null) {
-			return null;
-		}
-		return getFileObject(path).getContent().getInputStream();
-	}
+	 public static InputStream getInputStream(String path) throws IOException {
+	      if(path == null) {
+	         return null;
+	      }
+	      FileObject fileObj = getFileObject(path);
+	      FileContent fileContent = fileObj.getContent();
+	      InputStream is = fileContent.getInputStream();
+
+	      return is;
+	   }
 	
 //	/**
 //	 * Resolves the path and gets the contents of the file as a byte array
