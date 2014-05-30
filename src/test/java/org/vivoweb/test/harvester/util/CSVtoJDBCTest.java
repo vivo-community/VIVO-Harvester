@@ -57,7 +57,7 @@ public class CSVtoJDBCTest extends TestCase {
 	 */
 	public void testCSVtoJDBCStreamConnectionString() {
 		log.info("BEGIN testCSVtoJDBCStringConnectionString");
-		new CSVtoJDBC(this.sourceStream, this.conn, "Person");
+		new CSVtoJDBC(this.sourceStream, this.conn, "Person", "false");
 		log.info("END testCSVtoJDBCStringConnectionString");
 	}
 	
@@ -66,7 +66,7 @@ public class CSVtoJDBCTest extends TestCase {
 	 */
 	public void testExecute() throws IOException {
 		log.info("BEGIN testExecute");
-		CSVtoJDBC subject = new CSVtoJDBC(this.sourceStream, this.conn, "Person");
+		CSVtoJDBC subject = new CSVtoJDBC(this.sourceStream, this.conn, "Person", "false");
 		subject.execute();
 		try {
 			Statement cursor = this.conn.createStatement();
