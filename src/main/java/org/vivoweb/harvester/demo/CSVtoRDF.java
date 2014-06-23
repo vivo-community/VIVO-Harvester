@@ -72,7 +72,7 @@ public class CSVtoRDF {
 		String user = "sa";
 		String pass = "";
 		String tablename = "csv";
-		this.toDatabase = new CSVtoJDBC(CSVfilestream, driver, connLine, user, pass, tablename, "false");
+		this.toDatabase = new CSVtoJDBC(CSVfilestream, driver, connLine, user, pass, tablename);
 		this.fromDatabase = new JDBCFetch(driver, connLine, user, pass, output, uriNameSpace);
 	}
 	
