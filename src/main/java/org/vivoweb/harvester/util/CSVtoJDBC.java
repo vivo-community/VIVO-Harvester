@@ -58,13 +58,11 @@ public class CSVtoJDBC {
      * @param input CSV inputStream to read from
      * @param output The database connection for the output
      * @param tableName table name into which to output
-     * @param append to existing table
      */
-    public CSVtoJDBC(InputStream input, Connection output, String tableName, String append) {
+    public CSVtoJDBC(InputStream input, Connection output, String tableName) {
         this.csvStream = input;
         this.output = output;
         this.tableName = tableName;
-        this.append = append;
         this.fieldNames = new ArrayList<String>();
     }
 
@@ -73,11 +71,10 @@ public class CSVtoJDBC {
      * @param filename CSV to read from
      * @param output The database connection for the output
      * @param tableName table name into which to output
-     * @param append to existing table
      * @throws IOException error establishing connection to file
      */
-    public CSVtoJDBC(String filename, Connection output, String tableName, String append) throws IOException {
-        this(FileAide.getInputStream(filename), output, tableName, append);
+    public CSVtoJDBC(String filename, Connection output, String tableName) throws IOException {
+        this(FileAide.getInputStream(filename), output, tableName);
     }
 
     /**
@@ -88,11 +85,10 @@ public class CSVtoJDBC {
      * @param username username with which to connect
      * @param password password with which to connect
      * @param tableName table name into which to output
-     * @param append to existing table
      * @throws IOException error establishing connection to database or file
      */
-    public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName, String append) throws IOException {
-        this(filename,getConnection(jdbcDriverClass, connLine, username, password),tableName, append);
+    public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
+        this(filename,getConnection(jdbcDriverClass, connLine, username, password),tableName);
     }
 
     /**
@@ -103,11 +99,10 @@ public class CSVtoJDBC {
      * @param username username with which to connect
      * @param password password with which to connect
      * @param tableName table name into which to output
-     * @param append to existing table
      * @throws IOException error establishing connection to database or file
      */
-    public CSVtoJDBC(InputStream input, String jdbcDriverClass, String connLine, String username, String password, String tableName, String append) throws IOException {
-        this(input,getConnection(jdbcDriverClass, connLine, username, password),tableName, append);
+    public CSVtoJDBC(InputStream input, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
+        this(input,getConnection(jdbcDriverClass, connLine, username, password),tableName);
     }
 
 	
@@ -127,7 +122,7 @@ public class CSVtoJDBC {
 	 * @throws IOException error establishing connection to database or file
 	 */
 	private CSVtoJDBC(ArgList argList) throws IOException {
-		this(argList.get("i"), argList.get("d"), argList.get("c"), argList.get("u"), argList.get("p"), argList.get("t"), argList.get("a"));
+		this(argList.get("i"), argList.get("d"), argList.get("c"), argList.get("u"), argList.get("p"), argList.get("t"));
 	}
 	
 	/**
@@ -183,11 +178,11 @@ public class CSVtoJDBC {
                 columnNames.append((i == (meta.getColumnCount() - 1)) ? " )" : ", ");
             }
 	            
-	        if (this.append.equals("false")) {    
+	        //if (this.append.equals("false")) {    
 	            log.trace("Create table command: \n" + createTable.toString());
 	            cursor.execute(createTable.toString());
 	            cursor.execute("ALTER TABLE "+this.tableName+" ADD PRIMARY KEY (ROWID)");
-            }
+            //}
             
             while(rs.next()) {
 
@@ -241,7 +236,7 @@ public class CSVtoJDBC {
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username for output database").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password for output database").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameter(true, "TABLE_NAME").setDescription("a single database table name").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('a').setLongOpt("append").withParameter(true, "APPEND").setDescription("append data to existing table").setRequired(true));
+		
 		return parser;
 	}
 	
