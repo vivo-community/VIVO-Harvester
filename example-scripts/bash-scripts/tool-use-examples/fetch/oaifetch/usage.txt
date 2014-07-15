@@ -1,0 +1,13 @@
+usage: OAIFetch
+ -e,--end <DATE>                        ending date of date range
+                                        (YYYY-MM-DD)
+ -h,--help                              Help Message
+ -o,--output <CONFIG_FILE>              RecordHandler config file path
+ -O,--outputOverride <RH_PARAM=VALUE>   override the RH_PARAM of output
+                                        recordhandler using VALUE
+ -s,--start <DATE>                      beginning date of date range
+                                        (YYYY-MM-DD)
+ -u,--url <URL>                         repository url without http://
+ -w,--wordiness <LOG_LEVEL>             Set the console log level
+ -X,--config <CONFIG_FILE>              XML Configuration File
+
