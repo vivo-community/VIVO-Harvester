@@ -5,25 +5,11 @@
  ******************************************************************************/
 package org.vivoweb.harvester.fetch;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.IOException; 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-//import net.sf.ezmorph.bean.MorphDynaBean;
-//import net.sf.json.JSONArray;
-//import net.sf.json.JsonConfig;
-//import net.sf.json.JSONObject;
-import net.minidev.json.JSONObject;
-//import org.apache.bsf.util.Bean;
-//import org.apache.commons.beanutils.DynaClass;
-//import org.apache.commons.beanutils.DynaProperty;
+import java.util.Iterator; 
+import java.util.List; 
+import net.minidev.json.JSONObject; 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
@@ -39,6 +25,7 @@ import org.vivoweb.harvester.util.repo.RecordStreamOrigin;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
+
 /**
  * Class for harvesting from JSON Data Sources
  * @author Dale Scheppler
@@ -311,6 +298,10 @@ public class JSONFetch implements RecordStreamOrigin {
 
             // Get json contents as String, check for url first then a file
             String jsonString = new String();
+            if (this.strAddress == null) {
+            	System.out.println(getParser().getUsage());
+            	System.exit(1);
+            }
             if (this.strAddress.startsWith("http:")) {
                jsonString = WebAide.getURLContents(this.strAddress);
             } else {
@@ -324,7 +315,7 @@ public class JSONFetch implements RecordStreamOrigin {
                 jsonpath = this.pathStrings[i];
                 log.info("Using path: "+ jsonpath);
                 JsonPath path = JsonPath.compile(jsonpath);
-
+                log.info("got jsonpath: "+ path.getPath());
                 List<Object> nodes = path.read(jsonString);
                 log.info("name: "+ name);
                 //log.info("id: "+ id);
