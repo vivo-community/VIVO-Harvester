@@ -206,7 +206,7 @@ public class SimpleXMLFetch implements RecordStreamOrigin {
      * @param address The website address of the repository, without http://
      * @param rhOutput The recordhandler to write to
      * @param uriNS the default namespace
-     * @param rootPath The json path for the root node
+     * @param rootPath The xml path for the root node
      * @param tagNames list of node descriptiosn
      * @param idStrings unique id string
      */
@@ -235,18 +235,18 @@ public class SimpleXMLFetch implements RecordStreamOrigin {
      */
     private static ArgParser getParser() {
         ArgParser parser = new ArgParser("SimpleXMLFetch");
-
+        
         parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
         parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 
-        // json harvester specific arguments
-        parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("url which produces json ").withParameter(true, "URL").setRequired(false));
-        parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("file").setDescription("file containing json ").withParameter(true, "FALSE").setRequired(false));
-
+        // xml harvester specific arguments
+        parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("url which produces xml ").withParameter(true, "URL").setRequired(false));
+        parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("file").setDescription("file containing xml ").withParameter(true, "FALSE").setRequired(false));
+         
         parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("namespaceBase").withParameter(true, "NAMESPACE_BASE").setDescription("the base namespace to use for each node created").setRequired(false));
         parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tagname").withParameters(true, "TAGNAME").setDescription("an tagname [have multiple -e for more names]").setRequired(false));
-        parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("id").withParameters(true, "ID").setDescription("a single id for the json object [have multiple -i for more ids]").setRequired(false));
-
+        parser.addArgument(new ArgDef().setShortOption('i').setLongOpt("id").withParameters(true, "ID").setDescription("a single id for the xml object [have multiple -i for more ids]").setRequired(false));
+      
         return parser;
     }
 
@@ -294,7 +294,10 @@ public class SimpleXMLFetch implements RecordStreamOrigin {
 
             // Get xml contents as String, check for url first then a file
             InputStream stream = null;
-
+            if (this.strAddress == null) {
+            	System.out.println(getParser().getUsage());
+            	System.exit(1);
+            }
             if (this.strAddress.startsWith("http:")) {
                stream = WebAide.getInputStream(this.strAddress);
             } else if (this.strAddress.startsWith("https:")) {
