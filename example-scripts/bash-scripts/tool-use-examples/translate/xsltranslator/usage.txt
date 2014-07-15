@@ -1,0 +1,19 @@
+usage: XSLTranslator
+ -c,--cleanXML                          Decode and sanitize XML
+ -f,--force                             force translation of all input
+                                        records, even if previously
+                                        processed
+ -h,--help                              Help Message
+ -I,--inputOverride <RH_PARAM=VALUE>    override the RH_PARAM of input
+                                        recordhandler using VALUE
+ -i,--input <CONFIG_FILE>               config file for input record
+                                        handler
+ -o,--output <CONFIG_FILE>              config file for output record
+                                        handler
+ -O,--outputOverride <RH_PARAM=VALUE>   override the RH_PARAM of output
+                                        recordhandler using VALUE
+ -w,--wordiness <LOG_LEVEL>             Set the console log level
+ -X,--config <CONFIG_FILE>              XML Configuration File
+ -x,--xslFile <XSL_FILE>                xsl file
+
+
