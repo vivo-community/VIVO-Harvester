@@ -1,0 +1,16 @@
+2014-07-15 11:39:57.756 INFO  [o.v.h.f.n.NLMJournalFetch] Printing Usage:
+usage: NLMJournalFetch
+ -b,--batchSize <NUMBER>                number of records to fetch per
+                                        batch
+ -h,--help                              Help Message
+ -m,--email <EMAIL_ADDRESS>             your contact email address
+ -n,--numRecords <NUMBER>               maximum records to return
+ -o,--output <CONFIG_FILE>              RecordHandler config file path
+ -O,--outputOverride <RH_PARAM=VALUE>   override the RH_PARAM of output
+                                        recordhandler using VALUE
+ -t,--termSearch <SEARCH_STRING>        term to search against nlmcatalog
+                                        repository
+ -w,--wordiness <LOG_LEVEL>             Set the console log level
+ -X,--config <CONFIG_FILE>              XML Configuration File
+
+2014-07-15 11:39:57.762 INFO  [o.v.h.f.n.NLMJournalFetch] NLMJournalFetch: End
