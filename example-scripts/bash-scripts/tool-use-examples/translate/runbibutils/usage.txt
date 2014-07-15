@@ -1,0 +1,26 @@
+
+usage: RunBibutils
+ -b,--bibutilsBasePath <BIBUTILS_BASE_PATH>   Path to folder containing
+                                              bibutils executables
+ -f,--force                                   force translation of all
+                                              input records, even if
+                                              previously processed
+ -h,--help                                    Help Message
+ -I,--inputOverride <RH_PARAM=VALUE>          override the RH_PARAM of
+                                              input recordhandler using
+                                              VALUE
+ -i,--input <CONFIG_FILE>                     Record handler for input
+                                              files
+ -m,--inputFormat <INPUT_FORMAT>              Format of the input files.
+                                              Acceptable values are bib,
+                                              biblatex, copac, end, endx,
+                                              isi, med, ris.
+ -o,--output <CONFIG_FILE>                    Record handler for output
+                                              files
+ -O,--outputOverride <RH_PARAM=VALUE>         override the RH_PARAM of
+                                              output recordhandler using
+                                              VALUE
+ -w,--wordiness <LOG_LEVEL>                   Set the console log level
+ -X,--config <CONFIG_FILE>                    XML Configuration File
+
+
