@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
+HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 export HARVEST_NAME=example-csv
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -146,9 +146,9 @@ harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #	agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO for pre-1.2 versions
-harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+#harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO for pre-1.2 versions
-harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+#harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 #Output some counts
 ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`

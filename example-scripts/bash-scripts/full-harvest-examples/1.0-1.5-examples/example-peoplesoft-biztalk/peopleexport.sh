@@ -107,7 +107,7 @@
 #        }}}}}
 # }
 
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+export HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvest
 export HARVEST_NAME=people-seeding
 export DATE=`date +%Y-%m-%d'T'%T`
 

@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/home/mbarbieri/workspace/HarvesterDev
+HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 #HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
 export HARVEST_NAME=example-mods
 export DATE=`date +%Y-%m-%d'T'%T`

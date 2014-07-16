@@ -17,7 +17,7 @@
 #       Since it is also possible the harvester was installed by
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+export HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 export HARVEST_NAME=example-images
 export DATE=`date +%Y-%m-%d'T'%T`
 

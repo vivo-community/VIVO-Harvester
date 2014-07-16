@@ -7,7 +7,7 @@
 <Config>
 	<Param name="d2rMapConfigFile">d2rmap-csv.config.xml</Param>
 
-	<Param name="d2rMapWorkingDirectory">/usr/share/vivo/harvester/example-scripts/example-d2rmap-csv</Param>
+	<Param name="d2rMapWorkingDirectory">/usr/local/src/VIVO-Harvester/example-scripts/bash-scripts/full-harvest-examples/1.0-1.5-examples/example-d2rmap-csv</Param>
 
 	<!--  OUTPUT -->
 	<Param name="output">translated-records.config.xml</Param>

@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 export HARVEST_NAME=example-courses
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -219,6 +219,7 @@ harvester-changenamespace -X changenamespace-termStart.config.xml
 # When making the previous harvest model agree with the current harvest, the entries that exist in
 #       the current harvest but not in the previous harvest need to be identified for addition.
 harvester-diff -X diff-additions.config.xml
+
 
 # Apply Subtractions to Previous model
 #harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m

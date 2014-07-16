@@ -42,7 +42,7 @@
 	dumptofile - relative path of the file in which to place the results.  Will be overwritten if
 	             it exists.
 	-->
-	<Param name="dumptofile">data/vivo-subtractions.rdf.xml</Param>
+	<Param name="dumptofile">filename=data/vivo-subtractions.rdf.xml</Param>
 	
 	<!--OUTPUT : for more information please see the given config file -->
 <!-- 

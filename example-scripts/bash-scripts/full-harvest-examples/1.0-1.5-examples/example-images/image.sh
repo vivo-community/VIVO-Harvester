@@ -11,7 +11,7 @@
 #	Vincent Sposato, Mayank Saini, Kuppuraj Gunasekaran - Updating of script and workflow - 2012-03-08
 
 # Point the script to the system properties file that houses all of the data
-. /data/vivo/harvester/vivo-auto-harvest/images/image-ingest/system.properties
+. /usr/local/src/VIVO-Harvester/example-scripts/bash-scripts/full-harvest-examples/1.0-1.5-examples/example-images/system.properties
 
 ################## ADD OPENCONNECT CONNECTION SCRIPT - VJS 20111216 ##################
 rm -f $OPENCONNECT_LOG

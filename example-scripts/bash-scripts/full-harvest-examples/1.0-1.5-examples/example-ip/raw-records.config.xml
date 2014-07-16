@@ -295,5 +295,5 @@
 	<Param name="dbPass"></Param>
 -->
 	<Param name="rhClass">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>
-	<Param name="fileDir">/home/phuong/VIVO/ctsaip-data</Param>
+	<Param name="fileDir">./ctsaip-data</Param>
 </RecordHandler>

@@ -47,7 +47,7 @@
 <%  a synonym for "RDF/XML".					  																	  %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
-	<Param name="dumptofile">data/vivo-additions.rdf.xml</Param>
+	<Param name="dumptofile">filename=data/vivo-additions.rdf.xml</Param>
     <!--OUTPUT : for more information please see the given config file -->
 <!-- 
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>

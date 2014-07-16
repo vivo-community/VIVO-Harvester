@@ -8,18 +8,18 @@ Here are the files that need to be modified:
 check that the database information is configured correctly for your system.  By default, it will
 connect to a database called vitrodb_test on localhost
 
-2. run-dsr.sh
+2. run-pubmed.sh
 
 set to the directory where the harvester was installed
 HARVESTER_INSTALL_DIR
 (Note: there may be other shell scripts which have a set HARVESTER_INSTALL_DIR which
 will need to modified)
 
-3. jdbcfetch.config.xml
+3. pubmedfetch.config.xml
 
-change the database connection parameters to your database instance
+configure email address and search criteria
 
-5. all the changenamespace-*.config.xml files
+3. all the changenamespace-*.config.xml files
 
 change the "newNamespace" value to the namespace of your VIVO instance
 

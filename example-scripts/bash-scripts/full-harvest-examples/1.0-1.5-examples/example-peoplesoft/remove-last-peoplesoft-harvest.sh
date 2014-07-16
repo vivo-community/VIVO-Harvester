@@ -12,7 +12,7 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-HARVESTER_INSTALL_DIR=/usr/share/vivo/harvester
+HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 export HARVEST_NAME=example-peoplesoft
 export DATE=`date +%Y-%m-%d'T'%T`
 

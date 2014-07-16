@@ -18,12 +18,12 @@
 #       uncompressing the tar.gz the setting is available to be changed
 #       and should agree with the installation location
 VIVO_LOCATION_IN_TOMCAT_DIR=/var/lib/tomcat6/webapps/vivo
-export HARVESTER_INSTALL_DIR=/data/vivo/harvester/harvester_1.3
+export HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 export HARVEST_NAME=example-images
 export DATE=`date +%Y-%m-%d'T'%T`
-export IMG_HARVESTER_HOME_DIR=/data/vivo/harvester/vivo-auto-harvest/images/image-ingest
-export HARVESTER_LOG_DIR=/data/vivo/harvester/vivo-auto-harvest/images/log
-export HARVESTER_BACKUP_DIR=/data/vivo/harvester/vivo-auto-harvest/images/backup
+export IMG_HARVESTER_HOME_DIR=/usr/local/src/VIVO-Harvester/example-scripts/bash-scripts/full-harvest-examples/1.0-1.5-examples/example-images
+export HARVESTER_LOG_DIR=/usr/local/src/VIVO-Harvester/example-scripts/bash-scripts/full-harvest-examples/1.0-1.5-examples/example-images/log
+export HARVESTER_BACKUP_DIR=/usr/local/src/VIVO-Harvester/example-scripts/bash-scripts/full-harvest-examples/1.0-1.5-examples/example-images/backup
 
 # Add harvester binaries to path for execution
 # The tools within this script refer to binaries supplied within the harvester
