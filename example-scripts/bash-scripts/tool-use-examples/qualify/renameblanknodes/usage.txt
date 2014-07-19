@@ -1,0 +1,29 @@
+usage: RenameBlankNodes
+ -D,--dedupModelOverride <JENA_PARAM=VALUE>    override the JENA_PARAM of
+                                               deduplication test jena
+                                               model config using VALUE
+ -d,--dedupModel <CONFIG_FILE>                 optional: config file for
+                                               deduplication test jena
+                                               model
+ -h,--help                                     Help Message
+ -I,--inputModelOverride <JENA_PARAM=VALUE>    override the JENA_PARAM of
+                                               input jena model config
+                                               using VALUE
+ -i,--inputModel <CONFIG_FILE>                 config file for input jena
+                                               model (REQUIRED)
+ -n,--namespaceEtc <NAMESPACE_ETC>             the namespace before to use
+                                               for the unique URI
+ -o,--outputModel <CONFIG_FILE>                config file for output jena
+                                               model
+ -O,--outputModelOverride <JENA_PARAM=VALUE>   override the JENA_PARAM of
+                                               output jena model config
+                                               using VALUE
+ -p,--property <PROPERTY>                      property that contains the
+                                               unique id to use for the
+                                               new namespace
+ -t,--pattern <PATTERN>                        pattern to add between the
+                                               namespace and the uniqueid
+ -w,--wordiness <LOG_LEVEL>                    Set the console log level
+ -X,--config <CONFIG_FILE>                     XML Configuration File
+
+
