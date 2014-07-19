@@ -1,0 +1,17 @@
+usage: SplitProperty
+ -h,--help                                    Help Message
+ -I,--inputModelOverride <JENA_PARAM=VALUE>   override the JENA_PARAM of
+                                              jena model config using
+                                              VALUE
+ -i,--inputModel <CONFIG_FILE>                config file for jena model
+ -n,--newPropertyURI <NEW_PREDICATE>          new property uri (to store
+                                              split values in)
+ -r,--regex <SPLIT_REGEX>                     regex to split
+                                              oldPropertyURI value on
+ -t,--trim                                    trim() the new values
+ -u,--oldPropertyURI <OLD_PREDICATE>          old property uri (to be
+                                              split)
+ -w,--wordiness <LOG_LEVEL>                   Set the console log level
+ -X,--config <CONFIG_FILE>                    XML Configuration File
+
+

@@ -60,8 +60,7 @@
 -->
 
 <Config>
-    <Param name="inputModel">data.model.xml</Param>
-    <Param name="inputModelOverride">parameter=Value</Param>
+    <Param name="inputModel">harvested-data.model.xml</Param>
     <Param name="regex">regexString</Param>
     <Param name="oldPropertyURI">http://propertyold.com</Param>
     <Param name="newPropertyURI">http://propertynew.com</Param>
