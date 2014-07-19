@@ -69,7 +69,7 @@
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
  -->
 <Config>
-    <Param name="jenaConfig">model.conf.xml</Param>
+    <Param name="jenaConfig">harvested-data.model.xml</Param>
     <Param name="jenaOverride">param=newvalue</Param>
     <Param name="dataType">predicate</Param>
     <Param name="regexMatch">Regex string</Param>
