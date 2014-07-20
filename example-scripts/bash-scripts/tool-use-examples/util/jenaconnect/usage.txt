@@ -1,0 +1,19 @@
+usage: JenaConnect
+ -d,--dataset                             execute query against dataset
+                                          rather than model
+ -f,--fileOutput <OUTPUT_FILE>            the file to output the results
+                                          in, if not specified writes to
+                                          stdout
+ -h,--help                                Help Message
+ -j,--jena <CONFIG_FILE>                  config file for jena model
+ -J,--jenaOverride <JENA_PARAM=VALUE>     override the JENA_PARAM of jena
+                                          model config using VALUE
+ -Q,--queryResultFormat <RESULT_FORMAT>   the format to return the results
+                                          in ('RS_RDF',etc for select
+                                          queries / 'RDF/XML',etc for
+                                          construct/describe queries)
+ -q,--query <SPARQL_QUERY>                sparql query to execute
+ -t,--truncate                            empty the jena model
+ -w,--wordiness <LOG_LEVEL>               Set the console log level
+ -X,--config <CONFIG_FILE>                XML Configuration File
+
