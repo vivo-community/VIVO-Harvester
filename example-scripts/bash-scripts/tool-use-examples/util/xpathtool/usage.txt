@@ -1,0 +1,7 @@
+usage: XPathTool
+ -e,--expression <XPATH_EXPRESSION>   xpath expression to export
+ -h,--help                            Help Message
+ -w,--wordiness <LOG_LEVEL>           Set the console log level
+ -X,--config <CONFIG_FILE>            XML Configuration File
+ -x,--xml-file <XML_FILE>             path to xml file to read data from
+

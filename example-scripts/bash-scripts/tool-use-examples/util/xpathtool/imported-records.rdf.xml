@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:bibo="http://purl.org/ontology/bibo/"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:db-CSV="jdbc:h2:data/csv/store/fields/CSV2/"
+    xmlns:core="http://vivoweb.org/ontology/core#"
+    xmlns:score="http://vivoweb.org/ontology/score#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/org/org27010707">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>CTRIP</rdfs:label>
+    <score:orgID>27010707</score:orgID>
+    <core:organizationForPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionFor99575130from2010-09-25"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/position/positionForufVivo:ufidfrom2011-05-05">
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+    <core:positionForPerson rdf:resource="http://vivoweb.org/harvest/csvfile/person/personufVivo:ufid"/>
+    <core:positionInOrganization rdf:resource="http://vivoweb.org/harvest/csvfile/org/orgscore:deptID"/>
+    <core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2011-05-05</core:startDate>
+    <core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2011-05-05</core:endDate>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/person88374800">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#EmeritusProfessor"/>
+    <score:personID>88374800</score:personID>
+    <core:phoneNumber>3523713721</core:phoneNumber>
+    <foaf:firstName>Robert</foaf:firstName>
+    <foaf:lastName>Abrams</foaf:lastName>
+    <core:middleName>M</core:middleName>
+    <bibo:prefixName>Dr.</bibo:prefixName>
+    <rdfs:label>Abrams,Robert M</rdfs:label>
+    <core:preferredTitle>Professor</core:preferredTitle>
+    <core:personInPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionFor88374800from2006-12-31"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/person16310040">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+    <score:personID>16310040</score:personID>
+    <core:email>gvallad@ufl.edu</core:email>
+    <core:phoneNumber>8136340000</core:phoneNumber>
+    <foaf:firstName>Gary</foaf:firstName>
+    <foaf:lastName>Vallad</foaf:lastName>
+    <core:middleName>Edward</core:middleName>
+    <bibo:suffixName>Jr.</bibo:suffixName>
+    <rdfs:label>Vallad,Gary Edward</rdfs:label>
+    <core:preferredTitle>Lecturer</core:preferredTitle>
+    <core:personInPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionFor16310040from2007-14-12"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/person99575130">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+    <score:personID>99575130</score:personID>
+    <core:email>jrpence@ufl.edu</core:email>
+    <core:phoneNumber>3522945154</core:phoneNumber>
+    <foaf:firstName>James</foaf:firstName>
+    <foaf:lastName>Pence</foaf:lastName>
+    <core:middleName>Roth</core:middleName>
+    <rdfs:label>Pence,James Roth</rdfs:label>
+    <core:preferredTitle>Software Engineer</core:preferredTitle>
+    <core:personInPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionFor99575130from2010-09-25"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/org/org60754300">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>Social Science</rdfs:label>
+    <score:orgID>60754300</score:orgID>
+    <core:organizationForPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionFor16310040from2007-14-12"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/position/positionFor16310040from2007-14-12">
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+    <core:positionForPerson rdf:resource="http://vivoweb.org/harvest/csvfile/person/person16310040"/>
+    <core:positionInOrganization rdf:resource="http://vivoweb.org/harvest/csvfile/org/org60754300"/>
+    <core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-14-12</core:startDate>
+    <core:endDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-05-05</core:endDate>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/position/positionFor88374800from2006-12-31">
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#EmeritusProfessor"/>
+    <core:positionForPerson rdf:resource="http://vivoweb.org/harvest/csvfile/person/person88374800"/>
+    <core:positionInOrganization rdf:resource="http://vivoweb.org/harvest/csvfile/org/org29070102"/>
+    <core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-12-31</core:startDate>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/org/org29070102">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>BayTech</rdfs:label>
+    <score:orgID>29070102</score:orgID>
+    <core:organizationForPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionFor88374800from2006-12-31"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/personufVivo:ufid">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#FacultyMember"/>
+    <score:personID>ufVivo:ufid</score:personID>
+    <core:email>core:email</core:email>
+    <core:phoneNumber>core:phoneNumber</core:phoneNumber>
+    <core:faxNumber>core:faxNumber</core:faxNumber>
+    <foaf:firstName>foaf:firstName</foaf:firstName>
+    <foaf:lastName>foaf:lastName</foaf:lastName>
+    <core:middleName>core:middleName</core:middleName>
+    <bibo:prefixName>bibo:prefixName</bibo:prefixName>
+    <bibo:suffixName>bibo:suffixName</bibo:suffixName>
+    <rdfs:label>rdfs:label</rdfs:label>
+    <core:preferredTitle>core:preferredTitle</core:preferredTitle>
+    <core:personInPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionForufVivo:ufidfrom2011-05-05"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/position/positionFor99575130from2010-09-25">
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Position"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#NonAcademic"/>
+    <core:positionForPerson rdf:resource="http://vivoweb.org/harvest/csvfile/person/person99575130"/>
+    <core:positionInOrganization rdf:resource="http://vivoweb.org/harvest/csvfile/org/org27010707"/>
+    <core:startDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-09-25</core:startDate>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/org/orgscore:deptID">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>rdfs:label</rdfs:label>
+    <score:orgID>score:deptID</score:orgID>
+    <core:organizationForPosition rdf:resource="http://vivoweb.org/harvest/csvfile/position/positionForufVivo:ufidfrom2011-05-05"/>
+  </rdf:Description>
+</rdf:RDF>
