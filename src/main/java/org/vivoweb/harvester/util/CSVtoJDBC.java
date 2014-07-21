@@ -195,7 +195,11 @@ public class CSVtoJDBC {
                 insertCommand.append(", '");
                 for(int i = 0; i < meta.getColumnCount(); i++) {
                     data = rs.getString(i + 1);
-                    insertCommand.append(rs.getString(i + 1).replaceAll("'", "''"));
+                    if (data != null) {
+                       insertCommand.append(data.replaceAll("'", "''"));
+                    } else {
+                    	insertCommand.append("");	
+                    }
                     insertCommand.append((i == (meta.getColumnCount() - 1)) ? "')" : "', '");
                 }
                 log.trace("Insert command: \n" + insertCommand.toString());
