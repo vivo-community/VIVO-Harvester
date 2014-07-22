@@ -21,9 +21,10 @@ MAX_MEM=1g
 #-XX:SurvivorRatio=16                   Shrink eden slightly (Normal is 25)
 #-Xnoclassgc                                    Disable collection of class objects
 #-XX:ParallelGCThreads=3                Maximum number of Parallel garbage collection tasks
-#HARVESTER_JAVA_OPTS="" 
-HARVESTER_JAVA_OPTS="-server -d64 -XX:+UseParallelOldGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:ParallelGCThreads=3"
-HARVESTER_DIAGNOSTIC_OPTS="-XX:+PrintG -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:HeapDumpPath /data/vivo/harvester/harvester_1.3/bin/heap-dumps/ -XX:-HeapDumpOnOutOfMemoryError"
+HARVESTER_JAVA_OPTS="" 
+#HARVESTER_JAVA_OPTS="-server -d64 -XX:+UseParallelOldGC -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:-UseGCOverheadLimit -XX:SurvivorRatio=16 -Xnoclassgc -XX:ParallelGCThreads=3"
+HARVESTER_DIAGNOSTIC_OPTS=""
+#HARVESTER_DIAGNOSTIC_OPTS="-XX:+PrintG -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:HeapDumpPath /data/vivo/harvester/harvester_1.3/bin/heap-dumps/ -XX:-HeapDumpOnOutOfMemoryError"
 OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM $HARVESTER_JAVA_OPTS $HARVESTER_DIAGNOSTIC_OPTS -Dharvester-task=$HARVEST_NAME.$DATE"
 
 #pass incoming params to java program
