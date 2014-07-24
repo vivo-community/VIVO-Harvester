@@ -16,6 +16,6 @@
 
   <Param name="oldNamespace">http://vivo.example.com/harvest/iaald_events/</Param>
   <Param name="newNamespace">http://localhost:8080/vivo/individual/</Param>
-  <Param name="wordiness">WARN</Param>
+  <Param name="wordiness">INFO</Param>
   <Param name="errorLogging">false</Param>
 </Task>

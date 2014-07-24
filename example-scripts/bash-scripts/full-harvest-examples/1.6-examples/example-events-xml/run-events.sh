@@ -144,16 +144,16 @@ harvester-diff -X diff-subtractions.config.xml
 harvester-diff -X diff-additions.config.xml
 
 # Apply Subtractions to Previous model
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -w INFO -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to Previous model
-harvester-transfer -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -w INFO -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #	agree with the previous harvest, the changes are now applied to the vivo model.
 # Apply Subtractions to VIVO model
-harvester-transfer -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+harvester-transfer -w INFO -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
 # Apply Additions to VIVO model
-harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
+harvester-transfer -w INFO -o vivo.model.xml -r data/vivo-additions.rdf.xml
 
 #Output some counts
 #PUBS=`cat data/vivo-additions.rdf.xml | grep pmid | wc -l`
