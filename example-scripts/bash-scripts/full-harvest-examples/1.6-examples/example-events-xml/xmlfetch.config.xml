@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<config>
+    <param name="url">https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full</param>
+    <param name="wordiness">INFO</param>
+    <param name="output">raw-records.config.xml</param>
+    <param name="namespaceBase">http://vivo.example.com/harvest/iaald_events/</param>
+    <param name="tagname">entry</param>
+    <param name="id">id</param> 
+</config>
