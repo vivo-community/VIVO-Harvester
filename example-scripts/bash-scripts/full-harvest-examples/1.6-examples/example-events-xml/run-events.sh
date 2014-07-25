@@ -126,6 +126,10 @@ harvester-changenamespace -X changenamespace-orgs.config.xml
 # This is where the new locations from the harvest are given uris within the namespace of Vivo
 harvester-changenamespace -X changenamespace-location.config.xml
 
+# Execute ChangeNamespace to get unmatched contactInfo into current namespace
+# This is where the new locations from the harvest are given uris within the namespace of Vivo
+harvester-changenamespace -X changenamespace-contact.config.xml
+
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
