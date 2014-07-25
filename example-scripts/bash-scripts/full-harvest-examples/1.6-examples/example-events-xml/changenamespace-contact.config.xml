@@ -8,7 +8,7 @@
 <Config>
     <Param name="inputModel">harvested-data.model.xml</Param>
     <Param name="vivoModel">vivo.model.xml</Param>
-    <Param name="oldNamespace">http://vivo.example.com/harvest/iaald_events/location/</Param>
+    <Param name="oldNamespace">http://vivo.example.com/harvest/iaald_events/contact/</Param>
     <Param name="newNamespace">http://localhost:8080/vivo/individual/</Param>
     <Param name="wordiness">INFO</Param>
     <Param name="errorLogging">false</Param>

@@ -104,7 +104,7 @@
    </rdf:Description>
    
    <!-- contact faux property -->
-   <rdf:Description rdf:about="{$baseURI}event/contactInfo/contactInfo-for-{$uid}">    
+   <rdf:Description rdf:about="{$baseURI}event/contact/contactInfo-for-{$uid}">    
     <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_2000379"/> 
     <obo:ARG_2000029 rdf:resource="{$baseURI}event/id-{$uid}"/>
    </rdf:Description>
