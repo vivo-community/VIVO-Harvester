@@ -85,9 +85,7 @@
      <xsl:variable name="endDate" select="$this/gd:when/@endTime" />
      
      <xsl:variable name="location" select="$this/gd:where/@valueString" />
-     <!--
-     <xsl:variable name="countryName" select="placedata:lookup($location)" />
-    --> 
+      
 
    <rdf:Description rdf:about="{$baseURI}event/id-{$uid}">
       <localVivo:uId rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="$uid" /></localVivo:uId>
@@ -99,9 +97,24 @@
       <core:currentMemberOf rdf:resource="{$baseURI}org/iaald-events"  />
       <core:webpage><xsl:value-of select="$this/atom:content" /></core:webpage>
       <core:dateTimeInterval rdf:resource="{$baseURI}timeInterval/start{$startDate}toEnd{$endDate}" />
-      <!--
-      <core:hasGeographicLocation rdf:resource="{$countryName}" />
-      -->
+      <!-- link to contact info -->
+      <obo:ARG_2000028 rdf:resource="{$baseURI}event/contact/contactInfo-for-{$uid}"/>
+      <!-- location  -->
+      <obo:RO_0001025 rdf:resource="{$baseURI}event/location/location-for-{$uid}"/>
+   </rdf:Description>
+   
+   <!-- contact faux property -->
+   <rdf:Description rdf:about="{$baseURI}event/contactInfo/contactInfo-for-{$uid}">    
+    <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_2000379"/> 
+    <obo:ARG_2000029 rdf:resource="{$baseURI}event/id-{$uid}"/>
+   </rdf:Description>
+   
+   <!-- location for -->
+   <rdf:Description rdf:about="{$baseURI}event/location/location-for-{$uid}">    
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Location"/>
+    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#GeographicLocation"/>
+    <rdfs:label><xsl:value-of select="$location" /></rdfs:label>
+    <obo:RO_0001015 rdf:resource="{$baseURI}event/id-{$uid}"/>
    </rdf:Description>
 
     <!-- The beginning of the dateTimeInterval subgroup -->
@@ -128,14 +141,7 @@
     </rdf:Description>
     <!-- The end of the dateTimeInterval subgroup -->
 
-    <!-- the beginning of the geographicLocation -->
-    <!--
-    <rdf:Description rdf:about="{$baseURI}location/{$countryName}">
-      <rdfs:label><xsl:value-of select="$countryName" /></rdfs:label>
-      <localVivo:harvestedBy>iaald_events-Harvester </localVivo:harvestedBy> 
-      <core:geographicLocationOf rdf:resource="{$baseURI}event/id-{$uid}"/>
-    </rdf:Description>
-    -->
+    
 
     <rdf:Description rdf:about="{$baseURI}org/iaald-events">
       <localVivo:orgId>1-iaald-events</localVivo:orgId>
