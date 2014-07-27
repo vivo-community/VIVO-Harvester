@@ -6,16 +6,29 @@
 package org.vivoweb.harvester.services;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.args.UsageException;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.RecordHandler;
+import org.vivoweb.harvester.util.args.UsageException; 
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+ 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+//import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils; 
 
 /**
  * Execute Sparql update in Jena model in an instance of VIVO
@@ -118,7 +131,37 @@ public class SparqlQuery {
 	 * @throws IOException error
 	 */
 	private void execute() throws IOException {
-	   System.out.println("To be implemented");	 
+	   //System.out.println("To be implemented");
+	  
+	   CloseableHttpClient httpclient = HttpClients.createDefault();
+	   try {
+	      HttpPost httpPost = new HttpPost(this.url);
+	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+	      nvps.add(new BasicNameValuePair("query", this.query));
+	      nvps.add(new BasicNameValuePair("email", this.username));
+	      nvps.add(new BasicNameValuePair("password", this.password));
+	      httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+	      CloseableHttpResponse response = httpclient.execute(httpPost);
+	      try {
+              System.out.println(response.getStatusLine());
+              HttpEntity entity = response.getEntity();
+              InputStream is = entity.getContent();
+              try {
+            	 IOUtils.copy(is, System.out);
+              } finally {
+                 is.close();
+              }
+              
+          } finally {
+              response.close();
+          }
+	       
+	   } finally {
+	      httpclient.close();	
+	   }
+	   
+	   
+	   
 	}
 	
 	/**
