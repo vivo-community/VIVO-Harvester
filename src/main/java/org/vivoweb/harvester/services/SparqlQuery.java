@@ -76,11 +76,14 @@ public class SparqlQuery {
 		// load sparql query
 		this.query = argList.get("q"); ;		
 		 
-		// output to file, if requested
+		// get username
 		this.username = argList.get("u");
 		
-		// get namespace
+		// get password
 		this.password = argList.get("p"); 
+		
+		// get sparql url
+		this.url = argList.get("U");
 		
 		// Require model args
 		if(this.model == null) {
@@ -102,9 +105,9 @@ public class SparqlQuery {
 			throw new IllegalArgumentException("Must provide a VIVO admin password");
 		}
 		
-		// Require sparql update url
+		// Require sparql query url
 		if (this.url == null) {
-			throw new IllegalArgumentException("Must provide a Sparql Update URL");
+			throw new IllegalArgumentException("Must provide a Sparql Query URL");
 		}
 		
 		 

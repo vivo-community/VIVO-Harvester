@@ -79,8 +79,11 @@ public class SparqlUpdate {
 		// output to file, if requested
 		this.username = argList.get("u");
 		
-		// get namespace
+		// get password
 		this.password = argList.get("p"); 
+		
+		// get url
+		this.url = argList.get("U");
 		
 		// Require model args
 		if(this.model == null) {
