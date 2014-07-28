@@ -147,16 +147,12 @@ public class SparqlQuery {
 	private void execute() throws IOException {
 	   //System.out.println("To be implemented");
 		Header header = null;
-		if(this.format.equals("ntriples")) {
-			header = new BasicHeader(HttpHeaders.ACCEPT, "text/plain");
-		} else if(this.format.equals("rdfxml")) {
-			header = new BasicHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
-		} else if(this.format.equals("n3")) {
-			header = new BasicHeader(HttpHeaders.ACCEPT, "text/n3");
-		} else if(this.format.equals("turtle")) {
-			header = new BasicHeader(HttpHeaders.ACCEPT, "text/turtle");
-		} else if(this.format.equals("json")) {
-			header = new BasicHeader(HttpHeaders.ACCEPT, "application/json");
+		if (this.format.equals("rdfxml")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
+		} else if(this.format.equals("csv")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "text/csv");
+		}  else if(this.format.equals("json")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "application/sparql-results+json");
 		} else {
 			header = new BasicHeader(HttpHeaders.ACCEPT, "text/plain");
 		}
