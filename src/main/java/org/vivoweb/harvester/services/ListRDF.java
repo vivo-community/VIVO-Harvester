@@ -137,26 +137,25 @@ public class ListRDF {
 	   // test if format was specified, default to text/plain
 	   Header header = null;
 	   if (this.format.equals("ntriples")) {	    	  
-	      header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/plain");
+	      header = new BasicHeader(HttpHeaders.ACCEPT, "text/plain");
 	   } else if (this.format.equals("rdfxml")) { 
-	      header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/rdf+xml");
+	      header = new BasicHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
 	   } else if (this.format.equals("n3")) {
-		  header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/n3");  
+		  header = new BasicHeader(HttpHeaders.ACCEPT, "text/n3");  
 	   } else if (this.format.equals("turtle")) {
-		  header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");  
+		  header = new BasicHeader(HttpHeaders.ACCEPT, "text/turtle");  
 	   } else if (this.format.equals("json")) {
-		  header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");  
+		  header = new BasicHeader(HttpHeaders.ACCEPT, "application/json");  
 	   } else {
-		   header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/plain");   
+		   header = new BasicHeader(HttpHeaders.ACCEPT, "text/plain");   
 	   }
-	   Header[] headers = {header};
-	   //headers.add(header);
+	    
 	   CloseableHttpClient httpclient = HttpClients.createDefault();
-	   //HttpClient client = HttpClients.custom().setDefaultHeaders(headers).build();
+	    
 	   try {
-		  //HttpUriRequest request = RequestBuilder.post().setUri(this.url).build(); 
+		    
 	      HttpPost httpPost = new HttpPost(this.url);
-	      httpPost.setHeaders(headers);
+	      httpPost.addHeader(header);
 	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();
 	      nvps.add(new BasicNameValuePair("email", this.username));
 	      nvps.add(new BasicNameValuePair("password", this.password));
