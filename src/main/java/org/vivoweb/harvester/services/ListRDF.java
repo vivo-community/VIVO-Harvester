@@ -50,7 +50,11 @@ public class ListRDF {
 	 * vClass to be displayed
 	 */
 	private String vClass;
-	 
+	
+	/*
+	 * format of the output
+	 */
+	private String format; 
 	
 	/**
 	 * Constructor
@@ -83,8 +87,12 @@ public class ListRDF {
 			throw new IllegalArgumentException("Must provide the name of a vClass");
 		}
 		
-		
-		
+		// get format
+		this.format = argList.get("f");
+						
+		if (this.format == null) {
+		   this.format = "text";
+		} 
 		 
 	}
 	
@@ -94,13 +102,25 @@ public class ListRDF {
 	 */
 	private void execute() throws IOException {
 	   //System.out.println("To be implemented");
+	   
 	  
 	   CloseableHttpClient httpclient = HttpClients.createDefault();
 	   try {
 	      HttpPost httpPost = new HttpPost(this.url);
-	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();
-	       
-	      nvps.add(new BasicNameValuePair("vclass", this.vClass)); 
+	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();	       
+	      nvps.add(new BasicNameValuePair("vclass", this.vClass));
+	      // test if format was specified, default to text/plain
+	      if (this.format.equals("ntriples")) {
+	    	  httpPost.setHeader("Accept-Encoding: ", "text/plain");	    	  
+	      } else if (this.format.equals("rdfxml")) {
+	    	  httpPost.setHeader("Accept-Encoding: ", "application/rdf+xml");  
+	      } else if (this.format.equals("n3")) {
+	    	  httpPost.setHeader("Accept-Encoding: ", "text/n3");  
+	      } else if (this.format.equals("turtle")) {
+	    	  httpPost.setHeader("Accept-Encoding: ", "text/turtle");  
+	      } else if (this.format.equals("json")) {
+	    	  httpPost.setHeader("Accept-Encoding: ", "application/json");  
+	      }
 	      httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 	      CloseableHttpResponse response = httpclient.execute(httpPost);
 	      try {
@@ -133,9 +153,8 @@ public class ListRDF {
 		ArgParser parser = new ArgParser("ListRDF");
 		// Inputs
 		
-		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("filename").withParameter(true, "FILENAME").setDescription("the file which contains a list of uris").setRequired(true));
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("vivo admin user name").setRequired(true)); 
-		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("vivo admin password").setRequired(true)); 
+		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vclass").withParameter(true, "VCLASS").setDescription("the vclass to be displayed").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("format").withParameter(true, "FORMAT").setDescription("the format of the output (text, ntriples, n3, rdfxml, json").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("url").withParameter(true, "URL").setDescription("service url").setRequired(true));  
 		return parser;
 	}
