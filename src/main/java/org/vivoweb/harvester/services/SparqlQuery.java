@@ -18,7 +18,9 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException; 
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
  
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -27,6 +29,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils; 
 
@@ -64,7 +67,11 @@ public class SparqlQuery {
 	 * Sparql update URL
 	 */
 	private String url;
-	 
+	
+	/*
+	 * output format
+	 */
+	private String format; 
 	
 	/**
 	 * Constructor
@@ -123,6 +130,13 @@ public class SparqlQuery {
 			throw new IllegalArgumentException("Must provide a Sparql Query URL");
 		}
 		
+		// get format
+		this.format = argList.get("f");
+						
+		if (this.format == null) {
+		   this.format = "text";
+		}
+		
 		 
 	}
 	
@@ -132,10 +146,26 @@ public class SparqlQuery {
 	 */
 	private void execute() throws IOException {
 	   //System.out.println("To be implemented");
-	  
+		Header header = null;
+		if(this.format.equals("ntriples")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "text/plain");
+		} else if(this.format.equals("rdfxml")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
+		} else if(this.format.equals("n3")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "text/n3");
+		} else if(this.format.equals("turtle")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "text/turtle");
+		} else if(this.format.equals("json")) {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "application/json");
+		} else {
+			header = new BasicHeader(HttpHeaders.ACCEPT, "text/plain");
+		}
+		
+		
 	   CloseableHttpClient httpclient = HttpClients.createDefault();
 	   try {
 	      HttpPost httpPost = new HttpPost(this.url);
+	      httpPost.addHeader(header);
 	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();
 	      nvps.add(new BasicNameValuePair("query", this.query));
 	      nvps.add(new BasicNameValuePair("email", this.username));
@@ -178,6 +208,7 @@ public class SparqlQuery {
 		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("url").withParameter(true, "URL").setDescription("sparql update url").setRequired(true)); 
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("model").withParameter(true, "MODEL").setDescription("name of jena model").setRequired(true)); 
+		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("format").withParameter(true, "FORMAT").setDescription("the format of the output (text, ntriples, n3, rdfxml, json").setRequired(false));
 		return parser;
 	}
 	
