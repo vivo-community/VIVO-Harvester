@@ -18,15 +18,21 @@ import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException; 
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
  
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
 //import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils; 
 
@@ -128,29 +134,36 @@ public class ListRDF {
 	 */
 	private void execute() throws IOException {
 	   //System.out.println("To be implemented");
-	   
-	  
+	   // test if format was specified, default to text/plain
+	   Header header = null;
+	   if (this.format.equals("ntriples")) {	    	  
+	      header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/plain");
+	   } else if (this.format.equals("rdfxml")) { 
+	      header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/rdf+xml");
+	   } else if (this.format.equals("n3")) {
+		  header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/n3");  
+	   } else if (this.format.equals("turtle")) {
+		  header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");  
+	   } else if (this.format.equals("json")) {
+		  header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");  
+	   } else {
+		   header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "text/plain");   
+	   }
+	   Header[] headers = {header};
+	   //headers.add(header);
 	   CloseableHttpClient httpclient = HttpClients.createDefault();
+	   //HttpClient client = HttpClients.custom().setDefaultHeaders(headers).build();
 	   try {
+		  //HttpUriRequest request = RequestBuilder.post().setUri(this.url).build(); 
 	      HttpPost httpPost = new HttpPost(this.url);
+	      httpPost.setHeaders(headers);
 	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();
 	      nvps.add(new BasicNameValuePair("email", this.username));
 	      nvps.add(new BasicNameValuePair("password", this.password));
 	      
 	      nvps.add(new BasicNameValuePair("vclass", this.vClass));
 	      
-	      // test if format was specified, default to text/plain
-	      if (this.format.equals("ntriples")) {
-	    	  httpPost.setHeader("Accept: ", "text/plain");	    	  
-	      } else if (this.format.equals("rdfxml")) {
-	    	  httpPost.setHeader("Accept: ", "application/rdf+xml");  
-	      } else if (this.format.equals("n3")) {
-	    	  httpPost.setHeader("Accept: ", "text/n3");  
-	      } else if (this.format.equals("turtle")) {
-	    	  httpPost.setHeader("Accept: ", "text/turtle");  
-	      } else if (this.format.equals("json")) {
-	    	  httpPost.setHeader("Accept: ", "application/json");  
-	      }
+	      
 	      httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 	      CloseableHttpResponse response = httpclient.execute(httpPost);
 	      try {
