@@ -47,6 +47,16 @@ public class ListRDF {
 	private String url;
 	
 	/*
+	 * VIVO admin user name
+	 */
+	private String username;
+	
+	/*
+	 * VIVO admin password
+	 */
+	private String password; 
+	
+	/*
 	 * vClass to be displayed
 	 */
 	private String vClass;
@@ -80,6 +90,22 @@ public class ListRDF {
 			throw new IllegalArgumentException("Must provide the service URL");
 		}
 		
+		// get username
+		this.username = argList.get("u");
+				
+		// get password
+		this.password = argList.get("p");
+		
+		// Require user name 
+		if (this.username == null) {
+			throw new IllegalArgumentException("Must provide a VIVO admin username");
+		}
+				
+		// Require password
+		if (this.password == null) {
+			throw new IllegalArgumentException("Must provide a VIVO admin password");
+		}
+		
 		// get vClass
 		this.vClass = argList.get("v");
 				
@@ -107,8 +133,12 @@ public class ListRDF {
 	   CloseableHttpClient httpclient = HttpClients.createDefault();
 	   try {
 	      HttpPost httpPost = new HttpPost(this.url);
-	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();	       
+	      List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+	      nvps.add(new BasicNameValuePair("email", this.username));
+	      nvps.add(new BasicNameValuePair("password", this.password));
+	      
 	      nvps.add(new BasicNameValuePair("vclass", this.vClass));
+	      
 	      // test if format was specified, default to text/plain
 	      if (this.format.equals("ntriples")) {
 	    	  httpPost.setHeader("Accept-Encoding: ", "text/plain");	    	  
@@ -156,6 +186,8 @@ public class ListRDF {
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vclass").withParameter(true, "VCLASS").setDescription("the vclass to be displayed").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("format").withParameter(true, "FORMAT").setDescription("the format of the output (text, ntriples, n3, rdfxml, json").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("url").withParameter(true, "URL").setDescription("service url").setRequired(true));  
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("vivo admin user name").setRequired(true)); 
+		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("vivo admin password").setRequired(true));
 		return parser;
 	}
 	
