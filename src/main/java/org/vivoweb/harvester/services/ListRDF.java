@@ -141,15 +141,15 @@ public class ListRDF {
 	      
 	      // test if format was specified, default to text/plain
 	      if (this.format.equals("ntriples")) {
-	    	  httpPost.setHeader("Accept-Encoding: ", "text/plain");	    	  
+	    	  httpPost.setHeader("Accept: ", "text/plain");	    	  
 	      } else if (this.format.equals("rdfxml")) {
-	    	  httpPost.setHeader("Accept-Encoding: ", "application/rdf+xml");  
+	    	  httpPost.setHeader("Accept: ", "application/rdf+xml");  
 	      } else if (this.format.equals("n3")) {
-	    	  httpPost.setHeader("Accept-Encoding: ", "text/n3");  
+	    	  httpPost.setHeader("Accept: ", "text/n3");  
 	      } else if (this.format.equals("turtle")) {
-	    	  httpPost.setHeader("Accept-Encoding: ", "text/turtle");  
+	    	  httpPost.setHeader("Accept: ", "text/turtle");  
 	      } else if (this.format.equals("json")) {
-	    	  httpPost.setHeader("Accept-Encoding: ", "application/json");  
+	    	  httpPost.setHeader("Accept: ", "application/json");  
 	      }
 	      httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 	      CloseableHttpResponse response = httpclient.execute(httpPost);
