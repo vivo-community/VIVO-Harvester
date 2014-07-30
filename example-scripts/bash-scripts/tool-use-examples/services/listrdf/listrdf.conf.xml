@@ -12,7 +12,7 @@
     <Param name="password">skikt22</Param>
     <Param name="vclass">http://vivoweb.org/ontology/core#Continent</Param>
     <!-- output -->
-    <Param name="format">text</Param>
+    <Param name="format">json</Param>
    
 
 </Task>

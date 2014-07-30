@@ -1,5 +1,0 @@
-2014-07-27 12:11:44.344 INFO  [o.v.h.s.SparqlUpdate] SparqlUpdate: Start
-2014-07-27 12:11:44.358 DEBUG [o.v.h.u.a.ArgList] running SparqlUpdate
-2014-07-27 12:11:44.361 DEBUG [o.v.h.u.a.ArgList] command line args: -X sparqlupdate.conf.xml
-2014-07-27 12:11:44.381 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --model http://vitro.mannlib.cornell.edu/default/vitro-kb-2 --rdf vivo-additions.ntriples.rdf --wordiness INFO --password ****** --url http://localhost:8080/vivo/api/sparqlUpdate
-2014-07-27 12:11:44.384 INFO  [o.v.h.s.SparqlUpdate] SparqlUpdate: End
