@@ -5,9 +5,29 @@
  ******************************************************************************/
 package org.vivoweb.harvester.services;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -118,7 +138,44 @@ public class SparqlUpdate {
 	 * @throws IOException error
 	 */
 	private void execute() throws IOException {
-		System.out.println("To be implemented");	 
+	   StringBuffer updateBuffer = new StringBuffer();
+	  
+	   updateBuffer.append("INSERT DATA {");
+	   updateBuffer.append("GRAPH <"+ this.model + "> {");
+	  
+	   String rdfString = FileAide.getTextContent(this.inRDF); 
+	   updateBuffer.append(rdfString);
+       updateBuffer.append("  }");	   
+	   updateBuffer.append("}");
+	   System.out.println(updateBuffer.toString());
+		
+	   CloseableHttpClient httpclient = HttpClients.createDefault();
+	   try {
+	      HttpPost httpPost = new HttpPost(this.url);
+	       
+	      List <NameValuePair> nvps = new ArrayList <NameValuePair>(); 
+	      nvps.add(new BasicNameValuePair("email", this.username));
+	      nvps.add(new BasicNameValuePair("password", this.password));
+	      nvps.add(new BasicNameValuePair("update", updateBuffer.toString()));
+	      httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+	      CloseableHttpResponse response = httpclient.execute(httpPost);
+	      try {
+              System.out.println(response.getStatusLine());
+              HttpEntity entity = response.getEntity();
+              InputStream is = entity.getContent();
+              try {
+            	 IOUtils.copy(is, System.out);
+              } finally {
+                 is.close();
+              }
+              
+          } finally {
+              response.close();
+          }
+	       
+	   } finally {
+	      httpclient.close();	
+	   }	 
 	}
 	
 	/**
