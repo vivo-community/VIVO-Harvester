@@ -7,12 +7,12 @@
 <Task>
     <Param name="wordiness">INFO</Param>
     <!-- input -->
-    <Param name="rdf">vivo-additions.ntriples.rdf</Param>
+    <Param name="rdf">data/vivo-additions.ntriples.rdf</Param>
     <!-- output -->
 
     <Param name="url">http://localhost:8080/vivo/api/sparqlUpdate</Param>
     <Param name="model">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
     <Param name="username">jaf30@cornell.edu</Param>
-    <Param name="password">skikt22</Param>
+    <Param name="password">vivoadmin</Param>
 
 </Task>
