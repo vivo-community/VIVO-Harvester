@@ -22,7 +22,7 @@
     ERROR - All runtime errors
     DEBUG - Warning if no output is specified
     -->
-    <Param name="wordiness">INFO</Param>
+    <Param name="wordiness">DEBUG</Param>
 
     <!-- 
     recordHandler - relative path to the configuration file of the record handler from which we are drawing our input
