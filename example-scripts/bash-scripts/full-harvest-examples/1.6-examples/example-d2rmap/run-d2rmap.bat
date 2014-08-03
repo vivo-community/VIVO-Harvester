@@ -59,6 +59,8 @@ REM 	in a format based off of the source. The format is a form of RDF but not in
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 
+REM No XSLT translation required!!!!
+
 
 REM  Execute Transfer to import from record handler into local temp model
 REM  From this stage on the script places the data into a Jena model. A model is a
