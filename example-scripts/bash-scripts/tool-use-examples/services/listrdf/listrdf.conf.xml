@@ -9,7 +9,7 @@
     <!-- input -->
     <Param name="url">http://localhost:8080/vivo/listrdf</Param>
     <Param name="username">jaf30@cornell.edu</Param>
-    <Param name="password">skikt22</Param>
+    <Param name="password">vivoadmin</Param>
     <Param name="vclass">http://vivoweb.org/ontology/core#Continent</Param>
     <!-- output -->
     <Param name="format">json</Param>

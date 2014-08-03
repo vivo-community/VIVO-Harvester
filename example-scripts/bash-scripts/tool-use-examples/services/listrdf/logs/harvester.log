@@ -52,3 +52,8 @@ java.lang.IllegalArgumentException: Missing Argument: u
 2014-07-28 12:19:12.263 DEBUG [o.v.h.u.a.ArgList] command line args: -X listrdf.conf.xml
 2014-07-28 12:19:12.284 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --vclass http://vivoweb.org/ontology/core#Continent --wordiness INFO --format text --password ****** --url http://localhost:8080/vivo/listrdf
 2014-07-28 12:19:13.489 INFO  [o.v.h.s.ListRDF] ListRDF: End
+2014-08-01 14:19:44.911 INFO  [o.v.h.s.ListRDF] ListRDF: Start
+2014-08-01 14:19:44.915 DEBUG [o.v.h.u.a.ArgList] running ListRDF
+2014-08-01 14:19:44.915 DEBUG [o.v.h.u.a.ArgList] command line args: -X listrdf.conf.xml
+2014-08-01 14:19:44.920 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --vclass http://vivoweb.org/ontology/core#Continent --wordiness INFO --format json --password ****** --url http://localhost:8080/vivo/listrdf
+2014-08-01 14:19:45.397 INFO  [o.v.h.s.ListRDF] ListRDF: End

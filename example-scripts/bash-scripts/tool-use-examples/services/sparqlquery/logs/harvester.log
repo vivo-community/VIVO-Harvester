@@ -13,3 +13,13 @@
 2014-07-27 20:52:48.850 DEBUG [o.v.h.u.a.ArgList] command line args: -X sparqlquery.conf.xml
 2014-07-27 20:52:48.873 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --model http://vitro.mannlib.cornell.edu/default/vitro-kb-2 --query SELECT ?s ?p ?o WHERE {?s ?p ?o} LIMIT 50 --wordiness INFO --format text --password ****** --url http://localhost:8080/vivo/api/sparqlQuery
 2014-07-27 20:52:50.264 INFO  [o.v.h.s.SparqlQuery] SparqlQuery: End
+2014-08-01 14:21:18.102 INFO  [o.v.h.s.SparqlQuery] SparqlQuery: Start
+2014-08-01 14:21:18.106 DEBUG [o.v.h.u.a.ArgList] running SparqlQuery
+2014-08-01 14:21:18.106 DEBUG [o.v.h.u.a.ArgList] command line args: -X sparqlquery.conf.xml
+2014-08-01 14:21:18.111 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --model http://vitro.mannlib.cornell.edu/default/vitro-kb-2 --query SELECT ?s ?p ?o WHERE {?s ?p ?o} LIMIT 50 --wordiness INFO --format text --password ****** --url http://localhost:8080/vivo/api/sparqlQuery
+2014-08-01 14:21:18.345 INFO  [o.v.h.s.SparqlQuery] SparqlQuery: End
+2014-08-01 14:22:02.004 INFO  [o.v.h.s.SparqlQuery] SparqlQuery: Start
+2014-08-01 14:22:02.007 DEBUG [o.v.h.u.a.ArgList] running SparqlQuery
+2014-08-01 14:22:02.008 DEBUG [o.v.h.u.a.ArgList] command line args: -X sparqlquery.conf.xml
+2014-08-01 14:22:02.012 DEBUG [o.v.h.u.a.ArgList] config file args: --username ****** --model http://vitro.mannlib.cornell.edu/default/vitro-kb-2 --query SELECT ?s ?p ?o WHERE {?s ?p ?o} LIMIT 50 --wordiness INFO --format text --password ****** --url http://localhost:8080/vivo/api/sparqlQuery
+2014-08-01 14:22:02.341 INFO  [o.v.h.s.SparqlQuery] SparqlQuery: End
