@@ -13,5 +13,5 @@
 	
 	<!--  OPTIONS -->
 	<Param name="oldNamespace">http://vivoweb.org/harvest/pubmed/pub/</Param>
-	<Param name="newNamespace">http://vivo.ufl.edu/individual/</Param>
+	<Param name="newNamespace">http://vivo.cornell.edu/individual/</Param>
 </Task>

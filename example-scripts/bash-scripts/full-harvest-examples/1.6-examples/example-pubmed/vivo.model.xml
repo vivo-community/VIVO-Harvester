@@ -107,5 +107,5 @@
     
     <Param name="dbUser">vitro</Param>
     <Param name="dbPass">vitro123</Param>
-    <Param name="namespace">http://vivo.ufl.edu/individual/</Param>
+    <Param name="namespace">http://vivo.cornell.edu/individual/</Param>
 </Model>
