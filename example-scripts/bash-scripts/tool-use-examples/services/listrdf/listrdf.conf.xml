@@ -10,9 +10,9 @@
     <Param name="url">http://localhost:8080/vivo/listrdf</Param>
     <Param name="username">jaf30@cornell.edu</Param>
     <Param name="password">vivoadmin</Param>
-    <Param name="vclass">http://vivoweb.org/ontology/core#Continent</Param>
+    <Param name="vclass">http://xmlns.com/foaf/0.1/Person</Param>
     <!-- output -->
-    <Param name="format">json</Param>
+    <Param name="format">text</Param>
    
 
 </Task>

@@ -1,31 +1,12 @@
-
-usage: Transfer
- -d,--dumptofile <FILENAME>                    filename into which output
-                                               model should be dumped (as
-                                               rdf/xml)
- -h,--help                                     Help Message
- -I,--inputOverride <JENA_PARAM=VALUE>         override the JENA_PARAM of
-                                               input jena model config
-                                               using VALUE
- -i,--input <CONFIG_FILE>                      config file for jena model
-                                               to load into output model
- -m,--modeRemove                               remove from output model
-                                               rather than add
- -n,--namespace <URI_BASE>                     use URI_BASE when importing
-                                               relative uris
- -o,--output <CONFIG_FILE>                     config file for output jena
-                                               model
- -O,--outputOverride <JENA_PARAM=VALUE>        override the JENA_PARAM of
-                                               output jena model config
-                                               using VALUE
- -r,--rdf <RDF_FILE>                           rdf filename to load into
-                                               output model
- -R,--rdfLang <LANGUAGE>                       rdf language of rdf file
- -s,--recordHandler <RECORD_HANDLER>           record handler to load into
-                                               output model
- -S,--recordHandlerOverride <RH_PARAM=VALUE>   override the RH_PARAM of
-                                               recordhandler using VALUE
- -w,--wordiness <LOG_LEVEL>                    Set the console log level
- -X,--config <CONFIG_FILE>                     XML Configuration File
+usage: ListRDF
+ -f,--format <FORMAT>         the format of the output (text, ntriples,
+                              n3, rdfxml, json
+ -h,--help                    Help Message
+ -p,--password <PASSWORD>     vivo admin password
+ -U,--url <URL>               service url
+ -u,--username <USERNAME>     vivo admin user name
+ -v,--vclass <VCLASS>         the vclass to be displayed
+ -w,--wordiness <LOG_LEVEL>   Set the console log level
+ -X,--config <CONFIG_FILE>    XML Configuration File
 
 
