@@ -71,6 +71,12 @@ public class SparqlUpdate {
 	 * Sparql update URL
 	 */
 	private String url;
+	
+	/*
+	 * update type: add or delete
+	 */
+	
+	private String type;
 	 
 	
 	/**
@@ -105,6 +111,9 @@ public class SparqlUpdate {
 		// get url
 		this.url = argList.get("U");
 		
+		// get update type
+		this.type = argList.get("t");
+		
 		// Require model args
 		if(this.model == null) {
 			throw new IllegalArgumentException("Must provide an output model");
@@ -130,6 +139,16 @@ public class SparqlUpdate {
 			throw new IllegalArgumentException("Must provide a Sparql Update URL");
 		}
 		
+		if (this.type == null) {
+			throw new IllegalArgumentException("Must provide an update type: add or delete");			
+		}
+		
+		if (this.type.equalsIgnoreCase("add") || (this.type.equalsIgnoreCase("delete"))) {
+		    // the type was specified as add or delete, that's good				
+		} else {
+			throw new IllegalArgumentException("The update type must be add or delete");	
+		}
+		
 		 
 	}
 	
@@ -139,8 +158,11 @@ public class SparqlUpdate {
 	 */
 	private void execute() throws IOException {
 	   StringBuffer updateBuffer = new StringBuffer();
-	  
-	   updateBuffer.append("INSERT DATA {");
+	   if (this.type.equals("add")) {
+	      updateBuffer.append("INSERT DATA {");
+	   } else {
+		  updateBuffer.append("DELETE DATA {"); 
+	   }
 	   updateBuffer.append("GRAPH <"+ this.model + "> {");
 	  
 	   String rdfString = FileAide.getTextContent(this.inRDF); 
@@ -190,6 +212,7 @@ public class SparqlUpdate {
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("vivo admin user name").setRequired(true)); 
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("vivo admin password").setRequired(true)); 
 		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("url").withParameter(true, "URL").setDescription("sparql update url").setRequired(true)); 
+		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("type").withParameter(true, "UPDATE TYPE").setDescription("type of update: add or delete").setRequired(true));
 		// Outputs
 		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("model").withParameter(true, "MODEL").setDescription("name of jena model").setRequired(true)); 
 		return parser;
