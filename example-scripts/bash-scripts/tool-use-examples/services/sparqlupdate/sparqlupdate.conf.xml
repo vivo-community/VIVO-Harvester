@@ -8,6 +8,7 @@
     <Param name="wordiness">INFO</Param>
     <!-- input -->
     <Param name="rdf">data/vivo-additions.ntriples.rdf</Param>
+    <Param name="type">add</Param>
     <!-- output -->
 
     <Param name="url">http://localhost:8080/vivo/api/sparqlUpdate</Param>
