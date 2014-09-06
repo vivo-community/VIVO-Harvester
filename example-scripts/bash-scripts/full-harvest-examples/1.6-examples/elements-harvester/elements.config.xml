@@ -6,7 +6,7 @@
  | file, You can obtain one at http://mozilla.org/MPL/2.0/.
  -->
 <Task>
-    <Param name="apiEndpoint">https://symappdev1.cc.emory.edu:8091/elements-api/v4.6/</Param>
+    <Param name="apiEndpoint">https://symplectic-server:8091/elements-api/v4.6/</Param>
     <Param name="apiVersion">4.6</Param>
     <Param name="apiIsSecure">true</Param>
     <Param name="apiUsername">apitest</Param>
@@ -15,7 +15,7 @@
     <Param name="vivoImageDir">/vivo/example-elements/data/images</Param>
     <Param name="objectsPerPage">25</Param>
     <Param name="relationshipsPerPage">25</Param>
-    <Param name="queryObjects">users,publications</Param><!-- ,grants -->
+    <Param name="queryObjects">users,activities,teaching-activities,publications</Param><!-- ,grants -->
     <!--<Param name="paramGroups">11,14</Param>-->
     <Param name="currentStaffOnly">true</Param>
     <Param name="visibleLinksOnly">true</Param>
