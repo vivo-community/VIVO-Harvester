@@ -72,6 +72,4 @@ harvester-transfer -o previous-harvest.model.xml -i added-data.model.xml
 harvester-transfer -o vivo.model.xml -i subtracted-data.model.xml -m
 # Apply Additions to VIVO model
 #harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
-#harvester-transfer -o vivo.model.xml -i added-data.model.xml
-echo "Attempting to Load Additions via SPARQL Update API..."
-curl -d 'dsgrant=USER' -d 'password=Obladi38' -d '@import.sparql' 'http://localhost:8080/vivo/api/sparqlUpdate'
+harvester-transfer -o vivo.model.xml -i added-data.model.xml
