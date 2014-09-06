@@ -1,0 +1,1 @@
+update=LOAD data/vivo-additions.rdf.xml into graph <http://vitro.mannlib.cornell.edu/default/vitro-kb-2>
