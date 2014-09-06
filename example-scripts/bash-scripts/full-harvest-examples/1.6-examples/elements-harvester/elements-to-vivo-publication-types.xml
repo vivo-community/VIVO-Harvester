@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ | Copyright (c) 2012 Symplectic Limited. All rights reserved.
+ | This Source Code Form is subject to the terms of the Mozilla Public
+ | License, v. 2.0. If a copy of the MPL was not distributed with this
+ | file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ -->
+<!--
+    This XML file specifies the rdf:type (and vitro:mostSpecificType) statements that you require for each Elements publication type.
+
+    For each <config:publication-type /> element, the "type" attribute is the type name in Elements.
+    The statements within each <config:publication-type /> are the statements that you wish to have output.
+
+    Notes:
+
+    1. Only <rdf:type /> and <vitro:mostSpecificType /> statements are supported.
+    2. If no <vitro:mostSpecificType /> is specified, the FIRST <rdf:type /> for that publication type will be used.
+    3. The following statements are always output, so you do not need to specify them in the configuration:
+        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#InformationResource"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+-->
+<config:publication-types xmlns:config="http://www.symplectic.co.uk/vivo/namespaces/config" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <config:publication-type type="book">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+    </config:publication-type>
+    <config:publication-type type="chapter">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Chapter"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+    </config:publication-type>
+    <config:publication-type type="composition">
+        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Score"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+    </config:publication-type>
+    <config:publication-type type="conference">
+        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePaper"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+    </config:publication-type>
+    <config:publication-type type="exhibition">
+        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Exhibit"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Event"/>
+    </config:publication-type>
+    <config:publication-type type="internet-publication">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Webpage"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+    </config:publication-type>
+    <config:publication-type type="journal-article">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+    </config:publication-type>
+    <config:publication-type type="patent">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Patent"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+    </config:publication-type>
+    <config:publication-type type="performance">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Performance"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Event"/>
+    </config:publication-type>
+    <config:publication-type type="poster">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#ConferencePoster"/>
+    </config:publication-type>
+    <config:publication-type type="report">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Report"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+    </config:publication-type>
+    <config:publication-type type="scholarly-edition">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article"/>
+    </config:publication-type>
+    <config:publication-type type="software">
+        <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Software"/>
+    </config:publication-type>
+    <config:publication-type type="thesis-dissertation">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Thesis"/>
+    </config:publication-type>
+    <config:publication-type type="z-default">
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article"/>
+        <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document"/>
+    </config:publication-type>
+</config:publication-types>

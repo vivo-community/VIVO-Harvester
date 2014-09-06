@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ | Copyright (c) 2012 Symplectic Limited. All rights reserved.
+ | This Source Code Form is subject to the terms of the Mozilla Public
+ | License, v. 2.0. If a copy of the MPL was not distributed with this
+ | file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ -->
+<Model>
+    <Param name="type">sdb</Param>   <!--  Vivo 1.2 uses rdb, Vivo 1.3 uses sdb -->
+    <Param name="dbLayout">layout2</Param>
+    <Param name="dbClass">com.mysql.jdbc.Driver</Param>
+    <Param name="dbType">MySQL</Param>
+    <Param name="dbUrl">jdbc:mysql://localhost/vivotest</Param>   <!--  the Jdbc connection url to your Vivo instance -->
+    <Param name="dbUser">vivotest</Param>  <!--  database user -->
+    <Param name="dbPass">vivotest</Param> <!--  database password -->
+    <Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>  <!--  this is the default model name of the live Vivo instance, this is the default -->
+</Model>

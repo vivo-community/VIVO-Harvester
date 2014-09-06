@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ | Copyright (c) 2012 Symplectic Limited. All rights reserved.
+ | This Source Code Form is subject to the terms of the Mozilla Public
+ | License, v. 2.0. If a copy of the MPL was not distributed with this
+ | file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ -->
+<Task>
+    <Param name="apiEndpoint">https://symplectic-server:8091/elements-api/v4.6/</Param>
+    <Param name="apiVersion">4.6</Param>
+    <Param name="apiIsSecure">true</Param>
+    <Param name="apiUsername">username</Param>
+    <Param name="apiPassword">password</Param>
+
+    <Param name="vivoImageDir">/vivo/example-elements/data/images</Param>
+    <Param name="objectsPerPage">25</Param>
+    <Param name="relationshipsPerPage">25</Param>
+    <Param name="queryObjects">users,activities,teaching-activities,publications</Param><!-- ,grants -->
+    <!--<Param name="paramGroups">11,14</Param>-->
+    <Param name="currentStaffOnly">true</Param>
+    <Param name="visibleLinksOnly">true</Param>
+    <Param name="page">1</Param>
+
+    <Param name="rawOutput">raw-records.config.xml</Param>
+    <Param name="rdfOutput">translated-records.config.xml</Param>
+    <Param name="xslTemplate">elements-to-vivo.xsl</Param>
+</Task>
