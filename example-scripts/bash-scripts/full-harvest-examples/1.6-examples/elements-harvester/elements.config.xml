@@ -9,8 +9,8 @@
     <Param name="apiEndpoint">https://symplectic-server:8091/elements-api/v4.6/</Param>
     <Param name="apiVersion">4.6</Param>
     <Param name="apiIsSecure">true</Param>
-    <Param name="apiUsername">apitest</Param>
-    <Param name="apiPassword">apitest</Param>
+    <Param name="apiUsername">username</Param>
+    <Param name="apiPassword">password</Param>
 
     <Param name="vivoImageDir">/vivo/example-elements/data/images</Param>
     <Param name="objectsPerPage">25</Param>
