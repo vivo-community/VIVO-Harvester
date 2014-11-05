@@ -30,6 +30,10 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	 */
 	private byte[][] closeTags;
 	/**
+	 * the byte array that represent a opening record tag
+	 */
+	private byte[][] openTags;
+	/**
 	 * Regex to find the identifing data in the record data
 	 */
 	private Pattern idRegex;
@@ -41,7 +45,11 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	 * Append to each record
 	 */
 	private String footer;
-	
+	/**
+   * Store state of buffer comparison against tags to split on
+   */
+  private Boolean capturingRecord;
+
 	/**
 	 * Constructor
 	 * @param tagsToSplitOn defines the record tag types
@@ -51,12 +59,15 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	 * @param rso RecordStreamOrigin to give record back to
 	 */
 	public XMLRecordOutputStream(String[] tagsToSplitOn, String headerInfo, String footerInfo, String idLocationRegex, RecordStreamOrigin rso) {
-		this.buf = new ByteArrayOutputStream();
+		this.capturingRecord = false;
+    this.buf = new ByteArrayOutputStream();
 		this.rso = rso;
 		this.idRegex = Pattern.compile(idLocationRegex);
 		this.closeTags = new byte[tagsToSplitOn.length][];
+		this.openTags = new byte[tagsToSplitOn.length][];
 		for(int x = 0; x < tagsToSplitOn.length; x++) {
 			this.closeTags[x] = ("</" + tagsToSplitOn[x] + ">").getBytes();
+			this.openTags[x] = ("<" + tagsToSplitOn[x] + ">").getBytes();
 		}
 		this.header = headerInfo;
 		this.footer = footerInfo;
@@ -66,27 +77,51 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
 	public XMLRecordOutputStream clone() {
 		XMLRecordOutputStream template = new XMLRecordOutputStream(new String[]{}, this.header, this.footer, this.idRegex.pattern(), this.rso);
 		template.closeTags = this.closeTags;
+		template.openTags = this.openTags;
 		return template;
 	}
 	
 	@Override
 	public void write(int arg0) throws IOException {
-		this.buf.write(arg0);
-		byte[] a = this.buf.toByteArray();
-		for(int x = 0; x < this.closeTags.length; x++) {
-			if(compareByteArrays(a, this.closeTags[x])) {
-				String record = new String(a);
-				Matcher m = this.idRegex.matcher(record);
-				m.find();
-				String id = m.group(1);
-				if(this.rso == null) {
-					throw new IllegalArgumentException("Must provide a valid RecordStreamOrigin before writing!");
-				}
-				id = id.trim();
-				this.rso.writeRecord(id, this.header + record.trim() + this.footer);
-				this.buf.reset();
-			}
-		}
+	
+    this.buf.write(arg0);
+    byte[] a = this.buf.toByteArray();
+    
+    //store the state of when an opening tag is found
+    if (!this.capturingRecord){
+      for(int x = 0; x < this.openTags.length; x++) {
+        if(compareByteArrays(a, this.openTags[x])) {
+          this.capturingRecord = true;
+          this.buf.reset();
+          this.buf.write(this.openTags[x]);
+          System.out.println("capturing record");
+        }
+      }
+    }
+
+    //compare each closing tag - only if an opening tag has been found 
+    if (this.capturingRecord){
+      for(int x = 0; x < this.closeTags.length; x++) {
+        if(compareByteArrays(a, this.closeTags[x])) {
+          
+          //Create the record
+          String record = new String(a);
+          Matcher m = this.idRegex.matcher(record);
+          m.find();
+          String id = m.group(1);
+          
+          //Write the record
+          if(this.rso == null) {
+            throw new IllegalArgumentException("Must provide a valid RecordStreamOrigin before writing!");
+          }
+          id = id.trim();
+          this.rso.writeRecord(id, this.header + record.trim() + this.footer);
+          this.buf.reset();
+          this.capturingRecord = false;
+        }
+      }
+    }
+
 	}
 	
 	/**
