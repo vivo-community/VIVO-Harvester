@@ -165,7 +165,8 @@ public class SparqlUpdate {
 	   }
 	   updateBuffer.append("GRAPH <"+ this.model + "> {");
 	  
-	   String rdfString = FileAide.getTextContent(this.inRDF); 
+	   //String rdfString = FileAide.getTextContent(this.inRDF);
+	   String rdfString = FileUtils.readFileToString(new File(this.inRDF), "UTF-8");
 	   updateBuffer.append(rdfString);
        updateBuffer.append("  }");	   
 	   updateBuffer.append("}");

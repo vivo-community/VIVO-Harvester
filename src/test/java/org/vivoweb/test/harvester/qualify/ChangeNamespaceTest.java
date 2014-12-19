@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.ChangeNamespace;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.RDBJenaConnect;
+//import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 import org.vivoweb.harvester.util.repo.SDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -39,7 +39,7 @@ public class ChangeNamespaceTest extends TestCase {
 		this.namespace = "http://testChNS.vivoweb.org/individual/";
 		this.newNamespace = "http://vivo.test.edu/individual/";
 		this.model = new SDBJenaConnect("jdbc:h2:mem:testChNSh2change", "sa", "", "H2", "org.h2.Driver", "layout2", "testChNSchange");
-		this.vivo = new RDBJenaConnect("jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSvivo");
+		//this.vivo = new RDBJenaConnect("jdbc:h2:mem:testChNSh2vivo;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testChNSvivo");
 		String vivoData = "" +
 			"<rdf:RDF" +
 			"\n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" +

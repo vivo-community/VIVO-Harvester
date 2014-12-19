@@ -38,6 +38,7 @@ import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -45,8 +46,8 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
-import com.hp.hpl.jena.update.UpdateAction;
+ 
+import com.hp.hpl.jena.update.UpdateAction; 
 import com.hp.hpl.jena.update.UpdateFactory;
 
 /**
@@ -139,8 +140,8 @@ public abstract class JenaConnect {
 		JenaConnect jc;
 		if(type.equalsIgnoreCase("mem")) {
 			jc = new MemJenaConnect(params.get("modelName"));
-		} else if(type.equalsIgnoreCase("rdb")) {
-			jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
+		//} else if(type.equalsIgnoreCase("rdb")) {
+			//jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
 		} else if(type.equalsIgnoreCase("sdb")) {
 			jc = new SDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("dbLayout"), params.get("modelName"));
 		} else if(type.equalsIgnoreCase("tdb")) {
@@ -603,8 +604,11 @@ public abstract class JenaConnect {
 	/**
 	 * RDF formats
 	 */
+	/*
 	protected static HashMap<String, ResultSetFormat> formatSymbols = new HashMap<String, ResultSetFormat>();
 	static {
+		ResultsFormat.FMT_RS_XML;
+		ResultsFormat.lookup(ResultsFormat.FMT_RDF_XML);
 		formatSymbols.put(ResultSetFormat.syntaxXML.getSymbol(), ResultSetFormat.syntaxXML);
 		formatSymbols.put(ResultSetFormat.syntaxRDF_XML.getSymbol(), ResultSetFormat.syntaxRDF_XML);
 		formatSymbols.put(ResultSetFormat.syntaxRDF_N3.getSymbol(), ResultSetFormat.syntaxRDF_N3);
@@ -612,7 +616,7 @@ public abstract class JenaConnect {
 		formatSymbols.put(ResultSetFormat.syntaxText.getSymbol(), ResultSetFormat.syntaxText);
 		formatSymbols.put(ResultSetFormat.syntaxJSON.getSymbol(), ResultSetFormat.syntaxJSON);
 	}
-	
+	*/
 	/**
 	 * Execute a Query and output result to System.out
 	 * @param queryParam the query
@@ -653,10 +657,13 @@ public abstract class JenaConnect {
 				qe = QueryExecutionFactory.create(query, getJenaModel());
 			}
 			if(query.isSelectType()) {
-				ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
-				if(rsf == null) {
-					rsf = ResultSetFormat.syntaxText;
+				//ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
+				ResultsFormat rsf = ResultsFormat.lookup(resultFormatParam);
+				if (rsf == null) {
+					//rsf = ResultSetFormat.syntaxText;
+					rsf = ResultsFormat.lookup("RS_TEXT");
 				}
+				 
 				ResultSetFormatter.output(out, qe.execSelect(), rsf);
 			} else if(query.isAskType()) {
 				out.write((Boolean.toString(qe.execAsk())+"\n").getBytes());

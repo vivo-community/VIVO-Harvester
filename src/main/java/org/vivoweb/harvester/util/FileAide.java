@@ -187,7 +187,7 @@ public class FileAide {
 	 * @throws IOException error resolving
 	 */
 	public static String getTextContent(String path) throws IOException {
-		return getTextContent(path, null);
+		return getTextContent(path, "UTF-8");
 	}
 	
 	/**

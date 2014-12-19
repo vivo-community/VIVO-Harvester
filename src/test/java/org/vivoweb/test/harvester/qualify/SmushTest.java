@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.qualify.Smush;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.RDBJenaConnect;
+//import org.vivoweb.harvester.util.repo.RDBJenaConnect;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -45,7 +45,7 @@ public class SmushTest extends TestCase {
 		InitLog.initLogger(null, null);
 		this.namespace = "http://vivo.test.edu/individual/";
 //		this.outputModel = new SDBJenaConnect("jdbc:h2:mem:testSmushoutput", "sa", "", "H2", "org.h2.Driver", "layout2", "testSmushoutput");
-		this.inputModel = new RDBJenaConnect("jdbc:h2:mem:testSmushinput;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testSmushinput");
+		//this.inputModel = new RDBJenaConnect("jdbc:h2:mem:testSmushinput;MODE=HSQLDB", "sa", "", "HSQLDB", "org.h2.Driver", "testSmushinput");
 		String testData = "" +
 			"<rdf:RDF" +
 			"\n xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" +

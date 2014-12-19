@@ -233,10 +233,9 @@ public class ChangeNamespace {
 			Resource res = model.getJenaModel().getResource(sub);
 			float percent = Math.round(10000f * count / total) / 100f;
 			log.trace("(" + count + "/" + total + ": " + percent + "%): Finding unused URI for resource <" + res + ">");
-			String uri = getUnusedURI(newNamespace, vivo, model);
-			if(errorLog) {
-				log.warn("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
-			}
+			String uri = getUnusedURI(newNamespace, vivo, model);			 
+	        log.debug("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
+			 
 			RenameResources.renameResource(res, uri);
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
