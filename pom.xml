@@ -244,6 +244,14 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<dependency>
+   			<groupId>junit</groupId>
+      			<artifactId>junit</artifactId>
+         		<version>4.11</version>
+	    		<scope>test</scope>
+	    	</dependency>
+
 		<dependency>
 			<groupId>commons-vfs</groupId>
 			<artifactId>commons-vfs</artifactId>
@@ -255,11 +263,13 @@
 			<artifactId>jcifs</artifactId>
 			<version>1.2.19</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.hp.hpl.jena</groupId>
 			<artifactId>Gloze</artifactId>
 			<version>1.01-beta2</version>
 		</dependency>
+
 		<dependency>
 			<groupId>gov.nih.nln.ncbi</groupId>
 			<artifactId>eutils</artifactId>
@@ -309,67 +319,43 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/d2rmap-V03.jar</systemPath>
 		</dependency>
+               
+  		<dependency>
+    			<groupId>org.apache.jena</groupId>
+    			<artifactId>apache-jena-libs</artifactId>
+    			<type>pom</type>
+    			<version>2.10.1</version>
+ 			<exclusions>
 
-		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>tdb</artifactId>
-			<version>0.8.9</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>arq</artifactId>
-			<version>2.8.7</version>
-			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
+  					<groupId>org.slf4j</groupId>
+  					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>jena</artifactId>
-			<version>2.6.4</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<exclusions>
+  		</dependency> 
+                    
+                <dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-sdb</artifactId>
+			<version>1.3.6</version>
+ 			<exclusions>
+
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
+  					<groupId>org.slf4j</groupId>
+  					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>sdb</artifactId>
-			<version>1.3.3</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
+
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
