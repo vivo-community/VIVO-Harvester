@@ -1,7 +1,16 @@
 @echo off
-rmdir /s /q data 
-rmdir /s /q logs 
-rmdir /s /q previous-harvest 
+IF exist data (
+  rmdir /s /q data
+)
+
+IF exist logs (
+  rmdir /s /q logs
+)
+
+IF exist previous-harvest (
+  rmdir /s /q previous-harvest
+)
+
 tar zxf data.tar.gz
 
 set HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
