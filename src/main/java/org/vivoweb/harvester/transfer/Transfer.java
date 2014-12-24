@@ -119,6 +119,7 @@ public class Transfer {
 			this.output = new MemJenaConnect();
 			log.debug("No Output Specified, Using In-Memory Jena Model As Temporary Model");
 		}
+		 
 		if(this.removeMode) {
 			if(this.input != null) {
 				this.output.removeRdfFromJC(this.input);
@@ -127,7 +128,8 @@ public class Transfer {
 				this.output.removeRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 			}
 			if(this.inRH != null) {
-				this.output.removeRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
+				int processed = this.output.removeRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
+				log.info(getParser().getAppName() + ": Records Removed: "+ processed);
 			}
 		} else {
 			if(this.input != null) {
@@ -137,12 +139,16 @@ public class Transfer {
 				this.output.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 			}
 			if(this.inRH != null) {
-				this.output.loadRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
+				int processed = this.output.loadRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
+				log.info(getParser().getAppName() + ": Records loaded: "+ processed);				 
 			}
 		}
+		
+		
 		if(this.dumpFile != null) {
 			this.output.exportRdfToFile(this.dumpFile);
 		}
+		
 		if(this.input != null) {
 			this.input.sync();
 		}
