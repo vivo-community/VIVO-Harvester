@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
 import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 /**
@@ -60,12 +62,18 @@ public class TDBJenaConnect extends JenaConnect {
 		} catch(IOException e) {
 			throw new IllegalArgumentException("Invalid Directory", e);
 		}
-		if(modelName != null) {
-			setModelName(modelName);
+		
+		if (modelName != null) {
+			setModelName(modelName);			 
+		    Model m = getDataset().getNamedModel(getModelName());
+			setJenaModel(m);
 		} else {
-			setModelName("urn:x-arq:DefaultGraph");
+			//setModelName("urn:x-arq:DefaultGraph");
+			Model m = getDataset().getDefaultModel();
+			setJenaModel(m);
 		}
-		setJenaModel(getDataset().getNamedModel(getModelName()));
+		 
+		sync(); 
 	}
 	
 	@Override
@@ -84,7 +92,7 @@ public class TDBJenaConnect extends JenaConnect {
 	@Override
 	public void close() {
 		super.close();
-		getJenaModel().close();
+		getJenaModel().close();		 
 	}
 	
 	@Override
@@ -96,6 +104,7 @@ public class TDBJenaConnect extends JenaConnect {
 	
 	@Override
 	public void sync() {
-		// Do Nothing
+		log.trace("sync tdb");
+		TDB.sync(getDataset());	
 	}
 }
