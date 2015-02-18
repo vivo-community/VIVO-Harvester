@@ -38,10 +38,10 @@ public class HttpLinkedDataService implements LinkedDataService {
     //HttpClient http;
     CloseableHttpClient http;
    protected static final String RDF_CONTENT_TYPE = "text/plain";
-   protected static final String RDF_ACCEPT_HEADER =
-         "text/n3, text/rdf+n3, application/rdf+xml;q=0.9, text/turtle;q=0.8";
+   //protected static final String RDF_ACCEPT_HEADER =
+   //      "text/n3, text/rdf+n3, application/rdf+xml;q=0.9, text/turtle;q=0.8";
     
-    //protected static final String RDF_ACCEPT_HEADER = "application/rdf+xml";
+   protected static final String RDF_ACCEPT_HEADER = "application/rdf+xml";
     
     private static final Map<String,String>HEADER_TO_JENASTR;
     static{
@@ -69,7 +69,7 @@ public class HttpLinkedDataService implements LinkedDataService {
         log.trace("getLinkedData "+uri);
         HttpGet get = new HttpGet(uri);
         get.setHeader("Accept", RDF_ACCEPT_HEADER);
-        get.setHeader("Content-Type", RDF_CONTENT_TYPE);
+        //get.setHeader("Content-Type", RDF_CONTENT_TYPE);
         HttpResponse resp = http.execute( get );
         try{
             responseToModel(uri,m,resp);

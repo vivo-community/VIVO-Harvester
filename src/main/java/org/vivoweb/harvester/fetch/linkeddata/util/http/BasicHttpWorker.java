@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpClient; 
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -33,7 +33,8 @@ public class BasicHttpWorker implements HttpWorker {
 	private static final Charset utf8 = Charset.forName("UTF-8");
 
 	private final HttpClient httpClient;
-
+    //private final CloseableHttpClient httpClient;
+    
 	public BasicHttpWorker(HttpClient httpClient) {
 		this.httpClient = httpClient;
 	}
