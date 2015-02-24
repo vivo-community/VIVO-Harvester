@@ -81,6 +81,11 @@ public class LinkedDataFetch  {
 	 */
 	Iterable<String> vClasses;
 	
+	/*
+	 * optional rich export include dirs
+	 */
+	Iterable<String> includes;
+	
 	 
 	
 	/**
@@ -156,6 +161,7 @@ public class LinkedDataFetch  {
 			argList.get("U"),
 			argList.getAll("v"),
 			RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")),
+			argList.getAll("I"),
 			argList.get("f")
 		);
 		 
@@ -187,10 +193,11 @@ public class LinkedDataFetch  {
 	}
 	
 	 
-	public LinkedDataFetch(String url, List<String> vClasses, RecordHandler recordHandler, String format) {
+	public LinkedDataFetch(String url, List<String> vClasses, RecordHandler recordHandler, List<String> includes, String format) {
 		this.url = url;
 		this.vClasses = vClasses;
 		this.rhOutput = recordHandler;
+		this.includes = includes;
 		this.format = format;
 	}
 
@@ -229,9 +236,22 @@ public class LinkedDataFetch  {
 			   }
 			   individualID = StringUtils.substringAfterLast(uri, "/");
 			   //String lduri = uri + "?format=" + this.format + "&include=all";
-			   String lduri = uri + "/"+ individualID +".rdf?include=all";
+			   StringBuffer incBuf = new StringBuffer();
+			   
+			   if (this.includes != null ) {
+				   
+				   for (String dirName: this.includes) {
+					  incBuf.append("&include="+ dirName);   
+				   }
+			   }
+			   String lduri = new String();
+			   if (incBuf.length() > 0) {
+			      lduri = uri + "/"+ individualID +".rdf"+ incBuf.toString().replaceFirst("&", "?");
+			   } else {
+				  lduri = uri + "/"+ individualID +".rdf"; 
+			   }
 			   //log.info("uri: "+uri);
-			   //log.info("lduri: "+lduri);
+			   log.info("lduri: "+lduri);
 			   try {
 			      String linkedData = linkedDataService.getLinkedData(lduri );
 			      //String linkedData =  getLinkedDataRDF(lduri, httpWorker);
@@ -326,6 +346,7 @@ public class LinkedDataFetch  {
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('U').setLongOpt("url").withParameter(true, "URL").setDescription("service url").setRequired(true)); 
 		parser.addArgument(new ArgDef().setShortOption('v').setLongOpt("vclass").withParameterValueMap("VCLASS", "TYPE").setDescription("the vclasses to be displayed").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('I').setLongOpt("include").withParameterValueMap("INCLUDE", "dir").setDescription("rich export includes, use all for all directories").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('f').setLongOpt("format").withParameter(true, "FORMAT").setDescription("output format").setRequired(false));
 		return parser;
 	}
