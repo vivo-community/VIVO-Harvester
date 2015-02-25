@@ -30,9 +30,11 @@ IF not exist logs (
   mkdir logs
 )
 
-IF exist data ( rm -rf data )
+
+IF exist data (
+  rmdir /s /q data
+)
+
 @java %HARVESTER_JAVA_OPTS% -Dharvester-task=Fetch -cp %CLASSPATH% -Dharvester-task=Fetch org.vivoweb.harvester.fetch.linkeddata.LinkedDataFetch  -X linkeddata-fetch.config.xml
 if %errorlevel% neq 0 exit /b %errorlevel% 
-
-
 
