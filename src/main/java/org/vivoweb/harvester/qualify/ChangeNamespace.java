@@ -18,9 +18,11 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * Changes the namespace for all matching uris
@@ -132,6 +134,35 @@ public class ChangeNamespace {
 	}
 	
 	/**
+	 * Gets an unused URI in the the given namespace for the given models
+	 * @param namespace the namespace
+	 * @param models models to check in
+	 * @return the uri
+	 * @throws IOException error connecting
+	 */
+	public static String getUnusedURI(String namespace, OntModel... models) throws IOException {
+		if((namespace == null) || namespace.equals("")) {
+			throw new IllegalArgumentException("namespace cannot be empty");
+		}
+		String uri = null;
+		Random random = new Random();
+		while(uri == null) {
+			uri = namespace + "n" + random.nextInt(Integer.MAX_VALUE);
+			log.trace("evaluating uri <" + uri + ">");
+			for(OntModel model : models) {
+				boolean modelContains = model.contains(ResourceFactory.createResource(uri), null);
+				log.trace("model contains this uri?: " + modelContains);
+				if(modelContains) {
+					uri = null;
+					break;
+				}
+			}
+		}
+		log.debug("Using new URI: <" + uri + ">");
+		return uri;
+	}
+	
+	/**
 	 * Changes the namespace for all matching uris
 	 * @param model the model to change namespaces for
 	 * @param vivo the model to search for uris in
@@ -202,10 +233,9 @@ public class ChangeNamespace {
 			Resource res = model.getJenaModel().getResource(sub);
 			float percent = Math.round(10000f * count / total) / 100f;
 			log.trace("(" + count + "/" + total + ": " + percent + "%): Finding unused URI for resource <" + res + ">");
-			String uri = getUnusedURI(newNamespace, vivo, model);
-			if(errorLog) {
-				log.warn("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
-			}
+			String uri = getUnusedURI(newNamespace, vivo, model);			 
+	        log.debug("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
+			 
 			RenameResources.renameResource(res, uri);
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");

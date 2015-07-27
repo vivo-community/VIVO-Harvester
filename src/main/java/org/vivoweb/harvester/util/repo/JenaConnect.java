@@ -38,6 +38,8 @@ import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+//import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
+import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -45,8 +47,8 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
-import com.hp.hpl.jena.update.UpdateAction;
+ 
+import com.hp.hpl.jena.update.UpdateAction; 
 import com.hp.hpl.jena.update.UpdateFactory;
 
 /**
@@ -139,12 +141,10 @@ public abstract class JenaConnect {
 		JenaConnect jc;
 		if(type.equalsIgnoreCase("mem")) {
 			jc = new MemJenaConnect(params.get("modelName"));
-		} else if(type.equalsIgnoreCase("rdb")) {
-			jc = new RDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("modelName"));
 		} else if(type.equalsIgnoreCase("sdb")) {
 			jc = new SDBJenaConnect(params.get("dbUrl"), params.get("dbUser"), params.get("dbPass"), params.get("dbType"), params.get("dbClass"), params.get("dbLayout"), params.get("modelName"));
 		} else if(type.equalsIgnoreCase("tdb")) {
-			jc = new TDBJenaConnect(params.get("dbDir"), params.get("modelName"));
+			jc = new TDBJenaConnect(params.get("dbDir"), params.get("modelName"));			 
 		} else if(type.equalsIgnoreCase("file")) {
 			jc = new FileJenaConnect(params.get("file"), params.get("rdfLang"));
 		} else {
@@ -269,7 +269,7 @@ public abstract class JenaConnect {
 	 *        "RDF/XML"
 	 * @throws IOException error writing to stream
 	 */
-	private static void exportRdfToStream(Model m, OutputStream out, String language) throws IOException {
+	private static void exportRdfToStream(Model m, OutputStream out, String language) throws IOException { 
 		RDFWriter fasterWriter = m.getWriter(language);
 		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
@@ -277,7 +277,7 @@ public abstract class JenaConnect {
 		OutputStreamWriter osw = new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8"));
 		fasterWriter.write(m, osw, "");
 		osw.flush();
-		out.flush();
+		out.flush();		
 	}
 	
 	/**
@@ -586,33 +586,37 @@ public abstract class JenaConnect {
 		this.jenaModel.begin();
 		this.jenaModel.notifyEvent(GraphEvents.startRead);
 		try {
-//			log.debug("query:\n" + queryString);
+ 			log.trace("query:\n" + queryString);
 			if(datasetMode) {
-//				log.trace("Executing query against dataset");
+ 				log.trace("Executing query against dataset");
 				UpdateAction.execute(UpdateFactory.create(queryString), getDataset());
 			} else {
-//				log.trace("Executing query against model");
+ 				log.trace("Executing query against model");
 				UpdateAction.execute(UpdateFactory.create(queryString), getJenaModel());
 			}
 		} finally {
 			this.jenaModel.notifyEvent(GraphEvents.finishRead);
 			this.jenaModel.commit();
+			 
 		}
+		this.jenaModel.close();
 	}
 	
 	/**
 	 * RDF formats
 	 */
+	 
 	protected static HashMap<String, ResultSetFormat> formatSymbols = new HashMap<String, ResultSetFormat>();
-	static {
-		formatSymbols.put(ResultSetFormat.syntaxXML.getSymbol(), ResultSetFormat.syntaxXML);
-		formatSymbols.put(ResultSetFormat.syntaxRDF_XML.getSymbol(), ResultSetFormat.syntaxRDF_XML);
-		formatSymbols.put(ResultSetFormat.syntaxRDF_N3.getSymbol(), ResultSetFormat.syntaxRDF_N3);
-		formatSymbols.put(ResultSetFormat.syntaxCSV.getSymbol(), ResultSetFormat.syntaxCSV);
-		formatSymbols.put(ResultSetFormat.syntaxText.getSymbol(), ResultSetFormat.syntaxText);
-		formatSymbols.put(ResultSetFormat.syntaxJSON.getSymbol(), ResultSetFormat.syntaxJSON);
-	}
-	
+    static {
+            formatSymbols.put(ResultSetFormat.syntaxXML.getSymbol(), ResultSetFormat.syntaxXML);
+            formatSymbols.put(ResultSetFormat.syntaxRDF_XML.getSymbol(), ResultSetFormat.syntaxRDF_XML);
+            formatSymbols.put(ResultSetFormat.syntaxRDF_N3.getSymbol(), ResultSetFormat.syntaxRDF_N3);
+            formatSymbols.put(ResultSetFormat.syntaxCSV.getSymbol(), ResultSetFormat.syntaxCSV);
+            formatSymbols.put(ResultSetFormat.syntaxText.getSymbol(), ResultSetFormat.syntaxText);
+            formatSymbols.put(ResultSetFormat.syntaxJSON.getSymbol(), ResultSetFormat.syntaxJSON);
+    }
+
+	 
 	/**
 	 * Execute a Query and output result to System.out
 	 * @param queryParam the query
@@ -646,18 +650,28 @@ public abstract class JenaConnect {
 		try {
 			Query query = QueryFactory.create(queryParam, Syntax.syntaxARQ);
 			if(datasetMode) {
-//				log.trace("Executing query against dataset");
+ 				log.trace("Executing query against dataset");
 				qe = QueryExecutionFactory.create(query, getDataset());
 			} else {
-//				log.trace("Executing query against model");
+ 				log.trace("Executing query against model");
 				qe = QueryExecutionFactory.create(query, getJenaModel());
 			}
 			if(query.isSelectType()) {
 				ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
-				if(rsf == null) {
-					rsf = ResultSetFormat.syntaxText;
-				}
-				ResultSetFormatter.output(out, qe.execSelect(), rsf);
+                if(rsf == null) {
+                     rsf = ResultSetFormat.syntaxText;
+                }
+                ResultSetFormatter.output(out, qe.execSelect(), rsf);
+				 
+				// this changed in newer versions of Jena
+				 
+				/*ResultsFormat rsf = ResultsFormat.lookup(resultFormatParam);				 
+				if (rsf == null) {
+					ResultSetFormatter.out(qe.execSelect());					 
+				} else {				 
+				   ResultSetFormatter.output(out, qe.execSelect(), rsf);
+				}*/
+				
 			} else if(query.isAskType()) {
 				out.write((Boolean.toString(qe.execAsk())+"\n").getBytes());
 			} else {
@@ -669,7 +683,7 @@ public abstract class JenaConnect {
 				} else {
 					throw new IllegalArgumentException("Query Invalid: Not Select, Construct, Ask, or Describe");
 				}
-				
+				log.trace("export result model using format: "+ resultFormatParam);
 				resultModel.exportRdfToStream(out, resultFormatParam);
 			}
 		} catch(QueryParseException e1) {
@@ -871,12 +885,14 @@ public abstract class JenaConnect {
 			}
 			log.info("Removing all triples");
 			jc.truncate();
+			jc.sync();
 		} else if(argList.has("q")) {
+			log.info("Executing query");
 			jc.executeQuery(argList.get("q"), argList.get("Q"), FileAide.getOutputStream(argList.get("f")), argList.has("d"));
+		    jc.sync();
 		} else {
 			throw new IllegalArgumentException("No Operation Specified");
-		}
-		jc.sync();
+		} 
 	}
 	
 	/**

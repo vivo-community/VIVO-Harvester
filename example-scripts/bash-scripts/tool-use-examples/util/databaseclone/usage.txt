@@ -1,0 +1,34 @@
+usage: DatabaseClone
+ -D,--DBUnitFeature <FEATURE=VALUE>   Use VALUE for the DBUnit FEATURE
+                                      (should be (Boolean['true'/'false']
+                                      or a comma separated list))
+ -h,--help                            Help Message
+    --inputConnection <JDBC_CONN>     jdbc connection string for input
+                                      database
+    --inputDriver <JDBC_DRIVER>       jdbc driver class for input database
+    --inputFile <FILE_PATH>           use this database state file as the
+                                      input database
+    --inputPassword <PASSWORD>        database password for input database
+    --inputUsername <USERNAME>        database username for input database
+    --outputConnection <JDBC_CONN>    jdbc connection string for output
+                                      database
+    --outputDriver <JDBC_DRIVER>      jdbc driver class for output
+                                      database
+    --outputFile <FILE_PATH>          output the state of the input
+                                      database in this file
+    --outputPassword <PASSWORD>       database password for output
+                                      database
+    --outputUsername <USERNAME>       database username for output
+                                      database
+ -t,--tableName <TABLE_NAME>          a single database table name [have
+                                      multiple -t flags, one for each
+                                      table names]
+    --validTableType <TABLE_TYPE>     (deprecated) a single table type
+                                      ('TABLE', 'VIEW', etc) Defaults to
+                                      just 'TABLE' [have multiple
+                                      --validTableType flags, one for each
+                                      table type]
+ -w,--wordiness <LOG_LEVEL>           Set the console log level
+ -X,--config <CONFIG_FILE>            XML Configuration File
+
+

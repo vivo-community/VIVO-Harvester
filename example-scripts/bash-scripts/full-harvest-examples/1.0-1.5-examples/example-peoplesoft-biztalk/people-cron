@@ -1,0 +1,1 @@
+0 */2 * * * /usr/bin/flock -ew 1800 /tmp/harvest.lockfile bash /data/vivo/harvester/vivo-auto-harvest/peoplesoft-biztalk/peoplesoft-ingest/people-cron-wrapper.sh

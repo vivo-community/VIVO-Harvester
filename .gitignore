@@ -1,5 +1,9 @@
+.settings/*
 /build
 /logs
 */data
+*data/*
 */logs
 */previous-harvest
+*.DS_Store
+*errDest/*

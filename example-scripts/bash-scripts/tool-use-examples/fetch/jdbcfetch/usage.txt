@@ -1,0 +1,54 @@
+usage: JDBCFetch
+ -c,--connection <JDBC_CONN>                      jdbc connection string
+ -d,--driver <JDBC_DRIVER>                        jdbc driver class
+    --delimiterPrefix <DELIMITER>                 Prefix each field in the
+                                                  query with this
+                                                  character
+    --delimiterSuffix <DELIMITER>                 Suffix each field in the
+                                                  query with this
+                                                  character
+ -F,--fields <TABLE_NAME=FIELD_LIST>              fetch columns in
+                                                  FIELD_LIST[comma
+                                                  separated] for
+                                                  TABLE_NAME
+ -h,--help                                        Help Message
+ -I,--id <TABLE_NAME=ID_FIELD_LIST>               use columns in
+                                                  ID_FIELD_LIST[comma
+                                                  separated] as identifier
+                                                  for TABLE_NAME
+ -n,--namespaceBase <NAMESPACE_BASE>              the base namespace to
+                                                  use for each node
+                                                  created
+ -o,--output <CONFIG_FILE>                        RecordHandler config
+                                                  file path
+ -O,--outputOverride <RH_PARAM=VALUE>             override the RH_PARAM of
+                                                  output recordhandler
+                                                  using VALUE
+ -p,--password <PASSWORD>                         database password
+ -Q,--query <TABLE_NAME=SQL_QUERY>                use SQL_QUERY to select
+                                                  from TABLE_NAME
+ -R,--relations <TABLE_NAME=RELATION_PAIR_LIST>   fetch columns in
+                                                  RELATION_PAIR_LIST[comma
+                                                  separated] for
+                                                  TABLE_NAME
+ -T,--tableFromClause <TABLE_NAME=TABLE_LIST>     add tables to use in
+                                                  from clauses for
+                                                  TABLE_NAME
+ -t,--tableName <TABLE_NAME>                      a single database table
+                                                  name [have multiple -t
+                                                  for more table names]
+ -u,--username <USERNAME>                         database username
+ -v,--validTableType <TABLE_TYPE>                 a single table type
+                                                  (TABLE, VIEW, etc) [have
+                                                  multiple -v for more
+                                                  table types]
+ -w,--wordiness <LOG_LEVEL>                       Set the console log
+                                                  level
+ -W,--whereClause <TABLE_NAME=CLAUSE_LIST>        filter TABLE_NAME
+                                                  records based on
+                                                  conditions in
+                                                  CLAUSE_LIST[comma
+                                                  separated]
+ -X,--config <CONFIG_FILE>                        XML Configuration File
+
+

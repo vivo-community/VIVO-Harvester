@@ -1,0 +1,20 @@
+usage: ChangeNamespace
+ -e,--errorLogging                            Log error messages for each
+                                              record changed
+ -h,--help                                    Help Message
+ -I,--inputModelOverride <JENA_PARAM=VALUE>   override the JENA_PARAM of
+                                              input jena model config
+                                              using VALUE
+ -i,--inputModel <CONFIG_FILE>                config file for input jena
+                                              model
+ -n,--newNamespace <NEW_NAMESPACE>            The new namespace
+ -u,--oldNamespace <OLD_NAMESPACE>            The old namespace
+ -v,--vivoModel <CONFIG_FILE>                 config file for vivo jena
+                                              model
+ -V,--vivoModelOverride <JENA_PARAM=VALUE>    override the JENA_PARAM of
+                                              vivo jena model config using
+                                              VALUE
+ -w,--wordiness <LOG_LEVEL>                   Set the console log level
+ -X,--config <CONFIG_FILE>                    XML Configuration File
+
+

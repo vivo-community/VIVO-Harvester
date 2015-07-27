@@ -1,0 +1,9 @@
+#Metadata: Fileset: SPOG
+#Tue Jun 24 09:51:47 EDT 2014
+tdb.file.type=rangeindex
+tdb.file.indexorder=SPOG
+tdb.file.impl.version=bplustree-v1
+tdb.file.impl=bplustree
+tdb.bplustree.record=32,0
+tdb.bplustree.order=113
+tdb.bplustree.blksize=8192

@@ -1,0 +1,34 @@
+Part 1
+=========
+
+You need to modify certains files to ingest the data from the example csv file course_data.csv.
+
+Here are the files that need to be modified:
+
+1. vivo.model.xml
+
+check that the database information is configured correctly for your system. By default, it will
+connect to a database called vitrodb_test on localhost.
+
+2. run-d2rmap-csv.sh
+
+set to the directory where the harvester was installed
+HARVESTER_INSTALL_DIR
+
+3. remove-last-d2rmap-csv-harvest.sh
+
+set to the directory where the harvester was installed
+HARVESTER_INSTALL_DIR
+
+4. d2rmap-csv-fetch.config.xml
+
+set to the correct path for "d2rMapWorkingDirectory"
+
+5. all the changenamespace-*.config.xml files
+
+change the "newNamespace" value to the namespace of your VIVO instance
+
+Part 2
+=========
+
+Run run-d2rmap-csv.sh to ingest the course data to your VIVO instance

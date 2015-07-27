@@ -5,46 +5,7 @@
   This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 -->
 <Config>
-    <!-- 
-    a - Description and repercussions
-    -----
-    Possible Values:
-    b - Meaning of b
-    c - Meaning of c
-     -->
-    <Param name="a">b</Param>
-
-    <!-- 
-    Wordiness - How much should be displayed on the console when the rename is run.  Options range from nothing at all to errors only to general
-    information to more detailed debugging information.
-    -----
-    Allowable values:
-    OFF - No log information is displayed on the console.
-    FATAL - Only fatal errors are displayed on the console.
-    ERROR - All error messages are displayed. 
-    WARN - Error and warning messages are displayed.
-    INFO - Errors, warnings, and general user information is displayed.  This is the default.
-    DEBUG - Errors, warnings, general information, and information intended for debuggers is displayed to the console.
-    TRACE - All of the above as well as even finer-grain debugging information is displayed.
-    ALL - Everything that goes into the log is displayed on the console.
-    
-    Values meaningful for OAIFetch:
-    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
-    -->
-    <Param name="a">b</Param>
-
-    <!-- 
-    ModelSource - The data source in which to perform the rename.
-    -->
-    <Param name="a">b</Param>
-
-    <!-- 
-    NewURI - The URI to change all the input URIs into.
-    -->
-    <Param name="a">b</Param>
-
-    <!-- 
-    OldURI - A URI to search the model for and rename to NewURI when found.  Can be specified multiple times.
-    -->
-    <Param name="a">b</Param>
+    <Param name="inputJena-config">harvested-data.model.xml</Param>
+    <Param name="new-uri">predicate</Param>
+    <Param name="old-uri">Regex string</Param>
 </Config>

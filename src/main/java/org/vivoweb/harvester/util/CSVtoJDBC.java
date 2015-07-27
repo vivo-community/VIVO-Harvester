@@ -51,57 +51,59 @@ public class CSVtoJDBC {
 	 */
 	private List<String> fieldNames;
 	
-	/**
-	 * Library style initialyzer 
-	 * @param input CSV inputStream to read from
-	 * @param output The database connection for the output
-	 * @param tableName table name into which to output
-	 */
-	public CSVtoJDBC(InputStream input, Connection output, String tableName) {
-		this.csvStream = input;
-		this.output = output;
-		this.tableName = tableName;
-		this.fieldNames = new ArrayList<String>();
-	}
+	private String append;
 	
 	/**
-	 * Library style Constructor
-	 * @param filename CSV to read from
-	 * @param output The database connection for the output
-	 * @param tableName table name into which to output
-	 * @throws IOException error establishing connection to file
-	 */
-	public CSVtoJDBC(String filename, Connection output, String tableName) throws IOException {
-		this(FileAide.getInputStream(filename), output, tableName);
-	}
-	
-	/**
-	 * Library style Constructor
-	 * @param filename CSV to read from
-	 * @param jdbcDriverClass jdbc driver class
-	 * @param connLine the jdbc connection line
-	 * @param username username with which to connect
-	 * @param password password with which to connect
-	 * @param tableName table name into which to output
-	 * @throws IOException error establishing connection to database or file
-	 */
-	public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
-		this(filename,getConnection(jdbcDriverClass, connLine, username, password),tableName);
-	}
-	
-	/**
-	 * Library style Constructor
-	 * @param input CSV inputStream to read from
-	 * @param jdbcDriverClass jdbc driver class
-	 * @param connLine the jdbc connection line
-	 * @param username username with which to connect
-	 * @param password password with which to connect
-	 * @param tableName table name into which to output
-	 * @throws IOException error establishing connection to database or file
-	 */
-	public CSVtoJDBC(InputStream input, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
-		this(input,getConnection(jdbcDriverClass, connLine, username, password),tableName);
-	}
+     * Library style initialyzer
+     * @param input CSV inputStream to read from
+     * @param output The database connection for the output
+     * @param tableName table name into which to output
+     */
+    public CSVtoJDBC(InputStream input, Connection output, String tableName) {
+        this.csvStream = input;
+        this.output = output;
+        this.tableName = tableName;
+        this.fieldNames = new ArrayList<String>();
+    }
+
+    /**
+     * Library style Constructor
+     * @param filename CSV to read from
+     * @param output The database connection for the output
+     * @param tableName table name into which to output
+     * @throws IOException error establishing connection to file
+     */
+    public CSVtoJDBC(String filename, Connection output, String tableName) throws IOException {
+        this(FileAide.getInputStream(filename), output, tableName);
+    }
+
+    /**
+     * Library style Constructor
+     * @param filename CSV to read from
+     * @param jdbcDriverClass jdbc driver class
+     * @param connLine the jdbc connection line
+     * @param username username with which to connect
+     * @param password password with which to connect
+     * @param tableName table name into which to output
+     * @throws IOException error establishing connection to database or file
+     */
+    public CSVtoJDBC(String filename, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
+        this(filename,getConnection(jdbcDriverClass, connLine, username, password),tableName);
+    }
+
+    /**
+     * Library style Constructor
+     * @param input CSV inputStream to read from
+     * @param jdbcDriverClass jdbc driver class
+     * @param connLine the jdbc connection line
+     * @param username username with which to connect
+     * @param password password with which to connect
+     * @param tableName table name into which to output
+     * @throws IOException error establishing connection to database or file
+     */
+    public CSVtoJDBC(InputStream input, String jdbcDriverClass, String connLine, String username, String password, String tableName) throws IOException {
+        this(input,getConnection(jdbcDriverClass, connLine, username, password),tableName);
+    }
 
 	
 	/**
@@ -144,56 +146,78 @@ public class CSVtoJDBC {
 	}
 	
 	/**
-	 * Move CSV data into a recordHandler
-	 * @throws IOException error reading from database or file
-	 */
-	public void execute() throws IOException {
-		try {
-			ResultSet rs = Csv.getInstance().read(new InputStreamReader(this.csvStream), null);
-			ResultSetMetaData meta = rs.getMetaData();
-			Statement cursor = this.output.createStatement();
-			int rowID = 0;
-			StringBuilder createTable = new StringBuilder("CREATE TABLE ");
-			createTable.append(this.tableName);
-			createTable.append("( ROWID int NOT NULL, ");
-			this.fieldNames.add("ROWID");
-			StringBuilder columnNames = new StringBuilder("( ROWID, ");
-			for(int i = 0; i < meta.getColumnCount(); i++) {
-				String colLbl = meta.getColumnLabel(i + 1);
-				createTable.append("\n");
-				createTable.append( colLbl);
-				this.fieldNames.add( colLbl);
-				createTable.append((i == (meta.getColumnCount() - 1)) ? " TEXT )" : " TEXT ,");
-				
-				columnNames.append(colLbl);
-				columnNames.append((i == (meta.getColumnCount() - 1)) ? " )" : ", ");
-			}
-			log.debug("Create table command: \n" + createTable.toString());
-			cursor.execute(createTable.toString());
-			cursor.execute("ALTER TABLE "+this.tableName+" ADD PRIMARY KEY (ROWID)");
-			while(rs.next()) {
-				
-				StringBuilder insertCommand = new StringBuilder("INSERT INTO ");
-				insertCommand.append(this.tableName);
-				insertCommand.append(" ");
-				insertCommand.append(columnNames.toString());
-				insertCommand.append("\nVALUES (");
-				insertCommand.append(rowID);
-				insertCommand.append(", '");
-				for(int i = 0; i < meta.getColumnCount(); i++) {
-					insertCommand.append(rs.getString(i + 1));
-					insertCommand.append((i == (meta.getColumnCount() - 1)) ? "')" : "', '");
-				}
-				log.debug("Insert command: \n" + insertCommand.toString());
-				cursor.executeUpdate(insertCommand.toString());
-				rowID++;
-			}
-		} catch(FileSystemException e) {
-			throw new IOException(e);
-		} catch(SQLException e) {
-			throw new IOException(e);
-		}
-	}
+     * Move CSV data into a recordHandler
+     * @throws IOException error reading from database or file
+     */
+    public void execute() throws IOException {
+    	String data = new String();
+    	StringBuilder insertCommand = null;
+        try {
+            Csv csv = Csv.getInstance();
+            ResultSet rs = csv.read(new InputStreamReader(this.csvStream), null);
+            ResultSetMetaData meta = rs.getMetaData();
+            Statement cursor = this.output.createStatement();
+            
+            
+            int rowID = 0;
+            
+            StringBuilder createTable = new StringBuilder("CREATE TABLE ");
+            createTable.append(this.tableName);
+            createTable.append("( ROWID int NOT NULL, ");
+            this.fieldNames.add("ROWID");
+            StringBuilder columnNames = new StringBuilder("( ROWID, ");
+            for(int i = 0; i < meta.getColumnCount(); i++) {
+                String colLbl = meta.getColumnLabel(i + 1).replace(' ','_');
+                colLbl = colLbl.replace('-','_'); // replace invalid - char
+                createTable.append("\n");
+                createTable.append( colLbl);
+                this.fieldNames.add( colLbl);
+                createTable.append((i == (meta.getColumnCount() - 1)) ? " TEXT )" : " TEXT ,");
+
+                columnNames.append(colLbl);
+                columnNames.append((i == (meta.getColumnCount() - 1)) ? " )" : ", ");
+            }
+	            
+	        //if (this.append.equals("false")) {    
+	            log.trace("Create table command: \n" + createTable.toString());
+	            cursor.execute(createTable.toString());
+	            cursor.execute("ALTER TABLE "+this.tableName+" ADD PRIMARY KEY (ROWID)");
+            //}
+            
+            while(rs.next()) {
+
+                insertCommand = new StringBuilder("INSERT INTO ");
+                insertCommand.append(this.tableName);
+                insertCommand.append(" ");
+                insertCommand.append(columnNames.toString());
+                insertCommand.append("\nVALUES (");
+                insertCommand.append(rowID);
+                insertCommand.append(", '");
+                for(int i = 0; i < meta.getColumnCount(); i++) {
+                    data = rs.getString(i + 1);
+                    if (data != null) {
+                       insertCommand.append(data.replaceAll("'", "''"));
+                    } else {
+                    	insertCommand.append("");	
+                    }
+                    insertCommand.append((i == (meta.getColumnCount() - 1)) ? "')" : "', '");
+                }
+                log.trace("Insert command: \n" + insertCommand.toString());
+                cursor.executeUpdate(insertCommand.toString());
+                rowID++;
+            }
+            log.info("Records imported: "+ rowID);
+        } catch(FileSystemException e) {
+            throw new IOException(e);
+        } catch(SQLException e) {        	 
+            throw new IOException(e);
+        } catch (NullPointerException e) {
+        	System.err.println("NPE execption reading data");
+        	System.err.println("Insert Command: "+ insertCommand.toString());
+        	 
+        }
+    } 
+
 	
 	/**
 	 * Returns the list of fields from the recent CSV
@@ -216,6 +240,7 @@ public class CSVtoJDBC {
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("username").withParameter(true, "USERNAME").setDescription("database username for output database").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('p').setLongOpt("password").withParameter(true, "PASSWORD").setDescription("database password for output database").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('t').setLongOpt("tableName").withParameter(true, "TABLE_NAME").setDescription("a single database table name").setRequired(true));
+		
 		return parser;
 	}
 	

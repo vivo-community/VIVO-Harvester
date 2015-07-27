@@ -1,0 +1,14 @@
+usage: RenameResources
+ -h,--help                                    Help Message
+ -I,--inputModelOverride <JENA_PARAM=VALUE>   override the JENA_PARAM of
+                                              jena model config using
+                                              VALUE
+ -i,--inputModel <CONFIG_FILE>                config file for jena model
+ -n,--new-uri <RESOURCE_URI>                  The resource uri to which
+                                              old uri will be renamed
+ -u,--old-uri <RESOURCE_URI>                  The resource uri to be
+                                              renamed to the new uri
+ -w,--wordiness <LOG_LEVEL>                   Set the console log level
+ -X,--config <CONFIG_FILE>                    XML Configuration File
+
+

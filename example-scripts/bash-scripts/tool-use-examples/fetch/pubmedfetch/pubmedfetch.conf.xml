@@ -4,68 +4,10 @@
   All rights reserved.
   This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 -->
-<Config>
-    <!-- 
-    a - Description and repercussions
-    -----
-    Possible Values:
-    b - Meaning of b
-    c - Meaning of c
-     -->
-    <Param name="a">b</Param>
-
-    <!-- 
-    Wordiness - How much should be displayed on the console when the fetch is run.  Options range from nothing at all to errors only to general
-    information to more detailed debugging information.
-    -----
-    Allowable values:
-    OFF - No log information is displayed on the console.
-    FATAL - Only fatal errors are displayed on the console.
-    ERROR - All error messages are displayed. 
-    WARN - Error and warning messages are displayed.
-    INFO - Errors, warnings, and general user information is displayed.  This is the default.
-    DEBUG - Errors, warnings, general information, and information intended for debuggers is displayed to the console.
-    TRACE - All of the above as well as even finer-grain debugging information is displayed.
-    ALL - Everything that goes into the log is displayed on the console.
-    
-    Values meaningful for PubmedFetch:
-    ERROR - All runtime errors are categorized as ERROR, so none will be shown for FATAL
-    INFO - Start and end of fetch run, number of results returned by query, range of records being fetched in a given batch operation
-    DEBUG - Query text sent to Pubmed, start and end of result buffering and buffer size, start and end of sanitize step, plus length of XML file
-           pre- and post-sanitize
-    TRACE - Very fine-grain details, such as start and end of I/O operations
-     -->
-    <Param name="a">b</Param>
-
-    <!--
-    SearchTerm - The search query to be sent to Pubmed.  The query is in exactly the format as would be put into the web form at
-    http://www.ncbi.nlm.nih.gov/pubmed/, and the data returned is the same results, except in XML format.
-     -->
-    <Param name="a">b</Param>
-
-    <!--
-    NumRecords - The maximum number of publications to be returned.  This affects the request sent to Pubmed's servers, so it can be used to help
-                 manage Internet traffic volume.
-     -->
-    <Param name="a">b</Param>
-
-    <!--
-    BatchSize - The amount of publications in each batch.  If this is less than NumRecords and the query results size, multiple fetches will be made
-                to the server to grab each chunk of data.
-     -->
-    <Param name="a">b</Param>
-
-    <!-- 
-    Email - The email address of the person responsible for this install of the program.  This is required by NIH guidelines so the person can be
-            contacted if there is a problem, such as sending too many queries too quickly. 
-     -->
-    <Param name="a">b</Param>
-
-    <!-- 
-    RecordDestination - The record handler in which the results of the fetch will be placed, so that other Harvester tools or other programs may operate
-                        on the data.
-     -->
-    <Param name="a">b</Param>
-
-
-</Config>
+<Task >
+   <Param name="email">jaf30@cornell.edu</Param>
+   <Param name="termSearch">Cornell</Param>
+   <Param name="numRecords">10</Param>
+   <Param name="batchSize">10</Param>
+   <Param name="output">raw-records.config.xml</Param>
+</Task>

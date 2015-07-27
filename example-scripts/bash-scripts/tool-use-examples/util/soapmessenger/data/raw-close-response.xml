@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-    <soap:Body>
-        <ns2:closeSessionResponse xmlns:ns2="http://auth.cxf.wokmws.thomsonreuters.com"/>
-    </soap:Body>
-</soap:Envelope>

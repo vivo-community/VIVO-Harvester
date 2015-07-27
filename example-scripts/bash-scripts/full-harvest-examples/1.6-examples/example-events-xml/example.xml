@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:node-entry="http://vivo.example.com/harvest/iaald_events/fields/entry/"
+         xml:base="http://vivo.example.com/harvest/iaald_events/entry"
+
+xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
+xmlns:gd="http://schemas.google.com/g/2005"
+xmlns:gCal="http://schemas.google.com/gCal/2005">
+
+  <rdf:Description rdf:ID="node_-_0">
+    <rdf:type rdf:resource="http://vivo.example.com/harvest/iaald_events/types#entry"/>
+<id xmlns="http://www.w3.org/2005/Atom">http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/7di7mpm7lkja4adutei38mqois</id>
+<published xmlns="http://www.w3.org/2005/Atom">2010-09-18T05:53:42.000Z</published>
+<updated xmlns="http://www.w3.org/2005/Atom">2012-05-27T09:34:20.000Z</updated>
+<category xmlns="http://www.w3.org/2005/Atom" scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/g/2005#event"/>
+<title xmlns="http://www.w3.org/2005/Atom" type="text">IAALD World Congress: Emerging Priorities for Scientific Information Research and Discovery</title>
+<content xmlns="http://www.w3.org/2005/Atom" type="text">http://iaald.library.cornell.edu/</content>
+<link xmlns="http://www.w3.org/2005/Atom" href="https://www.google.com/calendar/event?eid=N2RpN21wbTdsa2phNGFkdXRlaTM4bXFvaXMgaW5mby5pYWFsZEBt" rel="alternate" title="alternate" type="text/html"/><link xmlns="http://www.w3.org/2005/Atom" href="https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/7di7mpm7lkja4adutei38mqois" rel="self" type="application/atom+xml"/>
+<author xmlns="http://www.w3.org/2005/Atom">
+   <name>IAALD IAALD</name>
+   <email>info.iaald@gmail.com</email>
+</author>
+<gd:comments xmlns:gd="http://schemas.google.com/g/2005">
+   <gd:feedLink href="https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/7di7mpm7lkja4adutei38mqois/comments"/>
+</gd:comments>
+<gd:eventStatus xmlns:gd="http://schemas.google.com/g/2005" value="http://schemas.google.com/g/2005#event.confirmed"/>
+   <gd:where xmlns:gd="http://schemas.google.com/g/2005" valueString="Cornell University"/>
+   <gd:who xmlns:gd="http://schemas.google.com/g/2005" email="info.iaald@gmail.com" rel="http://schemas.google.com/g/2005#event.organizer" valueString="info.iaald@gmail.com"/>
+   <gd:when xmlns:gd="http://schemas.google.com/g/2005" endTime="2013-07-25" startTime="2013-07-22"/>
+   <gd:transparency xmlns:gd="http://schemas.google.com/g/2005" value="http://schemas.google.com/g/2005#event.transparent"/>
+   <gCal:anyoneCanAddSelf xmlns:gCal="http://schemas.google.com/gCal/2005" value="false"/>
+   <gCal:guestsCanInviteOthers xmlns:gCal="http://schemas.google.com/gCal/2005" value="true"/>
+   <gCal:guestsCanModify xmlns:gCal="http://schemas.google.com/gCal/2005" value="false"/>
+   <gCal:guestsCanSeeGuests xmlns:gCal="http://schemas.google.com/gCal/2005" value="true"/>
+   <gCal:sequence xmlns:gCal="http://schemas.google.com/gCal/2005" value="0"/>
+   <gCal:uid xmlns:gCal="http://schemas.google.com/gCal/2005" value="7di7mpm7lkja4adutei38mqois@google.com"/>
+  </rdf:Description>
+</rdf:RDF>

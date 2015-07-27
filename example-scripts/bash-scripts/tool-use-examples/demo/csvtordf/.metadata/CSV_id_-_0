@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataRecordList>
+   <MetaDataRecord>
+      <Date>1403616076253</Date>
+      <DateReadable>2014-06-24 09:21:16.253</DateReadable>
+      <Operation>written</Operation>
+      <Operator>org.vivoweb.harvester.fetch.JDBCFetch</Operator>
+      <MD5>98f99a1b4c3b840c08fe3244ee68af9f</MD5>
+   </MetaDataRecord>
+</MetaDataRecordList>

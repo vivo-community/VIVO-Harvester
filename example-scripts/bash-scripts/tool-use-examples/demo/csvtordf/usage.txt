@@ -1,0 +1,12 @@
+usage: CSVtoRDF
+ -h,--help                              Help Message
+ -i,--input <FILENAME>                  csv file to be read into the
+                                        Recordhandler
+ -n,--namespace <NAMESPACE>
+ -o,--output <CONFIG_FILE>              RecordHandler config file path
+ -O,--outputOverride <RH_PARAM=VALUE>   override the RH_PARAM of output
+                                        recordhandler using VALUE
+ -w,--wordiness <LOG_LEVEL>             Set the console log level
+ -X,--config <CONFIG_FILE>              XML Configuration File
+
+

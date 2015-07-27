@@ -1,0 +1,14 @@
+usage: RecordHandler
+ -h,--help                             Help Message
+ -I,--inputOverride <RH_PARAM=VALUE>   override the RH_PARAM of input
+                                       recordhanlder config using VALUE
+ -i,--input-config                     CONFIG_FILE configuration filename
+                                       for input recordhandler
+ -o,--output-file <FILE_PATH>          output to this file rather than
+                                       stdout
+ -r,--recordId <RECORD_ID>             the record id to use
+ -v,--value <RECORD_VALUE>             set the value of RECORD_ID to be
+                                       RECORD_VALUE
+ -w,--wordiness <LOG_LEVEL>            Set the console log level
+ -X,--config <CONFIG_FILE>             XML Configuration File
+

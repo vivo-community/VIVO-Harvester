@@ -53,7 +53,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>GRAD ASST - R</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>	"+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	"     <ufVivo:privacy>N</ufVivo:privacy> "+
+	"     <ufVivo:privacyFlag>N</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>bisdorf2@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 392-0502</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -112,7 +112,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>IT Expert</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/> "+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	"     <ufVivo:privacy>Y</ufVivo:privacy> "+
+	"     <ufVivo:privacyFlag>Y</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>jlaufer@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 273-4717</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -141,7 +141,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>IT Expert</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/> "+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	//"     <ufVivo:privacy>Y</ufVivo:privacy> "+
+	//"     <ufVivo:privacyFlag>Y</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>tedLogan@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 273-4742</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -170,7 +170,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>IT Expert</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/> "+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	"     <ufVivo:privacy>N</ufVivo:privacy> "+
+	"     <ufVivo:privacyFlag>N</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>bPreston@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 273-2222</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -218,7 +218,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>GRAD ASST - R</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/>	"+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	"     <ufVivo:privacy>Y</ufVivo:privacy> "+
+	"     <ufVivo:privacyFlag>Y</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>bisdorf2@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 392-0502</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -247,7 +247,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>IT Expert</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/> "+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	"     <ufVivo:privacy>N</ufVivo:privacy> "+
+	"     <ufVivo:privacyFlag>N</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>jlaufer@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 273-4717</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -276,7 +276,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>IT Expert</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/> "+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	"     <ufVivo:privacy>Y</ufVivo:privacy> "+
+	"     <ufVivo:privacyFlag>Y</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>tedLogan@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 273-4742</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -305,7 +305,7 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	"     <core:preferredTitle>IT Expert</core:preferredTitle> "+
 	"     <rdf:type rdf:resource=\"http://xmlns.com/foaf/0.1/Person\"/> "+
 	"     <ufVivo:Deceased>N</ufVivo:Deceased> "+
-	"     <ufVivo:privacy>N</ufVivo:privacy> "+
+	"     <ufVivo:privacyFlag>N</ufVivo:privacyFlag> "+
 	"     <core:primaryEmail>tedLogan@ufl.edu</core:primaryEmail> "+
 	"     <core:primaryPhoneNumber>(352) 273-2222</core:primaryPhoneNumber> "+
 	"     <core:faxNumber/> "+
@@ -395,11 +395,28 @@ public class ImagePreservationDuringPrivacyTest extends TestCase {
 	 */
 	private TDBJenaConnect temp;
 	
+	/**
+	 * Path to output additions file to.
+	 */
+	private String vivoAddsPath = "data/privacy-vivo-additions.rdf.xml";
+	
+	/**
+	 * Path to output subtractions file to.
+	 */
+	private String vivoSubsPath = "data/privacy-vivo-subtractions.rdf.xml";
+	
+	/**
+	 * Language to Output
+	 */
+	private String diffLanguage = "RDF/XML";
+	
 	@SuppressWarnings("javadoc")
 	public void testExecute() throws IOException 
 	{
 		log.trace("BEGIN ImagePreservationDuringPrivacy test:");
-		ImagePreservationDuringPrivacy ipdp = new ImagePreservationDuringPrivacy(this.inputModel, this.privModel, this.vivoModel, true, true);
+		ImagePreservationDuringPrivacy ipdp = new ImagePreservationDuringPrivacy(this.inputModel, this.privModel, this.vivoModel, 
+																				this.vivoSubsPath, this.vivoAddsPath, this.diffLanguage,
+																				true, true);
 		ipdp.execute();
 	}
 	

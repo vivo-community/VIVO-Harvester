@@ -1,0 +1,939 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom'
+   xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/'
+  xmlns:gCal='http://schemas.google.com/gCal/2005'
+  xmlns:gd='http://schemas.google.com/g/2005'>
+  <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full
+  </id>
+  <updated>2011-12-21T18:41:49.000Z</updated>
+  <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/g/2005#event' />
+  <title type='text'>IAALD Calendar</title>
+  <subtitle type='text'>Events, workshops, conferences related to
+    agricultural information, communication, knowledge sharing and ICTs
+  </subtitle>
+  <link rel='alternate' type='text/html'
+    href='https://www.google.com/calendar/embed?src=info.iaald@gmail.com' />
+  <link rel='http://schemas.google.com/g/2005#feed' type='application/atom+xml'
+    href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full' />
+  <link rel='http://schemas.google.com/g/2005#batch' type='application/atom+xml'
+    href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/batch' />
+  <link rel='self' type='application/atom+xml'
+    href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full?max-results=25' />
+  <link rel='next' type='application/atom+xml'
+    href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full?start-index=26&amp;max-results=25' />
+  <author>
+    <name>IAALD IAALD</name>
+    <email>info.iaald@gmail.com</email>
+  </author>
+  <generator version='1.0' uri='http://www.google.com/calendar'>Google Calendar</generator>
+  <openSearch:totalResults>90</openSearch:totalResults>
+  <openSearch:startIndex>1</openSearch:startIndex>
+  <openSearch:itemsPerPage>25</openSearch:itemsPerPage>
+  <gCal:timezone value='America/New_York' />
+  <gCal:timesCleaned value='0' />
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ucm4e8lip9gh2hisgi2u74633g
+    </id>
+    <published>2011-12-21T18:41:49.000Z</published>
+    <updated>2011-12-21T18:41:49.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Food &amp; Agricultural Communications: The Next
+      Frontier</title>
+    <content type='text'>http://www.agcommevent.com/</content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=dWNtNGU4bGlwOWdoMmhpc2dpMnU3NDYzM2cgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ucm4e8lip9gh2hisgi2u74633g' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ucm4e8lip9gh2hisgi2u74633g/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Champaign, Illinois' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2012-02-18' startTime='2012-02-17' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='ucm4e8lip9gh2hisgi2u74633g@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/bfn9bff8e5abmlkjc8a8952ivo
+    </id>
+    <published>2011-01-07T13:22:15.000Z</published>
+    <updated>2011-12-06T13:07:03.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>USAIN Conference</title>
+    <content type='text'>http://plant.lib.umn.edu/USAIN2012/</content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=YmZuOWJmZjhlNWFibWxramM4YTg5NTJpdm8gaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/bfn9bff8e5abmlkjc8a8952ivo' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/bfn9bff8e5abmlkjc8a8952ivo/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='University of Minnesota' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2012-05-03' startTime='2012-04-29' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='bfn9bff8e5abmlkjc8a8952ivo@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hhtldfqhkh4gcia82lla23fh4s
+    </id>
+    <published>2011-11-25T05:07:03.000Z</published>
+    <updated>2011-11-25T05:07:03.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>IAALD Webinar: NING to Connect Information
+      Specialists Worldwide</title>
+    <content type='text'>http://iaald.blogspot.com/2011/11/iaald-webinar-ning-to-connect.html
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=aGh0bGRmcWhraDRnY2lhODJsbGEyM2ZoNHMgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hhtldfqhkh4gcia82lla23fh4s' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hhtldfqhkh4gcia82lla23fh4s/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-12-02' startTime='2011-12-01' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='hhtldfqhkh4gcia82lla23fh4s@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/jupfmbsmpl9tdcmhveadogmoic
+    </id>
+    <published>2011-11-06T18:10:00.000Z</published>
+    <updated>2011-11-06T18:10:00.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Training of Trainers Workshop on Coherence in
+      Information for Agricultural Research for Development</title>
+    <content type='text'>http://www.aarinena.org/documents/Workshops/CIARD2011/index.asp
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=anVwZm1ic21wbDl0ZGNtaHZlYWRvZ21vaWMgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/jupfmbsmpl9tdcmhveadogmoic' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/jupfmbsmpl9tdcmhveadogmoic/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Amman, Jordan' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-10-07' startTime='2011-10-04' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='jupfmbsmpl9tdcmhveadogmoic@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/f89nj645v3epda87o4nbo8j2ic
+    </id>
+    <published>2011-11-06T18:06:07.000Z</published>
+    <updated>2011-11-06T18:06:07.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Workshop on “Moving Beyond Strategy to Improve
+      Information and Knowledge Management for Agricultural Development in
+      the Pacific Islands Countries and Territories”</title>
+    <content type='text'>http://www.apaari.org/events/icm-pacific.html
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=Zjg5bmo2NDV2M2VwZGE4N280bmJvOGoyaWMgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/f89nj645v3epda87o4nbo8j2ic' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/f89nj645v3epda87o4nbo8j2ic/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Nadi, Fiji' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-11-25' startTime='2011-11-21' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='f89nj645v3epda87o4nbo8j2ic@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/23k05q25iscm0naplfu8ps4lak
+    </id>
+    <published>2011-07-17T20:26:25.000Z</published>
+    <updated>2011-10-21T10:52:15.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>IAALD International Conference: ICTs: Enabling
+      Agricultural Innovation for Prosperity</title>
+    <content type='text' />
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=MjNrMDVxMjVpc2NtMG5hcGxmdThwczRsYWsgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/23k05q25iscm0naplfu8ps4lak' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/23k05q25iscm0naplfu8ps4lak/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='DA-IICT, Gujarat, India' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2012-12-08' startTime='2012-12-03' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='23k05q25iscm0naplfu8ps4lak@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/lttjdeec4hq2ddqd191pbnuhpc
+    </id>
+    <published>2011-01-07T12:46:24.000Z</published>
+    <updated>2011-08-04T21:31:22.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>IAALD Africa Conference</title>
+    <content type='text'>http://www.iaald-africa.org/conferences_en.html
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=bHR0amRlZWM0aHEyZGRxZDE5MXBibnVocGMgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/lttjdeec4hq2ddqd191pbnuhpc' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/lttjdeec4hq2ddqd191pbnuhpc/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Johannesburg, South Africa' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2012-05-24' startTime='2012-05-21' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='3' />
+    <gCal:uid value='lttjdeec4hq2ddqd191pbnuhpc@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j5j6pshqanla80gp35apcboghc
+    </id>
+    <published>2011-07-11T22:33:59.000Z</published>
+    <updated>2011-07-11T22:33:59.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Expert Consultation: Communication for Development:
+      meeting 's agriculture and rural development challenges</title>
+    <content type='text'>http://www.fao.org/oek/communication-for-development/expert-consultation/en/
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=ajVqNnBzaHFhbmxhODBncDM1YXBjYm9naGMgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j5j6pshqanla80gp35apcboghc' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j5j6pshqanla80gp35apcboghc/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Rome, Italy' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-09-17' startTime='2011-09-14' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='j5j6pshqanla80gp35apcboghc@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/18s0f4vm762s8n8ap1q9q8hdgk
+    </id>
+    <published>2011-07-09T18:04:11.000Z</published>
+    <updated>2011-07-09T18:04:11.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Open Access Week</title>
+    <content type='text'>http://www.openaccessweek.org/</content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=MThzMGY0dm03NjJzOG44YXAxcTlxOGhkZ2sgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/18s0f4vm762s8n8ap1q9q8hdgk' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/18s0f4vm762s8n8ap1q9q8hdgk/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-10-31' startTime='2011-10-24' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='18s0f4vm762s8n8ap1q9q8hdgk@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/uqen66dtdhnngcfeb7evusqoq8
+    </id>
+    <published>2011-06-27T19:41:13.000Z</published>
+    <updated>2011-06-27T19:41:13.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Innovative Collaboration for Development: e-Learning
+      Course on Social Media Tools</title>
+    <content type='text' />
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=dXFlbjY2ZHRkaG5uZ2NmZWI3ZXZ1c3FvcTggaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/uqen66dtdhnngcfeb7evusqoq8' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/uqen66dtdhnngcfeb7evusqoq8/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='http://www.unitar.org/ksi/unitar-fao-social-media' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-09-24' startTime='2011-07-25' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='uqen66dtdhnngcfeb7evusqoq8@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/7hrvk8ruke43u73cdl6h6b57po
+    </id>
+    <published>2011-05-23T15:19:55.000Z</published>
+    <updated>2011-05-23T15:19:55.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CTA Web 2 learning workshop (Uganda)</title>
+    <content type='text'>http://www.web2fordev.net/component/content/article/1-latest-news/134-web2lo-gulu-uga
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=N2hydms4cnVrZTQzdTczY2RsNmg2YjU3cG8gaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/7hrvk8ruke43u73cdl6h6b57po' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/7hrvk8ruke43u73cdl6h6b57po/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Gulu University, Gulu, Uganda, 25-29 July 2011 ' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-07-30' startTime='2011-07-25' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='7hrvk8ruke43u73cdl6h6b57po@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j1t52457j76ppavpg4mutv2eik
+    </id>
+    <published>2011-05-23T15:16:56.000Z</published>
+    <updated>2011-05-23T15:18:09.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CTA Web 2 learning workshop (Uganda)</title>
+    <content type='text'>http://www.web2fordev.net/component/content/article/1-latest-news/132-web2lo-naro-uga
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=ajF0NTI0NTdqNzZwcGF2cGc0bXV0djJlaWsgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j1t52457j76ppavpg4mutv2eik' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j1t52457j76ppavpg4mutv2eik/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='NARO, Entebbe, Uganda' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-07-09' startTime='2011-07-04' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='2' />
+    <gCal:uid value='j1t52457j76ppavpg4mutv2eik@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/kthn14vcqvpu2gihhucs73ilao
+    </id>
+    <published>2011-05-23T15:12:39.000Z</published>
+    <updated>2011-05-23T15:14:42.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CTA Web 2 learning workshop (Gambia)</title>
+    <content type='text'>http://www.web2fordev.net/component/content/article/1-latest-news/130-web2-learning-opportunity-gmb-utg
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=a3RobjE0dmNxdnB1MmdpaGh1Y3M3M2lsYW8gaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/kthn14vcqvpu2gihhucs73ilao' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/kthn14vcqvpu2gihhucs73ilao/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Serrekunda,The Gambia' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-07-09' startTime='2011-06-27' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='2' />
+    <gCal:uid value='kthn14vcqvpu2gihhucs73ilao@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/elmq6scgm4aepl088nv8k1ljjg
+    </id>
+    <published>2011-05-23T15:13:08.000Z</published>
+    <updated>2011-05-23T15:13:08.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CTA Web 2 learning workshop (Gambia)</title>
+    <content type='text'>http://www.web2fordev.net/component/content/article/1-latest-news/130-web2-learning-opportunity-gmb-utg
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=ZWxtcTZzY2dtNGFlcGwwODhudjhrMWxqamcgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/elmq6scgm4aepl088nv8k1ljjg' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/elmq6scgm4aepl088nv8k1ljjg/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Serrekunda,The Gambia' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-06-25' startTime='2011-06-20' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='elmq6scgm4aepl088nv8k1ljjg@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/rlr4nluf5lgauaqtm9dgfak1h4
+    </id>
+    <published>2011-04-29T12:11:23.000Z</published>
+    <updated>2011-05-23T15:11:06.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CTA/ILRI web 2 learning workshop (Ethiopia)</title>
+    <content type='text'>http://www.web2fordev.net/component/content/article/1-latest-news/126-web2-learning-opportunity-ilri
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=cmxyNG5sdWY1bGdhdWFxdG05ZGdmYWsxaDQgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/rlr4nluf5lgauaqtm9dgfak1h4' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/rlr4nluf5lgauaqtm9dgfak1h4/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Addis Ababa, Ethiopia' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-05-28' startTime='2011-05-23' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='rlr4nluf5lgauaqtm9dgfak1h4@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j1bqco0rcep84u6vgtm4bsf6qg
+    </id>
+    <published>2011-05-23T15:08:56.000Z</published>
+    <updated>2011-05-23T15:09:49.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CTA Web 2 learning workshop (Uganda)</title>
+    <content type='text'>http://www.web2fordev.net/component/content/article/1-latest-news/133-web2lo-muk-uga
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=ajFicWNvMHJjZXA4NHU2dmd0bTRic2Y2cWcgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j1bqco0rcep84u6vgtm4bsf6qg' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/j1bqco0rcep84u6vgtm4bsf6qg/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Makerere University, Kampala, Uganda' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-07-23' startTime='2011-07-18' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='j1bqco0rcep84u6vgtm4bsf6qg@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ku3uiftavu920e68q1an26v918
+    </id>
+    <published>2011-04-29T12:12:23.000Z</published>
+    <updated>2011-05-23T15:09:17.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CTA web 2 learning workshop (Tanzania)</title>
+    <content type='text' />
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=a3UzdWlmdGF2dTkyMGU2OHExYW4yNnY5MTggaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ku3uiftavu920e68q1an26v918' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ku3uiftavu920e68q1an26v918/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Dare es Salaam, Tanzania' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-07-02' startTime='2011-06-27' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='ku3uiftavu920e68q1an26v918@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ckeukt4ncnipileprlr99vhk2o
+    </id>
+    <published>2011-04-29T12:14:42.000Z</published>
+    <updated>2011-05-23T14:38:08.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Second Global AgriKnowledge Share Fair</title>
+    <content type='text'>http://www.sharefair.net/share-fair-11-rome/
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=Y2tldWt0NG5jbmlwaWxlcHJscjk5dmhrMm8gaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ckeukt4ncnipileprlr99vhk2o' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ckeukt4ncnipileprlr99vhk2o/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='IFAD, Rome, Italy' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-09-30' startTime='2011-09-26' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='ckeukt4ncnipileprlr99vhk2o@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/a72vlqcushcu513jnff1v28kv0
+    </id>
+    <published>2011-05-16T20:49:35.000Z</published>
+    <updated>2011-05-19T05:51:07.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>SANGONeT ICT4RD Conference 2011 - “Rural Realities,
+      Real Solutions”</title>
+    <content type='text'>http://www.ngopulse.org/blogs/sangonet-ict4rd-conference-2011-rural-realities-real-solutions
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=YTcydmxxY3VzaGN1NTEzam5mZjF2MjhrdjAgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/a72vlqcushcu513jnff1v28kv0' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/a72vlqcushcu513jnff1v28kv0/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Johannesburg' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-11-04' startTime='2011-11-01' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='a72vlqcushcu513jnff1v28kv0@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hl60qjmf1asjmr5fa6liq7aabk
+    </id>
+    <published>2011-04-28T12:59:28.000Z</published>
+    <updated>2011-05-19T05:51:07.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>IAALD Webinar: CrowdSpotting: Who, what, why, where,
+      and the when of your web audience</title>
+    <content type='text'>http://iaald.blogspot.com/2011/04/crowdspotting-who-what-why-where-and.html
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=aGw2MHFqbWYxYXNqbXI1ZmE2bGlxN2FhYmsgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hl60qjmf1asjmr5fa6liq7aabk' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hl60qjmf1asjmr5fa6liq7aabk/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-05-14' startTime='2011-05-13' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='hl60qjmf1asjmr5fa6liq7aabk@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/o6m3uood9gkag648k9nj6q67g4
+    </id>
+    <published>2011-03-19T11:29:15.000Z</published>
+    <updated>2011-05-19T05:51:07.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Expert Consultation: "Building the CIARD Framework
+      for Data and Information Sharing"</title>
+    <content type='text'>http://www.ciard.net/events/international-expert-consultation-building-ciard-framework-data-sharing
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=bzZtM3Vvb2Q5Z2thZzY0OGs5bmo2cTY3ZzQgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/o6m3uood9gkag648k9nj6q67g4' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/o6m3uood9gkag648k9nj6q67g4/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Beijing, China' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-06-24' startTime='2011-06-20' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='o6m3uood9gkag648k9nj6q67g4@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ta9n5pdsb4h0csk0b95pj9dd7g
+    </id>
+    <published>2011-01-07T13:05:53.000Z</published>
+    <updated>2011-04-09T23:41:25.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>World Conference of Science Journalists</title>
+    <content type='text'>http://www.wcsj2011.org/</content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=dGE5bjVwZHNiNGgwY3NrMGI5NXBqOWRkN2cgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ta9n5pdsb4h0csk0b95pj9dd7g' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/ta9n5pdsb4h0csk0b95pj9dd7g/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Doha, Qatar' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-06-30' startTime='2011-06-26' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='ta9n5pdsb4h0csk0b95pj9dd7g@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hllgei49geup0djpv4ob83fge0
+    </id>
+    <published>2011-04-02T21:31:45.000Z</published>
+    <updated>2011-04-09T23:41:25.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>IFLA Conference</title>
+    <content type='text'>http://www.ifla.org/ifla78</content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=aGxsZ2VpNDlnZXVwMGRqcHY0b2I4M2ZnZTAgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hllgei49geup0djpv4ob83fge0' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/hllgei49geup0djpv4ob83fge0/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Helsinki, Finland' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2012-08-17' startTime='2012-08-11' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='1' />
+    <gCal:uid value='hllgei49geup0djpv4ob83fge0@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/4hd9pcemtoupaie2sf4552ll8s
+    </id>
+    <published>2011-03-19T11:22:50.000Z</published>
+    <updated>2011-04-09T23:41:25.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>CIARD eConsultation - Building the CIARD framework
+      for data and information sharing'</title>
+    <content type='text'>http://www.e-agriculture.org/en/news/building-ciard-framework-data-and-information-sharing
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=NGhkOXBjZW10b3VwYWllMnNmNDU1MmxsOHMgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/4hd9pcemtoupaie2sf4552ll8s' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/4hd9pcemtoupaie2sf4552ll8s/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='http://www.e-agriculture.org' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-04-16' startTime='2011-04-04' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='4hd9pcemtoupaie2sf4552ll8s@google.com' />
+  </entry>
+  <entry>
+    <id>http://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/464s2aff2sunhoe0he9ncogs5k
+    </id>
+    <published>2011-04-02T21:27:12.000Z</published>
+    <updated>2011-04-09T23:41:24.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+      term='http://schemas.google.com/g/2005#event' />
+    <title type='text'>Linking Knowledge to Policy and Action: Innovations
+      in Extension and Advisory Services for Food and Livelihoods</title>
+    <content type='text'>http://www.cta.int/en/About-us/CTA-Events/Linking-Knowledge-to-Policy-and-Action-Innovations-in-Extension-and-Advisory-Services-for-Food-and-Livelihoods
+    </content>
+    <link rel='alternate' type='text/html'
+      href='https://www.google.com/calendar/event?eid=NDY0czJhZmYyc3VuaG9lMGhlOW5jb2dzNWsgaW5mby5pYWFsZEBt'
+      title='alternate' />
+    <link rel='self' type='application/atom+xml'
+      href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/464s2aff2sunhoe0he9ncogs5k' />
+    <author>
+      <name>IAALD IAALD</name>
+      <email>info.iaald@gmail.com</email>
+    </author>
+    <gd:comments>
+      <gd:feedLink
+        href='https://www.google.com/calendar/feeds/info.iaald%40gmail.com/public/full/464s2aff2sunhoe0he9ncogs5k/comments' />
+    </gd:comments>
+    <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed' />
+    <gd:where valueString='Nairobi, Kenya' />
+    <gd:who email='info.iaald@gmail.com'
+      rel='http://schemas.google.com/g/2005#event.organizer' valueString='info.iaald@gmail.com' />
+    <gd:when endTime='2011-11-19' startTime='2011-11-15' />
+    <gd:transparency value='http://schemas.google.com/g/2005#event.transparent' />
+    <gCal:anyoneCanAddSelf value='false' />
+    <gCal:guestsCanInviteOthers value='true' />
+    <gCal:guestsCanModify value='false' />
+    <gCal:guestsCanSeeGuests value='true' />
+    <gCal:sequence value='0' />
+    <gCal:uid value='464s2aff2sunhoe0he9ncogs5k@google.com' />
+  </entry>
+</feed>

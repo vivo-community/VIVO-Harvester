@@ -240,6 +240,53 @@ public class ArgList {
 	}
 	
 	/**
+	 * Gets the value map for the argument
+	 * @param arg argument to get
+	 * @return the value map
+	 */
+	public Map<String, Map<String, String>> getMultiValueMap(String arg) {
+		ArgDef argdef = this.argParser.getOptMap().get(arg);
+		if(argdef == null) {
+			throw new IllegalArgumentException("No such parameter: "+arg);
+		}
+		if(!argdef.hasParameter()) {
+			throw new IllegalArgumentException(arg + " has no parameters");
+		}
+		if(!argdef.isParameterValueMap()) {
+			if(argdef.hasParameters()) {
+				throw new IllegalArgumentException(arg + " is not a value map parameter, use getAll()");
+			}
+			throw new IllegalArgumentException(arg + " is not a value map parameter, use get()");
+		}
+		Map<String, Map<String, String>> p = new HashMap<String, Map<String, String>>();
+		List<String> confVals = null;
+		if((this.confMap != null) && ((confVals = getConfArgValues(argdef)) != null)) {
+			for(String confVal : confVals) {
+				String[] confValSplit = confVal.split("=", 3);
+				if(confValSplit.length != 3) {
+					throw new IllegalArgumentException("Invalid config file: contains non-value map (name=paramName=paramValue) value for parameter '"+argdef.getOptionString()+"'");
+				}
+				if (!p.containsKey(confValSplit[0].trim())){
+					p.put(confValSplit[0].trim(), new HashMap<String, String>());
+				} 
+				Map<String, String> q = p.get(confValSplit[0].trim());
+				q.put(confValSplit[1].trim(), confValSplit[2].trim());
+			}
+		}
+		Properties props = this.oCmdSet.getOptionProperties(arg);
+		for(String prop : props.stringPropertyNames()) {
+			String[] splitValue = props.getProperty(prop).trim().split("=",2);
+			if (!p.containsKey(prop.trim())){
+				p.put(prop.trim(), new HashMap<String, String>());
+			}
+			Map<String, String> q = p.get(prop.trim());
+			q.put(splitValue[0].trim(), splitValue[1].trim());
+		}
+		return p;
+	}
+	
+	
+	/**
 	 * Gets the values of the argument (excluding a default value)
 	 * @param arg argument to get
 	 * @return the values

@@ -65,11 +65,8 @@
 
 -->
 <Config>
-    <Param name="jena">model.config.xml</Param>
-    <Param name="jenaOverride">Parameter=Value</Param>
-    <Param name="query">"SELECT ?s ?p ?o WHERE { ?s ?p ?o } "</Param>
+    <Param name="jena">harvested-data.model.xml</Param>
+    <Param name="query">"select ?s ?p ?o where { ?s ?p ?o } "</Param>
     <Param name="queryResultFormat">RDF/XML</Param>
-    <Param name="fileOutput">path/Filename</Param>
-    <Param name="dataset">true</Param>
-    <Param name="truncate">true</Param>
+    <Param name="fileOutput">output.rdf</Param>
 </Config>

@@ -1,0 +1,12 @@
+	
+usage: SparqlUpdate
+ -h,--help                    Help Message
+ -m,--model <MODEL>           name of jena model
+ -p,--password <PASSWORD>     vivo admin password
+ -r,--rdf <RDF_FILE>          rdf filename to load into output model
+ -U,--url <URL>               sparql update url
+ -u,--username <USERNAME>     vivo admin user name
+ -w,--wordiness <LOG_LEVEL>   Set the console log level
+ -X,--config <CONFIG_FILE>    XML Configuration File
+
+
