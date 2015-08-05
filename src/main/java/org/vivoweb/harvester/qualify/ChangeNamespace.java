@@ -23,6 +23,7 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
  * Changes the namespace for all matching uris
@@ -54,6 +55,11 @@ public class ChangeNamespace {
 	 */
 	private final boolean errorLogging;
 	
+	/*
+	 * create sameAs statement 
+	 */
+	private final boolean sameAs;
+	
 	/**
 	 * Constructor
 	 * @param args commandline arguments
@@ -75,8 +81,13 @@ public class ChangeNamespace {
 			JenaConnect.parseConfig(argList.get("v"), argList.getValueMap("V")), 
 			argList.get("u"), 
 			argList.get("n"), 
-			argList.has("e")
+			argList.has("e"),
+			argList.has("s")
 		);
+	}
+	
+	public ChangeNamespace(JenaConnect model, JenaConnect vivo, String oldName, String newName, boolean errorLog) {
+		this(model, vivo, oldName, newName,  errorLog, false);
 	}
 	
 	/**
@@ -87,7 +98,7 @@ public class ChangeNamespace {
 	 * @param newName new namespace
 	 * @param errorLog log error messages for changed nodes
 	 */
-	public ChangeNamespace(JenaConnect model, JenaConnect vivo, String oldName, String newName, boolean errorLog) {
+	public ChangeNamespace(JenaConnect model, JenaConnect vivo, String oldName, String newName, boolean errorLog, boolean sameAs) {
 		if(model == null) {
 			throw new IllegalArgumentException("No input model provided! Must provide an input model");
 		}
@@ -99,6 +110,7 @@ public class ChangeNamespace {
 		this.oldNamespace = oldName;
 		this.newNamespace = newName;
 		this.errorLogging = errorLog;
+		this.sameAs = sameAs;
 		
 		this.model.printParameters();
 		this.vivo.printParameters();
@@ -171,7 +183,7 @@ public class ChangeNamespace {
 	 * @param errorLog log error messages for changed nodes
 	 * @throws IOException error connecting
 	 */
-	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IOException {
+	public static void changeNS(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog, boolean sameAs) throws IOException {
 		if((oldNamespace == null) || oldNamespace.trim().equals("")) {
 			throw new IllegalArgumentException("old namespace cannot be empty");
 		}
@@ -182,7 +194,8 @@ public class ChangeNamespace {
 			log.trace("namespaces are equal, nothing to change");
 			return;
 		}
-		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim(), errorLog);
+		log.debug("sameAs: "+ sameAs);
+		batchRename(model, vivo, oldNamespace.trim(), newNamespace.trim(), errorLog, sameAs);
 	}
 	
 	/**
@@ -194,7 +207,7 @@ public class ChangeNamespace {
 	 * @param errorLog log error messages for changed nodes
 	 * @throws IOException error connecting
 	 */
-	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog) throws IOException {
+	private static void batchRename(JenaConnect model, JenaConnect vivo, String oldNamespace, String newNamespace, boolean errorLog, boolean sameAs) throws IOException {
 		//Grab all resources matching namespaces needing changed
 		String subjectQuery = "" + 
 		"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" + 
@@ -237,6 +250,10 @@ public class ChangeNamespace {
 	        log.debug("Resource <" + res.getURI() + "> was found and renamed to new uri <" + uri + ">!");
 			 
 			RenameResources.renameResource(res, uri);
+			if (sameAs) {
+			   Resource newRes = model.getJenaModel().getResource(uri); 
+			   model.getJenaModel().add(newRes, OWL.sameAs, res);
+		    }
 		}
 		log.info("Changed namespace for " + changeArray.size() + " rdf nodes");
 	}
@@ -246,7 +263,7 @@ public class ChangeNamespace {
 	 * @throws IOException error connecting
 	 */
 	public void execute() throws IOException {
-		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.errorLogging);
+		changeNS(this.model, this.vivo, this.oldNamespace, this.newNamespace, this.errorLogging, this.sameAs);
 		this.model.sync();
 	}
 	
@@ -266,6 +283,7 @@ public class ChangeNamespace {
 		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("oldNamespace").withParameter(true, "OLD_NAMESPACE").setDescription("The old namespace").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('n').setLongOpt("newNamespace").withParameter(true, "NEW_NAMESPACE").setDescription("The new namespace").setRequired(true));
 		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("errorLogging").setDescription("Log error messages for each record changed").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("sameAs").setDescription("Create sameAs Statement").setRequired(false));
 		return parser;
 	}
 	
