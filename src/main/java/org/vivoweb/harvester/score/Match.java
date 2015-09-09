@@ -137,10 +137,10 @@ public class Match {
 			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
 			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
 			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
-			opts.has("r"), 
+			Boolean.parseBoolean(opts.get("r")), 
 			Float.parseFloat(opts.get("t")), 
 			opts.getValueMap("l"), 
-			opts.has("c"), 
+			Boolean.parseBoolean(opts.get("c")), 
 			Integer.parseInt(opts.get("b"))
 		);
 	}
