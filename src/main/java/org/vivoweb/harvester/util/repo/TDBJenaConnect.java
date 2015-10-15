@@ -7,6 +7,7 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
@@ -66,10 +67,16 @@ public class TDBJenaConnect extends JenaConnect {
 		if (modelName != null) {
 			setModelName(modelName);			 
 		    Model m = getDataset().getNamedModel(getModelName());
+		    log.trace("model "+ modelName +" size: "+m.size());
 			setJenaModel(m);
 		} else {
 			//setModelName("urn:x-arq:DefaultGraph");
 			Model m = getDataset().getDefaultModel();
+			Iterator iter = getDataset().listNames();
+			while (iter.hasNext()) {
+				log.trace("ds: "+iter.next());
+			}
+			log.trace("model size: "+m.size());
 			setJenaModel(m);
 		}
 		 
