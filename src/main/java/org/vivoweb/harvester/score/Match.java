@@ -107,6 +107,8 @@ public class Match {
 		this.clearLiterals = clearLiterals;
 		
 		this.batchSize = size;
+		log.debug("renameRes: "+ this.renameRes);
+		log.debug("clearLiterals: "+ this.clearLiterals);
 	}
 	
 	/**
@@ -136,11 +138,11 @@ public class Match {
 		this(
 			JenaConnect.parseConfig(opts.get("i"), opts.getValueMap("I")), 
 			JenaConnect.parseConfig(opts.get("s"), opts.getValueMap("S")), 
-			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")), 
-			Boolean.parseBoolean(opts.get("r")), 
+			JenaConnect.parseConfig(opts.get("o"), opts.getValueMap("O")),
+			(opts.has("r")?Boolean.parseBoolean(opts.get("r")):false),
 			Float.parseFloat(opts.get("t")), 
 			opts.getValueMap("l"), 
-			Boolean.parseBoolean(opts.get("c")), 
+			(opts.has("c")?Boolean.parseBoolean(opts.get("c")):false), 
 			Integer.parseInt(opts.get("b"))
 		);
 	}
@@ -383,10 +385,10 @@ public class Match {
 		
 		// Linking Methods
 		parser.addArgument(new ArgDef().setShortOption('l').setLongOpt("link").withParameterValueMap("VIVO_TO_INPUT_PREDICATE", "INPUT_TO_VIVO_PREDICATE").setDescription("link the two matched entities together using INPUT_TO_VIVO_PREDICATE and INPUT_TO_VIVO_PREDICATE").setRequired(false));
-		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").setDescription("rename or remove the matched entity from scoring").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('r').setLongOpt("rename").withParameter(true, "RENAME").setDescription("rename or remove the matched entity from scoring").setRequired(false));
 		
 		// options
-		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-type-and-literals").setDescription("clear all rdf:type and literal values out of the nodes matched").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('c').setLongOpt("clear-type-and-literals").withParameter(true, "CLEAR_LITERALS").setDescription("clear all rdf:type and literal values out of the nodes matched").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('b').setLongOpt("batch-size").withParameter(true, "BATCH_SIZE").setDescription("number of records to process in batch - default 150 - lower this if getting StackOverflow or OutOfMemory").setDefaultValue("150").setRequired(false));
 		return parser;
 	}
@@ -414,7 +416,7 @@ public class Match {
 			clearTypesAndLiterals(resultSet);
 		}
 		
-		if(this.renameRes) {
+		if (this.renameRes) {
 			rename(resultSet);
 		}
 		
