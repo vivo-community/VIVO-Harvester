@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -539,9 +540,8 @@ public class WOSFetch {
 			String firstrecord = XPathTool.getXpathStreamResult(new ByteArrayInputStream(searchQuery.getBytes()), "//retrieveParameters/firstRecord");
 
 			Map<String,String> recordMap = extractSearchRecords(new String(searchResponse.toByteArray(),"UTF-8"));
-//			for(String recId : recordMap.keySet()){
-//
-//				writeRecord(recId, recordMap.get(recId));
+//			for(Entry<String, String> x : recordMap.entrySet()) {
+//				writeRecord(x.getKey(), x.getValue());
 //			}
 			log.debug("Search count = \"" + searchCount + "\"");
 			log.debug("Records Found = \"" + recFound + "\"");

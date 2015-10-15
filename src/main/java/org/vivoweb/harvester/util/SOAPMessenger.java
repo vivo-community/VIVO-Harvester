@@ -12,8 +12,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,7 +55,7 @@ public class SOAPMessenger {
 	/**
 	 * Connection derived from that URL
 	 */
-	private URLConnection urlCon;
+	private HttpURLConnection urlCon;
 	
 	/**
 	 * Inputstream with SOAP style XML message
@@ -72,6 +72,9 @@ public class SOAPMessenger {
 	 */
 	private String sessionID;
 	
+	/**
+	 * a map of the properties which go into the header of the request
+	 */
 	Map<String,String> requestProperties;
 	
 	/**
@@ -79,6 +82,7 @@ public class SOAPMessenger {
 	 * @param url address to connect with
 	 * @param output RecordHandler to write data to
 	 * @param xmlFile xml file to POST to the url
+	 * @param sesID The authentication sessionID
 	 * @param reqProperties a map of the properties which go into the header of the request
 	 * @throws IOException error talking with database
 	 */
@@ -118,9 +122,10 @@ public class SOAPMessenger {
 	 * @param url URL to connect with.
 	 * @param output The stream to the output file
 	 * @param xmlFileStream The stream which points to the Soap Message
-	 * @throws IOException problem with opening url connection
+	 * @param sesID the authentication sessionID
+	 * @param reqProprties a map of the properties which go into the header of the request
 	 */
-	public SOAPMessenger(URL url, OutputStream output, InputStream xmlFileStream, String sesID,Map<String,String> reqProprties) throws IOException {
+	public SOAPMessenger(URL url, OutputStream output, InputStream xmlFileStream, String sesID, Map<String,String> reqProprties) {
 		
 		this.outputFile = output;
 		this.url = url;
@@ -169,11 +174,9 @@ public class SOAPMessenger {
 	}
 	
 	/**
-	 * @param urlCon the location where the message is to.
-	 * @param message the xml message in the form of a string.
 	 * @throws IOException thrown if there is an issue with the stream.
 	 */
-	private void sendMessage(URLConnection urlCon,String message) throws IOException{
+	private void sendMessage() throws IOException{
 
 
 	    // specify that we will send output and accept input
@@ -206,12 +209,16 @@ public class SOAPMessenger {
 	}
 	
 	/**
-	 * @param urlCon the url connection which the message it comming from.
 	 * @return the string version of the message
 	 * @throws IOException if there is a problem with the source.
 	 */
-	private String readMessage(URLConnection urlCon) throws IOException{
-	    InputStreamReader isReader = new InputStreamReader( this.urlCon.getInputStream() );
+	private String readMessage() throws IOException{
+		InputStreamReader isReader;
+		try {
+			isReader = new InputStreamReader( this.urlCon.getInputStream() );
+		} catch(IOException e) {
+			isReader = new InputStreamReader( this.urlCon.getErrorStream() );
+		}
 	
 	    StringBuilder buf = new StringBuilder();
 	    char[] cbuf = new char[ 2048 ];
@@ -237,13 +244,13 @@ public class SOAPMessenger {
 		log.debug("Message contents:\n" + this.xmlString);
 
 		log.info("opening the url connection");
-		this.urlCon = this.url.openConnection();
+		this.urlCon = (HttpURLConnection)this.url.openConnection();
 		
-		sendMessage(this.urlCon,this.xmlString);
+		sendMessage();
 
 	    // reading the response
 		log.debug("getting reader for url connection");
-		String result = readMessage(this.urlCon);
+		String result = readMessage();
 
 	    result = formatResult(result);
 
