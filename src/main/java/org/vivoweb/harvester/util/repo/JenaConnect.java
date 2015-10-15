@@ -657,12 +657,17 @@ public abstract class JenaConnect {
 				qe = QueryExecutionFactory.create(query, getJenaModel());
 			}
 			if(query.isSelectType()) {
+				log.trace("output formatted results");
 				ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
                 if(rsf == null) {
                      rsf = ResultSetFormat.syntaxText;
                 }
-                ResultSetFormatter.output(out, qe.execSelect(), rsf);
-				 
+                ResultSet rs = qe.execSelect();
+                if (rs.hasNext()) {
+                   ResultSetFormatter.output(out, rs, rsf);
+                } else {
+                	log.warn("empty result set");
+                }
 				// this changed in newer versions of Jena
 				 
 				/*ResultsFormat rsf = ResultsFormat.lookup(resultFormatParam);				 
