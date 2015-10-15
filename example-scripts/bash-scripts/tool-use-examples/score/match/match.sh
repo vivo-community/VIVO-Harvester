@@ -10,3 +10,5 @@ export HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 export CLASSPATH=$HARVESTER_INSTALL_DIR/build/harvester.jar:$HARVESTER_INSTALL_DIR/build/dependency/*
 export HARVESTER_JAVA_OPTS=
 java $HARVESTER_JAVA_OPTS org.vivoweb.harvester.score.Match -X match.conf.xml
+# an example of how to call from the command line
+#java $HARVESTER_JAVA_OPTS org.vivoweb.harvester.score.Match -i harvested-data.model.xml -s score-data.model.xml -t 1.0 -r false
