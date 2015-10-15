@@ -16,7 +16,8 @@ public class XmlNamespaceContext implements NamespaceContext {
 	private final Map<String, String> namespaceMap;
 
 	public XmlNamespaceContext(XmlPrefix[] xmlPrefixes) {
-		this(XMLConstants.NULL_NS_URI, xmlPrefixes);
+		//this(XMLConstants.NULL_NS_URI, xmlPrefixes);
+		this("",xmlPrefixes);
 	}
 
 	public XmlNamespaceContext(String defaultNamespaceUri,
@@ -42,7 +43,8 @@ public class XmlNamespaceContext implements NamespaceContext {
 		String uri;
 		String ns = namespaceMap.get(prefix);
 		if (ns == null) {
-			uri = XMLConstants.NULL_NS_URI;
+			//uri = XMLConstants.NULL_NS_URI;
+			uri = "";
 		} else {
 			uri = namespaceMap.get(prefix);
 		}
