@@ -71,4 +71,5 @@
 	<Param name="weights">publication=1.0</Param>
 	<Param name="inputJena-predicates">publication=http://purl.org/ontology/bibo/pmid</Param>
 	<Param name="vivoJena-predicates">publication=http://purl.org/ontology/bibo/pmid</Param>
+        <Param name="wordiness">INFO</Param> 
 </Task>

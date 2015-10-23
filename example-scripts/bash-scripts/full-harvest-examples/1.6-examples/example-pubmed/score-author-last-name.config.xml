@@ -63,11 +63,12 @@
      -->
 	<Param name="tempJenaDir">data/temp-score-model</Param>
 	<Param name="namespace">http://vivoweb.org/harvest/pubmed/author/</Param>
-	
+	<Param name="wordiness">INFO</Param>
 	<!--COMPARISIONS -->
 	<!--LAST NAME-->
 	<Param name="algorithms">lname=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
 	<Param name="weights">lname=0.35</Param>
 	<Param name="inputJena-predicates">lname=http://xmlns.com/foaf/0.1/lastName</Param>
 	<Param name="vivoJena-predicates">lname=http://xmlns.com/foaf/0.1/lastName</Param>
+        
 </Task>

@@ -18,4 +18,5 @@
 	<Param name="rename">true</Param>
 	<Param name="threshold">0.55</Param>
 	<Param name="clear-type-and-literals">true</Param>
+        <Param name="wordiness">INFO</Param> 
 </Task>

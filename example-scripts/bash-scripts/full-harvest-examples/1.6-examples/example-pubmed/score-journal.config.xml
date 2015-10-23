@@ -70,4 +70,5 @@
 	<Param name="weights">journal=1.0</Param>
 	<Param name="inputJena-predicates">journal=http://purl.org/ontology/bibo/issn</Param>
 	<Param name="vivoJena-predicates">journal=http://purl.org/ontology/bibo/issn</Param>
+        <Param name="wordiness">INFO</Param> 
 </Task>

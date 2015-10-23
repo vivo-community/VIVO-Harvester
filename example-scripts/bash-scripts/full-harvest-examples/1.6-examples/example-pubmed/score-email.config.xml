@@ -71,4 +71,5 @@
 	<Param name="weights">email=1.0</Param>
 	<Param name="inputJena-predicates">email=http://vivoweb.org/ontology/score#email</Param>
 	<Param name="vivoJena-predicates">email=http://vivoweb.org/ontology/core#email</Param>
+        <Param name="wordiness">TRACE</Param>
 </Task>

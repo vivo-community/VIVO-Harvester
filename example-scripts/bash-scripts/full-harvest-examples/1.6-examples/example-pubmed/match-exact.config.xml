@@ -17,4 +17,5 @@
 	<!--OPTIONS -->
 	<Param name="rename">true</Param>
 	<Param name="threshold">1.0</Param>
+        <Param name="wordiness">TRACE</Param> 
 </Task>

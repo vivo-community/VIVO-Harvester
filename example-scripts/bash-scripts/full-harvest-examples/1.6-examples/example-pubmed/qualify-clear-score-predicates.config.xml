@@ -11,4 +11,5 @@
 	<!--  OPTIONS -->
 	<Param name="remove-namespace">http://vivoweb.org/ontology/score#</Param>
 	<Param name="predicate-clean">true</Param>
+        <Param name="wordiness">INFO</Param> 
 </Task>

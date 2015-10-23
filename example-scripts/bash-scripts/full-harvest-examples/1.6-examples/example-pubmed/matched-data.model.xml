@@ -149,4 +149,5 @@
 -->
 	<Param name="type">tdb</Param>
 	<Param name="dbDir">data/matched-data/</Param>
+        <Param name="wordiness">INFO</Param> 
 </Config>

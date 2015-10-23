@@ -6,12 +6,14 @@
 -->
 <Task>
 	<!--INPUT -->
-	<Param name="inputModel">matched-data.model.xml</Param>
+	<Param name="inputModel">harvested-data.model.xml</Param>
 	
 	<!--  VIVO -->
 	<Param name="vivoModel">vivo.model.xml</Param>
 	
 	<!--  OPTIONS -->
 	<Param name="oldNamespace">http://vivoweb.org/harvest/pubmed/author/</Param>
-	<Param name="newNamespace">http://vivo.cornell.edu/individual/</Param>
+	<!-- <Param name="newNamespace">http://vivo.cornell.edu/individual/</Param> -->
+	<Param name="newNamespace">http://localhost:8080/vivo/individual/</Param>
+        <Param name="wordiness">INFO</Param> 
 </Task>

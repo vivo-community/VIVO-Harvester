@@ -76,5 +76,5 @@
 	<Param name="weights">rdfslabel=0.50</Param>
 	<Param name="inputJena-predicates">rdfslabel=http://www.w3.org/2000/01/rdf-schema#label</Param>
 	<Param name="vivoJena-predicates">rdfslabel=http://www.w3.org/2000/01/rdf-schema#label</Param>
-	
+        <Param name="wordiness">INFO</Param>	
 </Task>

@@ -77,4 +77,6 @@
 	<Param name="weights">publink=0.5</Param>
 	<Param name="inputJena-predicates">publink=http://vivoweb.org/ontology/core#linkedInformationResource</Param>
 	<Param name="vivoJena-predicates">publink=http://vivoweb.org/ontology/core#linkedInformationResource</Param>
+
+        <Param name="wordiness">INFO</Param>
 </Task>

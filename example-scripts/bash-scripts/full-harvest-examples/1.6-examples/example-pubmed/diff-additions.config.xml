@@ -26,7 +26,7 @@
 <%                                                                                                                    %>
 <%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
 -->
-	<Param name="minuend">matched-data.model.xml</Param>
+	<Param name="minuend">harvested-data.model.xml</Param>
 
 	<!--VIVO -->
 		<!--SUBTRAHEND : for more information please see the given config file -->
@@ -87,5 +87,5 @@
 -->
     
 	<!-- <Param name="update-types">http://xmlns.com/foaf/0.1/Person</Param> -->
-
+        <Param name="wordiness">INFO</Param> 
 </Task>

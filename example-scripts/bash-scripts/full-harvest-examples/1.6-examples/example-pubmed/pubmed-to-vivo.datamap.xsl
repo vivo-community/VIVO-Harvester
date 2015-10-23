@@ -10,18 +10,32 @@
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:fn="http://www.w3.org/2005/xpath-functions"
+	xmlns:functx="http://www.functx.com"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:core="http://vivoweb.org/ontology/core#"
+	xmlns:vitro = "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:score='http://vivoweb.org/ontology/score#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
+	xmlns:obo = "http://purl.obolibrary.org/obo/"
+	xmlns:vcard = "http://www.w3.org/2006/vcard/ns#"
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
-	xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'>
+	xmlns:localVivo='http://vivo.sample.edu/ontology/'>
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:variable name="baseURI">http://vivoweb.org/harvest/pubmed/</xsl:variable>
+    <xsl:function name="functx:substring-before-last-match" as="xs:string?"
+              xmlns:functx="http://www.functx.com">
+     <xsl:param name="arg" as="xs:string?"/>
+     <xsl:param name="regex" as="xs:string"/>
 
+     <xsl:sequence select="replace($arg,concat('^(.*)',$regex,'.*'),'$1')
+    "/>
+
+</xsl:function>
 	<!-- The main Article Set of all pubmed citations loaded 
 		This serves as the header of the RDF file produced
 	 -->
@@ -37,9 +51,13 @@
 			xmlns:vitro='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#' 
 			xmlns:core='http://vivoweb.org/ontology/core#'
 			xmlns:foaf='http://xmlns.com/foaf/0.1/'
+			xmlns:obo = "http://purl.obolibrary.org/obo/"
+			xmlns:vcard = "http://www.w3.org/2006/vcard/ns#"
 			xmlns:score='http://vivoweb.org/ontology/score#'
 			xmlns:xs='http://www.w3.org/2001/XMLSchema#'
-			xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'>
+			xmlns:fn="http://www.w3.org/2005/xpath-functions"
+			xmlns:functx="http://www.functx.com"
+			xmlns:localVivo='http://vivo.sample.edu/ontology/'>
 			<xsl:apply-templates select="PubmedArticle" />
 			<xsl:apply-templates select="PubmedBookArticle" />
 		</rdf:RDF>
@@ -47,40 +65,26 @@
 	
 	<!-- The Article -->
 	<xsl:template match="PubmedArticle">
-		<xsl:variable name="emailAddress">
-			<!--
-			Possible better email match regex.
-			Needs tested. Not sure if &quot will work for "
-			- -Dale
-			-->
-			<xsl:if test="normalize-space( MedlineCitation/Article/Affiliation )">
-				<xsl:analyze-string select="MedlineCitation/Article/Affiliation" regex="\s*([a-zA-Z\d\.]*@[a-zA-Z\d\.]*)">
-				<!-- <xsl:analyze-string select="$elValue" regex="(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|&quot;(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*&quot;)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])">	-->
-				<!--
-				Here's the old expression
-				\s*([a-zA-Z\d\.]*@[a-z\.]*)
-				It was in quotes. Like the one above. 
-				-->
-					<xsl:matching-substring>
-						<xsl:value-of select="regex-group(1)" />
-					</xsl:matching-substring>			
-				</xsl:analyze-string>
-			</xsl:if>
-		</xsl:variable>
+		
+        <xsl:variable name="pmid" ><xsl:value-of select="MedlineCitation/PMID" /></xsl:variable>
+        
 		<rdf:Description rdf:about="{$baseURI}pub/pmid{child::MedlineCitation/PMID}">
 			<xsl:apply-templates select='MedlineCitation/Article/PublicationTypeList/PublicationType' />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			 
+			<localVivo:harvestedBy>PubMed-Harvester</localVivo:harvestedBy>
 			<bibo:pmid><xsl:value-of select="MedlineCitation/PMID" /></bibo:pmid>
 			<rdfs:label><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></rdfs:label>
-			<core:Title><xsl:value-of select="MedlineCitation/Article/ArticleTitle" /></core:Title>
-			<score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation>
+			 
+			<!--  <score:Affiliation><xsl:value-of select="MedlineCitation/Article/Affiliation" /></score:Affiliation> -->
 			<bibo:volume><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Volume"/></bibo:volume>
 			<bibo:number><xsl:value-of select="MedlineCitation/Article/Journal/JournalIssue/Issue"/></bibo:number>
 			<bibo:abstract><xsl:value-of select="MedlineCitation/Article/Abstract"/></bibo:abstract>
+			
 			<xsl:apply-templates select="MedlineCitation/ChemicalList/Chemical" />
+			<!-- keywords -->
 			<xsl:apply-templates select="MedlineCitation/KeywordList/Keyword" />
 			<xsl:apply-templates  select="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword" />
+			
 			<xsl:choose>
 				<xsl:when test='string(PubmedData/ArticleIdList/ArticleId[@IdType="doi"])'>
 					<bibo:doi><xsl:value-of select='PubmedData/ArticleIdList/ArticleId[@IdType="doi"]' /></bibo:doi>
@@ -151,22 +155,28 @@
 			<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="authorRef" />
 			<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="journalRef"/>
 		</rdf:Description>
-		<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="fullAuthor">
-			<xsl:with-param name="email" select="$emailAddress" />
-		</xsl:apply-templates>
+		
+		<xsl:apply-templates select="MedlineCitation/Article/AuthorList/Author" mode="fullAuthor" /> 
+		 
 		<xsl:apply-templates select="MedlineCitation/Article/Journal" mode="fullJournal" />
 	</xsl:template>
 	
 	<!-- The Book Article -->
 	<xsl:template match="PubmedBookArticle">
+	    <xsl:variable name="lastName" select="normalize-space(LastName)"/>
+        <xsl:variable name="firstName" select="normalize-space(ForeName)"/>    
+        <xsl:variable name="fullName"><xsl:value-of select = "$lastName" />, <xsl:value-of select = "$firstName" /></xsl:variable>
+        <xsl:variable name="pmid" select="ancestor::BookDocument/PMID" />
+        
+        <xsl:comment>book pmid is <xsl:value-of select="$pmid" /></xsl:comment>
+        
 		<rdf:Description rdf:about="{$baseURI}pub/pmid{child::BookDocument/PMID}">
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
-			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" /> 
+			<localVivo:harvestedBy>PubMed-Harvester</localVivo:harvestedBy>
 			<bibo:pmid><xsl:value-of select="BookDocument/PMID" /></bibo:pmid>
 			<rdfs:label><xsl:value-of select="BookDocument/Book/BookTitle" /></rdfs:label>
-			<core:Title><xsl:value-of select="BookDocument/Book/BookTitle" /></core:Title>
+			<core:relatedBy rdf:resource="{$baseURI}authorship/pmid{$pmid}authorship{position()}" />  
 			<score:Affiliation><xsl:value-of select="BookDocument/Book/CollectionTitle" /></score:Affiliation>
 			<bibo:abstract><xsl:value-of select="BookDocument/Abstract"/></bibo:abstract>
 			<xsl:apply-templates select="BookDocument/KeywordList/Keyword" />
@@ -240,10 +250,8 @@
 <!-- The Main Journal Entity -->
 	<xsl:template match="MedlineCitation/Article/Journal" mode="fullJournal">
 		<rdf:Description rdf:about="{$baseURI}journal/journal{child::ISSN}" >
-			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
-			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<core:Title><xsl:value-of select="Title" /></core:Title>
+			<localVivo:harvestedBy>PubMed-Harvester</localVivo:harvestedBy>
+			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" /> 
 			<rdfs:label><xsl:value-of select="Title" /></rdfs:label>
 			<bibo:issn><xsl:value-of select="ISSN"/></bibo:issn>
 			<core:publicationVenueFor rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
@@ -251,165 +259,189 @@
 	</xsl:template>
 
 	<!-- Links to From the Article to the Terms and Authors -->
-	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef">
-		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
-	</xsl:template>
+	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="authorRef"> 
+		<core:relatedBy rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+	</xsl:template> 
 
-	<!-- Article Author List Navigation --> 
+	<!-- Article Author List Navigation -->
 	<xsl:template match="MedlineCitation/Article/AuthorList/Author" mode="fullAuthor">
-		<xsl:param name='email' />
+	    
+	   <xsl:variable name="authorEmail" >
+	       <xsl:apply-templates select="AffiliationInfo/Affiliation" />
+		</xsl:variable>
+	    
+	    <xsl:variable name="lastName" select="normalize-space(LastName)"/>
+        <xsl:variable name="firstName" select="normalize-space(ForeName)"/>    
+        <xsl:variable name="fullName"><xsl:value-of select = "$lastName" />, <xsl:value-of select = "$firstName" /></xsl:variable>
+        <xsl:variable name="pmid" select="ancestor::MedlineCitation/PMID" />
+         
+	    <!-- authorship -->
 		<rdf:Description rdf:about="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}">
-			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+		   <localVivo:harvestedBy>PubMed-Harvester</localVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource" />
-			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
-			<core:linkedAuthor rdf:resource="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}" />
-			<core:linkedInformationResource rdf:resource="{$baseURI}pub/pmid{ancestor::MedlineCitation/PMID}"/>
+			<vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship" />
+			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+			<rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000020" />
+			<rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
+			<rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
 			<xsl:choose>
-				<xsl:when test="string(ForeName)">
-					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+				<xsl:when test="$firstName">
+					<rdfs:label>Authorship for <xsl:value-of select = "$firstName" />, <xsl:value-of select = "$lastName" /></rdfs:label>
 				</xsl:when>
-				<xsl:when test="string(LastName)">
-					<rdfs:label>Authorship for <xsl:value-of select="LastName" /></rdfs:label>
-				</xsl:when>
-				<xsl:when test="string(CollectiveName)">
-					<rdfs:label>Authorship for <xsl:value-of select="CollectiveName" /></rdfs:label>
-				</xsl:when>
+				<xsl:when test="$lastName">
+					<rdfs:label>Authorship for <xsl:value-of select="$lastName" /></rdfs:label>
+				</xsl:when> 
 			</xsl:choose>
-			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
+			<core:relates rdf:resource="{$baseURI}author/pmid{$pmid}author{position()}" />
+			<core:relates rdf:resource="{$baseURI}pub/pmid{$pmid}" />
+			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>
 		</rdf:Description>
+		
+		<!-- author -->
 		<rdf:Description rdf:about="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}">
-			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
-			<score:email><xsl:value-of select="$email" /></score:email>
-			<xsl:choose>
-				<xsl:when test="string(ForeName)">
-					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-					<rdfs:label><xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
-					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
-					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
-					<score:initials><xsl:value-of select="Initials" /></score:initials>
-					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
-					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
-						<xsl:matching-substring>
-							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<xsl:choose>
-								<xsl:when test="normalize-space(regex-group(2))">
-									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
-								</xsl:when>
-							</xsl:choose>
-						</xsl:matching-substring>
-					</xsl:analyze-string>
-				</xsl:when>
-				<xsl:when test="string(LastName)">
-					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-					<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
-					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
-					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
-					<score:initials><xsl:value-of select="Initials" /></score:initials>
-					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>	
-					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
-					    <xsl:matching-substring>
-							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<xsl:choose>
-								<xsl:when test="normalize-space(regex-group(2))">
-									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
-								</xsl:when>
-							</xsl:choose>
-						</xsl:matching-substring>
-					</xsl:analyze-string>			
-				</xsl:when>
-				<xsl:when test="string(CollectiveName)">
-					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
-					<rdfs:label><xsl:value-of select="CollectiveName" /></rdfs:label>
-				</xsl:when>
-			</xsl:choose>
-			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+		   <rdf:type rdf:resource = "http://xmlns.com/foaf/0.1/Person"/>
+           <vitro:mostSpecificType rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+           <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$fullName" /></rdfs:label>
+           <obo:ARG_2000028 rdf:resource="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcard{position()}"/>
 		</rdf:Description>
+		
+		<!-- vcard -->
+		<rdf:Description rdf:about="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcard{position()}">
+		   <obo:ARG_2000029 rdf:resource="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}"/>
+           <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
+           <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
+           <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_2000379"/>
+           <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard for: <xsl:value-of select = "$fullName" /></rdfs:label>
+           <vcard:hasName rdf:resource="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardName{position()}"/>
+           <xsl:if test="normalize-space($authorEmail)" >
+           <vcard:hasEmail rdf:resource="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardEmail{position()}"/>
+           </xsl:if>
+		</rdf:Description>
+		
+		<!-- vcard name -->
+		<rdf:Description rdf:about="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardName{position()}">
+		   <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Name"/> 
+           <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Name"/>
+           <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard name for: <xsl:value-of select = "$fullName" /></rdfs:label>
+           <vcard:givenName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$firstName" /></vcard:givenName>     
+           <vcard:familyName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$lastName" /></vcard:familyName>
+		</rdf:Description>
+		
+		<!-- vcard email -->
+		 <xsl:if test="normalize-space($authorEmail)" >
+	     <rdf:Description rdf:about="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardEmail{position()}">
+	       <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Email"/>
+	       <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Work"/>
+	       <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Email"/>
+	       <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard email for: <xsl:value-of select = "$fullName" /></rdfs:label>
+	       <vcard:email rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$authorEmail" /></vcard:email>  
+	     </rdf:Description>
+	     </xsl:if>
+	</xsl:template> 
+	
+	<xsl:template match="AffiliationInfo/Affiliation">
+	   <xsl:choose>
+			<xsl:when test="normalize-space(.)" >
+				<xsl:analyze-string select="string(.)" regex="\s*([a-zA-Z\d\.]*@[a-zA-Z\d\.]*)"> 
+				  
+					<xsl:matching-substring>
+					<xsl:choose>
+					<xsl:when test="fn:ends-with(regex-group(1), '.')">
+					<xsl:value-of select="functx:substring-before-last-match(regex-group(1), '.')" />  
+					</xsl:when> 
+					<xsl:otherwise><xsl:value-of select="regex-group(1)" /></xsl:otherwise> 
+					</xsl:choose>   
+					</xsl:matching-substring>
+								
+				</xsl:analyze-string>
+			</xsl:when>
+			<xsl:otherwise></xsl:otherwise>
+			</xsl:choose>
 	</xsl:template>
-
+	
 	<!-- Links to From the Book to the Terms and Authors -->
 	<xsl:template match="BookDocument/Book/AuthorList/Author" mode="authorRef">
-		<core:informationResourceInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
+		<core:relatedBy rdf:resource="{$baseURI}authorship/pmid{ancestor::MedlineCitation/PMID}authorship{position()}" />
 	</xsl:template>
 
 	<!-- Book Author List Navigation --> 
 	<xsl:template match="BookDocument/Book/AuthorList/Author" mode="fullAuthor">
+	    <xsl:variable name="lastName" select="normalize-space(LastName)"/>
+        <xsl:variable name="firstName" select="normalize-space(ForeName)"/>    
+        <xsl:variable name="fullName"><xsl:value-of select = "$lastName" />, <xsl:value-of select = "$firstName" /></xsl:variable>
+        <xsl:variable name="pmid" select="ancestor::MedlineCitation/PMID" />
+        <xsl:variable name="authorEmail" >
+	       <xsl:apply-templates select="AffiliationInfo/Affiliation" />
+		</xsl:variable>
+		
+		<!-- authorship -->
 		<rdf:Description rdf:about="{$baseURI}authorship/pmid{ancestor::BookDocument/PMID}authorship{position()}">
-			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
+			<localVivo:harvestedBy>PubMed-Harvester</localVivo:harvestedBy>
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#DependentResource" />
-			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DependentResource" />
-			<core:linkedAuthor rdf:resource="{$baseURI}author/pmid{ancestor::BookDocument/PMID}author{position()}" />
-			<core:linkedInformationResource rdf:resource="{$baseURI}pub/pmid{ancestor::BookDocument/PMID}"/>
+			<vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship" />
+			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+			<rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000020" />
+			<rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
+			<rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
 			<xsl:choose>
-				<xsl:when test="string(ForeName)">
-					<rdfs:label>Authorship for <xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
+				<xsl:when test="$firstName">
+					<rdfs:label>Authorship for <xsl:value-of select = "$firstName" />, <xsl:value-of select = "$lastName" /></rdfs:label>
 				</xsl:when>
-				<xsl:when test="string(LastName)">
-					<rdfs:label>Authorship for <xsl:value-of select="LastName" /></rdfs:label>
-				</xsl:when>
-				<xsl:when test="string(CollectiveName)">
-					<rdfs:label>Authorship for <xsl:value-of select="CollectiveName" /></rdfs:label>
-				</xsl:when>
+				<xsl:when test="$lastName">
+					<rdfs:label>Authorship for <xsl:value-of select="$lastName" /></rdfs:label>
+				</xsl:when> 
 			</xsl:choose>
+			<core:relates rdf:resource="{$baseURI}author/pmid{$pmid}author{position()}" />
+			<core:relates rdf:resource="{$baseURI}pub/pmid{$pmid}" />
 			<core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int"><xsl:value-of select="position()" /></core:authorRank>			
 		</rdf:Description>
-		<rdf:Description rdf:about="{$baseURI}author/pmid{ancestor::BookDocument/PMID}author{position()}">
-			<ufVivo:harvestedBy>PubMed-Harvester</ufVivo:harvestedBy>
-			<xsl:choose>
-				<xsl:when test="string(ForeName)">
-					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-					<rdfs:label><xsl:value-of select="LastName" />, <xsl:value-of select="ForeName"/></rdfs:label>
-					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
-					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
-					<score:initials><xsl:value-of select="Initials" /></score:initials>
-					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>
-					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
-						<xsl:matching-substring>
-							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<xsl:choose>
-								<xsl:when test="normalize-space(regex-group(2))">
-									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
-								</xsl:when>
-							</xsl:choose>
-						</xsl:matching-substring>
-					</xsl:analyze-string>
-				</xsl:when>
-				<xsl:when test="string(LastName)">
-					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-					<rdfs:label><xsl:value-of select="LastName" /></rdfs:label>
-					<foaf:lastName><xsl:value-of select="LastName" /></foaf:lastName>
-					<score:foreName><xsl:value-of select="ForeName" /></score:foreName>
-					<score:initials><xsl:value-of select="Initials" /></score:initials>
-					<score:suffix><xsl:value-of select="Suffix" /></score:suffix>	
-					<!-- Parse out possible middle name -->
-					<xsl:analyze-string select="string(ForeName)" regex="^\s*(\S+)\s*(.*)$">
-					    <xsl:matching-substring>
-							<foaf:firstName><xsl:value-of select="regex-group(1)" /></foaf:firstName>
-							<xsl:choose>
-								<xsl:when test="normalize-space(regex-group(2))">
-									<core:middleName><xsl:value-of select="regex-group(2)" /></core:middleName>
-								</xsl:when>
-							</xsl:choose>
-						</xsl:matching-substring>
-					</xsl:analyze-string>			
-				</xsl:when>
-				<xsl:when test="string(CollectiveName)">
-					<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
-					<rdfs:label><xsl:value-of select="CollectiveName" /></rdfs:label>
-				</xsl:when>
-			</xsl:choose>
-			<rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" />
-			<rdf:type rdf:resource="http://vitro.mannlib.cornell.edu/ns/vitro/0.7#Flag1Value1Thing" />
-			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::BookDocument/PMID}authorship{position()}" />
+		
+		<!-- author -->
+		<rdf:Description rdf:about="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}">
+		   <rdf:type rdf:resource = "http://xmlns.com/foaf/0.1/Person"/>
+           <vitro:mostSpecificType rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+           <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$fullName" /></rdfs:label>
+           <obo:ARG_2000028 rdf:resource="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcard{position()}"/>
 		</rdf:Description>
+		
+		<!-- vcard -->
+		<rdf:Description rdf:about="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcard{position()}">
+		   <obo:ARG_2000029 rdf:resource="{$baseURI}author/pmid{ancestor::MedlineCitation/PMID}author{position()}"/>
+           <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
+           <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
+           <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_2000379"/>
+           <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard for: <xsl:value-of select = "$fullName" /></rdfs:label>
+           <vcard:hasName rdf:resource="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardName{position()}"/>
+           <xsl:if test="normalize-space($authorEmail)" >
+           <vcard:hasEmail rdf:resource="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardEmail{position()}"/>
+           </xsl:if>
+		</rdf:Description>
+		
+		<!-- vcard name -->
+		<rdf:Description rdf:about="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardName{position()}">
+		   <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Name"/> 
+           <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Name"/>
+           <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard name for: <xsl:value-of select = "$fullName" /></rdfs:label>
+           <vcard:givenName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$firstName" /></vcard:givenName>     
+           <vcard:familyName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$lastName" /></vcard:familyName>
+		</rdf:Description>
+		
+		<!-- vcard email -->
+		 <xsl:if test="normalize-space($authorEmail)" >
+	     <rdf:Description rdf:about="{$baseURI}vcard/pmid{ancestor::MedlineCitation/PMID}vcardEmail{position()}">
+	       <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Email"/>
+	       <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Work"/>
+	       <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Email"/>
+	       <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard email for: <xsl:value-of select = "$fullName" /></rdfs:label>
+	       <vcard:email rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$authorEmail" /></vcard:email>  
+	     </rdf:Description>
+	     </xsl:if>
+			
+			<!-- <rdf:type rdf:resource="http://vivoweb.org/harvester/excludeEntity" /> 
+			<core:authorInAuthorship rdf:resource="{$baseURI}authorship/pmid{ancestor::BookDocument/PMID}authorship{position()}" /> -->
+		 
 	</xsl:template>
 	
 	<xsl:template match="MedlineCitation/MeshHeadingList/MeshHeading" mode="termAsKeyword">
@@ -422,29 +454,25 @@
 	
 	<!-- Chemical List -->
 	<xsl:template match="MedlineCitation/ChemicalList/Chemical">
-		<xsl:choose>
-			<xsl:when test="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)">
-				<core:freetextKeyword><xsl:value-of select="string(MedlineCitation/ChemicalList/Chemical/NameOfSubstance)" /></core:freetextKeyword>
-			</xsl:when>
-		</xsl:choose>
+		<xsl:if test="normalize-space(.)">
+			<core:freetextKeyword><xsl:value-of select="." /></core:freetextKeyword>
+		</xsl:if>
 	</xsl:template>
 	
 	<!-- Article Keyword -->
+	 
+	
 	<xsl:template match="MedlineCitation/KeywordList/Keyword">
-		<xsl:choose>
-			<xsl:when test="string(MedlineCitation/KeywordList/Keyword)">
-				<core:freetextKeyword><xsl:value-of select="string(MedlineCitation/KeywordList/Keyword)" /></core:freetextKeyword>  
-			</xsl:when>
-		</xsl:choose>
+	    <xsl:if test="normalize-space(.)" > 
+		<core:freetextKeyword><xsl:value-of select="." /></core:freetextKeyword>
+		</xsl:if>
 	</xsl:template>
 	
 	<!-- Book Keyword -->
 	<xsl:template match="BookDocument/KeywordList/Keyword">
-		<xsl:choose>
-			<xsl:when test="string(BookDocument/KeywordList/Keyword)">
-				<core:freetextKeyword><xsl:value-of select="string(BookDocument/KeywordList/Keyword)" /></core:freetextKeyword>  
-			</xsl:when>
-		</xsl:choose>
+		<xsl:if test="normalize-space(.)">
+			<core:freetextKeyword><xsl:value-of select="." /></core:freetextKeyword>  
+		</xsl:if>
 	</xsl:template>
 	
 	<!-- Types -->
@@ -690,5 +718,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
+	
+	 
 
 </xsl:stylesheet>

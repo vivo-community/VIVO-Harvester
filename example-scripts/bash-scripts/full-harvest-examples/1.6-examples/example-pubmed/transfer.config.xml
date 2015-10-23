@@ -34,5 +34,5 @@
     -->
     <Param name="output">harvested-data.model.xml</Param>
     <Param name="dumptofile">data/harvested-data/imported-records.rdf.xml</Param>
-
+    <Param name="wordiness">INFO</Param>    
 </Task>

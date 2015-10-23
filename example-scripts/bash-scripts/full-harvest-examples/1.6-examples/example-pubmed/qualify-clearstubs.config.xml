@@ -11,4 +11,5 @@
 	<!--  OPTIONS -->
 	<Param name="remove-namespace">http://vivoweb.org/harvest/pubmed/author/</Param>
 	<Param name="clean-resources">true</Param>
+        <Param name="wordiness">INFO</Param> 
 </Task>

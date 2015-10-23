@@ -32,4 +32,5 @@
     <Param name="inputJena-predicates">http://www.w3.org/2000/01/rdf-schema#label</Param>
     <Param name="namespace">http://vivoweb.org/harvest/pubmed/author/</Param>
     <Param name="replace">true</Param>
+    <Param name="wordiness">INFO</Param> 
 </Config>
