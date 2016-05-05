@@ -1,0 +1,33 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+
+# DO NOT change the SELECT clause
+SELECT DISTINCT ?person ?scopusId
+
+# The following can be customized
+WHERE {
+
+{?person rdf:type foaf:Person }
+UNION
+{?person rdf:type vivo:FacultyMember }
+UNION
+{?person rdf:type vivo:EmeritusFaculty }
+UNION
+{?person rdf:type vivo:Librarian }
+UNION
+{?person rdf:type vivo:NonAcademic }
+UNION
+{?person rdf:type vivo:NonFacultyAcademic }
+UNION
+{?person rdf:type vivo:Postdoc }
+UNION
+{?person rdf:type vivo:EmeritusProfessor }
+
+?person rdfs:label ?label .
+?person vivo:scopusId ?scopusId .
+	
+FILTER ((regex(str(?person), "individual/oid-", "i") || regex(str(?person), "individual/cwid-", "i")) && regex(str(?label), "Abramson, Erika", "i"))
+}
+

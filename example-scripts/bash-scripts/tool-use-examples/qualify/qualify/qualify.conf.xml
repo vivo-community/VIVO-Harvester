@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<!--
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%  ===== Qualify =====                                                                                               %>
+<%  The purpose of this tools is to allow batch changes to be applied to data within a jena model.                    %>
+<%  ===== Reason for Use =====                                                                                        %>
+<%  When there are sections of data that need to be removed or changed then the qualify tool is a way of performing   %>
+<%    those changes without the need to know how to form the sparql update queries.                                   %>
+<%                                                                                                                    %>
+<%  ===== PARAMETERS =====                                                                                            %>
+<%                                                                                                                    %>
+<%  wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log   %>
+<%          level, the more detailed the messages.                                                                    %>
+<%      Possible Values:                                                                                              %>
+<%          <Param name="wordiness">OFF</Param> - Results in no messages being displayed.                             %>
+<%          <Param name="wordiness">ERROR</Param> - Results in only messages from the ERROR level to be displayed.    %>
+<%              Error messages detail when the tool has experienced an error preventing it from completing its task   %>
+<%          <Param name="wordiness">WARN</Param> - Results in only messages above and including WARN level messages   %>
+<%              to be displayed. Match does not produce any WARN level messages.                                      %>
+<%          <Param name="wordiness">INFO</Param> - (Default) Results in all messages above and including INFO level   %>
+<%              messages to be displayed. INFO level messages detail when the tool has started and ended and when it  %>
+<%              begins/ends a phase ('Finding matches' and 'Beginning Rename of matches') and how many matches have   %>
+<%              been found.                                                                                           %>
+<%          <Param name="wordiness">DEBUG</Param> - Results in all messages above and including DEBUG level messages  %>
+<%              to be displayed. DEBUG level messages detail each matching input URI to its VIVO URI as they are      %>
+<%              processed. Additionally, it will display stacktrace information if an error occurs.                   %>
+<%          <Param name="wordiness">ALL or TRACE</Param> - Results in all messages above and including TRACE          %>
+<%              level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.    %>
+<%              TRACE level messages details every matching set as it is processed in each phase along with SPARQL    %>
+<%              queries and start and stop for their execution.                                                       %>
+<%                                                                                                                    %>
+<%  modelsource - Provides the information needed for the connection to the source data model, which is the model     %>
+<%          that will be searched and modified.                                                                       %>
+<%          <Param name="jenaConfig">model.conf.xml</Param>                                                           %>
+<%                                                                                                                    %>
+<%  predicate - When making changing the data related to a predicate this is the value which will be used as that     %>
+<%          that predicate.                                                                                           %>
+<%          <Param name="dataType">predicate</Param>                                                                  %>
+<%                                                                                                                    %>
+<%  regexMatch -  When using regular expressions from a matching string, this is the field which will hold that       %>
+<%          string with regex characters.                                                                             %>
+<%          <Param name="regexMatch">Regex string</Param>                                                             %>
+<%                                                                                                                    %>
+<%  textMatch -  When matching a text string, this is the field which will hold that string.                          %>
+<%          <Param name="textMatch">match string</Param>                                                              %>
+<%                                                                                                                    %>
+<%  value - This field gives the value that is used to replace the selected strings                                   %>
+<%          <Param name="value">replacevalue</Param>                                                                  %>
+<%                                                                                                                    %>
+<%  remove-namespace - This namespace is to be removed during the run of quality. Any resources within this           %>
+<%          namespace are removed from the model. It is used when there is a namespace used for part of the harvest   %>
+<%          but is not part of the data that is due for harvest.                                                      %>
+<%          <Param name="remove-namespace">namespace</Param>                                                          %>
+<%                                                                                                                    %>
+<%  predicate-clean - A flag to signify that the triples which have a predicate within the given "remove-namespace"   %>
+<%          are removed from the source. This is useful when removing the data can be specified by a predicate        %>
+<%          namespace.                                                                                                %>
+<%          <Param name="predicate-clean">true</Param>                                                                %>
+<%                                                                                                                    %>
+<%  clean-resources - This flag signifies that triples which have either a subject or object within the given         %>
+<%          "remove-namespace" is to be removed.                                                                      %>
+<%          <Param name="clean-resources">true</Param>                                                                %>
+<%                                                                                                                    %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+ -->
+<Config>
+    <Param name="jenaConfig">harvested-data.model.xml</Param>
+    <Param name="jenaOverride">param=newvalue</Param>
+    <Param name="dataType">predicate</Param>
+    <Param name="regexMatch">Regex string</Param>
+    <Param name="textMatch">match string</Param>
+    <Param name="value">replacevalue</Param>
+    <Param name="remove-namespace">namespace</Param>
+    <Param name="predicate-clean">true</Param>
+    <Param name="clean-resources">true</Param>
+</Config>

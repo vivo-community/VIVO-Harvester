@@ -1,0 +1,13 @@
+usage: SOAPMessenger
+ -a,--authentication <AUTH>           The authentication session ID
+ -h,--help                            Help Message
+ -m,--message <MESSAGE>               The MESSAGE file path.
+ -o,--output <OUTPUT_FILE>            XML result file path
+ -p,--requestproperty <PARAM=VALUE>   request properties to be associated
+                                      with the SOAP request
+ -u,--url <URL>                       The URL which will receive the
+                                      MESSAGE.
+ -w,--wordiness <LOG_LEVEL>           Set the console log level
+ -X,--config <CONFIG_FILE>            XML Configuration File
+
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<Task>
+	<!--INPUT -->
+	<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<% ===== PARAMETERS =====                                                                                             %>
+<% The source relational database information:                                                                        %>
+<%                                                                                                                    %>
+<% <Param name="inputDriver"> - A JDBC driver is a java class which handles the interface between the program and a   %>
+<%     given database.The driver needs to exist within the classpath, for the program to be able to use it.           %>
+<%     EXAMPLES:                                                                                                      %>
+<%            <Param name="driver">org.h2.Driver</Param>                                                              %>
+<%                                                                                                                    %>
+<% <Param name="inputConnection"> - JDBC uses a connection string related to the Driver being used.                   %>
+<%    It is in the general format "jdbc:somejdbcvendor:other data needed"                                             %>
+<%    EXAMPLES :                                                                                                      %>
+<%     Microsoft SQL server : <Param name="connection">jdbc:jtds:sqlserver://127.0.0.1:8080/databasename</Param>      %>
+<%     H2 database ( http://www.h2database.com ) : <Param name="connection">jdbc:h2:directory/location</Param>        %>
+<%                                                                                                                    %>
+<% <Param name="inputUsername"> - A valid login with proper permissions                                               %>
+<% <Param name="inputPassword"> - The associated secure password                                                      %>
+<%   These are what the clone uses when accessing the given database. These must be valid otherwise the harvest run   %>
+<%  will not have access to the database. By default we use "sa" for system administrator and a blank password.       %>
+<%                                                                                                                    %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+	<Param name="inputDriver">com.mysql.jdbc.Driver</Param>
+	<Param name="inputConnection">jdbc:mysql://127.0.0.1:3306/demodb</Param>
+	<Param name="inputUsername">demodb</Param>
+	<Param name="inputPassword">demodb</Param>
+	
+	<!--  OUTPUT -->
+<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<% ===== PARAMETERS =====                                                                                             %>
+<% The destination relational database information:                                                                   %>
+<%                                                                                                                    %>
+<% <Param name="outputDriver"> - A JDBC driver is a java class which handles the interface between the program and a  %>
+<%     given database.The driver needs to exist within the classpath, for the program to be able to use it.           %>
+<%     EXAMPLES:                                                                                                      %>
+<%            <Param name="driver">org.h2.Driver</Param>                                                              %>
+<%                                                                                                                    %>
+<% <Param name="outputConnection"> - JDBC uses a connection string related to the Driver being used.                  %>
+<%    It is in the general format "jdbc:somejdbcvendor:other data needed"                                             %>
+<%    EXAMPLES :                                                                                                      %>
+<%     Microsoft SQL server : <Param name="connection">jdbc:jtds:sqlserver://127.0.0.1:8080/databasename</Param>      %>
+<%     H2 database ( http://www.h2database.com ) : <Param name="connection">jdbc:h2:directory/location</Param>        %>
+<%                                                                                                                    %>
+<% <Param name="outputUsername"> - A valid login with proper permissions                                              %>
+<% <Param name="outputPassword"> - The associated secure password                                                     %>
+<%   These are what the clone uses when accessing the given database. These must be valid otherwise the harvest run   %>
+<%  will not have access to the database. By default we use "sa" for system administrator and a blank password.       %>
+<%                                                                                                                    %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+	<Param name="outputDriver">org.h2.Driver</Param>
+	<Param name="outputConnection">jdbc:h2:data/databaseclone/database</Param>
+	<Param name="outputUsername">sa</Param>
+	<Param name="outputPassword"></Param>
+	
+		<!--  TABLES -->
+<!--
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%                                                                                                                    %>
+<%  <Param name="tableName"> This parameter is one the name of the tables that is being harvested from.               %>
+<%                                                                                                                    %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+-->
+	<!-- <Param name="tableName">mytable</Param> -->
+
+	<!--  OPTIONS -->
+<!-- 
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%                                                                                                                    %>
+<%  <Param name="validTableType">  This parameter is used to determine which types of tables are to be harvester from %>
+<%     Possible values (If the parameter is not present it uses the default value):                                   %>
+<%          TABLE - If set to this then the DatabaseClone is expecting a table {DEFAULT}                              %>
+<%          VIEW - this setting expects a view generated from the database.                                           %>
+<%  <Param name="DBUnitFeature">  See http://www.dbunit.org/properties.html for possible values                       %>
+<%                                                                                                                    %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+	
+	<!-- <Param name="validTableType">TABLE</Param> -->
+	<!-- <Param name="validTableType">VIEW</Param> -->
+	<Param name="DBUnitFeature">http://www.dbunit.org/features/caseSensitiveTableNames=true</Param>
+</Task>

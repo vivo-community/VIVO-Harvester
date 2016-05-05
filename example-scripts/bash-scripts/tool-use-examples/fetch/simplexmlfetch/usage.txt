@@ -1,0 +1,16 @@
+usage: SimpleXMLFetch
+ -f,--file <FALSE>                      file containing xml
+ -h,--help                              Help Message
+ -i,--id <ID>                           a single id for the xml object
+                                        [have multiple -i for more ids]
+ -n,--namespaceBase <NAMESPACE_BASE>    the base namespace to use for each
+                                        node created
+ -o,--output <CONFIG_FILE>              RecordHandler config file path
+ -O,--outputOverride <RH_PARAM=VALUE>   override the RH_PARAM of output
+                                        recordhandler using VALUE
+ -t,--tagname <TAGNAME>                 an tagname [have multiple -e for
+                                        more names]
+ -u,--url <URL>                         url which produces xml
+ -w,--wordiness <LOG_LEVEL>             Set the console log level
+ -X,--config <CONFIG_FILE>              XML Configuration File
+

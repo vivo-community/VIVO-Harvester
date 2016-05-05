@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ | Copyright (c) 2012 Symplectic Limited. All rights reserved.
+ | This Source Code Form is subject to the terms of the Mozilla Public
+ | License, v. 2.0. If a copy of the MPL was not distributed with this
+ | file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ -->
+<RecordHandler>
+    <!-- Param name="rhClass">org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param -->
+    <Param name="rhClass">uk.co.symplectic.vivoweb.harvester.store.ElementsRecordHandler</Param>
+    <Param name="fileDir">data/translated-records</Param>
+</RecordHandler>

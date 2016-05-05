@@ -1,0 +1,22 @@
+usage: WOSFetch
+ -a,--authmessage <AUTHMESSAGE>             The AUTHMESSAGE file path.
+ -c,--searchconnection <URL>                The URL which will receive the
+                                            SEARCHMESSAGE.
+ -h,--help                                  Help Message
+ -l,--lamrconnection <URL>                  The URL which will receive the
+                                            LAMRMESSAGE.
+ -m,--lamrmessage <LAMRMESSAGE>             The LAMRMESSAGE file path.
+ -o,--output <OUTPUT_FILE>                  XML result file path
+ -O,--outputOverride <RH_PARAM=VALUE>       override the RH_PARAM of
+                                            output recordhandler using
+                                            VALUE
+ -p,--usernamepassword <USERNAMEPASSWORD>   The username and password
+                                            string to be encoded using
+                                            base64
+ -s,--searchmessage <SEARCHMESSAGE>         The SEARCHMESSAGE file path.
+ -u,--authurl <URL>                         The URL which will receive the
+                                            AUTHMESSAGE.
+ -w,--wordiness <LOG_LEVEL>                 Set the console log level
+ -X,--config <CONFIG_FILE>                  XML Configuration File
+
+

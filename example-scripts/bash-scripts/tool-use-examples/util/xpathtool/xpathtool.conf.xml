@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+   <Param name="xml-file">./imported-records.rdf.xml</Param>
+   <Param name="expression">//*/*</Param>
+   <Param name="wordiness">INFO</Param>
+</Task>

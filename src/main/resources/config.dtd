@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT config (source?, reference?, score-data?,filter-namespace?,predicate-comparisons?)>
+	<!ELEMENT source (tdb-model?,sdb-model?,rdb-model?,file-model?)>
+	<!ELEMENT reference (tdb-model?,sdb-model?,rdb-model?,file-model?)>
+	<!ELEMENT score-data (tdb-model?,sdb-model?,rdb-model?,file-model?)>
+	<!ELEMENT filter-namespace (#PCDATA)>
+
+<!ELEMENT tdb-model (directory,model-name?)>
+	<!ELEMENT directory (#PCDATA)>
+<!ELEMENT sdb-model (layout?,database-type,driver-class,dburl,model-name?,username,password)>
+	<!ELEMENT layout (#PCDATA)>
+<!ELEMENT rdb-model (database-type,driver-class,dburl,model-name?,username,password)>
+<!ELEMENT file-model (file-path,rdf-format?)>
+	<!ELEMENT file-path (#PCDATA)>
+	<!ELEMENT rdf-format (#PCDATA)>
+<!-- shared amongst model types -->
+	<!ELEMENT model-name (#PCDATA)>
+	<!ELEMENT database-type (#PCDATA)>
+	<!ELEMENT driver-class (#PCDATA)>
+	<!ELEMENT dburl (#PCDATA)>
+	<!ELEMENT username (#PCDATA)>
+	<!ELEMENT password (#PCDATA)>
+<!ELEMENT predicate-comparisons (predicate-comparison+)>
+	<!ELEMENT predicate-comparison (algorithm,reference-predicate,source-predicate,weight)>
+		<!ATTLIST predicate-comparison name CDATA #REQUIRED>
+		<!ELEMENT algorithm (#PCDATA)>
+		<!ELEMENT reference-predicate (#PCDATA)>
+		<!ELEMENT source-predicate (#PCDATA)>
+		<!ELEMENT weight (#PCDATA)>
+
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+<!ELEMENT body (#PCDATA)>

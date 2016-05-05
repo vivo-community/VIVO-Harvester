@@ -1,0 +1,282 @@
+1.5 Release
+       Update Description TBD (2/19/2014):
+1.3
+	Pubmed script updated for faster scoring
+	New Example Scripts
+		Web of Science
+		D2RMap-CSV
+	Updated CSV VIVO script to properly handled updates
+				
+
+1.2
+	Scoring
+		Tiered Scoring is now implemented allowing for more complex workflows and performance improvements	
+	The examples are now located inside the example-scripts folder. Each folder is a self-contained harvest.
+		Old style scripts/ and configs/ folder are now deprecated in favor of the self-contained scripts and config files folder.
+	remove-last-*-harvest.sh scripts are now in the examples folders.
+		This allows you to undo (meaning restore your vivo to a pre-harvest state) the last harvest you ran for each example	
+	update pubmed xsl to reflect core:email instead of core:workEmail
+	vivo harvester now integrated with vivo web site via ingest menu
+		Ingest people and ingest grants via csv templates
+	revamped d2rmap, and mods harvester examples
+	new csv example script
+		allows importing directly from a csv file
+	new image import script
+		allows for batch harvesting of images to vivo people
+	Extraneous debugging info removed
+	script formatting cleanups and standardization
+	example pubmed script authorship mismatching fixed
+		this should show vastly improved performance and consistency
+	Harvester minimum memory requirement is now 256mb
+	Transfer -h argument changed to -s to prevent confusion with -h being help
+	Cleanup copyright headers -- we're now using authors file and standard template headers
+	Update packaging permissions to ease post-installation configuration
+	Fixed "missing author" bug on ingest publications
+	Add symlink to latest log in logs folder
+	Added counts to inform number of new objects imported by a harvest
+	
+1.1.1
+	MODS
+		Fix XSLT and script to handle relatedItem recursion better, and add hyperlinks into VIVO
+
+	ChangeNamespace
+		Now logs WARN messages rather than ERROR
+	
+	Fixed Diff lines in all scripts to use Previous Harvest directory h2 models
+	All tools should no longer require config files, allowing all parameters to be specified as overrides
+	
+	Updated xsl of dsr to create dateTimeInterval resources.
+	
+
+1.1
+    Updated scripts
+        dsr example now incorporates smush
+        dsr and people soft have corrected previous harvest reference.
+    
+    Smush
+        allows compressing on predicates and filtered on namespace.
+    
+    MODS
+        Fixed issue with improper excludeEntity allocation
+        Fixed issue with backslashes in URIs
+        
+    CSVtoRDF
+        Alpha version for future integration into a simple harvest UI
+    
+    VIVO.xml
+        updated to use sdb by default
+        
+    Qualify
+        fix concurrent modification issue
+    
+    
+
+	Modified README to point users at mediawiki @ sourceforge
+	Removed INSTALL
+
+1.0
+	Updated scripts
+		env file no longer requires configuration
+		more variables are used for readability
+		env file contains optional performance enhancements for the JVM -- these are on by default
+	Config files no longer required to run any tool
+	Command line arguments have changed for several tools
+	Logging now logs to single file
+	
+	Match
+		Create methods for renaming nodes and linking nodes, based on a match meeting a threshold
+	D2RMap
+		now supports csv files
+	MODS
+		new xsl file to convert from MODS to vivo
+	Pubmed
+		Fix for mesh term striping errors
+		Regex function for pulling out firstname and middlename/initial
+	Score
+		Added new algorithim framework
+			Availible algorithims to score against:
+				Levenshtein Difference
+				Damerau-Levenshtein Difference
+				Typo Difference (Damerau-Levenshtein w/ Typo evaluation weighting)
+				SoundExDifference
+				DoubleMetaphone Difference
+				EqualityTest (simple 100% match)
+		Removed exact match, foriegnkey match, and name match
+		Removed output model for scoring
+		Combined previous functions along with cmw python code to create weighted search
+		now uses TDB as the backend for inprocess temporary jena models
+	Node Renaming
+		Moved to Qualify Package
+		Removed matching algorithms (use score ahead of node renaming)
+		Refactored to use sparql queries for determing nodes that need renamed
+	Qualify
+		In-line string replace
+		Moved Sanitize portion of scoring into qualify for removing ontologies/namespaces
+	Update
+		Wrapper class removed in favor of direct diff and transfer tool calls	
+	Merge
+		Merge tool created to assist with merging RF; specifically during JDBC harvests
+	VIVO.xml
+		namespace added
+		type added (supported types are sdb, rdb, or mem)
+
+0.7.1
+	XSL
+		Pubmed
+			fix for publication types
+	Score
+		fix authorname match selecting incorrectly
+		fix lang datatype issue not matching 
+		
+	changenamespace
+		small logic fixes and debugging info added
+
+0.7.0
+	Update -- new command
+		added Diff to run a diff between models
+		added Merge to perform addition and subtraction of statements between jena Models
+		added changenamespace for node renaming
+	XSL files
+		Pubmed
+			add DOI
+			fix for dates
+			moved mesh terms to free text keyword
+			added back author stubs 
+			people created in pubmed now have a class that can be added to ignore list inside lucene
+	Score
+		add -q option to clear output model before scoring
+		fix author name scoring bug where it would miss duplicate names
+		add initials logic to author name scoring
+		fix scoring infinite loop when recursively looping thru nodes
+	Logging 
+		migrated to logback from log4j
+		logging speed is much faster
+		by default, only info level and warnings are output to console. this can be changed by setting the level in logback.xml in the root installation folder
+		tasks and run both log to there own files
+	Example Scripts
+		 now utilize environment variables
+		 have been enhance to use H2 db by default; which greatly increases harvest speed
+		 update all scripts to support and use backups between tool runs
+	remapped /usr/share/vivoingest to /usr/share/vivo/harvester
+	tool is now known as harvester inside code, rather than ingest
+	
+
+0.6.2
+	Correct pubmed error -- would not fetch more than 1000 records
+	Correct null exception pointer on scoring when first name was blank
+
+0.6.1
+	Correct example scripts
+
+0.6.0
+Score
+	new ForeignKey matching function
+	uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	--keep-input-model (-k) is removed
+	--wipe-input-model (-w) is added as inverse of -k (if you had -k, dont have -w and vice-versa)
+Transfer
+	uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	--keep-input-model (-k) is removed
+	--wipe-input-model (-w) is added as inverse of -k (if you had -k, dont have -w and vice-versa)
+Translate
+	Gloze
+		added wrapper for gloze
+	XSLT
+		
+Fetch
+	Pubmed
+		location option removed
+		please register with pubmed ( send email to: eutilities@ncbi.nlm.nih.gov stating the email you have
+			in your config and that you are using the tool called "VIVO_Harvester_(vivo.sourceforge.net)" )
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	D2RMap
+		new method to allow D2RMap use inside of harvester
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+	JDBC
+		many new options to further refine your fetch queries
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+		example scripts added
+		bug fixes
+	OAI
+		uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+Qualify
+	uses capital letter flags as java style (-D foo=bar) overrides for record handler and jena configs
+Utils
+	DatabaseClone
+		Alpha version of a tool to duplicate a database from one jdbc connection to another (mssql -> mysql?)
+	RecordHandler
+		TextFileRecordHandler
+			Improved some of the record iteration code, but it is still not suggested to use this for large
+				datasets (over 10,000 records)
+Updated deb package to respect changed configuration files
+
+
+0.5.0
+Fetch
+	JDBCFetch handles XML special characters
+Score
+	no long accept rdf or record handlers as input, use transfer to load into model first
+Transfer
+	Add delete model before import flag
+	Allow for loading from an record handler
+Qualify
+	Using Jena Model methods rather than SPARQL queries now
+Utils
+	Fixed lots of small RecordHandler bugs
+	JenaConnect sibling creation shares database connection, rather than creating separate connection
+	XML special characters handler
+Junit testing is now implemented; more tests to come 
+New release script for building, testing, and uploading new releases to sourceforge
+Added rpm to maven build -- NOTE utilize the generated rpm at your own risk -- please file bugs if found
+
+0.4.5
+fix authorName bestMatch bug in scoring
+make staging default model for qualify and transfer
+add ability to load from RDF file as input for transfer
+
+0.4.4
+Fix scoring run failure when forename is blank
+Authors are listed out of order
+Dates are missing on many articles
+MeSH terms are duplicated
+articles not listed on their journal page under "publication venue for"
+
+0.4.3
+Add force option and author name matching to scoring
+fix version information in debian package
+
+0.4.2
+Patch for .metadata error on Windows
+
+0.4.1
+Fix null pointer exception inside fetch
+Fix mesh terms and author stubs
+
+0.4
+Design
+
+    * Clean up of Configuration Utilities
+    * Simplification of Design for execution 
+
+Virtual Machine
+
+    * Add harvester to virtual machine 
+
+Scoring
+
+    * Must allow for parameters to be passed in from command line for any algorithm
+    * Must allow for process flow and order dependency 
+
+Translating
+
+    * Definition of VIVO to Medline Relationship of Publication Types (ie Article, Demo, etc) 
+    
+0.3.2
+Fix tarball
+Fixes exception when executing fetch queries
+
+0.3.1
+Fix publication linking issues
+
+0.3
+Initial release for public consumption

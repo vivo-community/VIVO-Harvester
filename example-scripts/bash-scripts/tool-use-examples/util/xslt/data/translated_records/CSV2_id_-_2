@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:bibo="http://purl.org/ontology/bibo/"
+         xmlns:db-CSV="jdbc:h2:data/csv/store/fields/CSV2/"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:core="http://vivoweb.org/ontology/core#"
+         xmlns:score="http://vivoweb.org/ontology/score#">
+   <rdf:Description rdf:about="http://vivoweb.org/harvest/csvfile/person/person99575130">
+      <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+      <score:personID>99575130</score:personID>
+      <foaf:lastName>Fereira</foaf:lastName>
+      <foaf:firstName>John</foaf:firstName>
+      <score:authorName>Fereira J</score:authorName>
+   </rdf:Description>
+</rdf:RDF>

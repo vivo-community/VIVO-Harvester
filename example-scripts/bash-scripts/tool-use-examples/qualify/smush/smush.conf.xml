@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<!--
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+<%  ===== Smush =====                                                                                                 %>
+<%  The purpose of this tool is to collapse data according to a given predicate value.                                %>
+<%  ===== Reason for Use =====                                                                                        %>
+<%  The use of smush assumes that there is an identifying value for each resource of a given namespace. It removes    %>
+<%     resource duplicates by renaming the resources to one of the resources found that shares the value of the object%>
+<%     associated with the predicate.                                                                                 %>
+<%  This tool has its greatest use for when there is an identification number, label or other unique literal          %>
+<%  WARN : There is no operation to undo a smush on a dataset. Be sure to backup the data.                            %>
+<%                                                                                                                    %>
+<%  ===== PARAMETERS =====                                                                                            %>
+<%                                                                                                                    %>
+<%  wordiness - (optional) sets the lowest level of log messages to be displayed to the console.  The lower the log   %>
+<%          level, the more detailed the messages.                                                                    %>
+<%      Possible Values:                                                                                              %>
+<%          <wordiness>OFF</wordiness> - Results in no messages being displayed.                                      %>
+<%          <wordiness>ERROR</wordiness> - Results in only messages from the ERROR level to be displayed.             %>
+<%              Error messages detail when the tool has experienced an error preventing it from completing its task   %>
+<%          <wordiness>WARN</wordiness> - Results in only messages above and including WARN level messages            %>
+<%              to be displayed. Match does not produce any WARN level messages.                                      %>
+<%          <wordiness>INFO</wordiness> - (Default) Results in all messages above and including INFO level            %>
+<%              messages to be displayed. INFO level messages detail when the tool has started and ended and when it  %>
+<%              begins/ends a phase ('Finding matches' and 'Beginning Rename of matches') and how many matches have   %>
+<%              been found.                                                                                           %>
+<%          <wordiness>DEBUG</wordiness> - Results in all messages above and including DEBUG level messages           %>
+<%              to be displayed. DEBUG level messages detail each matching input URI to its VIVO URI as they are      %>
+<%              processed. Additionally, it will display stacktrace information if an error occurs.                   %>
+<%          <wordiness>ALL</Param> or TRACE<wordiness> - Results in all messages above and including TRACE            %>
+<%              level messages to be displayed, since trace is the lowest level it is the same as ALL in practice.    %>
+<%              TRACE level messages details every matching set as it is processed in each phase along with SPARQL    %>
+<%              queries and start and stop for their execution.                                                       %>
+<%                                                                                                                    %>
+<%  modelSource - Provides the information needed for the connection to the source data model, which is the model     %>
+<%          that will be searched and possibly modified.                                                              %>
+<%          <Param name="inputJena-config">model.conf.xml</Param>                                                     %>
+<%                                                                                                                    %>
+<%  modelDestination (Optional) - Provides the information for the connection to the destination model. If a          %>
+<%          destination model is provided then the source model remains unchanged. The reason to provide a            %>
+<%          destination model is that the source model needs to be used later in its un-smushed condition, or         %>
+<%          the model data will be smushed on separate predicates.                                                    %>
+<%          <Param name="outputJena-config">model.conf.xml</Param>                                                    %>
+<%                                                                                                                    %>
+<%  predicate - Since smush treats a predicate as an identifying the predicate smush be provided. Several predicates  %>
+<%          can be provided and will be operated on in series, not in parallel.                                       %>
+<%          <Param name="inputJena-predicates">http://predicate/</Param>                                              %>
+<%                                                                                                                    %>
+<%  namespace - Smush will filter its effects based on the namespace given in this field. It allows namspaces to be   %>
+<%          used as a narrowing property for the predicates that different resources find identifying.                %>
+<%          <Param name="namespace">http://mydomain.com/namespace</Param>                                             %>
+<%                                                                                                                    %>
+<%  inPlace - For Smush to work on the source data and not need a destination this flag signals that desire. The      %>
+<%          only time for this flag not to be activated is when producing an output model.                            %>
+<%          <Param name="replace">true</Param>                                                                        %>
+<%                                                                                                                    %>
+<%  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  %>
+ -->
+<Config>
+   <Param name="inputJena-config">harvested-data.model.xml</Param>
+   <Param name="inputJena-predicates">http://www.w3.org/2000/01/rdf-schema#label</Param>
+   <Param name="namespace">http://vivoweb.org/harvest/csvfile/person/</Param>
+   <Param name="replace">true</Param>
+</Config>

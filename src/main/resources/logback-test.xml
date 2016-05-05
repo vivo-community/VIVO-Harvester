@@ -1,0 +1,129 @@
+<configuration>
+  
+  <appender name="AllAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>logs/${harvester-task:-harvester}.log</File>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>${log-file-level:-ALL}</level>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>10</maxIndex>
+      <FileNamePattern>logs/${harvester-task:-harvester}.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>10240MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  
+  <!-- Uncomment to allow for individual log files for each tool - ->
+  <appender name="ClassAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>logs/${harvester-task:-harvester}.${process-task:-all}.log</File>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ALL</level>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>10</maxIndex>
+      <FileNamePattern>logs/${harvester-task:-harvester}.${process-task:-all}.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>10240MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender> <!- - -->
+  
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <Target>System.out</Target>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>TRACE</level>
+      <onMatch>${console-trace:-ACCEPT}</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>DEBUG</level>
+      <onMatch>${console-debug:-ACCEPT}</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>INFO</level>
+      <onMatch>${console-info:-ACCEPT}</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>WARN</level>
+      <onMatch>DENY</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>DENY</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+  </appender>
+  
+  <appender name="Error" class="ch.qos.logback.core.ConsoleAppender">
+    <Target>System.err</Target>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%c{1}] %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>${console-warnerror:-WARN}</level>
+    </filter>
+  </appender>
+  
+  <logger name="org.vivoweb.harvester" level="${harvester-level:-ALL}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+    <!-- - -><appender-ref ref="ClassAppender"/><!- - -->
+  </logger>
+  <logger name="org.vivoweb.harvester.util.XPathTool" level="WARN" additivity="false">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="org.vivoweb.test.harvester" level="${test-level:-ALL}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+    <!-- - -><appender-ref ref="ClassAppender"/><!- - -->
+  </logger>
+  <logger name="com.hp.hpl.jena" level="${jena-level:-INFO}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler" level="${rdf-error-level:-ERROR}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="com.hp.hpl.jena.arq" level="${arq-level:-ERROR}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="org.apache.commons.vfs" level="${vfs-level:-ERROR}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="org.dbunit" level="${dbunit-level:-ERROR}">
+  	<appender-ref ref="Console"/>
+  	<appender-ref ref="Error"/>
+  	<appender-ref ref="AllAppender"/>
+  </logger>
+  <logger name="ch.qos.logback" level="${logback-level:-ERROR}">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Error"/>
+    <appender-ref ref="AllAppender"/>
+  </logger>
+  <root level="${root-level:-OFF}"/>
+  
+</configuration>

@@ -1,0 +1,12 @@
+usage: CSVtoJDBC
+ -c,--connection <JDBC_CONN>   jdbc connection string for output database
+ -d,--driver <JDBC_DRIVER>     jdbc driver class for output database
+ -h,--help                     Help Message
+ -i,--inputFile <FILENAME>     csv file to be read into the database
+ -p,--password <PASSWORD>      database password for output database
+ -t,--tableName <TABLE_NAME>   a single database table name
+ -u,--username <USERNAME>      database username for output database
+ -w,--wordiness <LOG_LEVEL>    Set the console log level
+ -X,--config <CONFIG_FILE>     XML Configuration File
+
+

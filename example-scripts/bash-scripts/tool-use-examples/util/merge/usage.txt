@@ -1,0 +1,17 @@
+usage: Merge
+ -b,--baseRegex <REGEX>                   match records using REGEX and
+                                          use the first Group to find
+                                          sub-records
+ -h,--help                                Help Message
+ -I,--inputOverride <JENA_PARAM=VALUE>    override the JENA_PARAM of input
+                                          jena model config using VALUE
+ -i,--input <CONFIG_FILE>                 config file for input jena model
+ -o,--output <CONFIG_FILE>                config file for output jena
+                                          model
+ -O,--outputOverride <JENA_PARAM=VALUE>   override the JENA_PARAM of
+                                          output jena model config using
+                                          VALUE
+ -w,--wordiness <LOG_LEVEL>               Set the console log level
+ -X,--config <CONFIG_FILE>                XML Configuration File
+
+

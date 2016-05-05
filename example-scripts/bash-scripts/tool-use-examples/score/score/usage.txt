@@ -1,0 +1,59 @@
+usage: Score
+ -A,--algorithms <RUN_NAME=CLASS_NAME>            for RUN_NAME, use this
+                                                  CLASS_NAME (must
+                                                  implement Algorithm) to
+                                                  evaluate matches
+ -b,--batch-size <BATCH_SIZE>                     approximate number of
+                                                  triples to process in
+                                                  each batch - default
+                                                  2000 - lower this if
+                                                  getting StackOverflow or
+                                                  OutOfMemory
+ -c,--common-names <COMMON_NAMES>                 use these names to check
+                                                  if the score needs to be
+                                                  modified.
+ -F,--inputJena-predicates <RUN_NAME=PREDICATE>   for RUN_NAME, match
+ -h,--help                                        Help Message
+ -I,--inputOverride <JENA_PARAM=VALUE>            override the JENA_PARAM
+                                                  of inputJena jena model
+                                                  config using VALUE
+ -i,--inputJena-config <CONFIG_FILE>              inputJena JENA
+                                                  configuration filename
+ -m,--matchThreshold <THRESHOLD>                  match records with a
+                                                  score over THRESHOLD
+ -n,--namespace <SCORE_NAMESPACE>                 limit match Algorithm to
+                                                  only match rdf nodes in
+                                                  inputJena whose URI
+                                                  begin with
+                                                  SCORE_NAMESPACE
+ -P,--vivoJena-predicates <RUN_NAME=PREDICAATE>   for RUN_NAME, assign
+                                                  this weight (0,1) to the
+                                                  scores
+    --reloadInput                                 reload the temp copy of
+                                                  input, only needed if
+                                                  input has changed since
+                                                  last score
+    --reloadVivo                                  reload the temp copy of
+                                                  Vivo, only needed if
+                                                  Vivo has changed since
+                                                  last score
+ -s,--score-config <CONFIG_FILE>                  score data JENA
+                                                  configuration filename
+ -S,--scoreOverride <JENA_PARAM=VALUE>            override the JENA_PARAM
+                                                  of score jena model
+                                                  config using VALUE
+ -t,--tempJenaDir <DIRECTORY_PATH>                directory to store temp
+                                                  jena model
+ -v,--vivoJena-config <CONFIG_FILE>               vivoJena JENA
+                                                  configuration filename
+ -V,--vivoOverride <JENA_PARAM=VALUE>             override the JENA_PARAM
+                                                  of vivoJena jena model
+                                                  config using VALUE
+ -w,--wordiness <LOG_LEVEL>                       Set the console log
+                                                  level
+ -W,--weights <RUN_NAME=WEIGHT>                   for RUN_NAME, assign
+                                                  this weight (0,1) to the
+                                                  scores
+ -X,--config <CONFIG_FILE>                        XML Configuration File
+
+

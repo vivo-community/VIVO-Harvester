@@ -1,0 +1,873 @@
+@prefix ocresd: <http://purl.org/net/OCRe/study_design.owl#> .
+@prefix geo:   <http://aims.fao.org/aos/geopolitical.owl#> .
+@prefix scires: <http://vivoweb.org/ontology/scientific-research#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix cito:  <http://purl.org/spar/cito/> .
+@prefix j.1:   <http://vivoweb.org/ontology/score#> .
+@prefix j.0:   <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix j.3:   <http://www.w3.org/2006/vcard/ns#> .
+@prefix j.2:   <http://purl.obolibrary.org/obo/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix obo:   <http://purl.obolibrary.org/obo/> .
+@prefix j.4:   <http://vivoweb.org/ontology/core#> .
+@prefix ocrer: <http://purl.org/net/OCRe/research.owl#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix j.5:   <http://xmlns.com/foaf/0.1/> .
+@prefix event: <http://purl.org/NET/c4dm/event.owl#> .
+@prefix bibo:  <http://purl.org/ontology/bibo/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix c4o:   <http://purl.org/spar/c4o/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix vitro-public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix vivo:  <http://vivoweb.org/ontology/core#> .
+
+<http://vivo.sample.edu/individual/n878461518>
+        a                     j.4:FacultyMember , j.4:Position , j.4:Relationship ;
+        rdfs:label            "Lecturer"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.4:dateTimeInterval  <http://vivo.sample.edu/individual/n1134853684> ;
+        j.4:relates           <http://vivo.sample.edu/individual/n266525218> , <http://vivo.sample.edu/individual/n965692431> .
+
+<http://vivo.sample.edu/individual/n965692431>
+        a                j.4:FacultyMember , j.5:Person ;
+        rdfs:label       "Vallad, Gary"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        obo:ARG_2000028  <http://vivo.sample.edu/individual/n1554466463> ;
+        j.4:relatedBy    <http://vivo.sample.edu/individual/n878461518> ;
+        j.1:personid     "16310040" ;
+        vcard:hasTitle   <http://vivo.sample.edu/individual/n1893936722> .
+
+<http://vivo.sample.edu/individual/n1937466095>
+        a                      j.4:DateTimeValue , owl:Thing ;
+        j.4:dateTime           "2007-14-12T00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        j.4:dateTimePrecision  j.4:yearMonthDayPrecision .
+
+<http://vivo.sample.edu/individual/n457314312>
+        a                      j.4:DateTimeValue , owl:Thing ;
+        j.4:dateTime           "2010-09-25T00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        j.4:dateTimePrecision  j.4:yearMonthDayPrecision .
+
+<http://vivo.sample.edu/individual/n208704524>
+        a                      j.4:DateTimeValue , owl:Thing ;
+        j.4:dateTime           "2006-12-31T00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        j.4:dateTimePrecision  j.4:yearMonthDayPrecision .
+
+<http://vivo.sample.edu/individual/n853989941>
+        a                      j.4:DateTimeValue , owl:Thing ;
+        j.4:dateTime           "2010-05-05T00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+        j.4:dateTimePrecision  j.4:yearMonthDayPrecision .
+
+<http://vivo.sample.edu/individual/n1893936722>
+        a                     vcard:Title ;
+        rdfs:label            "vCard title for: Vallad, Gary"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType  vcard:Title ;
+        vcard:title           "Lecturer"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n560460824>
+        a                     vcard:Title ;
+        rdfs:label            "vCard title for: Pence, James"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType  vcard:Title ;
+        vcard:title           "Software Engineer"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n664149413>
+        a                     vcard:Title ;
+        rdfs:label            "vCard title for: Abrams, Robert"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType  vcard:Title ;
+        vcard:title           "Professor"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n2053583499>
+        a              j.5:Organization ;
+        rdfs:label     "BayTech"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.4:relatedBy  <http://vivo.sample.edu/individual/n1848411375> .
+
+<http://vivo.sample.edu/individual/n266525218>
+        a              j.5:Organization ;
+        rdfs:label     "Social Science"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.4:relatedBy  <http://vivo.sample.edu/individual/n878461518> .
+
+<http://vivo.sample.edu/individual/n1319639528>
+        a              j.5:Organization ;
+        rdfs:label     "CTRIP"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.4:relatedBy  <http://vivo.sample.edu/individual/n735046576> .
+
+<http://vivo.sample.edu/individual/n1463699641>
+        a                     j.4:DateTimeInterval , owl:Thing ;
+        j.0:mostSpecificType  j.4:DateTimeInterval ;
+        j.4:start             <http://vivo.sample.edu/individual/n208704524> .
+
+<http://vivo.sample.edu/individual/n194501766>
+        a                     j.4:DateTimeInterval , owl:Thing ;
+        j.0:mostSpecificType  j.4:DateTimeInterval ;
+        j.4:start             <http://vivo.sample.edu/individual/n457314312> .
+
+<http://vivo.sample.edu/individual/n1134853684>
+        a                     j.4:DateTimeInterval , owl:Thing ;
+        j.0:mostSpecificType  j.4:DateTimeInterval ;
+        j.4:end               <http://vivo.sample.edu/individual/n853989941> ;
+        j.4:start             <http://vivo.sample.edu/individual/n1937466095> .
+
+<http://vivo.sample.edu/individual/n1554466463>
+        a                   obo:ARG_2000379 , vcard:Individual ;
+        rdfs:label          "vCard for: Vallad, Gary"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        obo:ARG_2000029     <http://vivo.sample.edu/individual/n965692431> ;
+        vcard:hasEmail      <http://vivo.sample.edu/individual/n1888324432> ;
+        vcard:hasName       <http://vivo.sample.edu/individual/n515617003> ;
+        vcard:hasTelephone  <http://vivo.sample.edu/individual/n658621900> ;
+        vcard:hasTitle      <http://vivo.sample.edu/individual/n1893936722> .
+
+<http://vivo.sample.edu/individual/n1442647477>
+        a                   obo:ARG_2000379 , vcard:Individual ;
+        rdfs:label          "vCard for: Abrams, Robert"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        obo:ARG_2000029     <http://vivo.sample.edu/individual/n456388393> ;
+        vcard:hasName       <http://vivo.sample.edu/individual/n702342420> ;
+        vcard:hasTelephone  <http://vivo.sample.edu/individual/n73542895> ;
+        vcard:hasTitle      <http://vivo.sample.edu/individual/n664149413> .
+
+<http://vivo.sample.edu/individual/n968589489>
+        a                   obo:ARG_2000379 , vcard:Individual ;
+        rdfs:label          "vCard for: Pence, James"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        obo:ARG_2000029     <http://vivo.sample.edu/individual/n1861108840> ;
+        vcard:hasEmail      <http://vivo.sample.edu/individual/n728035770> ;
+        vcard:hasName       <http://vivo.sample.edu/individual/n942032532> ;
+        vcard:hasTelephone  <http://vivo.sample.edu/individual/n1960915866> , <http://localhost:8080/vivo/individual/n5214> ;
+        vcard:hasTitle      <http://vivo.sample.edu/individual/n560460824> .
+
+<http://vivo.sample.edu/individual/n728035770>
+        a                     vcard:Work , vcard:Email ;
+        rdfs:label            "vCard email for: Pence, James"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType  vcard:Email ;
+        vcard:email           "jrpence@ufl.edu"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n1888324432>
+        a                     vcard:Work , vcard:Email ;
+        rdfs:label            "vCard email for: Vallad, Gary"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType  vcard:Email ;
+        vcard:email           "gvallad@ufl.edu"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n456388393>
+        a                j.5:Person , j.4:EmeritusProfessor ;
+        rdfs:label       "Abrams, Robert"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        obo:ARG_2000028  <http://vivo.sample.edu/individual/n1442647477> ;
+        j.4:relatedBy    <http://vivo.sample.edu/individual/n1848411375> ;
+        j.1:personid     "88374800" ;
+        vcard:hasTitle   <http://vivo.sample.edu/individual/n664149413> .
+
+<http://vivo.sample.edu/individual/n1861108840>
+        a                j.5:Person , j.4:NonAcademic ;
+        rdfs:label       "Pence, James"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        obo:ARG_2000028  <http://vivo.sample.edu/individual/n968589489> ;
+        j.4:relatedBy    <http://vivo.sample.edu/individual/n735046576> ;
+        j.1:personid     "99575130" ;
+        vcard:hasTitle   <http://vivo.sample.edu/individual/n560460824> .
+
+<http://vivo.sample.edu/individual/n735046576>
+        a                     j.4:Position , j.4:NonAcademic , j.4:Relationship ;
+        rdfs:label            "Software Engineer"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.4:dateTimeInterval  <http://vivo.sample.edu/individual/n194501766> ;
+        j.4:relates           <http://vivo.sample.edu/individual/n1319639528> , <http://vivo.sample.edu/individual/n1861108840> .
+
+<http://vivo.sample.edu/individual/n1848411375>
+        a                     j.4:Position , j.4:EmeritusProfessor , j.4:Relationship ;
+        rdfs:label            "Professor"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.4:dateTimeInterval  <http://vivo.sample.edu/individual/n1463699641> ;
+        j.4:relates           <http://vivo.sample.edu/individual/n2053583499> , <http://vivo.sample.edu/individual/n456388393> .
+
+<http://vivo.sample.edu/individual/n515617003>
+        a                      vcard:Name ;
+        rdfs:label             "vCard name for: Vallad, Gary"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType   vcard:Name ;
+        vcard:familyName       "Vallad"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:givenName        "Gary"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:honorificSuffix  "Jr."^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n942032532>
+        a                     vcard:Name ;
+        rdfs:label            "vCard name for: Pence, James"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType  vcard:Name ;
+        vcard:familyName      "Pence"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:givenName       "James"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n702342420>
+        a                      vcard:Name ;
+        rdfs:label             "vCard name for: Abrams, Robert"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        j.0:mostSpecificType   vcard:Name ;
+        vcard:familyName       "Abrams"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:givenName        "Robert"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:honorificPrefix  "Dr."^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n73542895>
+        a                vcard:Telephone ;
+        rdfs:label       "vCard telephone for: Abrams, Robert"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:telephone  "3523713721"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n1960915866>
+        a                vcard:Telephone ;
+        rdfs:label       "vCard telephone for: Pence, James"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:telephone  "3522945154"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://localhost:8080/vivo/individual/n5214>
+        a                vcard:Telephone , vcard:Fax ;
+        vcard:telephone  "555-5555"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://vivo.sample.edu/individual/n658621900>
+        a                vcard:Telephone ;
+        rdfs:label       "vCard telephone for: Vallad, Gary"^^<http://www.w3.org/2001/XMLSchema#string> ;
+        vcard:telephone  "8136340000"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Comoros_the  rdfs:label  "Comoros"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Romania  rdfs:label  "Romania"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Serbia_and_Montenegro
+        rdfs:label  "Serbia and Montenegro"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CAN  rdfs:label  "Andean Community "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cote_d_Ivoire  rdfs:label  "Côte d'Ivoire"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Fiji  rdfs:label  "Fiji"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:eastern_Asia  rdfs:label  "eastern Asia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Yemen_1990  rdfs:label  "Yemen_1990"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bermuda  rdfs:label  "Bermuda"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Montenegro  rdfs:label  "Montenegro"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:United_States_Virgin_Islands
+        rdfs:label  "United States Virgin Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Jamaica  rdfs:label  "Jamaica"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Ethiopia  rdfs:label  "Ethiopia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Democratic_Yemen  rdfs:label  "Yemen, Democratic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Slovenia  rdfs:label  "Slovenia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Solomon_Islands  rdfs:label  "Solomon Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Slovakia  rdfs:label  "Slovakia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Guatemala  rdfs:label  "Guatemala"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Oman  rdfs:label  "Oman"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Grenada  rdfs:label  "Grenada"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Seychelles  rdfs:label  "Seychelles"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Burundi  rdfs:label  "Burundi"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saint_Vincent_and_the_Grenadines
+        rdfs:label  "Saint Vincent and the Grenadines"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Ethiopia_1993  rdfs:label  "Ethiopia_1993"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:China  rdfs:label  "China"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Mozambique  rdfs:label  "Mozambique"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:northern_Europe  rdfs:label  "northern Europe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Guinea-Bissau  rdfs:label  "Guinea-Bissau"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Netherlands_Antilles
+        rdfs:label  "Netherlands Antilles"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Madagascar  rdfs:label  "Madagascar"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Holy_See  rdfs:label  "Holy See"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Africa  rdfs:label  "Africa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Falkland_Is  rdfs:label  "Falkland Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cook_Islands_the  rdfs:label  "Cook Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Palau  rdfs:label  "Palau"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Antarctica  rdfs:label  "Antarctica"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cambodia  rdfs:label  "Cambodia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Spain  rdfs:label  "Spain"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:western_Asia  rdfs:label  "western Asia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saint_Barthelemy  rdfs:label  "Saint Barthélemy   "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Liechtenstein  rdfs:label  "Liechtenstein"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Turkmenistan  rdfs:label  "Turkmenistan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saudi_Arabia  rdfs:label  "Saudi Arabia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Italy  rdfs:label  "Italy"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:World  rdfs:label  "World"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Liberia  rdfs:label  "Liberia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Ecuador  rdfs:label  "Ecuador"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Uruguay  rdfs:label  "Uruguay"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Mexico  rdfs:label  "Mexico"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Kuwait  rdfs:label  "Kuwait"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Republic_of_Moldova
+        rdfs:label  "Republic of Moldova"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:eastern_Europe  rdfs:label  "eastern Europe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cayman_Islands  rdfs:label  "Cayman Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:United_Kingdom_of_Great_Britain_and_Northern_Ireland__the
+        rdfs:label  "United Kingdom"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Sao_Tome_and_Principe
+        rdfs:label  "Sao Tome and Principe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Lebanon  rdfs:label  "Lebanon"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Lesotho  rdfs:label  "Lesotho"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Sint_Maarten  rdfs:label  "Sint Maarten (Dutch Part)  "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:British_Virgin_Islands
+        rdfs:label  "British Virgin Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:PTA  rdfs:label  "Preferential Trade Area for Eastern and Southern African States "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Philippines__the  rdfs:label  "Philippines"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Jordan  rdfs:label  "Jordan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CAC  rdfs:label  "Central American Council of Agriculture  "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:United_Arab_Emirates__the
+        rdfs:label  "United Arab Emirates"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Canada  rdfs:label  "Canada"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Democratic_Republic_of_the_Congo
+        rdfs:label  "Democratic Republic of the Congo"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Montserrat  rdfs:label  "Montserrat"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:COMESA  rdfs:label  "Common Market for Eastern and Southern Africa "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:COMESA_1994  rdfs:label  "Common Market for Eastern and Southern Africa "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Ukraine  rdfs:label  "Ukraine"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Tajikistan  rdfs:label  "Tajikistan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Burkina_Faso  rdfs:label  "Burkina Faso"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:south-eastern_Asia
+        rdfs:label  "south-eastern Asia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:northern_Africa  rdfs:label  "northern Africa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:LIFDC_2009  rdfs:label  "low income and food deficit countries"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:LIFDC_2008  rdfs:label  "low income and food deficit countries"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:LIFDC  rdfs:label  "low income and food deficit countries"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:LIFDC_2005  rdfs:label  "low income and food deficit countries"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Asia  rdfs:label  "Asia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Puerto_Rico  rdfs:label  "Puerto Rico"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Kenya  rdfs:label  "Kenya"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Benin  rdfs:label  "Benin"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:South_Sudan  rdfs:label  "South Sudan "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Malawi  rdfs:label  "Malawi"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:central_America  rdfs:label  "central America"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saint-Martin  rdfs:label  "Saint-Martin (French Part)   "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Equatorial_Guinea
+        rdfs:label  "Equatorial Guinea"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Sudan_the_1956  rdfs:label  "Sudan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Sudan_the  rdfs:label  "Sudan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Algeria  rdfs:label  "Algeria"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Senegal  rdfs:label  "Senegal"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:FAO_2006  rdfs:label  "FAO_2006"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bhutan  rdfs:label  "Bhutan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bangladesh  rdfs:label  "Bangladesh"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Tokelau  rdfs:label  "Tokelau"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Guadeloupe  rdfs:label  "Guadeloupe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Paraguay  rdfs:label  "Paraguay"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Austria  rdfs:label  "Austria"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:SAARC_1985  rdfs:label  "South Asian Association for Regional Cooperation "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:SAARC  rdfs:label  "South Asian Association for Regional Cooperation "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Curacao  rdfs:label  "Curaçao "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saint_Lucia  rdfs:label  "Saint Lucia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Mali  rdfs:label  "Mali"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Central_African_Republic_the
+        rdfs:label  "Central African Republic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Zambia  rdfs:label  "Zambia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:AMU  rdfs:label  "Arab Maghreb Union "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Libyan_Arab_Jamahiriya__the
+        rdfs:label  "Libyan Arab Jamahiriya"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Pakistan  rdfs:label  "Pakistan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CARIFORUM  rdfs:label  "Caribbean Forum of African, Caribbean and Pacific States "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Samoa  rdfs:label  "Samoa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saint_Helena  rdfs:label  "Saint Helena, Ascension and Tristan da Cunha "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Tunisia  rdfs:label  "Tunisia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Kyrgyzstan  rdfs:label  "Kyrgyzstan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Israel  rdfs:label  "Israel"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Americas  rdfs:label  "Americas"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:central_Asia  rdfs:label  "Central Asia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Venezuela  rdfs:label  "Venezuela (Bolivarian Republic of)"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Melanesia  rdfs:label  "Melanesia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Lao_People_s_Democratic_Republic__the
+        rdfs:label  "Lao People's Democratic Republic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Swaziland  rdfs:label  "Swaziland"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Luxembourg  rdfs:label  "Luxembourg"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Faroe_Islands  rdfs:label  "Faroe Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Marshall_Islands__the
+        rdfs:label  "Marshall Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cape_Verde  rdfs:label  "Cape Verde"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Brazil  rdfs:label  "Brazil"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Argentina  rdfs:label  "Argentina"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:UEMOA  rdfs:label  "West African Economic and Monetary Union "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Colombia  rdfs:label  "Colombia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Uzbekistan  rdfs:label  "Uzbekistan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Turks_and_Caicos_Islands
+        rdfs:label  "Turks and Caicos Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:France  rdfs:label  "France"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Chad  rdfs:label  "Chad"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Russian_Federation__the
+        rdfs:label  "Russian Federation"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Papua_New_Guinea  rdfs:label  "Papua New Guinea"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Rwanda  rdfs:label  "Rwanda"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Mauritania  rdfs:label  "Mauritania"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Somalia  rdfs:label  "Somalia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:eastern_Africa  rdfs:label  "eastern Africa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Micronesia__Fed_States_of_
+        rdfs:label  "Micronesia (Federated States of)"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Finland  rdfs:label  "Finland"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Caribbean  rdfs:label  "Caribbean"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Guam  rdfs:label  "Guam"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Australia  rdfs:label  "Australia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Antigua_and_Barbuda
+        rdfs:label  "Antigua and Barbuda"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:ECOWAS  rdfs:label  "Economic Community of West African States"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:ECOWAS_1985  rdfs:label  "Economic Community of West African States"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Iraq  rdfs:label  "Iraq"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:IGADD  rdfs:label  "Intergovernmental Authority on Development "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Maldives  rdfs:label  "Maldives"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:San_Marino  rdfs:label  "San Marino"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Armenia  rdfs:label  "Armenia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Gabon  rdfs:label  "Gabon"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:The_former_Yugoslav_Republic_of_Macedonia
+        rdfs:label  "Yugoslav, former Yugoslav Republic of Macedonia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Niger_the  rdfs:label  "Niger"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Malaysia  rdfs:label  "Malaysia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Dominica  rdfs:label  "Dominica"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:New_Zealand  rdfs:label  "New Zealand"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Eritrea  rdfs:label  "Eritrea"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Tonga  rdfs:label  "Tonga"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Greece  rdfs:label  "Greece"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Sri_Lanka  rdfs:label  "Sri Lanka"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:middle_Africa  rdfs:label  "middle Africa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CEN_SAD  rdfs:label  "Community of Sahel-Saharan States"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CEN_SAD_1998  rdfs:label  "Community of Sahel-Saharan States"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Dominican_Republic_the
+        rdfs:label  "Dominican Republic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Wallis_and_Futuna_Is
+        rdfs:label  "Wallis and Futuna Islands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Myanmar  rdfs:label  "Myanmar"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Congo_the  rdfs:label  "Congo"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:western_Europe  rdfs:label  "western Europe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Belgium  rdfs:label  "Belgium"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Serbia  rdfs:label  "Serbia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Germany  rdfs:label  "Germany"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bahamas_the  rdfs:label  "Bahamas"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:SIDS  rdfs:label  "Small Island Developing States "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Honduras  rdfs:label  "Honduras"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:MERCOSUR_1991  rdfs:label  "Southern Common Market "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:MERCOSUR  rdfs:label  "Southern Common Market "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Haiti  rdfs:label  "Haiti"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Chile  rdfs:label  "Chile"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Latvia  rdfs:label  "Latvia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Kazakhstan  rdfs:label  "Kazakhstan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:German_Democratic_Republic_the
+        rdfs:label  "German Democratic Republic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Brunei_Darussalam
+        rdfs:label  "Brunei Darussalam"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CCASG  rdfs:label  "Cooperation Council for the Arab States of the Gulf "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Vanuatu  rdfs:label  "Vanuatu"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Egypt  rdfs:label  "Egypt"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Norway  rdfs:label  "Norway"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Nauru  rdfs:label  "Nauru"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Switzerland  rdfs:label  "Switzerland"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Nicaragua  rdfs:label  "Nicaragua"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:EU  rdfs:label  " European Union"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Belize  rdfs:label  "Belize"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Micronesia  rdfs:label  "Micronesia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Djibouti  rdfs:label  "Djibouti"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:SADC  rdfs:label  "Southern African Development Community "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Croatia  rdfs:label  "Croatia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Niue  rdfs:label  "Niue"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:ECO  rdfs:label  "Economic Cooperation Organization "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bolivia  rdfs:label  "Bolivia (Plurinational State of)"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:northern_America  rdfs:label  "North America"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Andorra  rdfs:label  "Andorra"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Georgia  rdfs:label  "Georgia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Mauritius  rdfs:label  "Mauritius"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Angola  rdfs:label  "Angola"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Panama  rdfs:label  "Panama"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Botswana  rdfs:label  "Botswana"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bosnia_and_Herzegovina
+        rdfs:label  "Bosnia and Herzegovina"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Costa_Rica  rdfs:label  "Costa Rica"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Japan  rdfs:label  "Japan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:South_Africa  rdfs:label  "South Africa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:southern_Africa  rdfs:label  "southern Africa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Martinique  rdfs:label  "Martinique"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CEEAC  rdfs:label  "Economic Community of Central African States "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CEMAC  rdfs:label  "Central African Economic and Monetary Community "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Europe  rdfs:label  "Europe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Federal_Republic_of_Germany_the
+        rdfs:label  "Germany, Federal Republic of"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:NFIDC  rdfs:label  "NFIDC"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Nigeria  rdfs:label  "Nigeria"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Qatar  rdfs:label  "Qatar"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:El_Salvador  rdfs:label  "El Salvador"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Suriname  rdfs:label  "Suriname"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:western_Africa  rdfs:label  "western Africa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Uganda  rdfs:label  "Uganda"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Guyana  rdfs:label  "Guyana"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Aruba  rdfs:label  "Aruba"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Albania  rdfs:label  "Albania"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:LLDC  rdfs:label  "land-locked developing country"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:United_Republic_of_Tanzania__the
+        rdfs:label  "United Republic of Tanzania"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Republic_of_Korea__the
+        rdfs:label  "South Korea"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Singapore  rdfs:label  "Singapore"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Lithuania  rdfs:label  "Lithuania"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Barbados  rdfs:label  "Barbados"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Ghana  rdfs:label  "Ghana"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:India  rdfs:label  "India"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Thailand  rdfs:label  "Thailand"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Democratic_People_s_Republic_of_Korea_the
+        rdfs:label  "North Korea"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:FAO  rdfs:label  "Food and Agriculture Organization of the United Nations "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:FAO_2007  rdfs:label  "Food and Agriculture Organization of the United Nations "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Azerbaijan  rdfs:label  "Azerbaijan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Afghanistan  rdfs:label  "Afghanistan"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Guinea  rdfs:label  "Guinea"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Zimbabwe  rdfs:label  "Zimbabwe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Yugoslavia  rdfs:label  "Yugoslavia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Namibia  rdfs:label  "Namibia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Tuvalu  rdfs:label  "Tuvalu"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Timor-Leste  rdfs:label  "Timor-Leste"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:southern_Europe  rdfs:label  "southern Europe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Kiribati  rdfs:label  "Kiribati"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:French_Polynesia  rdfs:label  "French Polynesia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:American_Samoa  rdfs:label  "American Samoa"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Indonesia  rdfs:label  "Indonesia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Hungary  rdfs:label  "Hungary"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Anguilla  rdfs:label  "Anguilla"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Denmark  rdfs:label  "Denmark"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Sierra_Leone  rdfs:label  "Sierra Leone"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Syrian_Arab_Republic_the
+        rdfs:label  "Syrian Arab Republic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bonaire_Sint_Eustatius_and_Saba
+        rdfs:label  "Bonaire, Sint Eustatius and Saba  "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Reunion  rdfs:label  "Réunion"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cuba  rdfs:label  "Cuba"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Australia_and_New_Zealand
+        rdfs:label  "Australia and New Zealand"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Ireland  rdfs:label  "Ireland"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:LDC_1993  rdfs:label  "least developed countries "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:LDC  rdfs:label  "least developed countries "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Zaire  rdfs:label  "Zaire"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Mongolia  rdfs:label  "Mongolia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Monaco  rdfs:label  "Monaco"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:French_Guiana  rdfs:label  "French Guiana"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Estonia  rdfs:label  "Estonia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:IGAD  rdfs:label  "Intergovernmental Authority on Development"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Gambia__the  rdfs:label  "Gambia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:New_Caledonia  rdfs:label  "New Caledonia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Poland  rdfs:label  "Poland"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Viet_Nam  rdfs:label  "Viet Nam"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Oceania  rdfs:label  "Oceania"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Nepal  rdfs:label  "Nepal"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Morocco  rdfs:label  "Morocco"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Polynesia  rdfs:label  "Polynesia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:South_America  rdfs:label  "South America"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Union_of_Soviet_Socialist_Republic_the
+        rdfs:label  "Union of Soviet Socialist Republic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CARICOM_1985  rdfs:label  "Caribbean Community and Common Market "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CARICOM  rdfs:label  "Caribbean Community and Common Market "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Belarus  rdfs:label  "Belarus"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Trinidad_and_Tobago
+        rdfs:label  "Trinidad and Tobago"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Malta  rdfs:label  "Malta"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Gibraltar  rdfs:label  "Gibraltar"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Peru  rdfs:label  "Peru"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:southern_Asia  rdfs:label  "southern Asia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Iceland  rdfs:label  "Iceland"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saint_Pierre_and_Miquelon
+        rdfs:label  "Saint Pierre and Miquelon"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Czech_Republic_the
+        rdfs:label  "Czech Republic"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Sweden  rdfs:label  "Sweden"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Yemen  rdfs:label  "Yemen"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Socialist_Federal_Republic_of_Yugoslavia_the
+        rdfs:label  "Yugoslavia, Socialist Federal Republic of"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:United_States_of_America
+        rdfs:label  "United States of America"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Czechoslovakia  rdfs:label  "Czechoslovakia"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bahrain  rdfs:label  "Bahrain"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:PIF  rdfs:label  "Pacific Islands Forum "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:PIF_1985  rdfs:label  "Pacific Islands Forum "^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Bulgaria  rdfs:label  "Bulgaria"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cameroon  rdfs:label  "Cameroon"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Cyprus  rdfs:label  "Cyprus"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Netherlands_the  rdfs:label  "Netherlands"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Iran_Islamic_Rep_of_
+        rdfs:label  "Iran (Islamic Republic of)"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Portugal  rdfs:label  "Portugal"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Saint_Kitts_and_Nevis
+        rdfs:label  "Saint Kitts and Nevis"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Togo  rdfs:label  "Togo"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:Turkey  rdfs:label  "Turkey"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+geo:CAEU  rdfs:label  "Council of Arab Economic Unity "^^<http://www.w3.org/2001/XMLSchema#string> .

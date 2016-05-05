@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
+  All rights reserved.
+  This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
+-->
+<Config>
+	<Param name="wordiness">INFO</Param>
+
+	<Param name="recordId">record12345</Param>
+	<Param name="value">record12345 has new contents!</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample RecordHandler input using external definition																%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+	<Param name="input-config">record-set.conf.xml</Param>
+<!--
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+<%	Sample TextFileRecordHandler input inline definition																%>
+<%	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	%>
+-->
+
+	<Param name="inputOverride">rhClass=org.vivoweb.harvester.util.repo.TextFileRecordHandler</Param>
+	<Param name="inputOverride">fileDir=data/tf-rh</Param>
+</Config>

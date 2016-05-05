@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:db-CSV2="jdbc:h2:data/csv/store/fields/CSV2/"
+         xml:base="jdbc:h2:data/csv/store/CSV2">
+  <rdf:Description rdf:ID="id_-_2">
+    <rdf:type rdf:resource="jdbc:h2:data/csv/store/types#CSV2"/>
+    <db-CSV2:ROWID>2</db-CSV2:ROWID>
+    <db-CSV2:PERSONID>99575130</db-CSV2:PERSONID>
+    <db-CSV2:FIRSTNAME>John</db-CSV2:FIRSTNAME>
+    <db-CSV2:MIDNAME></db-CSV2:MIDNAME>
+    <db-CSV2:LASTNAME>Fereira</db-CSV2:LASTNAME>
+  </rdf:Description>
+</rdf:RDF>

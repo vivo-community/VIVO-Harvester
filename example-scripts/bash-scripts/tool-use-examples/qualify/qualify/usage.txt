@@ -1,0 +1,23 @@
+usage: Qualify
+ -c,--clean-resources                    remove all statements where the
+                                         subject or object is from the
+                                         given -n/--remove-namespace
+ -d,--dataType <RDF_PREDICATE>           data type (rdf predicate)
+ -h,--help                               Help Message
+ -I,--jenaOverride <JENA_PARAM=VALUE>    override the JENA_PARAM of jena
+                                         model config using VALUE
+ -i,--jenaConfig <CONFIG_FILE>           config file for jena model
+ -n,--remove-namespace <RDF_NAMESPACE>   specify namespace for
+                                         -p/--predicate-clean and
+                                         -c/--clean-resources flag
+ -p,--predicate-clean                    remove all statements where the
+                                         predicate is from the given
+                                         -n/--remove-namespace
+ -r,--regexMatch <REGEX>                 match this regex expression
+ -t,--textMatch <MATCH_STRING>           match this exact text string
+ -v,--value <REPLACE_VALUE>              replace matching record data with
+                                         this value
+ -w,--wordiness <LOG_LEVEL>              Set the console log level
+ -X,--config <CONFIG_FILE>               XML Configuration File
+
+

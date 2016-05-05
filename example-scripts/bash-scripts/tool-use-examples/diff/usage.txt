@@ -1,0 +1,27 @@
+usage: Diff
+ -d,--dumptofile <FILE_NAME=FILENAME>         filename for output
+ -e,--selective-diff                          Use selective diff
+ -h,--help                                    Help Message
+ -l,--dumptolanguage <FILE_NAME=LANGUAGE>     language for output
+ -M,--minuendOverride <JENA_PARAM=VALUE>      override the JENA_PARAM of
+                                              source jena model config
+                                              using VALUE
+ -m,--minuend <CONFIG_FILE>                   config file for source jena
+                                              model
+ -n,--dumpn3tofile <FILENAME>                 filename for N 3 output
+ -o,--output <CONFIG_FILE>                    config file for output jena
+                                              model
+ -O,--outputOverride <JENA_PARAM=VALUE>       override the JENA_PARAM of
+                                              output jena model config
+                                              using VALUE
+ -s,--subtrahend <CONFIG_FILE>                config file for removemode
+                                              jena model
+ -S,--subtrahendOverride <JENA_PARAM=VALUE>   override the JENA_PARAM of
+                                              remove jena model config
+                                              using VALUE
+ -t,--dumpntripletofile <FILENAME>            filename for N triple output
+ -U,--update-types <NAME=TYPE>                Type to be updated
+ -w,--wordiness <LOG_LEVEL>                   Set the console log level
+ -X,--config <CONFIG_FILE>                    XML Configuration File
+
+

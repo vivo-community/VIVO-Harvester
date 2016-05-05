@@ -1,0 +1,93 @@
+usage: Match
+ -b,--batch-size <BATCH_SIZE>                                  number of
+                                                               records to
+                                                               process in
+                                                               batch -
+                                                               default 150
+                                                               - lower
+                                                               this if
+                                                               getting
+                                                               StackOverfl
+                                                               ow or
+                                                               OutOfMemory
+ -c,--clear-type-and-literals                                  clear all
+                                                               rdf:type
+                                                               and literal
+                                                               values out
+                                                               of the
+                                                               nodes
+                                                               matched
+ -h,--help                                                     Help
+                                                               Message
+ -I,--inputOverride <JENA_PARAM=VALUE>                         override
+                                                               the
+                                                               JENA_PARAM
+                                                               of input
+                                                               jena model
+                                                               config
+                                                               using VALUE
+ -i,--input-config <CONFIG_FILE>                               inputConfig
+                                                               JENA
+                                                               configurati
+                                                               on filename
+ -l,--link <VIVO_TO_INPUT_PREDICATE=INPUT_TO_VIVO_PREDICATE>   link the
+                                                               two matched
+                                                               entities
+                                                               together
+                                                               using
+                                                               INPUT_TO_VI
+                                                               VO_PREDICAT
+                                                               E and
+                                                               INPUT_TO_VI
+                                                               VO_PREDICAT
+                                                               E
+ -o,--output-config <CONFIG_FILE>
+                                                               outputConfi
+                                                               g JENA
+                                                               configurati
+                                                               on
+                                                               filename,
+                                                               when set
+                                                               nodes that
+                                                               meet the
+                                                               threshold
+                                                               are pushed
+                                                               to the
+                                                               output
+                                                               model
+ -O,--outputOverride <JENA_PARAM=VALUE>                        override
+                                                               the
+                                                               JENA_PARAM
+                                                               of output
+                                                               jena model
+                                                               config
+                                                               using VALUE
+ -r,--rename                                                   rename or
+                                                               remove the
+                                                               matched
+                                                               entity from
+                                                               scoring
+ -s,--score-config <CONFIG_FILE>                               scoreConfig
+                                                               JENA
+                                                               configurati
+                                                               on filename
+ -S,--scoreOverride <JENA_PARAM=VALUE>                         override
+                                                               the
+                                                               JENA_PARAM
+                                                               of score
+                                                               jena model
+                                                               config
+                                                               using VALUE
+ -t,--threshold <THRESHOLD>                                    match
+                                                               records
+                                                               with a
+                                                               score over
+                                                               THRESHOLD
+ -w,--wordiness <LOG_LEVEL>                                    Set the
+                                                               console log
+                                                               level
+ -X,--config <CONFIG_FILE>                                     XML
+                                                               Configurati
+                                                               on File
+
+2014-06-24 07:57:16.179 INFO  [o.v.h.s.Match] Match: End

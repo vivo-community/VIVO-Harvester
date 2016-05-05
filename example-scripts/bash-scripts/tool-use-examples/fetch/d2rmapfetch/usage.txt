@@ -1,0 +1,20 @@
+usage: D2RMapFetch
+ -a,--d2rMapWorkingDirectory <D2RMAP_WORKING_DIRECTORY>   D2RMap working
+                                                          directory
+ -h,--help                                                Help Message
+ -o,--output <CONFIG_FILE>                                RecordHandler
+                                                          config file path
+ -O,--outputOverride <RH_PARAM=VALUE>                     override the
+                                                          RH_PARAM of
+                                                          output
+                                                          recordhandler
+                                                          using VALUE
+ -u,--d2rMapConfigFile <D2RMAP_CONFIG_FILE>               D2RMap config
+                                                          file path
+ -w,--wordiness <LOG_LEVEL>                               Set the console
+                                                          log level
+ -X,--config <CONFIG_FILE>                                XML
+                                                          Configuration
+                                                          File
+
+

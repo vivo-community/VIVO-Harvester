@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task>
+  <Param name="email">jaf30@cornell.edu</Param>
+  <Param name="termSearch">sample AND edu[ad]</Param>
+  <Param name="output">raw-records.config.xml</Param>
+  <Param name="numRecords">ALL</Param>
+  <Param name="batchSize">1000</Param>
+</Task>

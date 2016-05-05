@@ -1,0 +1,12 @@
+usage: ListRDF
+ -f,--format <FORMAT>         the format of the output (text, ntriples,
+                              n3, rdfxml, json
+ -h,--help                    Help Message
+ -p,--password <PASSWORD>     vivo admin password
+ -U,--url <URL>               service url
+ -u,--username <USERNAME>     vivo admin user name
+ -v,--vclass <VCLASS>         the vclass to be displayed
+ -w,--wordiness <LOG_LEVEL>   Set the console log level
+ -X,--config <CONFIG_FILE>    XML Configuration File
+
+
