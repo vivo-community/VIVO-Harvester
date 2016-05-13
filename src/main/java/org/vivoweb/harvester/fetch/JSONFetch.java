@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator; 
 import java.util.List; 
-import net.minidev.json.JSONObject; 
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
@@ -361,27 +362,13 @@ public class JSONFetch implements RecordStreamOrigin {
                     while (iter.hasNext()) {
                         String key = (String) iter.next();
                         Object val = jsonObject.get(key);
-                        String fixedkey = key.replaceAll(" ","_");
-
-                        // Field BEGIN
-
-                        String field = nodeNS + ":" + fixedkey;
-                        sb.append("    <");
-                        sb.append(SpecialEntities.xmlEncode(field));
-                        sb.append(">");
-
-                        // insert field value
-                        // insert an empty string if the val is null
                         if (val == null) {
-                           log.error("val is null for key: "+key);
-                           sb.append(""); // put in an empty string
-                        } else {
-                           sb.append(SpecialEntities.xmlEncode(val.toString().trim()));
+                          val = "";
                         }
-                        // Field END
-                        sb.append("</");
-                        sb.append(SpecialEntities.xmlEncode(field));
-                        sb.append(">\n");
+                        //log.info("val type for key: "+key+ ": "+val.getClass().getName());
+                        String fixedkey = key.replaceAll(" ","_"); 
+                        String field = nodeNS + ":" + fixedkey;
+                        sb.append(getFieldXml(field, val));
                     }
                     // Record info END
                     sb.append("  </rdf:Description>\n");
@@ -406,6 +393,33 @@ public class JSONFetch implements RecordStreamOrigin {
             e.printStackTrace();
             throw new IOException(e);
         }
+    }
+    
+    public String getFieldXml(String field, Object val) {
+       StringBuffer sb = new StringBuffer();
+       //log.debug("val type for field "+ field +": "+val.getClass().getName());
+       sb.append("    <");
+       sb.append(SpecialEntities.xmlEncode(field));
+       sb.append(">");
+
+       // insert field value
+       if (val instanceof  JSONArray) {
+    	   JSONArray array = (JSONArray) val;
+    	   log.debug("field is an array: "+ field);
+    	   Iterator iter = array.iterator();
+    	   while (iter.hasNext()) {
+    		   Object obj = iter.next();
+               log.debug("objtype: "+ obj.getClass().getName());
+    		   log.debug("val: "+ array.toString());
+    	   }
+       } else {
+         sb.append(SpecialEntities.xmlEncode(val.toString().trim()));
+       } 
+       // Field END
+       sb.append("</");
+       sb.append(SpecialEntities.xmlEncode(field));
+       sb.append(">\n");
+       return sb.toString();
     }
 
 
