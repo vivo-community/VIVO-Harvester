@@ -6,8 +6,20 @@
 package org.vivoweb.harvester.fetch;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.apache.commons.lang.StringUtils;
+import org.dlese.dpc.oai.harvester.HarvestMessageHandler;
+import org.dlese.dpc.oai.harvester.Harvester;
+import org.dlese.dpc.oai.harvester.Hexception;
+import org.dlese.dpc.oai.harvester.OAIChangeListener;
+import org.dlese.dpc.oai.harvester.OAIErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -49,6 +61,16 @@ public class OAIFetch implements RecordStreamOrigin {
 	 * Example 2010-01-15T13:45:12:50Z<br>
 	 */
 	private String strEndDate;
+	
+	private String metadataPrefix = "oai_dc";
+	/**
+	 * the metadataprefix is hardcoded to oai_dc for now until implementations for other metadata types are supported
+	 */
+	private String strSetSpec; 
+	/**
+	 * the setSpec (called spec to avoid confusion with a setter method) is set to null until 
+	 * it is added as an optional argument
+	 */
 	/**
 	 * The record handler to write records to
 	 */
@@ -64,7 +86,7 @@ public class OAIFetch implements RecordStreamOrigin {
 	 * @param rhOutput The recordhandler to write to
 	 */
 	public OAIFetch(String address, RecordHandler rhOutput) {
-		this(address, "0001-01-01", "8000-01-01", rhOutput);
+		this(address, "0001-01-01", "8000-01-01", "", "oai_dc", rhOutput);
 	}
 	
 	/**
@@ -83,7 +105,7 @@ public class OAIFetch implements RecordStreamOrigin {
 	 * @throws IOException error connecting to record handler
 	 */
 	private OAIFetch(ArgList argList) throws IOException {
-		this(argList.get("u"), argList.get("s"), argList.get("e"), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
+		this(argList.get("u"), argList.get("s"), argList.get("e"), argList.get("S"), argList.get("m"), RecordHandler.parseConfig(argList.get("o"), argList.getValueMap("O")));
 	}
 	
 	/**
@@ -93,10 +115,16 @@ public class OAIFetch implements RecordStreamOrigin {
 	 * @param endDate The date at which to stop fetching records, format and time resolution depends on repository.
 	 * @param rhOutput The recordhandler to write to
 	 */
-	public OAIFetch(String address, String startDate, String endDate, RecordHandler rhOutput) {
+	public OAIFetch(String address, String startDate, String endDate, String setSpec, String metadataPrefix, RecordHandler rhOutput) {
 		this.strAddress = address;
 		this.strStartDate = startDate;
 		this.strEndDate = endDate;
+		this.strSetSpec = setSpec;
+		if (metadataPrefix == null) {
+			this.metadataPrefix = "oai_dc";
+		} else {
+		    this.metadataPrefix = metadataPrefix;
+		}
 		this.rhOutput = rhOutput;
 	}
 	
@@ -108,15 +136,73 @@ public class OAIFetch implements RecordStreamOrigin {
 		try {
 			XMLRecordOutputStream xmlRos = xmlRosBase.clone();
 			xmlRos.setRso(this);
-			RawWrite.run("http://" + this.strAddress, this.strStartDate, this.strEndDate, "oai_dc", "", xmlRos);
-		} catch(ParserConfigurationException e) {
-			throw new IOException(e);
-		} catch(SAXException e) {
-			throw new IOException(e);
-		} catch(TransformerException e) {
-			throw new IOException(e);
-		} catch(NoSuchFieldException e) {
-			throw new IOException(e);
+			HarvestMessageHandler msgHandler = null;
+			OAIChangeListener oaiChangeListener = null;
+			boolean splitBySet = false;
+			boolean writeHeaders = false;
+			boolean harvestAll = false;
+			boolean harvestAllIfNoDeletedRecord = false;
+			int timeOutMilliseconds = 0;
+			Date from = null;
+			Date until = null; 
+			
+			if (this.strStartDate.endsWith("Z")) {
+			  from = setDate(this.strStartDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+			} else {
+			   from = setDate(this.strStartDate, "yyyy-MM-dd");
+		    }
+			if (this.strEndDate.endsWith("Z")) {
+				until = setDate(this.strEndDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+			} else {
+				until = setDate(this.strEndDate, "yyyy-MM-dd");	
+			}
+			 
+			
+			String outdir = null;  // set output directory to null to capture resultes in an array or arrays
+			String baseURL = new String();
+			
+			// if we're not sure if the url is http or https try to ping both
+			if (! this.strAddress.startsWith("http")) {
+				baseURL = "http://" + this.strAddress;
+				
+				// try to connect via http.  If fails, try https
+				boolean okUrl = pingURL(baseURL, 2000);
+				if (okUrl) {
+			       //
+				} else {
+					System.err.println("Could not ping "+ baseURL +" trying https");
+					baseURL = "https://" + this.strAddress;
+					okUrl = pingURL(baseURL, 2000);
+					if (okUrl) {
+						//
+					} else {
+						System.err.println("Could not ping "+ baseURL);
+						return;
+					}
+				}
+			} else {
+				baseURL = this.strAddress;
+			}
+			System.out.println("baseURL: "+baseURL);
+	
+				
+			
+			String[][] results = Harvester.harvest(baseURL, this.metadataPrefix,
+				this.strSetSpec, from, until, outdir, splitBySet, msgHandler, oaiChangeListener, writeHeaders, harvestAll, harvestAllIfNoDeletedRecord, timeOutMilliseconds);
+			for (String[] strArray: results) {
+		    	 
+				if (! StringUtils.equalsIgnoreCase(strArray[1], "deleted")) {
+		    	   log.trace("Adding record: " + strArray[0]);
+				   this.rhOutput.addRecord(strArray[0], strArray[1], this.getClass()); 
+				}
+		    }
+		 
+		} catch(Hexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(OAIErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -126,10 +212,12 @@ public class OAIFetch implements RecordStreamOrigin {
 	 */
 	private static ArgParser getParser() {
 		ArgParser parser = new ArgParser("OAIFetch");
-		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("repository url without http://").withParameter(true, "URL"));
-		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
-		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (YYYY-MM-DD)").withParameter(true, "DATE"));
-		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE"));
+		parser.addArgument(new ArgDef().setShortOption('u').setLongOpt("url").setDescription("repository url without http://").withParameter(true, "URL").setRequired(true));
+		parser.addArgument(new ArgDef().setShortOption('s').setLongOpt("start").setDescription("beginning date of date range (YYYY-MM-DD)").withParameter(true, "DATE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('e').setLongOpt("end").setDescription("ending date of date range (YYYY-MM-DD)").withParameter(true, "DATE").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('S').setLongOpt("setSpec").setDescription("setSpec").withParameter(true, "SETSPEC").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('m').setLongOpt("metadataPrefix").setDescription("metadataPrefix (oai_dc)").withParameter(true, "METADATAPREFIX").setRequired(false));
+		parser.addArgument(new ArgDef().setShortOption('o').setLongOpt("output").setDescription("RecordHandler config file path").withParameter(true, "CONFIG_FILE").setRequired(false));
 		parser.addArgument(new ArgDef().setShortOption('O').setLongOpt("outputOverride").withParameterValueMap("RH_PARAM", "VALUE").setDescription("override the RH_PARAM of output recordhandler using VALUE").setRequired(false));
 		return parser;
 	}
@@ -169,5 +257,41 @@ public class OAIFetch implements RecordStreamOrigin {
 				System.exit(1);
 			}
 		}
+	}
+	
+	public static java.util.Date setDate(String s, String fmt) {
+	      SimpleDateFormat formatter = new SimpleDateFormat(fmt);
+	      
+	      java.util.Date newDate = null;
+		  try {
+			  newDate = formatter.parse(s);
+		  } catch(ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		  }
+	      
+	      return newDate;
+	}
+	
+	public static boolean pingURL(String url, int timeout) {
+	    //url = url.replaceFirst("^https", "http"); // Otherwise an exception may be thrown on invalid SSL certificates.
+
+	    try {
+	        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+	        connection.setConnectTimeout(timeout);
+	        connection.setReadTimeout(timeout);
+	        connection.setRequestMethod("HEAD");
+	        int responseCode = connection.getResponseCode();
+	        //System.out.println("responseCode: "+ responseCode);
+	        if (200 <= responseCode && responseCode <= 399) {
+	        	return true;
+	        } else {
+	        	System.err.println("responseCode: "+ responseCode);
+	        	return false;
+	        }
+	        
+	    } catch (IOException exception) {
+	        return false;
+	    }
 	}
 }
