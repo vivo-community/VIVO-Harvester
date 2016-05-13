@@ -303,7 +303,7 @@
        <xsl:when test="$type='article'">
 	      <rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 	   </xsl:when>
-	   <xsl:when test="$type='article'">
+	   <xsl:when test="$type='preprint'">
 	      <rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
 	   </xsl:when>
        <xsl:when test="starts-with($type, 'journal article')">
@@ -333,10 +333,16 @@
 	   <xsl:when test="$type='report'">
 			<rdf:type rdf:resource="http://purl.org/ontology/bibo/Report" />
 	   </xsl:when>
+	   <xsl:when test="$type='presentation'">
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Presentation" />
+	   </xsl:when>
 	   <xsl:when test="$type='lecture speech'">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Speech" />
 	   </xsl:when>
 	   <xsl:when test="$type='dissertation'">
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Thesis" />
+	   </xsl:when>
+	   <xsl:when test="$type='thesis'">
 			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#Thesis" />
 	   </xsl:when>
 	   <xsl:when test="$type='directory'">
