@@ -295,8 +295,22 @@ public class LinkedDataFetch  {
 	 */
 	private static String getLinkedData(String uri) throws Exception {
 		Header header = new BasicHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		 
+		RequestConfig requestConfig = RequestConfig.custom()
+	        .setConnectTimeout(10000)
+	        .setConnectionRequestTimeout(10000)
+	        .setSocketTimeout(10000)
+	        .build();
+	    CloseableHttpClient httpclient = HttpClientBuilder.create()
+	        .disableAuthCaching()
+	        .disableAutomaticRetries()
+	        .disableConnectionState()
+	        .disableContentCompression()
+	        .disableCookieManagement()
+	        .disableRedirectHandling()
+	        .setDefaultRequestConfig(requestConfig)
+	        .build();
+		//CloseableHttpClient httpclient = HttpClients.createDefault();
+		  
 		StringWriter writer = new StringWriter();
 		String ld = new String();
 		try {
