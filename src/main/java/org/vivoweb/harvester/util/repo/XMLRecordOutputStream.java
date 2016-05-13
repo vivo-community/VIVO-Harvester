@@ -94,7 +94,7 @@ public class XMLRecordOutputStream extends OutputStream implements Cloneable {
           this.capturingRecord = true;
           this.buf.reset();
           this.buf.write(this.openTags[x]);
-          System.out.println("capturing record");
+          //System.out.println("capturing record");
         }
       }
     }
