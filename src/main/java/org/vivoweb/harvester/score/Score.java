@@ -414,6 +414,7 @@ public class Score {
 		QueryExecution queryExec = QueryExecutionFactory.create(query, ds);
 		log.debug("Executing Query");
 		ResultSet rs = queryExec.execSelect();
+		log.debug("Query Finished");
 		return rs;
 	}
 	
@@ -423,11 +424,13 @@ public class Score {
 	 * @throws IOException error connecting to the models
 	 */
 	private Set<Map<String, String>> buildSolutionSet() throws IOException {
-		if(this.matchThreshold != null) {
+		if (this.matchThreshold != null) {
 			return buildFilterSolutionSet();
 		}
 		ResultSet rs = getResultSet();
+	     
 		Set<Map<String, String>> solSet = getNewSolSet();
+		 
 		if(!rs.hasNext()) {
 			log.info("No Results Found");
 		} else {
@@ -441,12 +444,17 @@ public class Score {
 				tempMap.put("sInput", sinputuri);
 				tempMap.put("sVivo", svivouri);
 				for(String runName : this.vivoPredicates.keySet()) {
+					//log.trace("adding runName to tempMap: "+ runName);
 					RDFNode os = solution.get("os_" + runName);
 					RDFNode op = solution.get("op_" + runName);
 					addRunName(tempMap, runName, os, op);
+					//log.trace("Added runName");
 				}
+				
 				solSet.add(tempMap);
 			}
+			log.info("Finished building Record Set");
+			log.info("Added this many records: "+ solSet.size());
 		}
 		return solSet;
 	}
@@ -457,6 +465,7 @@ public class Score {
 	 * @throws IOException error connecting to the models
 	 */
 	private Set<Map<String, String>> buildFilterSolutionSet() throws IOException {
+		log.trace("buildFilterSolutionSet");
 		Set<Map<String, String>> matchSet = Match.match(this.matchThreshold.floatValue(), this.scoreJena);
 		Set<Map<String, String>> solSet = getNewSolSet();
 		if(matchSet.isEmpty()) {
@@ -474,6 +483,7 @@ public class Score {
 				tempMap.put("sVivo", svivouri);
 				Resource sVivo = this.vivoJena.getJenaModel().getResource(svivouri);
 				for(String runName : this.vivoPredicates.keySet()) {
+					//log.trace("adding runName to tempMap: "+ runName);
 					Property os_runName = this.inputJena.getJenaModel().getProperty(this.inputPredicates.get(runName));
 					Statement os_stmnt = sInput.getProperty(os_runName);
 					RDFNode os = null;
@@ -486,10 +496,15 @@ public class Score {
 					if(op_stmnt != null) {
 						op = op_stmnt.getObject();
 					}
+					
 					addRunName(tempMap, runName, os, op);
+					//log.trace("Added runName");
 				}
+				//log.trace("Add tempMap to solSet");
 				solSet.add(tempMap);
 			}
+			log.info("Finished building Record Set");
+			log.info("Added this many records: "+ solSet.size());
 		}
 		return solSet;
 	}
@@ -562,12 +577,12 @@ public class Score {
 					String osLit = eval.get("LIT_os_" + runName);
 					String opUri = eval.get("URI_op_" + runName);
 					String opLit = eval.get("LIT_op_" + runName);
-					log.debug("os_" + runName + ": '" + ((osUri != null) ? osUri : osLit) + "'");
-					log.debug("op_" + runName + ": '" + ((opUri != null) ? opUri : opLit) + "'");
+					//log.trace("os_" + runName + ": '" + ((osUri != null) ? osUri : osLit) + "'");
+					//log.trace("op_" + runName + ": '" + ((opUri != null) ? opUri : opLit) + "'");
 					sum_total += appendScoreSparqlFragment(indScore, incrementer, opUri, opLit, osUri, osLit, runName);
 				}
 				log.debug("sum_total: "+sum_total);
-				log.trace("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
+				//log.trace("Scores for inputJena node <" + sInputURI + "> to vivoJena node <" + sVivoURI + ">:\n" + indScore.toString());
 				scoreSparql.append(indScore);
 				if(incrementer == recordBatchSize) {
 					loadRdfToScoreData(scoreSparql.toString());
@@ -621,6 +636,7 @@ public class Score {
 			vivoSelects.add("?sVivo <" + vivoProperty + "> ?op_" + runName + " .");
 			inputSelects.add("?sInput <" + inputProperty + "> ?os_" + runName + " .");
 			filters.add("(str(?os_" + runName + ") = str(?op_" + runName + "))");
+			//filters.add("(SAMETERM(?os_" + runName + ",?op_" + runName + ")");
 			filters.add("(str(?os_" + runName + ") != str(\"\"))");
 			filters.add("(str(?op_" + runName + ") != str(\"\"))");
 		}
@@ -635,6 +651,7 @@ public class Score {
 		sQuery.append(") && (str(?sVivo) != str(?sInput))");
 		if(this.namespace != null) {
 			sQuery.append(" && regex(str(?sInput), \"^" + this.namespace + "\")");
+			//sQuery.append(" && STRSTARTS(str(?sInput), \"^" + this.namespace + "\")");
 		}
 		sQuery.append(" ) .\n");
 		sQuery.append("}");
@@ -670,6 +687,7 @@ public class Score {
 			inputUnions.add("{ ?sInput <" + inputProperty + "> ?oi_" + runName + " }");
 			inputOptionals.append("    " + "OPTIONAL { " + "?sInput <").append(inputProperty).append("> ").append("?os_" + runName).append(" }" + " . \n");
 			filters.add("(str(?os_" + runName + ") = str(?ov_" + runName + "))");
+			//filters.add("(SAMETERM(?os_" + runName + ",?ov_" + runName + "))");
 		}
 		
 		sQuery.append("\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#vivoClone>\n" + "FROM NAMED <http://vivoweb.org/harvester/model/scoring#inputClone>\n" + "WHERE {\n");
@@ -687,9 +705,10 @@ public class Score {
 		sQuery.append(StringUtils.join(filters, " || "));
 		sQuery.append(") && (str(?sVivo) != str(?sInput))");
 		if(this.namespace != null) {
-			sQuery.append(" && regex(str(?sInput), \"^" + this.namespace + "\")");
+			sQuery.append(" && regex(str(?sInput), \"^" + this.namespace + "\")"); 
 		}
 		sQuery.append(" ) .\n");
+		 
 		sQuery.append("}");
 		return sQuery.toString();
 	}
