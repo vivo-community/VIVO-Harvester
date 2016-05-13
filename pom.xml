@@ -341,6 +341,14 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.dlese.dpc.oai.harvester</groupId>
+			<artifactId>dlese-project-tools</artifactId>
+                        <version>3.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/DLESETools.jar</systemPath>
+		</dependency>
+
+		<dependency>
 			<groupId>com.hp.hpl.jena</groupId>
 			<artifactId>tdb</artifactId>
 			<version>0.8.9</version>
