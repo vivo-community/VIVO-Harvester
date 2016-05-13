@@ -1,0 +1,10 @@
+This example will demonstrate fetching oai-phm provider which exposes content using mets and
+eventuall load RDF into a VIVO instance.
+
+You will need to:
+
+- Examine the run-oaifetch.sh script and change the location of the VIVO Harvesters if necessary. 
+- Modify the vivo.model.xml file to provide parameters for accessing your  VIVO web application.
+
+
+

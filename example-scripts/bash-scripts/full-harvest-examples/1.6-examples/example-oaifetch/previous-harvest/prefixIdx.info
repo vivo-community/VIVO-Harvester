@@ -1,0 +1,9 @@
+#Metadata: Fileset: prefixIdx
+#Fri May 13 12:20:04 EDT 2016
+tdb.file.type=rangeindex
+tdb.file.indexorder=GPU
+tdb.file.impl.version=bplustree-v1
+tdb.file.impl=bplustree
+tdb.bplustree.record=24,0
+tdb.bplustree.order=146
+tdb.bplustree.blksize=8192
