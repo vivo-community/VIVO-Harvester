@@ -16,7 +16,7 @@
 	<Param name="inputJena-predicates">lName=http://xmlns.com/foaf/0.1/lastName</Param>
 	<Param name="weights">lName=0.5</Param>
 	<Param name="vivoJena-predicates">lName=http://xmlns.com/foaf/0.1/lastName</Param>
-	<Param name="namespace">http://vivoweb.org/harvest/author/</Param>
+	<Param name="namespace">http://vivo.example.com/harvest/author/</Param>
         <Param name="wordiness">INFO</Param>
 </Task>
 

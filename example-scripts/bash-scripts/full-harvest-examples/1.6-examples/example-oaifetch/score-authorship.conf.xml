@@ -19,7 +19,7 @@
 	<Param name="weights">authauth=0.5</Param>
 	<Param name="vivoJena-predicates">authauth=http://vivoweb.org/ontology/core#linkedAuthor</Param>
 
-	<Param name="namespace">http://vivoweb.org/harvest/authorship/</Param>
+	<Param name="namespace">http://vivo.example.com/harvest/authorship/</Param>
         <Param name="wordiness">INFO</Param>
 </Task>
 
