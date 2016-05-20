@@ -27,6 +27,7 @@
     xmlns:geo = "http://aims.fao.org/aos/geopolitical.owl#"
     xmlns:mets = "http://www.loc.gov/METS/"
     xmlns:mods="http://www.loc.gov/mods/v3"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:node-oai = "http://vivo.example.com/harvest/fields/oai/"
     xmlns:localVivo = "http://vivo.sample.edu/ontology/" 
     xmlns:oai_dc = "http://www.openarchives.org/OAI/2.0/oai_dc/"
@@ -64,11 +65,15 @@
      <xsl:variable name="authors" select="$this/mets:dmdSec/mets:mdWrap/mets:xmlData/mods:name" />
      <xsl:variable name="publisher" select="$this/mets:dmdSec/mets:mdWrap/mets:xmlData/mods:originInfo/mods:publisher" />
      <xsl:variable name="publisher_enc" select="encode-for-uri($publisher)" />
+     <xsl:variable name="url" select="$this/mets:fileSec/mets:fileGrp/mets:file/mets:FLocat/@xlink:href" />
+     <xsl:comment>   
+       url: <xsl:value-of select = "$url" />
+       <xsl:text>&#xa;</xsl:text>
+     </xsl:comment>
+     <xsl:text>&#10;</xsl:text>
      
      <rdf:Description  rdf:about="{$baseURI}oai/pubid{$identifier}">
-      <localVivo:harvestedBy>oaifetch_Harvester</localVivo:harvestedBy>
-      
-      
+      <localVivo:harvestedBy>oaifetch_Harvester</localVivo:harvestedBy> 
       <xsl:if test="normalize-space($publisher)">
       <vivo:hasPublisherVenue rdf:resource="{$baseURI}publisher/{$publisher_enc}" />
       </xsl:if>
@@ -96,6 +101,9 @@
       <xsl:apply-templates select="mets:dmdSec/mets:mdWrap/mets:xmlData/mods:location"  />
       <xsl:apply-templates select="mets:dmdSec/mets:mdWrap/mets:xmlData/mods:name" mode="authorRef" />
       
+      <xsl:if test="normalize-space($url)">
+      <obo:ARG_2000028 rdf:resource="{$baseURI}vcard4Pub/pubid{$identifier}" />
+      </xsl:if>
       
     </rdf:Description> 
     
@@ -115,6 +123,14 @@
        <xsl:with-param name="publisher_enc" select="$publisher_enc" />
        <xsl:with-param name="pubid" select="$identifier" />
     </xsl:call-template>
+    </xsl:if>
+    
+    <xsl:if test="normalize-space($url)">
+    <xsl:call-template name="fulltext">
+    <xsl:with-param name="pubid" select="$identifier" />
+    <xsl:with-param name="url" select="$url" />
+    </xsl:call-template>
+    
     </xsl:if>
     
     <!-- apply templates to ignore elements we don't need --> 
@@ -150,14 +166,14 @@
 		</xsl:if>
   </xsl:template>
   
-  <!-- template for language -->
+  <!-- template for location -->
   <xsl:template match="mets:dmdSec/mets:mdWrap/mets:xmlData/mods:location">
 	     
 		<localVivo:location><xsl:value-of select="." /></localVivo:location>
 		 
   </xsl:template>
   
-  <!-- template for language -->
+  <!-- template for subject -->
   <xsl:template match="mets:dmdSec/mets:mdWrap/mets:xmlData/mods:subject">
         <xsl:variable name="authority" select='@authority' />
         <localVivo:authority><xsl:value-of select="$authority" /></localVivo:authority>
@@ -236,7 +252,7 @@
            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_2000379"/>
            <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard for: <xsl:value-of select = "$fullName" /></rdfs:label>
            <vcard:hasName rdf:resource="{$baseURI}vcardName/pubid{$pubid}vcardName{position()}"/>
-            
+             
 		</rdf:Description>
 		
 		<!-- vcard name -->
@@ -246,7 +262,37 @@
            <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard name for: <xsl:value-of select = "$fullName" /></rdfs:label>
            <vcard:givenName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$givenName" /></vcard:givenName>     
            <vcard:familyName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select = "$familyName" /></vcard:familyName>
-		</rdf:Description> 
+		</rdf:Description>
+		
+		 
+         
+        
+  </xsl:template>
+  
+  <xsl:template name="fulltext">
+     <xsl:param name="pubid" />
+     <xsl:param name="url" />
+     <rdf:Description rdf:about="{$baseURI}vcard4Pub/pubid{$pubid}">
+       <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002"/>
+       <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+       <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Kind"/>
+       <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001"/>
+       <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000031"/>
+       <obo:ARG_2000029 rdf:resource="{$baseURI}oai/pubid{$pubid}"/>
+       <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+       <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard for: pub <xsl:value-of select = "$pubid" /></rdfs:label>
+       <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
+       <vcard:hasURL rdf:resource="{$baseURI}vcardUrl/pubid{$pubid}"/>
+       <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_2000379"/>
+     </rdf:Description>
+     
+     <rdf:Description rdf:about="{$baseURI}vcardUrl/pubid{$pubid}">
+           <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#URL"/>
+           <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#URL"/>
+           <vcard:url><xsl:value-of select = "$url" /></vcard:url>
+           <rdfs:label>Full Text</rdfs:label>
+           <vivo:rank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</vivo:rank> 
+        </rdf:Description>
   </xsl:template>
   
   <xsl:template name="dateTime">
