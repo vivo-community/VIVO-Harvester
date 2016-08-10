@@ -38,8 +38,8 @@ import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.ResultSetFormatter;
-//import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
-import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
+//import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -606,7 +606,7 @@ public abstract class JenaConnect {
 	 * RDF formats
 	 */
 	 
-	protected static HashMap<String, ResultSetFormat> formatSymbols = new HashMap<String, ResultSetFormat>();
+	/*protected static HashMap<String, ResultSetFormat> formatSymbols = new HashMap<String, ResultSetFormat>();
     static {
             formatSymbols.put(ResultSetFormat.syntaxXML.getSymbol(), ResultSetFormat.syntaxXML);
             formatSymbols.put(ResultSetFormat.syntaxRDF_XML.getSymbol(), ResultSetFormat.syntaxRDF_XML);
@@ -614,6 +614,19 @@ public abstract class JenaConnect {
             formatSymbols.put(ResultSetFormat.syntaxCSV.getSymbol(), ResultSetFormat.syntaxCSV);
             formatSymbols.put(ResultSetFormat.syntaxText.getSymbol(), ResultSetFormat.syntaxText);
             formatSymbols.put(ResultSetFormat.syntaxJSON.getSymbol(), ResultSetFormat.syntaxJSON);
+    }*/
+    
+    
+    
+    protected static HashMap<String, ResultsFormat> formatSymbols = new HashMap<String, ResultsFormat>();
+    static { 
+    	    
+            formatSymbols.put(ResultsFormat.FMT_RS_XML.getSymbol(), ResultsFormat.FMT_RS_XML);
+            formatSymbols.put(ResultsFormat.FMT_RDF_XML.getSymbol(), ResultsFormat.FMT_RDF_XML);
+            formatSymbols.put(ResultsFormat.FMT_RDF_N3.getSymbol(), ResultsFormat.FMT_RDF_N3);
+            formatSymbols.put(ResultsFormat.FMT_RS_CSV.getSymbol(), ResultsFormat.FMT_RS_CSV);
+            formatSymbols.put(ResultsFormat.FMT_TEXT.getSymbol(), ResultsFormat.FMT_TEXT);
+            formatSymbols.put(ResultsFormat.FMT_RS_JSON.getSymbol(), ResultsFormat.FMT_RS_JSON);
     }
 
 	 
@@ -658,10 +671,15 @@ public abstract class JenaConnect {
 			}
 			if(query.isSelectType()) {
 				log.trace("output formatted results");
-				ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
-                if(rsf == null) {
+				/*ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
+                if (rsf == null) {
                      rsf = ResultSetFormat.syntaxText;
-                }
+                }*/
+                
+                ResultsFormat rsf = formatSymbols.get(resultFormatParam);
+                if (rsf == null) {
+                     rsf = ResultsFormat.FMT_TEXT;
+                } 
                 ResultSet rs = qe.execSelect();
                 if (rs.hasNext()) {
                    ResultSetFormatter.output(out, rs, rsf);
