@@ -62,10 +62,11 @@ public class BasicHttpWorker implements HttpWorker {
 			throws HttpWorkerException {
 		HttpRequestBase hreq = (request.getMethod() == Method.GET) ? buildGetMethod(request)
 				: buildPostMethod(request);
-
+		InputStream stream = null;
 		try {
 			HttpResponse hresp = httpClient.execute(hreq);
-			try (InputStream stream = hresp.getEntity().getContent()) {
+			try  {
+				stream = hresp.getEntity().getContent();
 				String responseBody = (stream == null) ? "" : IOUtils.toString(
 						stream, "UTF-8");
 				if (hresp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
@@ -73,6 +74,8 @@ public class BasicHttpWorker implements HttpWorker {
 							hresp.getStatusLine(), responseBody);
 				}
 				return responseBody;
+			} catch (Exception ex) {
+				return null;
 			}
 		} catch (Exception e) {
 			throw new HttpWorkerException(e);
