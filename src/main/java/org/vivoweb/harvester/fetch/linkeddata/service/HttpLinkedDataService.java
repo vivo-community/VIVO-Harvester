@@ -114,11 +114,13 @@ public class HttpLinkedDataService implements LinkedDataService {
         }
 
         HttpEntity  entity = response.getEntity();
+        InputStream instream = null;
         if (entity == null) {
             throw new Exception("could not get HttpEntity for " + uri +
                                 " status: " + response.getStatusLine() );
-        }else{
-            try (InputStream instream = entity.getContent()){
+        } else {
+            try {
+            	instream = entity.getContent();
                 m.read(instream, "", getRDFType( entity ));
                 instream.close();
             } catch (Exception ex ){
