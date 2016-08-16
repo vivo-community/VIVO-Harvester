@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
 import org.vivoweb.harvester.util.repo.MemJenaConnect;
 import org.vivoweb.harvester.util.repo.TDBJenaConnect;
+import org.apache.commons.lang.time.StopWatch;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -424,38 +426,48 @@ public class Score {
 	 * @throws IOException error connecting to the models
 	 */
 	private Set<Map<String, String>> buildSolutionSet() throws IOException {
+		 
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		if (this.matchThreshold != null) {
 			return buildFilterSolutionSet();
 		}
 		ResultSet rs = getResultSet();
-	     
+	    Set<String> runNames = this.vivoPredicates.keySet();
 		Set<Map<String, String>> solSet = getNewSolSet();
 		 
-		if(!rs.hasNext()) {
+		if (!rs.hasNext()) {
 			log.info("No Results Found");
 		} else {
 			log.info("Building Record Set");
+			 
 			Map<String, String> tempMap;
-			for(QuerySolution solution : IterableAdaptor.adapt(rs)) {
+			
+			for (QuerySolution solution : IterableAdaptor.adapt(rs)) { 
+				 
+				log.trace("solution "+rs.getRowNumber());
+		        
 				String sinputuri = solution.getResource("sInput").getURI();
 				String svivouri = solution.getResource("sVivo").getURI();
 				log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
 				tempMap = new HashMap<String, String>();
 				tempMap.put("sInput", sinputuri);
 				tempMap.put("sVivo", svivouri);
-				for(String runName : this.vivoPredicates.keySet()) {
-					//log.trace("adding runName to tempMap: "+ runName);
+				 
+				for (String runName : runNames) { 
 					RDFNode os = solution.get("os_" + runName);
 					RDFNode op = solution.get("op_" + runName);
-					addRunName(tempMap, runName, os, op);
-					//log.trace("Added runName");
+					addRunName(tempMap, runName, os, op); 
 				}
 				
-				solSet.add(tempMap);
+				solSet.add(tempMap); 
+				 
 			}
 			log.info("Finished building Record Set");
 			log.info("Added this many records: "+ solSet.size());
 		}
+		stopWatch.stop();
+		log.trace("BuildSolutionSet took this much time: "+stopWatch.getTime());
 		return solSet;
 	}
 	
@@ -468,12 +480,13 @@ public class Score {
 		log.trace("buildFilterSolutionSet");
 		Set<Map<String, String>> matchSet = Match.match(this.matchThreshold.floatValue(), this.scoreJena);
 		Set<Map<String, String>> solSet = getNewSolSet();
-		if(matchSet.isEmpty()) {
+		
+		if (matchSet.isEmpty()) {
 			log.info("No Results Found");
 		} else {
 			log.info("Building Record Set");
 			Map<String, String> tempMap;
-			for(Map<String, String> entry : matchSet) {
+			for (Map<String, String> entry : matchSet) {
 				String sinputuri = entry.get("sInputURI");
 				String svivouri = entry.get("sVivoURI");
 				log.trace("Potential Match: <" + sinputuri + "> to <" + svivouri + ">");
@@ -482,25 +495,25 @@ public class Score {
 				Resource sInput = this.inputJena.getJenaModel().getResource(sinputuri);
 				tempMap.put("sVivo", svivouri);
 				Resource sVivo = this.vivoJena.getJenaModel().getResource(svivouri);
-				for(String runName : this.vivoPredicates.keySet()) {
-					//log.trace("adding runName to tempMap: "+ runName);
+				for (String runName : this.vivoPredicates.keySet()) {
+					 
 					Property os_runName = this.inputJena.getJenaModel().getProperty(this.inputPredicates.get(runName));
 					Statement os_stmnt = sInput.getProperty(os_runName);
 					RDFNode os = null;
-					if(os_stmnt != null) {
+					if (os_stmnt != null) {
 						os = os_stmnt.getObject();
 					}
 					Property op_runName = this.vivoJena.getJenaModel().getProperty(this.vivoPredicates.get(runName));
 					Statement op_stmnt = sVivo.getProperty(op_runName);
 					RDFNode op = null;
-					if(op_stmnt != null) {
+					if (op_stmnt != null) {
 						op = op_stmnt.getObject();
 					}
 					
 					addRunName(tempMap, runName, os, op);
-					//log.trace("Added runName");
+					 
 				}
-				//log.trace("Add tempMap to solSet");
+				 
 				solSet.add(tempMap);
 			}
 			log.info("Finished building Record Set");
