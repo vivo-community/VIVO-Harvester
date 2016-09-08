@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.score.algorithm.Algorithm;
 import org.vivoweb.harvester.score.algorithm.EqualityTest;
+import org.vivoweb.harvester.score.algorithm.EqualityIgnoreCaseTest;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.IterableAdaptor;
 import org.vivoweb.harvester.util.args.ArgDef;
@@ -196,14 +197,17 @@ public class Score {
 		maps.put("algorithms", this.algorithms);
 		maps.put("weights", this.weights);
 		verifyRunNames(maps);
+
 		boolean test = true;
-		for(Class<?> algClass : this.algorithms.values()) {
-			try {
-				algClass.asSubclass(EqualityTest.class);
-			} catch(ClassCastException e) {
-				test = false;
-				break;
+		for (Class<?> algClass : this.algorithms.values()) {
+			log.trace("algClass: "+ algClass.getSimpleName()); 
+			if (algClass.getClass().isInstance(EqualityTest.class)  || algClass.getClass().isInstance(EqualityIgnoreCaseTest.class)   ) {
+				test = true;
+			} else {
+			   test = false;
+			   break;
 			}
+			 
 		}
 		this.equalityOnlyMode = test;
 		this.matchThreshold = matchThreshold;
@@ -463,11 +467,12 @@ public class Score {
 				solSet.add(tempMap); 
 				 
 			}
-			log.info("Finished building Record Set");
-			log.info("Added this many records: "+ solSet.size());
+			
 		}
 		stopWatch.stop();
 		log.trace("BuildSolutionSet took this much time: "+stopWatch.getTime());
+		log.info("Finished building Record Set");
+		log.info("Added this many records: "+ solSet.size());
 		return solSet;
 	}
 	
@@ -477,6 +482,8 @@ public class Score {
 	 * @throws IOException error connecting to the models
 	 */
 	private Set<Map<String, String>> buildFilterSolutionSet() throws IOException {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		log.trace("buildFilterSolutionSet");
 		Set<Map<String, String>> matchSet = Match.match(this.matchThreshold.floatValue(), this.scoreJena);
 		Set<Map<String, String>> solSet = getNewSolSet();
@@ -516,9 +523,12 @@ public class Score {
 				 
 				solSet.add(tempMap);
 			}
-			log.info("Finished building Record Set");
-			log.info("Added this many records: "+ solSet.size());
+			
 		}
+		stopWatch.stop();
+		log.trace("BuildFilterSolutionSet took this much time: "+stopWatch.getTime());
+		log.info("Finished building Record Set");
+		log.info("Added this many records: "+ solSet.size());
 		return solSet;
 	}
 	
@@ -550,9 +560,15 @@ public class Score {
 		return new TreeSet<Map<String, String>>(new Comparator<Map<String, String>>() {
 			@Override
 			public int compare(Map<String, String> o1, Map<String, String> o2) {
-				String o1key = o1.get("sInput") + o1.get("sVivo");
-				String o2key = o2.get("sInput") + o2.get("sVivo");
-				return o1key.compareTo(o2key);
+				StringBuilder o1sb = new StringBuilder();
+				o1sb.append(o1.get("sInput")).append(o1.get("sVivo"));
+				StringBuilder o2sb = new StringBuilder();
+				o2sb.append(o2.get("sInput")).append(o2.get("sVivo"));
+				return o1sb.toString().compareTo(o2sb.toString());
+				
+				//String o1key = o1.get("sInput") + o1.get("sVivo");
+				//String o2key = o2.get("sInput") + o2.get("sVivo");
+				//return o1key.compareTo(o2key);
 			}
 		});
 	}
