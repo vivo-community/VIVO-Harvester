@@ -10,19 +10,6 @@
 
 	<repositories>
 		<repository>
-			<releases>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>Maven Mirror</id>
-			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
-		</repository>
-		<repository>
-			<id>Jenabean</id>
-			<url>http://jenabean.googlecode.com/svn/repo</url>
-		</repository>
-		<repository>
 			<id>eulergui</id>
 			<url>http://eulergui.sourceforge.net/maven2</url>
 		</repository>
@@ -494,6 +481,10 @@
 				<exclusion>
 					<artifactId>slf4j-api</artifactId>
 					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
