@@ -352,7 +352,7 @@ public class WOSFetch {
 				NodeList recordList = responseDoc.getElementsByTagName("records");
 				for(int index = 0; index < recordList.getLength(); index++){
 					Element currentRecord = (Element)recordList.item(index);
-					String identifier = currentRecord.getElementsByTagName("UT").item(0).getTextContent();
+					String identifier = currentRecord.getElementsByTagName("uid").item(0).getTextContent();
 					String id = "id_-_" + identifier;
 					compileLamrList(identifier);
 					Element recordRoot = responseDoc.createElement("Description");
