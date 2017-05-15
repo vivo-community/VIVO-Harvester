@@ -17,11 +17,11 @@
 	xmlns:foaf='http://xmlns.com/foaf/0.1/'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
 	xmlns:bibo='http://purl.org/ontology/bibo/'
-    xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'>
+  xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'>
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
-	<xsl:variable name="baseURI">http://vivoweb.org/harvest/wos/</xsl:variable>
+	<xsl:variable name="baseURI">http://localhost:8080/chercheurs/</xsl:variable>
 
 	<!-- The root of the XML returned by WOS.  This serves as the header of the RDF file produced. -->
 	<xsl:template match="/Description">
@@ -52,16 +52,20 @@
 			     This is handled by selecting "authors/values" with modes "withinPub" and "standAlone",
 			     respectively.
 			     
-			     Similar mechanics work for journals and keywords.
+			     Similar mechanics work for journals, keywords and date.
 			-->
 			<xsl:apply-templates select="authors/value" mode="withinPub"/>
 			<xsl:apply-templates select="source[label='SourceTitle']/value" mode="withinPub"/>
 			<xsl:apply-templates select="keywords/value" mode="withinPub"/>
+      <!-- Match year first as month is a sibling and not always present -->
+      <xsl:apply-templates select="source[label='Published.BiblioYear']/value" mode="withinPub"/>
 		</rdf:Description>
 
 		<xsl:apply-templates select="authors/value" mode="standAlone" />
 		<xsl:apply-templates select="source[label='SourceTitle']/value" mode="standAlone" />
 		<xsl:apply-templates select="keywords/value" mode="standAlone" />
+    <!-- Same comment : match year first as month is a sibling and not always present -->
+    <xsl:apply-templates select="source[label='Published.BiblioYear']/value" mode="standAlone" />
 	</xsl:template>
 	
 	<!-- Match authors and place resulting XML outside of the publication node. -->
@@ -141,6 +145,51 @@
 	<!-- Match journals and place resulting XML inside the publication node. -->
 	<xsl:template match="source[label='SourceTitle']/value" mode="withinPub">
 		<core:hasPublicationVenue rdf:resource="{$baseURI}journal/wosid{ancestor::records/uid}journal{position()}" />
+	</xsl:template>
+  
+  <!-- Match date and place resulting XML outside of the publication node. -->
+	<xsl:template match="source[label='Published.BiblioYear']/value" mode="standAlone">
+		
+		<xsl:variable name="year" select="." />
+    <xsl:variable name="month" select="substring(../../source[label='Published.BiblioDate']/value, 1, 3)" />
+    <xsl:variable name="monthsMap">
+      <entry key="JAN">01</entry>
+      <entry key="FEB">02</entry>
+      <entry key="MAR">03</entry>
+      <entry key="APR">04</entry>
+      <entry key="MAY">05</entry>
+      <entry key="JUN">06</entry>
+      <entry key="JUL">07</entry>
+      <entry key="AUG">08</entry>
+      <entry key="SEP">09</entry>
+      <entry key="OCT">10</entry>
+      <entry key="NOV">11</entry>
+      <entry key="DEC">12</entry>
+      <entry key="SPR">03</entry>
+      <entry key="SUM">06</entry>
+      <entry key="AUT">09</entry>
+      <entry key="WIN">12</entry>
+    </xsl:variable>
+		<!-- Create the DateTimeValue node, assuming year is always present -->
+		<rdf:Description rdf:about="{$baseURI}datetime/wosid{ancestor::records/uid}datetime">
+			<rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue" />
+      <xsl:choose>
+				<xsl:when test="not($month = '')">
+          <core:dateTime><xsl:value-of select="concat($year, '-', $monthsMap/entry[@key=$month], '-01T00:00:00')" /></core:dateTime>
+          <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearMonthPrecision" />
+        </xsl:when>
+				<xsl:otherwise>
+          <core:dateTime><xsl:value-of select="concat($year, '-', '01-01T00:00:00')" /></core:dateTime>
+          <core:dateTimePrecision rdf:resource="http://vivoweb.org/ontology/core#yearPrecision" />
+        </xsl:otherwise>
+			</xsl:choose>
+		</rdf:Description>
+		
+	</xsl:template>
+  
+  <!-- Match date and place resulting XML inside the publication node. -->
+	<xsl:template match="source[label='Published.BiblioYear']/value" mode="withinPub">
+		<core:dateTimeValue rdf:resource="{$baseURI}datetime/wosid{ancestor::records/uid}datetime" />
 	</xsl:template>
 	
 	

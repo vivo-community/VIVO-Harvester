@@ -6,8 +6,10 @@
 package org.vivoweb.harvester.transfer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
@@ -63,6 +65,19 @@ public class Transfer {
 	
 	/**
 	 * Constructor
+	 * @param input 
+	 * @param jenaConfigFileName 
+	 * @param dumpToFile 
+	 * @throws IOException error parsing options
+	 */
+	public Transfer(RecordHandler inRH, String jenaConfigFileName, String dumpToFile) throws IOException {
+		this.inRH = inRH;
+		this.output = JenaConnect.parseConfig(jenaConfigFileName);
+		this.dumpFile = dumpToFile;
+	}
+	
+	/**
+	 * Constructor
 	 * @param args commandline arguments
 	 * @throws IOException error parsing options
 	 * @throws UsageException user requested usage message
@@ -114,7 +129,7 @@ public class Transfer {
 	 * Copy data from input to output
 	 * @throws IOException error
 	 */
-	private void execute() throws IOException {
+	public void execute() throws IOException {
 		if(this.output == null) {
 			this.output = new MemJenaConnect();
 			log.debug("No Output Specified, Using In-Memory Jena Model As Temporary Model");

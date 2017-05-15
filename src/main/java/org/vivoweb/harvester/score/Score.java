@@ -279,7 +279,7 @@ public class Score {
 	 * @param algs the commandline mapping
 	 * @return the algorithm map
 	 */
-	private static Map<String, Class<? extends Algorithm>> initAlgs(Map<String,String> algs) {
+	public static Map<String, Class<? extends Algorithm>> initAlgs(Map<String,String> algs) {
 		Map<String, Class<? extends Algorithm>> retVal = new HashMap<String, Class<? extends Algorithm>>();
 		for(String runName : algs.keySet()) {
 			try {
