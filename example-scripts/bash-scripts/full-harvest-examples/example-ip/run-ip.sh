@@ -72,11 +72,14 @@ harvester-xsltranslator -X xsltranslator.config.xml
 # -d means that this call will also produce a text dump file in the specified location 
 harvester-transfer -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
+#Smush data together based off the organization label and the person's email
+harvester-smush -X smush-org.config.xml
+harvester-smush -X smush-person.config.xml
+
 # Clean up the data going into VIVO using Qualify to fix some of the content
 #
 #
 #harvester-qualify -X qualify.conf.xml
-
 
 # Transfer Data Out
 #
@@ -104,12 +107,21 @@ harvester-transfer -i harvested-data.model.xml -d data/harvested-data/exported-r
 #   we need to clear out all that old data before we add more
 #harvester-jenaconnect -j score-data.model.xml -t
 
+
 # Execute ChangeNamespace to get unmatched  into current namespace
 # This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
 # 	If there is an issue with uris being in another namespace, this is the phase
 #	which should give some light to the problem.
 # Execute ChangeNamespace for People
-#harvester-changenamespace -X changenamespace-people.config.xml
+harvester-changenamespace -X changenamespace-people.config.xml
+
+
+# Execute ChangeNamespace to get unmatched  into current namespace
+# This is where the new people, departments, and positions from the harvest are given uris within the namespace of Vivo
+# 	If there is an issue with uris being in another namespace, this is the phase
+#	which should give some light to the problem.
+# Execute ChangeNamespace for Organizations
+harvester-changenamespace -X changenamespace-orgs.config.xml
 
 # Perform an update
 # The harvester maintains copies of previous harvests in order to perform the same harvest twice
@@ -145,11 +157,14 @@ harvester-transfer -o vivo.model.xml -r data/vivo-additions.rdf.xml
 # ---------------------------------------------------------------------------------------------------------
 
 
-
 #Output some counts
 ORGS=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Organization' | wc -l`
 PEOPLE=`cat data/vivo-additions.rdf.xml | grep 'http://xmlns.com/foaf/0.1/Person' | wc -l`
-#POSITIONS=`cat data/vivo-additions.rdf.xml | grep 'positionForPerson' | wc -l`
-echo "Imported $ORGS organizations, $PEOPLE people"
+TECH=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Technology' | wc -l`
+MAT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Material' | wc -l`
+INNOV=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/Innovation' | wc -l`
+RT=`cat data/vivo-additions.rdf.xml | grep 'http://vivo.ufl.edu/ontology/ctsaip/ResearchTool' | wc -l`
+echo "Imported $ORGS organizations, $PEOPLE people, $TECH technologies, $MAT materials, $INNOV innovations, $RT research tools"
+
 
 echo 'Harvest completed successfully'

@@ -1,0 +1,9 @@
+#Metadata: Fileset: POS
+#Wed Apr 18 12:40:20 EDT 2012
+tdb.file.type=rangeindex
+tdb.file.indexorder=POS
+tdb.file.impl.version=bplustree-v1
+tdb.file.impl=bplustree
+tdb.bplustree.record=24,0
+tdb.bplustree.order=146
+tdb.bplustree.blksize=8192

@@ -5,6 +5,7 @@
 	xmlns:public='http://vitro.mannlib.cornell.edu/ns/vitro/public#'
 	xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:ufVivo='http://vivo.ufl.edu/ontology/vivo-ufl/'
 	xmlns:vitro='http://vitro.mannlib.cornell.edu/ns/vitro/0.7#'
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:db-COURSES_CSV="jdbc:h2:data/csv/store/fields/COURSES_CSV/">
 
 	<xsl:output method="xml" indent="yes" />
@@ -19,6 +20,27 @@
 			<xsl:apply-templates select="rdf:Description" />
 		</rdf:RDF>
 	</xsl:template>
+	
+	<!-- Functions required to handle padding of 0's on UF IDs Start -->
+	<xsl:function name="ufVivo:repeat-string" as="xs:string" >
+	  <xsl:param name="stringToRepeat" as="xs:string?"/> 
+	  <xsl:param name="count" as="xs:integer"/> 
+	 
+	  <xsl:sequence select="string-join((for $i in 1 to $count return $stringToRepeat),'')"/>
+	   
+	</xsl:function>
+
+	<xsl:function name="ufVivo:pad-integer-to-length" as="xs:string">
+	  <xsl:param name="integerToPad" as="xs:string"/> 
+	  <xsl:param name="length" as="xs:integer"/> 
+	  <xsl:sequence select="if ($length &lt; string-length(string($integerToPad)))
+	  then 
+	  	error(xs:QName('ufVivo:Integer_Longer_Than_Length'))
+	  else 
+	  	concat(ufVivo:repeat-string('0',$length - string-length(string($integerToPad))),string($integerToPad))"/>
+	</xsl:function>
+	<!-- Functions required to handle padding of 0's on UF IDs End -->
+
 
 	<xsl:template match="rdf:Description">
 		
@@ -46,8 +68,12 @@
 			<xsl:value-of select="db-COURSES_CSV:SECT" />
 		</xsl:variable>
 		
-		<xsl:variable name="ins_ufid">
+		<xsl:variable name="unclean_ufid">
 			<xsl:value-of select="db-COURSES_CSV:INS_UFID" />
+		</xsl:variable>
+		
+		<xsl:variable name="ins_ufid">
+			<xsl:value-of select="ufVivo:pad-integer-to-length($unclean_ufid,8)" />
 		</xsl:variable>
 		
 		<xsl:variable name="instructorName">
@@ -379,4 +405,5 @@
                 <xsl:value-of select="translate($inputString,$smallCase,$upperCase)"/>
  
         </xsl:template>
+        
 </xsl:stylesheet>

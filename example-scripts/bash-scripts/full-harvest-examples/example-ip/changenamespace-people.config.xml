@@ -34,8 +34,8 @@
 <%  <Param name="newNamespace"> The namespace put here should agree with the namespace of the vivo being harvested    %>
 <%      into.                                                                                                         %>
 -->   
-	<Param name="oldNamespace">http://vivoweb.org/harvest/example/jdbc/person/</Param>
-	<Param name="newNamespace">http://vivo.sample.edu/individual/</Param>
+	<Param name="oldNamespace">http://vivoweb.org/harvest/ip/casemngr/</Param>
+	<Param name="newNamespace">http://vivo.ufl.edu/individual/</Param>
 		<!-- 
 <%   <Param name="errorLogging"> This parameter determines if a change in namespace will produce an error message. If %>
 <%      a change in the namespace should not be happening then this flag should be enabled.                           %>

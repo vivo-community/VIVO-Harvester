@@ -62,9 +62,9 @@
 <% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ %>
      -->
 	<Param name="tempJenaDir">data/temp-score-model</Param>
-	<Param name="algorithms">deptid=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
-	<Param name="weights">deptid=1.0</Param>
-	<Param name="inputJena-predicates">deptid=http://vivo.ufl.edu/ontology/vivo-ufl/deptID</Param>
-	<Param name="vivoJena-predicates">deptid=http://vivo.ufl.edu/ontology/vivo-ufl/deptID</Param>
-	<Param name="namespace">http://vivo.ufl.edu/translated/peoplesoft/org/</Param>
+	<Param name="algorithms">deptID=org.vivoweb.harvester.score.algorithm.EqualityTest</Param>
+	<Param name="weights">deptID=1.0</Param>
+	<Param name="inputJena-predicates">deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID</Param>
+	<Param name="vivoJena-predicates">deptID=http://vivo.ufl.edu/ontology/vivo-ufl/deptID</Param>
+	<Param name="namespace">http://vivo.ufl.edu/harvested/dept/</Param>
 </Task>
