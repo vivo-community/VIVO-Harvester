@@ -21,7 +21,7 @@
 
 	<!-- This will create indenting in xml readers -->
 	<xsl:output method="xml" indent="yes"/>
-	<xsl:variable name="baseURI">http://localhost:8080/chercheurs/</xsl:variable>
+	<xsl:variable name="baseURI">http://vivoweb.org/harvest/wos/</xsl:variable>
 
 	<!-- The root of the XML returned by WOS.  This serves as the header of the RDF file produced. -->
 	<xsl:template match="/Description">
