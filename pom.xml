@@ -16,7 +16,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 			<id>Maven Mirror</id>
-			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+			<url>http://uk.maven.org/maven2</url>
 		</repository>
 		<repository>
 			<id>Jenabean</id>
