@@ -60,7 +60,11 @@ public class IterableAdaptor<T> implements Iterable<T> {
 				
 				@Override
 				public T next() {
-					return getEn().nextElement();
+					try {
+					   return getEn().nextElement();
+					} catch (UnsupportedOperationException e) {
+					   return null;
+					}
 				}
 				
 				@Override
@@ -97,7 +101,7 @@ public class IterableAdaptor<T> implements Iterable<T> {
 	 * @param enin enumeration to adapt
 	 * @return an iterable adapter for the enumeration
 	 */
-	public static <T> Iterable<T> adapt(Enumeration<T> enin) {
+	public static <T> Iterable<T> adapt(Enumeration<T> enin) throws java.lang.UnsupportedOperationException {
 		return new IterableAdaptor<T>(enin);
 	}
 	
@@ -107,7 +111,7 @@ public class IterableAdaptor<T> implements Iterable<T> {
 	 * @param itin iterator to adapt
 	 * @return an iterable adapter for the iterator
 	 */
-	public static <T> Iterable<T> adapt(Iterator<T> itin) {
+	public static <T> Iterable<T> adapt(Iterator<T> itin) throws java.lang.UnsupportedOperationException {
 		return new IterableAdaptor<T>(itin);
 	}
 }
