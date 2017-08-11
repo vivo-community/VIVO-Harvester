@@ -670,7 +670,7 @@ public abstract class JenaConnect {
 				qe = QueryExecutionFactory.create(query, getJenaModel());
 			}
 			if(query.isSelectType()) {
-				log.trace("output formatted results");
+				log.trace("output formatted results"); 
 				/*ResultSetFormat rsf = formatSymbols.get(resultFormatParam);
                 if (rsf == null) {
                      rsf = ResultSetFormat.syntaxText;
@@ -679,7 +679,8 @@ public abstract class JenaConnect {
                 ResultsFormat rsf = formatSymbols.get(resultFormatParam);
                 if (rsf == null) {
                      rsf = ResultsFormat.FMT_TEXT;
-                } 
+                }
+                log.trace("resultSetFormat: "+ rsf.toString());
                 ResultSet rs = qe.execSelect();
                 if (rs.hasNext()) {
                    ResultSetFormatter.output(out, rs, rsf);
