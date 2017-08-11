@@ -1,0 +1,27 @@
+NOTE: This example has not yet been migrated to use the VIVO ISF ontology.  It is just a copy of the 1.0-1.5-examples version
+
+You need to modify certains files to ingest data using this example.
+
+Here are the files that need to be modified:
+
+1. vivo.model.xml
+
+check that the database information is configured correctly for your system.  By default, it will
+connect to a database called vitrodb_test on localhost
+
+2. run-mods.sh
+
+set to the directory where the harvester was installed
+HARVESTER_INSTALL_DIR
+(Note: there may be other shell scripts which have a set HARVESTER_INSTALL_DIR which
+will need to modified)
+
+3. raw.recordhanlder.xml
+
+change the fileDir as necessary.  It defaults to ./input and is where the bibutils input file
+should be stored.
+
+5. all the changenamespace-*.config.xml files
+
+change the "newNamespace" value to the namespace of your VIVO instance
+
