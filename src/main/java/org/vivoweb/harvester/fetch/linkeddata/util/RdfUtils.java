@@ -4,8 +4,8 @@ package org.vivoweb.harvester.fetch.linkeddata.util;
 
 import java.io.InputStream;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
 /**
  * A collection of static methods for helping deal with RDF

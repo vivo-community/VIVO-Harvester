@@ -1,6 +1,6 @@
 package org.vivoweb.harvester.fetch.linkeddata.service;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 /**
  * Interface for classes that can be used to get RDF linked data.

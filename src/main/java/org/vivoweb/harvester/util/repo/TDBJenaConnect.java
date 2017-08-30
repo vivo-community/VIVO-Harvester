@@ -11,10 +11,10 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.FileAide;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.tdb.TDB;
-import com.hp.hpl.jena.tdb.TDBFactory;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.tdb.TDB;
+import org.apache.jena.tdb.TDBFactory;
 
 /**
  * Connection Helper for TDB Jena Models
@@ -67,6 +67,7 @@ public class TDBJenaConnect extends JenaConnect {
 		if (modelName != null) {
 			setModelName(modelName);			 
 		    Model m = getDataset().getNamedModel(getModelName());
+		    
 		    log.trace("model "+ modelName +" size: "+m.size());
 			setJenaModel(m);
 		} else {
@@ -74,7 +75,7 @@ public class TDBJenaConnect extends JenaConnect {
 			Model m = getDataset().getDefaultModel();
 			Iterator iter = getDataset().listNames();
 			while (iter.hasNext()) {
-				log.trace("ds: "+iter.next());
+				log.debug("ds: "+iter.next());
 			}
 			log.trace("model size: "+m.size());
 			setJenaModel(m);

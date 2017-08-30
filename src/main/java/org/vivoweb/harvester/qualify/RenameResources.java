@@ -17,15 +17,17 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-import com.hp.hpl.jena.graph.BulkUpdateHandler;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.reasoner.InfGraph;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.Filter;
+
+//import org.apache.jena.graph.BulkUpdateHandler;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.Filter;
 
 /**
  * Changes the namespace for all matching uris
@@ -110,7 +112,7 @@ public class RenameResources {
 	 * @param uri A new URI for resource old, or <code>null</code> to rename old to a bNode
 	 * @return A new resource that occupies the same position in the graph as old, but which
 	 * has the new given URI.
-	 * @author jena team - see com.hp.hpl.jena.util.ResourceUtils
+	 * @author jena team - see org.apache.jena.util.ResourceUtils
 	 * @author hainesc - fixed to not cause ConcurrentModificationException in TDB
 	 */
 	public static Resource renameResource(final Resource old, final String uri) {
@@ -187,9 +189,12 @@ public class RenameResources {
 //		for(final Triple t : addTriples) {
 //			rawGraph.add(t);
 //		}
-		BulkUpdateHandler buh = rawGraph.getBulkUpdateHandler();
-		buh.add(addTriples.iterator());
-		buh.delete(removeTriples.iterator());
+		// BulkUpdateHandler removed in Jena3, use GraphUtil instead
+		//BulkUpdateHandler buh = rawGraph.getBulkUpdateHandler();
+		//buh.add(addTriples.iterator());
+		//buh.delete(removeTriples.iterator());
+		GraphUtil.add(rawGraph, addTriples.iterator());
+		GraphUtil.delete(rawGraph, removeTriples.iterator());
 		
 		// Did we work in the back of the InfGraph? If so, we need to rebind raw data (more or less expensive)!
 		if(rawGraph != graph)

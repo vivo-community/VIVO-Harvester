@@ -10,14 +10,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.sdb.SDBFactory;
-import com.hp.hpl.jena.sdb.Store;
-import com.hp.hpl.jena.sdb.StoreDesc;
-import com.hp.hpl.jena.sdb.sql.SDBConnectionFactory;
-import com.hp.hpl.jena.sdb.util.StoreUtils;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.sdb.SDBFactory;
+import org.apache.jena.sdb.Store;
+import org.apache.jena.sdb.StoreDesc;
+import org.apache.jena.sdb.sql.SDBConnectionFactory;
+import org.apache.jena.sdb.util.StoreUtils;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 /**
  * Connection Helper for SDB Jena Models

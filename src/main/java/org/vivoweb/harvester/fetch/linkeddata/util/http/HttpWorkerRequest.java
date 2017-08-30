@@ -2,7 +2,7 @@
 
 package org.vivoweb.harvester.fetch.linkeddata.util.http;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 /**
  * TODO
