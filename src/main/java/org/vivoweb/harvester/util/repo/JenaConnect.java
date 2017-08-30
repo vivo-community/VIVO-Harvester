@@ -28,28 +28,28 @@ import org.vivoweb.harvester.util.args.UsageException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import com.hp.hpl.jena.graph.GraphEvents;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
-//import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.RDFWriter;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.shared.Lock;
+import org.apache.jena.graph.GraphEvents;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QueryParseException;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.sparql.resultset.ResultsFormat;
+//import org.apache.jena.sparql.resultset.ResultSetFormat;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.Lock;
  
-import com.hp.hpl.jena.update.UpdateAction; 
-import com.hp.hpl.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateAction; 
+import org.apache.jena.update.UpdateFactory;
 
 /**
  * Connection Helper for Jena Models
@@ -269,7 +269,8 @@ public abstract class JenaConnect {
 	 *        "RDF/XML"
 	 * @throws IOException error writing to stream
 	 */
-	private static void exportRdfToStream(Model m, OutputStream out, String language) throws IOException { 
+	private static void exportRdfToStream(Model m, OutputStream out, String language) throws IOException {
+		
 		RDFWriter fasterWriter = m.getWriter(language);
 		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
@@ -309,7 +310,7 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to file
 	 */
 	public void exportRdfToFile(String fileName) throws IOException {
-		exportRdfToFile(fileName, null);
+		exportRdfToFile(fileName, "RDF/XML");
 	}
 	
 	/**
@@ -417,8 +418,8 @@ public abstract class JenaConnect {
 		int processCount = 0;
 		for(Record r : rh) {
 			log.trace("loading record: " + r.getID());
-			if(namespace != null) {
-				// log.trace("using namespace '"+namespace+"'");
+			if (namespace != null) {
+				log.trace("using namespace '"+namespace+"'");
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
 			getJenaModel().read(bais, namespace, language);
@@ -583,11 +584,12 @@ public abstract class JenaConnect {
 	 * @throws IOException error connecting
 	 */
 	public void executeUpdateQuery(String queryString, boolean datasetMode) throws IOException {
-		this.jenaModel.begin();
+		log.debug("datasetMode: "+ datasetMode); 
+		if (this.jenaModel.supportsTransactions()) this.jenaModel.begin();
 		this.jenaModel.notifyEvent(GraphEvents.startRead);
 		try {
  			log.trace("query:\n" + queryString);
-			if(datasetMode) {
+			if (datasetMode) {
  				log.trace("Executing query against dataset");
 				UpdateAction.execute(UpdateFactory.create(queryString), getDataset());
 			} else {
@@ -596,7 +598,7 @@ public abstract class JenaConnect {
 			}
 		} finally {
 			this.jenaModel.notifyEvent(GraphEvents.finishRead);
-			this.jenaModel.commit();
+			if (this.jenaModel.supportsTransactions()) this.jenaModel.commit();
 			 
 		}
 		this.jenaModel.close();

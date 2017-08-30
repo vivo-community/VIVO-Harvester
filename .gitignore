@@ -7,3 +7,4 @@
 */previous-harvest
 *.DS_Store
 *errDest/*
+support/*

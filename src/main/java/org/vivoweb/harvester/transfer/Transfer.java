@@ -86,6 +86,9 @@ public class Transfer {
 		// load any specified rdf file data
 		this.inRDF = argList.get("r");
 		this.inRDFlang = argList.get("R");
+		if (this.inRDFlang == null || this.inRDFlang.isEmpty()) {
+			this.inRDFlang = "RDF/XML";
+		}
 		
 		// load data from recordhandler
 		this.inRH = RecordHandler.parseConfig(argList.get("s"), argList.getValueMap("S"));
@@ -95,7 +98,7 @@ public class Transfer {
 		
 		// get namespace
 		this.namespace = argList.get("n");
-		
+		 
 		// remove mode
 		this.removeMode = argList.has("m");
 		
@@ -136,9 +139,12 @@ public class Transfer {
 				this.output.loadRdfFromJC(this.input);
 			}
 			if(this.inRDF != null) {
+				log.debug(getParser().getAppName() + ": language: "+ this.inRDFlang);
 				this.output.loadRdfFromFile(this.inRDF, this.namespace, this.inRDFlang);
 			}
 			if(this.inRH != null) {
+				log.debug(getParser().getAppName() + ": language: "+ this.inRDFlang);
+				log.debug(getParser().getAppName() + ": namespace: "+ this.namespace);
 				int processed = this.output.loadRdfFromRH(this.inRH, this.namespace, this.inRDFlang);
 				log.info(getParser().getAppName() + ": Records loaded: "+ processed);				 
 			}
