@@ -51,7 +51,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import sun.misc.BASE64Decoder;
+import java.util.Base64;
 
 public class ImageQueueConsumer {
 	/**
@@ -199,7 +199,7 @@ public class ImageQueueConsumer {
 	 * TODO: Fix this documentation to match actual method.
 	 * This function get the XML tag values  for example : for Tag "DateUpdated" it will give you the updatedate, for Image Tag it will give 
 	 * you the encoded Image String
-	 * @param base64String text encoded Image ,path Path to store the Image,This process repeats for every received message
+	 * @param e text encoded Image ,path Path to store the Image,This process repeats for every received message
 	 * @throwsI OException
 	 */
 	
@@ -220,8 +220,8 @@ public class ImageQueueConsumer {
 	
 	public static void WriteImageFromBase64(String base64String, String path) throws IOException {
 		//TODO: Resolve access issues and libraries.
-		BASE64Decoder decoder = new BASE64Decoder();
-		byte[] buf = decoder.decodeBuffer(base64String);
+		Base64.Decoder decoder = Base64.getDecoder();
+		byte[] buf = decoder.decode(base64String);
 		bytearr = new ByteArrayDataSource(buf, "image/jpeg");
 		InputStream in = bytearr.getInputStream();
 		// TODO: Member hiding and unused variables.

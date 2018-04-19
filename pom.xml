@@ -10,15 +10,6 @@
 
 	<repositories>
 		<repository>
-			<releases>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>Maven Mirror</id>
-			<url>http://uk.maven.org/maven2</url>
-		</repository>
-		<repository>
 			<id>Jenabean</id>
 			<url>http://jenabean.googlecode.com/svn/repo</url>
 		</repository>
