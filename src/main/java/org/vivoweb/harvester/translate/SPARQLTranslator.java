@@ -146,6 +146,7 @@ public class SPARQLTranslator {
 			}
 			this.outputJC.sync();
 		}
+		this.outputJC.close();
 		log.info("Translation: End");
 	}
 	

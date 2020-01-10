@@ -244,7 +244,8 @@ public class CSVFetch {
 		//resultModels[1] = tboxOntModel;
 		destination.add(ontModel);
 		destination.add(tboxOntModel);
-		System.out.println(this.rh.exportRdfToString());
+		System.out.println(this.rh.exportRdfToString("RDF/XML"));
+		destination.close();
 		//return resultModels;
 	}
 	

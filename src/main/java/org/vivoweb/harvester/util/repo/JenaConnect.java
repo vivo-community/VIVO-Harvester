@@ -245,7 +245,8 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to stream
 	 */
 	public void exportRdfToStream(OutputStream out) throws IOException {
-		exportRdfToStream(out, null);
+	        log.debug("exportRdfToStream:language not set, defaulting to RDF/XML");
+		exportRdfToStream(out, "RDF/XML");
 	}
 	
 	/**
@@ -257,6 +258,7 @@ public abstract class JenaConnect {
 	 * @throws IOException error writing to stream
 	 */
 	public void exportRdfToStream(OutputStream out, String language) throws IOException {
+	        log.debug("exportRdfToStream:language=" + language);
 		exportRdfToStream(this.jenaModel, out, language);
 	}
 	
@@ -271,6 +273,7 @@ public abstract class JenaConnect {
 	 */
 	private static void exportRdfToStream(Model m, OutputStream out, String language) throws IOException {
 		
+	        language = (language != null) ? language : "RDF/XML";
 		RDFWriter fasterWriter = m.getWriter(language);
 		fasterWriter.setProperty("showXmlDeclaration", "true");
 		fasterWriter.setProperty("allowBadURIs", "true");
