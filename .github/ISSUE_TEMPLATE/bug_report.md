@@ -29,11 +29,5 @@ If applicable, add screenshots to help explain your problem.
  - VIVO version [e.g. 1.11.0, 1.12.0]
  - Apache Solr or ElasticSearch version
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
 **Additional context**
 Add any other context about the problem here.
