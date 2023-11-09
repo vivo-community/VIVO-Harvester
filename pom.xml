@@ -422,7 +422,7 @@
     			<groupId>org.apache.jena</groupId>
     			<artifactId>jena-core</artifactId>
     			<type>pom</type>
-    			<version>3.4.0</version>
+    			<version>4.2.0</version>
  			<exclusions>
 
 				<exclusion>
