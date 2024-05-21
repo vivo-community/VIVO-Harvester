@@ -153,7 +153,7 @@ public class CSVtoJDBC {
     	String data = new String();
     	StringBuilder insertCommand = null;
         try {
-            Csv csv = Csv.getInstance();
+            Csv csv = new Csv();
             ResultSet rs = csv.read(new InputStreamReader(this.csvStream), null);
             ResultSetMetaData meta = rs.getMetaData();
             Statement cursor = this.output.createStatement();

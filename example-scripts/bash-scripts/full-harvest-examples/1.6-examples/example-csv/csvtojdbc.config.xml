@@ -30,7 +30,7 @@
 <%                                                                                                                    %>
 -->
 	<Param name="driver">org.h2.Driver</Param>
-	<Param name="connection">jdbc:h2:data/csv/store</Param>
+	<Param name="connection">jdbc:h2:./data/csv/store</Param>
 	<Param name="username">sa</Param>
 	<Param name="password"></Param>
 		<!-- TABLES -->

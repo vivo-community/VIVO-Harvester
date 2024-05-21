@@ -11,7 +11,7 @@ REM 	current location associated with the deb installation.
 REM 	Since it is also possible the harvester was installed by
 REM 	uncompressing the tar.gz the setting is available to be changed
 REM 	and should agree with the installation location
-set HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
+set HARVESTER_INSTALL_DIR=C:\Users\KampeB\Dev\confident-harvester\
 set HARVEST_NAME=example-csv
 FOR %%A IN (%Date:/=%) DO SET Today=%%A
 
@@ -53,7 +53,7 @@ REM  This stage of the script is where the information is gathered together into
 REM 	place to facilitate the further steps of the harvest. The data is stored locally
 REM 	in a format based off of the source. The format is a form of RDF but not in the VIVO ontology
 echo Fetch from JDBC
-@java %HARVESTER_JAVA_OPTS% -cp %CLASSPATH% org.vivoweb.harvester.fetch.JDBCFetch -X jdbcfetch.config.xml
+@java %HARVESTER_JAVA_OPTS% -cp %CLASSPATH% org.vivoweb.harvester.fetch.JDBCFetch -X jdbcfetch.config.xml --id CSV2=ROWID
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 
