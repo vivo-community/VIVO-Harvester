@@ -100,7 +100,7 @@
 <Model>
     <Param name="type">sdb</Param>
     <Param name="dbLayout">layout2</Param>
-    <Param name="dbClass">com.mysql.jdbc.Driver</Param>
+    <Param name="dbClass">com.mysql.cj.jdbc.Driver</Param>
     <Param name="dbType">MySQL</Param>
 
     <Param name="dbUrl">jdbc:mysql://127.0.0.1:3306/vitrodb_test</Param>
