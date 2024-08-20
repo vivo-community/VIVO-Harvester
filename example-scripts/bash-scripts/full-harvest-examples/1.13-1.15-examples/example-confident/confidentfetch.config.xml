@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
-  All rights reserved.
+  Copyright (c) 2024 TIB.
   This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
 -->
 <config>
-<!--    <param name="file">https://www.confident-conference.org/api.php?action=ask&amp;format=json&amp;query=[[Category%3AEvent]]%20[[Year%3A%3A2022]]%20[[Start%20Date%3A%3A%3E2022%2F7%2F1]]%20[[Start%20Date%3A%3A%3C2022%2F7%2F31]]%20%7C%3FTitle%20%7C%3FStart%20Date%20</param>-->
     <param name="file">https://www.confident-conference.org/api.php?action=askargs&amp;format=json&amp;conditions=%1FConcept%3AEvents%1FHas%20subobject.Organization%3A%3A%2B%1FAcademic%20Field%3A%3AAcademic_Field%3AArchitecture%7C%7CAcademic_Field%3ACivil_Engineering%7C%7CAcademic_Field%3AUrban%20Studies&amp;printouts=Academic%20Field%7CAcronym%7CTitle%7CIn%20Event%20Series%7CStart%20Date%7CEnd%20Date%7CEvent%20Mode%7CVenue%7CCity%7CRegion%7CCountry%7COfficial%20Website%7CDOI&amp;parameters=offset%3D0%7Climit%3D500</param>
-<!--    <param name="file">result.json</param>-->
     <param name="output">raw-records.config.xml</param>
     <param name="namespaceBase">http://vivo.example.com/harvest/aims_users/</param>
     <param name="description">event</param>
     <param name="id">uid</param>
     <param name="path">$.query.results</param>
-<!--    <param name="path">$.results</param>-->
     <Param name="wordiness">TRACE</Param>
 </config>
 
