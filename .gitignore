@@ -29,3 +29,6 @@ utilities/rdbmigration/.work
 **/.classpath
 **/.project
 **/bin/
+/example-scripts/bash-scripts/full-harvest-examples/1.13-examples/example-confident/data/
+/example-scripts/bash-scripts/full-harvest-examples/1.13-examples/example-confident/logs/
+/example-scripts/bash-scripts/full-harvest-examples/1.13-examples/example-confident/previous-harvest/
