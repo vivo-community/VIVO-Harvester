@@ -5,18 +5,14 @@
  ******************************************************************************/
 package org.vivoweb.harvester.fetch;
 
-import java.io.IOException; 
-import java.util.HashMap;
-import java.util.Iterator; 
-import java.util.List; 
-import net.minidev.json.JSONObject;
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.SpecialEntities;
-import org.vivoweb.harvester.util.WebAide;
+import org.vivoweb.harvester.util.*;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -24,8 +20,12 @@ import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.RecordStreamOrigin;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class for harvesting from JSON Data Sources
@@ -48,7 +48,7 @@ public class JSONFetch implements RecordStreamOrigin {
      */
     private RecordHandler rhOutput;
 
-        /**
+    /**
      * Namespace for RDF made from this database
      */
     private String uriNS;
@@ -291,6 +291,8 @@ public class JSONFetch implements RecordStreamOrigin {
     public void execute() throws IOException {
 
         String jsonpath = new String();
+//        Configuration conf = Configuration.defaultConfiguration();
+//        conf.addOptions(Option.ALWAYS_RETURN_LIST);
 
         try {
             XMLRecordOutputStream xmlRos = xmlRosBase.clone();
@@ -300,10 +302,11 @@ public class JSONFetch implements RecordStreamOrigin {
             // Get json contents as String, check for url first then a file
             String jsonString = new String();
             if (this.strAddress == null) {
-            	System.out.println(getParser().getUsage());
-            	System.exit(1);
+               System.out.println(getParser().getUsage());
+               System.exit(1);
             }
-            if (this.strAddress.startsWith("http:")) {
+            if (this.strAddress.startsWith("http")) {
+               log.debug("URL: "+this.strAddress);
                jsonString = WebAide.getURLContents(this.strAddress);
             } else {
                jsonString = FileAide.getTextContent(this.strAddress);
@@ -314,16 +317,69 @@ public class JSONFetch implements RecordStreamOrigin {
                 String name = this.nodeNames[i];
                 String id = this.idStrings[i];
                 jsonpath = this.pathStrings[i];
+                List<Object> nodes = new ArrayList<>();
                 log.info("Using path: "+ jsonpath);
                 JsonPath path = JsonPath.compile(jsonpath);
                 log.info("got jsonpath: "+ path.getPath());
-                List<Object> nodes = path.read(jsonString);
+                log.debug("type: "+path.read(jsonString).getClass().getSimpleName());
+
+                //        if (path.read(jsonString).getClass().getSimpleName().equals("JSONArray")) {
+                //            nodes = path.read(jsonString);
+//                } else {
+//                    JSONObject tmpObject = path.read(jsonString);
+//                    Gson gson = new GsonBuilder().create();
+//
+//                    JsonObject job = gson.fromJson(tmpObject.toJSONString(), JsonObject.class);
+//
+//                    log.debug("JSONObject: " + job);
+//                    //nodes = Arrays.asList(Arrays.stream(tmpObject).toArray());
+//                }
+
+                if (path.read(jsonString).getClass().getSimpleName().equals("JSONObject")) {
+                    Iterator objectIterator;
+                    JSONObject jsonObject = path.read(jsonString);
+
+                    objectIterator = jsonObject.keySet().iterator();
+
+                    while (objectIterator.hasNext()) {
+
+                        String key = (String) objectIterator.next();
+                        Object objVal = jsonObject.get(key);
+
+//                        log.debug("field: "+key);
+//                        log.debug("value: "+objVal);
+                        JSONObject tmpOpj = new JSONObject();
+                        tmpOpj.put(key,objVal);
+                        log.debug("adding: "+tmpOpj);
+                        nodes.add(tmpOpj);
+
+                    }
+                } else {
+                    nodes = path.read(jsonString);
+                }
+
+                //    log.debug("JSONArray: " +nodes);
+
+
+//                List<Object> nodes = path.read(jsonString);
+
+//                List<Object> nodes = JsonPath.using(conf).parse(jsonString).read(jsonpath, new TypeReference<List<Object>>() {});
+
+//                TypeRef<List<Object>> typeReference = new TypeRef<List<Object>>() {};
+//                ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+//                List<Object> nodes = JsonPath.using(
+//                                        conf
+//                                        .jsonProvider(new JacksonJsonProvider(mapper))
+//                                        .mappingProvider(new JacksonMappingProvider(mapper))
+//                        )
+//                        .parse(jsonString)
+//                        .read(jsonpath, typeReference);
+
                 log.info("name: "+ name);
-                //log.info("id: "+ id);
                 log.info("num nodes: " + nodes.size());
                 int count = 0;
 
-                 for (Object o: nodes) {
+                for (Object o: nodes) {
                     JSONObject jsonObject = (JSONObject) o;
                     Iterator iter = jsonObject.keySet().iterator();
                     StringBuilder sb = new StringBuilder();
@@ -331,14 +387,14 @@ public class JSONFetch implements RecordStreamOrigin {
                     //log.info("fixedkey: "+ fixedkey);
                     StringBuilder recID = new StringBuilder();
                     recID.append("node_-_");
-                    recID.append(String.valueOf(count));
+                    recID.append(count);
 
-                    //log.trace("Creating RDF for "+name+": "+recID);
+                    log.trace("Creating RDF for "+name+": "+recID);
                     // Build RDF BEGIN
                     // Header info
                     String nodeNS = "node-" + name;
                     sb = new StringBuilder();
-                    sb.append("<?xml version=\"1.0\"?>\n");
+                    sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                     sb.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n");
                     sb.append("         xmlns:");
                     sb.append(nodeNS);
@@ -363,12 +419,20 @@ public class JSONFetch implements RecordStreamOrigin {
                         String key = (String) iter.next();
                         Object val = jsonObject.get(key);
                         if (val == null) {
-                          val = "";
+                            val = "";
                         }
                         //log.info("val type for key: "+key+ ": "+val.getClass().getName());
-                        String fixedkey = key.replaceAll(" ","_"); 
-                        String field = nodeNS + ":" + fixedkey;
-                        sb.append(getFieldXml(field, val));
+                        String fixedkey = key
+                                .replaceAll(" |/","_")
+                                .replaceAll("\\(|\\)","")
+                                .replaceAll("/","_");
+                        if (!Character.isDigit(fixedkey.charAt(0)) && !fixedkey.equals("abstract_inverted_index")) {
+                            // Confident JSON node names contain "Event:A6bdb69a-e51d-42d7-bd25-62ec3c40b7e8"
+                            if (fixedkey.contains(":"))
+                                fixedkey = fixedkey.substring(fixedkey.indexOf(":")+1);
+                            String field = nodeNS + ":" + fixedkey;
+                            sb.append(getFieldXml(field, val, fixedkey));
+                        }
                     }
                     // Record info END
                     sb.append("  </rdf:Description>\n");
@@ -394,36 +458,190 @@ public class JSONFetch implements RecordStreamOrigin {
             throw new IOException(e);
         }
     }
-    
-    public String getFieldXml(String field, Object val) {
-       StringBuffer sb = new StringBuffer();
-       //log.debug("val type for field "+ field +": "+val.getClass().getName());
-       sb.append("    <");
-       sb.append(SpecialEntities.xmlEncode(field));
-       sb.append(">");
 
-       // insert field value
-       if (val instanceof  JSONArray) {
-    	   JSONArray array = (JSONArray) val;
-    	   log.debug("field is an array: "+ field);
-    	   Iterator iter = array.iterator();
-    	   while (iter.hasNext()) {
-    		   Object obj = iter.next();
-               log.debug("objtype: "+ obj.getClass().getName());
-    		   log.debug("val: "+ array.toString());
-    	   }
-       } else {
-         sb.append(SpecialEntities.xmlEncode(val.toString().trim()));
-       } 
-       // Field END
-       sb.append("</");
-       sb.append(SpecialEntities.xmlEncode(field));
-       sb.append(">\n");
-       return sb.toString();
+    public String getFieldXml(String field, Object val, String fixedkey) {
+        StringBuffer sb = new StringBuffer();
+
+        // to make it possible to handle confident data
+        if (field.contains(":")) {
+            field = field.replaceAll("/","_").substring(0,field.indexOf(':'));
+        }
+//        field = field.replaceAll("/","_").replaceAll(":","_");
+
+        log.debug("val type for field "+ field +": "+val.getClass().getName());
+        sb.append("    <");
+        sb.append(SpecialEntities.xmlEncode(field));
+        sb.append(">");
+
+        // insert field value
+        if (val instanceof  JSONArray) {
+            log.debug(field+" is an array with "+((JSONArray) val).size()+" elements") ;
+            XMLTagIndexing xmlTagIndexing = new XMLTagIndexing();
+            xmlTagIndexing.setElementNo(0);
+            arrayHandlingV2(val, sb, xmlTagIndexing, fixedkey);
+        } if (val instanceof  JSONObject) {
+            log.debug(field+" is an object with "+((JSONObject) val).size()+" elements") ;
+            objectHandling(val, sb);
+        } else if (val instanceof String || val instanceof Integer){
+            sb.append(SpecialEntities.xmlEncode(val.toString().trim().replaceAll("\u201D", "'").replaceAll("\u201C","'")));
+        }
+        // Field END
+        sb.append("</");
+        sb.append(SpecialEntities.xmlEncode(field));
+        sb.append(">\n");
+        return sb.toString();
     }
 
+//    private void arrayHandling(Object val, StringBuffer sb) {
+//        JSONArray array = (JSONArray) val;
+//
+//        sb.append("\n");
+//        Iterator arrayIterator = array.iterator();
+//        Iterator objectIterator;
+////        log.debug("val: "+ array);
+//
+//        while (arrayIterator.hasNext()) {
+//            if (!arrayIndexOpen) {
+//                arrayIndexOpen = true;
+//                sb.append("    <"+ elementNo +">\n");
+//            }
+//
+//            Object obj = arrayIterator.next();
+////            log.debug("objtype: "+ obj.getClass().getName());
+//            log.debug("val: "+ obj);
+//
+//            if (obj instanceof JSONArray) {
+//                log.debug("there is an JSON Array inside: "+ obj);
+////                arrayHandling(obj, sb);
+//            } else if (obj instanceof JSONObject) {
+//                log.debug("there is an JSON Object inside: "+ obj);
+//
+//                JSONObject jsonObject = (JSONObject) obj;
+//                objectIterator = jsonObject.keySet().iterator();
+//
+//
+//                while (objectIterator.hasNext()) {
+//                    String key = (String) objectIterator.next();
+//                    Object objVal = jsonObject.get(key);
+//                    if (objVal == null) {
+//                        objVal = "";
+//                    }
+//                    String fixedkey = key
+//                            .replaceAll(" |/","_")
+//                            .replaceAll("\\(|\\)","");
+//                    if (!Character.isDigit(fixedkey.charAt(0))) {
+//                        String field = fixedkey;
+//                        sb.append(getFieldXml(field, objVal));
+//                    }
+//                }
+//
+//
+//            } else {
+////                sb.append("        <"+i+">");
+////                sb.append(obj);
+////                sb.append("</"+i+">\n");
+////                i++;
+//            }
+//            if (arrayIndexOpen) {
+//                sb.append("    </"+ elementNo +">\n");
+//                arrayIndexOpen = false;
+//                elementNo++;
+//            }
+//        }
+//        sb.append("    ");
+//    }
 
+    private void objectHandling(Object val, StringBuffer sb) {
+        Iterator objectIterator;
 
+        JSONObject jsonObject = (JSONObject) val;
+        objectIterator = jsonObject.keySet().iterator();
+
+        while (objectIterator.hasNext()) {
+
+            String key = (String) objectIterator.next();
+            Object objVal = jsonObject.get(key);
+            if (objVal == null) {
+                objVal = "";
+            }
+
+            key = key.replaceAll("/","_")
+//                    .replaceAll("\\(","_")
+//                    .replaceAll("\\)","_")
+//                    .replaceAll("'","_")
+//                    .replaceAll(",","_")
+                    .replaceAll(" ","_");
+
+            if (!Character.isDigit(key.charAt(0))) {
+
+                log.debug("field: "+key);
+//                        sb.append(getTagName(field, objVal));
+                sb.append(getFieldXml(key, objVal, key));
+            }
+        }
+    }
+
+    private void arrayHandlingV2(Object val, StringBuffer sb, XMLTagIndexing xmlTagIndexing, String fixedkey) {
+        JSONArray array = (JSONArray) val;
+
+        sb.append("\n");
+        Iterator arrayIterator = array.iterator();
+
+        log.debug("val: "+ val);
+
+        while (arrayIterator.hasNext()) {
+            Object obj = arrayIterator.next();
+
+            if (!xmlTagIndexing.isArrayIndexOpen()) {
+                xmlTagIndexing.setArrayIndexOpen();
+                String lastChar = fixedkey.substring(fixedkey.length() - 1);
+                if (lastChar.equals("s"))
+                    xmlTagIndexing.setXmlTagName(StringUtils.chop(fixedkey));
+                else
+                    xmlTagIndexing.setXmlTagName(fixedkey);
+                sb.append("    <"+xmlTagIndexing.getXmlTagName()+"_"+ xmlTagIndexing.getElementNo() +">");
+            }
+
+//            log.debug("val: "+ obj);
+
+            if (obj instanceof JSONArray) {
+                log.debug("there is an JSON Array inside: "+ obj);
+                XMLTagIndexing xmlArrayIndexing = new XMLTagIndexing();
+                xmlArrayIndexing.setElementNo(0);
+
+                arrayHandlingV2(val, sb, xmlArrayIndexing, fixedkey);
+            } else if (obj instanceof JSONObject) {
+                log.debug("there is an JSON Object inside: "+ obj);
+                objectHandling(obj, sb);
+            }
+            else {
+                sb.append(obj.toString().replaceAll("&","&amp;"));
+            }
+            if (xmlTagIndexing.isArrayIndexOpen()) {
+                sb.append("</"+xmlTagIndexing.getXmlTagName()+"_"+ xmlTagIndexing.getElementNo() +">\n");
+                xmlTagIndexing.increaseElementNo();
+                xmlTagIndexing.setArrayIndexClosed();
+            }
+        }
+        sb.append("    ");
+    }
+
+    public String getTagName(String field, Object val) {
+        StringBuffer sb = new StringBuffer();
+        log.debug("val type for tag "+ field +": "+val.getClass().getName());
+        sb.append("    <");
+        sb.append(SpecialEntities.xmlEncode(field));
+        sb.append(">");
+
+        // insert field value
+        sb.append(SpecialEntities.xmlEncode(val.toString().trim()));
+
+        // Field END
+        sb.append("</");
+        sb.append(SpecialEntities.xmlEncode(field));
+        sb.append(">\n");
+        return sb.toString();
+    }
 
 
     @Override
@@ -440,7 +658,7 @@ public class JSONFetch implements RecordStreamOrigin {
            Object valobj = mapobject.get(keyobj);
            log.info(keyobj +": "+ valobj);
         }
-     }
+    }
 
 
     /**
