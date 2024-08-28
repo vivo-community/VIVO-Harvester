@@ -339,77 +339,7 @@ public class JSONFetch implements RecordStreamOrigin {
 
                     if (jsonObject.get("title") == null) {
                         itr.remove();
-                    } /*else {
-                    // scoring - for getting just relevant publications belonging to listed concepts
-                        for (int j = 0; j < conceptArray.size(); j++) {
-                            JSONObject concept = (JSONObject) conceptArray.get(j);
-                            String conceptID = (String) concept.get("id");
-                            Double score = Double.parseDouble(concept.get("score").toString());
-
-                            if (conceptID.contains("C66862320") ||
-                                    conceptID.contains("C147176958") ||
-                                    conceptID.contains("C10238366") ||
-                                    conceptID.contains("C118416809") ||
-                                    conceptID.contains("C119823426") ||
-                                    conceptID.contains("C120991184") ||
-                                    conceptID.contains("C122156500") ||
-                                    conceptID.contains("C123657996") ||
-                                    conceptID.contains("C124363303") ||
-                                    conceptID.contains("C127416549") ||
-                                    conceptID.contains("C147176958") ||
-                                    conceptID.contains("C148803439") ||
-                                    conceptID.contains("C154226666") ||
-                                    conceptID.contains("C158049464") ||
-                                    conceptID.contains("C158550234") ||
-                                    conceptID.contains("C1631582") ||
-                                    conceptID.contains("C173560066") ||
-                                    conceptID.contains("C178432105") ||
-                                    conceptID.contains("C190831278") ||
-                                    conceptID.contains("C196316656") ||
-                                    conceptID.contains("C203115093") ||
-                                    conceptID.contains("C203299862") ||
-                                    conceptID.contains("C205300905") ||
-                                    conceptID.contains("C2775926657") ||
-                                    conceptID.contains("C2776009117") ||
-                                    conceptID.contains("C2776081408") ||
-                                    conceptID.contains("C2776136241") ||
-                                    conceptID.contains("C2776161637") ||
-                                    conceptID.contains("C2776311590") ||
-                                    conceptID.contains("C2776445639") ||
-                                    conceptID.contains("C2776748203") ||
-                                    conceptID.contains("C2776825979") ||
-                                    conceptID.contains("C2777231864") ||
-                                    conceptID.contains("C2777364373") ||
-                                    conceptID.contains("C2777800518") ||
-                                    conceptID.contains("C2777831296") ||
-                                    conceptID.contains("C2778206487") ||
-                                    conceptID.contains("C2778647717") ||
-                                    conceptID.contains("C2778684775") ||
-                                    conceptID.contains("C2778753569") ||
-                                    conceptID.contains("C2778906150") ||
-                                    conceptID.contains("C2779054714") ||
-                                    conceptID.contains("C2779201158") ||
-                                    conceptID.contains("C2779265402") ||
-                                    conceptID.contains("C2779331490") ||
-                                    conceptID.contains("C2779635184") ||
-                                    conceptID.contains("C2780021121") ||
-                                    conceptID.contains("C2780113678") ||
-                                    conceptID.contains("C2780344732") ||
-                                    conceptID.contains("C2780886216") ||
-                                    conceptID.contains("C2780933643") ||
-                                    conceptID.contains("C2781052401")) {
-                                log.debug("Concept:\t\t" + concept.get("display_name"));
-                                log.debug("Concept ID:\t\t" + conceptID);
-                                log.debug("Concept score:\t" + score);
-                                if (score > relevantScore)
-                                    relevantScore = score;
-                                log.debug("Relevant score:\t" + relevantScore);
-                            }
-                        }
-                        if (relevantScore < 0.35)
-                            itr.remove();
-                    }*/
-
+                    }
                 }
 
                 for (Object o : nodes) {
@@ -580,65 +510,6 @@ public class JSONFetch implements RecordStreamOrigin {
             sb.append(">\n");
             return sb.toString();
         }
-
-//    private void arrayHandling(Object val, StringBuffer sb) {
-//        JSONArray array = (JSONArray) val;
-//
-//        sb.append("\n");
-//        Iterator arrayIterator = array.iterator();
-//        Iterator objectIterator;
-////        log.debug("val: "+ array);
-//
-//        while (arrayIterator.hasNext()) {
-//            if (!arrayIndexOpen) {
-//                arrayIndexOpen = true;
-//                sb.append("    <"+ elementNo +">\n");
-//            }
-//
-//            Object obj = arrayIterator.next();
-////            log.debug("objtype: "+ obj.getClass().getName());
-//            log.debug("val: "+ obj);
-//
-//            if (obj instanceof JSONArray) {
-//                log.debug("there is an JSON Array inside: "+ obj);
-////                arrayHandling(obj, sb);
-//            } else if (obj instanceof JSONObject) {
-//                log.debug("there is an JSON Object inside: "+ obj);
-//
-//                JSONObject jsonObject = (JSONObject) obj;
-//                objectIterator = jsonObject.keySet().iterator();
-//
-//
-//                while (objectIterator.hasNext()) {
-//                    String key = (String) objectIterator.next();
-//                    Object objVal = jsonObject.get(key);
-//                    if (objVal == null) {
-//                        objVal = "";
-//                    }
-//                    String fixedkey = key
-//                            .replaceAll(" |/","_")
-//                            .replaceAll("\\(|\\)","");
-//                    if (!Character.isDigit(fixedkey.charAt(0))) {
-//                        String field = fixedkey;
-//                        sb.append(getFieldXml(field, objVal));
-//                    }
-//                }
-//
-//
-//            } else {
-////                sb.append("        <"+i+">");
-////                sb.append(obj);
-////                sb.append("</"+i+">\n");
-////                i++;
-//            }
-//            if (arrayIndexOpen) {
-//                sb.append("    </"+ elementNo +">\n");
-//                arrayIndexOpen = false;
-//                elementNo++;
-//            }
-//        }
-//        sb.append("    ");
-//    }
 
         private void objectHandling(Object val, StringBuffer sb) {
             Iterator objectIterator;
