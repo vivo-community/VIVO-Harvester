@@ -1,0 +1,64 @@
+{
+    "Animal": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "type": {
+                "type": "string"
+            }
+        },
+        "discriminator" : {
+            "propertyName" : "type"
+        }
+    },
+    "Human": {
+        "type": "object",
+        "allOf": [
+            {
+                "$ref": "#/components/schemas/Animal"
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    }
+                }
+            }
+        ]
+    },
+    "Pet": {
+        "type": "object",
+        "allOf": [
+            {
+                "$ref": "#/components/schemas/Animal"
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The pet type"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the pet"
+                    },
+                    "isDomestic": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        ],
+        "required": [
+            "isDomestic",
+            "name",
+            "type"
+        ]
+    }
+}

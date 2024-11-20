@@ -1,0 +1,52 @@
+{
+  "dspaceType" : "item",
+  "id" : "123456789_68",
+  "uri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+  "url" : "http://localhost:8080/server/rdf/resource/123456789/68",
+  "dspaceBitstreamURL" : "http://localhost:4000/bitstream/123456789/68/1/bubble-chart-line.png",
+  "dspaceIsPartOfCollectionID" : [ "123456789_62" ],
+  "listOfStatements" : null,
+  "listOfStatementLiterals" : [ {
+    "dspaceType" : "statementLiteral",
+    "subjectUri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+    "predicateUri" : "dc:date",
+    "objectLiteral" : "2022-04-02T06:28:50Z",
+    "literalType" : "xsd:dateTime"
+  }, {
+    "dspaceType" : "statementLiteral",
+    "subjectUri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+    "predicateUri" : "dcterms:available",
+    "objectLiteral" : "2022-04-02T06:28:50Z",
+    "literalType" : "xsd:dateTime"
+  }, {
+    "dspaceType" : "statementLiteral",
+    "subjectUri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+    "predicateUri" : "dcterms:hasPart",
+    "objectLiteral" : "http://localhost:4000/bitstream/123456789/68/1/bubble-chart-line.png",
+    "literalType" : "xsd:anyURI"
+  }, {
+    "dspaceType" : "statementLiteral",
+    "subjectUri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+    "predicateUri" : "dcterms:isPartOf",
+    "objectLiteral" : "http://localhost:8080/server/rdf/resource/123456789/62",
+    "literalType" : "xsd:anyURI"
+  }, {
+    "dspaceType" : "statementLiteral",
+    "subjectUri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+    "predicateUri" : "dcterms:issued",
+    "objectLiteral" : "2022",
+    "literalType" : null
+  }, {
+    "dspaceType" : "statementLiteral",
+    "subjectUri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+    "predicateUri" : "dcterms:title",
+    "objectLiteral" : "Test thesis",
+    "literalType" : null
+  }, {
+    "dspaceType" : "statementLiteral",
+    "subjectUri" : "http://dspacevivo.vivoweb.org/individual/123456789_68",
+    "predicateUri" : "bibo:uri",
+    "objectLiteral" : "http://localhost:4000/handle/123456789/68",
+    "literalType" : "xsd:anyURI"
+  } ]
+}

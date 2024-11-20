@@ -1,0 +1,66 @@
+@prefix ocrer: <http://purl.org/net/OCRe/research.owl#> .
+@prefix p1:    <http://vivoweb.org/ontology/vitroAnnotfr_CA#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix scires: <http://vivoweb.org/ontology/scientific-research#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ocresd: <http://purl.org/net/OCRe/study_design.owl#> .
+@prefix swo:   <http://www.ebi.ac.uk/efo/swo/> .
+@prefix cito:  <http://purl.org/spar/cito/> .
+@prefix geo:   <http://aims.fao.org/aos/geopolitical.owl#> .
+@prefix ocresst: <http://purl.org/net/OCRe/statistics.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vivo:  <http://vivoweb.org/ontology/core#> .
+@prefix event: <http://purl.org/NET/c4dm/event.owl#> .
+@prefix vann:  <http://purl.org/vocab/vann/> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix c4o:   <http://purl.org/spar/c4o/> .
+@prefix vivo-indv: <http://localhost:8080/vivo/individual/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix swrl:  <http://www.w3.org/2003/11/swrl#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix vitro-public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ocresp: <http://purl.org/net/OCRe/study_protocol.owl#> .
+@prefix bibo:  <http://purl.org/ontology/bibo/> .
+@prefix obo:   <http://purl.obolibrary.org/obo/> .
+@prefix ro:    <http://purl.obolibrary.org/obo/ro.owl#> .
+
+vivo-indv:n3137  a              bibo:Article , obo:BFO_0000031 , obo:BFO_0000001 , owl:Thing , obo:BFO_0000002 , bibo:Document , obo:IAO_0000030 ;
+        rdfs:label              "Simple Article"@en-CA ;
+        vitro:mostSpecificType  bibo:Article ;
+        vivo:relatedBy          vivo-indv:n488 .
+
+vivo-indv:n7024  a              vcard:Kind , obo:ARG_2000379 , vcard:Individual , obo:IAO_0000030 , obo:BFO_0000001 , owl:Thing , obo:BFO_0000031 , obo:BFO_0000002 ;
+        obo:ARG_2000029         vivo-indv:n1647 ;
+        vitro:mostSpecificType  vcard:Individual ;
+        vcard:hasName           vivo-indv:n2245 .
+
+vivo-indv:n488  a               owl:Thing , obo:BFO_0000002 , vivo:Relationship , obo:BFO_0000020 , obo:BFO_0000001 , vivo:Authorship ;
+        vitro:mostSpecificType  vivo:Authorship ;
+        vivo:relates            vivo-indv:n1647 , vivo-indv:n3137 .
+
+vivo-indv:n630  a               obo:BFO_0000023 , obo:BFO_0000017 , obo:BFO_0000001 , owl:Thing , obo:BFO_0000020 , obo:BFO_0000002 , vivo:MemberRole ;
+        obo:RO_0000052          vivo-indv:n1647 ;
+        vitro:mostSpecificType  vivo:MemberRole ;
+        vivo:roleContributesTo  vivo-indv:n3165 .
+
+vivo-indv:n1647  a              foaf:Person , obo:BFO_0000004 , obo:BFO_0000001 , owl:Thing , vivo:FacultyMember , obo:BFO_0000002 , foaf:Agent ;
+        rdfs:label              "Héon, Michel "@en-CA ;
+        obo:ARG_2000028         vivo-indv:n7024 ;
+        obo:RO_0000053          vivo-indv:n630 ;
+        vitro:mostSpecificType  vivo:FacultyMember ;
+        vivo:relatedBy          vivo-indv:n488 .
+
+vivo-indv:n3165  a              foaf:Organization , obo:BFO_0000001 , vivo:University , obo:BFO_0000004 , obo:BFO_0000002 , foaf:Agent , owl:Thing ;
+        rdfs:label              "Université du Québec à Montréal"@en-CA ;
+        vitro:mostSpecificType  vivo:University ;
+        vivo:contributingRole   vivo-indv:n630 .
+
+vivo-indv:n2245  a              owl:Thing , vcard:Identification , vcard:Addressing , vcard:Explanatory , vcard:Communication , vcard:Name ;
+        vitro:mostSpecificType  vcard:Name ;
+        vcard:familyName        "Héon"@en-CA ;
+        vcard:givenName         "Michel"@en-CA .

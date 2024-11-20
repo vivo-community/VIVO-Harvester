@@ -1,0 +1,14 @@
+1)Execute with Maven:
+
+mvn compile exec:java -Dexec.mainClass="org.vivoweb.dspacevivo.transformation.ConsoleApplication" -Dexec.ar="/somedir/harvester.conf /somedir/outputDir/"
+
+2)To generate JAR executable:
+
+mvn clean compile assembly:single
+
+Execute the harvester as JAR:
+
+java -jar transformation.jar /somedir/harvester.conf /somedir/outputDir/
+
+
+

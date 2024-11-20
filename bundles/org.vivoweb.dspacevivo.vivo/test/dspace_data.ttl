@@ -1,0 +1,34 @@
+@prefix ocrer: <http://purl.org/net/OCRe/research.owl#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix scires: <http://vivoweb.org/ontology/scientific-research#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ocresd: <http://purl.org/net/OCRe/study_design.owl#> .
+@prefix swo:   <http://www.ebi.ac.uk/efo/swo/> .
+@prefix cito:  <http://purl.org/spar/cito/> .
+@prefix dspace: <http://vivoweb.org/ontology/dspace#> .
+@prefix geo:   <http://aims.fao.org/aos/geopolitical.owl#> .
+@prefix ocresst: <http://purl.org/net/OCRe/statistics.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vivo:  <http://vivoweb.org/ontology/core#> .
+@prefix event: <http://purl.org/NET/c4dm/event.owl#> .
+@prefix vann:  <http://purl.org/vocab/vann/> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix c4o:   <http://purl.org/spar/c4o/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix swrl:  <http://www.w3.org/2003/11/swrl#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix vitro-public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ocresp: <http://purl.org/net/OCRe/study_protocol.owl#> .
+@prefix bibo:  <http://purl.org/ontology/bibo/> .
+@prefix obo:   <http://purl.obolibrary.org/obo/> .
+@prefix ro:    <http://purl.obolibrary.org/obo/ro.owl#> .
+
+<http://dspacevivo.vivoweb.org/individual/n0002>
+        a                       owl:Thing , obo:IAO_0000030 , obo:BFO_0000031 , obo:BFO_0000002 , dspace:Community , bibo:CollectedDocument , obo:BFO_0000001 , bibo:Document ;
+        rdfs:label              "a DSPACE Community"@en-US ;
+        vitro:mostSpecificType  dspace:Community .

@@ -1,0 +1,1 @@
+export VIVO_URL=http://localhost:8080/$VIVO_APP_NAME

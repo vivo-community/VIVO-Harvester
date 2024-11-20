@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.vivoweb</groupId>
@@ -28,6 +28,8 @@
 	</dependencyManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jena.version>3.17.0</jena.version>
+		<jackson.version>2.12.1</jackson.version>
 	</properties>
 
 	<developers>
@@ -139,7 +141,7 @@
 										<type>perm</type>
 										<prefix>/usr/share/vivo/harvester/scripts</prefix>
 									</mapper>
-								</data>--> 
+								</data>-->
 								<data>
 									<src>${project.basedir}/example-datamaps</src>
 									<type>directory</type>
@@ -183,28 +185,28 @@
 					</execution>
 				</executions>
 			</plugin>
-                        <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>rpm-maven-plugin</artifactId> 
-				<version>2.1-alpha-1</version> <executions> <execution> <phase>package</phase> 
-				<goals> <goal>rpm</goal> </goals> </execution> </executions> <configuration> 
-				<copyright>2010, VIVO Harvester Team</copyright> <distribution>VIVO Release 
-				1.1</distribution> <group>Development</group> <packager>VIVO Harvester Team</packager> 
-				<prefix>/usr/share/vivo/harvester</prefix> <changelogFile>CHANGELOG</changelogFile> 
-				<defineStatements> <defineStatement>_unpackaged_files_terminate_build 0</defineStatement> 
-				</defineStatements> <mappings> <mapping> <directory>/usr/share/vivo/harvester/bin/</directory> 
-				<filemode>444</filemode> <sources> <source> <location>${project.build.directory}/${project.build.finalName}.jar</location> 
-				</source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/bin/dependency</directory> 
-				<filemode>750</filemode> <sources> <source> <location>${project.build.directory}/dependency</location> 
-				</source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/docs</directory> 
-				<documentation>true</documentation> <filemode>444</filemode> <sources> <source> 
-				<location>AUTHORS</location> </source> <source> <location>CHANGELOG</location> 
-				</source> <source> <location>INSTALL</location> </source> <source> <location>LICENSE</location> 
-				</source> <source> <location>README</location> </source> <source> <location>THANKS</location> 
-				</source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/conf</directory> 
-				<configuration>true</configuration> <filemode>644</filemode> <sources> <source> 
-				<location>config</location> </source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/scripts</directory> 
-				<filemode>644</filemode> <sources> <source> <location>scripts</location> 
-				</source> </sources> </mapping> </mappings> </configuration> </plugin> 
-                        -->
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>rpm-maven-plugin</artifactId>
+    <version>2.1-alpha-1</version> <executions> <execution> <phase>package</phase>
+    <goals> <goal>rpm</goal> </goals> </execution> </executions> <configuration>
+    <copyright>2010, VIVO Harvester Team</copyright> <distribution>VIVO Release
+    1.1</distribution> <group>Development</group> <packager>VIVO Harvester Team</packager>
+    <prefix>/usr/share/vivo/harvester</prefix> <changelogFile>CHANGELOG</changelogFile>
+    <defineStatements> <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+    </defineStatements> <mappings> <mapping> <directory>/usr/share/vivo/harvester/bin/</directory>
+    <filemode>444</filemode> <sources> <source> <location>${project.build.directory}/${project.build.finalName}.jar</location>
+    </source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/bin/dependency</directory>
+    <filemode>750</filemode> <sources> <source> <location>${project.build.directory}/dependency</location>
+    </source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/docs</directory>
+    <documentation>true</documentation> <filemode>444</filemode> <sources> <source>
+    <location>AUTHORS</location> </source> <source> <location>CHANGELOG</location>
+    </source> <source> <location>INSTALL</location> </source> <source> <location>LICENSE</location>
+    </source> <source> <location>README</location> </source> <source> <location>THANKS</location>
+    </source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/conf</directory>
+    <configuration>true</configuration> <filemode>644</filemode> <sources> <source>
+    <location>config</location> </source> </sources> </mapping> <mapping> <directory>/usr/share/vivo/harvester/scripts</directory>
+    <filemode>644</filemode> <sources> <source> <location>scripts</location>
+    </source> </sources> </mapping> </mappings> </configuration> </plugin>
+            -->
 		</plugins>
 		<resources>
 		</resources>
@@ -212,6 +214,84 @@
 	<profiles>
 	</profiles>
 	<dependencies>
+		<dependency>
+			<groupId>org.vivoweb.dspacevivo</groupId>
+			<artifactId>org.vivoweb.dspacevivo.transformation</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/bundles/org.vivoweb.dspacevivo.transformation/target/org.vivoweb.dspacevivo.transformation-0.0.1-SNAPSHOT.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.vivoweb.dspacevivo</groupId>
+			<artifactId>org.vivoweb.dspacevivo.model.ontologie</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/bundles/org.vivoweb.dspacevivo.model.ontologie/target/org.vivoweb.dspacevivo.model.ontologie-0.0.1-SNAPSHOT.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.vivoweb.dspacevivo</groupId>
+			<artifactId>org.vivoweb.dspacevivo.model.openapi</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/bundles/org.vivoweb.dspacevivo.model.openapi/target/org.vivoweb.dspacevivo.model.openapi-0.0.1-SNAPSHOT.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-arq</artifactId>
+			<version>${jena.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-cmds</artifactId>
+			<version>${jena.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>apache-jena</artifactId>
+			<version>${jena.version}</version>
+			<type>pom</type>
+		</dependency>
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.14.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>3.13.8</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -227,23 +307,23 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-  			<groupId>org.apache.activemq</groupId>
+			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-all</artifactId>
- 			<version>5.4.3</version>
- 			<exclusions>
+			<version>5.4.3</version>
+			<exclusions>
 				<exclusion>
-  					<groupId>org.slf4j</groupId>
-  					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 
 		<dependency>
-   			<groupId>junit</groupId>
-      			<artifactId>junit</artifactId>
-         		<version>4.13.1</version>
-	    		<scope>test</scope>
-	    	</dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-vfs</groupId>
@@ -251,7 +331,7 @@
 			<version>1.0</version>
 			<type>jar</type>
 		</dependency>
-                <dependency>
+		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.2</version>
@@ -275,20 +355,20 @@
 			<version>1.2.19</version>
 		</dependency>
 
-                <!--
+		<!--
+<dependency>
+    <groupId>com.hp.hpl.jena</groupId>
+    <artifactId>Gloze</artifactId>
+    <version>1.01-beta2</version>
+</dependency>
+        -->
 		<dependency>
 			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>Gloze</artifactId>
-			<version>1.01-beta2</version>
+			<artifactId>gloze</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/gloze.jar</systemPath>
 		</dependency>
-                -->
-                <dependency>
-                        <groupId>com.hp.hpl.jena</groupId>
-                        <artifactId>gloze</artifactId>
-                        <version>1.0</version>
-                        <scope>system</scope>
-                        <systemPath>${basedir}/lib/gloze.jar</systemPath>
-                </dependency>
 		<dependency>
 			<groupId>gov.nih.nln.ncbi</groupId>
 			<artifactId>eutils</artifactId>
@@ -342,100 +422,100 @@
 		<dependency>
 			<groupId>org.dlese.dpc.oai.harvester</groupId>
 			<artifactId>dlese-project-tools</artifactId>
-                        <version>3.0</version>
+			<version>3.0</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/DLESETools.jar</systemPath>
 		</dependency>
 
-<!-- Old Jena libraries
+		<!-- Old Jena libraries
+
+                <dependency>
+                    <groupId>com.hp.hpl.jena</groupId>
+                    <artifactId>jena</artifactId>
+                    <version>2.6.4</version>
+                    <type>jar</type>
+                    <scope>compile</scope>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>slf4j-log4j12</artifactId>
+                            <groupId>org.slf4j</groupId>
+                        </exclusion>
+                        <exclusion>
+                            <artifactId>slf4j-api</artifactId>
+                            <groupId>org.slf4j</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.hp.hpl.jena</groupId>
+                    <artifactId>arq</artifactId>
+                    <version>2.8.7</version>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>slf4j-log4j12</artifactId>
+                            <groupId>org.slf4j</groupId>
+                        </exclusion>
+                        <exclusion>
+                            <artifactId>slf4j-api</artifactId>
+                            <groupId>org.slf4j</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+
+                <dependency>
+                    <groupId>com.hp.hpl.jena</groupId>
+                    <artifactId>sdb</artifactId>
+                    <version>1.3.3</version>
+                    <type>jar</type>
+                    <scope>compile</scope>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>slf4j-log4j12</artifactId>
+                            <groupId>org.slf4j</groupId>
+                        </exclusion>
+                        <exclusion>
+                            <artifactId>slf4j-api</artifactId>
+                            <groupId>org.slf4j</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.hp.hpl.jena</groupId>
+                    <artifactId>tdb</artifactId>
+                    <version>0.8.9</version>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>slf4j-api</artifactId>
+                            <groupId>org.slf4j</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+        -->
+
+		<!-- newer jena libraries to be used once TDB connection issue fixed -->
 
 		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>jena</artifactId>
-			<version>2.6.4</version>
-			<type>jar</type>
-			<scope>compile</scope>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-core</artifactId>
+			<type>pom</type>
+			<version>3.4.0</version>
 			<exclusions>
+
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>slf4j-api</artifactId>
 					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>arq</artifactId>
-			<version>2.8.7</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-
-		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>sdb</artifactId>
-			<version>1.3.3</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>tdb</artifactId>
-			<version>0.8.9</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
--->
-            
-               <!-- newer jena libraries to be used once TDB connection issue fixed -->
-
-  		<dependency>
-    			<groupId>org.apache.jena</groupId>
-    			<artifactId>jena-core</artifactId>
-    			<type>pom</type>
-    			<version>3.4.0</version>
- 			<exclusions>
-
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-  					<groupId>org.slf4j</groupId>
-  					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-  		</dependency> 
-                    
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
@@ -467,19 +547,19 @@
 			</exclusions>
 		</dependency>
 
-                <dependency>
+		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-sdb</artifactId>
 			<version>3.4.0</version>
- 			<exclusions>
+			<exclusions>
 
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
 				<exclusion>
-  					<groupId>org.slf4j</groupId>
-  					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -599,27 +679,27 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
-                <dependency>
-                       <groupId>org.skife.csv</groupId>
-                       <artifactId>csv</artifactId>
-                       <version>1.0</version>
-                       <systemPath>${basedir}/lib/csv-1.0.jar</systemPath>
-                       <scope>system</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.jayway.jsonpath</groupId>
-                    <artifactId>json-path</artifactId>
-                    <version>0.9.1</version>
-                </dependency>
-                <dependency>
-                  <groupId>org.apache.httpcomponents</groupId>
-                  <artifactId>httpclient</artifactId>
-                  <version>4.5.13</version>
-                </dependency>
-                <dependency>
-                  <groupId>org.apache.httpcomponents</groupId>
-                  <artifactId>httpcore</artifactId>
-                  <version>4.4.6</version>
-                </dependency>
+		<dependency>
+			<groupId>org.skife.csv</groupId>
+			<artifactId>csv</artifactId>
+			<version>1.0</version>
+			<systemPath>${basedir}/lib/csv-1.0.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.6</version>
+		</dependency>
 	</dependencies>
 </project>

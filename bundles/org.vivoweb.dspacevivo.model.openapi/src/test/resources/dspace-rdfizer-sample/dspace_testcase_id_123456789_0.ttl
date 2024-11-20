@@ -1,0 +1,320 @@
+openapi: "3.0.2"
+info:
+  version: 1.0.0
+  title: DSpace - VIVO integration project
+  description: |-
+    This is the "DSpace - VIVO integration project" based on the OpenAPI 3.0 specification.
+    You can find out more about Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+    Some useful links:
+    - [DSpace-VIVO - Integration project of DSpace metadata with VIVO](https://github.com/vivo-community/DSpace-VIVO) 
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Michel Héon PhD
+    email: vivo@uqam.ca
+    url: https://github.com/vivo-community/DSpace-VIVO
+  license:
+    name: BSD 3-Clause License
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: /api
+tags:
+- name: "DSpace"
+  description: "Operations about a DSpace metadata convertion to VIVO"
+paths:
+  /dspace/article:
+    post:
+      tags:
+      - DSpace
+      summary: "Translate DSpace-Article metadata to VIVO"
+      description: ""
+      operationId: "parseArticle"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
+            text/n3:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            text/owl-manchester:
+              schema:
+                type: string
+            text/owl-functional:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/owl+xml:
+              schema:
+                type: string
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /dspace/collection:
+    post:
+      tags:
+      - DSpace
+      summary: "Translate DSpace-Collection metadata to VIVO"
+      description: ""
+      operationId: "parseCollection"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Collection'
+        required: true
+      responses:
+        200:
+          description:  successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
+            text/n3:
+              schema:
+                type: string
+            text/turtle:
+              schema:
+                type: string
+            text/owl-manchester:
+              schema:
+                type: string
+            text/owl-functional:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/owl+xml:
+              schema:
+                type: string
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Article:
+      type: object
+      required:
+        - id
+        - uri
+        - url
+        - dspaceBitstreamURL
+        - dspaceIsPartOfCollectionID
+      properties:
+        id:
+          type: string
+          example: 123456789/4
+        dspaceBitstreamURL:
+          type: string
+          example: http://localhost:4000/bitstream/123456789/3/1/pdf1.pdf
+        dspaceIsPartOfCollectionID:
+          type: string
+          example: 123456789/2
+        uri:
+          type: string
+          example: http://localhost:4000/handle/123456789/3
+        url:
+          type: string
+          example: http://localhost:4000/items/948d534a-e1d9-41b2-bb23-1ae2fe9cff4f
+        listOfTriples:
+          type: array
+          items:
+              $ref: '#/components/schemas/Triple'
+          example: [ {
+                    subjectUri: http://localhost:4000/handle/123456789/3,
+                    predicateUri: dcterms:isPartOf,
+                    objectUri: http://localhost:4000/handle/123456789/3
+                  }, {
+                    subjectUri: http://localhost:4000/handle/123456789/3,
+                    predicateUri: bibo:uri,
+                    objectUri: http://localhost:4000/handle/123456789/3
+                  }]
+        listOfTripleLiterals:
+          type: array
+          items:
+              $ref: '#/components/schemas/TripleLiteral'
+          exemple: [{
+                      subjectUri: http://localhost:4000/handle/123456789/3,
+                      predicateUri: dc:creator,
+                      objectLiteral: Michel Héon,
+                      literalType: xsd:string
+                    }, {
+                      subjectUri: http://localhost:4000/handle/123456789/3,
+                      predicateUri: dcterms:hasPart,
+                      objectLiteral: http://localhost:4000/bitstream/123456789/3/1/pdf1.pdf,
+                      literalType: xsd:anyURI
+                  } ]
+    Collection:
+      type: object
+      required:
+        - id
+        - uri
+        - url
+        - hasItem 
+        - isPartOfCommunity 
+      properties:
+        id:
+          type: string
+          example: 123456789/2
+        uri:
+          type: string
+          example: http://localhost:4000/handle/123456789/2
+        url:
+          type: string
+          example: http://localhost:4000/items/948d534a-e1d9-41b2-bb23-1ae2fe9cff4f
+        hasItem: 
+          type: array
+          items:
+            type: string
+          example: 123456789/4,123456789/3
+        isPartOfCommunity: 
+          type: array
+          items:
+            type: string
+          example: 123456789/1
+        listOfTriples:
+          type: array
+          items:
+              $ref: '#/components/schemas/Triple'
+        listOfTripleLiterals:
+          type: array
+          items:
+              $ref: '#/components/schemas/TripleLiteral'
+    Community:
+      type: object
+      required:
+        - id
+        - uri
+        - url
+        - hasCollection
+        - isPartOfRepository 
+      properties:
+        id:
+          type: string
+          example: 123456789/1
+        uri:
+          type: string
+          example: "http://localhost:4000/handle/123456789/1"        
+        url:
+          type: string
+          example: "http://localhost:4000/communities/b278a9dd-9c63-4864-9c6e-0a6caa8ff459"        
+        hasCollection:
+          type: array
+          items:
+            type: string
+          example: 123456789/2
+        isPartOfRepositoryID:
+          type: string
+          example: 123456789/0
+        listOfTriples:
+          type: array
+          items:
+              $ref: '#/components/schemas/Triple'
+        listOfTripleLiterals:
+          type: array
+          items:
+              $ref: '#/components/schemas/TripleLiteral'
+    Repository:
+      type: object
+      required:
+        - id
+        - uri
+        - hasCommunityId
+      properties:
+        id:
+          type: string
+          example: 123456789/0
+        uri:
+          type: string
+          example: "http://localhost:4000/handle/123456789/0"    
+        hasCommunityId:
+          type: array
+          items:
+            type: string
+          example: 123456789/1, 123456789/2
+        listOfTriples:
+          type: array
+          items:
+              $ref: '#/components/schemas/Triple'
+        listOfTripleLiterals:
+          type: array
+          items:
+              $ref: '#/components/schemas/TripleLiteral'
+    Triple:
+      type: object
+      required:
+        - subjectUri
+        - predicateUri
+        - objectUri
+      properties:
+        subjectUri:
+          type: string
+          example: http://localhost:4000/handle/123456789/3
+        predicateUri:
+          type: string
+          example: dcterms:isPartOf
+        objectUri:
+          type: string
+          example: http://localhost:4000/handle/123456789/3
+    TripleLiteral:
+      type: object
+      required:
+        - subjectUri
+        - predicateUri
+        - objectLiteral
+        - literalType
+      properties:
+        subjectUri:
+          type: string
+          example: http://localhost:4000/handle/123456789/3
+        predicateUri:
+          type: string
+          example: dc:creator
+        objectLiteral:
+          type: string
+          example: "Michel Héon"
+        literalType:
+          type: string
+          example: "xsd:string"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  
+  

@@ -1,0 +1,46 @@
+"abstract" <http://purl.org/ontology/bibo/abstract>
+"animation" <http://purl.org/ontology/bibo/interviewee>
+"article" <http://purl.org/ontology/bibo/Article>   
+"bachelorthesis" <http://purl.org/ontology/bibo/Thesis>
+"book" <http://purl.org/ontology/bibo/Book>
+"book chapter" <http://purl.org/ontology/bibo/BookSection>
+"booklet" <http://purl.org/ontology/bibo/BookSection>
+"conferenceobject" <http://purl.org/ontology/bibo/Conference>
+"conference proceeding" <http://purl.org/ontology/bibo/Proceedings> 
+"conference proceedings" <http://purl.org/ontology/bibo/Proceedings>    
+"consensus study report" <http://purl.org/ontology/bibo/Report>
+"consensus study report (concise)" <http://purl.org/ontology/bibo/Report>
+"dataset" <http://vivoweb.org/ontology/core#Dataset>
+"doctoralthesis" <http://purl.org/ontology/bibo/Thesis>
+"editorial" <http://vivoweb.org/ontology/core#EditorialArticle>
+"erratum" <http://purl.org/spar/fabio/Erratum>
+"forum proceedings" <http://purl.org/ontology/bibo/Proceedings>
+"image" <http://purl.org/ontology/bibo/Image>
+"image, 3-d" <http://purl.org/ontology/bibo/Image> 
+"info:eu-repo/semantics/article" <http://purl.org/ontology/bibo/Article> 
+"info:eu-repo/semantics/publishedversion" <http://purl.org/ontology/bibo/Article> 
+"journal article" <http://purl.obolibrary.org/obo/IAO_0000013>
+"learning object" <http://vivoweb.org/ontology/core#Video>
+"magazine" <http://purl.org/ontology/bibo/Magazine>
+"masterthesis" <http://purl.org/ontology/bibo/Thesis> 
+"meeting proceedings" <http://purl.org/ontology/bibo/Proceedings> 
+"other" <http://purl.org/ontology/bibo/Document>
+"peer review report" <http://purl.org/ontology/bibo/Report> 
+"policy brief" <http://purl.org/ontology/bibo/Report>
+"policymakers’ booklet" <http://purl.org/ontology/bibo/Report> 
+"presentation"  <http://vivoweb.org/ontology/core#Presentation>
+"proceedings report" <http://purl.org/ontology/bibo/Report> 
+"recording, musical" <http://purl.org/ontology/bibo/AudioDocument>
+"report" <http://purl.org/ontology/bibo/Report> 
+"research article" <http://purl.org/ontology/bibo/AcademicArticle> 
+"retraction" <http://purl.org/spar/fabio/Comment>
+"review article" <http://vivoweb.org/ontology/core#Review> 
+"software" <http://purl.obolibrary.org/obo/ERO_0000071>
+"statement" <http://purl.org/ontology/bibo/Issue>
+"survey report" <http://purl.org/ontology/bibo/Report> 
+"symposium proceedings" <http://purl.org/ontology/bibo/Proceedings> 
+"technical report" <http://purl.org/ontology/bibo/Report>
+"thesis" <http://purl.org/ontology/bibo/Thesis>
+"video" <http://vivoweb.org/ontology/core#Video>
+"workshop proceedings" <http://purl.org/ontology/bibo/Proceedings> 
+"text" <http://purl.org/ontology/bibo/Manuscript>

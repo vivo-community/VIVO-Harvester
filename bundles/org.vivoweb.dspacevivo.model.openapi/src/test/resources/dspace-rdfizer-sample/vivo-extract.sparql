@@ -1,0 +1,39 @@
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl:      <http://www.w3.org/2002/07/owl#>
+PREFIX swrl:     <http://www.w3.org/2003/11/swrl#>
+PREFIX swrlb:    <http://www.w3.org/2003/11/swrlb#>
+PREFIX vitro:    <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#>
+PREFIX c4o:      <http://purl.org/spar/c4o/>
+PREFIX cito:     <http://purl.org/spar/cito/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX event:    <http://purl.org/NET/c4dm/event.owl#>
+PREFIX fabio:    <http://purl.org/spar/fabio/>
+PREFIX foaf:     <http://xmlns.com/foaf/0.1/>
+PREFIX obo:      <http://purl.obolibrary.org/obo/>
+PREFIX ocresst:  <http://purl.org/net/OCRe/statistics.owl#>
+PREFIX ocresp:   <http://purl.org/net/OCRe/study_protocol.owl#>
+PREFIX bibo:     <http://purl.org/ontology/bibo/>
+PREFIX geo:      <http://aims.fao.org/aos/geopolitical.owl#>
+PREFIX ocresd:   <http://purl.org/net/OCRe/study_design.owl#>
+PREFIX ocrer:    <http://purl.org/net/OCRe/research.owl#>
+PREFIX ro:       <http://purl.obolibrary.org/obo/ro.owl#>
+PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
+PREFIX swo:      <http://www.ebi.ac.uk/efo/swo/>
+PREFIX vcard:    <http://www.w3.org/2006/vcard/ns#>
+PREFIX p1:       <http://vivoweb.org/ontology/vitroAnnotfr_CA#>
+PREFIX vitro-public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#>
+PREFIX vivo:     <http://vivoweb.org/ontology/core#>
+PREFIX scires:   <http://vivoweb.org/ontology/scientific-research#>
+PREFIX vann:     <http://purl.org/vocab/vann/>
+PREFIX vivo-indv: <http://localhost:8080/vivo/individual/>
+
+describe 
+<http://localhost:8080/vivo/individual/n1647>
+<http://localhost:8080/vivo/individual/n7024> 
+<http://localhost:8080/vivo/individual/n630> 
+<http://localhost:8080/vivo/individual/n488> 
+<http://localhost:8080/vivo/individual/n2245> 
+<http://localhost:8080/vivo/individual/n3137>
+<http://localhost:8080/vivo/individual/n3165>
