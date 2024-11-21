@@ -20,13 +20,13 @@ cd $SCRIPT_DIR
 # Clean and setup up data directories and properties
 cp $RESSOURCESDIR/*.conf $RESSOURCES_TARGET_DIR
 flush_data_dspace.sh 2>/dev/null
-flush_data_dspace6.sh 2>/dev/null 
+flush_data_dspace6.sh 2>/dev/null
 flush_data_dspace7.sh 2>/dev/null
 
 ###################################################################
 # Extract dspace(6-7) demo data
-./extract-dspace6.sh 
-./extract-dspace7.sh 
+./extract-dspace6.sh
+./extract-dspace7.sh
 cp -rf $DATA_DEMO6_DIR/* $DATA_DEMO7_DIR/* $DATA_DIR
 
 ###################################################################

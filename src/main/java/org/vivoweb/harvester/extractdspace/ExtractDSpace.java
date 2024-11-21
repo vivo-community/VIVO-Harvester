@@ -16,7 +16,7 @@ public class ExtractDSpace {
         logger.info("Init Dspace Harvester...");
         runner.init();
         logger.info("Harvesting Items...");
-        runner.setOutputDir("./data/extract/");
+        runner.setOutputDir("./data/transform/");
         runner.harvestItems();
         logger.info("Harvesting Communities...");
         //runner.harvestCommunities();

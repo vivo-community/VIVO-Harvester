@@ -82,7 +82,7 @@ public class HarvesterRunner {
                 Model repoModel = dspaceVioItemparser.parse(next);
                 String stringModel = ParserHelper.dumpModelNtriples(repoModel);
                 if (this.outputDir != null) {
-                    String filename = this.outputDir + next.getId().replace("/", "_") + ".nt";
+                    String filename = this.outputDir + next.getId().replace("/", "_") + ".ntriples";
                     try (PrintWriter out = new PrintWriter(filename)) {
                         out.println(stringModel);
                         logger.info("Saving file {}", filename);
