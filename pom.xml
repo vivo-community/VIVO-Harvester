@@ -30,6 +30,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jena.version>3.17.0</jena.version>
 		<jackson.version>2.12.1</jackson.version>
+		<validation-api-version>2.0.2</validation-api-version>
 	</properties>
 
 	<developers>
@@ -215,25 +216,9 @@
 	</profiles>
 	<dependencies>
 		<dependency>
-			<groupId>org.vivoweb.dspacevivo</groupId>
-			<artifactId>org.vivoweb.dspacevivo.transformation</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/bundles/org.vivoweb.dspacevivo.transformation/target/org.vivoweb.dspacevivo.transformation-0.0.1-SNAPSHOT.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.vivoweb.dspacevivo</groupId>
-			<artifactId>org.vivoweb.dspacevivo.model.ontologie</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/bundles/org.vivoweb.dspacevivo.model.ontologie/target/org.vivoweb.dspacevivo.model.ontologie-0.0.1-SNAPSHOT.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.vivoweb.dspacevivo</groupId>
-			<artifactId>org.vivoweb.dspacevivo.model.openapi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/bundles/org.vivoweb.dspacevivo.model.openapi/target/org.vivoweb.dspacevivo.model.openapi-0.0.1-SNAPSHOT.jar</systemPath>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>${validation-api-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -285,7 +270,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.14.3</version>
+			<version>1.7.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.konghq</groupId>

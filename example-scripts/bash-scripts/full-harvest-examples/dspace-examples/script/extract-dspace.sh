@@ -13,7 +13,8 @@ export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 source $SCRIPT_DIR/00-env.sh
 cd $WORKDIR
 CLASSPATH=$(find "$LIB" -name '*.jar' -printf '%p:' | sed 's/:$//')
-export PRJ_CP=$WORKDIR/target/org.vivoweb.dspacevivo.etlexample-0.0.1-SNAPSHOT.jar:$LIB/*:
+#export PRJ_CP=$WORKDIR/target/org.vivoweb.dspacevivo.etlexample-0.0.1-SNAPSHOT.jar:$LIB/*:
+export PRJ_CP=$WORKDIR/../../../../build/classes:$LIB/*:
 export JVM_ARGS=""
 
 
