@@ -26,7 +26,7 @@ export PATH=$CATALINA_HOME/bin:$SOLR_DIR/bin:$DSPACE_HOME/bin:$PATH
 
 ###################################################################
 ## Extract username and password
-export RUNTIME_PROP=vivoauth.properties
+export RUNTIME_PROP=etl.properties
 if test -f "$RUNTIME_PROP"; then
         [ -v ROOT_PASSWD ] || export ROOT_PASSWD=$(grep 'rootUser.password' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
         [ -v ROOT_USER ] || export ROOT_USER=$(grep 'rootUser.emailAddress' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
