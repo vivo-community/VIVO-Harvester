@@ -1,0 +1,1018 @@
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1169"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1169-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/publisher> "CAST, Inc."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/subject> "Education -- Universal Design for Learning"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/type> "Collection"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/description> "This web page is a collection of resources intended for faculty, instructional designers, policy makers, administrators, and others who work in postsecondary institutions. &amp;quot;The purpose of this site is to offer an understanding of Universal Design for Learning (UDL) in higher education.&amp;quot; The site includes the following four sections: UDL in Higher Ed, Course Design, Media and Materials, and Accessibility and Policy. &amp;quot;Each section provides resources about addressing learner variability at the postsecondary level in an effort to improve learning opportunities, retention, and outcomes.&amp;quot; The resources include sections provide information on what the resource is about, why is it important for higher education, the UDL connection, examples, and more.A few key pages are highlighted below:Web conferencing: This resource highlights the ways in which the use of web conferencing, live streaming and webinar platforms to broadcast content can enhance the learning experience when designed using the Universal Design for Learning (UDL) framework.Accessibility and Open Educational Resources (OER): This resource provides examples, key factors and resources about accessibility of OERs.Creating Accessible OERs: This resource provides definitions, examples of best practices and accessibility resources for creating OERs.Supporting Executive Function in Online Environments: This resource provides a brief definition of executive functioning, a video example and strategies for supporting executive functioning in online environments.Using Images: This resource describes how images can be used effectively to communicate information and addresses how to make images fully accessible.Using Video: This resource highlights the value of using video as part of instructional design and addresses how to make video fully accessible."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1169> <http://vivoweb.org/ontology/core#freetextKeyword> "Education -- Universal Design for Learning"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/ontology/bibo/abstract> "This web page is a collection of resources intended for faculty, instructional designers, policy makers, administrators, and others who work in postsecondary institutions. &amp;quot;The purpose of this site is to offer an understanding of Universal Design for Learning (UDL) in higher education.&amp;quot; The site includes the following four sections: UDL in Higher Ed, Course Design, Media and Materials, and Accessibility and Policy. &amp;quot;Each section provides resources about addressing learner variability at the postsecondary level in an effort to improve learning opportunities, retention, and outcomes.&amp;quot; The resources include sections provide information on what the resource is about, why is it important for higher education, the UDL connection, examples, and more.A few key pages are highlighted below:Web conferencing: This resource highlights the ways in which the use of web conferencing, live streaming and webinar platforms to broadcast content can enhance the learning experience when designed using the Universal Design for Learning (UDL) framework.Accessibility and Open Educational Resources (OER): This resource provides examples, key factors and resources about accessibility of OERs.Creating Accessible OERs: This resource provides definitions, examples of best practices and accessibility resources for creating OERs.Supporting Executive Function in Online Environments: This resource provides a brief definition of executive functioning, a video example and strategies for supporting executive functioning in online environments.Using Images: This resource describes how images can be used effectively to communicate information and addresses how to make images fully accessible.Using Video: This resource highlights the value of using video as part of instructional design and addresses how to make video fully accessible."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/language> "English"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/2000/01/rdf-schema#label> "UDL On Campus"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1169-vcard> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/title> "UDL On Campus"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/format> "html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1169> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/date> "2024-06-22T16:22:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1169> <http://purl.org/dc/terms/date> "2024-06-22T16:22:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1169> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1169-vcard-url> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1169> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1169-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1241-vcard-url> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1241> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1241-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1241"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1241-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1241> <http://vivoweb.org/ontology/core#freetextKeyword> "Disabilities -- Neurological and neurodevelopmental differences -- Autism spectrum disorders (ASD)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/subject> "Legal -- Discrimination -- Americans With Disabilities Act (ADA)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/title> "Accommodation and Compliance: Autism Spectrum"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/type> "Reference Material -- Nonfiction Reference"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/ontology/bibo/abstract> "This web page from the Job Accommodation Network provides information about individuals who are on the autism spectrum and related Americans with Disabilities Act (ADA) information, publications, events, and organizations. Accommodation ideas are also included, which explore accommodations by limitation and work-related function, alongside sample situations and solutions.&amp;nbsp;"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/language> "English"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1241-vcard> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/2000/01/rdf-schema#label> "Accommodation and Compliance: Autism Spectrum"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/description> "This web page from the Job Accommodation Network provides information about individuals who are on the autism spectrum and related Americans with Disabilities Act (ADA) information, publications, events, and organizations. Accommodation ideas are also included, which explore accommodations by limitation and work-related function, alongside sample situations and solutions.&amp;nbsp;"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://vivoweb.org/ontology/core#freetextKeyword> "Legal -- Discrimination -- Americans With Disabilities Act (ADA)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/subject> "Access/Accommodations -- Inclusive workspaces"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/format> "html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/publisher> "Job Accommodation Network (U.S.)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/subject> "Disabilities -- Neurological and neurodevelopmental differences -- Autism spectrum disorders (ASD)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1241> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1241> <http://vivoweb.org/ontology/core#freetextKeyword> "Access/Accommodations -- Inclusive workspaces"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/date> "2024-06-22T16:26:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1241> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1241> <http://purl.org/dc/terms/date> "2024-06-22T16:26:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1304"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1304-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1304-vcard-url> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1304> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1304-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/language> "English"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1304-vcard> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/2000/01/rdf-schema#label> "Balabolka"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/publisher> "Morozov, Ilya"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://vivoweb.org/ontology/core#freetextKeyword> "Assistive technologies -- Visual/textual interpretation -- Text-to-speech"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/title> "Balabolka"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/ontology/bibo/abstract> "Balabolka is a text-to-speech program that uses Microsoft Speech API to convert text to audio.&amp;nbsp;Balabolka is available in several languages and works with most text file formats.&amp;nbsp;"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1304> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/format> "html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/date> "2024-06-22T16:30:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/date> "2024-06-22T16:30:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/type> "Tool"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/description> "Balabolka is a text-to-speech program that uses Microsoft Speech API to convert text to audio.&amp;nbsp;Balabolka is available in several languages and works with most text file formats.&amp;nbsp;"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://purl.org/dc/terms/subject> "Assistive technologies -- Visual/textual interpretation -- Text-to-speech"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/language> "Spanish"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/subject> "Communication"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/language> "English"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/language> "American Sign Language"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/type> "Reference Material -- Nonfiction Reference"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/publisher> "University of Texas at Austin. College of Education"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/type> "Reference Material -- Article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/ontology/bibo/abstract> "This resource, from the National Deaf Center on Postsecondary Outcomes, provides two documents and a video&amp;nbsp;that explore&amp;nbsp;research on the effects of&amp;nbsp;increased access to English through computer-mediated communication (CMC) on&amp;nbsp;Deaf individuals' language and literacy skills. The first document is a&amp;nbsp;summary of research goals, methods, findings, and implications. A&amp;nbsp;16-page report entitled &amp;quot;Bridging the Communication Divide: CMC and Deaf Individuals' Literacy Skills&amp;quot;&amp;nbsp;is also available and further explores the research.&amp;nbsp;A video is also provided, which likewise explores the effects of communication technology on Deaf individuals' literacy skills. The video recording runs 4:54 minutes in length."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://vivoweb.org/ontology/core#freetextKeyword> "Disabilities -- Hearing -- Deafness"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/2000/01/rdf-schema#label> "Communication Technology and Deaf Individuals' Literacy Skills"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1319> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1319-vcard> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1319> <http://vivoweb.org/ontology/core#freetextKeyword> "Communication"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/description> "This resource, from the National Deaf Center on Postsecondary Outcomes, provides two documents and a video&amp;nbsp;that explore&amp;nbsp;research on the effects of&amp;nbsp;increased access to English through computer-mediated communication (CMC) on&amp;nbsp;Deaf individuals' language and literacy skills. The first document is a&amp;nbsp;summary of research goals, methods, findings, and implications. A&amp;nbsp;16-page report entitled &amp;quot;Bridging the Communication Divide: CMC and Deaf Individuals' Literacy Skills&amp;quot;&amp;nbsp;is also available and further explores the research.&amp;nbsp;A video is also provided, which likewise explores the effects of communication technology on Deaf individuals' literacy skills. The video recording runs 4:54 minutes in length."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/subject> "Disabilities -- Hearing -- Deafness"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/format> "pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/format> "html5"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/date> "2024-06-22T16:31:26Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/date> "2024-06-22T16:31:26Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/title> "Communication Technology and Deaf Individuals' Literacy Skills"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/type> "Audio/Visual -- Movie/Animation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319> <http://purl.org/dc/terms/format> "html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1319"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1319-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1319-vcard-url> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1319> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1319-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/date> "2024-06-22T16:32:10Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/ontology/bibo/abstract> "In this video from DO-IT, Richard E. Ladner discusses barriers to computer science (CS) education for students with disabilities and practices to make CS education more accessible.&amp;nbsp;Ladner explores demographics on disabilities in the United States, the number of students with disabilities taking CS courses, case studies of students with disabilities and their experiences with CS courses, assistive technologies needed for computer access, access tools, ways to design computer programs to be more accessible, AccessCSforAll's curricula and tools, and professional development.&amp;nbsp;The strategies presented in the webinar can be used in both pre-service and in-service CS education programs to supplement other diversity, equity, and inclusion parts of these programs. The video recording runs 1:00:19 minutes in length.&amp;nbsp;"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/subject> "Education -- Inclusive practices in the classroom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/title> "Including Students with Disabilities in CS Education"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/creator> "Ladner, Richard E."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/type> "Audio/Visual -- Movie/Animation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/publisher> "University of Washington"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/format> "html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/subject> "Education -- Learning, Barriers to"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://vivoweb.org/ontology/core#freetextKeyword> "Education -- Inclusive practices in the classroom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/format> "html5"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1330-vcard> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/date> "2022-08-08"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1330> <http://vivoweb.org/ontology/core#freetextKeyword> "Education -- Learning, Barriers to"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1330> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/2000/01/rdf-schema#label> "Including Students with Disabilities in CS Education"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1330> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/language> "English"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/description> "In this video from DO-IT, Richard E. Ladner discusses barriers to computer science (CS) education for students with disabilities and practices to make CS education more accessible.&amp;nbsp;Ladner explores demographics on disabilities in the United States, the number of students with disabilities taking CS courses, case studies of students with disabilities and their experiences with CS courses, assistive technologies needed for computer access, access tools, ways to design computer programs to be more accessible, AccessCSforAll's curricula and tools, and professional development.&amp;nbsp;The strategies presented in the webinar can be used in both pre-service and in-service CS education programs to supplement other diversity, equity, and inclusion parts of these programs. The video recording runs 1:00:19 minutes in length.&amp;nbsp;"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1330> <http://purl.org/dc/terms/date> "2024-06-22T16:32:10Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1330"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1330-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1330-vcard-url> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1330> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1330-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/publisher> "Grupo Docentes 2.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/source> "Docentes 2.0 Journal ; Vol. 1 No. 1 (2013): ICT in education  ; 3-4"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "TIC"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/language> "spa"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/source> "Revista Docentes 2.0; Vol. 1 Núm. 1 (2013): TIC en la educación; 3-4"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/2000/01/rdf-schema#label> "ICT in the Classroom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "ICT"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "Technology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "ICT"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/type> "Unassessed Article Review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/title> "ICT in the Classroom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "Tecnologia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/2000/01/rdf-schema#label> "TIC en el Aula"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "Educacion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "Aula"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "Educacion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "Education"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "Aula"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/relation> "https://ojs.docentes20.com/index.php/revista-docentes20/article/view/33/64"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/description> "ICTs are present in our social life beyond considering that it is possible to teach without computers in schools. Historically, computers were introduced without having previously thought about the reasons for doing so, that is, without thinking about the educational goals or their potential benefits. We must be aware that technology attracts students and makes them learn while enjoying; The PC has a motivating power but this does not mean that students learn something important, but how they learn and for what."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "Tecnologia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/title> "TIC en el Aula"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/source> "2665-0266"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/rights> "Derechos de autor 2013 Mujica-Sequera, R."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/date> "2013-06-12"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "Technology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/ontology/bibo/abstract> "ICTs are present in our social life beyond considering that it is possible to teach without computers in schools. Historically, computers were introduced without having previously thought about the reasons for doing so, that is, without thinking about the educational goals or their potential benefits. We must be aware that technology attracts students and makes them learn while enjoying; The PC has a motivating power but this does not mean that students learn something important, but how they learn and for what."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/description> "Las TIC están presentes en nuestra vida social más allá de considerar que es posible enseñar sin ordenadores en las escuelas. Históricamente los ordenadores se introdujeron sin haber pensado previamente las razones para hacerlo, es decir sin pensar en las metas educativas ni los beneficios potenciales de los mismos. Debemos ser conscientes de que la tecnología atrae a los estudiantes y hace que aprendan disfrutando; la PC tiene un poder motivador pero esto no significa que los estudiantes aprendan así algo importante, sino cómo aprenden y para qué."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "Classroom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1411-vcard> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/date> "2024-06-22T18:26:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/date> "2024-06-22T18:26:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1411> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/ontology/bibo/abstract> "Las TIC están presentes en nuestra vida social más allá de considerar que es posible enseñar sin ordenadores en las escuelas. Históricamente los ordenadores se introdujeron sin haber pensado previamente las razones para hacerlo, es decir sin pensar en las metas educativas ni los beneficios potenciales de los mismos. Debemos ser conscientes de que la tecnología atrae a los estudiantes y hace que aprendan disfrutando; la PC tiene un poder motivador pero esto no significa que los estudiantes aprendan así algo importante, sino cómo aprenden y para qué."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/type> "Artículo no evaluada"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "TIC"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-nc-nd/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://vivoweb.org/ontology/core#freetextKeyword> "Education"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/subject> "Classroom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411> <http://purl.org/dc/terms/creator> "Mujica-Sequera, Ruth M."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1411-vcard-url> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1411> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1411-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1411"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1411-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/date> "2020-01-14"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/date> "2024-06-22T18:59:59Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/date> "2024-06-22T18:59:59Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/creator> "Elijah Adegoke Adebayo"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/2000/01/rdf-schema#label> "Conversion of Agro-Wastes into Bio-Fertilizer by Anaerobic Digestion for Soil Fertility Enhancement"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-nc/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/creator> "Majolagbe Olusola Nathaniel"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/rights> "Copyright (c) 2020 Abiodun Ayandele, Majolagbe Olusola Nathaniel, Iyabo Olunike Omomowo, Elijah Adegoke Adebayo"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/title> "Conversion of Agro-Wastes into Bio-Fertilizer by Anaerobic Digestion for Soil Fertility Enhancement"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/publisher> "AIJR Preprints"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/preprint"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/description> "There is a continuous demand for bio-fertilizer to improve the soil fertility and increase food production. Wastes were collected from eateries, food canteens, domestic houses and agricultural outlets. Five experimental set-ups were made using different combinations of digested wastes as follows: pig waste (Pw), cassava wastes (Cw), food wastes (Fw); pig waste + cassava waste (Pw+Cw), pig waste + Food wastes (Pw+Fw). The slurry of each category of bio-product were prepared by addition of appropriate volume of water, incubated for 70days with intermittent agitation at regular intervals in the digester. The principal bacteria which took the most active role in the bioconversion process were identified to be P. aeruginosa and Bacillus spp. Comparative evaluation of each of the digested category of slurry combinations showed variations in their nitrogen content as follows: Pw (1.70± 0.03 mg/100g), Cw (0.61±0.02mg/100g), Fw (1.96±0.03mg/100g), Pw+Cw (1.20±0.01mg/100g), Pw+Fw (2.10± 0.02mg/100g). Pw+Fw showed highest K, P and Mg concentrations as 66.72± 2.36 mg/100g, 143.36± 2.36 mg/100g and 53.34±2.36 mg/100g respectively.The elemental composition in the increasing order in each of the slurry waste as follows: Cw&lt;Fw&lt; Pw &lt;Pw+Cw&lt;Pw+Fw There were shifts in the pH which could be due to metabolic activities and microbial interaction between the soil, other its component and added digested waste. The best performance in mineral content and plant growth noticed in Pw+Fw could be due to the nearness to neutrality of its pH."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1496> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1496-vcard> .
+<https://dspace7.org/resource/10673_1496> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/creator> "Abiodun Ayandele"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/dc/terms/creator> "Iyabo Olunike Omomowo"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496> <http://purl.org/ontology/bibo/abstract> "There is a continuous demand for bio-fertilizer to improve the soil fertility and increase food production. Wastes were collected from eateries, food canteens, domestic houses and agricultural outlets. Five experimental set-ups were made using different combinations of digested wastes as follows: pig waste (Pw), cassava wastes (Cw), food wastes (Fw); pig waste + cassava waste (Pw+Cw), pig waste + Food wastes (Pw+Fw). The slurry of each category of bio-product were prepared by addition of appropriate volume of water, incubated for 70days with intermittent agitation at regular intervals in the digester. The principal bacteria which took the most active role in the bioconversion process were identified to be P. aeruginosa and Bacillus spp. Comparative evaluation of each of the digested category of slurry combinations showed variations in their nitrogen content as follows: Pw (1.70± 0.03 mg/100g), Cw (0.61±0.02mg/100g), Fw (1.96±0.03mg/100g), Pw+Cw (1.20±0.01mg/100g), Pw+Fw (2.10± 0.02mg/100g). Pw+Fw showed highest K, P and Mg concentrations as 66.72± 2.36 mg/100g, 143.36± 2.36 mg/100g and 53.34±2.36 mg/100g respectively.The elemental composition in the increasing order in each of the slurry waste as follows: Cw&lt;Fw&lt; Pw &lt;Pw+Cw&lt;Pw+Fw There were shifts in the pH which could be due to metabolic activities and microbial interaction between the soil, other its component and added digested waste. The best performance in mineral content and plant growth noticed in Pw+Fw could be due to the nearness to neutrality of its pH."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1496"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1496-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1496-vcard-url> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1496> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1496-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1518-vcard-url> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1518> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1518-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/date> "2024-06-22T19:01:09Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/date> "2024-06-22T19:01:09Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/ontology/bibo/abstract> "Coronaviruses have caused two large scale pandemics severe acute respiratory syndrome (SARS) and Middle East respiratory syndrome (MERS) in last two decades. It was thought that SARS-related coronaviruses (SARSr-CoV) is mainly found in bats. Previous studies have shown that some bat SARSr-CoVs have the potential to infect humans. The current outbreak of viral pneumonia in the city of Wuhan, China, was caused by a novel coronavirus designated 2019-nCoV by the World Health Organization, as determined by sequencing the viral RNA genome. Many initial patients were exposed to wildlife animals at the Huanan seafood wholesale market, where poultry, snake, bats, and other farm animals were also sold. Here we have taken an attempt to understand the genetic structure of 2019-nCoV and subsequent sequence analysis of multiple regions of its genome to identify unique motifs, receptor binding domain, hypervariable region which may direct some insight to future research for developing effective treatment against this novel coronavirus. We have identified unique motif in spike protein, multiple hypervariable regions, amino acids polymorphism in ORF8 and N protein. These may affect the conformation of the peptide and shed some light to cross species transmission, and subsequent host adaptation."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/subject> "Life Science"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/publisher> "AIJR Preprints"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/preprint"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/date> "2020-04-16"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/subject> "Sequence Analysis"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/description> "Coronaviruses have caused two large scale pandemics severe acute respiratory syndrome (SARS) and Middle East respiratory syndrome (MERS) in last two decades. It was thought that SARS-related coronaviruses (SARSr-CoV) is mainly found in bats. Previous studies have shown that some bat SARSr-CoVs have the potential to infect humans. The current outbreak of viral pneumonia in the city of Wuhan, China, was caused by a novel coronavirus designated 2019-nCoV by the World Health Organization, as determined by sequencing the viral RNA genome. Many initial patients were exposed to wildlife animals at the Huanan seafood wholesale market, where poultry, snake, bats, and other farm animals were also sold. Here we have taken an attempt to understand the genetic structure of 2019-nCoV and subsequent sequence analysis of multiple regions of its genome to identify unique motifs, receptor binding domain, hypervariable region which may direct some insight to future research for developing effective treatment against this novel coronavirus. We have identified unique motif in spike protein, multiple hypervariable regions, amino acids polymorphism in ORF8 and N protein. These may affect the conformation of the peptide and shed some light to cross species transmission, and subsequent host adaptation."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/subject> "Genomics"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-nc/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/language> "eng"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://vivoweb.org/ontology/core#freetextKeyword> "Sequence Analysis"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://vivoweb.org/ontology/core#freetextKeyword> "Genomics"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1518> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1518-vcard> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/title> "A Genetic Perspective of 2019-nCoV in Relation to Cross Species Transmission"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/creator> "Dasgupta, Rimjhim"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/rights> "Copyright (c) 2020 Rimjhim Dasgupta"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://vivoweb.org/ontology/core#freetextKeyword> "2019-nCoV"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/2000/01/rdf-schema#label> "A Genetic Perspective of 2019-nCoV in Relation to Cross Species Transmission"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1518> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1518> <http://vivoweb.org/ontology/core#freetextKeyword> "Life Science"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518> <http://purl.org/dc/terms/subject> "2019-nCoV"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1518"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1518-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1696-vcard-url> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1696> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1696-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/date> "2024-06-19T19:42:14Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/title> "CONSIDERAZIONI SUI SISTEMI DI MISURA ADOTTATI SUI MONO E STEREO COMPARATORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/2000/01/rdf-schema#label> "CONSIDERAZIONI SUI SISTEMI DI MISURA ADOTTATI SUI MONO E STEREO COMPARATORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/title> "CONSIDERAZIONI SUI SISTEMI DI MISURA ADOTTATI SUI MONO E STEREO COMPARATORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/2000/01/rdf-schema#label> "CONSIDERAZIONI SUI SISTEMI DI MISURA ADOTTATI SUI MONO E STEREO COMPARATORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 2 (1965); 40-45"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1696-vcard> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/date> "1965-06-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1584/3154"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/creator> "Vari_1582, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 2 (1965); 40-45"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/rights> "Copyright (c) 1965 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1584/3155"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1696> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1696> <http://purl.org/dc/terms/date> "2024-06-19T19:42:14Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1696"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1696-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1810"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1810-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/ontology/bibo/abstract> "The aim of this study was to use human induced pluripotent stem cells (hiPSC) to understand key steps of neuronal differentiation and to model the human brain developmental disorder, primary microcephaly (MCPH). MCPH is a genetically and clinically heterogeneous group of autosomal recessive disorders characterized by significant reduction of brain volume associated with intellectual disabilities. Since available animal models are inadequate for fully understanding the pathology of this disorder, the objective was to create humanized models of MCPH. This was achieved by inducing cellular reprogramming of dermal fibroblasts from healthy and MCPH patients into pluripotent stem cells, and driving them towards neuronal differentiation to study neural proliferation and differentiation in the correct genetic context. hiPSCs were created from fibroblasts obtained from one unaffected individual (control) and one microcephaly patient having mutations in MCPH1. These were differentiated into neural stem cells and cortical neurons following embryoid body methodology of differentiation. Noggin was used for neural induction to obtain a forebrain identity. Patient iPSC-derived neural rosettes showed reduced neural induction, reduced neural proliferation and increased cell death as compared to control. They also showed higher proportion of simplified rosettes as compared to control. Interestingly, some of the patient cells which were unable to form a rosette and had an apoptotic centre, showed presence of neurites indicating premature differentiation, while no such neurites were observed in the control rosettes. Most importantly, when immunostained for cortical layer specific markers, neurons obtained from patient iPSC showed comparable expression of Cux1, while Ctip2 expression was reduced and there was no expression of Tbr1 as compared to control. During development, normal brain size is dependent on the number of neural progenitors and neurons generated. Since patient-derived neural stem cells showed lower neural induction, reduced proliferation, increased cell death of neural progenitors as well as premature differentiation, and absence of a subset of neurons, it is likely that these factors together or partly could contribute to the reduced brain size seen in microcephaly patients"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/relation> ";G29252"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/date> "2024-06-26T06:51:31Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/date> "2024-06-26T06:51:31Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/date> "2018"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/subject> "brain"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/subject> "pluripotent stem cells"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/description> "The aim of this study was to use human induced pluripotent stem cells (hiPSC) to understand key steps of neuronal differentiation and to model the human brain developmental disorder, primary microcephaly (MCPH). MCPH is a genetically and clinically heterogeneous group of autosomal recessive disorders characterized by significant reduction of brain volume associated with intellectual disabilities. Since available animal models are inadequate for fully understanding the pathology of this disorder, the objective was to create humanized models of MCPH. This was achieved by inducing cellular reprogramming of dermal fibroblasts from healthy and MCPH patients into pluripotent stem cells, and driving them towards neuronal differentiation to study neural proliferation and differentiation in the correct genetic context. hiPSCs were created from fibroblasts obtained from one unaffected individual (control) and one microcephaly patient having mutations in MCPH1. These were differentiated into neural stem cells and cortical neurons following embryoid body methodology of differentiation. Noggin was used for neural induction to obtain a forebrain identity. Patient iPSC-derived neural rosettes showed reduced neural induction, reduced neural proliferation and increased cell death as compared to control. They also showed higher proportion of simplified rosettes as compared to control. Interestingly, some of the patient cells which were unable to form a rosette and had an apoptotic centre, showed presence of neurites indicating premature differentiation, while no such neurites were observed in the control rosettes. Most importantly, when immunostained for cortical layer specific markers, neurons obtained from patient iPSC showed comparable expression of Cux1, while Ctip2 expression was reduced and there was no expression of Tbr1 as compared to control. During development, normal brain size is dependent on the number of neural progenitors and neurons generated. Since patient-derived neural stem cells showed lower neural induction, reduced proliferation, increased cell death of neural progenitors as well as premature differentiation, and absence of a subset of neurons, it is likely that these factors together or partly could contribute to the reduced brain size seen in microcephaly patients"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://vivoweb.org/ontology/core#freetextKeyword> "dermal fibroblasts"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/subject> "Research Subject Categories::NATURAL SCIENCES::Biology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/language> "en_US"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/type> "Thesis"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/date> "2021-11-08T09:30:18Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/subject> "dermal fibroblasts"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/date> "2021-11-08T09:30:18Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/title> "Use of Human Induced Pluripotent Stem Cells as a Model to Study Primary Microcephaly"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1810> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1810-vcard> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/subject> "microcephaly"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1810> <http://vivoweb.org/ontology/core#freetextKeyword> "brain"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/contributor> "Ramanan, Narendrakumar"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/creator> "Patwardhan, Dhruti"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/rights> "I grant Indian Institute of Science the right to archive and to make available my thesis or dissertation in whole or in part in all forms of media, now hereafter known. I retain all proprietary rights, such as patent rights. I also retain the right to use in future works (such as articles or books) all or part of this thesis or dissertation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://vivoweb.org/ontology/core#freetextKeyword> "Research Subject Categories::NATURAL SCIENCES::Biology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://vivoweb.org/ontology/core#freetextKeyword> "microcephaly"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1810> <http://vivoweb.org/ontology/core#freetextKeyword> "pluripotent stem cells"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://purl.org/dc/terms/contributor> "Mani, Shyamala"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810> <http://www.w3.org/2000/01/rdf-schema#label> "Use of Human Induced Pluripotent Stem Cells as a Model to Study Primary Microcephaly"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1810-vcard-url> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1810> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1810-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1815"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1815-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1815-vcard-url> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1815> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1815-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/language> "en_US"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://vivoweb.org/ontology/core#freetextKeyword> "Spatial Map"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://vivoweb.org/ontology/core#freetextKeyword> "Grid Cells"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/date> "2024-06-26T06:51:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/date> "2024-06-26T06:51:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1815> <http://vivoweb.org/ontology/core#freetextKeyword> "Place Cells"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://vivoweb.org/ontology/core#freetextKeyword> "Hippocampal System"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/contributor> "Deshmukh, Sachin"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://vivoweb.org/ontology/core#freetextKeyword> "Neuroscience"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://vivoweb.org/ontology/core#freetextKeyword> "Medial Entorhinal Cortex (MEC)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://vivoweb.org/ontology/core#freetextKeyword> "Hippocampus"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/subject> "Neuroscience"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/title> "Is Spatial Map Shaped by Environmental Determinants?"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/ontology/bibo/abstract> "Humans and other animals form internal mental maps of the outer world in order to navigate. Hippocampal place cells and grid cells in MEC (medial entorhinal cortex) are the key components of this navigation system. However, the spatial map formed by place cells and grid cells is not rigid and is subject to change. Environmental structure, size, geometry, identity and the sensory cues present in the environment can have a strong influence over the spatial map. To study the effect of environmental factors on the spatial map, I first started with the study to determine if place cells behave differently in environments of different scales. Using a commercial wireless recording system and a novel position-tracking system developed in our lab, I could analyse spatial representation beyond artificially small arenas (≤1m2) and closer to ethologically appropriate spatial scales. In our experiments, arena sizes ranged from 1m2 to 16.5m2 which is much larger than the arena sizes employed in previous studies. We found that in large arenas (16.5m2), both dorsal and ventral hippocampal neurons become more spatially selective with less diffused fields and therefore might have a higher resolution representation. Finally, I quantified local distortions in grid maps using grid cell data from Hafting et al (2005). It has been empirically observed that grid patterns near the boundaries are more distorted as compared to in the center of the environment. And we wanted to determine if there are discernible trends in which grids distort. We found that grid patterns get compressed and distorted more near the boundaries of the environment than at the center. Hence, we conclude that environmental features like scale and boundaries do have an influence on the spatial map."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/subject> "Hippocampus"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1815> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/subject> "Spatial Map"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/date> "2020-06-05T09:25:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/rights> "I grant Indian Institute of Science the right to archive and to make available my thesis or dissertation in whole or in part in all forms of media, now hereafter known. I retain all proprietary rights, such as patent rights. I also retain the right to use in future works (such as articles or books) all or part of this thesis or dissertation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/date> "2020-06-05T09:25:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/contributor> "Jayaprakash, Balaji"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/type> "Thesis"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/subject> "Grid Cells"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/subject> "Hippocampal System"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1815> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1815-vcard> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/creator> "Barde, Warsha"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/description> "Humans and other animals form internal mental maps of the outer world in order to navigate. Hippocampal place cells and grid cells in MEC (medial entorhinal cortex) are the key components of this navigation system. However, the spatial map formed by place cells and grid cells is not rigid and is subject to change. Environmental structure, size, geometry, identity and the sensory cues present in the environment can have a strong influence over the spatial map. To study the effect of environmental factors on the spatial map, I first started with the study to determine if place cells behave differently in environments of different scales. Using a commercial wireless recording system and a novel position-tracking system developed in our lab, I could analyse spatial representation beyond artificially small arenas (≤1m2) and closer to ethologically appropriate spatial scales. In our experiments, arena sizes ranged from 1m2 to 16.5m2 which is much larger than the arena sizes employed in previous studies. We found that in large arenas (16.5m2), both dorsal and ventral hippocampal neurons become more spatially selective with less diffused fields and therefore might have a higher resolution representation. Finally, I quantified local distortions in grid maps using grid cell data from Hafting et al (2005). It has been empirically observed that grid patterns near the boundaries are more distorted as compared to in the center of the environment. And we wanted to determine if there are discernible trends in which grids distort. We found that grid patterns get compressed and distorted more near the boundaries of the environment than at the center. Hence, we conclude that environmental features like scale and boundaries do have an influence on the spatial map."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/2000/01/rdf-schema#label> "Is Spatial Map Shaped by Environmental Determinants?"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/subject> "Place Cells"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/date> "2020"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1815> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1815> <http://purl.org/dc/terms/subject> "Medial Entorhinal Cortex (MEC)"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1828"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1828-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1828-vcard-url> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1828> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1828-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/subject> "Research Subject Categories::NATURAL SCIENCES::Biology::Cell and molecular biology::Cell biology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/subject> "Research Subject Categories::NATURAL SCIENCES::Biology::Cell and molecular biology::Molecular biology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/date> "2023"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/2000/01/rdf-schema#label> "Astrocytes regulate oligodendrocyte development and myelination in the mammalian brain"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/language> "en_US"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/subject> "Oligodendrocytes"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/contributor> "Ramanan, Narendrakumar"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/type> "Thesis"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://vivoweb.org/ontology/core#freetextKeyword> "Research Subject Categories::NATURAL SCIENCES::Biology::Cell and molecular biology::Neurobiology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/subject> "Reactive astrocytes"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/subject> "Myelination"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://vivoweb.org/ontology/core#freetextKeyword> "Myelination"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/title> "Astrocytes regulate oligodendrocyte development and myelination in the mammalian brain"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/ontology/bibo/abstract> "Oligodendrocytes (OLs), a type of glial cell, are the main myelinating cells of the mammalian central nervous system (CNS), enabling efficient saltatory mode of nerve conduction. On the other hand, astrocytes, another glial cell type, have diverse functions including neurotransmitter reuptake, maintenance of the blood-brain barrier, and providing trophic support. In the murine brain, there is a temporal sequence in the generation of major cell types with neurons differentiating first from the ventricular/sub-ventricular zone neural progenitor cells (NPCs), followed by astrocytes and oligodendrocytes. Recent findings from our lab have shown that astrocyte-specific deletion of serum response factor (Srf) early during murine brain development leads to hypertrophic astrocytes exhibiting reactive-like phenotype throughout the brain (Jain et al., 2021). This reactive-like phenotype persists throughout adulthood. Interestingly, the SrfGFAPcKO brains also exhibit severe loss of myelin in different grey and white matter regions. The myelin deficits become evident around four weeks of age and worsen over time. Further investigations have shown that the myelin loss is not due to deficits in oligodendrocyte lineage cell proliferation, differentiation, or loss of oligodendrocyte progenitors or mature oligodendrocytes. Instead, the observations suggest that oligodendrocytes fail to mature into the myelinating phenotype. Comprehensive evaluation of motor behavior provided compelling evidence of significant abnormalities in motor coordination and gait in these Srf mutant mice as evident from open field exploration, accelerating rotarod test and footprint analysis. These findings not only shed light on the specific behavioral deficits but also establish a potential connection between the observed hypomyelination in these mice and the impairments in their motor functions. Transcriptomic analysis of RNA isolated from control and SrfGFAPcKO astrocytes revealed the downregulation of genes involved in lipid and cholesterol metabolism in SRF mutant astrocytes. Astrocytes are known to supply essential lipids and cholesterol to oligodendrocytes for myelin synthesis. Any disruptions in this astrocytic lipid and cholesterol supply can result in defects in myelination. Furthermore, a comparative analysis of the Srf mutant astrocyte transcriptome with that of astrocytes in a mouse model of Alexander disease has revealed shared genes between the two datasets. This further suggests that the myelin defects observed in the Srf mutant mice resemble those observed in the Alexander disease model. These findings shed light on the intricate interplay between astrocytes and oligodendrocytes and highlights the importance of Srf and associated pathways in the regulation of oligodendrocyte development and myelination."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/relation> ";ET00311"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/date> "2023-11-16T12:11:47Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/date> "2023-11-16T12:11:47Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/subject> "Research Subject Categories::NATURAL SCIENCES::Biology::Cell and molecular biology::Neurobiology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1828-vcard> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1828> <http://vivoweb.org/ontology/core#freetextKeyword> "Oligodendrocytes"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/description> "Oligodendrocytes (OLs), a type of glial cell, are the main myelinating cells of the mammalian central nervous system (CNS), enabling efficient saltatory mode of nerve conduction. On the other hand, astrocytes, another glial cell type, have diverse functions including neurotransmitter reuptake, maintenance of the blood-brain barrier, and providing trophic support. In the murine brain, there is a temporal sequence in the generation of major cell types with neurons differentiating first from the ventricular/sub-ventricular zone neural progenitor cells (NPCs), followed by astrocytes and oligodendrocytes. Recent findings from our lab have shown that astrocyte-specific deletion of serum response factor (Srf) early during murine brain development leads to hypertrophic astrocytes exhibiting reactive-like phenotype throughout the brain (Jain et al., 2021). This reactive-like phenotype persists throughout adulthood. Interestingly, the SrfGFAPcKO brains also exhibit severe loss of myelin in different grey and white matter regions. The myelin deficits become evident around four weeks of age and worsen over time. Further investigations have shown that the myelin loss is not due to deficits in oligodendrocyte lineage cell proliferation, differentiation, or loss of oligodendrocyte progenitors or mature oligodendrocytes. Instead, the observations suggest that oligodendrocytes fail to mature into the myelinating phenotype. Comprehensive evaluation of motor behavior provided compelling evidence of significant abnormalities in motor coordination and gait in these Srf mutant mice as evident from open field exploration, accelerating rotarod test and footprint analysis. These findings not only shed light on the specific behavioral deficits but also establish a potential connection between the observed hypomyelination in these mice and the impairments in their motor functions. Transcriptomic analysis of RNA isolated from control and SrfGFAPcKO astrocytes revealed the downregulation of genes involved in lipid and cholesterol metabolism in SRF mutant astrocytes. Astrocytes are known to supply essential lipids and cholesterol to oligodendrocytes for myelin synthesis. Any disruptions in this astrocytic lipid and cholesterol supply can result in defects in myelination. Furthermore, a comparative analysis of the Srf mutant astrocyte transcriptome with that of astrocytes in a mouse model of Alexander disease has revealed shared genes between the two datasets. This further suggests that the myelin defects observed in the Srf mutant mice resemble those observed in the Alexander disease model. These findings shed light on the intricate interplay between astrocytes and oligodendrocytes and highlights the importance of Srf and associated pathways in the regulation of oligodendrocyte development and myelination."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://vivoweb.org/ontology/core#freetextKeyword> "Research Subject Categories::NATURAL SCIENCES::Biology::Cell and molecular biology::Molecular biology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1828> <http://vivoweb.org/ontology/core#freetextKeyword> "Reactive astrocytes"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/rights> "I grant Indian Institute of Science the right to archive and to make available my thesis or dissertation in whole or in part in all forms of media, now hereafter known. I retain all proprietary rights, such as patent rights. I also retain the right to use in future works (such as articles or books) all or part of this thesis or dissertation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/subject> "Hypomyelination"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://vivoweb.org/ontology/core#freetextKeyword> "Research Subject Categories::NATURAL SCIENCES::Biology::Cell and molecular biology::Cell biology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/creator> "Das, Soumen"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/date> "2024-06-26T06:51:44Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/date> "2024-06-26T06:51:44Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1828> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1828> <http://vivoweb.org/ontology/core#freetextKeyword> "Hypomyelination"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1828> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1779/3545"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1779/3544"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/date> "1970-03-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/title> "II - PARTE PRATICA"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/title> "II - PARTE PRATICA"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/date> "2024-06-19T19:52:24Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/date> "2024-06-19T19:52:24Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/2000/01/rdf-schema#label> "II - PARTE PRATICA"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/2000/01/rdf-schema#label> "II - PARTE PRATICA"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1883> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1883-vcard> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 1 (1970); 42-45"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 1 (1970); 42-45"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/rights> "Copyright (c) 1970 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1883> <http://purl.org/dc/terms/creator> "Vari_1777, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1883-vcard-url> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1883> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1883-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1883"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1883-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_1965-vcard-url> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_1965> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1965-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/1965"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_1965-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1866/3719"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/date> "1970-12-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1866/3718"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1965> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 4 (1970); 184-188"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/rights> "Copyright (c) 1970 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/date> "2024-06-19T19:57:01Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/date> "2024-06-19T19:57:01Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/title> "Dott. B. GRIFONI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/title> "Dott. B. GRIFONI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 4 (1970); 184-188"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/creator> "Vari_1864, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/2000/01/rdf-schema#label> "Dott. B. GRIFONI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/2000/01/rdf-schema#label> "Dott. B. GRIFONI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_1965-vcard> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_1965> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_1965> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2010"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2010-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/creator> "Vari_1911, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/date> "2024-06-19T19:59:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/2000/01/rdf-schema#label> "VERBALE DELL’ASSEMBLEA DEI SOCI TENUTASI IN FIRENZE IN OCCASIONE DEL XVII CONVEGNO ANNUALE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/2000/01/rdf-schema#label> "VERBALE DELL’ASSEMBLEA DEI SOCI TENUTASI IN FIRENZE IN OCCASIONE DEL XVII CONVEGNO ANNUALE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 4 (1972); 69-73"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/title> "VERBALE DELL’ASSEMBLEA DEI SOCI TENUTASI IN FIRENZE IN OCCASIONE DEL XVII CONVEGNO ANNUALE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/title> "VERBALE DELL’ASSEMBLEA DEI SOCI TENUTASI IN FIRENZE IN OCCASIONE DEL XVII CONVEGNO ANNUALE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1913/3813"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/date> "1972-12-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2010-vcard> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2010> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 4 (1972); 69-73"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1913/3812"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/rights> "Copyright (c) 1972 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2010> <http://purl.org/dc/terms/date> "2024-06-19T19:59:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2010-vcard-url> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2010> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2010-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2032-vcard-url> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2032> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2032-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1937/3860"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/rights> "Copyright (c) 1973 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2032-vcard> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/date> "2024-06-19T20:00:44Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/date> "2024-06-19T20:00:44Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/title> "COMITATO DI REDAZIONE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/title> "COMITATO DI REDAZIONE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/creator> "Vari_1935, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 2 (1973); 5-6"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/date> "1973-06-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/2000/01/rdf-schema#label> "COMITATO DI REDAZIONE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/2000/01/rdf-schema#label> "COMITATO DI REDAZIONE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 2 (1973); 5-6"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1937/3861"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2032> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2032"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2032-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/title> "RECENTI SVILUPPI DEL RILEVAMENTO FOTOGRAMMETRICO DELLA CUPOLA DI SANTA MARIA DEL FIORE IN FIRENZE MARIO FONDELLI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1944/3874"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/rights> "Copyright (c) 1973 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 2 (1973); 42-44"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/date> "1973-06-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 2 (1973); 42-44"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2038-vcard> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1944/3875"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/date> "2024-06-19T20:01:04Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/date> "2024-06-19T20:01:04Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/2000/01/rdf-schema#label> "RECENTI SVILUPPI DEL RILEVAMENTO FOTOGRAMMETRICO DELLA CUPOLA DI SANTA MARIA DEL FIORE IN FIRENZE MARIO FONDELLI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/2000/01/rdf-schema#label> "RECENTI SVILUPPI DEL RILEVAMENTO FOTOGRAMMETRICO DELLA CUPOLA DI SANTA MARIA DEL FIORE IN FIRENZE MARIO FONDELLI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/creator> "Vari_1942, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2038> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038> <http://purl.org/dc/terms/title> "RECENTI SVILUPPI DEL RILEVAMENTO FOTOGRAMMETRICO DELLA CUPOLA DI SANTA MARIA DEL FIORE IN FIRENZE MARIO FONDELLI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2038-vcard-url> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2038> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2038-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2038"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2038-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2047-vcard-url> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2047> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2047-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/rights> "Copyright (c) 1973 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1954/3894"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1954/3895"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/date> "1973-06-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/creator> "Vari_1952, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 2 (1973); 70-73"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/title> "RENÉ CUENIN CARTOGRAPHIE GENERALE DUE VOLUMI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/title> "RENÉ CUENIN CARTOGRAPHIE GENERALE DUE VOLUMI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 2 (1973); 70-73"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2047-vcard> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/date> "2024-06-19T20:01:33Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2047> <http://purl.org/dc/terms/date> "2024-06-19T20:01:33Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/2000/01/rdf-schema#label> "RENÉ CUENIN CARTOGRAPHIE GENERALE DUE VOLUMI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047> <http://www.w3.org/2000/01/rdf-schema#label> "RENÉ CUENIN CARTOGRAPHIE GENERALE DUE VOLUMI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2047"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2047-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2087"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2087-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1994/3975"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/core#Dataset> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/date> "2024-06-19T20:03:38Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/date> "2024-06-19T20:03:38Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/ontology/bibo/abstract> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/date> "1974-09-28"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/format> "text/html"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/1994/3974"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2087-vcard> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/description> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 3 (1974); 71-73"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/title> "ALBO NAZIONALE COSTRUTTORI EDILI INSTALLATORI AFFINI INGEGNERI, ARCHITETTI, GEOMETRI, STUDI TEGNICI GUIDA DEI FORNITORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/title> "ALBO NAZIONALE COSTRUTTORI EDILI INSTALLATORI AFFINI INGEGNERI, ARCHITETTI, GEOMETRI, STUDI TEGNICI GUIDA DEI FORNITORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/rights> "Copyright (c) 1974 Autori Vari"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/ontology/bibo/abstract> "Text extracted with OCR Tesseract4 on 06 October 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/2000/01/rdf-schema#label> "ALBO NAZIONALE COSTRUTTORI EDILI INSTALLATORI AFFINI INGEGNERI, ARCHITETTI, GEOMETRI, STUDI TEGNICI GUIDA DEI FORNITORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/2000/01/rdf-schema#label> "ALBO NAZIONALE COSTRUTTORI EDILI INSTALLATORI AFFINI INGEGNERI, ARCHITETTI, GEOMETRI, STUDI TEGNICI GUIDA DEI FORNITORI"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 3 (1974); 71-73"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/description> "Estratto con OCR Tesseract4 in data 06 Ottobre 2019"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://purl.org/dc/terms/creator> "Vari_1992, Autori"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2087> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vivoweb.org/ontology/dspace#Item> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2087-vcard-url> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2087> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2087-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .

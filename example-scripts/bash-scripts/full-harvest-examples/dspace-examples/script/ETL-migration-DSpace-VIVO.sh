@@ -10,6 +10,8 @@
 # Email         : heon.michel@uqam.ca
 ###################################################################
 export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
+source $SCRIPT_DIR/00-env.sh
+
 $SCRIPT_DIR/create-all-transformation-directory.sh
 unset ROOT_USER
 unset ROOT_PASSWD

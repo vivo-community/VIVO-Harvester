@@ -19,7 +19,6 @@ export JVM_ARGS=""
 
 echo "============================================"
 
-cp $WORKDIR/resources/harvester-dspace6.conf $WORKDIR/resources/harvester-dspace.conf
 cp $WORKDIR/resources/harvester-dspace6.conf $WORKDIR/../../../../build/classes/harvester.conf
 java $JVM_ARGS -cp "$PRJ_CP" org.vivoweb.harvester.extractdspace.ExtractDSpace
 

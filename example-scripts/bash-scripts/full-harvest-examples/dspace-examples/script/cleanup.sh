@@ -23,4 +23,3 @@ trap 'cleanup' EXIT HUP INT QUIT TERM
 # mktemp arguments are not very portable.  We make a temporary directory with
 # portable arguments, then use a consistent filename within.
 TMPDIR="$(mktemp -d -t tmp.XXXXXXXXX)" || error_exit "Failed to create temp directory."
-

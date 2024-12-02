@@ -50,4 +50,5 @@ construct {
 
 } where {}
 EOF
-sparql  --query=$GET_TYPE_QUERY --results=TTL --results=nt 2>/dev/null > $PRAGMA.ntriples
+sparql  --query=$GET_TYPE_QUERY --results=TTL --results=nt 2>/dev/null > $ETL_DIR_TRANSFORM_PERSON/$PRAGMA.ntriples
+echo "KRLJANJE $ETL_DIR_TRANSFORM_PERSON/$PRAGMA.ntriples"

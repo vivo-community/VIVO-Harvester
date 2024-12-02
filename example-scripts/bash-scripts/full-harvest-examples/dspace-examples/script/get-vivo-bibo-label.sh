@@ -28,7 +28,7 @@ where {
     filter regex(str(?s), "bibo", "i")
 }  
 EOF
-sparql --data=$WORKDIR/src/main/resources/ontology/vivo.ttl --query=$QUERY_FN --results=TSV 2> /dev/null | sed -e "s/\@en$//" >$WORKDIR/data/vivo_doc_type_list.data
+sparql --data=$WORKDIR/resources/ontology/vivo.ttl --query=$QUERY_FN --results=TSV 2> /dev/null | sed -e "s/\@en$//" >$WORKDIR/data/vivo_doc_type_list.data
 
 
 

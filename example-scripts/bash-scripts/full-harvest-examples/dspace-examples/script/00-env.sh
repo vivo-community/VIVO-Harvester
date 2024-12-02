@@ -13,15 +13,37 @@
 ###################################################################
 # Scripts root directory
 export LOC_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
+###################################################################
+## Root variables
+source cleanup.sh
+export DEPLOY=$(cd $LOC_SCRIPT_DIR/../../../../../build; pwd -P)
+export LIB=$DEPLOY/dependency
 
+export VIVO_APP_NAME=vivo
+
+export VIVO_URL=http://localhost:8080/$VIVO_APP_NAME
+export PATH=$CATALINA_HOME/bin:$SOLR_DIR/bin:$DSPACE_HOME/bin:$PATH
 
 ###################################################################
-# Root installation directory of the different dspace2vivo packages
-export INSTALLER_DIR=$(cd $LOC_SCRIPT_DIR/../releng/org.vivoweb.dspacevivo.installer ; pwd -P)
+## Extract username and password
+export RUNTIME_PROP=vivoauth.properties
+if test -f "$RUNTIME_PROP"; then
+        [ -v ROOT_PASSWD ] || export ROOT_PASSWD=$(grep 'rootUser.password' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
+        [ -v ROOT_USER ] || export ROOT_USER=$(grep 'rootUser.emailAddress' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
+        [ -v JENA_PATH ] || export JENA_PATH=$(grep 'jenaPath' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
+        alias vivo_passwd="echo $ROOT_PASSWD"
+        alias vivo_user="echo $ROOT_USER"
+        alias jena_path="echo $JENA_PATH"
+fi
 
 ###################################################################
-# Project root variables
-source $INSTALLER_DIR/00-env.sh
+## Variables for dspace backend/frontend runtime
+
+# "rest" section
+export DSPACE_REST_SSL=false
+export DSPACE_REST_HOST=localhost
+export DSPACE_REST_PORT=8080
+export DSPACE_REST_NAMESPACE=/server
 
 ###################################################################
 # Executable and script path needed to run dspace2VIVO
@@ -62,3 +84,10 @@ export ETL_DIR_TRANSFORM_DOC_TYPE=$(cd ${ETL_DIR_TRANSFORM}_doc_type ; pwd -P)
 export ETL_DIR_TRANSFORM_PERSON=$(cd ${ETL_DIR_TRANSFORM}_person ; pwd -P)
 export ETL_DIR_TRANSFORM_EXPERTISES=$(cd ${ETL_DIR_TRANSFORM}_expertises ; pwd -P)
 export ETL_DIR_TRANSFORM_PERSON_EXPERTISES=$(cd ${ETL_DIR_TRANSFORM}_person_expertises ; pwd -P)
+
+###################################################################
+# Setup Jena environment
+
+cd $JENA_PATH
+export JENA_HOME="$(pwd)"
+export PATH="$PATH:$(pwd)/bin"

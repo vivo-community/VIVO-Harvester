@@ -50,7 +50,7 @@ fi
 ############################################################
 # Build query
 ############################################################
-TMP_FILE=/tmp/$BASHPID_tmp_data.ntriples
+TMP_FILE="/tmp/${BASHPID}_tmp_data.ntriples"
 cat $FILE_NAME > $TMP_FILE
 QUERY=$(cat <<EOF
 update=LOAD <file://$TMP_FILE> into graph <http://vitro.mannlib.cornell.edu/default/vitro-kb-2>

@@ -51,7 +51,7 @@ public class OAIPMHResponse {
     private String rawResponse;
     private Document xmlResponse;
     private List<String> setSpec;
-    private static String XSLT_FILENAME = "./resources/aoi_dc.xslt";
+    private static String XSLT_FILENAME = "aoi_dc.xslt";
     private Properties prop;
 
     public OAIPMHResponse(String rawResponse) {
@@ -417,10 +417,10 @@ public class OAIPMHResponse {
         return sw.toString();
     }
 
-    public static String ApplyXSLT(String xmlIn, String xsl) throws TransformerConfigurationException, TransformerException {
-        //StreamSource xslSource = new StreamSource(new StringReader(xsl));
+    public String ApplyXSLT(String xmlIn, String xsl) throws TransformerConfigurationException, TransformerException {
         StreamSource xmlInSource = new StreamSource(new StringReader(xmlIn));
-        Transformer tf = TransformerFactory.newInstance().newTransformer(new StreamSource(new File(XSLT_FILENAME)));
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(XSLT_FILENAME);
+        Transformer tf = TransformerFactory.newInstance().newTransformer(new StreamSource(in));
         StringWriter xmlOutWriter = new StringWriter();
         tf.transform(xmlInSource, new StreamResult(xmlOutWriter));
         return xmlOutWriter.toString();
