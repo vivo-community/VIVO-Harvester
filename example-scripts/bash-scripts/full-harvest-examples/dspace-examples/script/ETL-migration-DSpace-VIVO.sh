@@ -18,8 +18,9 @@ unset ROOT_PASSWD
 source $SCRIPT_DIR/00-env.sh
 cd $SCRIPT_DIR
 
-###################################################################
+##################################################################
 # Clean and setup up data directories and properties
+# TODO: Should we copy
 cp $RESSOURCESDIR/*.conf $RESSOURCES_TARGET_DIR
 flush_data_dspace.sh 2>/dev/null
 flush_data_dspace6.sh 2>/dev/null

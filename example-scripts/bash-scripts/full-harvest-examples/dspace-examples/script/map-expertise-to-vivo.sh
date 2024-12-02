@@ -36,4 +36,4 @@ construct {
 } where {}
 EOF
 
-sparql  --query=$GET_TYPE_QUERY --results=nt 2>/dev/null > $PRAGMA.ntriples
+sparql  --query=$GET_TYPE_QUERY --results=nt 2>/dev/null > $ETL_DIR_TRANSFORM_EXPERTISES/$PRAGMA.ntriples
