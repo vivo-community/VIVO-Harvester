@@ -43,7 +43,6 @@ else
 fi
 
 cp -rf $DATA_DEMO6_DIR/* $DATA_DEMO7_DIR/* $DATA_DIR
-exit 1
 ###################################################################
 # Produce all list
 echo run produce-list-of-expertise.sh
