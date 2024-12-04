@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.RequestLine;
@@ -32,18 +32,19 @@ public class OAIPMHHttpClient {
     private boolean ignoreSSLWarnings;
 
     public String doRequest(
-            URI baseURI, String verb, String set, String from, String until, String metadataPrefix, String token,
-            String identifier)
-            throws IOException, URISyntaxException {
+        URI baseURI, String verb, String set, String from, String until, String metadataPrefix,
+        String token,
+        String identifier)
+        throws IOException, URISyntaxException {
 
         try (CloseableHttpClient httpclient = getCloseableHttpClient()) {
             URIBuilder builder = new URIBuilder();
             builder.setScheme(baseURI.getScheme())
-                    .setHost(baseURI.getHost())
-                    .setPort(baseURI.getPort())
-                    .setPath(baseURI.getPath())
-                    .addParameter("verb", verb)
-                    .addParameters(URLEncodedUtils.parse(baseURI, Charset.defaultCharset()));
+                .setHost(baseURI.getHost())
+                .setPort(baseURI.getPort())
+                .setPath(baseURI.getPath())
+                .addParameter("verb", verb)
+                .addParameters(URLEncodedUtils.parse(baseURI, Charset.defaultCharset()));
 
             if (identifier != null) {
                 builder.addParameter("identifier", identifier);
@@ -83,7 +84,7 @@ public class OAIPMHHttpClient {
                         if (entity == null) {
                             throw new IOException("No response received");
                         }
-                        return EntityUtils.toString(entity, Charset.forName("UTF-8"));
+                        return EntityUtils.toString(entity, StandardCharsets.UTF_8);
                     } else {
                         throw new ClientProtocolException("Unexpected response status: " + status);
                     }
@@ -92,7 +93,7 @@ public class OAIPMHHttpClient {
             };
             String responseBody = httpclient.execute(httpget, responseHandler);
 
-            LOG.debug("Response received: {}", responseBody);
+//            LOG.debug("Response received: {}", responseBody);
 
             return responseBody;
         }
@@ -104,9 +105,9 @@ public class OAIPMHHttpClient {
                 SSLContextBuilder builder = new SSLContextBuilder();
                 builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                        builder.build());
+                    builder.build());
                 return HttpClients.custom().setSSLSocketFactory(
-                        sslsf).build();
+                    sslsf).build();
             } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException ex) {
                 throw new IOException("The HTTP Client could not be started", ex);
             }

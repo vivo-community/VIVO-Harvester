@@ -11,9 +11,9 @@ import org.vivoweb.harvester.extractdspace.model.Item;
 
 public class CommunityItr implements Iterator<Community> {
 
-    private DspaceOAI dspaceHarvester;
+    private final DspaceOAI dspaceHarvester;
     private List<Community> oaiPage = null;
-    private Item nextCommunity = null;
+    private final Item nextCommunity = null;
 
     public CommunityItr(DspaceOAI hr) {
         this.dspaceHarvester = hr;
@@ -31,14 +31,20 @@ public class CommunityItr implements Iterator<Community> {
             String responseXML = null;
             do {
                 try {
-                    responseXML = this.dspaceHarvester.getHttpClient().doRequest(this.dspaceHarvester.getBaseURI(), this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(), this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(), this.dspaceHarvester.getMetadata(),
-                            this.dspaceHarvester.getResumptionToken(), this.dspaceHarvester.getIdentifier());
+                    responseXML = this.dspaceHarvester.getHttpClient()
+                        .doRequest(this.dspaceHarvester.getBaseURI(),
+                            this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(),
+                            this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(),
+                            this.dspaceHarvester.getMetadata(),
+                            this.dspaceHarvester.getResumptionToken(),
+                            this.dspaceHarvester.getIdentifier());
 
                     oaipmhResponse = new OAIPMHResponse(responseXML, dspaceHarvester.getConf());
 
                     oaiPage = oaipmhResponse.modelCommunity();
 
-                    HashMap<String, List<Collection>> hmCollection = new HashMap<String, List<Collection>>();
+                    HashMap<String, List<Collection>> hmCollection =
+                        new HashMap<String, List<Collection>>();
                     Iterator<Collection> CollectionItr = this.dspaceHarvester.harvestCollection();
                     while (CollectionItr.hasNext()) {
                         Collection cl = CollectionItr.next();

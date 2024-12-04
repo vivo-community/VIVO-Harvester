@@ -9,9 +9,9 @@ import org.vivoweb.harvester.extractdspace.model.Item;
 
 public class CollectionItr implements Iterator<Collection> {
 
-    private DspaceOAI dspaceHarvester;
+    private final DspaceOAI dspaceHarvester;
     private List<Collection> oaiPage = null;
-    private Item nextCollection = null;
+    private final Item nextCollection = null;
 
     public CollectionItr(DspaceOAI hr) {
         this.dspaceHarvester = hr;
@@ -29,8 +29,13 @@ public class CollectionItr implements Iterator<Collection> {
             String responseXML = null;
             do {
                 try {
-                    responseXML = this.dspaceHarvester.getHttpClient().doRequest(this.dspaceHarvester.getBaseURI(), this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(), this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(), this.dspaceHarvester.getMetadata(),
-                            this.dspaceHarvester.getResumptionToken(), this.dspaceHarvester.getIdentifier());
+                    responseXML = this.dspaceHarvester.getHttpClient()
+                        .doRequest(this.dspaceHarvester.getBaseURI(),
+                            this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(),
+                            this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(),
+                            this.dspaceHarvester.getMetadata(),
+                            this.dspaceHarvester.getResumptionToken(),
+                            this.dspaceHarvester.getIdentifier());
 
                     oaipmhResponse = new OAIPMHResponse(responseXML, dspaceHarvester.getConf());
                     oaiPage = oaipmhResponse.modelCollections();
@@ -45,7 +50,8 @@ public class CollectionItr implements Iterator<Collection> {
                             col.getHasItem().add(harvestItemsItr.next());
 
                         }
-                        this.dspaceHarvester.getRecoverSets().removeIf(element -> (element.startsWith("col")));
+                        this.dspaceHarvester.getRecoverSets()
+                            .removeIf(element -> (element.startsWith("col")));
                         col.setIsPartOfCommunityID(this.dspaceHarvester.getRecoverSets());
 
                     }

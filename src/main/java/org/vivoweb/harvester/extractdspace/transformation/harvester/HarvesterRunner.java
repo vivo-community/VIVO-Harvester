@@ -22,29 +22,29 @@ import org.vivoweb.harvester.extractdspace.transformation.harvester.restv7.RESTv
 import org.vivoweb.harvester.extractdspace.vocab.util.ParserHelper;
 
 public class HarvesterRunner {
-    
-    private static Logger logger = LoggerFactory.getLogger(HarvesterRunner.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(HarvesterRunner.class);
     private DspaceHarvester dh = null;
     private String pathConfigFile = null;
     private String outputDir = null;
     private DspaceItemParser dspaceVioItemparser = null;
-    
-    public void setPathConfigFile(String pathConfigFile) {
-        this.pathConfigFile = pathConfigFile;
-    }
-    
+
     public String getPathConfigFile() {
         return this.pathConfigFile;
     }
-    
+
+    public void setPathConfigFile(String pathConfigFile) {
+        this.pathConfigFile = pathConfigFile;
+    }
+
     public String getOutputDir() {
         return this.outputDir;
     }
-    
+
     public void setOutputDir(String outputDir) {
         this.outputDir = outputDir;
     }
-    
+
     public void init() throws IOException {
         logger.info("Creating DspaceVivoParser");
         dspaceVioItemparser = new DspaceItemParser();
@@ -67,9 +67,8 @@ public class HarvesterRunner {
         }
         dh.connect();
     }
-    
-    public void harvestItems() throws JsonProcessingException {
-        ObjectMapper mp = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+    public void harvestItems() {
         Iterator<Item> harvestItemsItr = dh.harvestItems();
         int count = 0;
         if (harvestItemsItr != null) {
@@ -91,11 +90,11 @@ public class HarvesterRunner {
                 } else {
                     logger.info(stringModel);
                 }
-                
+
             }
         }
     }
-    
+
     public void harvestCollections() throws JsonProcessingException {
         ObjectMapper mp = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         Iterator<Collection> harvestCollection = dh.harvestCollection();
@@ -110,7 +109,7 @@ public class HarvesterRunner {
             }
         }
     }
-    
+
     public void harvestCommunities() throws JsonProcessingException {
         ObjectMapper mp = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         Iterator<Community> harvestCommunity = dh.harvestCommunity();
@@ -125,7 +124,7 @@ public class HarvesterRunner {
             }
         }
     }
-    
+
     public void harvestRepositories() throws JsonProcessingException {
         ObjectMapper mp = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         Iterator<Repository> harvestRepository = dh.harvestRepository();
@@ -140,5 +139,5 @@ public class HarvesterRunner {
             }
         }
     }
-    
+
 }

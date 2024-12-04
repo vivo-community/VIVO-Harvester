@@ -7,7 +7,7 @@ import org.vivoweb.harvester.extractdspace.transformation.harvester.HarvesterRun
 
 public class ConsoleApplication {
 
-    private static Logger logger = LoggerFactory.getLogger(ConsoleApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsoleApplication.class);
 
     public static void main(String[] args) throws IOException {
 

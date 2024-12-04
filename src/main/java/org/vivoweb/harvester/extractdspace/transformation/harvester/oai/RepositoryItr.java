@@ -10,9 +10,9 @@ import org.vivoweb.harvester.extractdspace.model.Repository;
 
 public class RepositoryItr implements Iterator<Repository> {
 
-    private DspaceOAI dspaceHarvester;
+    private final DspaceOAI dspaceHarvester;
     private List<Repository> oaiPage = null;
-    private Item nextRepository = null;
+    private final Item nextRepository = null;
 
     public RepositoryItr(DspaceOAI hr) {
         this.dspaceHarvester = hr;
@@ -27,11 +27,16 @@ public class RepositoryItr implements Iterator<Repository> {
         boolean hasNext = false;
         boolean iterate = false;
         if (!this.dspaceHarvester.isEmpty()) {
-            String responseXML = null;
+            String responseXML;
             do {
                 try {
-                    responseXML = this.dspaceHarvester.getHttpClient().doRequest(this.dspaceHarvester.getBaseURI(), this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(), this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(), this.dspaceHarvester.getMetadata(),
-                            this.dspaceHarvester.getResumptionToken(), this.dspaceHarvester.getIdentifier());
+                    responseXML = this.dspaceHarvester.getHttpClient()
+                        .doRequest(this.dspaceHarvester.getBaseURI(),
+                            this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(),
+                            this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(),
+                            this.dspaceHarvester.getMetadata(),
+                            this.dspaceHarvester.getResumptionToken(),
+                            this.dspaceHarvester.getIdentifier());
 
                     oaipmhResponse = new OAIPMHResponse(responseXML, dspaceHarvester.getConf());
 

@@ -2,7 +2,6 @@ package org.vivoweb.harvester.extractdspace.transformation.harvester.oai;
 
 import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -18,7 +17,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -48,15 +46,16 @@ import org.xml.sax.SAXException;
 public class OAIPMHResponse {
 
     private static final Logger LOG = LoggerFactory.getLogger(OAIPMHResponse.class);
+    private static final String XSLT_DC_FILENAME = "aoi_dc.xslt";
+    private static final String XSLT_DIM_FILENAME = "aoi_dim.xslt";
+    private final List<String> setSpec;
     private String rawResponse;
     private Document xmlResponse;
-    private List<String> setSpec;
-    private static String XSLT_FILENAME = "aoi_dc.xslt";
     private Properties prop;
 
     public OAIPMHResponse(String rawResponse) {
         this.rawResponse = rawResponse;
-        this.setSpec = new ArrayList();
+        this.setSpec = new ArrayList<>();
         parse();
     }
 
@@ -64,15 +63,24 @@ public class OAIPMHResponse {
         this.rawResponse = rawResponse;
         parse();
         this.prop = p;
-        this.setSpec = new ArrayList();
-    }
-
-    private void parse() {
-        this.xmlResponse = Jsoup.parse(rawResponse, "", Parser.xmlParser());
+        this.setSpec = new ArrayList<>();
     }
 
     private static Document parse(String text) {
         return Jsoup.parse(text, "", Parser.xmlParser());
+    }
+
+    public static String nodeToXML(Node node) throws TransformerException {
+        StringWriter sw = new StringWriter();
+        Transformer t = TransformerFactory.newInstance().newTransformer();
+        t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        t.setOutputProperty(OutputKeys.INDENT, "yes");
+        t.transform(new DOMSource(node), new StreamResult(sw));
+        return sw.toString();
+    }
+
+    private void parse() {
+        this.xmlResponse = Jsoup.parse(rawResponse, "", Parser.xmlParser());
     }
 
     public Optional<String> getResumptionToken() {
@@ -107,84 +115,153 @@ public class OAIPMHResponse {
     public Collection modelCollection() {
         Collection col = new Collection();
         col.setId("");
-        col.setIsPartOfCommunityID(new ArrayList());
-        col.setListOfStatementLiterals(new ArrayList());
+        col.setIsPartOfCommunityID(new ArrayList<>());
+        col.setListOfStatementLiterals(new ArrayList<>());
         col.setUri("");
         col.setUrl("");
-        col.setHasItem(new ArrayList());
+        col.setHasItem(new ArrayList<>());
 
         return col;
     }
 
-    public Item modelItem(Document doc, Document head) {
-        Document result = doc;
-        Item resp = new Item();
+    public Item modelItem(Document metadataDoc, Document headerDoc, String metadataFormat) {
+        Item item = new Item();
+        item.setDspaceIsPartOfCollectionID(new ArrayList<>());
+        item.setListOfStatementLiterals(new ArrayList<>());
 
-        resp.setDspaceIsPartOfCollectionID(new ArrayList());
-        Elements listh = head.getElementsByTag("header");
-        for (Element e : listh.get(0).children()) {
-            String htex = e.text();
-            String htag = e.tagName();
+        // Process header
+        processHeader(headerDoc, item);
 
-            if ("identifier".equals(htag)) {
-                resp.setId(htex.split(":")[2]);
-            } else if ("setSpec".equals(htag)) {
-                setSpec.add(htex);
-                if (htex.contains("col")) {
-                    resp.getDspaceIsPartOfCollectionID().add(htex);
-                }
-            }
+        // Determine metadata tag
+        String metadataTag = determineMetadataTag(metadataFormat);
 
-        }
+        // Process metadata
+        processMetadata(metadataDoc, metadataTag, item);
 
-        Elements list = result.getElementsByTag("oai_dc");
-
-        String id = resp.getId();
-        String uri = this.prop.getProperty("uriPrefix") + id.replace("/","_");
-        resp.setListOfStatementLiterals(new ArrayList());
-        for (Element e : list.get(0).children()) {
-            String text = e.text();
-            String tag = e.tagName();
-            String literalType = "xsd:string";
-            switch (tag) {
-                case "dc:identifier":
-                    resp.setUrl(text);
-                    /*
-                     * Replace last '/' by '_' to define URI
-                     */
-                    resp.setUri(uri);
-//                    StringBuffer sb = new StringBuffer(text);
-//                    int index=sb.lastIndexOf("/");    
-//                    sb.replace(index,1+index,"_");    
-//                    resp.setUri(sb.toString());
-                    break;
-                case "dc:bundle":
-                    if (resp.getDspaceBitstreamURLs() == null){
-                        resp.setDspaceBitstreamURLs(Lists.newArrayList());
-                    }
-                    resp.getDspaceBitstreamURLs().add(text);
-                    break;
-                case "dc:date":
-                    literalType = "xsd:dateTime"; 
-                default:
-                    StatementLiteral statementLiteral = new StatementLiteral();
-                    statementLiteral.setSubjectUri(uri);
-                    statementLiteral.setPredicateUri(tag.replace("dc:", "http://purl.org/dc/terms/"));
-                    statementLiteral.setObjectLiteral(text);
-                    statementLiteral.setLiteralType(literalType);
-                    resp.getListOfStatementLiterals().add(statementLiteral);
-
-            }
-
-        }
-
-        return resp;
+        return item;
     }
+
+    private void processHeader(Document headerDoc, Item item) {
+        Elements headerElements = headerDoc.getElementsByTag("header");
+        if (headerElements.isEmpty()) {
+            return;
+        }
+
+        for (Element element : headerElements.get(0).children()) {
+            String tagName = element.tagName();
+            String text = element.text();
+
+            switch (tagName) {
+                case "identifier":
+                    item.setId(parseIdentifier(text));
+                    break;
+                case "setSpec":
+                    handleSetSpec(text, item);
+                    break;
+            }
+        }
+    }
+
+    private String determineMetadataTag(String metadataFormat) {
+        return (metadataFormat != null && metadataFormat.trim().equalsIgnoreCase("DIM"))
+            ? "dim:dim"
+            : "oai_dc";
+    }
+
+    private void processMetadata(Document metadataDoc, String metadataTag, Item item) {
+        Elements metadataElements = metadataDoc.getElementsByTag(metadataTag);
+        if (metadataElements.isEmpty()) {
+            return;
+        }
+
+        String itemId = item.getId();
+        String uriPrefix = this.prop.getProperty("uriPrefix");
+        String itemUri = uriPrefix + itemId.replace("/", "_");
+        item.setUri(itemUri);
+
+        for (Element element : metadataElements.get(0).children()) {
+            String text = element.text();
+            String tagName = element.tagName();
+
+            if ("oai_dc".equals(metadataTag)) {
+                handleOaiDcMetadata(item, text, tagName, itemUri);
+            } else {
+                handleDimMetadata(item, element, text, itemUri);
+            }
+        }
+    }
+
+    private void handleSetSpec(String text, Item item) {
+        item.getDspaceIsPartOfCollectionID().add(text);
+    }
+
+    private String parseIdentifier(String identifier) {
+        String[] parts = identifier.split(":");
+        return parts.length > 2 ? parts[2] : identifier;
+    }
+
+    private void handleOaiDcMetadata(Item item, String text, String tagName, String uri) {
+        switch (tagName) {
+            case "dc:identifier":
+                item.setUrl(text);
+                break;
+            case "dc:bundle":
+                addToBitstreamURLs(item, text);
+                break;
+            case "dc:date":
+                addStatementLiteral(item, uri, tagName, text, "xsd:dateTime", true);
+                break;
+            default:
+                addStatementLiteral(item, uri, tagName, text, "xsd:string", true);
+        }
+    }
+
+    private void handleDimMetadata(Item item, Element element, String text, String uri) {
+        String elementName = element.attr("element");
+        String literalType = "xsd:string";
+
+        if ("date".equals(elementName)) {
+            literalType = "xsd:dateTime";
+        }
+
+        if ("identifier".equals(elementName)) {
+            item.setUrl(text);
+        } else if ("bundle".equals(elementName)) {
+            addToBitstreamURLs(item, text);
+        } else {
+            addStatementLiteral(item, uri, elementName, text, literalType, false);
+        }
+    }
+
+    private void addToBitstreamURLs(Item item, String url) {
+        if (item.getDspaceBitstreamURLs() == null) {
+            item.setDspaceBitstreamURLs(new ArrayList<>());
+        }
+        item.getDspaceBitstreamURLs().add(url);
+    }
+
+    private void addStatementLiteral(Item item, String subjectUri, String predicate,
+                                     String objectLiteral, String literalType, boolean isDC) {
+        StatementLiteral statement = new StatementLiteral();
+        statement.setSubjectUri(subjectUri);
+
+        if (isDC) {
+            statement.setPredicateUri(predicate.replace("dc:", "http://purl.org/dc/terms/"));
+        } else {
+            statement.setPredicateUri("http://purl.org/dc/terms/" + predicate);
+        }
+        statement.setObjectLiteral(objectLiteral);
+        statement.setLiteralType(literalType);
+
+        item.getListOfStatementLiterals().add(statement);
+    }
+
     public String urlToUri(String url, String id) {
         String pragma = id.replace("/", "_");
-        String uri =  url.replaceAll(id, pragma);
+        String uri = url.replaceAll(id, pragma);
         return uri;
     }
+
     public List<String> getSetSpec() {
         return setSpec;
     }
@@ -199,20 +276,13 @@ public class OAIPMHResponse {
             Item resp = new Item();
             String id = e.getElementsByTag("identifier").text();
             resp.setId(id);
-            Elements eset = e.getElementsByTag("setSpec");
-            for (Element sp : eset) {
-                String col = sp.getElementsByTag("setSpec").text();
-                if (col.contains("col")) {
-                    //resp.setDspaceIsPartOfCollectionID(col);
-                }
 
-            }
             Element meta = e.getElementsByTag("metadata").first().child(0);
-            resp.setListOfStatementLiterals(new ArrayList());
+            resp.setListOfStatementLiterals(new ArrayList<>());
             for (Element s : meta.children()) {
 
                 if ("dc:bundle".equals(s.tagName())) {
-                    if (resp.getDspaceBitstreamURLs() == null){
+                    if (resp.getDspaceBitstreamURLs() == null) {
                         resp.setDspaceBitstreamURLs(Lists.newArrayList());
                     }
                     resp.getDspaceBitstreamURLs().add(s.text());
@@ -220,7 +290,8 @@ public class OAIPMHResponse {
 
                     StatementLiteral statementLiteral = new StatementLiteral();
                     statementLiteral.setSubjectUri(id);
-                    statementLiteral.setPredicateUri(s.tagName().replace("dc:", "http://purl.org/dc/terms/"));
+                    statementLiteral.setPredicateUri(
+                        s.tagName().replace("dc:", "http://purl.org/dc/terms/"));
                     statementLiteral.setObjectLiteral(s.text());
                     statementLiteral.setLiteralType(null);
                     resp.getListOfStatementLiterals().add(statementLiteral);
@@ -234,7 +305,8 @@ public class OAIPMHResponse {
         return response;
     }
 
-    public org.w3c.dom.Document parsexml(String st) throws SAXException, ParserConfigurationException, IOException {
+    public org.w3c.dom.Document parsexml(String st)
+        throws SAXException, ParserConfigurationException, IOException {
         DocumentBuilderFactory domFact = DocumentBuilderFactory.newInstance();
         domFact.setNamespaceAware(true);
         DocumentBuilder builder = domFact.newDocumentBuilder();
@@ -244,7 +316,9 @@ public class OAIPMHResponse {
 
     }
 
-    public List<Item> modelItemsxoai() throws TransformerException, XPathExpressionException, SAXException, ParserConfigurationException, IOException {
+    public List<Item> modelItemsxoai()
+        throws TransformerException, XPathExpressionException, SAXException,
+        ParserConfigurationException, IOException {
         InputStream toInputStream1 = IOUtils.toInputStream(this.rawResponse);
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
@@ -252,8 +326,8 @@ public class OAIPMHResponse {
         return extracttransform(xmlDocument);
     }
 
-    public List<Community> modelCommunity() throws TransformerException, XPathExpressionException, SAXException, ParserConfigurationException, IOException {
-        List<Community> lcom = new ArrayList();
+    public List<Community> modelCommunity() {
+        List<Community> lcom = new ArrayList<>();
 
         Document doc = this.xmlResponse;
         Elements list = doc.getElementsByTag("set");
@@ -263,7 +337,8 @@ public class OAIPMHResponse {
             String name = e.getElementsByTag("setName").text();
             if (id.contains("com_")) {
                 com.setId(id);
-                String uri = this.prop.getProperty("uriPrefix") + "handle" + id.replace("com_", "/").replace("_", "/");
+                String uri = this.prop.getProperty("uriPrefix") + "handle" +
+                    id.replace("com_", "/").replace("_", "/");
                 com.setUri(uri);
                 lcom.add(com);
 
@@ -274,8 +349,8 @@ public class OAIPMHResponse {
         return lcom;
     }
 
-    public List<Repository> modelRepository() throws TransformerException, XPathExpressionException, SAXException, ParserConfigurationException, IOException {
-        List<Repository> lrepo = new ArrayList();
+    public List<Repository> modelRepository() {
+        List<Repository> lrepo = new ArrayList<>();
 
         Document doc = this.xmlResponse;
         Elements list = doc.getElementsByTag("Identify");
@@ -285,7 +360,7 @@ public class OAIPMHResponse {
             repo.setUri(uri);
             String id = e.getElementsByTag("repositoryIdentifier").text();
             repo.setId(id);
-            repo.setListOfStatementLiterals(new ArrayList());
+            repo.setListOfStatementLiterals(new ArrayList<>());
             Elements elements = e.children();
             for (Element echild : elements) {
                 String tagname = echild.tagName();
@@ -307,8 +382,8 @@ public class OAIPMHResponse {
         return lrepo;
     }
 
-    public List<Collection> modelCollections() throws TransformerException, XPathExpressionException, SAXException, ParserConfigurationException, IOException {
-        List<Collection> lcol = new ArrayList();
+    public List<Collection> modelCollections() {
+        List<Collection> lcol = new ArrayList<>();
 
         Document doc = this.xmlResponse;
         Elements list = doc.getElementsByTag("set");
@@ -318,7 +393,8 @@ public class OAIPMHResponse {
             String name = e.getElementsByTag("setName").text();
             if (id.contains("col_")) {
                 col.setId(id);
-                String uri = this.prop.getProperty("uriPrefix") + "/handle" + id.replace("col_", "/").replace("_", "/");
+                String uri = this.prop.getProperty("uriPrefix") + "/handle" +
+                    id.replace("col_", "/").replace("_", "/");
                 col.setUri(uri);
                 lcol.add(col);
             }
@@ -328,8 +404,8 @@ public class OAIPMHResponse {
         return lcol;
     }
 
-    public List<String> modelItemCollections() throws TransformerException, XPathExpressionException, SAXException, ParserConfigurationException, IOException {
-        List<String> litems = new ArrayList();
+    public List<String> modelItemCollections() {
+        List<String> litems = new ArrayList<>();
         Document doc = this.xmlResponse;
         Elements list = doc.getElementsByTag("identifier");
         for (Element e : list) {
@@ -344,8 +420,8 @@ public class OAIPMHResponse {
         return litems;
     }
 
-    public List<String> modelSetSpec() throws TransformerException, XPathExpressionException, SAXException, ParserConfigurationException, IOException {
-        List<String> lspec = new ArrayList();
+    public List<String> modelSetSpec() {
+        List<String> lspec = new ArrayList<>();
         Document doc = this.xmlResponse;
         Elements list = doc.getElementsByTag("header");
         for (Element e : list) {
@@ -360,7 +436,8 @@ public class OAIPMHResponse {
         return lspec;
     }
 
-    public List<Item> extracttransform(org.w3c.dom.Document xmlDocument) throws XPathExpressionException, TransformerException {
+    public List<Item> extracttransform(org.w3c.dom.Document xmlDocument)
+        throws XPathExpressionException, TransformerException {
         List<Item> resp = Lists.newArrayList();
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new NamespaceContext() {
@@ -392,34 +469,47 @@ public class OAIPMHResponse {
             }
         });
 
-        String expression = "/OAI-PMH/ListRecords/record/metadata/metadata";
-        NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
+        String metadataFormat = prop.getProperty("metadataFormat");
+        if (metadataFormat == null || metadataFormat.isEmpty()) {
+            metadataFormat = "DC";
+        }
 
-        String expressionhead = "/OAI-PMH/ListRecords/record/header";
-        NodeList headers = (NodeList) xPath.compile(expressionhead).evaluate(xmlDocument, XPathConstants.NODESET);
+        String xslFilename = null;
+        if (metadataFormat.trim().equalsIgnoreCase("DC")) {
+            xslFilename = XSLT_DC_FILENAME;
+        } else if ((metadataFormat.trim().equalsIgnoreCase("DIM"))) {
+            xslFilename = XSLT_DIM_FILENAME;
+        } else {
+            LOG.error("Unsupported metadata format: {}", metadataFormat);
+            System.exit(1);
+        }
+
+        String expression = "/OAI-PMH/ListRecords/record/metadata" +
+            (xslFilename.equals(XSLT_DC_FILENAME) ? "/metadata" : "");
+        NodeList nodeList =
+            (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
+
+        String expressionHead = "/OAI-PMH/ListRecords/record/header";
+        NodeList headers =
+            (NodeList) xPath.compile(expressionHead).evaluate(xmlDocument, XPathConstants.NODESET);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node item = nodeList.item(i);
             String nodeToXML = nodeToXML(item);
-            String ApplyXSLT = ApplyXSLT(nodeToXML, "a");
-            Item it = modelItem(parse(ApplyXSLT), parse(nodeToXML(headers.item(i))));
+            String ApplyXSLT = ApplyXSLT(nodeToXML, xslFilename);
+            Item it =
+                modelItem(parse(ApplyXSLT), parse(nodeToXML(headers.item(i))), metadataFormat);
             resp.add(it);
         }
         return resp;
     }
 
-    public static String nodeToXML(Node node) throws TransformerException {
-        StringWriter sw = new StringWriter();
-        Transformer t = TransformerFactory.newInstance().newTransformer();
-        t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        t.setOutputProperty(OutputKeys.INDENT, "yes");
-        t.transform(new DOMSource(node), new StreamResult(sw));
-        return sw.toString();
-    }
-
-    public String ApplyXSLT(String xmlIn, String xsl) throws TransformerConfigurationException, TransformerException {
+    public String ApplyXSLT(String xmlIn, String xsl)
+        throws TransformerException {
         StreamSource xmlInSource = new StreamSource(new StringReader(xmlIn));
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(XSLT_FILENAME);
+
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xsl);
+
         Transformer tf = TransformerFactory.newInstance().newTransformer(new StreamSource(in));
         StringWriter xmlOutWriter = new StringWriter();
         tf.transform(xmlInSource, new StreamResult(xmlOutWriter));

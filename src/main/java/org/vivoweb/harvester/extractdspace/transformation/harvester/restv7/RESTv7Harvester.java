@@ -21,7 +21,7 @@ import org.vivoweb.harvester.extractdspace.transformation.harvester.DspaceHarves
 
 public class RESTv7Harvester extends DspaceHarvester {
 
-    private static Logger log = LoggerFactory.getLogger(RESTv7Harvester.class);
+    private static final Logger log = LoggerFactory.getLogger(RESTv7Harvester.class);
     private String csrfToken = null;
     private String authToken = null;
 
@@ -31,7 +31,7 @@ public class RESTv7Harvester extends DspaceHarvester {
 
     private HttpResponse<JsonNode> updateCSRF(HttpResponse<JsonNode> i) {
         List<String> get = i.getHeaders().get("DSPACE-XSRF-TOKEN");
-        if (get.size() > 0) {
+        if (!get.isEmpty()) {
             this.csrfToken = get.get(0);
         }
         return i;
@@ -41,18 +41,19 @@ public class RESTv7Harvester extends DspaceHarvester {
     public void connect() {
         updateCSRF(Unirest.get(this.conf.getProperty("endpoint") + "/authn/status").asJson());
         this.authToken = updateCSRF(Unirest.post(this.conf.getProperty("endpoint") + "/authn/login")
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("X-XSRF-TOKEN", this.csrfToken)
-                .field("user", this.conf.getProperty("username"))
-                .field("password", this.conf.getProperty("password"))
-                .asJson()).getHeaders().get("Authorization").get(0);
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .header("X-XSRF-TOKEN", this.csrfToken)
+            .field("user", this.conf.getProperty("username"))
+            .field("password", this.conf.getProperty("password"))
+            .asJson()).getHeaders().get("Authorization").get(0);
     }
 
     public JsonNode getItemsPage(int page, int size) {
-        return updateCSRF(Unirest.get(this.conf.getProperty("endpoint") + "/discover/browses/title/items?sort=dc.title,ASC&size=" + size + "&page=" + page)
-                .header("X-XSRF-TOKEN", this.csrfToken)
-                .header("Authorization", this.authToken)
-                .asJson()).getBody();
+        return updateCSRF(Unirest.get(this.conf.getProperty("endpoint") +
+                "/discover/browses/title/items?sort=dc.title,ASC&size=" + size + "&page=" + page)
+            .header("X-XSRF-TOKEN", this.csrfToken)
+            .header("Authorization", this.authToken)
+            .asJson()).getBody();
     }
 
     @Override
@@ -62,9 +63,9 @@ public class RESTv7Harvester extends DspaceHarvester {
 
     private JsonNode calllinks(String link) {
         return updateCSRF(Unirest.get(link)
-                .header("X-XSRF-TOKEN", this.csrfToken)
-                .header("Authorization", this.authToken)
-                .asJson()).getBody();
+            .header("X-XSRF-TOKEN", this.csrfToken)
+            .header("Authorization", this.authToken)
+            .asJson()).getBody();
 
     }
 
@@ -75,14 +76,16 @@ public class RESTv7Harvester extends DspaceHarvester {
         resp.setUri(this.conf.getProperty("uriPrefix") + jsonObject.getString("handle"));
         resp.setUrl(jsonObject.getJSONObject("_links").getJSONObject("self").getString("href"));
 
-        JsonNode collectionLink = calllinks(jsonObject.getJSONObject("_links").getJSONObject("owningCollection").getString("href"));
+        JsonNode collectionLink = calllinks(
+            jsonObject.getJSONObject("_links").getJSONObject("owningCollection").getString("href"));
 
         resp.dspaceIsPartOfCollectionID(Lists.newArrayList());
         resp.getDspaceIsPartOfCollectionID().add(collectionLink.getObject().getString("handle"));
 
         resp.setListOfStatements(Lists.newArrayList());
         resp.setListOfStatementLiterals(Lists.newArrayList());
-        List<Object> metadataMapping = metadataMapping(resp.getUri(), jsonObject.getJSONObject("metadata"));
+        List<Object> metadataMapping =
+            metadataMapping(resp.getUri(), jsonObject.getJSONObject("metadata"));
         for (Object obj : metadataMapping) {
             if (obj instanceof StatementLiteral) {
                 resp.getListOfStatementLiterals().add((StatementLiteral) obj);

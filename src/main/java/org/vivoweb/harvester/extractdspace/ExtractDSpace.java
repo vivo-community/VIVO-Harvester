@@ -7,7 +7,7 @@ import org.vivoweb.harvester.extractdspace.transformation.harvester.HarvesterRun
 
 public class ExtractDSpace {
 
-    private static Logger logger = LoggerFactory.getLogger(ExtractDSpace.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExtractDSpace.class);
 
     public static void main(String[] args) throws IOException {
 

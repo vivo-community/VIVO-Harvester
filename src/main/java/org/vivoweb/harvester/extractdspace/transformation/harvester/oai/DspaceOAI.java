@@ -4,7 +4,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.extractdspace.model.Collection;
 import org.vivoweb.harvester.extractdspace.model.Community;
 import org.vivoweb.harvester.extractdspace.model.Item;
@@ -13,6 +16,7 @@ import org.vivoweb.harvester.extractdspace.transformation.harvester.DspaceHarves
 
 public class DspaceOAI extends DspaceHarvester {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DspaceOAI.class);
     private static final String NO_TOKEN = null;
     private String resumptionToken = NO_TOKEN;
     private URI baseURI;
@@ -39,6 +43,33 @@ public class DspaceOAI extends DspaceHarvester {
         this.httpClient = new OAIPMHHttpClient();
     }
 
+    private void loadConfigurationProperties() {
+        this.until = this.conf.getProperty("endDate");
+        this.from = this.conf.getProperty("startDate");
+
+        String metadataFormat = this.conf.getProperty("metadataFormat");
+        if (metadataFormat == null || metadataFormat.isEmpty()) {
+            metadataFormat = "DC";
+        }
+
+        switch (metadataFormat.trim().toUpperCase()) {
+            case "DC":
+                this.metadata = "xoai";
+                break;
+            case "DIM":
+                this.metadata = "dim";
+                break;
+            default:
+                LOG.error("Unsupported metadata format: {}", metadataFormat);
+                System.exit(1);
+        }
+
+        String set = this.conf.getProperty("set");
+        if (Objects.nonNull(set) && !set.trim().isEmpty()) {
+            this.set = this.conf.getProperty("set");
+        }
+    }
+
     @Override
     public Iterator<Item> harvestItems() {
         this.verb = "ListRecords";
@@ -48,9 +79,11 @@ public class DspaceOAI extends DspaceHarvester {
         this.set = null;
         this.identifier = null;
         this.recoverSets = null;
+        loadConfigurationProperties();
 
-        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
-                || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
+        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats ||
+            OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
+            || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
             this.metadata = null;
             this.until = null;
             this.from = null;
@@ -76,9 +109,11 @@ public class DspaceOAI extends DspaceHarvester {
         this.from = null;
         this.set = null;
         this.identifier = null;
+        loadConfigurationProperties();
 
-        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
-                || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
+        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats ||
+            OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
+            || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
             this.metadata = null;
             this.until = null;
             this.from = null;
@@ -96,9 +131,11 @@ public class DspaceOAI extends DspaceHarvester {
         this.from = null;
         this.set = null;
         this.identifier = null;
+        loadConfigurationProperties();
 
-        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
-                || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
+        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats ||
+            OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
+            || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
             this.metadata = null;
             this.until = null;
             this.from = null;
@@ -116,9 +153,11 @@ public class DspaceOAI extends DspaceHarvester {
         this.from = null;
         this.set = null;
         this.identifier = null;
+        loadConfigurationProperties();
 
-        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
-                || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
+        if (OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListMetadataFormats ||
+            OAIPMHVerb.valueOf(verb) == OAIPMHVerb.ListSets
+            || OAIPMHVerb.valueOf(verb) == OAIPMHVerb.Identify) {
             this.metadata = null;
             this.until = null;
             this.from = null;

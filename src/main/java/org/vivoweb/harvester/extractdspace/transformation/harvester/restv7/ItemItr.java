@@ -11,10 +11,10 @@ import org.vivoweb.harvester.extractdspace.model.Item;
 public class ItemItr implements Iterator<Item> {
 
     private int page = 0;
-    private int size = 20;
-    private List<Item> restPage = Lists.newArrayList();
-    private Item nextItem = null;
-    private RESTv7Harvester endpoint;
+    private final int size = 20;
+    private final List<Item> restPage = Lists.newArrayList();
+    private final Item nextItem = null;
+    private final RESTv7Harvester endpoint;
 
     public ItemItr(RESTv7Harvester endpoint) {
         this.endpoint = endpoint;

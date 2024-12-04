@@ -9,7 +9,7 @@ import org.vivoweb.harvester.extractdspace.model.Repository;
 
 public abstract class DspaceHarvester {
 
-    protected Properties conf = null;
+    protected Properties conf;
 
     public DspaceHarvester(Properties conf) {
         this.conf = conf;

@@ -8,16 +8,16 @@ import org.vivoweb.harvester.extractdspace.model.Item;
 
 public class ItemItr implements Iterator<Item> {
 
-    private DspaceOAI dspaceHarvester;
+    private final DspaceOAI dspaceHarvester;
     private List<Item> oaiPage = null;
-    private Item nextItem = null;
+    private final Item nextItem = null;
     private boolean finalValue;
     private List<String> setsList = null;
 
     public ItemItr(DspaceOAI hr) {
         this.dspaceHarvester = hr;
         this.finalValue = false;
-        setsList = new ArrayList();
+        setsList = new ArrayList<>();
     }
 
     @Override
@@ -29,15 +29,20 @@ public class ItemItr implements Iterator<Item> {
         boolean hasNext = false;
         boolean iterate = false;
         if (!finalValue) {
-            String responseXML = null;
+            String responseXML;
             do {
                 try {
-                    responseXML = this.dspaceHarvester.getHttpClient().doRequest(this.dspaceHarvester.getBaseURI(), this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(), this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(), this.dspaceHarvester.getMetadata(),
-                            this.dspaceHarvester.getResumptionToken(), this.dspaceHarvester.getIdentifier());
+                    responseXML = this.dspaceHarvester.getHttpClient()
+                        .doRequest(this.dspaceHarvester.getBaseURI(),
+                            this.dspaceHarvester.getVerb(), this.dspaceHarvester.getSet(),
+                            this.dspaceHarvester.getFrom(), this.dspaceHarvester.getUntil(),
+                            this.dspaceHarvester.getMetadata(),
+                            this.dspaceHarvester.getResumptionToken(),
+                            this.dspaceHarvester.getIdentifier());
 
                     oaipmhResponse = new OAIPMHResponse(responseXML, dspaceHarvester.getConf());
                     oaiPage = oaipmhResponse.modelItemsxoai();
-                    this.dspaceHarvester.setRecoverSets(new ArrayList());
+                    this.dspaceHarvester.setRecoverSets(new ArrayList<>());
                     for (String spec : oaipmhResponse.getSetSpec()) {
                         if (!this.dspaceHarvester.getRecoverSets().contains(spec)) {
                             this.dspaceHarvester.getRecoverSets().add(spec);
@@ -63,7 +68,6 @@ public class ItemItr implements Iterator<Item> {
                 } else if (this.dspaceHarvester.getResumptionToken() != null) {
                     iterate = true;
                 } else {
-                    hasNext = false;
                     iterate = false;
                 }
 

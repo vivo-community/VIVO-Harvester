@@ -31,9 +31,11 @@ if test -f "$RUNTIME_PROP"; then
         [ -v ROOT_PASSWD ] || export ROOT_PASSWD=$(grep 'rootUser.password' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
         [ -v ROOT_USER ] || export ROOT_USER=$(grep 'rootUser.emailAddress' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
         [ -v JENA_PATH ] || export JENA_PATH=$(grep 'jenaPath' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
+        [ -v GRAPH_NAME ] || export GRAPH_NAME=$(grep 'graphName=' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
         alias vivo_passwd="echo $ROOT_PASSWD"
         alias vivo_user="echo $ROOT_USER"
         alias jena_path="echo $JENA_PATH"
+        alias vivo_graph="echo $GRAPH_NAME"
 fi
 
 ###################################################################
