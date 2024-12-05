@@ -1,0 +1,66 @@
+<https://dspace7.org/resource/10673_2137> <http://vivoweb.org/ontology/core#freetextKeyword> "Linguistics"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/subject> "Photo-interpretation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/subject> "Trattamento delle osservazioni"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/subject> "Linguistica"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/description> "The illustration of the experiment to construct a map, starting from a written text, assigned and prepared to specifically describe theimage of a mountain landscape, is presented with the aim of demonstrating its actual feasibility and measuring the quality obtained,in quantitative terms."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2137> <http://vivoweb.org/ontology/core#freetextKeyword> "Linguistica"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/subject> "Fotointerpretazione"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/description> "L’illustrazione dell’esperimento di costruzione di una mappa, partendo da un testo scritto assegnato e preparato appositamente perdescrivere l’immagine di un paesaggio (montano), è presentata con lo scopo di dimostrarne l’effettiva fattibilità e misurare la qualitàottenuta, in termini quantitativi."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2137-vcard> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/2000/01/rdf-schema#label> "From an image to a map, through a written text"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 2 (2018); 57-65"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/date> "2018-05-03"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/2000/01/rdf-schema#label> "Da un'immagine a una mappa attraverso un testo scritto"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/title> "Da un'immagine a una mappa attraverso un testo scritto"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://vivoweb.org/ontology/core#freetextKeyword> "Photo-interpretation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/ontology/bibo/abstract> "L’illustrazione dell’esperimento di costruzione di una mappa, partendo da un testo scritto assegnato e preparato appositamente perdescrivere l’immagine di un paesaggio (montano), è presentata con lo scopo di dimostrarne l’effettiva fattibilità e misurare la qualitàottenuta, in termini quantitativi."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/ontology/bibo/abstract> "The illustration of the experiment to construct a map, starting from a written text, assigned and prepared to specifically describe theimage of a mountain landscape, is presented with the aim of demonstrating its actual feasibility and measuring the quality obtained,in quantitative terms."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/creator> "Mussio, Luigi"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/date> "2024-06-19T20:06:34Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/date> "2024-06-19T20:06:34Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/creator> "Mandelli, Alessandro"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/subject> "Data processing"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/2172/4292"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2137> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/creator> "Dante, Valentina"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://vivoweb.org/ontology/core#freetextKeyword> "Trattamento delle osservazioni"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/subject> "Linguistics"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 2 (2018); 57-65"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://vivoweb.org/ontology/core#freetextKeyword> "Fotointerpretazione"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://vivoweb.org/ontology/core#freetextKeyword> "Data processing"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137> <http://purl.org/dc/terms/title> "From an image to a map, through a written text"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2137"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2137-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2137-vcard-url> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2137> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2137-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+

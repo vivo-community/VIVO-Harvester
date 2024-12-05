@@ -1,0 +1,92 @@
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Albano, Valentina"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/title> "Achievement of the “Benchmark” session - On the use of UAV images for 3D reconstruction: a joint experience among users” (held during the 61th SIFET meeting, Lecce, Italy, June 8-10, 2016)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Aicardi, Irene"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Garraffa, Alessandra"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/date> "2024-06-19T20:08:33Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/date> "2024-06-19T20:08:33Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Stecchi, Francesco"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "action camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "action camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "camera self-calibration"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Santise, Marina"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Ratto Cavagnaro, Massimo"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "Benchmark session"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "Benchmark session"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Rossi, Paolo"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Ballarin, Martina"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "auto-calibrazione"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Visintini, Domenico"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Abate, Giovanni"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "frame camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "frame camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Pinto, Livio"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/date> "2016-05-30"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "Sessione Benchmark"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Guerra, Francesco"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Mancini, Francesco"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2174-vcard> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "Sessione Benchmark"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "De Luca, Valerio"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/2209/4334"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Grasso, Nives"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Curuni, Michele"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/ontology/bibo/abstract> "Il lavoro riassume i risultati ottenuti da diversi partecipanti alla sessione “benchmark” - uso di immagini UAV per la ricostruzione3D: esperienze condivise tra utenti, svoltasi nell’ambito del 61° convegno nazionale SIFET (Lecce 8-10 giugno 2016). L’iniziativaha previsto l’elaborazione di un dataset comune, rappresentato da immagini acquisite tramite aeromobile a pilotaggio remoto, ai finidella ricostruzione tridimensionale di ambienti di pregio storico e culturale. Tra gli obiettivi principali vi era quello di confrontare idiversi approcci seguiti dai partecipanti nell’elaborazione dei dati, mettendo in luce le diverse potenzialità dei software disponibili, lepossibili strategie relative all’uso dei punti di controllo e il livello di accuratezza raggiunto. Nonostante l’utilizzo di procedureconsolidate nell’analisi dei dati, i risultati riportati dagli utenti evidenziano significative differenze nei livelli di accuratezza,verificabili dopo il confronto con i punti di controllo e con la nuvola di punti ottenuta con scansione laser terrestre."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Caroti, Gabriella"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "frame camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "frame camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 3 (2016); 1-9"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "UAV photogrammetry"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/description> "Il lavoro riassume i risultati ottenuti da diversi partecipanti alla sessione “benchmark” - uso di immagini UAV per la ricostruzione3D: esperienze condivise tra utenti, svoltasi nell’ambito del 61° convegno nazionale SIFET (Lecce 8-10 giugno 2016). L’iniziativaha previsto l’elaborazione di un dataset comune, rappresentato da immagini acquisite tramite aeromobile a pilotaggio remoto, ai finidella ricostruzione tridimensionale di ambienti di pregio storico e culturale. Tra gli obiettivi principali vi era quello di confrontare idiversi approcci seguiti dai partecipanti nell’elaborazione dei dati, mettendo in luce le diverse potenzialità dei software disponibili, lepossibili strategie relative all’uso dei punti di controllo e il livello di accuratezza raggiunto. Nonostante l’utilizzo di procedureconsolidate nell’analisi dei dati, i risultati riportati dagli utenti evidenziano significative differenze nei livelli di accuratezza,verificabili dopo il confronto con i punti di controllo e con la nuvola di punti ottenuta con scansione laser terrestre."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "auto-calibrazione"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/description> "This paper summarize the achievements of an experimental meeting session held within the 61th SIFET national meeting (Lecce,Italy, 6-10 June 2016). The session named “benchmark” introduced results achieved by users in the processing of a shared dataset,composed of images acquired from unmanned aerial vehicle (UAV), to reconstruct the three-dimensional properties of culturalheritage. Data, results provided by authors and validation strategies of outcomes from the photogrammetric processing of UAVimages highlighted different level of spatial accuracy by the products. Despite the good level of automation introduced by thestructure from motion approach to data processing, the users detected differences at cm-level in the accuracy of results after the useof available software."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/subject> "fotogrammetria da UAV"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Noardo, Francesca"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "fotogrammetria da UAV"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 3 (2016); 1-9"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Piemonte, Andrea"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/ontology/bibo/abstract> "This paper summarize the achievements of an experimental meeting session held within the 61th SIFET national meeting (Lecce,Italy, 6-10 June 2016). The session named “benchmark” introduced results achieved by users in the processing of a shared dataset,composed of images acquired from unmanned aerial vehicle (UAV), to reconstruct the three-dimensional properties of culturalheritage. Data, results provided by authors and validation strategies of outcomes from the photogrammetric processing of UAVimages highlighted different level of spatial accuracy by the products. Despite the good level of automation introduced by thestructure from motion approach to data processing, the users detected differences at cm-level in the accuracy of results after the useof available software."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "action camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "action camera"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "UAV photogrammetry"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Castagnetti, Cristina"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/creator> "Cerratti, Marco"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/2000/01/rdf-schema#label> "Risultati ottenuti nell’ambito della sessione “Benchmark” - Uso di immagini UAV per la ricostruzione 3D: esperienze condivise tra utenti (61° Convegno Nazionale Sifet, Lecce 8-10 giugno 2016)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/title> "Risultati ottenuti nell’ambito della sessione “Benchmark” - Uso di immagini UAV per la ricostruzione 3D: esperienze condivise tra utenti (61° Convegno Nazionale Sifet, Lecce 8-10 giugno 2016)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://vivoweb.org/ontology/core#freetextKeyword> "camera self-calibration"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://www.w3.org/2000/01/rdf-schema#label> "Achievement of the “Benchmark” session - On the use of UAV images for 3D reconstruction: a joint experience among users” (held during the 61th SIFET meeting, Lecce, Italy, June 8-10, 2016)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2174"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2174-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2174-vcard-url> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2174> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2174-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+

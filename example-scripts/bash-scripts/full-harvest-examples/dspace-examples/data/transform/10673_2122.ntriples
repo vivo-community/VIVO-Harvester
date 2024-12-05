@@ -1,0 +1,72 @@
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/source> "1721-971X"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/2000/01/rdf-schema#label> "A review of spatial ontologies for urban and architectural heritage domain"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "ontologie"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; N. 1 (2020); 47-56"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/ontology/bibo/abstract> "Il presente lavoro ha lo scopo di presentare un’articolata ricognizione della letteratura passata e attuale, inerente le ontologie informatiche, con particolare attenzione a quelle connesse al dominio spaziale urbano e del patrimonio culturale architettonico costruito. Da un punto di vista generale, il documento offre una descrizione di definizioni, classificazioni e approcci e metodi per la creazione di ontologie nel campo del Web Semantico, dalle prime nozioni emerse negli anni Novanta alla loro evoluzione negli ultimi due decenni.Nel settore del patrimonio costruito, l'interesse, il bisogno di conoscenza e l'uso di ontologie sono cresciuti per rispondere alle necessità di condivisione e scambio di dati spaziali e alla crescente adozione di infrastrutture geografiche. Queste stanno infatti riscontrando problemi di interoperabilità tecnica, geometrica e semantica nell'integrazione di database geografici e urbani multi-scala che richiedono pertanto l'adozione di standard condivisi e linguaggi comuni."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/publishedVersion"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/rights> "Copyright (c) 2020 Antonia Spanò, Elisabetta Colucci"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "interoperability"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "ontologie"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/2000/01/rdf-schema#label> "Ontologie geografiche nel dominio spaziale urbano e del patrimonio costruito"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "standards"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "standards"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/type> "info:eu-repo/semantics/article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "patrimonio costruito urbano"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "ontologie spaziali"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "spatial onthologies"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "standards"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "standards"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "patrimonio costruito urbano"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/creator> "Spanò, Antonia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/title> "A review of spatial ontologies for urban and architectural heritage domain"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "interoperability"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "interoperabilità"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/format> "application/pdf"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/type> "Peer-reviewed article"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/type> "Articolo peer-review"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/date> "2024-06-19T20:05:45Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/date> "2024-06-19T20:05:45Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "spatial onthologies"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/source> "Bollettino della società italiana di fotogrammetria e topografia; No. 1 (2020); 47-56"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/title> "Ontologie geografiche nel dominio spaziale urbano e del patrimonio costruito"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "ontologie spaziali"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/creator> "Colucci, Elisabetta"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "urban heritage"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vivoweb.org/ontology/core#freetextKeyword> "interoperabilità"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://purl.org/ontology/bibo/Document> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/source> "2784-9473"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.obolibrary.org/obo/ARG_2000028> <https://dspace7.org/resource/10673_2122-vcard> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/description> "This paper aims to report a review in the past literature about computer science ontologies, with a special view on the ones connected to the spatial domain of urban data and built heritage. From a general point of view the paper offer a write up of definitions, classifications and design approaches and methods for ontologies as they have emerged since the nineties and evolved in the last two decades.In the built heritage domain, the interest, need of knowledge and the use of ontologies has grown to face the wide exchange of digital spatial data and the extensive adoption of spatial data infrastructures, which faced problems related in the general sense to the interoperability among spatial databases, and specifically the integration of geographical and urban databases involving the adoption of standards"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/ontology/bibo/abstract> "This paper aims to report a review in the past literature about computer science ontologies, with a special view on the ones connected to the spatial domain of urban data and built heritage. From a general point of view the paper offer a write up of definitions, classifications and design approaches and methods for ontologies as they have emerged since the nineties and evolved in the last two decades.In the built heritage domain, the interest, need of knowledge and the use of ontologies has grown to face the wide exchange of digital spatial data and the extensive adoption of spatial data infrastructures, which faced problems related in the general sense to the interoperability among spatial databases, and specifically the integration of geographical and urban databases involving the adoption of standards"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/date> "2020-12-24"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/publisher> "Società Italiana di Fotogrammetria e Topografia"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/relation> "https://www.sifet.org/bollettino/index.php/bollettinosifet/article/view/2149/4296"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/rights> "https://creativecommons.org/licenses/by-sa/4.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/language> "ita"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/description> "Il presente lavoro ha lo scopo di presentare un’articolata ricognizione della letteratura passata e attuale, inerente le ontologie informatiche, con particolare attenzione a quelle connesse al dominio spaziale urbano e del patrimonio culturale architettonico costruito. Da un punto di vista generale, il documento offre una descrizione di definizioni, classificazioni e approcci e metodi per la creazione di ontologie nel campo del Web Semantico, dalle prime nozioni emerse negli anni Novanta alla loro evoluzione negli ultimi due decenni.Nel settore del patrimonio costruito, l'interesse, il bisogno di conoscenza e l'uso di ontologie sono cresciuti per rispondere alle necessità di condivisione e scambio di dati spaziali e alla crescente adozione di infrastrutture geografiche. Queste stanno infatti riscontrando problemi di interoperabilità tecnica, geometrica e semantica nell'integrazione di database geografici e urbani multi-scala che richiedono pertanto l'adozione di standard condivisi e linguaggi comuni."^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122> <http://purl.org/dc/terms/subject> "urban heritage"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/2006/vcard/ns#hasURL> <https://dspace7.org/resource/10673_2122-vcard-url> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://purl.obolibrary.org/obo/ARG_2000029> <https://dspace7.org/resource/10673_2122> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/IAO_0000030> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/ARG_2000379> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000001> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000002> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.obolibrary.org/obo/BFO_0000031> .
+<https://dspace7.org/resource/10673_2122-vcard> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Kind> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://www.w3.org/2006/vcard/ns#url> "https://demo.dspace.org/handle/10673/2122"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://vivoweb.org/ontology/core#rank> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#mostSpecificType> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Explanatory> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Communication> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Identification> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#URL> .
+<https://dspace7.org/resource/10673_2122-vcard-url> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/vcard/ns#Addressing> .
+

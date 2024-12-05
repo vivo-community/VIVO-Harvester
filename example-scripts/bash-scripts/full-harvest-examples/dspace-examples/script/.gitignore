@@ -1,3 +1,4 @@
 /*.json
 /data/
 /ETL-migration.sh
+etl.properties

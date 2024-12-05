@@ -75,8 +75,6 @@ export QUERY_DIR=$(cd $RESSOURCESDIR/query ; pwd -P)
 ###################################################################
 # Repositories containing transient data from the extract/transform/load process
 export DATA_DIR=$(cd $WORKDIR/data ; pwd -P)
-export DATA_DEMO6_DIR=$(cd $WORKDIR/data_src_dspace6 ; pwd -P)
-export DATA_DEMO7_DIR=$(cd $WORKDIR/data_src_dspace7 ; pwd -P)
 
 ###################################################################
 # Data transition sub-directories for each step of the ETL process
@@ -89,7 +87,6 @@ export ETL_DIR_TRANSFORM_PERSON_EXPERTISES=$(cd ${ETL_DIR_TRANSFORM}_person_expe
 
 ###################################################################
 # Setup Jena environment
-
 cd $JENA_PATH
 export JENA_HOME="$(pwd)"
 export PATH="$PATH:$(pwd)/bin"
