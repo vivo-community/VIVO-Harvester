@@ -18,6 +18,3 @@ cd $ETL_DIR_TRANSFORM_DOC_TYPE; rm -f *
 cd $ETL_DIR_TRANSFORM_PERSON; rm -f *
 cd $ETL_DIR_TRANSFORM_EXPERTISES; rm -f *
 cd $ETL_DIR_TRANSFORM_PERSON_EXPERTISES; rm -f *
-cd $VIVO_HOME; rm -fr tdbContentModels  tdbModels  upgrade  uploads
-
-

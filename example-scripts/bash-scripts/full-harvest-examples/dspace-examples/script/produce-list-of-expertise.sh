@@ -31,4 +31,3 @@ cat *.ntriples  > $TMPDIR/all.nt
 sparql --data=$TMPDIR/all.nt --query=$GET_TYPE_QUERY --results=TSV 2>/dev/null  | sed 1d | func-encode_string_to_expertise.sh |  func-sort-list.sh > $MAPPING_DATA_DIR/list-of-all-expertises.data
 cat $MAPPING_DATA_DIR/list-of-all-expertises.data
 wc -l $MAPPING_DATA_DIR/list-of-all-expertises.data
-

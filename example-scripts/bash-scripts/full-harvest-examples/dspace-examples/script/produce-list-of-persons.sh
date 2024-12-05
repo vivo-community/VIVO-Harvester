@@ -27,9 +27,6 @@ where {
 }  
 EOF
 
-#       { ?s dc:creator ?o  }
-#       UNION { ?s dc:contributor  ?o  }
-
 combined_data=$(cat *.ntriples)
 echo "$combined_data" > "$MAPPING_DATA_DIR/all_combined.nt"
 
@@ -37,5 +34,3 @@ echo "$combined_data" > "$MAPPING_DATA_DIR/all_combined.nt"
 sparql --data="$MAPPING_DATA_DIR/all_combined.nt" --query="$GET_TYPE_QUERY" --results=TSV 2>/dev/null | sed 1d | func-sort-list.sh > "$MAPPING_DATA_DIR/list-of-all-persons.data"
 cat $MAPPING_DATA_DIR/list-of-all-persons.data
 wc -l $MAPPING_DATA_DIR/list-of-all-persons.data
-
-#grep terms/type *.ntriples | cut -d ' ' -f 3- | tr -d '.' |  tr '[:upper:]' '[:lower:]'| sort | uniq 

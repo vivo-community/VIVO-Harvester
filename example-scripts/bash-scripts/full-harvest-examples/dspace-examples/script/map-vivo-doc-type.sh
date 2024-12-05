@@ -35,7 +35,7 @@ while read docValue; do
         ?s dc:type ?o  .
     }  
 EOF
-    #riot --output=RDFXML $inputGraph > /$TMPDIR/$1.rdf 2>/dev/null
+
     cp $inputGraph  /$TMPDIR/$1.nt
     sparql --data=/$TMPDIR/$1.nt --query=$GET_TYPE_QUERY --results=ntriples 2>/dev/null
 done <<< " $docValues"

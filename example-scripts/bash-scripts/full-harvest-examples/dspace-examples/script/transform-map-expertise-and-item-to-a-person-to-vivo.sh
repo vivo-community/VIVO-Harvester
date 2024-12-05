@@ -89,5 +89,3 @@ while read name; do
 done < $MAPPING_DATA_DIR/list-of-all-expertises.data
 wait
 echo "$(basename $0) Done" >&2
-
-

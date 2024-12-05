@@ -20,11 +20,7 @@ do
     echo "Processing $f"
     cat $fileName | grep -v '^\.$' >> $TMPDIR/all.ntriples
 
-#    grep terms/type $fileName
 done
 echo "Loading all files to VIVO"
 sparql-load-a-graph-to-vivo.sh -f $TMPDIR/all.ntriples
 echo "Done!"
-
-
-

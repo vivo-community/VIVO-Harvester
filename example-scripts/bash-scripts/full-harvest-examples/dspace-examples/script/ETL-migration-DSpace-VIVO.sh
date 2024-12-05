@@ -28,19 +28,9 @@ flush_data_dspace6.sh 2>/dev/null
 flush_data_dspace7.sh 2>/dev/null
 
 ###################################################################
-# Extract dspace(6-7) demo data
-if test -f "$RUNTIME_PROP"; then
-        [ -v DSPACE_VERSION ] || export DSPACE_VERSION=$(grep 'dspaceVersion' < $RUNTIME_PROP | tr -d ' ' | cut -f 2 -d '=')
-        alias dspace_version="echo $DSPACE_VERSION"
-fi
+# Extract dspace data
 
-if [ "$DSPACE_VERSION" == "6" ]; then
-  echo "Extracting using DSpace6 configuration"
-  ./extract-dspace6.sh
-else
-  echo "Extracting using DSpace7 configuration"
-  ./extract-dspace7.sh
-fi
+./extract-dspace.sh
 
 cp -rf $DATA_DEMO6_DIR/* $DATA_DEMO7_DIR/* $DATA_DIR
 ###################################################################
@@ -55,7 +45,7 @@ produce-list-of-itemtype.sh
 ###########################
 echo run produce-list-of-persons.sh
 produce-list-of-persons.sh
-
+exit 1
 ###################################################################
 # Process transformation and load to VIVO
 load-data-to-vivo.sh

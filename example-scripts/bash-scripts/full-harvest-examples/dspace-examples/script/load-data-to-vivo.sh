@@ -23,4 +23,3 @@ done
 echo "Loading all files to VIVO"
 sparql-load-a-graph-to-vivo.sh -f $TMPDIR/all.ntriples
 head -10  $TMPDIR/all.ntriples
-

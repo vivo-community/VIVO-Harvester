@@ -63,5 +63,4 @@ construct {
 EOF
 NAME_PRAGMA=$(echo $NAME | func-encode_string_to_uid.sh )
 EXPERTISE_PRAGMA=$(echo $EXPERTISE_LABEL | func-encode_string_to_uid.sh )
-#cat $GET_TYPE_QUERY > $ETL_DIR_TRANSFORM_PERSON_EXPERTISES/${EXPERTISE_PRAGMA}-${NAME_PRAGMA}.ntriples
 sparql  --query=$GET_TYPE_QUERY --results=nt 2>/dev/null > $ETL_DIR_TRANSFORM_PERSON_EXPERTISES/${EXPERTISE_PRAGMA}-${NAME_PRAGMA}.ntriples
