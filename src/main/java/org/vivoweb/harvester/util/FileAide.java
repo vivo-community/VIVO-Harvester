@@ -24,6 +24,7 @@ import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.repo.TextFileRecordHandler;
 
 /**
  * Assists in common tasks using Files
@@ -300,15 +301,35 @@ public class FileAide {
 	 * @throws IOException error resolving path
 	 */
 	public static Set<String> getNonHiddenChildren(String path) throws IOException {
-		Set<String> allFileListing = new HashSet<String>();
-		for(FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
-			if(!file.isHidden() && (file.getType() == FileType.FILE)) {
+		Set<String> allFileListing = new HashSet<>();
+
+		// Process sub-directories
+		for (FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
+			if (!file.isHidden() && file.getType() == FileType.FOLDER) {
+				// Move all files in children directories to the parent folder
+				for (FileObject childFile : file.findFiles(Selectors.SELECT_CHILDREN)) {
+					if (!childFile.isHidden() && childFile.getType() == FileType.FILE) {
+						FileObject parentFolder = file.getParent();
+						if (parentFolder != null) {
+							FileObject targetFile = parentFolder.resolveFile(childFile.getName().getBaseName());
+							childFile.moveTo(targetFile);
+						}
+					}
+				}
+			}
+		}
+
+		// Process files directly under the given path
+		for (FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
+			if (!file.isHidden() && file.getType() == FileType.FILE) {
 				allFileListing.add(file.getName().getBaseName());
 			}
 		}
+
 		return allFileListing;
 	}
-	
+
+
 	/**
 	 * Get an inputstream from the first file under the given path with a matching fileName
 	 * @param path the path to search under
