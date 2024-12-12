@@ -1,10 +1,11 @@
-This example will demonstrate fetching oai-phm provider which exposes content using mets and
-eventuall load RDF into a VIVO instance.
+This example will demonstrate fetching DSpace oai-phm provider which exposes content
+using DublinCore metadata format and loading it into a VIVO instance.
 
 You will need to:
 
-- Examine the run-oaifetch.sh script and change the location of the VIVO Harvesters if necessary. 
-- Modify the vivo.model.xml file to provide parameters for accessing your  VIVO web application.
-
-
-
+- Examine the run-oaifetch.sh (or .bat) script and type the location of the VIVO Harvester installation directory.
+- You can uncomment the score and match functions if you want deduplication to be performed (it is turned off by default)
+- Modify the vivo.model.xml file to provide parameters for accessing your VIVO web application.
+- Shut down your VIVO instance (in order to free the TDB lock)
+- Run run-oaifetch.sh (or .bat)
+- Restart your VIVO instance and reindex the search indexes

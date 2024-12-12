@@ -9,13 +9,9 @@
 	<Param name="vivoJena-config">vivo.model.xml</Param>
 	<Param name="score-config">score-data.model.xml</Param>
 	<Param name="algorithms">fName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference</Param>
-	<Param name="inputJena-predicates">fName=http://xmlns.com/foaf/0.1/firstName</Param>
+	<Param name="inputJena-predicates">fName=http://www.w3.org/2000/01/rdf-schema#label</Param>
 	<Param name="weights">fName=0.3</Param>
-	<Param name="vivoJena-predicates">fName=http://xmlns.com/foaf/0.1/firstName</Param>
-	<Param name="algorithms">lName=org.vivoweb.harvester.score.algorithm.NormalizedLevenshteinDifference</Param>
-	<Param name="inputJena-predicates">lName=http://xmlns.com/foaf/0.1/lastName</Param>
-	<Param name="weights">lName=0.5</Param>
-	<Param name="vivoJena-predicates">lName=http://xmlns.com/foaf/0.1/lastName</Param>
+	<Param name="vivoJena-predicates">fName=http://www.w3.org/2000/01/rdf-schema#label</Param>
 	<Param name="namespace">http://vivo.example.com/harvest/author/</Param>
         <Param name="wordiness">INFO</Param>
 </Task>

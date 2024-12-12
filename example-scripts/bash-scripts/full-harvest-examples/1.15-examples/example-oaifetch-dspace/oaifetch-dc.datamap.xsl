@@ -24,20 +24,34 @@
                 xmlns:stringhash="java:org.vivoweb.harvester.util.xslt.StringHash"
                 extension-element-prefixes = "stringhash"
 >
-
     <xsl:output method="xml" indent="yes"/>
 
-    <!-- Base URI for resources -->
-    <xsl:variable name="baseURI">http://vivo.example.com/harvest/</xsl:variable>
+    <!-- Authorship keys -->
+    <xsl:key name="authorships"
+             match="dc:creator"
+             use="concat('authorship_author/', translate(encode-for-uri(translate(normalize-space(.), ' ', '')), '%', ''), $documentId)" />
 
-    <!-- Root Template -->
+    <!-- Global variables -->
+    <xsl:variable name="baseURI">http://vivo.example.com/harvest/</xsl:variable>
+    <xsl:variable name="documentId" select="translate(encode-for-uri(translate(/oai_dc:dc/dc:identifier[1], ' ', '')), '%', '')" />
+    <xsl:variable name="documentURI" select="concat($baseURI, 'oai/', translate(encode-for-uri(translate(/oai_dc:dc/dc:identifier[1], ' ', '')), '%', ''))" />
+
+
     <xsl:template match="/oai_dc:dc">
         <rdf:RDF>
-            <rdf:Description rdf:about="{$baseURI}oai/{encode-for-uri(dc:identifier[1])}">
+            <rdf:Description rdf:about="{$documentURI}">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+
+                <!-- Add vivo:relatedBy for all Authorships -->
+                <xsl:for-each select="dc:creator">
+                    <xsl:variable name="authorshipId" select="concat('authorship_author/', translate(encode-for-uri(translate(normalize-space(.), ' ', '')), '%', ''), $documentId)" />
+                    <vivo:relatedBy rdf:resource="{$baseURI}{$authorshipId}" />
+                </xsl:for-each>
+
                 <xsl:apply-templates select="*[not(self::dc:creator or self::dc:contributor)]" />
             </rdf:Description>
 
+            <!-- Process authors and contributors -->
             <xsl:apply-templates select="dc:creator" />
             <xsl:apply-templates select="dc:contributor" />
         </rdf:RDF>
@@ -48,74 +62,10 @@
         <rdfs:label><xsl:value-of select="normalize-space(.)"/></rdfs:label>
     </xsl:template>
 
-    <!-- Creator -->
-    <xsl:template match="dc:creator">
-        <!-- Output Authorship and Person separately -->
-        <xsl:variable name="authorId" select="encode-for-uri(normalize-space(.))"/>
-        <xsl:variable name="authorshipId" select="concat('authorship_', $authorId)"/>
-
-        <!-- Authorship -->
-        <rdf:Description rdf:about="{$baseURI}{$authorshipId}">
-            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
-            <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
-            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship" />
-            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
-            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000020" />
-            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
-            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
-            <rdfs:label>Authorship for <xsl:value-of select="normalize-space(.)"/></rdfs:label>
-
-            <core:relates rdf:resource="{$baseURI}author/{$authorId}" />
-            <core:relates rdf:resource="{$baseURI}oai/{encode-for-uri(dc:identifier[1])}" />
-
-            <core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">
-                <xsl:value-of select="position()" />
-            </core:authorRank>
-        </rdf:Description>
-
-        <!-- Person -->
-        <rdf:Description rdf:about="{$baseURI}author/{$authorId}">
-            <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-            <rdfs:label><xsl:value-of select="normalize-space(.)"/></rdfs:label>
-        </rdf:Description>
-    </xsl:template>
-
-    <!-- Contributor -->
-    <xsl:template match="dc:contributor">
-        <!-- Output Authorship and Person separately -->
-        <xsl:variable name="contributorId" select="encode-for-uri(normalize-space(.))"/>
-        <xsl:variable name="authorshipId" select="concat('authorship_', contributorId)"/>
-
-        <!-- Authorship -->
-        <rdf:Description rdf:about="{$baseURI}{$authorshipId}">
-            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
-            <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
-            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship" />
-            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
-            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000020" />
-            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
-            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
-            <rdfs:label>Authorship for <xsl:value-of select="normalize-space(.)"/></rdfs:label>
-
-            <core:relates rdf:resource="{$baseURI}author/{$contributorId}" />
-            <core:relates rdf:resource="{$baseURI}oai/{encode-for-uri(dc:identifier[1])}" />
-
-            <core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">
-                <xsl:value-of select="position()" />
-            </core:authorRank>
-        </rdf:Description>
-
-        <!-- Person -->
-        <rdf:Description rdf:about="{$baseURI}author/{$contributorId}">
-            <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
-            <rdfs:label><xsl:value-of select="normalize-space(.)"/></rdfs:label>
-        </rdf:Description>
-    </xsl:template>
-
     <!-- Subject -->
     <xsl:template match="dc:subject">
         <vivo:hasSubjectArea>
-            <rdf:Description rdf:about="{$baseURI}contributor/{encode-for-uri(.)}">
+            <rdf:Description rdf:about="{$baseURI}contributor/{translate(encode-for-uri(translate(normalize-space(.), ' ', '')), '%', '')}">
                 <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept" />
                 <rdfs:label><xsl:value-of select="normalize-space(.)"/></rdfs:label>
             </rdf:Description>
@@ -130,7 +80,7 @@
     <!-- Date -->
     <xsl:template match="dc:date">
         <vivo:dateTimeValue>
-            <rdf:Description rdf:about="{$baseURI}oai/{encode-for-uri(dc:identifier[1])}">
+            <rdf:Description rdf:about="{$baseURI}oai/{$documentURI}">
                 <rdf:type rdf:resource="http://vivoweb.org/ontology/core#DateTimeValue" />
                 <vivo:dateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
                     <xsl:value-of select="normalize-space(.)"/>
@@ -149,6 +99,10 @@
             <xsl:when test="ends-with(., 'publishedVersion')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
             </xsl:when>
+
+            <xsl:otherwise>
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
 
@@ -160,7 +114,7 @@
     <!-- Publisher -->
     <xsl:template match="dc:publisher">
         <vivo:publisher>
-            <rdf:Description rdf:about="{$baseURI}publisher/{encode-for-uri(.)}">
+            <rdf:Description rdf:about="{$baseURI}publisher/{translate(encode-for-uri(translate(normalize-space(.), ' ', '')), '%', '')}">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
                 <rdfs:label><xsl:value-of select="normalize-space(.)"/></rdfs:label>
             </rdf:Description>
@@ -202,5 +156,102 @@
     <!-- Coverage -->
     <xsl:template match="dc:coverage">
         <vivo:coverage><xsl:value-of select="normalize-space(.)"/></vivo:coverage>
+    </xsl:template>
+
+    <!-- Creator -->
+    <xsl:template match="dc:creator">
+        <!-- Output Authorship and Person separately -->
+        <xsl:variable name="authorId" select="concat('author/', translate(encode-for-uri(translate(normalize-space(.), ' ', '')), '%', ''))"/>
+        <xsl:variable name="authorURI" select="concat($baseURI, $authorId)"/>
+        <xsl:variable name="authorshipId" select="concat('authorship_', $authorId, $documentId)"/>
+        <xsl:variable name="authorName" select="normalize-space(.)"/>
+
+        <!-- Authorship -->
+        <rdf:Description rdf:about="{$baseURI}{$authorshipId}">
+            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+            <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+            <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship" />
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
+            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000020" />
+            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
+            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
+            <rdfs:label>Authorship for <xsl:value-of select="$authorName"/></rdfs:label>
+
+            <core:relates rdf:resource="{$baseURI}oai/{$documentURI}"/>
+            <core:relates rdf:resource="{$authorURI}" />
+
+            <core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">
+                <xsl:value-of select="position()" />
+            </core:authorRank>
+        </rdf:Description>
+
+        <!-- Person -->
+        <rdf:Description rdf:about="{$authorURI}">
+            <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+            <vitro:mostSpecificType rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+            <rdfs:label><xsl:value-of select="$authorName"/></rdfs:label>
+        </rdf:Description>
+
+        <xsl:variable name="vcardURI" select="concat($baseURI, 'vcard_', $authorshipId)"/>
+        <xsl:variable name="vcardNameURI" select="concat($baseURI, 'vcardName_', $authorshipId)"/>
+
+        <!-- vcard -->
+        <rdf:Description rdf:about="{$vcardURI}">
+            <obo:ARG_2000029 rdf:resource="{$authorURI}"/>
+            <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
+            <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
+            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_2000379"/>
+            <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard for: <xsl:value-of select="$authorName" /></rdfs:label>
+            <vcard:hasName rdf:resource="{$vcardNameURI}"/>
+        </rdf:Description>
+
+        <!-- vcard name -->
+        <rdf:Description rdf:about="{$vcardNameURI}">
+            <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Name"/>
+            <vitro:mostSpecificType rdf:resource="http://www.w3.org/2006/vcard/ns#Name"/>
+            <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard name for: <xsl:value-of select="$authorName" /></rdfs:label>
+            <vcard:givenName><xsl:value-of select = "$authorName" /></vcard:givenName>
+        </rdf:Description>
+    </xsl:template>
+
+    <!-- Contributor -->
+    <xsl:template match="dc:contributor">
+        <xsl:variable name="contributorName" select="normalize-space(.)"/>
+        <xsl:variable name="isPerson" select="contains($contributorName, ',')"/>
+
+        <xsl:choose>
+            <!-- If contributor is a person -->
+            <xsl:when test="$isPerson">
+                <xsl:variable name="contributorId" select="concat('author/', translate(encode-for-uri(translate($contributorName, ' ', '')), '%', ''))"/>
+                <xsl:variable name="contributorURI" select="concat($baseURI, $contributorId)"/>
+                <xsl:variable name="authorshipId" select="concat('authorship_', $contributorId, $documentId)"/>
+
+                <!-- Authorship -->
+                <rdf:Description rdf:about="{$baseURI}{$authorshipId}">
+                    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+                    <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
+                    <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship" />
+                    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
+                    <rdfs:label>Authorship for <xsl:value-of select="$contributorName"/></rdfs:label>
+                    <core:relates rdf:resource="{$documentURI}" />
+                    <core:relates rdf:resource="{$contributorURI}" />
+                </rdf:Description>
+
+                <!-- Person -->
+                <rdf:Description rdf:about="{$contributorURI}">
+                    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+                    <rdfs:label><xsl:value-of select="$contributorName"/></rdfs:label>
+                </rdf:Description>
+
+                <rdf:Description rdf:about="{$documentURI}">
+                    <vivo:relatedBy rdf:resource="{$contributorURI}" />
+                </rdf:Description>
+            </xsl:when>
+
+            <!-- If contributor is a keyword or organization -->
+            <xsl:otherwise>
+<!--            Nothing for now-->
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 </xsl:stylesheet>

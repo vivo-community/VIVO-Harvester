@@ -17,7 +17,7 @@
 	
 	<!--OPTIONS -->
       <!--  <Param name="tempJenaDir">data/temp-score-model</Param> -->
-	<Param name="namespace">http://vivo.example.com/harvest/vcardName/</Param>
+	<Param name="namespace">http://vivo.example.com/harvest/vcardName_</Param>
 			
 	<!--COMPARISIONS -->
 	

@@ -12,9 +12,9 @@
 #	Since it is also possible the harvester was installed by
 #	uncompressing the tar.gz the setting is available to be changed
 #	and should agree with the installation location
-#export HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
+#export HARVESTER_INSTALL_DIR=<HARVESTER_INSTALL_DIR>
 HARVESTER_INSTALL_DIR=$(pwd)/../../../../../../VIVO-Harvester
-export HARVEST_NAME=example-oaifetch-dspace
+export HARVEST_NAME=DSpace-OAI-fetch
 export DATE=`date +%Y-%m-%d'T'%T`
 
 # Add harvester binaries to path for execution
@@ -56,8 +56,8 @@ rm -rf data
 # This stage of the script is where the information is gathered together into one local
 #	place to facilitate the further steps of the harvest. The data is stored locally
 #	in a format based off of the source. The format is a form of RDF but not in the VIVO ontology
+java $HARVESTER_JAVA_OPTS org.vivoweb.harvester.fetch.OAIFetch -X dspace-oaifetch.conf.xml
 
-java $HARVESTER_JAVA_OPTS org.vivoweb.harvester.fetch.OAIFetch -X oaifetch.conf.xml
 # Execute Translate
 # This is the part of the script where the input data is transformed into valid RDF
 #   Translate will apply an xslt file to the fetched data which will result in the data 
