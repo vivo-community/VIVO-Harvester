@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileContent;
 import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
@@ -305,15 +306,17 @@ public class FileAide {
 
 		// Process sub-directories
 		for (FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
-			if (!file.isHidden() && file.getType() == FileType.FOLDER) {
-				// Move all files in children directories to the parent folder
-				for (FileObject childFile : file.findFiles(Selectors.SELECT_CHILDREN)) {
-					if (!childFile.isHidden() && childFile.getType() == FileType.FILE) {
-						FileObject parentFolder = file.getParent();
-						if (parentFolder != null) {
-							FileObject targetFile = parentFolder.resolveFile(childFile.getName().getBaseName());
-							childFile.moveTo(targetFile);
-						}
+			if (file.isHidden() || file.getType() != FileType.FOLDER) {
+				continue;
+			}
+			// Move all files in children directories to the parent folder
+			for (FileObject childFile : file.findFiles(Selectors.SELECT_CHILDREN)) {
+				if (isValidFile(childFile)) {
+					FileObject parentFolder = file.getParent();
+					if (parentFolder != null) {
+						FileObject targetFile =
+							parentFolder.resolveFile(childFile.getName().getBaseName());
+						childFile.moveTo(targetFile);
 					}
 				}
 			}
@@ -321,7 +324,7 @@ public class FileAide {
 
 		// Process files directly under the given path
 		for (FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
-			if (!file.isHidden() && file.getType() == FileType.FILE) {
+			if (isValidFile(file)) {
 				allFileListing.add(file.getName().getBaseName());
 			}
 		}
@@ -329,6 +332,9 @@ public class FileAide {
 		return allFileListing;
 	}
 
+	private static boolean isValidFile(FileObject file) throws FileSystemException {
+		return !file.isHidden() && file.getType() == FileType.FILE;
+	}
 
 	/**
 	 * Get an inputstream from the first file under the given path with a matching fileName
