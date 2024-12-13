@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ "$1" != "" && "$1" != "tdb" && "$1" != "sparql" ]]; then
+  echo "Invalid argument: $1"
+  echo "Usage: $0 [tdb|sparql]"
+  exit 1
+fi
+
 #Copyright (c) 2010-2011 VIVO Harvester Team. For full list of contributors, please see the AUTHORS file provided.
 #All rights reserved.
 #This program and the accompanying materials are made available under the terms of the new BSD license which accompanies this distribution, and is available at http://www.opensource.org/licenses/bsd-license.html
@@ -60,7 +66,7 @@ java $HARVESTER_JAVA_OPTS org.vivoweb.harvester.fetch.OAIFetch -X dspace-oaifetc
 
 # Execute Translate
 # This is the part of the script where the input data is transformed into valid RDF
-#   Translate will apply an xslt file to the fetched data which will result in the data 
+#   Translate will apply an xslt file to the fetched data which will result in the data
 #   becoming valid RDF in the VIVO ontology
 harvester-xsltranslator -X xsltranslator.config.xml
 
@@ -71,7 +77,7 @@ harvester-xsltranslator -X xsltranslator.config.xml
 # For this call on the transfer tool:
 # -s refers to the source translated records file, which was just produced by the translator step
 # -o refers to the destination model for harvested data
-# -d means that this call will also produce a text dump file in the specified location 
+# -d means that this call will also produce a text dump file in the specified location
 harvester-transfer -w INFO -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 
 #Score on publications
@@ -81,7 +87,7 @@ harvester-transfer -w INFO -s translated-records.config.xml -o harvested-data.mo
 
 #Match publications
 # Use the score values from the previous score to rename publications which we deem are the
-#	same, so that they match the URI of the publication in VIVO. 
+#	same, so that they match the URI of the publication in VIVO.
 #harvester-match -X match-pub.conf.xml
 
 #Score on authors, organizations, geographic locations, journals, hyperlinks, and
@@ -145,10 +151,16 @@ harvester-transfer -w info -o previous-harvest.model.xml -r data/vivo-additions.
 
 # Now that the changes have been applied to the previous harvest and the harvested data in vivo
 #	agree with the previous harvest, the changes are now applied to the vivo model.
-# Apply Subtractions to VIVO model
-harvester-transfer -w info -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
-# Apply Additions to VIVO model
-harvester-transfer -w info -o vivo.model.xml -r data/vivo-additions.rdf.xml
+if [[ "$1" == "tdb" ]]; then
+  # Apply Subtractions to VIVO model
+  harvester-transfer -w info -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+  # Apply Additions to VIVO model
+  harvester-transfer -w info -o vivo.model.xml -r data/vivo-additions.rdf.xml
+fi
+
+if [[ "$1" == "" || "$1" == "sparql" ]]; then
+  java $HARVESTER_JAVA_OPTS org.vivoweb.harvester.services.SparqlUpdate -X sparqlupdate.conf.xml
+fi
 
 #Output some counts
 PUBS=`cat data/vivo-additions.rdf.xml | grep oai | wc -l`

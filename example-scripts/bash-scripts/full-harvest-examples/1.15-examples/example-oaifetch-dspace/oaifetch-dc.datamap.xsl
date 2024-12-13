@@ -92,12 +92,48 @@
     <!-- Type -->
     <xsl:template match="dc:type">
         <xsl:choose>
-            <xsl:when test="ends-with(., 'article')">
+            <xsl:when test="ends-with(lower-case(.), 'article')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
             </xsl:when>
 
-            <xsl:when test="ends-with(., 'publishedVersion')">
-                <rdf:type rdf:resource="http://purl.org/ontology/bibo/AcademicArticle" />
+            <xsl:when test="ends-with(lower-case(.), 'book')">
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+            </xsl:when>
+
+            <xsl:when test="ends-with(lower-case(.), 'chapter')">
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/chapter" />
+            </xsl:when>
+
+            <xsl:when test="ends-with(lower-case(.), 'dataset')">
+                <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Dataset" />
+            </xsl:when>
+
+            <xsl:when test="ends-with(lower-case(.), 'presentation')">
+                <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Presentation" />
+            </xsl:when>
+
+            <xsl:when test="contains(lower-case(.), 'recording')">
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
+            </xsl:when>
+
+            <xsl:when test="contains(lower-case(.), 'software')">
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ERO_0000071" />
+            </xsl:when>
+
+            <xsl:when test="contains(lower-case(.), 'thesis')">
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Thesis" />
+            </xsl:when>
+
+            <xsl:when test="contains(lower-case(.), 'report')">
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Report" />
+            </xsl:when>
+
+            <xsl:when test="contains(lower-case(.), 'video')">
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
+            </xsl:when>
+
+            <xsl:when test="contains(lower-case(.), 'paper')">
+                <rdf:type rdf:resource="http://vivoweb.org/ontology/core#WorkingPaper" />
             </xsl:when>
 
             <xsl:otherwise>

@@ -8,6 +8,20 @@ IF exist logs (
     rmdir /s /q logs
 )
 
+set LOAD_METHOD=sparql
+
+if not "%1"=="" (
+    if "%1"=="tdb" (
+        set LOAD_METHOD=tdb
+    ) else if "%1"=="sparql" (
+        set LOAD_METHOD=sparql
+    ) else (
+        echo Invalid argument: %1
+        echo Usage: %~nx0 [tdb|sparql]
+        exit /b 1
+    )
+)
+
 REM  set to the directory where the harvester was installed or unpacked
 REM  HARVESTER_INSTALL_DIR is set to the location of the installed harvester
 REM 	If the deb file was used to install the harvester then the
@@ -80,14 +94,18 @@ echo Apply Additions to Previous model
 
 REM  Now that the changes have been applied to the previous harvest and the harvested data in vivo
 REM 	agree with the previous harvest, the changes are now applied to the vivo model.
-REM  Apply Subtractions to VIVO model
-echo Apply Subtractions to VIVO model
-@java %HARVESTER_JAVA_OPTS% -cp %CLASSPATH% org.vivoweb.harvester.transfer.Transfer  -w INFO -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
- if %errorlevel% neq 0 exit /b %errorlevel%
+if "%LOAD_METHOD%"=="tdb" (
+    REM  Apply Subtractions to VIVO model
+    echo Apply Subtractions to VIVO model
+    @java %HARVESTER_JAVA_OPTS% -cp %CLASSPATH% org.vivoweb.harvester.transfer.Transfer  -w INFO -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+     if %errorlevel% neq 0 exit /b %errorlevel%
 
-REM  Apply Additions to VIVO model
-echo Apply Additions to VIVO model
-@java %HARVESTER_JAVA_OPTS% -cp %CLASSPATH% org.vivoweb.harvester.transfer.Transfer  -w INFO -o vivo.model.xml -r data/vivo-additions.rdf.xml
- if %errorlevel% neq 0 exit /b %errorlevel%
+    REM  Apply Additions to VIVO model
+    echo Apply Additions to VIVO model
+    @java %HARVESTER_JAVA_OPTS% -cp %CLASSPATH% org.vivoweb.harvester.transfer.Transfer  -w INFO -o vivo.model.xml -r data/vivo-additions.rdf.xml
+     if %errorlevel% neq 0 exit /b %errorlevel%
+) else (
+    @java %HARVESTER_JAVA_OPTS% -cp %CLASSPATH% org.vivoweb.harvester.services.SparqlUpdate -X sparqlupdate.conf.xml
+)
 
 echo Harvest completed successfully

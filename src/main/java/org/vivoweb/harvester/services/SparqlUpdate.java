@@ -7,35 +7,29 @@ package org.vivoweb.harvester.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.FileAide;
 import org.vivoweb.harvester.util.InitLog;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
-import org.vivoweb.harvester.util.repo.JenaConnect;
-import org.vivoweb.harvester.util.repo.MemJenaConnect;
-import org.vivoweb.harvester.util.repo.RecordHandler;
 
 /**
  * Execute Sparql update in Jena model in an instance of VIVO
@@ -157,50 +151,62 @@ public class SparqlUpdate {
 	 * @throws IOException error
 	 */
 	private void execute() throws IOException {
-	   StringBuffer updateBuffer = new StringBuffer();
-	   if (this.type.equals("add")) {
-	      updateBuffer.append("INSERT DATA {");
-	   } else {
-		  updateBuffer.append("DELETE DATA {"); 
-	   }
-	   updateBuffer.append("GRAPH <"+ this.model + "> {");
+	    StringBuffer updateBuffer = new StringBuffer();
+	    if (this.type.equals("add")) {
+	       updateBuffer.append("INSERT DATA {");
+	    } else {
+		   updateBuffer.append("DELETE DATA {");
+	    }
+	    updateBuffer.append("GRAPH <").append(this.model).append("> {");
 	  
-	   //String rdfString = FileAide.getTextContent(this.inRDF);
-	   String rdfString = FileUtils.readFileToString(new File(this.inRDF), "UTF-8");
-	   updateBuffer.append(rdfString);
-       updateBuffer.append("  }");	   
-	   updateBuffer.append("}");
-	   System.out.println(updateBuffer.toString());
-		
-	   CloseableHttpClient httpclient = HttpClients.createDefault();
-	   try {
-	      HttpPost httpPost = new HttpPost(this.url);
-	       
-	      List <NameValuePair> nvps = new ArrayList <NameValuePair>(); 
-	      nvps.add(new BasicNameValuePair("email", this.username));
-	      nvps.add(new BasicNameValuePair("password", this.password));
-	      nvps.add(new BasicNameValuePair("update", updateBuffer.toString()));
-	      httpPost.setEntity(new UrlEncodedFormEntity(nvps));
-	      CloseableHttpResponse response = httpclient.execute(httpPost);
-	      try {
-              System.out.println(response.getStatusLine());
-              HttpEntity entity = response.getEntity();
-              InputStream is = entity.getContent();
-              try {
-            	 IOUtils.copy(is, System.out);
-              } finally {
-                 is.close();
-              }
-              
-          } finally {
-              response.close();
-          }
-	       
-	   } finally {
-	      httpclient.close();	
-	   }	 
+	    //String rdfString = FileAide.getTextContent(this.inRDF);
+	    Model model = ModelFactory.createDefaultModel();
+		deduceRdfFormatAndParseData(model, new File(this.inRDF));
+
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			model.write(out, "N-TRIPLES");
+			updateBuffer.append(out.toString("UTF-8"));
+		}
+		updateBuffer.append("  }");
+		updateBuffer.append("}");
+		System.out.println(updateBuffer);
+
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(this.url);
+
+            List<NameValuePair> nvps = new ArrayList<>();
+            nvps.add(new BasicNameValuePair("email", this.username));
+            nvps.add(new BasicNameValuePair("password", this.password));
+            nvps.add(new BasicNameValuePair("update", updateBuffer.toString()));
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+            try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
+                System.out.println(response.getStatusLine());
+                HttpEntity entity = response.getEntity();
+                try (InputStream is = entity.getContent()) {
+                    IOUtils.copy(is, System.out);
+                }
+
+            }
+
+        }
 	}
-	
+
+	private void deduceRdfFormatAndParseData(Model model, File rdfFile) throws IOException {
+		String[] supportedFormats = new String[]{"RDF/XML", "TURTLE", "N3"};
+		for (String format : supportedFormats) {
+			try (InputStream in = Files.newInputStream(rdfFile.toPath())) {
+				try {
+					model.read(in, null, format);
+					return;
+				} catch (Exception e) {
+					// pass
+				}
+			}
+		}
+
+		throw new IOException("Unable to deduce RDF format for file: " + rdfFile.getName());
+	}
+
 	/**
 	 * Get the ArgParser for this task
 	 * @return the ArgParser
