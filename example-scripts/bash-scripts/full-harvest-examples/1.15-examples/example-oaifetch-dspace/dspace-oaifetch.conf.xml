@@ -6,7 +6,7 @@
 -->
 <Config>
 
-<Param name="url">http://ir.cut.ac.za/oai/request</Param>
+<Param name="url">https://demo.dspace.org/server/oai/request</Param>
 
 <!--
 <Param name="url">aei.pitt.edu/cgi/oai2</Param>
