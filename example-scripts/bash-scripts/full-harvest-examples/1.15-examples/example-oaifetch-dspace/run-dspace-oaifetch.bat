@@ -31,7 +31,7 @@ if not "%~1"=="" (
 
 REM Set installation directory
 REM Replace this with the actual installation path
-set HARVESTER_INSTALL_DIR=C:\path\to\harvester
+set HARVESTER_INSTALL_DIR=<PATH_TO_HARVESTER>
 
 REM Validate HARVESTER_INSTALL_DIR
 IF NOT EXIST "%HARVESTER_INSTALL_DIR%" (
