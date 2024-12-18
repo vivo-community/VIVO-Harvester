@@ -51,12 +51,12 @@ set HARVESTER_JAVA_OPTS=-Xms1024M -Xmx2048M
 REM ============================
 REM Fetch Stage
 REM ============================
-echo Fetching from OpenAlex...
-IF NOT EXIST dspace-oaifetch.config.xml (
-    echo ERROR: Missing configuration file: dspace-oaifetch.config.xml
+echo Fetching from DSpace...
+IF NOT EXIST dspace-oaifetch.conf.xml (
+    echo ERROR: Missing configuration file: dspace-oaifetch.conf.xml
     exit /b 1
 )
-java %HARVESTER_JAVA_OPTS% -cp "%CLASSPATH%" org.vivoweb.harvester.fetch.OAIFetch -X dspace-oaifetch.config.xml
+java %HARVESTER_JAVA_OPTS% -cp "%CLASSPATH%" org.vivoweb.harvester.fetch.OAIFetch -X dspace-oaifetch.conf.xml
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM ============================

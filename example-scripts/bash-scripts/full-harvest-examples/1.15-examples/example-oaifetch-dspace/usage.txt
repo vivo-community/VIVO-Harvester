@@ -7,5 +7,5 @@ You will need to:
 - You can uncomment the score and match functions if you want deduplication to be performed (it is turned off by default)
 - Modify the vivo.model.xml file to provide parameters for accessing your VIVO web application.
 - Shut down your VIVO instance (if you are performing load using the TDB, in order to free the TDB lock)
-- Run `run-oaifetch.sh [tdb/sparql]` (use .bat script if you are on WindowsOS. It is recommended that you perform the first harvest, especially for large datasets, using TDB, as SPARQL API may have trouble loading very large files. All subsequent re-harvests can be performed with SPARQL API without the need for restarting your VIVO instance)
+- Run `run-dspace-oaifetch.sh [tdb/sparql]` (use .bat script if you are on WindowsOS. It is recommended that you perform the first harvest, especially for large datasets, using TDB, as SPARQL API may have trouble loading very large files. All subsequent re-harvests can be performed with SPARQL API without the need for restarting your VIVO instance)
 - Restart your VIVO instance (in case you loaded data using the TDB) and reindex the search indexes
