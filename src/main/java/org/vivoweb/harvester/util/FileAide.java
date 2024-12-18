@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -206,7 +207,7 @@ public class FileAide {
 		StringBuilder sb = new StringBuilder();
 		InputStreamReader isr;
 		if(charsetName == null) {
-			isr = new InputStreamReader(getInputStream(path));
+			isr = new InputStreamReader(getInputStream(path), StandardCharsets.UTF_8);
 		} else {
 			isr = new InputStreamReader(getInputStream(path), charsetName);
 		}
@@ -248,7 +249,8 @@ public class FileAide {
 			if(!isWriteable(path)) {
 				throw new IOException("Insufficient file system privileges to modify file " + path);
 			}
-			bw = new BufferedWriter(new OutputStreamWriter(getOutputStream(path)));
+			bw = new BufferedWriter(
+				new OutputStreamWriter(getOutputStream(path), StandardCharsets.UTF_8));
 			bw.append(value);
 			bw.close();
 		} catch(IOException e) {
