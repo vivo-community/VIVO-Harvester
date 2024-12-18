@@ -56,7 +56,7 @@ IF NOT EXIST dspace-oaifetch.config.xml (
     echo ERROR: Missing configuration file: dspace-oaifetch.config.xml
     exit /b 1
 )
-java %HARVESTER_JAVA_OPTS% -cp "%CLASSPATH%" org.vivoweb.harvester.fetch.JSONFetch -X dspace-oaifetch.config.xml
+java %HARVESTER_JAVA_OPTS% -cp "%CLASSPATH%" org.vivoweb.harvester.fetch.OAIFetch -X dspace-oaifetch.config.xml
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM ============================
@@ -74,7 +74,7 @@ REM ============================
 REM Transfer Stage
 REM ============================
 echo Transferring RDF into temporary triple store...
-java %HARVESTER_JAVA_OPTS% -cp "%CLASSPATH%" org.vivoweb.harvester.transfer.Transfer -X transfer.config.xml
+java %HARVESTER_JAVA_OPTS% -cp "%CLASSPATH%" org.vivoweb.harvester.transfer.Transfer -w INFO -s translated-records.config.xml -o harvested-data.model.xml -d data/harvested-data/imported-records.rdf.xml
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM ============================
