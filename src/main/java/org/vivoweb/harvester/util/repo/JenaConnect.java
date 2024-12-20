@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -424,7 +425,8 @@ public abstract class JenaConnect {
 			if (namespace != null) {
 				log.trace("using namespace '"+namespace+"'");
 			}
-			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes());
+			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes(
+				StandardCharsets.UTF_8));
 			getJenaModel().read(bais, namespace, language);
 			try {
 				bais.close();
