@@ -26,7 +26,6 @@ import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.repo.TextFileRecordHandler;
 
 /**
  * Assists in common tasks using Files
