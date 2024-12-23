@@ -7,7 +7,6 @@ package org.vivoweb.harvester.util.repo;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -151,7 +150,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		String fmo = null;
 		BufferedWriter bw = null;
 		try {
-			fmo = this.metaDir + File.separator + recID;
+			fmo = this.metaDir + "/" + recID;
 			FileAide.createFile(fmo);
 			
 			bw = new BufferedWriter(new OutputStreamWriter(FileAide.getOutputStream(fmo)));
