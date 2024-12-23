@@ -307,7 +307,9 @@ public class FileAide {
 
 		// Process sub-directories
 		for (FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
-			if (file.isHidden() || file.getType() != FileType.FOLDER) {
+			if (file.isHidden() ||
+				file.getName().getBaseName().startsWith(".") ||
+				file.getType() != FileType.FOLDER) {
 				continue;
 			}
 			// Move all files in children directories to the parent folder
