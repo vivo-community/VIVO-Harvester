@@ -155,8 +155,8 @@ public class XSLTranslator {
 				log.trace("Translating Record " + r.getID());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				recordData = (this.cleanXML) ? URLDecoder.decode(r.getData(), "UTF-8") : r.getData();
-				xmlTranslate(new ByteArrayInputStream(recordData.getBytes("UTF-8")), baos, new ByteArrayInputStream(this.translationString.getBytes()));
-				this.outStore.addRecord(r.getID(), baos.toString(), this.getClass());
+				xmlTranslate(new ByteArrayInputStream(recordData.getBytes("UTF-8")), baos, new ByteArrayInputStream(this.translationString.getBytes("UTF-8")));
+				this.outStore.addRecord(r.getID(), baos.toString("UTF-8"), this.getClass());
 				r.setProcessed(this.getClass());
 				baos.close();
 				translated++;
