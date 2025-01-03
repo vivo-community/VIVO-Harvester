@@ -18,17 +18,6 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.args.ArgDef;
-import org.vivoweb.harvester.util.args.ArgList;
-import org.vivoweb.harvester.util.args.ArgParser;
-import org.vivoweb.harvester.util.args.UsageException;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 import org.apache.jena.graph.GraphEvents;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
@@ -39,8 +28,6 @@ import org.apache.jena.query.QueryParseException;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.query.ResultSetFormatter;
-import org.apache.jena.sparql.resultset.ResultsFormat;
-//import org.apache.jena.sparql.resultset.ResultSetFormat;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
@@ -48,9 +35,20 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.RDFWriter;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.shared.Lock;
- 
-import org.apache.jena.update.UpdateAction; 
+import org.apache.jena.sparql.resultset.ResultsFormat;
+import org.apache.jena.update.UpdateAction;
 import org.apache.jena.update.UpdateFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vivoweb.harvester.util.FileAide;
+import org.vivoweb.harvester.util.InitLog;
+import org.vivoweb.harvester.util.args.ArgDef;
+import org.vivoweb.harvester.util.args.ArgList;
+import org.vivoweb.harvester.util.args.ArgParser;
+import org.vivoweb.harvester.util.args.UsageException;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Connection Helper for Jena Models
@@ -425,8 +423,14 @@ public abstract class JenaConnect {
 			if (namespace != null) {
 				log.trace("using namespace '"+namespace+"'");
 			}
-			ByteArrayInputStream bais = new ByteArrayInputStream(r.getData().getBytes(
-				StandardCharsets.UTF_8));
+
+			String charReferenceRegex = "(?<=^|[^&])(&#(?:[0-9]+|x[0-9a-fA-F]+);)";
+			String fullyEscapedContent = r.getData()
+				.replaceAll(charReferenceRegex, "&amp;$1");
+
+			ByteArrayInputStream bais = new ByteArrayInputStream(
+				fullyEscapedContent.getBytes(StandardCharsets.UTF_8)
+			);
 			getJenaModel().read(bais, namespace, language);
 			try {
 				bais.close();

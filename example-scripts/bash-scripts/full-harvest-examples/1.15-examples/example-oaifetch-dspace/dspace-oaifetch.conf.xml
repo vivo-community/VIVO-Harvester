@@ -6,13 +6,13 @@
 -->
 <Config>
 
-<Param name="url">https://demo.dspace.org/server/oai/request</Param>
+<Param name="url">https://dspace.mit.edu/oai/request</Param>
 
 <!--
 <Param name="url">aei.pitt.edu/cgi/oai2</Param>
 <Param name="url">www4.fao.org:8080/oaicat/OAIHandler</Param>
 -->
-<Param name="start">2020-10-01T00:00:00Z</Param>
+<Param name="start">2024-12-29T00:00:00Z</Param>
 <Param name="end">2024-12-31T00:00:00Z</Param>
 <Param name="metadataPrefix">oai_dc</Param>
 <Param name="output">raw-records.config.xml</Param>
