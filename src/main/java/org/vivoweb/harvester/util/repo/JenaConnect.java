@@ -424,12 +424,8 @@ public abstract class JenaConnect {
 				log.trace("using namespace '"+namespace+"'");
 			}
 
-			String charReferenceRegex = "(?<=^|[^&])(&#(?:[0-9]+|x[0-9a-fA-F]+);)";
-			String fullyEscapedContent = r.getData()
-				.replaceAll(charReferenceRegex, "&amp;$1");
-
 			ByteArrayInputStream bais = new ByteArrayInputStream(
-				fullyEscapedContent.getBytes(StandardCharsets.UTF_8)
+				r.getData().getBytes(StandardCharsets.UTF_8)
 			);
 			getJenaModel().read(bais, namespace, language);
 			try {

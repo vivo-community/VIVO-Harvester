@@ -193,7 +193,9 @@ public class OAIFetch implements RecordStreamOrigin {
 		    	 
 				if (! StringUtils.equalsIgnoreCase(strArray[1], "deleted")) {
 		    	   log.trace("Adding record: " + strArray[0]);
-				   this.rhOutput.addRecord(strArray[0], strArray[1], this.getClass()); 
+					String charReferenceRegex = "(?<=^|[^&])(&#(?:[0-9]+|x[0-9a-fA-F]+);)";
+					String fullyEscapedData = strArray[1].replaceAll(charReferenceRegex, "&amp;$1").replace("&amp;&#", "&amp;#");
+				   this.rhOutput.addRecord(strArray[0], fullyEscapedData, this.getClass());
 				}
 		    }
 		 
