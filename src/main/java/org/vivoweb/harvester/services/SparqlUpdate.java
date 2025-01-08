@@ -9,6 +9,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,7 +171,6 @@ public class SparqlUpdate {
 		}
 		updateBuffer.append("  }");
 		updateBuffer.append("}");
-		System.out.println(updateBuffer);
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(this.url);
@@ -178,25 +179,24 @@ public class SparqlUpdate {
             nvps.add(new BasicNameValuePair("email", this.username));
             nvps.add(new BasicNameValuePair("password", this.password));
             nvps.add(new BasicNameValuePair("update", updateBuffer.toString()));
-            httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
             try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
                 System.out.println(response.getStatusLine());
                 HttpEntity entity = response.getEntity();
                 try (InputStream is = entity.getContent()) {
                     IOUtils.copy(is, System.out);
                 }
-
             }
-
         }
 	}
 
 	private void deduceRdfFormatAndParseData(Model model, File rdfFile) throws IOException {
 		String[] supportedFormats = new String[]{"RDF/XML", "TURTLE", "N3"};
 		for (String format : supportedFormats) {
-			try (InputStream in = Files.newInputStream(rdfFile.toPath())) {
+			try (InputStream in = Files.newInputStream(rdfFile.toPath());
+				 InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
 				try {
-					model.read(in, null, format);
+					model.read(reader, null, format);
 					return;
 				} catch (Exception e) {
 					// pass
