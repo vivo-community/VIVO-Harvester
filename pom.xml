@@ -28,6 +28,7 @@
 	</dependencyManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jena.version>3.16.0</jena.version>
 	</properties>
 
 	<developers>
@@ -422,7 +423,7 @@
     			<groupId>org.apache.jena</groupId>
     			<artifactId>jena-core</artifactId>
     			<type>pom</type>
-    			<version>3.4.0</version>
+    			<version>${jena.version}</version>
  			<exclusions>
 
 				<exclusion>
@@ -439,7 +440,7 @@
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
-			<version>3.4.0</version>
+			<version>${jena.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
@@ -454,7 +455,7 @@
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-iri</artifactId>
-			<version>3.4.0</version>
+			<version>${jena.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
@@ -470,7 +471,7 @@
                 <dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-sdb</artifactId>
-			<version>3.4.0</version>
+			<version>${jena.version}</version>
  			<exclusions>
 
 				<exclusion>
@@ -487,7 +488,7 @@
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-tdb</artifactId>
-			<version>3.4.0</version>
+			<version>${jena.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-api</artifactId>

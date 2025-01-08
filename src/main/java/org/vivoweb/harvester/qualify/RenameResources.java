@@ -8,6 +8,14 @@ package org.vivoweb.harvester.qualify;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vivoweb.harvester.util.InitLog;
@@ -17,17 +25,6 @@ import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
 import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.JenaConnect;
-
-//import org.apache.jena.graph.BulkUpdateHandler;
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphUtil;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.reasoner.InfGraph;
-import org.apache.jena.util.iterator.ExtendedIterator;
-import org.apache.jena.util.iterator.Filter;
 
 /**
  * Changes the namespace for all matching uris
@@ -142,16 +139,15 @@ public class RenameResources {
 		// combine these iterators
 		ExtendedIterator<Triple> combinedTriples = subjectTriples.andThen(objectTriples);
 		// Filter reflexive triples, which are found twice in each find method, thus, we need to make sure to keep only one.
-		ExtendedIterator<Triple> filteredTriples = combinedTriples.filterKeep(new Filter<Triple>() {
-			@Override
-			public boolean accept(final Triple o) {
+		ExtendedIterator<Triple> filteredTriples = combinedTriples.filterKeep(
+			(final Triple o) -> {
 				if(o.getSubject().equals(o.getObject())) {
 					reflexiveTriples.add(o);
 					return false;
 				}
 				return true;
 			}
-		});
+		);
 		
 		// create a new resource node to replace old
 		final Resource newRes = model.createResource(uri);

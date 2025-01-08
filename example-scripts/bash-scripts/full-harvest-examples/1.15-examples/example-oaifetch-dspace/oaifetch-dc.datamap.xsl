@@ -41,6 +41,12 @@
         <rdf:RDF>
             <rdf:Description rdf:about="{$documentURI}">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Document" />
+                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000031" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030" />
+
 
                 <!-- Add vivo:relatedBy for all Authorships -->
                 <xsl:for-each select="dc:creator">
@@ -94,50 +100,62 @@
         <xsl:choose>
             <xsl:when test="ends-with(lower-case(.), 'article')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Article"/>
             </xsl:when>
 
             <xsl:when test="ends-with(lower-case(.), 'book')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Book" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Book"/>
             </xsl:when>
 
             <xsl:when test="ends-with(lower-case(.), 'chapter')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/chapter" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/chapter"/>
             </xsl:when>
 
             <xsl:when test="ends-with(lower-case(.), 'dataset')">
                 <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Dataset" />
+                <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Dataset"/>
             </xsl:when>
 
             <xsl:when test="ends-with(lower-case(.), 'presentation')">
                 <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Presentation" />
+                <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Presentation"/>
             </xsl:when>
 
             <xsl:when test="contains(lower-case(.), 'recording')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioDocument" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/AudioDocument"/>
             </xsl:when>
 
             <xsl:when test="contains(lower-case(.), 'software')">
                 <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ERO_0000071" />
+                <vitro:mostSpecificType rdf:resource="http://purl.obolibrary.org/obo/ERO_0000071"/>
             </xsl:when>
 
             <xsl:when test="contains(lower-case(.), 'thesis')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Thesis" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Thesis"/>
             </xsl:when>
 
             <xsl:when test="contains(lower-case(.), 'report')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Report" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Report"/>
             </xsl:when>
 
             <xsl:when test="contains(lower-case(.), 'video')">
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/AudioVisualDocument"/>
             </xsl:when>
 
             <xsl:when test="contains(lower-case(.), 'paper')">
                 <rdf:type rdf:resource="http://vivoweb.org/ontology/core#WorkingPaper" />
+                <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#WorkingPaper"/>
             </xsl:when>
 
             <xsl:otherwise>
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Article" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Article"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -151,8 +169,18 @@
     <xsl:template match="dc:publisher">
         <vivo:publisher>
             <rdf:Description rdf:about="{$baseURI}publisher/{translate(encode-for-uri(translate(normalize-space(.), ' ', '')), '%', '')}">
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Collection" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000031" />
+                <rdf:type rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030" />
+                <rdf:type rdf:resource="http://purl.org/ontology/bibo/Periodical" />
+                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
                 <rdf:type rdf:resource="http://purl.org/ontology/bibo/Journal" />
+                <vitro:mostSpecificType rdf:resource="http://purl.org/ontology/bibo/Journal"/>
                 <rdfs:label><xsl:value-of select="normalize-space(.)"/></rdfs:label>
+
+                <vivo:publisherOf rdf:resource="{$documentURI}"/>
             </rdf:Description>
         </vivo:publisher>
     </xsl:template>
@@ -213,7 +241,7 @@
             <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
             <rdfs:label>Authorship for <xsl:value-of select="$authorName"/></rdfs:label>
 
-            <core:relates rdf:resource="{$baseURI}oai/{$documentURI}"/>
+            <core:relates rdf:resource="{$documentURI}"/>
             <core:relates rdf:resource="{$authorURI}" />
 
             <core:authorRank rdf:datatype="http://www.w3.org/2001/XMLSchema#int">
@@ -224,8 +252,16 @@
         <!-- Person -->
         <rdf:Description rdf:about="{$authorURI}">
             <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+            <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Agent" />
+            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
+            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
+            <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000004" />
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
             <vitro:mostSpecificType rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
             <rdfs:label><xsl:value-of select="$authorName"/></rdfs:label>
+
+            <vivo:relatedBy rdf:resource="{$baseURI}{$authorshipId}" />
+            <core:relates rdf:resource="{$documentURI}"/>
         </rdf:Description>
 
         <xsl:variable name="vcardURI" select="concat($baseURI, 'vcard_', $authorshipId)"/>
@@ -276,7 +312,16 @@
                 <!-- Person -->
                 <rdf:Description rdf:about="{$contributorURI}">
                     <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
+                    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Agent" />
+                    <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002" />
+                    <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001" />
+                    <rdf:type rdf:resource="http://purl.obolibrary.org/obo/BFO_0000004" />
+                    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Thing" />
+                    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person" />
                     <rdfs:label><xsl:value-of select="$contributorName"/></rdfs:label>
+
+                    <vivo:relatedBy rdf:resource="{$baseURI}{$authorshipId}" />
+                    <core:relates rdf:resource="{$documentURI}"/>
                 </rdf:Description>
 
                 <rdf:Description rdf:about="{$documentURI}">
