@@ -77,6 +77,11 @@ public class OAIFetch implements RecordStreamOrigin {
 	 */
 	private static XMLRecordOutputStream xmlRosBase = new XMLRecordOutputStream(new String[]{"record"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", null);
 
+	/**
+	 * Pattern to match character references in a string that are not already escaped.
+	 * This ensures that numeric or hexadecimal character references (e.g., &#123; or &#x7B;)
+	 * are detected when not preceded by an ampersand (&) to avoid double-escaping.
+	 */
 	private static final Pattern CHAR_REFERENCE_PATTERN =
 		Pattern.compile("(?<=^|[^&])(&#(?:[0-9]+|x[0-9a-fA-F]+);)");
 
