@@ -405,10 +405,6 @@ public class JSONFetch implements RecordStreamOrigin {
                         // Build RDF END
 
                         // Write RDF to RecordHandler
-                        //log.trace("Adding record: " + fixedkey + "_" + recID);
-                        //log.trace("data: "+ sb.toString());
-                        //log.info("rhOutput: "+ this.rhOutput);
-                        //log.info("recID: "+recID);
                         this.rhOutput.addRecord(name + "_" + recID, sb.toString(), this.getClass());
                         count++;
                     }
@@ -433,9 +429,6 @@ public class JSONFetch implements RecordStreamOrigin {
 
             JSONObject jsonObject;
 
-//        FileWriter file = new FileWriter("openalex.json");
-//        file.write("results:");
-
             cursor = (String) this.strAddress.subSequence(this.strAddress.indexOf("cursor=")+7, this.strAddress.length());
             url_without_cursor = (String) this.strAddress.subSequence(0, this.strAddress.indexOf("cursor="));
             log.debug("URL: "+this.strAddress);
@@ -451,8 +444,6 @@ public class JSONFetch implements RecordStreamOrigin {
                     cursor = jsonObject.get("next_cursor").toString();
                 else
                     cursor = null;
-
-//            log.debug("Next cursor: "+cursor);
 
                 // get meta informations
                 if (!displayed) {
@@ -526,16 +517,10 @@ public class JSONFetch implements RecordStreamOrigin {
                 }
 
                 key = key.replaceAll("/","_");
-//                    .replaceAll("\\(","_")
-//                    .replaceAll("\\)","_")
-//                    .replaceAll("'","_")
-//                    .replaceAll(",","_")
-//                    .replaceAll(".","_");
 
                 if (!Character.isDigit(key.charAt(0))) {
 
                     log.debug("field: "+key);
-//                        sb.append(getTagName(field, objVal));
                     sb.append(getFieldXml(key, objVal, key));
                 }
             }
