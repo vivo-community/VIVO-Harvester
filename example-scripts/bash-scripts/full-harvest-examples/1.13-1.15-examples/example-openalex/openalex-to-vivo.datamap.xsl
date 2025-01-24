@@ -13,28 +13,21 @@
                 xmlns:rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
                 xmlns:rdfs = 'http://www.w3.org/2000/01/rdf-schema#'
                 xmlns:core = 'http://vivoweb.org/ontology/core#'
-                xmlns:score = 'http://vivoweb.org/ontology/score#'
-                xmlns:foaf = 'http://xmlns.com/foaf/0.1/'
                 xmlns:bibo = 'http://purl.org/ontology/bibo/'
                 xmlns:obo = 'http://purl.obolibrary.org/obo/'
                 xmlns:vitro = 'http://vitro.mannlib.cornell.edu/ns/vitro/0.7#'
                 xmlns:vcard = 'http://www.w3.org/2006/vcard/ns#'
-                xmlns:kdsf-vivo = 'http://lod.tib.eu/onto/kdsf/'
                 xmlns:node-publication='http://vivo.example.com/harvest/aims_users/fields/publication/'
                 xmlns:fn='http://www.w3.org/2005/xpath-functions'
-                xmlns:functx='http://www.functx.com'
-                xmlns:vivo-oa='http://lod.tib.eu/onto/vivo-oa/'
                 xmlns:c4o='http://purl.org/spar/c4o/' >
 
     <xsl:output method = "xml" indent = "yes"/>
-    <xsl:variable name = "baseURI">https://forschungsatlas.fid-bau.de/individual/</xsl:variable>
+    <xsl:variable name = "baseURI">http://vivo.school.edu/individual/</xsl:variable>
 
     <xsl:template match = "rdf:RDF">
         <rdf:RDF xmlns:rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
                  xmlns:rdfs = 'http://www.w3.org/2000/01/rdf-schema#'
                  xmlns:core = 'http://vivoweb.org/ontology/core#'
-                 xmlns:score = 'http://vivoweb.org/ontology/score#'
-                 xmlns:foaf = 'http://xmlns.com/foaf/0.1/'
                  xmlns:bibo = 'http://purl.org/ontology/bibo/'>
             <xsl:apply-templates select = "rdf:Description" />
         </rdf:RDF>
@@ -214,6 +207,7 @@
             <xsl:if test="$pageEnd != ''">
                 <bibo:pageEnd><xsl:value-of select="$pageEnd" /></bibo:pageEnd>
             </xsl:if>
+            // Open access ontology is needed to do display open access type and status
             <xsl:if test="$is_oa != ''">
                 <xsl:choose>
                     <xsl:when test="$is_oa='true'">
