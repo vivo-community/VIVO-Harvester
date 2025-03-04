@@ -9,6 +9,7 @@ You will need to:
 - Modify the vivo.model.xml file to provide parameters for accessing your VIVO web application and tdbContentModels directory.
 - Shut down your VIVO instance (if you are performing load using the TDB, in order to free the TDB lock)
 - Run `run-dspace-oaifetch.sh [tdb/sparql]` (use .bat script if you are on WindowsOS. It is recommended that you perform the first harvest, especially for large datasets, using TDB, as SPARQL API may have trouble loading very large files. All subsequent re-harvests can be performed with SPARQL API without the need for restarting your VIVO instance)
+- If you imported using TDB, you have to recompute inferences using "Site Admin"->"Recompute inferences" in order to be able to properly browse imported data
 - Restart your VIVO instance (in case you loaded data using the TDB) and reindex the search indexes
 
 Note: When performing TDB import, if it's your first time running VIVO, it is mandatory that you first start up VIVO and wait for
