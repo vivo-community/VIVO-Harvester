@@ -238,7 +238,7 @@
 
         <!-- vcard -->
         <rdf:Description rdf:about="{$vcardURI}">
-            <obo:ARG_2000029 rdf:resource="{$authorURI}"/>=
+            <obo:ARG_2000029 rdf:resource="{$authorURI}"/>
             <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Individual"/>
             <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vCard for: <xsl:value-of select="$authorName" /></rdfs:label>
             <vcard:hasName rdf:resource="{$vcardNameURI}"/>
