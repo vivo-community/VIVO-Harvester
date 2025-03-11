@@ -7,7 +7,10 @@ package org.vivoweb.harvester.fetch.nih;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
@@ -76,24 +79,28 @@ public class PubmedHTTPFetch extends NIHFetch {
 		String[] env = new String[4];
 		try {
 			StringBuilder urlSb = new StringBuilder();
-			urlSb.append("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?");
+			urlSb.append("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?");
 			urlSb.append("&db=");
 			urlSb.append(database);
 			urlSb.append("&tool=");
-			urlSb.append(getToolName());
+			urlSb.append(urlEncode(getToolName()));
 			urlSb.append("&email=");
 			urlSb.append(getEmailAddress());
 			urlSb.append("&usehistory=y");
 			urlSb.append("&retmode=xml");
 			urlSb.append("&term=");
-			urlSb.append(term);
+			urlSb.append(urlEncode(term));
 			if(logMessage) {
 				//				log.debug(urlSb.toString());
 			}
 			
 			DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
 			docBuildFactory.setIgnoringComments(true);
-			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(WebAide.getURLContents(urlSb.toString()).getBytes("UTF-8"))));
+
+			String xmlResponse = WebAide.getURLContents(urlSb.toString());
+			Document doc = docBuildFactory.newDocumentBuilder().parse(new InputSource(new ByteArrayInputStream(xmlResponse.getBytes(
+				StandardCharsets.UTF_8))));
+
 			env[0] = doc.getElementsByTagName("WebEnv").item(0).getTextContent();
 			env[1] = doc.getElementsByTagName("QueryKey").item(0).getTextContent();
 			env[2] = doc.getElementsByTagName("Count").item(0).getTextContent();
@@ -110,11 +117,19 @@ public class PubmedHTTPFetch extends NIHFetch {
 		}
 		return env;
 	}
+
+	private String urlEncode(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e); // Should never happen
+        }
+    }
 	
 	@Override
 	public void fetchRecords(String WebEnv, String QueryKey, String retStart, String numRecords) throws IOException {
 		StringBuilder urlSb = new StringBuilder();
-		urlSb.append("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?");
+		urlSb.append("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?");
 		urlSb.append("&db=");
 		urlSb.append(database);
 		urlSb.append("&query_key=");

@@ -1,7 +1,13 @@
 #!/bin/bash
 
+if [[ "$1" != "" && "$1" != "tdb" && "$1" != "sparql" ]]; then
+  echo "Invalid argument: $1"
+  echo "Usage: $0 [tdb|sparql]"
+  exit 1
+fi
+
 # Set environment variables
-export HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
+export HARVESTER_INSTALL_DIR=/home/ivanmrsulja/Desktop/posao/VIVO-Harvester
 export HARVEST_NAME=example-pubmed
 export DATE=`date +%Y-%m-%d'T'%T`
 
@@ -38,15 +44,23 @@ harvester-diff -X diff-subtractions.config.xml
 # Find Additions
 harvester-diff -X diff-additions.config.xml
 
-# Apply Subtractions to Previous model (TDB)
-harvester-transfer -w INFO -o previous-harvest-tdb.model.xml -r data/vivo-subtractions.rdf.xml -m
+# Apply Subtractions to Previous model
+harvester-transfer -w INFO -o previous-harvest.model.xml -r data/vivo-subtractions.rdf.xml -m
 
-# Apply Additions to Previous model (TDB)
-harvester-transfer -w INFO -o previous-harvest-tdb.model.xml -r data/vivo-additions.rdf.xml
+# Apply Additions to Previous model
+harvester-transfer -w INFO -o previous-harvest.model.xml -r data/vivo-additions.rdf.xml
 
-# Apply changes to VIVO model (TDB)
-harvester-transfer -w INFO -o vivo-tdb.model.xml -r data/vivo-subtractions.rdf.xml -m
-harvester-transfer -w INFO -o vivo-tdb.model.xml -r data/vivo-additions.rdf.xml
+## Apply changes to VIVO model
+if [[ "$1" == "tdb" ]]; then
+  # Apply Subtractions to VIVO model
+  harvester-transfer -w info -o vivo.model.xml -r data/vivo-subtractions.rdf.xml -m
+  # Apply Additions to VIVO model
+  harvester-transfer -w info -o vivo.model.xml -r data/vivo-additions.rdf.xml
+fi
+
+if [[ "$1" == "" || "$1" == "sparql" ]]; then
+  java $HARVESTER_JAVA_OPTS org.vivoweb.harvester.services.SparqlUpdate -X sparqlupdate.conf.xml
+fi
 
 # Output counts
 PUBS=`grep -c oai data/vivo-additions.rdf.xml`

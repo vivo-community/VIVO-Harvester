@@ -87,5 +87,5 @@
 -->
     
 	<!-- <Param name="update-types">http://xmlns.com/foaf/0.1/Person</Param> -->
-        <Param name="wordiness">INFO</Param> 
+        <Param name="wordiness">INFO</Param>
 </Task>
