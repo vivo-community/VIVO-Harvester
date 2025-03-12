@@ -7,7 +7,7 @@ if [[ "$1" != "" && "$1" != "tdb" && "$1" != "sparql" ]]; then
 fi
 
 # Set environment variables
-export HARVESTER_INSTALL_DIR=/home/ivanmrsulja/Desktop/posao/VIVO-Harvester
+export HARVESTER_INSTALL_DIR=/usr/local/src/VIVO-Harvester
 export HARVEST_NAME=example-pubmed
 export DATE=`date +%Y-%m-%d'T'%T`
 

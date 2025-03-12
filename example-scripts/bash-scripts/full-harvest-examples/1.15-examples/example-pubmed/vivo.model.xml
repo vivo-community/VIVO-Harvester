@@ -100,7 +100,7 @@
 <Model>
     <Model>
         <Param name="type">tdb</Param>
-        <Param name="dbDir">/home/ivanmrsulja/Desktop/posao/vivo/vivo_home/tdbContentModels</Param>
+        <Param name="dbDir">/usr/local/vivo/vivo_home/tdbContentModels</Param>
         <Param name="modelName">http://vitro.mannlib.cornell.edu/default/vitro-kb-2</Param>
     </Model>
 
