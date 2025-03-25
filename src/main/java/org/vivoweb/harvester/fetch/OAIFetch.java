@@ -9,11 +9,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.dlese.dpc.oai.harvester.HarvestMessageHandler;
 import org.dlese.dpc.oai.harvester.Harvester;
@@ -30,8 +29,6 @@ import org.vivoweb.harvester.util.args.UsageException;
 import org.vivoweb.harvester.util.repo.RecordHandler;
 import org.vivoweb.harvester.util.repo.RecordStreamOrigin;
 import org.vivoweb.harvester.util.repo.XMLRecordOutputStream;
-import org.xml.sax.SAXException;
-import ORG.oclc.oai.harvester2.app.RawWrite;
 
 /**
  * Class for harvesting from OAI Data Sources
@@ -75,11 +72,20 @@ public class OAIFetch implements RecordStreamOrigin {
 	 * The record handler to write records to
 	 */
 	private RecordHandler rhOutput;
+
+	/**
+	 * Pattern to match character references in a string that are not already escaped.
+	 * This ensures that numeric or hexadecimal character references (e.g., &#123; or &#x7B;)
+	 * are detected when not preceded by an ampersand (&) to avoid double-escaping.
+	 */
+	private static final Pattern CHAR_REFERENCE_PATTERN =
+		Pattern.compile("(?<=^|[^&])(&#(?:[0-9]+|x[0-9a-fA-F]+);)");
+
 	/**
 	 * the base for each instance's xmlRos
 	 */
 	private static XMLRecordOutputStream xmlRosBase = new XMLRecordOutputStream(new String[]{"record"}, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><harvest>", "</harvest>", ".*?<identifier>(.*?)</identifier>.*?", null);
-	
+
 	/**
 	 * Constuctor
 	 * @param address The website address of the repository, without http://
@@ -193,7 +199,10 @@ public class OAIFetch implements RecordStreamOrigin {
 		    	 
 				if (! StringUtils.equalsIgnoreCase(strArray[1], "deleted")) {
 		    	   log.trace("Adding record: " + strArray[0]);
-				   this.rhOutput.addRecord(strArray[0], strArray[1], this.getClass()); 
+				   this.rhOutput.addRecord(strArray[0], strArray[1], this.getClass());
+				   Matcher matcher = CHAR_REFERENCE_PATTERN.matcher(strArray[1]);
+				   String fullyEscapedData = matcher.replaceAll("&amp;$1").replace("&amp;&#", "&amp;#");
+				   this.rhOutput.addRecord(strArray[0], fullyEscapedData, this.getClass());
 				}
 		    }
 		 

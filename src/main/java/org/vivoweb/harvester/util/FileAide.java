@@ -13,12 +13,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileContent;
 import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
@@ -204,7 +206,7 @@ public class FileAide {
 		StringBuilder sb = new StringBuilder();
 		InputStreamReader isr;
 		if(charsetName == null) {
-			isr = new InputStreamReader(getInputStream(path));
+			isr = new InputStreamReader(getInputStream(path), StandardCharsets.UTF_8);
 		} else {
 			isr = new InputStreamReader(getInputStream(path), charsetName);
 		}
@@ -246,7 +248,8 @@ public class FileAide {
 			if(!isWriteable(path)) {
 				throw new IOException("Insufficient file system privileges to modify file " + path);
 			}
-			bw = new BufferedWriter(new OutputStreamWriter(getOutputStream(path)));
+			bw = new BufferedWriter(
+				new OutputStreamWriter(getOutputStream(path), StandardCharsets.UTF_8));
 			bw.append(value);
 			bw.close();
 		} catch(IOException e) {
@@ -300,13 +303,40 @@ public class FileAide {
 	 * @throws IOException error resolving path
 	 */
 	public static Set<String> getNonHiddenChildren(String path) throws IOException {
-		Set<String> allFileListing = new HashSet<String>();
-		for(FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
-			if(!file.isHidden() && (file.getType() == FileType.FILE)) {
+		Set<String> allFileListing = new HashSet<>();
+
+		// Process sub-directories
+		for (FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
+			if (file.isHidden() ||
+				file.getName().getBaseName().startsWith(".") ||
+				file.getType() != FileType.FOLDER) {
+				continue;
+			}
+			// Move all files in children directories to the parent folder
+			for (FileObject childFile : file.findFiles(Selectors.SELECT_CHILDREN)) {
+				if (isValidFile(childFile)) {
+					FileObject parentFolder = file.getParent();
+					if (parentFolder != null) {
+						FileObject targetFile =
+							parentFolder.resolveFile(childFile.getName().getBaseName());
+						childFile.moveTo(targetFile);
+					}
+				}
+			}
+		}
+
+		// Process files directly under the given path
+		for (FileObject file : getFileObject(path).findFiles(Selectors.SELECT_CHILDREN)) {
+			if (isValidFile(file)) {
 				allFileListing.add(file.getName().getBaseName());
 			}
 		}
+
 		return allFileListing;
+	}
+
+	private static boolean isValidFile(FileObject file) throws FileSystemException {
+		return !file.isHidden() && file.getType() == FileType.FILE;
 	}
 	
 	/**
