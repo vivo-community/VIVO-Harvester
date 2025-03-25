@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -107,7 +108,13 @@ public class TextFileRecordHandler extends RecordHandler {
 	 * @return null if no sanitization needed, else the new id
 	 */
 	private String sanitizeID(String id) {
-		String s = id.replaceAll("\\n", "_-_NEWLINE_-_").replaceAll("\\r", "_-_RETURN_-_").replaceAll("\\t", "_-_TAB_-_").replaceAll(" ", "_-_SPACE_-_").replaceAll("\\\\", "_-_BACKSLASH_-_").replaceAll("/", "_-_FORWARDSLASH_-_").replaceAll(":", "_-_COLON_-_").replaceAll("\\*", "_-_STAR_-_").replaceAll("\\?", "_-_QUESTIONMARK_-_").replaceAll("\"", "_-_DOUBLEQUOTE_-_").replaceAll("<", "_-_LESSTHAN_-_").replaceAll(">", "_-_GREATERTHAN_-_").replaceAll("\\|", "_-_PIPE_-_");
+		String urlDecodedId = "";
+		try {
+			urlDecodedId = java.net.URLDecoder.decode(id, java.nio.charset.StandardCharsets.UTF_8.name());
+		} catch (Exception e) {
+			// not going to happen - value came from JDK's own StandardCharsets
+		}
+		String s = urlDecodedId.replaceAll("\\n", "_-_NEWLINE_-_").replaceAll("\\r", "_-_RETURN_-_").replaceAll("\\t", "_-_TAB_-_").replaceAll(" ", "_-_SPACE_-_").replaceAll("\\\\", "_-_BACKSLASH_-_").replaceAll("/", "_-_FORWARDSLASH_-_").replaceAll(":", "_-_COLON_-_").replaceAll("\\*", "_-_STAR_-_").replaceAll("\\?", "_-_QUESTIONMARK_-_").replaceAll("\"", "_-_DOUBLEQUOTE_-_").replaceAll("<", "_-_LESSTHAN_-_").replaceAll(">", "_-_GREATERTHAN_-_").replaceAll("\\|", "_-_PIPE_-_").replaceAll("\\.", "_-_DOT_-_");
 		if(s.equals(id)) {
 			return null;
 		}
@@ -144,7 +151,7 @@ public class TextFileRecordHandler extends RecordHandler {
 		String fmo = null;
 		BufferedWriter bw = null;
 		try {
-			fmo = this.metaDir+"/"+recID;
+			fmo = this.metaDir + "/" + recID;
 			FileAide.createFile(fmo);
 			
 			bw = new BufferedWriter(new OutputStreamWriter(FileAide.getOutputStream(fmo)));
@@ -200,7 +207,7 @@ public class TextFileRecordHandler extends RecordHandler {
 			if(!FileAide.exists(fo)) {
 				throw new IllegalArgumentException("Record " + recID + " does not exist!");
 			}
-			br = new BufferedReader(new InputStreamReader(FileAide.getInputStream(fo)));
+			br = new BufferedReader(new InputStreamReader(FileAide.getInputStream(fo), StandardCharsets.UTF_8));
 			String line;
 			while((line = br.readLine()) != null) {
 				sb.append(line);
