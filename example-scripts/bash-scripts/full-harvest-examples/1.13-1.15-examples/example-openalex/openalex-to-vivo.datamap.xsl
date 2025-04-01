@@ -19,6 +19,7 @@
                 xmlns:vcard = 'http://www.w3.org/2006/vcard/ns#'
                 xmlns:node-publication='http://vivo.example.com/harvest/aims_users/fields/publication/'
                 xmlns:fn='http://www.w3.org/2005/xpath-functions'
+                xmlns:vivo-oa='http://lod.tib.eu/onto/vivo-oa/'
                 xmlns:c4o='http://purl.org/spar/c4o/' >
 
     <xsl:output method = "xml" indent = "yes"/>
@@ -207,7 +208,7 @@
             <xsl:if test="$pageEnd != ''">
                 <bibo:pageEnd><xsl:value-of select="$pageEnd" /></bibo:pageEnd>
             </xsl:if>
-            // Open access ontology is needed to do display open access type and status
+<!--            Open access ontology is needed to do display open access type and status-->
             <xsl:if test="$is_oa != ''">
                 <xsl:choose>
                     <xsl:when test="$is_oa='true'">
@@ -234,7 +235,7 @@
 
             <xsl:for-each select="$this/node-publication:authorships/*">
                 <xsl:variable name="id" select="substring-after(author/id,'org/')"/>
-                <core:relatedBy rdf:resource="{$baseURI}authorship_{$oaid}"/>
+                <core:relatedBy rdf:resource="{$baseURI}authorship_{$id}"/>
             </xsl:for-each>
 
             <xsl:for-each select="$this/node-publication:concepts/*">
