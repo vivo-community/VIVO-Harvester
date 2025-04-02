@@ -80,6 +80,7 @@
                 <xsl:with-param name = "venue_id" select="$venue_id"/>
             </xsl:call-template>
             <xsl:for-each select="$this/node-publication:authorships/*">
+                <xsl:variable name="i" select="position()" />
 
                 <xsl:variable name = "affiliation" select = "raw_affiliation_string"/>
 
@@ -95,6 +96,7 @@
                     <xsl:with-param name = "org_id" select = "$org_id" />
                     <xsl:with-param name = "doi" select = "$doi" />
                     <xsl:with-param name = "oaid" select = "$oaid" />
+                    <xsl:with-param name = "position" select="$i"/>
                 </xsl:call-template>
                 <xsl:call-template name="t_Institution">
                     <!--            if multiple institutions are possible the next line has to be edited to handle institutions e.g. in a for-each block-->
@@ -234,8 +236,8 @@
             </xsl:if>
 
             <xsl:for-each select="$this/node-publication:authorships/*">
-                <xsl:variable name="id" select="substring-after(author/id,'org/')"/>
-                <core:relatedBy rdf:resource="{$baseURI}authorship_{$id}"/>
+                <xsl:variable name="i" select="position()" />
+                <core:relatedBy rdf:resource="{$baseURI}authorship_{$oaid}-{$i}"/>
             </xsl:for-each>
 
             <xsl:for-each select="$this/node-publication:concepts/*">
@@ -320,6 +322,7 @@
         <xsl:param name = 'doi'/>
         <xsl:param name = 'oaid'/>
         <xsl:param name = "org_id"/>
+        <xsl:param name = "position"/>
 
         <xsl:variable name="fullName" select="$author/display_name"/>
         <xsl:variable name="id" select="substring-after($author/id,'org/')"/>
@@ -352,7 +355,7 @@
 
 
         <!-- authorship -->
-        <rdf:Description rdf:about="{$baseURI}authorship_{$oaid}">
+        <rdf:Description rdf:about="{$baseURI}authorship_{$oaid}-{$position}">
             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
             <vitro:mostSpecificType rdf:resource="http://vivoweb.org/ontology/core#Authorship" />
             <rdf:type rdf:resource="http://vivoweb.org/ontology/core#Relationship" />
