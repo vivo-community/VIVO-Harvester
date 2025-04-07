@@ -5,18 +5,18 @@
  ******************************************************************************/
 package org.vivoweb.harvester.fetch;
 
-import java.io.IOException; 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator; 
 import java.util.List; 
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONArray;
+import net.minidev.json.parser.JSONParser;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vivoweb.harvester.util.FileAide;
-import org.vivoweb.harvester.util.InitLog;
-import org.vivoweb.harvester.util.SpecialEntities;
-import org.vivoweb.harvester.util.WebAide;
+import org.vivoweb.harvester.util.*;
 import org.vivoweb.harvester.util.args.ArgDef;
 import org.vivoweb.harvester.util.args.ArgList;
 import org.vivoweb.harvester.util.args.ArgParser;
@@ -289,8 +289,9 @@ public class JSONFetch implements RecordStreamOrigin {
      * @throws IOException error getting recrords
      */
     public void execute() throws IOException {
-
+        JSONParser parser = new JSONParser();
         String jsonpath = new String();
+        List<Object> nodes = null;
 
         try {
             XMLRecordOutputStream xmlRos = xmlRosBase.clone();
@@ -298,42 +299,60 @@ public class JSONFetch implements RecordStreamOrigin {
 
 
             // Get json contents as String, check for url first then a file
-            String jsonString = new String();
+            String jsonString = null;
             if (this.strAddress == null) {
-            	System.out.println(getParser().getUsage());
-            	System.exit(1);
+                System.out.println(getParser().getUsage());
+                System.exit(1);
             }
-            if (this.strAddress.startsWith("http:")) {
-               jsonString = WebAide.getURLContents(this.strAddress);
+            if (this.strAddress.startsWith("http") && this.strAddress.contains("cursor=")) {
+                nodes = paging();
+            } else if (this.strAddress.startsWith("http") && !this.strAddress.contains("cursor=")) {
+                log.debug("URL: " + this.strAddress);
+                jsonString = WebAide.getURLContents(this.strAddress);
             } else {
-               jsonString = FileAide.getTextContent(this.strAddress);
+                jsonString = FileAide.getTextContent(this.strAddress);
             }
             //log.info(jsonString);
 
-            for (int i=0; i < this.nodeNames.length ; i++) {
+            for (int i = 0; i < this.nodeNames.length; i++) {
                 String name = this.nodeNames[i];
                 String id = this.idStrings[i];
                 jsonpath = this.pathStrings[i];
-                log.info("Using path: "+ jsonpath);
+                log.info("Using path: " + jsonpath);
                 JsonPath path = JsonPath.compile(jsonpath);
-                log.info("got jsonpath: "+ path.getPath());
-                List<Object> nodes = path.read(jsonString);
-                log.info("name: "+ name);
+                log.info("got jsonpath: " + path.getPath());
+                if (jsonString != null) {
+                    log.info(jsonString);
+                    nodes = path.read(jsonString);
+                }
+                log.info("name: " + name);
                 //log.info("id: "+ id);
                 log.info("num nodes: " + nodes.size());
                 int count = 0;
 
-                 for (Object o: nodes) {
-                    JSONObject jsonObject = (JSONObject) o;
+                Iterator itr = nodes.iterator();
+
+                while (itr.hasNext()) {
+                    Double relevantScore = 0.0;
+                    JSONObject jsonObject = (JSONObject) parser.parse(itr.next().toString());
+                    JSONArray conceptArray = (JSONArray) jsonObject.get("concepts");
+
+                    if (jsonObject.get("title") == null) {
+                        itr.remove();
+                    }
+                }
+
+                for (Object o : nodes) {
+                    JSONObject jsonObject = (JSONObject) parser.parse(o.toString());
                     Iterator iter = jsonObject.keySet().iterator();
                     StringBuilder sb = new StringBuilder();
 
                     //log.info("fixedkey: "+ fixedkey);
                     StringBuilder recID = new StringBuilder();
                     recID.append("node_-_");
-                    recID.append(String.valueOf(count));
+                    recID.append(count);
 
-                    //log.trace("Creating RDF for "+name+": "+recID);
+                    log.trace("Creating RDF for "+name+": "+recID);
                     // Build RDF BEGIN
                     // Header info
                     String nodeNS = "node-" + name;
@@ -363,68 +382,215 @@ public class JSONFetch implements RecordStreamOrigin {
                         String key = (String) iter.next();
                         Object val = jsonObject.get(key);
                         if (val == null) {
-                          val = "";
+                            val = "";
                         }
                         //log.info("val type for key: "+key+ ": "+val.getClass().getName());
-                        String fixedkey = key.replaceAll(" ","_"); 
-                        String field = nodeNS + ":" + fixedkey;
-                        sb.append(getFieldXml(field, val));
+                        String fixedkey = key
+                                .replaceAll(" |/", "_")
+                                .replaceAll("\\(|\\)", "")
+                                .replaceAll("/", "_");
+                        if (!Character.isDigit(fixedkey.charAt(0)) && !fixedkey.equals("abstract_inverted_index")) {
+                            // Confident JSON node names contain "Event:A6bdb69a-e51d-42d7-bd25-62ec3c40b7e8"
+                            if (fixedkey.contains(":"))
+                                fixedkey = fixedkey.substring(fixedkey.indexOf(":") + 1);
+                            String field = nodeNS + ":" + fixedkey;
+                            sb.append(getFieldXml(field, val, fixedkey));
+                        }
                     }
-                    // Record info END
-                    sb.append("  </rdf:Description>\n");
+                        // Record info END
+                        sb.append("  </rdf:Description>\n");
 
-                    // Footer info
-                    sb.append("</rdf:RDF>");
-                    // Build RDF END
+                        // Footer info
+                        sb.append("</rdf:RDF>");
+                        // Build RDF END
 
-                    // Write RDF to RecordHandler
-                    //log.trace("Adding record: " + fixedkey + "_" + recID);
-                    //log.trace("data: "+ sb.toString());
-                    //log.info("rhOutput: "+ this.rhOutput);
-                    //log.info("recID: "+recID);
-                    this.rhOutput.addRecord(name + "_" + recID, sb.toString(), this.getClass());
-                    count++;
+                        // Write RDF to RecordHandler
+                        this.rhOutput.addRecord(name + "_" + recID, sb.toString(), this.getClass());
+                        count++;
+                    }
+                }
+            } catch(InvalidPathException e){
+                log.error("Invalid JsonPath: " + jsonpath);
+            } catch(Exception e){
+                log.error(e.getMessage());
+                e.printStackTrace();
+                throw new IOException(e);
+            }
+        }
+
+        private ArrayList<Object> paging() throws IOException {
+            ArrayList<Object> listdata = new ArrayList<>();
+            String cursor, url_without_cursor;
+            int per_page,count,dbTime, pages = 0, i=1;
+            String jsonString;
+            JsonPath path, metapath;
+            boolean displayed = false;
+            JSONArray resultPart = new JSONArray();
+
+            JSONObject jsonObject;
+
+            cursor = (String) this.strAddress.subSequence(this.strAddress.indexOf("cursor=")+7, this.strAddress.length());
+            url_without_cursor = (String) this.strAddress.subSequence(0, this.strAddress.indexOf("cursor="));
+            log.debug("URL: "+this.strAddress);
+
+            metapath = JsonPath.compile("$.meta");
+
+            while (cursor != null) {
+                jsonString = WebAide.getURLContents(url_without_cursor+"cursor="+cursor);
+                jsonObject = metapath.read(jsonString);
+
+                // get next cursor till if there is a next one
+                if (jsonObject.get("next_cursor") != null)
+                    cursor = jsonObject.get("next_cursor").toString();
+                else
+                    cursor = null;
+
+                // get meta informations
+                if (!displayed) {
+                    dbTime = Integer.parseInt(jsonObject.get("db_response_time_ms").toString());
+                    log.debug("DB response time [ms]: "+dbTime);
+                    per_page = Integer.parseInt(jsonObject.get("per_page").toString());
+                    log.debug("Objects per page: "+per_page);
+                    count = Integer.parseInt(jsonObject.get("count").toString());
+                    log.debug("Total amount of objects: "+count);
+                    pages = (count + per_page - 1) / per_page;
+                    displayed = true;
+                }
+
+                if (cursor != null) {
+                    log.debug("Page Number: "+i+"/"+pages);
+                    // get data
+                    path = JsonPath.compile(this.pathStrings[0]);
+                    resultPart = path.read(jsonString);
+                    for (int k=0; k<resultPart.size(); k++)
+                        listdata.add(resultPart.get(k).toString());
+                }
+                i++;
+            }
+
+            log.debug("Elements in array: "+listdata.size());
+            return listdata;
+        }
+
+
+        public String getFieldXml(String field, Object val, String fixedkey) {
+            StringBuffer sb = new StringBuffer();
+
+            log.debug("val type for field "+ field +": "+val.getClass().getName());
+            sb.append("    <");
+            sb.append(SpecialEntities.xmlEncode(field).replaceAll("/","_"));
+            sb.append(">");
+
+            // insert field value
+            if (val instanceof  JSONArray) {
+                log.debug(field+" is an array with "+((JSONArray) val).size()+" elements") ;
+                XMLTagIndexing xmlTagIndexing = new XMLTagIndexing();
+                xmlTagIndexing.setElementNo(0);
+                arrayHandlingV2(val, sb, xmlTagIndexing, fixedkey);
+            } if (val instanceof  JSONObject) {
+                log.debug(field+" is an object with "+((JSONObject) val).size()+" elements") ;
+                objectHandling(val, sb);
+            } else if (val instanceof String || val instanceof Integer){
+                sb.append(SpecialEntities.xmlEncode(val.toString().trim()
+                        .replaceAll("\u201D", "'")
+                        .replaceAll("\u201C","'")));
+            }
+            // Field END
+            sb.append("</");
+            sb.append(SpecialEntities.xmlEncode(field));
+            sb.append(">\n");
+            return sb.toString();
+        }
+
+        private void objectHandling(Object val, StringBuffer sb) {
+            Iterator objectIterator;
+
+            JSONObject jsonObject = (JSONObject) val;
+            objectIterator = jsonObject.keySet().iterator();
+
+            while (objectIterator.hasNext()) {
+
+                String key = (String) objectIterator.next();
+                Object objVal = jsonObject.get(key);
+                if (objVal == null) {
+                    objVal = "";
+                }
+
+                key = key.replaceAll("/","_");
+
+                if (!Character.isDigit(key.charAt(0))) {
+
+                    log.debug("field: "+key);
+                    sb.append(getFieldXml(key, objVal, key));
                 }
             }
-        } catch (InvalidPathException e) {
-            log.error("Invalid JsonPath: "+ jsonpath);
-        } catch(Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            throw new IOException(e);
         }
-    }
-    
-    public String getFieldXml(String field, Object val) {
-       StringBuffer sb = new StringBuffer();
-       //log.debug("val type for field "+ field +": "+val.getClass().getName());
-       sb.append("    <");
-       sb.append(SpecialEntities.xmlEncode(field));
-       sb.append(">");
 
-       // insert field value
-       if (val instanceof  JSONArray) {
-    	   JSONArray array = (JSONArray) val;
-    	   log.debug("field is an array: "+ field);
-    	   Iterator iter = array.iterator();
-    	   while (iter.hasNext()) {
-    		   Object obj = iter.next();
-               log.debug("objtype: "+ obj.getClass().getName());
-    		   log.debug("val: "+ array.toString());
-    	   }
-       } else {
-         sb.append(SpecialEntities.xmlEncode(val.toString().trim()));
-       } 
-       // Field END
-       sb.append("</");
-       sb.append(SpecialEntities.xmlEncode(field));
-       sb.append(">\n");
-       return sb.toString();
-    }
+        private void arrayHandlingV2(Object val, StringBuffer sb, XMLTagIndexing xmlTagIndexing, String fixedkey) {
+            JSONArray array = (JSONArray) val;
 
+            sb.append("\n");
+            Iterator arrayIterator = array.iterator();
 
+            log.debug("val: "+ val);
 
+            while (arrayIterator.hasNext()) {
+                Object obj = arrayIterator.next();
 
+                if (!xmlTagIndexing.isArrayIndexOpen()) {
+                    xmlTagIndexing.setArrayIndexOpen();
+                    String lastChar = fixedkey.substring(fixedkey.length() - 1);
+                    if (lastChar.equals("s"))
+                        xmlTagIndexing.setXmlTagName(StringUtils.chop(fixedkey));
+                    else
+                        xmlTagIndexing.setXmlTagName(fixedkey);
+                    sb.append("    <"+xmlTagIndexing.getXmlTagName()+"_"+ xmlTagIndexing.getElementNo() +">");
+                }
+
+//            log.debug("val: "+ obj);
+
+                if (obj instanceof JSONArray) {
+                    log.debug("there is an JSON Array inside: "+ obj);
+                    XMLTagIndexing xmlArrayIndexing = new XMLTagIndexing();
+                    xmlArrayIndexing.setElementNo(0);
+
+                    arrayHandlingV2(val, sb, xmlArrayIndexing, fixedkey);
+                } else if (obj instanceof JSONObject) {
+                    log.debug("there is an JSON Object inside: "+ obj);
+                    objectHandling(obj, sb);
+                }
+                else {
+                    sb.append(obj.toString()
+                            .replaceAll("&", "&amp;")
+                            .replaceAll("</br>","")
+                            .replaceAll("<","")
+                            .replaceAll(">",""));
+                }
+                if (xmlTagIndexing.isArrayIndexOpen()) {
+                    sb.append("</"+xmlTagIndexing.getXmlTagName()+"_"+ xmlTagIndexing.getElementNo() +">\n");
+                    xmlTagIndexing.increaseElementNo();
+                    xmlTagIndexing.setArrayIndexClosed();
+                }
+            }
+            sb.append("    ");
+        }
+
+        public String getTagName(String field, Object val) {
+            StringBuffer sb = new StringBuffer();
+            log.debug("val type for tag "+ field +": "+val.getClass().getName());
+            sb.append("    <");
+            sb.append(SpecialEntities.xmlEncode(field));
+            sb.append(">");
+
+            // insert field value
+            sb.append(SpecialEntities.xmlEncode(val.toString().trim()));
+
+            // Field END
+            sb.append("</");
+            sb.append(SpecialEntities.xmlEncode(field));
+            sb.append(">\n");
+            return sb.toString();
+        }
 
     @Override
     public void writeRecord(String id, String data) throws IOException {

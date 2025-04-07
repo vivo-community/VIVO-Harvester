@@ -1,0 +1,20 @@
+usage: JSONFetch
+ -d,--description <NAME>                a descriptive name for the json
+                                        object [have multiple -d for more
+                                        names]
+ -f,--file <FALSE>                      file containing json
+ -h,--help                              Help Message
+ -i,--id <ID>                           a single id for the json object
+                                        [have multiple -i for more ids]
+ -n,--namespaceBase <NAMESPACE_BASE>    the base namespace to use for each
+                                        node created
+ -o,--output <CONFIG_FILE>              RecordHandler config file path
+ -O,--outputOverride <RH_PARAM=VALUE>   override the RH_PARAM of output
+                                        recordhandler using VALUE
+ -p,--path <PATH>                       a single path for the json object
+                                        [have multiple -p for more json
+                                        paths]
+ -u,--url <URL>                         url which produces json
+ -w,--wordiness <LOG_LEVEL>             Set the console log level
+ -X,--config <CONFIG_FILE>              XML Configuration File
+
